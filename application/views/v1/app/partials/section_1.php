@@ -2,8 +2,8 @@
     <div class="col-12 col-md-12 col-lg-5">
         <div class="csVideoBox">
             <?= getSourceByType(
-                $homeContent['page']['sections']['section1']['sourceType'],
-                $homeContent['page']['sections']['section1']['sourceFile']
+                $pageContent['sections']['section1']['sourceType'],
+                $pageContent['sections']['section1']['sourceFile']
             ); ?>
         </div>
     </div>
@@ -13,14 +13,14 @@
                 <div class="col-sm-12 set-contentcenter-ontablet">
                     <div class="margin-btm">
                         <p class="heading-h4-grey heading text-white opacity-eighty">
-                            <?php echo $homeContent['page']['sections']['section1']['mainheading'] ?>
+                            <?php echo $pageContent['sections']['section1']['mainheading'] ?>
                         </p>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <h4 class="second-heading text-center-onmobile white-text text-align-center-ontablet">
-                            <?php echo $homeContent['page']['sections']['section1']['heading'] ?>
+                            <?php echo $pageContent['sections']['section1']['heading'] ?>
 
                         </h4>
                     </div>
@@ -28,7 +28,7 @@
                 <div class="col-sm-12">
                     <div class="margin-btm">
                         <p class="detail-text text-center-onmobile white-text opacity-eighty text-align-center-ontablet">
-                            <?php echo $homeContent['page']['sections']['section1']['headingDetail'] ?>
+                            <?php echo $pageContent['sections']['section1']['headingDetail'] ?>
 
                         </p>
                     </div>
@@ -37,12 +37,12 @@
                     <div class="margin-btm">
 
                         <?php
-                        $bullet1Array = convertToStrip($homeContent['page']['sections']['section1']['bullet1']);
-                        $bullet2Array = convertToStrip($homeContent['page']['sections']['section1']['bullet2']);
-                        $bullet3Array = convertToStrip($homeContent['page']['sections']['section1']['bullet3']);
-                        $bullet4Array = convertToStrip($homeContent['page']['sections']['section1']['bullet4']);
-                        $bullet5Array = convertToStrip($homeContent['page']['sections']['section1']['bullet5']);
-                        $bullet6Array = convertToStrip($homeContent['page']['sections']['section1']['bullet6']);
+                        $bullet1Array = convertToStrip($pageContent['sections']['section1']['bullet1']);
+                        $bullet2Array = convertToStrip($pageContent['sections']['section1']['bullet2']);
+                        $bullet3Array = convertToStrip($pageContent['sections']['section1']['bullet3']);
+                        $bullet4Array = convertToStrip($pageContent['sections']['section1']['bullet4']);
+                        $bullet5Array = convertToStrip($pageContent['sections']['section1']['bullet5']);
+                        $bullet6Array = convertToStrip($pageContent['sections']['section1']['bullet6']);
                         ?>
 
                         <div class="d-flex">
@@ -86,8 +86,8 @@
             </div>
             <div class="row get-started">
                 <div class=" col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12 btn-mob-center text-align-center-ontablet">
-                    <a href="<?= base_url($homeContent['page']['sections']['section1']['btnSlug']) ?>" class="button explore_btn bg-white mt-4 solution-btn d-inline-flex ms-2 auto-right-top-button jsButtonAnimate">
-                        <p class="mb-0 btn-text"><?php echo $homeContent['page']['sections']['section1']['btnText'] ?></p>
+                    <a href="<?= base_url($pageContent['sections']['section1']['btnSlug']) ?>" class="button explore_btn bg-white mt-4 solution-btn d-inline-flex ms-2 auto-right-top-button jsButtonAnimate">
+                        <p class="mb-0 btn-text"><?php echo $pageContent['sections']['section1']['btnText'] ?></p>
 
                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                     </a>

@@ -6,11 +6,9 @@ $(function () {
 		rules: {
 			meta_title: {
 				required: true,
-				minlength: 50,
 			},
 			meta_description: {
 				required: true,
-				minlength: 50,
 			},
 			meta_keywords: {
 				required: true,

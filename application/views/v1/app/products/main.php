@@ -18,7 +18,7 @@
 
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6 column-flex-center form-area-product ">
                 <?php $this->load->view("v1/app/partials/demo_form_product", [
-                    "heading" => convertToStrip($pageContent["banner"]["mainHeading"]),
+                    "heading" => "See AutomotoHR in action",
                     "buttonClass" => "w-100"
                 ]); ?>
             </div>
@@ -122,6 +122,6 @@
     </section>
     <!-- footer section -->
     <?php $this->load->view("v1/app/products/products_footer", [
-        "heading" => convertToStrip($pageContent["banner"]["mainHeading"])
+        "heading" => "See AutomotoHR in action"
     ]); ?>
 </main>

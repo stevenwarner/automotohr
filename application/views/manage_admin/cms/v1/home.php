@@ -44,7 +44,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    const apiURL = "<?= getCreds("AHR")->API_BROWSER_URL; ?>";
-</script>

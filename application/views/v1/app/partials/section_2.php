@@ -1,7 +1,6 @@
 <?php
 
-$products = $homeContent['page']['sections']['section2']["products"];
-// $products = [];
+$products = $pageContent['sections']['section2']["products"];
 $productBg = [
     "1" => [
         "bg" => "career_section_main py-5 width_100 d-flex justify-content-center career_section_bg_color",
@@ -73,10 +72,10 @@ $productBg = [
     <div class="width_80">
         <div class="width_100 d-flex flex-column align-items-center justify-content-center py-5">
             <p class="lightgrey heading-h4-grey heading">
-                <?php echo $homeContent['page']['sections']['section2']['mainheading'] ?>
+                <?php echo $pageContent['sections']['section2']['mainheading'] ?>
             </p>
             <h5 class="darkgrey text-center mt-3 title px-sm-5 px-2 mx-sm-3 mx-0 title">
-                <?php echo $homeContent['page']['sections']['section2']['heading'] ?>
+                <?php echo $pageContent['sections']['section2']['heading'] ?>
             </h5>
         </div>
     </div>

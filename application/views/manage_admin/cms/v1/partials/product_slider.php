@@ -27,7 +27,7 @@ $contentToShow = $pageContent["page"]["sections"]["banner"];
                         Details&nbsp;
                         <strong class="text-danger">*</strong>
                     </label>
-                    <input type="text" name="details" id="details" class="form-control" value="<?= $contentToShow["details"]; ?>" />
+                    <textarea rows="5" name="details" id="details" class="form-control"><?= $contentToShow["details"]; ?></textarea>
                 </div>
             </div>
             <div class="panel-footer text-center">

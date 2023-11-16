@@ -95,7 +95,7 @@ $(function () {
 		submitHandler: function (form) {
 			//
 			let formDataObj = formArrayToObj($(form).serializeArray());
-			formDataObj.append("section", "section_1");
+			formDataObj.append("section", "section_2");
 			return processData(formDataObj, $("#jsSection2Btn"), "section_2");
 		},
 	});

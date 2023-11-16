@@ -36,13 +36,13 @@ class Home extends CI_Controller
         }
 
         //
-        $homeContent = getPageContent('home');
+        $homeContent = getPageContent('home', true)["page"];
 
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = $homeContent['page']['meta']['title'];
-        $data['meta']['description'] = $homeContent['page']['meta']['description'];
-        $data['meta']['keywords'] = $homeContent['page']['meta']['keyword'];
+        $data['meta']['title'] = $homeContent['meta']['title'];
+        $data['meta']['description'] = $homeContent['meta']['description'];
+        $data['meta']['keywords'] = $homeContent['meta']['keyword'];
 
         if (isset($_COOKIE[STORE_NAME]['username']) && isset($_COOKIE[STORE_NAME]['password'])) {
             $this->load->model('users_model');
@@ -91,11 +91,11 @@ class Home extends CI_Controller
 
         $data['headerFixed'] = true;
 
-        $data['homeContent'] = $homeContent;
+        $data['pageContent'] = $homeContent;
 
-        $this->load->view($this->header, $data);
-        $this->load->view('v1/app/homepage');
-        $this->load->view($this->footer);
+        $this->load->view($this->header, $data)
+            ->view('v1/app/homepage')
+            ->view($this->footer);
     }
 
     public function decryptCookie($value)

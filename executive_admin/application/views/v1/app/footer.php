@@ -1,18 +1,20 @@
+<?php $pageHeader = getPageContent('header', true)["page"]["sections"]["section_1"]; ?>
+<?php $pageFooter = getPageContent('footer', true)["page"]["sections"]; ?>
+<?php $salesSupportDetail = getPageContent('contact_us', false)["page"]["sections"]["section_0"]; ?>
 <footer class="footer-section">
-    <?php $footerContent = getPageContent('footer');
-    ?>
-
     <div class="footer-space-adj">
         <div class="row margin-bottom-20">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
                 <div>
                     <img src="<?= image_url('/'); ?>Emboss-Logo.png" alt="embose logo" />
-                    <p class="white-opacity-text"><?= $footerContent['page']['logo']['text_under_logo']; ?></p>
+                    <p class="white-opacity-text">
+                        <?= $pageFooter["section_0"]["logoText"]; ?>
+                    </p>
                 </div>
                 <div class="margin-top-60">
-                    <p class="stay-connect"><?= $footerContent['page']['logo']['text_stay_connect']; ?></p>
-
-
+                    <p class="stay-connect">
+                        <?= $pageFooter["section_1"]["mainHeading"]; ?>
+                    </p>
                     <div class="inline-flex">
                         <div class="anchor-span">
                             <?php
@@ -65,77 +67,131 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 section-space-adj">
                 <p class="footer-text-three">
-                    <a href="#"> Products</a>
+                    <a href="#"> Solutions</a>
                 </p>
 
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['productoperations']['slug']) ?>"> <?php echo $footerContent['page']['products']['productoperations']['title'] ?> </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['recruitment']['slug']) ?>"> <?php echo $footerContent['page']['products']['recruitment']['title'] ?> </a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['electroniconboarding']['slug']) ?>"> <?php echo $footerContent['page']['products']['electroniconboarding']['title'] ?></a></p>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['employeemanagement']['slug']) ?>"> <?php echo $footerContent['page']['products']['employeemanagement']['title'] ?> </a></li>
-                <p class="p-bottom-adj second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['payroll']['slug']) ?>"> <?php echo $footerContent['page']['products']['payroll']['title'] ?> </a></p>
-                <p class=" second-text-adj f-w-500"><a href="<?= main_url($footerContent['page']['products']['compliance']['slug']) ?>"> <?php echo $footerContent['page']['products']['compliance']['title'] ?> </a></p>
+                <p class="p-bottom-adj second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu1Link"]); ?>">
+                        <?= ($pageHeader["subMenu1Text"]); ?>
+                    </a>
+                </p>
+                <p class="p-bottom-adj second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu2Link"]); ?>">
+                        <?= ($pageHeader["subMenu2Text"]); ?>
+                    </a>
+                </p>
+                <p class="p-bottom-adj second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu3Link"]); ?>">
+                        <?= ($pageHeader["subMenu3Text"]); ?>
+                    </a>
+                </p>
+                <p class="p-bottom-adj second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu4Link"]); ?>">
+                        <?= ($pageHeader["subMenu4Text"]); ?>
+                    </a>
+                </p>
+                <p class="p-bottom-adj second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu5Link"]); ?>">
+                        <?= ($pageHeader["subMenu5Text"]); ?>
+                    </a>
+                </p>
+                <p class=" second-text-adj f-w-500">
+                    <a href="<?= main_url($pageHeader["subMenu6Link"]); ?>">
+                        <?= ($pageHeader["subMenu6Text"]); ?>
+                    </a>
+                </p>
 
                 <div class="margin-top-40 margin-bottom-30">
-                    <p class="footer-text-three p-bottom-adj"><a href="<?= main_url($footerContent['page']['affiliateprogram']['slug']) ?>"> <?php echo $footerContent['page']['affiliateprogram']['title'] ?></a></p>
-                    <p class="footer-text-three p-bottom-adj"><a href="<?= main_url($footerContent['page']['privacypolicy']['slug']) ?>"> <?php echo $footerContent['page']['privacypolicy']['title'] ?> </a></p>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= main_url($pageFooter["section_2"]["menu1Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu1Text"]); ?>
+                        </a>
+                    </p>
+                    <p class="footer-text-three p-bottom-adj">
+                        <a href="<?= main_url($pageFooter["section_2"]["menu2Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu2Text"]); ?>
+                        </a>
+                    </p>
                 </div>
 
                 <div class="book-demo-btn">
-                    <a href="javascript:void(0)" class="jsButtonAnimate jsScheduleDemoPopup"> Book A Free Demo</a>
+                    <a href="javascript:void(0)" class="jsButtonAnimate jsScheduleDemoPopup">
+                        <?= ($pageFooter["section_2"]["menu3Text"]); ?>
+                    </a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-2">
                 <div>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= main_url($footerContent['page']['whyus']['slug']) ?>"><?php echo $footerContent['page']['whyus']['title'] ?></a>
+                        <a href="<?= main_url($pageFooter["section_2"]["menu4Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu4Text"]); ?>
+                        </a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= main_url($footerContent['page']['aboutus']['slug']) ?>"><?php echo $footerContent['page']['aboutus']['title'] ?></a>
+                        <a href="<?= main_url($pageFooter["section_2"]["menu5Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu5Text"]); ?>
+                        </a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= main_url($footerContent['page']['resources']['slug']) ?>"><?php echo $footerContent['page']['resources']['title'] ?></a>
+                        <a href="<?= main_url($pageFooter["section_2"]["menu6Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu6Text"]); ?>
+                        </a>
                     </p>
                     <p class="footer-text-three p-bottom-adj">
-                        <a href="<?= main_url($footerContent['page']['contactus']['slug']) ?>"><?php echo $footerContent['page']['contactus']['title'] ?></a>
+                        <a href="<?= main_url($pageFooter["section_2"]["menu7Link"]); ?>">
+                            <?= ($pageFooter["section_2"]["menu7Text"]); ?>
+                        </a>
                     </p>
                     <div class="margin-top-40">
                         <p class="footer-text-three p-bottom-adj">
-                            <a href="<?= main_url($footerContent['page']['terms']['slug']) ?>"><?php echo $footerContent['page']['terms']['title'] ?></a>
+                            <a href="<?= main_url($pageFooter["section_2"]["menu8Link"]); ?>">
+                                <?= ($pageFooter["section_2"]["menu8Text"]); ?>
+                            </a>
                         </p>
-                        <p class="footer-text-three"><a href="<?= main_url($footerContent['page']['sitemap']['slug']) ?>"><?php echo $footerContent['page']['sitemap']['title'] ?></a></p>
-                        <p class="footer-text-three"><a href="<?= main_url("affiliate_portal/login") ?>">Affiliate Partner Log-in</a></p>
+                        <p class="footer-text-three">
+                            <a href="<?= main_url($pageFooter["section_2"]["menu9Link"]); ?>">
+                                <?= ($pageFooter["section_2"]["menu9Text"]); ?>
+                            </a>
+                        </p>
+                        <p class="footer-text-three">
+                            <a href="<?= main_url($pageFooter["section_2"]["menu10Link"]); ?>">
+                                <?= ($pageFooter["section_2"]["menu10Text"]); ?>
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
                 <div>
-                    <p class="footer-text-three"><?php echo $footerContent['page']['sales']['heading'] ?></p>
+                    <p class="footer-text-three">Sales</p>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons "><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="tel:<?php echo $footerContent['page']['sales']['title'] ?>"><?php echo $footerContent['page']['sales']['title'] ?></a>
+                        <a class="icon-text-adj" href="tel:<?= $salesSupportDetail["phoneNumberSales"]; ?>">
+                            <?= $salesSupportDetail["phoneNumberSales"]; ?>
+                        </a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['sales']['slug'] ?>"><?php echo $footerContent['page']['sales']['slug'] ?> </a>
+                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailSales"]; ?>"><?= $salesSupportDetail["emailSales"]; ?> </a>
                     </div>
                 </div>
                 <div class="margin-top-40">
-                    <p class="footer-text-three"><?php echo $footerContent['page']['technical']['heading'] ?></p>
+                    <p class="footer-text-three">Technical</p>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-phone"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="tel:<?php echo $footerContent['page']['technical']['title'] ?>"><?php echo $footerContent['page']['technical']['title'] ?></a>
+                        <a class="icon-text-adj" href="tel:<?= $salesSupportDetail["phoneNumberTechnical"]; ?>"><?= $salesSupportDetail["phoneNumberTechnical"]; ?></a>
                     </div>
                     <div class="flex-center margin-bottom-20">
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?php echo $footerContent['page']['technical']['slug'] ?>"><?php echo $footerContent['page']['technical']['slug'] ?></a>
+                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailAddressTechnical"]; ?>"><?= $salesSupportDetail["emailAddressTechnical"]; ?></a>
                     </div>
                 </div>
             </div>
@@ -143,17 +199,21 @@
         <hr class="footer-hr" />
         <div class="row">
             <div class="col-sm-12 col-lg-6">
-                <p class="margin-top-10"><?= $footerContent['page']['logo']['copy_right']; ?></p>
+                <p class="margin-top-10">
+                    ©2023 AutomotoHR All Rights Reserved
+                </p>
             </div>
             <div class="col-sm-12 col-lg-6 text-right">
                 <p class="inline-block">Powered by</p>
-                <img src="<?= image_url('/'); ?>footerlogo.png" alt="footer logo" />
+                <img src="<?= image_url('footerlogo.png'); ?>" alt="footer logo" />
             </div>
         </div>
     </div>
 </footer>
+<?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>
 <?= $appJs ?? ''; ?>
+
 </html>

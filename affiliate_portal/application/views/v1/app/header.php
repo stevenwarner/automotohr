@@ -1,3 +1,4 @@
+<?php $pageHeader = getPageContent('header', true)["page"]["sections"]; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,24 +13,27 @@
     <title><?= $meta['title']; ?></title>
     <meta name="description" content="<?= $meta['description']; ?>">
     <meta name="keywords" content="<?= $meta['keywords']; ?>">
-    <?php
-    if (isset($pageCSS)) :
-        echo GetCss($pageCSS);
-    endif;
-    ?>
-    <?php if (isset($appCSS)) {
-        echo $appCSS;
-    } ?>
+    <?php if ($this->uri->segment(1) === '') { ?>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <?php } ?>
+    <?= $pageCSS ? GetCss($pageCSS) : ""; ?>
+    <?= $appCSS ?? ""; ?>
 </head>
 
 <body>
     <!-- header -->
     <header class="<?= $headerFixed ? 'csAbsolute' : ''; ?>">
-        <?php $headerContent = getPageContent('header');  ?>
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
             <div class="container-fluid">
-                <a class="navbar-brand" href="<?= main_url('/'); ?>"><img src="<?= image_url('Mask group.png'); ?>" alt="logo" /></a>
+                <a class="navbar-brand" href="<?= main_url("/"); ?>">
+                    <?= getSourceByType(
+                        $pageHeader["section_0"]["sourceType"],
+                        $pageHeader["section_0"]["sourceFile"],
+                        '',
+                        false
+                    ); ?>
+                </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -37,35 +41,35 @@
                 <div class="collapse navbar-collapse" id="navbarScroll">
                     <ul class="navbar-nav mx-auto<?= $limited_menu ? '-right' : ''; ?> my-2 my-lg-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= main_url($headerContent['page']['home']['slug']); ?>"><?php echo $headerContent['page']['home']['title']; ?></a>
+                            <a class="nav-link" aria-current="page" href="<?= main_url($pageHeader["section_1"]["menu1Link"]); ?>"><?= $pageHeader["section_1"]["menu1Text"] ?></a>
                         </li>
                         <?php if (!$limited_menu) { ?>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <?php echo $headerContent['page']['products']['title']; ?>
+                                <a class="nav-link dropdown-toggle" href="<?= ($pageHeader["section_1"]["menu2Link"]); ?>" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <?= ($pageHeader["section_1"]["menu2Text"]); ?>
                                 </a>
                                 <ul class="dropdown-menu dropdown-modal" aria-labelledby="navbarScrollingDropdown">
                                     <div class="display-flex">
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu1']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu1']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu1Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu1Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu1']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu1Details"]); ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
                                         <hr />
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu2']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu2']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu2Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu2Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu2']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu2Details"]); ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
                                         <hr class="dropdown-divider" />
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu3']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu3']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu3Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu3Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu3']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu3Details"]); ?>
                                             </p>
                                             <hr class="dropdown-hr" />
                                         </li>
@@ -73,24 +77,23 @@
                                     </div>
                                     <div class="display-flex margin-top-twenty">
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu4']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu4']['title']; ?>
-                                            </a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu4Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu4Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu4']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu4Details"]); ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu5']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu5']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu5Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu5Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu5']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu5Details"]); ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
                                         <li>
-                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($headerContent['page']['products']['submenu6']['slug']); ?>"><?php echo $headerContent['page']['products']['submenu6']['title']; ?></a>
+                                            <a class="dropdown-item-custom modal-anchor" href="<?= main_url($pageHeader["section_1"]["subMenu6Link"]); ?>"><?= ($pageHeader["section_1"]["subMenu6Text"]); ?></a>
                                             <p class="dropdown-item-custom">
-                                                <?php echo $headerContent['page']['products']['submenu6']['titledetail']; ?>
+                                                <?= ($pageHeader["section_1"]["subMenu6Details"]); ?>
                                             </p>
                                             <hr class="dropdown-divider" />
                                         </li>
@@ -98,22 +101,26 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= main_url($headerContent['page']['whyus']['slug']); ?>"><?php echo $headerContent['page']['whyus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($pageHeader["section_1"]["menu3Link"]); ?>"><?= ($pageHeader["section_1"]["menu3Text"]); ?></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= main_url($headerContent['page']['aboutus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['aboutus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($pageHeader["section_1"]["menu4Link"]); ?>"><?= ($pageHeader["section_1"]["menu4Text"]); ?></a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="<?= main_url($headerContent['page']['contactus']['slug']); ?>" tabindex="-1"><?php echo $headerContent['page']['contactus']['title']; ?></a>
+                                <a class="nav-link" href="<?= main_url($pageHeader["section_1"]["menu5Link"]); ?>"><?= ($pageHeader["section_1"]["menu5Text"]); ?></a>
                             </li>
                         <?php } ?>
                     </ul>
 
                     <div class="d-flex flex-direction-coloumn-on-mobile">
                         <?php if (!$limited_menu) { ?>
-                            <a class="btn schedule-btn" href="<?= main_url($headerContent['page']['btnobligation']['slug']); ?>"><?php echo $headerContent['page']['btnobligation']['title']; ?></a>
+                            <a class="btn schedule-btn" href="<?= main_url($pageHeader["section_2"]["buttonLinkSchedule"]); ?>">
+                                <?= ($pageHeader["section_2"]["buttonTextSchedule"]); ?>
+                            </a>
                         <?php } ?>
-                        <a class="btn login-btn" href="<?= main_url($headerContent['page']['btnlogin']['slug']) ?>"> <?php echo $headerContent['page']['btnlogin']['title']; ?> </a>
+                        <a class="btn login-btn" href="<?= main_url($pageHeader["section_2"]["buttonLinkLogin"]); ?>">
+                            <?= ($pageHeader["section_2"]["buttonTextLogin"]); ?>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 <div id="carouselExampleIndicators" class="carousel slide position-relative" data-ride="carousel">
     <div class="carousel-inner">
         <?php $bullets = ''; ?>
-        <?php foreach ($homeContent["page"]["slider"] as $index => $slide) : ?>
+        <?php foreach ($pageContent["slider"] as $index => $slide) : ?>
             <?php
             $bullets .= '
                 <div class="bullet" data-target="#carouselExampleIndicators" data-slide-to="' . $index . '" class="' . ($index === 0 ? 'active' : '') . '">

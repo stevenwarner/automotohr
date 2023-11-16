@@ -150,20 +150,62 @@ $(function () {
 						},
 					},
 					submitHandler: function (form) {
+						const fileObject =
+							$("#bannerEditImage").msFileUploader("get");
 						// check for image
-						if (
-							!isValidFile(
-								$("#bannerEditImage").msFileUploader("get")
-							)
-						) {
+						if (!isValidFile(fileObject)) {
 							return _error("Banner image is required.");
 						}
+						const formDataObj = formArrayToObj(
+							$(form).serializeArray()
+						);
+						//
+						if (fileObject.link !== undefined) {
+							formDataObj.append("source_type", fileObject.type);
+							formDataObj.append("source_link", fileObject.link);
+						} else {
+							formDataObj.append("source_type", "upload");
+							formDataObj.append("file", fileObject);
+						}
 
-						return processAddBanner(form);
+						return processEditBanner(formDataObj);
 					},
 				});
 				//
 				ml(false, "jsEditSliderModalLoader");
+			});
+	}
+
+	//
+	function processEditBanner(formDataObj) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		const pageId = getSegment(2);
+		const btnHook = callButtonHook($(".jsUpdateBanner"), true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("cms/" + pageId + "/slider/" + $("#jsId").val()),
+			method: "POST",
+			data: formDataObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				XHR = null;
+				callButtonHook(btnHook, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"manage_admin/edit_page/" +
+							getSegment(2) +
+							"/?page=slider"
+					);
+				});
 			});
 	}
 
@@ -176,15 +218,12 @@ $(function () {
 		//
 		const formObj = formArrayToObj($(form).serializeArray());
 		const pageId = getSegment(2);
-		const btnHook = callButtonHook($(".jsUpdateBanner"), true);
+		const btnHook = callButtonHook($(".jsSaveBanner"), true);
 		//
-		formObj.append(
-			"banner_image",
-			$("#bannerEditImage").msFileUploader("get")
-		);
+		formObj.append("banner_image", $("#bannerImage").msFileUploader("get"));
 		//
 		XHR = $.ajax({
-			url: baseUrl("cms/" + pageId + "/slider/" + $("#jsId").val()),
+			url: baseUrl("cms/" + pageId + "/slider/"),
 			method: "POST",
 			data: formObj,
 			processData: false,

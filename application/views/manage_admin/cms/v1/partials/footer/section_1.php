@@ -25,7 +25,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_1"];
                     <input type="text" class="form-control" name="mainHeading" value="<?= $contentToShow["mainHeading"]; ?>" />
                 </div>
 
-                <div class=" form-group">
+                <div class=" form-group hidden">
                     <label>
                         YouTube Link&nbsp;
                         <strong class="text-danger">*</strong>
@@ -33,7 +33,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_1"];
                     <input type="url" class="form-control" name="youtubeLink" value="<?= $contentToShow["youtubeLink"]; ?>" />
                 </div>
 
-                <div class=" form-group">
+                <div class=" form-group hidden">
                     <label>
                         Twitter Link&nbsp;
                         <strong class="text-danger">*</strong>
@@ -41,7 +41,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_1"];
                     <input type="url" class="form-control" name="twitterLink" value="<?= $contentToShow["twitterLink"]; ?>" />
                 </div>
 
-                <div class=" form-group">
+                <div class=" form-group hidden">
                     <label>
                         Facebook Link&nbsp;
                         <strong class="text-danger">*</strong>
@@ -49,7 +49,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_1"];
                     <input type="url" class="form-control" name="facebookLink" value="<?= $contentToShow["facebookLink"]; ?>" />
                 </div>
                 
-                <div class=" form-group">
+                <div class=" form-group hidden">
                     <label>
                         Linkedin Link&nbsp;
                         <strong class="text-danger">*</strong>

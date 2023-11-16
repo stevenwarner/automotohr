@@ -73,6 +73,13 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
                     </label>
                     <input type="email" class="form-control" name="emailAddressTechnical" value="<?= $contentToShow["emailAddressTechnical"]; ?>" />
                 </div>
+                <div class=" form-group">
+                    <label>
+                        Source&nbsp;
+                        <strong class="text-danger">*</strong>
+                    </label>
+                    <input type="file" name="file" id="jsSection0File" class="hidden" accept="image/*" />
+                </div>
             </div>
             <div class="panel-footer text-center">
                 <button class="btn btn-success" id="jsSection0Btn">
@@ -83,3 +90,12 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
         </form>
     </div>
 </div>
+
+
+
+<script>
+    const section0 = {
+        sourceType: "<?= $contentToShow["sourceType"] ?? "upload"; ?>",
+        sourceFile: "<?= $contentToShow["sourceFile"] ?? "" ?>"
+    };
+</script>

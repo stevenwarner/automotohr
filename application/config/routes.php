@@ -2016,6 +2016,7 @@ $route["cms/page/(:num)/banner/(:num)"]["get"] = "manage_admin/Cms/getBannerEdit
 $route["cms/(:num)/slider"]["post"] = "manage_admin/Cms/updateSlider/$1";
 $route["cms/(:num)/slider/(:num)"]["delete"] = "manage_admin/Cms/deleteSlider/$1/$2";
 $route["cms/(:num)/slider/(:num)"]["post"] = "manage_admin/Cms/updateSliderIndex/$1/$2";
+$route["cms/(:num)/slider/"]["post"] = "manage_admin/Cms/addSliderIndex/$1";
 // Home section 1
 $route["cms/(:num)/home/section1"]["post"] = "manage_admin/Cms/updateHomePageSection1/$1";
 $route["cms/(:num)/home/section2"]["post"] = "manage_admin/Cms/updateHomePageSection2/$1";

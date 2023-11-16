@@ -55,8 +55,8 @@ $(function () {
 	$("#jsSection8File").msFileUploader({
 		allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 		allowLinks: true,
-		activeLink: section1.sourceType,
-		placeholderImage: section1.sourceFile,
+		activeLink: section8.sourceType,
+		placeholderImage: section8.sourceFile,
 		fileLimit: "10mb",
 	});
 

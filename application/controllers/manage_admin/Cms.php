@@ -153,8 +153,8 @@ class Cms extends Admin_Controller
      */
     public function updateMeta(int $pageId)
     {
-        $this->form_validation->set_rules("meta_title", "Meta title", "xss_clean|required|trim|min_length[50]");
-        $this->form_validation->set_rules("meta_description", "Meta description", "xss_clean|required|trim|min_length[50]");
+        $this->form_validation->set_rules("meta_title", "Meta title", "xss_clean|required|trim");
+        $this->form_validation->set_rules("meta_description", "Meta description", "xss_clean|required|trim");
         $this->form_validation->set_rules("meta_keywords", "Meta keywords", "xss_clean|required|trim");
         //
         if (!$this->form_validation->run()) {
@@ -174,12 +174,7 @@ class Cms extends Admin_Controller
             "description" => $post["meta_description"],
             "keyword" => $post["meta_keywords"],
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the meta."]);
     }
@@ -226,12 +221,7 @@ class Cms extends Admin_Controller
                 "slider_banner_",
             ),
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully added a banner."]);
     }
@@ -247,12 +237,7 @@ class Cms extends Admin_Controller
         $pageContent = json_decode($pageContent, true);
         //
         unset($pageContent["page"]["slider"][$index]);
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted a banner."]);
     }
@@ -311,6 +296,65 @@ class Cms extends Admin_Controller
                 getFormErrors()
             );
         }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $fileLink = $post["source_link"];
+        //
+        if ($post["source_type"] === "upload") {
+            //
+            if (!$_FILES['file'] && $post['source_link']) {
+                $fileLink = $post["source_link"];
+            } else {
+                // check and run for image
+                $errors = hasFileErrors($_FILES, "file", 'image', 10);
+                //
+                if ($errors) {
+                    return SendResponse(
+                        400,
+                        ["errors" => $errors]
+                    );
+                }
+                $fileLink = upload_file_to_aws(
+                    "file",
+                    0,
+                    "slider",
+                );
+            }
+        }
+        // get the page record
+        $pageContent = $this->cms_model->get_page_data($pageId)["content"];
+        // //
+        $pageContent = json_decode($pageContent, true);
+        //
+        $pageContent["page"]["slider"][$index] = [
+            "heading" => $post["heading"],
+            "headingDetail" => $post["details"],
+            "btnText" => $post["button_text"],
+            "btnSlug" => $post["button_link"],
+            "image" => $fileLink
+        ];
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "You have successfully updated a banner."]);
+    }
+
+    /**
+     * 
+     */
+    public function addSliderIndex(int $pageId)
+    {
+        $this->form_validation->set_rules("heading", "Banner heading", "xss_clean|required|trim");
+        $this->form_validation->set_rules("details", "Banner details", "xss_clean|required|trim");
+        $this->form_validation->set_rules("button_text", "Button text", "xss_clean|required|trim");
+        $this->form_validation->set_rules("button_link", "Button link", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
         // check and run for image
         $errors = hasFileErrors($_FILES, "banner_image", 'image');
         //
@@ -327,7 +371,7 @@ class Cms extends Admin_Controller
         // //
         $pageContent = json_decode($pageContent, true);
         //
-        $pageContent["page"]["slider"][$index] = [
+        $pageContent["page"]["slider"][] = [
             "heading" => $post["heading"],
             "headingDetail" => $post["details"],
             "btnText" => $post["button_text"],
@@ -338,14 +382,9 @@ class Cms extends Admin_Controller
                 "slider_banner_",
             ),
         ];
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
-        //
-        return SendResponse(200, ["msg" => "You have successfully updated a banner."]);
+        return SendResponse(200, ["msg" => "You have successfully added a banner."]);
     }
 
     /**
@@ -417,12 +456,7 @@ class Cms extends Admin_Controller
             "bullet5" => $post["bullet5"],
             "bullet6" => $post["bullet6"],
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated \"What we offer?\"."]);
     }
@@ -453,12 +487,7 @@ class Cms extends Admin_Controller
             "heading" => $post["jsSubHeading"],
             "products" =>  $pageContent["page"]["sections"]["section2"]["products"],
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the data."]);
     }
@@ -518,12 +547,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully added a new product section."]);
     }
@@ -587,12 +611,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the product section."]);
     }
@@ -609,12 +628,7 @@ class Cms extends Admin_Controller
         $pageContent = json_decode($pageContent, true);
 
         unset($pageContent["page"]["sections"]["section2"]["products"][$index]);
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected product section."]);
     }
@@ -788,12 +802,7 @@ class Cms extends Admin_Controller
 
 
         $pageContent["page"]["sections"][$post["section"]] = $post;
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the section."]);
     }
@@ -900,12 +909,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully added a new product section."]);
     }
@@ -986,12 +990,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the product section."]);
     }
@@ -1007,12 +1006,7 @@ class Cms extends Admin_Controller
         $pageContent = json_decode($pageContent, true);
 
         unset($pageContent["page"]["sections"]["products"][$index]);
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected product section."]);
     }
@@ -1082,12 +1076,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully added a new section."]);
     }
@@ -1167,12 +1156,7 @@ class Cms extends Admin_Controller
             "sourceType" => $post["source_type"],
             "sourceFile" => $fileLink,
         ];
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated a section."]);
     }
@@ -1188,12 +1172,7 @@ class Cms extends Admin_Controller
         $pageContent = json_decode($pageContent, true);
 
         unset($pageContent["page"]["sections"][$page][$index]);
-        //
-        $this->db
-            ->where("sid", $pageId)
-            ->update("cms_pages_new", [
-                "content" => json_encode($pageContent)
-            ]);
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected section."]);
     }

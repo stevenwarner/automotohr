@@ -413,10 +413,25 @@ if (typeof formArrayToObj === "undefined") {
 		let formData = new FormData();
 		//
 		formArray.map(function (value) {
-			formData.append(value.name, value.value);
+			formData.append(value.name, nl2br(value.value));
 		});
 		//
 		return formData;
+	}
+}
+
+if (typeof nl2br === "undefined") {
+	function nl2br(str, is_xhtml) {
+		if (typeof str === "undefined" || str === null) {
+			return "";
+		}
+		str = str.replace(/<br(.*?)>/gi, "");
+		let breakTag =
+			is_xhtml || typeof is_xhtml === "undefined" ? "<br />" : "<br>";
+		return (str + "").replace(
+			/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g,
+			"$1" + breakTag + "$2"
+		);
 	}
 }
 

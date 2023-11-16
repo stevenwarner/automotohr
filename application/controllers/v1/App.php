@@ -39,8 +39,6 @@ class App extends CI_Controller
     public function whyUs()
     {
         //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
-        //
         $whyUsContent = getPageContent('why_us');
         // meta titles
         $data['meta'] = [];
@@ -60,8 +58,6 @@ class App extends CI_Controller
      */
     public function aboutUs()
     {
-        //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('about-us', true);
         // meta titles
@@ -84,14 +80,12 @@ class App extends CI_Controller
     public function contactUs()
     {
         //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
-        //
-        $pageContent = getPageContent('contact-us', true);
+        $pageContent = getPageContent('contact-us', true)["page"];
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = $pageContent['page']['meta']['title'];
-        $data['meta']['description'] = $pageContent['page']['meta']['description'];
-        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+        $data['meta']['title'] = $pageContent['meta']['title'];
+        $data['meta']['description'] = $pageContent['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['meta']['keywords'];
         //
         $this->setCommon("v1/app/js/pages/contact_us", "js");
         $this->getCommon($data, "contact-us");
@@ -107,8 +101,6 @@ class App extends CI_Controller
      */
     public function privacyPolicy()
     {
-        //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('privacy-policy', true);
         // meta titles
@@ -131,8 +123,6 @@ class App extends CI_Controller
     public function termsOfService()
     {
         //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
-        //
         $pageContent = getPageContent('terms-of-service', true);
         // meta titles
         $data['meta'] = [];
@@ -154,8 +144,6 @@ class App extends CI_Controller
     public function siteMap()
     {
         //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
-        //
         $pageContent = getPageContent('sitemap', true);
         // meta titles
         $data['meta'] = [];
@@ -176,8 +164,6 @@ class App extends CI_Controller
      */
     public function products(string $productSlug)
     {
-        //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent($productSlug, true)["page"];
 
@@ -202,8 +188,6 @@ class App extends CI_Controller
     public function getYourAccount()
     {
         //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
-        //
         //
         $pageContent = getPageContent('get-account', true);
         // meta titles
@@ -226,8 +210,6 @@ class App extends CI_Controller
      */
     public function affiliateProgram()
     {
-        //
-        // $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('affiliate-program', true);
         // meta titles

@@ -237,42 +237,80 @@
                         <div class="col-xs-12 col-lg-6 ">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <h2 class="automotoH1 text-start why-us-heading w-100 "><?php echo $whyUsContent['page']['sections']['section4']['mainHeading'] ?></h2>
+                                    <h2 class="automotoH1 text-start why-us-heading w-100 ">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["mainHeading"]); ?>
+                                    </h2>
                                 </div>
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_1.png" alt="speaker icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint1Type"],
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint1File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9 col-sm-9 ">
-                                    <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section4']['heading1'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section4']['heading1Detail'] ?></p>
+                                    <p class="text-bold inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["headingPoint1"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["detailsPoint1"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_3.png" alt="settings icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint2Type"],
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint2File"],
+                                        '',
+                                        false
+                                    ); ?>
 
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section4']['heading2'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section4']['heading2Detail'] ?></p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["headingPoint2"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["detailsPoint2"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/Group_h_2.png" alt="checklist icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint3Type"],
+                                        $whyUsContent["page"]["sections"]["section_4"]["headingPoint3File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section4']['heading3'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section4']['heading3Detail'] ?></p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["headingPoint3"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_4"]["detailsPoint3"]); ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-end">
                             <div class="image-containing-div position-relative">
-                                <img src="<?= base_url(); ?>assets/v1/app/images/twoPersonsHandShaking.png" class="full-width-height-img" alt="girl with documents" />
-                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
+                                <?=
+                                getSourceByType(
+                                    $whyUsContent["page"]["sections"]["section_4"]["sourceType"],
+                                    $whyUsContent["page"]["sections"]["section_4"]["sourceFile"],
+                                    ' class="full-width-height-img"',
+                                    false
+                                ); ?>
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" alt="icon" />
                             </div>
                         </div>
                     </div>
@@ -288,44 +326,82 @@
                         <div class="col-xs-12 col-lg-6 order-2-product">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <h2 class="automotoH1 text-start why-us-heading w-100 "><?php echo $whyUsContent['page']['sections']['section5']['mainHeading'] ?></h2>
+                                    <h2 class="automotoH1 text-start why-us-heading w-100 ">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["mainHeading"]); ?>
+                                    </h2>
                                 </div>
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
                                     <div class="whyus-icons">
-                                        <img src="<?= base_url(); ?>assets/v1/app/images/office_face_icon.png" alt="officer icon" />
+                                        <?=
+                                        getSourceByType(
+                                            $whyUsContent["page"]["sections"]["section_5"]["headingPoint1Type"],
+                                            $whyUsContent["page"]["sections"]["section_5"]["headingPoint1File"],
+                                            '',
+                                            false
+                                        ); ?>
                                     </div>
 
                                 </div>
                                 <div class="col-9 col-sm-9 ">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section5']['heading1'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section5']['heading1Detail'] ?></p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["headingPoint1"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["detailsPoint1"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/clockUmbrella.png" alt="attendance tracking icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_5"]["headingPoint2Type"],
+                                        $whyUsContent["page"]["sections"]["section_5"]["headingPoint2File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section5']['heading2'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section5']['heading2Detail'] ?></p>
+                                    <p class="text-bold inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["headingPoint2"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["detailsPoint2"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/alienShip.png" alt="workflow  icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_5"]["headingPoint3Type"],
+                                        $whyUsContent["page"]["sections"]["section_5"]["headingPoint3File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section5']['heading3'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section5']['heading3Detail'] ?></p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["headingPoint3"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_5"]["detailsPoint3"]); ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-start order-1-product">
                             <div class="image-containing-div position-relative">
-                                <img src="<?= base_url(); ?>assets/v1/app/images/manSmilingWithBook.png" class="full-width-height-img" alt="man sitting with book" />
-                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
+                                <?=
+                                getSourceByType(
+                                    $whyUsContent["page"]["sections"]["section_5"]["sourceType"],
+                                    $whyUsContent["page"]["sections"]["section_5"]["sourceFile"],
+                                    ' class="full-width-height-img"',
+                                    false
+                                ); ?>
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" alt="icon" />
                             </div>
                         </div>
                     </div>
@@ -341,33 +417,61 @@
                         <div class="col-xs-12 col-lg-6 ">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <h2 class="automotoH1 text-start why-us-heading w-100 "><?php echo $whyUsContent['page']['sections']['section6']['mainHeading'] ?></h2>
+                                    <h2 class="automotoH1 text-start why-us-heading w-100 ">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_6"]["mainHeading"]); ?>
+                                    </h2>
                                 </div>
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/selfServiceOne.png" alt="database icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_6"]["headingPoint1Type"],
+                                        $whyUsContent["page"]["sections"]["section_6"]["headingPoint1File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9 col-sm-9 ">
-                                    <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section6']['heading1'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section6']['heading1Detail'] ?></p>
+                                    <p class="text-bold inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_6"]["headingPoint1"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_6"]["detailsPoint1"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/selfServiceTwo.png" alt="attendance tracking icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_6"]["headingPoint2Type"],
+                                        $whyUsContent["page"]["sections"]["section_6"]["headingPoint2File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section6']['heading2'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section6']['heading2Detail'] ?></p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_6"]["headingPoint2"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_6"]["detailsPoint2"]); ?>
+                                    </p>
                                 </div>
                             </div>
 
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-end">
                             <div class="image-containing-div position-relative">
-                                <img src="<?= base_url(); ?>assets/v1/app/images/girlWithPhoneAndTablet.png" class="full-width-height-img" alt="girl with phone and tablet" />
-                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" />
+                                <?=
+                                getSourceByType(
+                                    $whyUsContent["page"]["sections"]["section_6"]["sourceType"],
+                                    $whyUsContent["page"]["sections"]["section_6"]["sourceFile"],
+                                    ' class="full-width-height-img"',
+                                    false
+                                ); ?>
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle" alt="icon" />
                             </div>
                         </div>
                     </div>
@@ -383,36 +487,64 @@
                         <div class="col-xs-12 col-lg-6 order-2-product">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <h2 class="automotoH1 text-start why-us-heading w-100 "><?php echo $whyUsContent['page']['sections']['section7']['mainHeading'] ?></h2>
+                                    <h2 class="automotoH1 text-start why-us-heading w-100 ">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_7"]["mainHeading"]); ?>
+                                    </h2>
                                 </div>
                             </div>
                             <div class="row margin-top-30">
                                 <div class="col-3 col-sm-3 text-center ">
                                     <div class="whyus-icons">
-                                        <img src="<?= base_url(); ?>assets/v1/app/images/scaleableOne.png" alt="Businesses of All Sizes" />
+                                        <?=
+                                        getSourceByType(
+                                            $whyUsContent["page"]["sections"]["section_7"]["headingPoint1Type"],
+                                            $whyUsContent["page"]["sections"]["section_7"]["headingPoint1File"],
+                                            '',
+                                            false
+                                        ); ?>
                                     </div>
 
                                 </div>
                                 <div class="col-9 col-sm-9 ">
-                                    <p class="text-bold  inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section7']['heading1'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section7']['heading1Detail'] ?> </p>
+                                    <p class="text-bold  inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_7"]["headingPoint1"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_7"]["detailsPoint1"]); ?>
+                                    </p>
                                 </div>
                             </div>
                             <div class="row margin-top-20">
                                 <div class="col-3 text-center ">
-                                    <img src="<?= base_url(); ?>assets/v1/app/images/scaleableTwo.png" alt="Industry Relevant icon" />
+                                    <?=
+                                    getSourceByType(
+                                        $whyUsContent["page"]["sections"]["section_7"]["headingPoint2Type"],
+                                        $whyUsContent["page"]["sections"]["section_7"]["headingPoint2File"],
+                                        '',
+                                        false
+                                    ); ?>
                                 </div>
                                 <div class="col-9">
-                                    <p class="text-bold inter-family whyus-sub-heading"><?php echo $whyUsContent['page']['sections']['section7']['heading2'] ?></p>
-                                    <p class=" inter-family autmotoPara line-height-30 opacity-90"><?php echo $whyUsContent['page']['sections']['section7']['heading2Detail'] ?></p>
+                                    <p class="text-bold inter-family whyus-sub-heading">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_7"]["headingPoint2"]); ?>
+                                    </p>
+                                    <p class=" inter-family autmotoPara line-height-30 opacity-90">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_7"]["detailsPoint2"]); ?>
+                                    </p>
                                 </div>
                             </div>
 
                         </div>
                         <div class="col-xs-12 col-lg-6 flex-start order-1-product">
                             <div class="image-containing-div position-relative">
-                                <img src="<?= base_url(); ?>assets/v1/app/images/manAndWomenClapping.png" class="full-width-height-img" alt="man sitting with book" />
-                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" />
+                                <?=
+                                getSourceByType(
+                                    $whyUsContent["page"]["sections"]["section_7"]["sourceType"],
+                                    $whyUsContent["page"]["sections"]["section_7"]["sourceFile"],
+                                    ' class="full-width-height-img"',
+                                    false
+                                ); ?>
+                                <img src="<?= base_url(); ?>assets/v1/app/images/lightbluehalfcircle.png" class="whyus-half-blue-circle-start" alt="icon" />
                             </div>
                         </div>
                     </div>
@@ -426,19 +558,31 @@
                 <div class="w-80 section-padding-whyus">
                     <div class="row">
                         <div class="col-xs-12 col-lg-6">
-                            <img src="<?= base_url(); ?>assets/v1/app/images/whyUsLastSectionImage.png" class="w-h-100" />
+                            <?=
+                            getSourceByType(
+                                $whyUsContent["page"]["sections"]["section_8"]["sourceType"],
+                                $whyUsContent["page"]["sections"]["section_8"]["sourceFile"],
+                                ' class="w-h-100"',
+                                false
+                            ); ?>
                         </div>
                         <div class="col-xs-12 col-lg-6">
                             <div class="row">
                                 <div class="col-xs-12 ">
-                                    <h2 class="automotoH1 text-start why-us-heading w-100 text-white"><?php echo $whyUsContent['page']['sections']['section8']['heading'] ?></h2>
+                                    <h2 class="automotoH1 text-start why-us-heading w-100 text-white">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_8"]["mainHeading"]); ?>
+                                    </h2>
                                 </div>
                                 <div class="col-xs-12 ">
-                                    <p class="autmotoPara opacity-70  padding-x-35 text-white"><?php echo $whyUsContent['page']['sections']['section8']['detailHeading'] ?></p>
+                                    <p class="autmotoPara opacity-70  padding-x-35 text-white">
+                                        <?= convertToStrip($whyUsContent["page"]["sections"]["section_8"]["details"]); ?>
+                                    </p>
                                 </div>
                                 <div class="col-xs-12  ">
-                                    <button class="d-flex  justify-content-center align-items-center  whyus-yellow-btn btn-animate jsButtonAnimate jsScheduleDemoPopup">
-                                        <p class="text"><?php echo $whyUsContent['page']['sections']['section8']['btnText'] ?></p>
+                                    <button class="d-flex justify-content-center align-items-center  whyus-yellow-btn btn-animate jsButtonAnimate jsScheduleDemoPopup">
+                                        <p class="text">
+                                            <?= convertToStrip($whyUsContent["page"]["sections"]["section_8"]["buttonText"]); ?>
+                                        </p>
                                         <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                     </button>
                                 </div>

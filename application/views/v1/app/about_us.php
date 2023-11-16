@@ -60,6 +60,7 @@
             </div>
         </div>
     </section>
+    <?php if($pageContent["page"]["sections"]["section_2"]["status"] == "on") {?>
     <section class="whyus-second why-us">
         <div class="row">
             <div class="col-xs-12 column-flex-center">
@@ -94,6 +95,7 @@
             </div>
         </div>
     </section>
+    <?php }?>
     <section class="whyus-third">
         <div class="row">
             <div class="col-xs-12 column-flex-center">

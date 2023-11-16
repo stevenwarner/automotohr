@@ -14,7 +14,7 @@ class cms_model extends CI_Model
             return $this->db->count_all_results('cms_pages_new');
         } else {
             $query = $this->db
-                ->order_by("title", "ASC")->get('cms_pages_new');
+                ->order_by("sid", "ASC")->get('cms_pages_new');
             return $query->result_array();
         }
     }
@@ -42,5 +42,14 @@ class cms_model extends CI_Model
             ->where("sid", $pageId)
             ->get("cms_pages_new")
             ->row_array();
+    }
+
+    public function updatePage($pageId, $data)
+    {
+        $this->db->where("sid", $pageId)
+            ->update("cms_pages_new", [
+                "content" => $data,
+                "updated_at" => getSystemDate()
+            ]);
     }
 }

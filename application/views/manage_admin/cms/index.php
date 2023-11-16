@@ -35,26 +35,36 @@
                                                 <div class="col-xs-12">
                                                     <div class="table-responsive">
                                                         <table class="table table-bordered table-hover table-striped">
+                                                            <caption></caption>
                                                             <thead>
                                                                 <tr>
-                                                                    <th class="col-xs-3 text-center">Name</th>
-                                                                    <th class="col-xs-2 text-center">Slug</th>
-                                                                    <th class="col-xs-3 text-center">Created At</th>
-                                                                    <th class="col-xs-3 text-center">Updated At</th>
-                                                                    <th class="col-xs-1 text-center">Actions</th>
+                                                                    <th class="col-xs-3">Name</th>
+                                                                    <th class="col-xs-2">Slug</th>
+                                                                    <th class="col-xs-2">Last updated at</th>
+                                                                    <th class="col-xs-1">Actions</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <?php foreach ($pages_data as $page) { ?>
                                                                     <tr>
-                                                                        <td><?php echo $page['title']; ?></td>
-                                                                        <td><?php echo $page['slug']; ?></td>
-                                                                        <td>
-                                                                            <?php echo  date_with_time($page['created_at']); ?>
+                                                                        <td style="vertical-align: middle;"><?php echo $page['title']; ?></td>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <a href="<?php echo $page['slug']; ?>" target="_blank">
+                                                                                <?php echo $page['slug']; ?>
+                                                                            </a>
                                                                         </td>
-                                                                        <td> <?php echo  date_with_time($page['updated_at']); ?>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <?= formatDateToDB(
+                                                                                $page["updated_at"],
+                                                                                DB_DATE_WITH_TIME,
+                                                                                DATE_WITH_TIME
+                                                                            ); ?>
                                                                         </td>
-                                                                        <td><button class="btn btn-success" onclick="window.location.href = '<?php echo base_url('manage_admin/edit_page/' . $page['sid']) ?>' ">Edit</button>
+                                                                        <td style="vertical-align: middle;">
+                                                                            <a href="<?php echo base_url('manage_admin/edit_page/' . $page['sid']) ?>" class="btn btn-warning">
+                                                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                                &nbsp;Edit Page
+                                                                            </a>
                                                                         </td>
                                                                     </tr>
                                                                 <?php } ?>

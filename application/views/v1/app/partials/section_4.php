@@ -4,14 +4,14 @@
             <div class="col-sm-12 hide-on-mobile set-contentcenter-ontablet">
                 <div class="margin-btm">
                     <p class="heading-h4-grey text-white opacity-ninety margin-top-inovating">
-                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
+                        <?= convertToStrip($pageContent['sections']['about']['mainHeading']); ?>
                     </p>
                 </div>
             </div>
             <div class="col-sm-12 hide-on-mobile">
                 <div class="margin-btm">
                     <p class="second-heading white-text text-align-center-ontablet">
-                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
+                        <?= convertToStrip($pageContent['sections']['about']['subHeading']); ?>
                     </p>
                 </div>
             </div>
@@ -26,19 +26,19 @@
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="heading-h4-grey text-white">
-                                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
+                                        <?= convertToStrip($pageContent['sections']['about']['mainHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="second-heading white-text">
-                                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
+                                        <?= convertToStrip($pageContent['sections']['about']['subHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <p class="detail-text white-text opacity-ninety">
-                                <?= convertToStrip($homeContent['page']['sections']['about']['ourMission']); ?>
+                                <?= convertToStrip($pageContent['sections']['about']['ourMission']); ?>
 
                             </p>
                         </div>
@@ -46,19 +46,19 @@
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="heading-h4-grey text-white">
-                                        <?= convertToStrip($homeContent['page']['sections']['about']['mainHeading']); ?>
+                                        <?= convertToStrip($pageContent['sections']['about']['mainHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <div class="col-sm-12 show-on-mobile">
                                 <div class="margin-btm">
                                     <p class="second-heading white-text">
-                                        <?= convertToStrip($homeContent['page']['sections']['about']['subHeading']); ?>
+                                        <?= convertToStrip($pageContent['sections']['about']['subHeading']); ?>
                                     </p>
                                 </div>
                             </div>
                             <p class="detail-text white-text opacity-ninety">
-                                <?= convertToStrip($homeContent['page']['sections']['about']['ourVision']); ?>
+                                <?= convertToStrip($pageContent['sections']['about']['ourVision']); ?>
                             </p>
                         </div>
                     </div>
@@ -68,15 +68,15 @@
 
         <div class="col-sm-12 col-md-12 col-lg-6 position-relative div-one">
             <div class="text-right text-align-center-ontablet">
-                <?=getSourceByType(
-                    $homeContent['page']['sections']['about']['sourceType'],
-                    $homeContent['page']['sections']['about']['sourceFile'],
+                <?= getSourceByType(
+                    $pageContent['sections']['about']['sourceType'],
+                    $pageContent['sections']['about']['sourceFile'],
                     'class="rotate-img"'
-                );?>
-                <img src="<?= image_url('/'); ?>/Ellipse_9.webp" class="light-green-half-circle" alt="half circle" />
-                <img src="<?= image_url('/'); ?>/Ellipse_10.webp" class="light-red-circle" alt="half circle" />
+                ); ?>
+                <img src="<?= image_url('Ellipse_9.webp'); ?>" class="light-green-half-circle" alt="half circle" />
+                <img src="<?= image_url('Ellipse_10.webp'); ?>" class="light-red-circle" alt="half circle" />
             </div>
-            <img src="<?= image_url('/'); ?>/Ellipse_8.webp" class="yellow-half-circle" alt="half circle" />
+            <img src="<?= image_url('Ellipse_8.webp'); ?>" class="yellow-half-circle" alt="half circle" />
         </div>
     </div>
     <div class="row notable-benifits-row"></div>
@@ -98,14 +98,14 @@
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                         <p class="mid-heading grey-text">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading1']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitHeading1']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail1']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitDetail1']); ?>
                         </p>
                     </div>
                 </div>
@@ -121,14 +121,14 @@
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                         <p class="mid-heading grey-text">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading2']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitHeading2']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail2']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitDetail2']); ?>
 
                         </p>
                     </div>
@@ -145,14 +145,14 @@
                     </div>
                     <div class="col-9 col-sm-9 col-md-10 col-lg-9">
                         <p class="mid-heading grey-text">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitHeading3']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitHeading3']); ?>
                         </p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <p class="detail-text grey-text opacity-ninety margin-top-five mb-2rem">
-                            <?= convertToStrip($homeContent['page']['sections']['about']['notableBenefitDetail3']); ?>
+                            <?= convertToStrip($pageContent['sections']['about']['notableBenefitDetail3']); ?>
                         </p>
                     </div>
                 </div>
