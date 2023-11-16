@@ -490,7 +490,6 @@ class Assign_bulk_documents extends Public_Controller
     }
 
     function downloadSecureDocument () {
-        _e("I am in", true);
         $session = $this->session->userdata('logged_in');
         $companyId  = $session['company_detail']['sid'];
         //
@@ -526,21 +525,29 @@ class Assign_bulk_documents extends Public_Controller
             //
             $this->zip->read_dir($path, FALSE);
             $this->zip->archive($downloadZipPath);
-            // $this->zip->download($zipFileName);
+            //
+            $return_array['url'] = base_url('company/documents/secure/download_zip/'.$companyId.'/'.str_replace('.zip','',$zipFileName));
         }
         //
+        $return_array['Status'] = true;
+        $return_array['Response'] = 'Proceed';
+        $this->response($return_array);
+    }
+
+    public function downloadDocumentZipFile($companyId, $fileName)
+    {
+        //
+        $fileWithPath = $zipath = ROOTPATH . '/temp_files/secure_document/'.$companyId.'/'. $fileName.'.zip';
+        // Download file
         header('Content-type: application/zip');
-        header('Content-Disposition: attachment; filename="' . basename($zipFileName) . '"');
-        header("Content-length: " . filesize($downloadZipPath));
+        header('Content-Disposition: attachment; filename="' . basename($fileName.'.zip') . '"');
+        header("Content-length: " . filesize($fileWithPath));
         header("Pragma: no-cache");
         header("Expires: 0");
 
         ob_clean();
         flush();
-        readfile($downloadZipPath);
-        //
-        $return_array['Status'] = true;
-        $return_array['Response'] = 'Proceed';
-        $this->response($return_array);
+        readfile($fileWithPath);
+        exit;
     }
 }

@@ -390,9 +390,12 @@
         //
         $.post("<?= base_url('company/documents/secure/download'); ?>", {
             documents: ids
-        }).done(function() {
+        }).done(function(resp) {
             //
             loader(false);
+            //
+            // var url = '<?php echo base_url('company/documents/secure/download'); ?>';
+            window.open(resp.url, '_blank');
             //
             alertify.alert('Success!', 'You have successfully downloaded documents.', function() {
                 return;

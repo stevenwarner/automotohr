@@ -1697,6 +1697,7 @@ $route['company/documents/secure/add'] = 'Assign_bulk_documents/addSecureDocumen
 $route['copy_manual_secure_document'] = 'Assign_bulk_documents/copySecureDocument';
 $route['delete_manual_secure_document'] = 'Assign_bulk_documents/deleteSecureDocument';
 $route['company/documents/secure/download'] = 'Assign_bulk_documents/downloadSecureDocument';
+$route['company/documents/secure/download_zip/(:any)/(:any)'] = 'Assign_bulk_documents/downloadDocumentZipFile/$1/$2';
 
 
 
