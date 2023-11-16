@@ -30,6 +30,26 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <strong>Folder Name</strong>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="document-action-required" style="padding: 14px;">
+                                        <b>Please add the folder name before linking the document into it.</b>
+                                    </div>
+                                    <div class="document-action-required">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <label>Name:</label>
+                                            <input class="invoice-fields" name="folder" type="text" id="jsFolderName">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <div class="hr-box">
                                 <div class="hr-innerpadding">
@@ -457,9 +477,12 @@
 
         // Send ajax request
         function uploadAndAssignFiles() {
+            var folderName = $("#jsFolderName").val();
+            //
             fileLength = fileArray.length;
             var formpost = new FormData();
             formpost.append('file', fileArray[fileIndex]);
+            formpost.append('folder_name', folderName);
             $.each(megaOBJ, function(i, v) {
                 formpost.append(i, v);
             });

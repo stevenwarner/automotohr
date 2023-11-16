@@ -66,7 +66,7 @@
 
                                 <div class="table-responsive table-outer">
                                     <div class="data-table">
-                                        <table id="categories_table" class="table">
+                                        <table id="categories_table" class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="vertical-align: middle;">
@@ -82,34 +82,35 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($secure_documents as $document) {
-                                                ?>
-                                                    <tr>
-                                                        <td scope="col" style="vertical-align: middle;">
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" name="documents_ids[]" value="<?= $document['sid']; ?>" class="jsSelectSingle" />
-                                                                <div class="control__indicator" style="top: -7px;"></div>
-                                                            </label>
-                                                        </td>
-                                                        <td style="vertical-align: middle;" class="jsDocumentName"><?php echo $document['document_title']; ?></td>
-                                                        <td style="vertical-align: middle;"><?php echo getUserNameBySID($document['created_by']) ?></td>
-                                                        <td style="vertical-align: middle;"><?php echo formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
-                                                        <td style="vertical-align: middle;">
-                                                            <button class="btn btn-info jsViewDocument" data-key=<?= $document['document_s3_name']; ?>>
-                                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                &nbsp;View
-                                                            </button>
-                                                            <a class="btn btn-success csF16" href="<?php echo base_url('download/file/' . ($document['document_s3_name']) . ''); ?>">
-                                                                <i class="fa fa-download csF16" aria-hidden="true"></i>
-                                                                &nbsp;Download
-                                                            </a>
-                                                            <a class="btn btn-danger csF16 jsDeleteSecureDocument" data-id="<?= $document['sid']; ?>" href="javascript:;">
-                                                                <i class="fa fa-trash csF16" aria-hidden="true"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                <?php }
-                                                ?>
+                                                <?php foreach ($secure_documents as $key => $documents) { ?>
+                                                    <th colspan="5" style="background: #ccc;"><?php echo $key;?></th>
+                                                    <?php foreach ($documents as $key => $document) { ?>
+                                                        <tr>
+                                                            <td scope="col" style="vertical-align: middle;">
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="documents_ids[]" value="<?= $document['sid']; ?>" class="jsSelectSingle" />
+                                                                    <div class="control__indicator" style="top: -7px;"></div>
+                                                                </label>
+                                                            </td>
+                                                            <td style="vertical-align: middle;" class="jsDocumentName"><?php echo $document['document_title']; ?></td>
+                                                            <td style="vertical-align: middle;"><?php echo getUserNameBySID($document['created_by']) ?></td>
+                                                            <td style="vertical-align: middle;"><?php echo formatDateToDB($document['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
+                                                            <td style="vertical-align: middle;">
+                                                                <button class="btn btn-info jsViewDocument" data-key=<?= $document['document_s3_name']; ?>>
+                                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                    &nbsp;View
+                                                                </button>
+                                                                <a class="btn btn-success csF16" href="<?php echo base_url('download/file/' . ($document['document_s3_name']) . ''); ?>">
+                                                                    <i class="fa fa-download csF16" aria-hidden="true"></i>
+                                                                    &nbsp;Download
+                                                                </a>
+                                                                <a class="btn btn-danger csF16 jsDeleteSecureDocument" data-id="<?= $document['sid']; ?>" href="javascript:;">
+                                                                    <i class="fa fa-trash csF16" aria-hidden="true"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     <?php } else { ?>

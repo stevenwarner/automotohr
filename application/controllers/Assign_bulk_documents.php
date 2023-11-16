@@ -339,7 +339,18 @@ class Assign_bulk_documents extends Public_Controller
         //
         $documentTitle = $this->input->get('title', true);
 
-        $data['secure_documents'] = $this->assign_bulk_documents_model->getSecureDocuments($data['company_sid'], $documentTitle);
+        $secure_documents = $this->assign_bulk_documents_model->getSecureDocuments($data['company_sid'], $documentTitle);
+        //
+        $processDocuments = [];
+        //
+        if (!empty($secure_documents)) {
+            foreach ($secure_documents as $document) {
+                $processDocuments[$document['folder_name']][] = $document;
+            }
+        }
+        //
+        $data['secure_documents'] = $processDocuments;
+        //
         $data['employees'] = $this->assign_bulk_documents_model->fetchEmployeesByCompanyId($data['company_sid']);
 
         $data['documentTitle'] = $documentTitle;
@@ -392,6 +403,7 @@ class Assign_bulk_documents extends Public_Controller
         //
         $file = $_FILES['file'];
         $formpost = $this->input->post(NULL, TRUE);
+        //
         if (!sizeof($file)) $this->response($return_array);
         if ($file['error'] != 0) $this->response($return_array);
         //
@@ -411,6 +423,10 @@ class Assign_bulk_documents extends Public_Controller
         } else {
             $return_array['Response'] = 'Error';
             $this->response($return_array);
+        }
+        //
+        if (isset($formpost['folder_name']) &&  !empty($formpost['folder_name'])) {
+            $data_to_insert['folder_name'] = $formpost['folder_name'];
         }
         //
         if ($formpost['document_sid'] != '') {
