@@ -313,7 +313,7 @@ class Assign_bulk_documents_model extends CI_Model
 
     function getSpecificSecureDocuments ($documentIds) {
         $this->db->select('*');
-        $this->db->where_in('sid', $documentId);
+        $this->db->where_in('sid', $documentIds);
         $records_obj = $this->db->get('company_secure_documents');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
