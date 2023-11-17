@@ -54,17 +54,31 @@ class Users extends CI_Controller
         $data['meta']['title'] = $loginContent['page']['meta']['title'];
         $data['meta']['description'] = $loginContent['page']['meta']['description'];
         $data['meta']['keywords'] = $loginContent['page']['meta']['keyword'];
-        //
+
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js"
+        ];
         $data['pageCSS'] = [
-            main_url('assets/v1/plugins/bootstrap5/css/bootstrap.min.css'),
-            main_url('assets/v1/plugins/fontawesome/css/all.min.css'),
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
             'v1/app/css/login',
         ];
         //
         $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/theme',
         ], $this->css, "affiliate-login", true);
         //
+        $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            "v1/app/js/pages/schedule_demo"
+        ], $this->js, "affiliate-login", true);
+
         $data['limited_menu'] = true;
 
 
@@ -79,6 +93,7 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/affiliate_login');
+            $this->load->view($this->footer);
         } else {
             $username = $this->input->post('identity');
             $password = $this->input->post('password');

@@ -201,6 +201,10 @@ class Dashboard extends CI_Controller
         $data['meta']['description'] = $passwordRecoveryContent['page']['meta']['description'];
         $data['meta']['keywords'] = $passwordRecoveryContent['page']['meta']['keyword'];
         $data['limited_menu'] = true;
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js"
+        ];
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
@@ -209,14 +213,18 @@ class Dashboard extends CI_Controller
         ];
         //
         $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/theme',
             'v1/app/css/pages',
         ], $this->css, "executive_admin_forgot", true);
         //
         $data['appJs'] = bundleJs([
             'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            "v1/app/js/pages/schedule_demo"
         ], $this->js, "executive_admin_forgot", true);
 
 
@@ -230,6 +238,7 @@ class Dashboard extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/exe_admin_password_recovery');
+            $this->load->view($this->footer);
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);

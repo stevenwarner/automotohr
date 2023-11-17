@@ -11,8 +11,8 @@ class Dashboard extends CI_Controller
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         //
-        $this->css = "../public/v1/css/app/";
-        $this->js = "../public/v1/js/app/";
+        $this->css = "public/v1/css/app/";
+        $this->js = "public/v1/js/app/";
     }
     public function index($keyword = null)
     {
@@ -73,16 +73,30 @@ class Dashboard extends CI_Controller
             $data['meta']['title'] = $loginContent['page']['meta']['title'];
             $data['meta']['description'] = $loginContent['page']['meta']['description'];
             $data['meta']['keywords'] = $loginContent['page']['meta']['keyword'];
-            //
-            $data['pageCSS'] = [
-                main_url('assets/v1/plugins/bootstrap5/css/bootstrap.min.css'),
-                main_url('assets/v1/plugins/fontawesome/css/all.min.css'),
+
+            // js
+            $data['pageJs'] = [
+                "https://www.google.com/recaptcha/api.js"
             ];
-            //
+            $data['pageCSS'] = [
+                'v1/app/plugins/bootstrap5/css/bootstrap.min',
+                'v1/app/plugins/fontawesome/css/all',
+            ];
+          
             $data['appCSS'] = bundleCSS([
+                "v1/plugins/alertifyjs/css/alertify.min",
                 'v1/app/css/theme',
                 'v1/app/css/pages',
             ], $this->css, "affiliate-forgot", true);
+            //
+            $data['appJs'] = bundleJs([
+                'v1/app/js/jquery-1.11.3.min',
+                'v1/plugins/bootstrap5/js/bootstrap.bundle',
+                'v1/plugins/alertifyjs/alertify.min',
+                'js/jquery.validate.min',
+                'js/app_helper',
+                "v1/app/js/pages/schedule_demo"
+            ], $this->js, "affiliate-forgot", true);
             //
             $data['limited_menu'] = true;
             
@@ -90,6 +104,7 @@ class Dashboard extends CI_Controller
             $data['page_title'] = "Forgot Password";
             $this->load->view('v1/app/header', $data);
             $this->load->view('v1/app/forgot_password');
+            $this->load->view('v1/app/footer');
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);

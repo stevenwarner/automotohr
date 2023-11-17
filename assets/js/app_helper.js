@@ -291,6 +291,7 @@ if (typeof baseUrl === "undefined") {
 	 * @returns
 	 */
 	function baseUrl(appendUrl = "") {
+		appendUrl = appendUrl.replace(/^\//g, "");
 		// return the url
 		return window.location.origin + "/" + appendUrl;
 	}

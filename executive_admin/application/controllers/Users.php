@@ -56,6 +56,10 @@ class Users extends CI_Controller
         $data['meta']['description'] = $loginContent['page']['meta']['description'];
         $data['meta']['keywords'] = $loginContent['page']['meta']['keyword'];
         $data['limited_menu'] = true;
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js"
+        ];
         //
         $data['pageCSS'] = [
             'v1/app/plugins/bootstrap5/css/bootstrap.min',
@@ -64,14 +68,18 @@ class Users extends CI_Controller
         ];
         //
         $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/theme',
             'v1/app/css/pages',
         ], $this->css, "executive_admin", true);
         //
         $data['appJs'] = bundleJs([
             'v1/app/js/jquery-1.11.3.min',
-            'plugins/bootstrap5/js/bootstrap.bundle',
-            'alertifyjs/alertify.min'
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            "v1/app/js/pages/schedule_demo"
         ], $this->js, "executive_admin", true);
 
 
@@ -87,6 +95,7 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/executive_admin_login');
+            $this->load->view($this->footer);
         } else {
             $username = $this->input->post('identity');
             $password = $this->input->post('password');

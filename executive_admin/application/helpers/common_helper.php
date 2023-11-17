@@ -1334,6 +1334,13 @@ if (!function_exists('getStaticFileVersion')) {
         $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
         // Earning types
         $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
+        // new theme
+        // login
+        $files['public/v1/css/app/executive_admin'] = ["css" => "2.0"];
+        $files['public/v1/js/app/executive_admin'] = ["js" => "2.0"];
+        // forgot
+        $files['public/v1/css/app/executive_admin_forgot'] = ["css" => "2.0"];
+        $files['public/v1/js/app/executive_admin_forgot'] = ["js" => "2.0"];
         // check and return data
         return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
@@ -1729,5 +1736,39 @@ if (!function_exists('getImageURL')) {
         } else {
             return base_url('assets/images/img-applicant.jpg');
         }
+    }
+}
+
+
+if (!function_exists('GetScripts')) {
+    /**
+     * Generates the scripts tags
+     * @param array  $tabs
+     * [
+     *  'assets/js/script'
+     * ]
+     *
+     * @return
+     */
+    function GetScripts($scripts)
+    {
+        //
+        $html = '';
+        //
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script[1], 'js', $script[0]))) . '"></script>' . "\n\t";
+            } else {
+                //
+                if (strpos($script, 'http') !== false) {
+                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>' . "\n\t";
+                } else {
+                    $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script))) . '"></script>' . "\n\t";
+                }
+            }
+        }
+        //
+        return $html;
     }
 }

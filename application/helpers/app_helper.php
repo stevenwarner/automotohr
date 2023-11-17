@@ -668,6 +668,47 @@ if (!function_exists('getStaticFileVersion')) {
         $files['public/v1/css/payroll/add-signatory'] = ['css' => '1.0.1'];
         // regular
         $files['public/v1/js/payroll/regular/hours_and_earnings'] = ['js' => '1.0.1'];
+
+        // new theme
+        // home
+        $files['public/v1/css/app/home'] = ["css" => "2.0"];
+        $files['public/v1/js/app/home'] = ["js" => "2.0"];
+        // solution
+        $files['public/v1/css/app/pages/products'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/products'] = ["js" => "2.0"];
+        // why us
+        $files['public/v1/css/app/pages/why-us'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/why-us'] = ["js" => "2.0"];
+        // about us
+        $files['public/v1/css/app/pages/about-us'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/about-us'] = ["js" => "2.0"];
+        // contact us
+        $files['public/v1/css/app/pages/contact-us'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/contact-us'] = ["js" => "2.0"];
+        // get your free account
+        $files['public/v1/css/app/pages/get-your-account'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/get-your-account'] = ["js" => "2.0"];
+        // login
+        $files['public/v1/css/app/login'] = ["css" => "2.0"];
+        $files['public/v1/js/app/login'] = ["js" => "2.0"];
+        // forgot password
+        $files['public/v1/css/app/forgot'] = ["css" => "2.0"];
+        $files['public/v1/js/app/forgot'] = ["js" => "2.0"];
+        // Affiliate program
+        $files['public/v1/css/app/pages/affiliate-program'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/affiliate-program'] = ["js" => "2.0"];
+        // Privacy policy
+        $files['public/v1/css/app/pages/privacy-policy'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/privacy-policy'] = ["js" => "2.0"];
+        // Resources 
+        $files['public/v1/css/app/resources'] = ["css" => "2.0"];
+        $files['public/v1/js/app/resources'] = ["js" => "2.0"];
+        // Terms of service
+        $files['public/v1/css/app/pages/terms-of-service'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/terms-of-service'] = ["js" => "2.0"];
+        // Site map
+        $files['public/v1/css/app/pages/sitemap'] = ["css" => "2.0"];
+        $files['public/v1/js/app/pages/sitemap'] = ["js" => "2.0"];
         // check and return data
         return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
@@ -1979,7 +2020,7 @@ if (!file_exists("getSourceByType")) {
     {
         if ($type === "upload") {
             if (isImage($path)) {
-                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="'.(splitPathAndFileName($path)["name"]).'" />';
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="' . (splitPathAndFileName($path)["name"]) . '" />';
             } else {
                 return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
             }

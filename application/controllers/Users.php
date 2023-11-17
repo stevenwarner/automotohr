@@ -112,6 +112,7 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/login');
+            $this->load->view($this->footer);
 
             $snapshot = $this->session->userdata('snapshot');
         } else {

@@ -1457,10 +1457,10 @@ nav-tabs.nav-tabs-modified .nav-item.show .nav-link,
 	display: inline-block;
 }
 @media screen and (max-width: 1300px) {
-	.w-70{
+	.w-70 {
 		width: 60%;
 	}
-	.slider_detail{
+	.slider_detail {
 		margin-top: 10px;
 		width: 50%;
 	}
@@ -2651,7 +2651,7 @@ input[type="radio"] {
 }
 
 .text-yellow {
-	color: #0000ff;
+	color: #ffb72b;
 }
 
 /* home page iframe - what we offer */
@@ -2669,12 +2669,12 @@ input[type="radio"] {
 	border: 0;
 }
 
-.csImageAtBottom{
+.csImageAtBottom {
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end
+	justify-content: flex-end;
 }
 
-.csSection{
+.csSection {
 	padding: 50px 0;
 }
