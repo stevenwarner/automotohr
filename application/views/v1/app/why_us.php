@@ -26,12 +26,12 @@
                                 </p>
                             </div>
                             <div class="col-xs-12 margin-top-30 ">
-                                <button class="d-flex load-more justify-content-center align-items-center login-screen-btns  btn-animate margin-top-30 jsButtonAnimate jsScheduleDemoPopup w-80">
+                                <a href="<?= $whyUsContent["page"]["sections"]["section_1"]["buttonSlug"]; ?>" class="d-flex load-more justify-content-center align-items-center login-screen-btns  btn-animate margin-top-30 jsButtonAnimate w-80">
                                     <p class="text">
                                         <?= convertToStrip($whyUsContent["page"]["sections"]["section_1"]["buttonText"]); ?>
                                     </p>
                                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
-                                </button>
+                                </a>
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6 order-1-on-mobile">
