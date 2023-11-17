@@ -707,7 +707,7 @@ if ($user_type == 'applicant') {
                                                                     </h3>
                                                                     <hr />
                                                                 </div>
-                                                                <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
+                                                                <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package change_default_record_status" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
                                                             </div>
                                                         </label>
                                                     </div>
@@ -3769,6 +3769,44 @@ if ($user_type == 'applicant') {
         }
 
     });
+
+
+    //
+    $(document).on('click', '.change_default_record_status', function() {
+        var sid = $(this).val();
+
+        if ($(this).is(':checked')) {
+            change_default_status(sid, 1);
+            alertify.success('Custom location Enable');
+        } else {
+            change_default_status(sid, 0);
+            alertify.error('Custom location Disable');
+        }
+    });
+
+    //
+    function change_default_status(sid, status) {
+        var myurl = "<?= base_url() ?>onboarding/change_default_status";
+
+        $.ajax({
+            type: 'POST',
+            data: {
+                custom_record_sid: sid,
+                custom_record_status: status,
+                user_type: '<?php echo $user_type; ?>',
+                user_sid: '<?php echo $user_info['sid']; ?>',
+                company_sid: '<?php echo $company_sid; ?>'
+
+            },
+            url: myurl,
+            success: function(data) {
+                return true;
+            },
+            error: function() {
+
+            }
+        });
+    }
 </script>
 
 <!--  -->

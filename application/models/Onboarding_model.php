@@ -493,6 +493,7 @@ class Onboarding_model extends CI_Model
         $records_obj = $this->db->get('onboarding_custom_assignment');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
+        $sql = $this->db->last_query();
 
         if (!empty($records_arr)) {
             return true;
@@ -3199,5 +3200,26 @@ class Onboarding_model extends CI_Model
         ])
         ->get('onboarding_office_locations')
         ->row_array();
+    }
+
+
+
+    //
+    function change_default_record_status($company_sid, $user_type, $user_sid, $custom_type, $parent_sid,$status)
+    {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('user_type', $user_type);
+
+        if ($user_type == 'employee') {
+            $this->db->where('employee_sid', $user_sid);
+        } else {
+            $this->db->where('applicant_sid', $user_sid);
+        }
+
+        $this->db->where('custom_type', $custom_type);
+        $this->db->where('parent_sid', $parent_sid);
+        $this->db->where('is_custom', 0);
+        $this->db->set('status', $status);
+        $this->db->update('onboarding_custom_assignment');
     }
 }
