@@ -37,7 +37,6 @@
                     <div class="margin-btm">
 
                         <?php
-                        $bullet1Array = convertToStrip($pageContent['sections']['section1']['bullet1']);
                         $bullet2Array = convertToStrip($pageContent['sections']['section1']['bullet2']);
                         $bullet3Array = convertToStrip($pageContent['sections']['section1']['bullet3']);
                         $bullet4Array = convertToStrip($pageContent['sections']['section1']['bullet4']);
@@ -48,7 +47,7 @@
                         <div class="d-flex">
                             <img alt="tick icon" src="<?= image_url('Group.png'); ?>" class="me-3 yellow-icon-image" />
                             <p class="detail-text white-text opacity-eighty">
-                                <?php echo $bullet1Array; ?>
+                                <?= convertToStrip($pageContent['sections']['section1']['bullet1']); ?>
                             </p>
                         </div>
                         <div class="d-flex">
