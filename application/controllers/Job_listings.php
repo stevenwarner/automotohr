@@ -774,9 +774,17 @@ class Job_listings extends Public_Controller
                         foreach ($job_listings as $index => $job) {
                             $job_listings[$index]['deactive_by_name'] = $jobLastStates[$job['sid']]['deactive_by_name'];
                             $job_listings[$index]['deactivation_date'] = $jobLastStates[$job['sid']]['deactive_date'];
+                            $job_listings[$index]['totalapplicants'] = $jobLastStates[$job['sid']]['deactive_date'];
                         }
                     }
                 }
+
+                //
+                foreach ($job_listings as $index => $job) {
+                    $job_listings[$index]['totalapplicants'] = $this->job_listings_visibility_model->getApplicantsByJobId($job['sid'], $company_sid);
+                }
+
+
                 $data['listings_active'] = $job_listings;
                 $data['url_status'] = $status;
                 $this->load->view('main/header', $data);
@@ -2346,7 +2354,7 @@ class Job_listings extends Public_Controller
         }
 
         if ($_POST) {
-           // _e($_POST,true,true);
+            // _e($_POST,true,true);
             $performAction = $this->input->post('perform_action');
 
             if ($performAction == 'email_job_info_to_users') {
@@ -2373,7 +2381,7 @@ class Job_listings extends Public_Controller
             $this->load->view('main/footer');
         } else {
 
-            
+
             $performAction = $this->input->post('perform_action');
             //
             $selectedUsers = array();
@@ -2404,7 +2412,7 @@ class Job_listings extends Public_Controller
             }
 
             //
-            if(empty($selectedUsers) && $performAction == 'email_job_info_to_users'){
+            if (empty($selectedUsers) && $performAction == 'email_job_info_to_users') {
                 $this->session->set_flashdata('message', '<b>Error:</b> Please select at least one employee.');
                 redirect('add_listing_share/' . $jobId);
             }
@@ -2448,7 +2456,7 @@ class Job_listings extends Public_Controller
                 $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . count($selectedUsers) . ' users!' . ' </b>');
                 redirect('my_listings', 'refresh');
             } elseif ($performAction == 'email_job') {
-              // die('emailsfsdf');
+                // die('emailsfsdf');
                 $email = $this->input->post('email_address');
                 $userFullName = $this->input->post('full_name');
                 $replacement_array = array();
@@ -2473,8 +2481,6 @@ class Job_listings extends Public_Controller
                 redirect('my_listings', 'refresh');
             }
         }
-
-        
     }
 
     function preview_listing($sid = NULL)

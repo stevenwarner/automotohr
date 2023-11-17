@@ -854,4 +854,16 @@ class Job_listings_visibility_model extends CI_Model {
         return sizeof($result_arr) && isset($result_arr[$column]) ? $result_arr[$column] : $result_arr;
     }
 
+
+//
+    function getApplicantsByJobId($job_sid,$company_sid){
+        $result = $this->db
+        ->from('portal_applicant_jobs_list')
+        ->where('job_sid', $job_sid)
+        ->where('company_sid', $company_sid)
+        ->count_all_results();
+        return $result ;
+    }
+
+
 }
