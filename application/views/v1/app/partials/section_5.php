@@ -15,9 +15,11 @@
                     <div class="form_section px-5 d-flex flex-column justify-content-center">
                         <div class="d-flex flex-column align-items-center mb-5">
                             <p class="lightgrey heading-h4-grey heading opacity-eighty">
-                                <?php echo $pageContent['sections']['section16']['heading'] ?>
+                                Want the Inside Secret on People Operations?
                             </p>
-                            <p class="darkgrey title"><?php echo $pageContent['sections']['section16']['heading2'] ?></p>
+                            <p class="darkgrey title">
+                                See AutomotoHR in action
+                            </p>
                         </div>
                         <?php $this->load->view("v1/app/partials/demo_form"); ?>
                     </div>
