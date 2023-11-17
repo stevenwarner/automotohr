@@ -1979,6 +1979,14 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 $route['job_info/(:any)/(:any)'] = 'employee_management/JobInfo/$1/$2';
 $route['job_info_add/(:any)/(:any)'] = 'employee_management/JobInfoAdd/$1/$2';
 
+$route['job_info_primary_check/(:any)/(:any)'] = 'employee_management/checkPrimaryJob/$1/$2';
+
+$route['job_info_edit/(:any)'] = 'employee_management/JobInfoEdit/$1';
+$route['job_info_delete/(:any)'] = 'employee_management/JobInfoDelete/$1';
+
+
+
+
 
 //$route['equipment_info/(:any)/(:any)'] = 'settings/equipment_info/$1/$2';
 

@@ -2018,7 +2018,7 @@
                 if ($phoneRegex) {
                     $this->db->or_like('REGEXP_REPLACE(users.PhoneNumber, "[^0-9]", "")', preg_replace('/[^0-9]/', '', $multiple_keywords[$i]), false);
                 }
-               // $this->db->or_like('users.job_title', $multiple_keywords[$i]);
+                // $this->db->or_like('users.job_title', $multiple_keywords[$i]);
                 $this->db->or_like('users.access_level', $multiple_keywords[$i]);
                 $this->db->or_like('users.registration_date', $multiple_keywords[$i]);
             }
@@ -2091,4 +2091,189 @@
 
         return $tmp;
     }
+
+
+
+    //
+    function addjobCompensation($sid, $employeeType, $data)
+    {
+
+        //
+        if ($data['is_primary'] == 1) {
+
+            $primaryCount = $this->getPrimaryJob($employeeType, $sid);
+
+            if ($primaryCount > 0) {
+                $dataToUpdate['is_primary'] = 0;
+                $this->db->where('employee_sid', $sid);
+                $this->db->where('employee_type', $employeeType);
+                $this->db->update('payroll_employee_garnishments', $dataToUpdate);
+            }
+        }
+
+        //
+        $this->db->insert('payroll_employee_garnishments', $data);
+        return $this->db->insert_id();
+    }
+
+    //
+    function addjobCompensationDetails($data)
+    {
+        $this->db->insert('payroll_employee_job_compensations', $data);
+    }
+
+
+    //
+    function getPrimaryJob($employeeType, $sid)
+    {
+        return
+            $this->db
+            ->where("employee_sid", $sid)
+            ->where("employee_type", $employeeType)
+            ->where("is_primary", 1)
+            ->count_all_results("payroll_employee_garnishments");
+    }
+
+
+    function getEmployeejobInformation($employeeType, $sid, $jobStatus, $primaryJob)
+    {
+
+        //
+        $this->db->select(
+            "
+            payroll_employee_garnishments.sid,
+            payroll_employee_garnishments.job_title,
+            payroll_employee_garnishments.flsa,
+            payroll_employee_garnishments.is_primary,
+            payroll_employee_garnishments.is_active,
+            payroll_employee_garnishments.employee_type,
+            payroll_employee_job_compensations.normal_shift_start_time,
+            payroll_employee_job_compensations.normal_shift_end_time,
+            payroll_employee_job_compensations.normal_break_hour,
+            payroll_employee_job_compensations.normal_break_minutes,
+            payroll_employee_job_compensations.normal_week_days_off,
+            payroll_employee_job_compensations.normal_rate,
+            payroll_employee_job_compensations.normal_per,
+            payroll_employee_job_compensations.normal_effected_date,
+            payroll_employee_job_compensations.overtime_shift_start_time,
+            payroll_employee_job_compensations.overtime_shift_end_time,
+            payroll_employee_job_compensations.overtime_rate,
+            payroll_employee_job_compensations.overtime_is_allowed,
+            payroll_employee_job_compensations.double_overtime_shift_start_time,
+            payroll_employee_job_compensations.double_overtime_shift_end_time,
+            payroll_employee_job_compensations.double_overtime_is_allowed,
+            payroll_employee_job_compensations.holiday_rate,
+            payroll_employee_job_compensations.holiday_overtime_is_allowed,
+            payroll_employee_job_compensations.double_overtime_rate
+            "
+        );
+        $this->db->where("payroll_employee_garnishments.employee_sid", $sid);
+        $this->db->where("payroll_employee_garnishments.employee_type", $employeeType);
+        //
+        if ($jobStatus != '') {
+            $this->db->where("payroll_employee_garnishments.is_active", $jobStatus);
+        }
+        if ($primaryJob != '') {
+            $this->db->where("payroll_employee_garnishments.is_primary", $primaryJob);
+        }
+        $this->db->join('payroll_employee_job_compensations', 'payroll_employee_job_compensations.payroll_job_sid = payroll_employee_garnishments.sid');
+
+        $records =  $this->db->get('payroll_employee_garnishments')->result_array();
+
+        //   $sql = $this->db->last_query();
+        //       die($sql);
+        //
+        if (!empty($records)) {
+            return $records;
+        } else {
+            return [];
+        }
+    }
+
+
+
+    function getjobInformationById($sid)
+    {
+
+        //
+        $this->db->select(
+            "
+            payroll_employee_garnishments.sid,
+            payroll_employee_garnishments.employee_sid,
+            payroll_employee_garnishments.job_title,
+            payroll_employee_garnishments.flsa,
+            payroll_employee_garnishments.is_primary,
+            payroll_employee_garnishments.is_active,
+            payroll_employee_garnishments.employee_type,
+            payroll_employee_job_compensations.normal_shift_start_time,
+            payroll_employee_job_compensations.normal_shift_end_time,
+            payroll_employee_job_compensations.normal_break_hour,
+            payroll_employee_job_compensations.normal_break_minutes,
+            payroll_employee_job_compensations.normal_week_days_off,
+            payroll_employee_job_compensations.normal_rate,
+            payroll_employee_job_compensations.normal_per,
+            payroll_employee_job_compensations.normal_effected_date,
+            payroll_employee_job_compensations.overtime_shift_start_time,
+            payroll_employee_job_compensations.overtime_shift_end_time,
+            payroll_employee_job_compensations.overtime_rate,
+            payroll_employee_job_compensations.overtime_is_allowed,
+            payroll_employee_job_compensations.double_overtime_shift_start_time,
+            payroll_employee_job_compensations.double_overtime_shift_end_time,
+            payroll_employee_job_compensations.double_overtime_is_allowed,
+            payroll_employee_job_compensations.holiday_rate,
+            payroll_employee_job_compensations.holiday_overtime_is_allowed,
+            payroll_employee_job_compensations.double_overtime_rate
+            "
+        );
+        $this->db->where("payroll_employee_garnishments.sid", $sid);
+        //
+
+        $this->db->join('payroll_employee_job_compensations', 'payroll_employee_job_compensations.payroll_job_sid = payroll_employee_garnishments.sid');
+
+        $records =  $this->db->get('payroll_employee_garnishments')->row_array();
+
+        //   $sql = $this->db->last_query();
+        //       die($sql);
+        //
+        if (!empty($records)) {
+            return $records;
+        } else {
+            return [];
+        }
+    }
+
+
+
+    //
+    function updatejobCompensation($sid, $dataToUpdate)
+    {
+        //
+        $this->db->where('sid', $sid);
+        $this->db->update('payroll_employee_garnishments', $dataToUpdate);
+    }
+
+    function updatejobCompensationDetails($sid, $dataToUpdate)
+    {
+        //
+        $this->db->where('payroll_job_sid', $sid);
+        $this->db->update('payroll_employee_job_compensations', $dataToUpdate);
+    }
+
+
+
+    function deletejobCompensation($sid)
+    {
+        //
+        $this->db->where('sid', $sid);
+        $this->db->delete('payroll_employee_garnishments');
+    }
+
+    function deletejobCompensationDetails($sid)
+    {
+        //
+        $this->db->where('payroll_job_sid', $sid);
+        $this->db->delete('payroll_employee_job_compensations');
+    }
+
+
 }

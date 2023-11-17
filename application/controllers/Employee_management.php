@@ -4288,17 +4288,20 @@ class Employee_management extends Public_Controller
                 $data['employer']['state_name'] = '';
                 $data['employer']['country_name'] = '';
 
-                $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
 
-                if ($this->form_validation->run() === FALSE) { //checking if the form is submitted so i can open the form screen again
+                //
+                $data["primaryJobData"] = $this->getEmployeejobInformation($userType, $sid, '1', '1');
+                $data["activeJobData"] = $this->getEmployeejobInformation($userType, $sid, '1');
+                $data["inActiveJobData"] = $this->getEmployeejobInformation($userType, $sid, '0');
 
-                    $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
-                    //
-                    $this->load->view('main/header', $data);
-                    $this->load->view('manage_employer/employee_management/job_info');
-                    $this->load->view('main/footer');
-                } else {
-                }
+                //  _e($data["primaryJobData"] , true, true);
+
+
+                $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                //
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/employee_management/job_info');
+                $this->load->view('main/footer');
             } else {
                 redirect(base_url('login'), "refresh");
             }
@@ -4310,7 +4313,7 @@ class Employee_management extends Public_Controller
 
 
     //
-    public function JobInfoAdd($userType,$sid = NULL)
+    public function JobInfoAdd($employeeType, $sid = NULL)
     {
         if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
@@ -4348,9 +4351,25 @@ class Employee_management extends Public_Controller
                 $data['employer']['state_name'] = '';
                 $data['employer']['country_name'] = '';
 
-                $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
+                $data['employeetype'] = $employeeType;
+                $data['employeesid'] = $sid;
 
-                if ($this->form_validation->run() === FALSE) { //checking if the form is submitted so i can open the form screen again
+                //
+                $data['jobTitleData'] = [];
+
+
+                $this->form_validation->set_rules('job_title', 'Job Title', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('normal_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('double_overtime_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('holiday_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('normal_per', 'Per', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('normal_effected_date', 'Per', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('overtime_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('flsa', 'flsa', 'required|trim|xss_clean');
+
+
+
+                if ($this->form_validation->run() === FALSE) {
 
                     $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     //
@@ -4358,10 +4377,252 @@ class Employee_management extends Public_Controller
                     $this->load->view('manage_employer/employee_management/job_info_form');
                     $this->load->view('main/footer');
                 } else {
+
+                    $insertJobData['job_title'] = $this->input->post('job_title');
+                    $insertJobData['flsa'] = $this->input->post('flsa');
+                    $insertJobData['is_primary'] =  $this->input->post('is_primary') ? '1' : '0';
+                    $insertJobData['is_active'] = $this->input->post('is_active') ? '1' : '0';
+                    $insertJobData['employee_type'] = $employeeType;
+                    $insertJobData['employee_sid'] = $sid;
+
+                    $insertJobcompensationData['normal_shift_start_time'] = $this->input->post('normal_shift_start_time');
+                    $insertJobcompensationData['normal_shift_end_time'] = $this->input->post('normal_shift_end_time');
+                    $insertJobcompensationData['normal_break_hour'] = $this->input->post('normal_break_hour');
+                    $insertJobcompensationData['normal_break_minutes'] = $this->input->post('normal_break_minutes');
+                    $insertJobcompensationData['normal_rate'] = $this->input->post('normal_rate');
+                    $insertJobcompensationData['normal_per'] = $this->input->post('normal_per');
+                    $insertJobcompensationData['normal_effected_date'] =  empty($this->input->post('normal_effected_date')) ? null : DateTime::createFromFormat('m-d-Y', $this->input->post('normal_effected_date'))->format('Y-m-d 00:00:00');
+                    $insertJobcompensationData['overtime_shift_start_time'] = $this->input->post('overtime_shift_start_time');
+                    $insertJobcompensationData['overtime_shift_end_time'] = $this->input->post('overtime_shift_end_time');
+                    $insertJobcompensationData['overtime_rate'] = $this->input->post('overtime_rate');
+                    $insertJobcompensationData['overtime_is_allowed'] = $this->input->post('overtime_is_allowed') ? '1' : '0';
+                    $insertJobcompensationData['double_overtime_shift_start_time'] = $this->input->post('double_overtime_shift_start_time');
+                    $insertJobcompensationData['double_overtime_shift_end_time'] = $this->input->post('double_overtime_shift_end_time');
+                    $insertJobcompensationData['double_overtime_rate'] = $this->input->post('double_overtime_rate');
+                    $insertJobcompensationData['double_overtime_rate'] = $this->input->post('double_overtime_rate');
+                    $insertJobcompensationData['double_overtime_is_allowed'] = $this->input->post('double_overtime_is_allowed') ? '1' : '0';
+                    $insertJobcompensationData['holiday_rate'] = $this->input->post('holiday_rate');
+                    $insertJobcompensationData['holiday_overtime_is_allowed'] = $this->input->post('holiday_overtime_is_allowed') ? '1' : '0';
+
+                    if ($this->input->post('normal_week_days_off')) {
+                        $normalWeekDaysOff = implode(',', $this->input->post('normal_week_days_off'));
+                        $insertJobcompensationData['normal_week_days_off'] =  $normalWeekDaysOff;
+                    }
+
+                    //
+                    $jobSid = $this->employee_model->addjobCompensation($sid, $employeeType, $insertJobData);
+
+                    if ($jobSid > 0) {
+                        $insertJobcompensationData['payroll_job_sid'] = $jobSid;
+                        $this->employee_model->addjobCompensationDetails($insertJobcompensationData);
+                    }
+
+                    $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' Job Compensation successfully Added');
+                    redirect(base_url('job_info_add/' . $employeeType . '/' . $sid), "refresh");
                 }
             } else {
                 redirect(base_url('login'), "refresh");
             }
         }
+    }
+
+
+
+
+    public function JobInfoEdit($jobsid = NULL)
+    {
+        if ($jobsid == NULL) {
+            $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
+            redirect('employee_management', 'refresh');
+        } else {
+            if ($this->session->userdata('logged_in')) {
+
+
+                $jobTitleData = $this->employee_model->getjobInformationById($jobsid);
+                //  _e($jobTitleData, true, true);
+                //  die($jobsid);
+
+                $sid = $jobTitleData['employee_sid'];
+                $employeeType = $jobTitleData['employee_type'];
+
+                $data = employee_right_nav($sid);
+                // Added on: 04-07-2019
+                $data['show_timezone'] = $data['session']['company_detail']['timezone'];
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                check_access_permissions($security_details, 'employee_management', 'employee_profile'); // Param2: Redirect URL, Param3: Function Name
+                $company_id = $data["session"]["company_detail"]["sid"];
+                $employer_access_level = $data["session"]["employer_detail"]["access_level"];
+                $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+                $employer_id = $sid;
+                $data['title'] = "Employee / Team Members Profile";
+                $data['employer_sid'] = $security_sid;
+                $data['main_employer_id'] = $security_sid;
+                $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
+                //
+                $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
+                $data['company_accounts'] = $company_accounts;
+                //
+                $data['employer_access_level'] = $employer_access_level;
+                $full_access = false;
+
+                if ($employer_access_level == 'Admin') {
+                    $full_access = true;
+                }
+
+                $data['full_access'] = $full_access;
+                $data["access_level"] = db_get_enum_values('users', 'access_level');
+                $data['employer']['state_name'] = '';
+                $data['employer']['country_name'] = '';
+
+                $data['employeetype'] = $employeeType;
+                $data['employeesid'] = $sid;
+
+                //
+                $data['jobTitleData'] = $jobTitleData;
+
+
+                $this->form_validation->set_rules('job_title', 'Job Title', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('normal_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('double_overtime_rate', 'Rate', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('holiday_rate', 'Rate', 'required|trim|xss_clean');
+
+
+                if ($this->form_validation->run() === FALSE) {
+
+                    $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                    //
+                    $this->load->view('main/header', $data);
+                    $this->load->view('manage_employer/employee_management/job_info_form');
+                    $this->load->view('main/footer');
+                } else {
+
+                    $insertJobData['job_title'] = $this->input->post('job_title');
+                    $insertJobData['flsa'] = $this->input->post('flsa');
+                    $insertJobData['is_primary'] =  $this->input->post('is_primary') ? '1' : '0';
+                    $insertJobData['is_active'] = $this->input->post('is_active') ? '1' : '0';
+                    //  $insertJobData['employee_type'] = $employeeType;
+                    //  $insertJobData['employee_sid'] = $sid;
+
+                    $insertJobcompensationData['normal_shift_start_time'] = $this->input->post('normal_shift_start_time');
+                    $insertJobcompensationData['normal_shift_end_time'] = $this->input->post('normal_shift_end_time');
+                    $insertJobcompensationData['normal_break_hour'] = $this->input->post('normal_break_hour');
+                    $insertJobcompensationData['normal_break_minutes'] = $this->input->post('normal_break_minutes');
+                    $insertJobcompensationData['normal_rate'] = $this->input->post('normal_rate');
+                    $insertJobcompensationData['normal_per'] = $this->input->post('normal_per');
+
+                    $insertJobcompensationData['normal_effected_date'] =  empty($this->input->post('normal_effected_date')) ? null : DateTime::createFromFormat('m-d-Y', $this->input->post('normal_effected_date'))->format('Y-m-d 00:00:00');
+                    $insertJobcompensationData['overtime_shift_start_time'] = $this->input->post('overtime_shift_start_time');
+                    $insertJobcompensationData['overtime_shift_end_time'] = $this->input->post('overtime_shift_end_time');
+                    $insertJobcompensationData['overtime_rate'] = $this->input->post('overtime_rate');
+                    $insertJobcompensationData['overtime_is_allowed'] = $this->input->post('overtime_is_allowed') ? '1' : '0';
+                    $insertJobcompensationData['double_overtime_shift_start_time'] = $this->input->post('double_overtime_shift_start_time');
+                    $insertJobcompensationData['double_overtime_shift_end_time'] = $this->input->post('double_overtime_shift_end_time');
+                    $insertJobcompensationData['double_overtime_rate'] = $this->input->post('double_overtime_rate');
+                    $insertJobcompensationData['double_overtime_rate'] = $this->input->post('double_overtime_rate');
+                    $insertJobcompensationData['double_overtime_is_allowed'] = $this->input->post('double_overtime_is_allowed') ? '1' : '0';
+                    $insertJobcompensationData['holiday_rate'] = $this->input->post('holiday_rate');
+                    $insertJobcompensationData['holiday_overtime_is_allowed'] = $this->input->post('holiday_overtime_is_allowed') ? '1' : '0';
+
+
+
+                    if ($this->input->post('normal_week_days_off')) {
+                        $normalWeekDaysOff = implode(',', $this->input->post('normal_week_days_off'));
+                        $insertJobcompensationData['normal_week_days_off'] =  $normalWeekDaysOff;
+                    }
+
+                    //
+                    $this->employee_model->updatejobCompensation($jobsid, $insertJobData);
+                    $this->employee_model->updatejobCompensationDetails($jobsid, $insertJobcompensationData);
+
+                    $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' Job Compensation successfully Updated');
+                    redirect(base_url('job_info_edit/' . $jobsid), "refresh");
+                }
+            } else {
+                redirect(base_url('login'), "refresh");
+            }
+        }
+    }
+
+
+
+    public function JobInfoDelete($jobsid = NULL)
+    {
+        if ($jobsid == NULL) {
+            $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
+            redirect('employee_management', 'refresh');
+        } else {
+            if ($this->session->userdata('logged_in')) {
+
+                $jobTitleData = $this->employee_model->getjobInformationById($jobsid);
+                $sid = $jobTitleData['employee_sid'];
+                $employeeType = $jobTitleData['employee_type'];
+
+                $data = employee_right_nav($sid);
+                $data['show_timezone'] = $data['session']['company_detail']['timezone'];
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                check_access_permissions($security_details, 'employee_management', 'employee_profile'); // Param2: Redirect URL, Param3: Function Name
+                $company_id = $data["session"]["company_detail"]["sid"];
+                $employer_access_level = $data["session"]["employer_detail"]["access_level"];
+                $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+                $employer_id = $sid;
+                $data['title'] = "Employee / Team Members Profile";
+                $data['employer_sid'] = $security_sid;
+                $data['main_employer_id'] = $security_sid;
+                $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
+                //
+                $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
+                $data['company_accounts'] = $company_accounts;
+                //
+                $data['employer_access_level'] = $employer_access_level;
+                $full_access = false;
+
+                if ($employer_access_level == 'Admin') {
+                    $full_access = true;
+                }
+
+                $data['full_access'] = $full_access;
+                $data["access_level"] = db_get_enum_values('users', 'access_level');
+                $data['employer']['state_name'] = '';
+                $data['employer']['country_name'] = '';
+
+                //
+                $this->employee_model->deletejobCompensation($jobsid);
+                $this->employee_model->deletejobCompensationDetails($jobsid);
+
+                $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' Job Compensation successfully Deleted');
+                redirect(base_url('job_info/' . $employeeType . '/' . $sid), "refresh");
+            } else {
+                redirect(base_url('login'), "refresh");
+            }
+        }
+    }
+
+
+
+
+    //
+    public function checkPrimaryJob($employeeType, $sid = NULL)
+    {
+
+        $promaryCount = $this->employee_model->getPrimaryJob($employeeType, $sid);
+
+        if ($promaryCount > 0) {
+            echo "yes";
+        } else {
+            echo "no";
+        }
+    }
+
+
+
+    public function getEmployeejobInformation($employeeType, $sid, $jobStatus = '', $primaryJob = '')
+    {
+        //  _e($primaryJob ,true,true);
+        $jobInformationData = $this->employee_model->getEmployeejobInformation($employeeType, $sid, $jobStatus, $primaryJob);
+        return $jobInformationData;
     }
 }
