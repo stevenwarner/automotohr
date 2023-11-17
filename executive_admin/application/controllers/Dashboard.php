@@ -238,7 +238,6 @@ class Dashboard extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/exe_admin_password_recovery');
-            $this->load->view($this->footer);
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);

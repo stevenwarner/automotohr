@@ -93,7 +93,6 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/affiliate_login');
-            $this->load->view($this->footer);
         } else {
             $username = $this->input->post('identity');
             $password = $this->input->post('password');

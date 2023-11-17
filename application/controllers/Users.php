@@ -112,7 +112,6 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/login');
-            $this->load->view($this->footer);
 
             $snapshot = $this->session->userdata('snapshot');
         } else {
@@ -368,7 +367,6 @@ class Users extends CI_Controller
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/forgot_password');
-            $this->load->view($this->footer);
         } else {
             $email = $this->input->post('email');
             $result = $this->users_model->check_email($email);
@@ -560,7 +558,6 @@ class Users extends CI_Controller
             //
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/users/password_recovery');
-            $this->load->view($this->footer);
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');

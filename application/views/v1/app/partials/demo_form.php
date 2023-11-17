@@ -1,4 +1,10 @@
-<form method="post" action="javascript:void(0)" class="form" id="jsScheduleFreeDemoMain">
+<style>
+    select.form-control {
+        border-radius: 50px;
+        height: 45px;
+    }
+</style>
+<form method="post" action="javascript:void(0)" class="form" id="<?= $id ?? "jsScheduleFreeDemoMain"; ?>">
     <div class="form-group">
         <input type="text" class="form-control" id="name" placeholder="Name*" name="name" />
         <?php echo form_error('name'); ?>
@@ -10,6 +16,20 @@
     <div class="form-group mt-4">
         <input type="text" class="form-control" id="phone_number" placeholder="Phone Number*" name="phone_number" />
         <?php echo form_error('phone_number'); ?>
+    </div>
+    <div class="form-group mt-4">
+        <select class="form-control jsCountrySelect" placeholder="Country*" name="country">
+            <option value="">Please select a country</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+        </select>
+        <?php echo form_error('Country'); ?>
+    </div>
+    <div class="form-group mt-4">
+        <select class="form-control" placeholder="State*" name="state">
+            <option value="">Please select a state</option>
+        </select>
+        <?php echo form_error('State'); ?>
     </div>
     <div class="row mt-4">
         <div class="col-sm-6 col-12">
@@ -37,7 +57,6 @@
     <div class="form-group mt-4">
         <input type="text" class="form-control" placeholder="Company Name*" name="company_name" />
         <?php echo form_error('company_name'); ?>
-
     </div>
     <div class="form-group mt-4">
         <textarea class="form-control textarea" id="client_message" rows="10" placeholder="Please let us know the types of Features that are most important to you and what you are looking for in your new system." name="client_message"></textarea>

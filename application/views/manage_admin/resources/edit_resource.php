@@ -102,7 +102,7 @@
                                                             </label>
 
                                                             <label class="control control--checkbox">
-                                                                <input type="checkbox" name="resourcetype[]" value="Articles" <?php echo in_array("Articles", $resourceTypeArray) ? 'checked' : '' ?>> Case Studies
+                                                                <input type="checkbox" name="resourcetype[]" value="Articles" <?php echo in_array("Articles", $resourceTypeArray) ? 'checked' : '' ?>> Articles
                                                                 <div class="control__indicator"></div>
                                                             </label>
 

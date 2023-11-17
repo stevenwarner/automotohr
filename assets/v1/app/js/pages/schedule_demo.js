@@ -10,6 +10,8 @@ $(function () {
 		phone_number: {
 			required: true,
 		},
+		country: { required: true },
+		state: { required: true },
 		company_name: {
 			required: true,
 		},
@@ -28,7 +30,13 @@ $(function () {
 			required: "Please provide valid email.",
 		},
 		phone_number: {
-			required: "Please provide valid phone number",
+			required: "Please provide valid phone number.",
+		},
+		country: {
+			required: "Please select a country.",
+		},
+		state: {
+			required: "Please select a state.",
 		},
 		company_name: {
 			required: "Please provide company name.",
@@ -60,10 +68,23 @@ $(function () {
 	/**
 	 *
 	 */
+	$("#jsScheduleFreeDemoPopUp").validate({
+		rules,
+		messages,
+		submitHandler: submitFormHandler,
+	});
+
+	/**
+	 *
+	 */
 	$("#jsScheduleFreeDemoFooter").validate({
 		rules,
 		messages,
 		submitHandler: submitFormHandler,
+	});
+
+	$(".jsCountrySelect").change(function () {
+		loadCountryStates($(this).val(), $(this).closest("form").prop("id"));
 	});
 
 	/**
@@ -99,6 +120,45 @@ $(function () {
 				});
 			})
 			.fail(handleErrorResponse);
+	}
+
+	/**
+	 * handles the form submission
+	 * @param {*} form
+	 */
+	function loadCountryStates(country, formRef) {
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		$("#" + formRef)
+			.find('[name="state"]')
+			.html("");
+		//
+		XHR = $.ajax({
+			url: baseUrl(
+				"states/" + country.replace(/\s+/gi, "_").toLowerCase()
+			),
+			type: "get",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.done(function (resp) {
+				let options;
+
+				resp &&
+					resp.map(function (value) {
+						options +=
+							'<option value="' +
+							value +
+							'">' +
+							value +
+							"</option>";
+					});
+				$("#" + formRef)
+					.find('[name="state"]')
+					.html(options);
+			});
 	}
 
 	/**

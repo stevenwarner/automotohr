@@ -2040,3 +2040,6 @@ $route["cms/page/(:num)/add"]["post"] = "manage_admin/Cms/processAddPage/$1";
 $route["cms/page/(:num)/teams/(:num)"]["get"] = "manage_admin/Cms/getEditPage/$1/teams/$2";
 $route["cms/page/(:num)/edit/(:num)"]["post"] = "manage_admin/Cms/processEditPage/$1/$2";
 $route["cms/page/(:num)/(:any)/(:num)"]["delete"] = "manage_admin/Cms/processDeletePage/$1/$2/$3";
+
+// get states by country
+$route["states/(:any)"]["get"] = "v1/App/getStatesByCountry/$1";

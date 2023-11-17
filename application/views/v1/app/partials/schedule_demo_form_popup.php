@@ -21,6 +21,7 @@
                     </div>
                 </div>
                 <?php $this->load->view("v1/app/partials/demo_form", [
+                    "id" => "jsScheduleFreeDemoPopUp",
                     "buttonClass"  => "w-100",
                     "buttonText" => "Schedule My Free Demo"
                 ]); ?>

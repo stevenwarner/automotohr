@@ -29,7 +29,7 @@ class App extends CI_Controller
             "css"  => [],
             "js" => []
         ];
-        $this->disableMinifiedFiles = true;
+        $this->disableMinifiedFiles = false;
     }
 
     // main website routes
@@ -277,7 +277,7 @@ class App extends CI_Controller
 
         // js
         $data['pageJs'] = [
-            "https://www.google.com/recaptcha/api.js"
+            "https://www.google.com/recaptcha/api.js",
         ];
         // css bundle
         $data['appCSS'] = bundleCSS(array_merge($appCSS, $this->commonFiles["css"]), $this->css, $page, $this->disableMinifiedFiles);
@@ -295,6 +295,8 @@ class App extends CI_Controller
         $this->form_validation->set_rules('name', 'Please provide name', 'trim|required|xss_clean');
         $this->form_validation->set_rules('email', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
         $this->form_validation->set_rules('phone_number', 'Please provide valid number', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('country', 'Please select a country', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('state', 'Please select a state', 'trim|required|xss_clean');
         $this->form_validation->set_rules('company_name', 'Please provide your Company Name', 'trim|required|xss_clean');
         $this->form_validation->set_rules('title', 'Please provide your Title', 'trim|xss_clean');
         $this->form_validation->set_rules('company_size', 'Please provide your Company Size', 'trim|xss_clean');
@@ -315,6 +317,8 @@ class App extends CI_Controller
         $company_name = $this->input->post('company_name', true);
         $job_role = $this->input->post('job_role', true);
         $company_size = $this->input->post('company_size', true);
+        $country = $this->input->post('country', true);
+        $state = $this->input->post('state', true);
         $newsletter_subscribe = $this->input->post('newsletter_subscribe', true);
         $date_requested = getSystemDate();
         $ppc = 0;
@@ -322,7 +326,7 @@ class App extends CI_Controller
         $message = $this->input->post('client_message', true);
         //
         $this->load->model('Demo_model');
-        $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role);
+        $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role, 0, $country, $state);
         $replacement_array['name'] = $first_name;
         $replacement_array['firstname'] = $first_name;
         $replacement_array['first_name'] = $first_name;
@@ -696,5 +700,20 @@ class App extends CI_Controller
                 "contentToShow" => json_decode($pageData["content"], true)["page"]["sections"]["section_0"]["details"]
             ], true)
         ]);
+    }
+
+    public function getStatesByCountry(string $countryName)
+    {
+        $pageData = $this->db
+            ->select("state_name")
+            ->where("country_sid", $countryName === "canada" ? 38 : 227)
+            ->get("states")
+            ->result_array();
+        //
+        if (!$pageData) {
+            return SendResponse(400, ["errors" => ["No record found."]]);
+        }
+        //
+        return SendResponse(200, array_column($pageData, "state_name"));
     }
 }

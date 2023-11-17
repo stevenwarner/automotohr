@@ -1,4 +1,4 @@
-<form method="post" action="javascript:void(0)" class="form <?=$buttonClass2 ?? "w-80"?>" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
+<form method="post" action="javascript:void(0)" class="form <?= $buttonClass2 ?? "w-80" ?>" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
     <div class="position-relative">
         <img src="<?= image_url("/"); ?>Ellipse 9.png" class="purple-half-div" alt="half-purple-circle" />
         <div class="form-div">
@@ -19,6 +19,20 @@
             <div class="form-group mt-4">
                 <input type="text" class="form-control" id="phone_number" placeholder="Phone Number*" name="phone_number" />
                 <?php echo form_error('phone_number'); ?>
+            </div>
+            <div class="form-group mt-4">
+                <select class="form-control jsCountrySelect" placeholder="Country*" name="country">
+                    <option value="">Please select a country</option>
+                    <option value="United States">United States</option>
+                    <option value="Canada">Canada</option>
+                </select>
+                <?php echo form_error('Country'); ?>
+            </div>
+            <div class="form-group mt-4">
+                <select class="form-control" placeholder="State*" name="state">
+                    <option value="">Please select a state</option>
+                </select>
+                <?php echo form_error('State'); ?>
             </div>
             <div class="row mt-4">
                 <div class="col-sm-6 col-12">

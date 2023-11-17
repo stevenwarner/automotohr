@@ -104,7 +104,6 @@ class Dashboard extends CI_Controller
             $data['page_title'] = "Forgot Password";
             $this->load->view('v1/app/header', $data);
             $this->load->view('v1/app/forgot_password');
-            $this->load->view('v1/app/footer');
         } else {
             $email = $this->input->post('email');
             $result = $this->Users_model->check_email($email);
