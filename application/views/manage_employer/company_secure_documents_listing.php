@@ -135,7 +135,7 @@
 </div>
 
 <!-- Modal -->
-<div id="jsSelectEmployeeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div id="jsSelectEmployeeModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
@@ -196,7 +196,9 @@
     var selectedDocuments = {};
     //
     $(document).ready(function() {
-        $('#jsSelectedEmployeeId').select2();
+        $('#jsSelectedEmployeeId').select2({
+            closeOnSelect: false
+        });
     });
     //
     $("#clear_filter").click(function() {
