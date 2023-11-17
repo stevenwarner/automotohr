@@ -29,7 +29,7 @@ class App extends CI_Controller
             "css"  => [],
             "js" => []
         ];
-        $this->disableMinifiedFiles = false;
+        $this->disableMinifiedFiles = true;
     }
 
     // main website routes
