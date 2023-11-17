@@ -9,6 +9,7 @@
                         <th class="col-xs-2 text-center">Posted On</th>
                         <!--<th class="col-xs-2 text-center">Active</th>-->
                         <th class="col-xs-2 text-center">Job Views</th>
+                        <th class="col-xs-2 text-center">Number of Applicants</th>
                         <?php if ($job_approval_module_status == 1) { ?>
                             <th class="col-xs-1">Status</th>
                         <?php } ?>
@@ -54,6 +55,7 @@
                                 
                             </td>
                             <td class="text-center"><?php echo $listing['views']; ?></td>
+                            <td class="text-center"><?php echo $listing['totalapplicants']; ?></td>
                             <?php if ($job_approval_module_status == 1) { ?>
                                 <td class="text-center">
                                     <?php if ($listing["approval_status"] == 'pending') { ?>
