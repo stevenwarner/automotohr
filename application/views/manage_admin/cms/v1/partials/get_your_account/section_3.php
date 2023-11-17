@@ -9,7 +9,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_3"];
     <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#jsSection3" aria-expanded="<?= $ariaExpanded; ?>" aria-controls="collapseOne">
         <h4>
             <strong>
-                Main
+                Banner 1
             </strong>
         </h4>
     </div>

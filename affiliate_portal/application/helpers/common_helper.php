@@ -1685,3 +1685,193 @@ if (!function_exists('bundleCSS')) {
         )) . '" />';
     }
 }
+
+
+
+if (!file_exists("getSourceByType")) {
+    function getSourceByType(string $type, string $path, string $props = '', $fullWidth = true): string
+    {
+        if ($type === "upload") {
+            if (isImage($path)) {
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="' . (splitPathAndFileName($path)["name"]) . '" />';
+            } else {
+                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
+            }
+        } else {
+            return '<iframe src="' . $path . '" title="AutomotoHR video" style="' . ($fullWidth ? "width: 100%;" : "") . ' min-height: 450px" ' . ($props) . '></iframe>';
+        }
+    }
+}
+
+if (!function_exists('isImage')) {
+    /**
+     * Check if the file is an image
+     * 
+     * @param string $str
+     * @return
+     */
+    function isImage($str)
+    {
+        return in_array(
+            strtolower(pathinfo($str, PATHINFO_EXTENSION)),
+            [
+                'png', 'jpg', 'jpeg', 'gif', 'webp'
+            ]
+        );
+    }
+}
+
+if (!function_exists('splitPathAndFileName')) {
+    /**
+     * splits file name and path
+     *
+     * @param string $file
+     * @return array
+     */
+    function splitPathAndFileName(string $file): array
+    {
+        //
+        $returnArray = [
+            'path' => '',
+            'name' => '',
+            'orig_name' => $file,
+            'ext' => '',
+            'mime' => ''
+        ];
+        //
+        $splits = explode('/', $file);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['name'] = $splits[$index];
+        //
+        unset($splits[$index]);
+        // for extension
+        $returnArray['path'] = implode('/', $splits);
+        //
+        $splits = explode('.', $returnArray['name']);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['ext'] = $splits[$index];
+        $returnArray['mime'] = getMimeType($returnArray['ext']);
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('getMimeType')) {
+    function getMimeType($input)
+    {
+        $mime_types = array(
+            'txt' => 'text/plain',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'php' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'swf' => 'application/x-shockwave-flash',
+            'flv' => 'video/x-flv',
+
+            // images
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip' => 'application/zip',
+            'rar' => 'application/x-rar-compressed',
+            'exe' => 'application/x-msdownload',
+            'msi' => 'application/x-msdownload',
+            'cab' => 'application/vnd.ms-cab-compressed',
+
+            // audio/video
+            'mp3' => 'audio/mpeg',
+            'qt' => 'video/quicktime',
+            'mov' => 'video/quicktime',
+
+            // adobe
+            'pdf' => 'application/pdf',
+            'psd' => 'image/vnd.adobe.photoshop',
+            'ai' => 'application/postscript',
+            'eps' => 'application/postscript',
+            'ps' => 'application/postscript',
+
+            // ms office
+            'doc' => 'application/msword',
+            'rtf' => 'application/rtf',
+            'xls' => 'application/vnd.ms-excel',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'docx' => 'application/msword',
+            'xlsx' => 'application/vnd.ms-excel',
+            'pptx' => 'application/vnd.ms-powerpoint',
+
+
+            // open office
+            'odt' => 'application/vnd.oasis.opendocument.text',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+        );
+        //
+        $tmp = explode('.', $input);
+        $ext = strtolower($tmp[sizeof($tmp) - 1]);
+        //
+        $mimetype = '';
+        if (function_exists('mime_content_type')) {
+            $mimetype = @mime_content_type($input);
+        }
+        if (empty($mimetype) && function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimetype = @finfo_file($finfo, $input);
+            finfo_close($finfo);
+        }
+        if (empty($mimetype) && array_key_exists($ext, $mime_types)) {
+            $mimetype = $mime_types[$ext];
+        }
+        if (empty($mimetype)) {
+            $mimetype = 'application/octet-stream';
+        }
+        return $mimetype;
+    }
+}
+
+if (!function_exists("convertToStrip")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToStrip(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
+    }
+}
+
+/**
+ * 
+ */
+if (!function_exists('getImageURL')) {
+    function getImageURL($img)
+    {
+        //
+        $img = str_replace(AWS_S3_BUCKET_URL, "", $img);
+        $img = str_replace(AWS_S3_BUCKET_URL . 'test.png', "", $img);
+        //
+        if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
+            return AWS_S3_BUCKET_URL . $img;
+        } else {
+            return base_url('assets/images/img-applicant.jpg');
+        }
+    }
+}

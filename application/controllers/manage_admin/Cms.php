@@ -91,7 +91,7 @@ class Cms extends Admin_Controller
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
-        ], "public/v1/app/", "app_". $page_data["page"], false);
+        ], "public/v1/app/", "app_" . $page_data["page"], true);
         //
         $files = [];
         // for home page
@@ -129,7 +129,7 @@ class Cms extends Admin_Controller
             "v1/plugins/ms_uploader/main",
             "js/app_helper",
             "v1/cms/meta",
-        ], $files), "public/v1/app/", "app_".$page_data["page"], false);
+        ], $files), "public/v1/app/", "app_" . $page_data["page"], true);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
     }

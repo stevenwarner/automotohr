@@ -45,6 +45,13 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
                     </label>
                     <input type="text" class="form-control" name="buttonLink" value="<?= $contentToShow["buttonLink"]; ?>" />
                 </div>
+                <div class=" form-group">
+                    <label>
+                        Background&nbsp;
+                        <strong class="text-danger">*</strong>
+                    </label>
+                    <input type="file" name="file" id="jsSection0File" class="hidden" accept="<?= ALLOWED_EXTENSIONS; ?>" />
+                </div>
 
                 <div class="form-group">
                     <label>
@@ -87,7 +94,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
                         Main heading&nbsp;
                         <strong class="text-danger">*</strong>
                     </label>
-                    <input type="text" class="form-control" name="mainHeadingContact" value="<?= $contentToShow["mainHeadingContact"]; ?>" />
+                    <textarea rows="5" class="form-control" name="mainHeadingContact"><?= $contentToShow["mainHeadingContact"]; ?></textarea>
                 </div>
                 <div class=" form-group">
                     <label>
@@ -103,7 +110,6 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
                     </label>
                     <input type="text" class="form-control" name="buttonLinkContact" value="<?= $contentToShow["buttonLinkContact"]; ?>" />
                 </div>
-
             </div>
             <div class="panel-footer text-center">
                 <button class="btn btn-success" id="jsSection0Btn">
@@ -114,3 +120,12 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
         </form>
     </div>
 </div>
+
+
+
+<script>
+    const section0 = {
+        sourceType: "<?= $contentToShow["sourceType"] ?? "upload"; ?>",
+        sourceFile: "<?= $contentToShow["sourceFile"] ?? "" ?>"
+    };
+</script>

@@ -1,4 +1,6 @@
 $(function () {
+	//
+	let XHR = null;
 	$("#affiliated-form").validate({
 		ignore: [],
 		rules: {
@@ -67,4 +69,61 @@ $(function () {
 			form.submit();
 		},
 	});
+
+	$("[target]").click(function () {
+		const $href = $(this).attr("target");
+		const $anchor = $("#" + $href).offset();
+		window.scrollTo($anchor.left, $anchor.top);
+		return false;
+	});
+
+	/**
+	 * terms of service popup
+	 */
+	$(".jsTermsOfServicePopUp").click(function (event) {
+		//
+		event.preventDefault();
+		if (XHR !== null) {
+			return;
+		}
+		//
+		XHR = $.ajax({
+			url: baseUrl("popup/terms_of_service"),
+			method: "get",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.done(function (resp) {
+				showModal(resp.view);
+			});
+	});
+
+	/**
+	 * privacy policy popup
+	 */
+	$(".jsPrivacyPolicyPopUp").click(function (event) {
+		//
+		event.preventDefault();
+		if (XHR !== null) {
+			return;
+		}
+		//
+		XHR = $.ajax({
+			url: baseUrl("popup/privacy_policy"),
+			method: "get",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.done(function (resp) {
+				showModal(resp.view);
+			});
+	});
+
+	function showModal(modalView) {
+		$("#jsPopUpModal").remove();
+		$("body").append(modalView);
+		$("#jsPopUpModal").modal("show");
+	}
 });

@@ -237,8 +237,8 @@ $(function () {
 	$("#jsSection7File").msFileUploader({
 		allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 		allowLinks: true,
-		activeLink: section5.sourceType,
-		placeholderImage: section5.sourceFile,
+		activeLink: section7.sourceType,
+		placeholderImage: section7.sourceFile,
 		fileLimit: "10mb",
 	});
 	$("#jsSection7Form").validate({

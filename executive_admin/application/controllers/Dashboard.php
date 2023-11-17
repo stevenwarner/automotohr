@@ -194,8 +194,7 @@ class Dashboard extends CI_Controller
         );
 
         //
-        $passwordRecoveryContent = getPageContent('exe_admin_password_recovery');
-
+        $passwordRecoveryContent = getPageContent('executive_admin_password_recovery', false);
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $passwordRecoveryContent['page']['meta']['title'];

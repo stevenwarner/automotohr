@@ -67,7 +67,7 @@ $contentToShow = $pageContent["page"]["sections"]["section_0"];
 
 
 <script>
-    const section6 = {
+    const section0 = {
         sourceType: "<?= $contentToShow["sourceType"] ?? "upload"; ?>",
         sourceFile: "<?= $contentToShow["sourceFile"] ?? "" ?>"
     };

@@ -4,16 +4,18 @@
         <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
                 <p class="Affiliate-title Opacity_80">
-                    <span class="highlighted-light-blue-div">Fuel</span> your Finances
+                    <span class="highlighted-light-blue-div">
+                        <?= substr($sections["section_1"]["mainHeading"], 0, 4); ?>
+                    </span> <?= convertToStrip(substr($sections["section_1"]["mainHeading"], 4)); ?>
                 </p>
             </div>
             <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
-                    <h1 class="Affiliate-heading"><?= convertToStrip($sections["section1"]['heading']); ?></h1>
+                    <h1 class="Affiliate-heading"><?= convertToStrip($sections["section_1"]['subHeading']); ?></h1>
                 </div>
                 <div class="col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center no_padding_on_mobile">
                     <p class="Affiliate-content Opacity_90">
-                        <?= convertToStrip($sections["section1"]['headingDetail']); ?>
+                        <?= convertToStrip($sections["section_1"]['details']); ?>
                     </p>
                 </div>
             </div>
@@ -24,7 +26,12 @@
                     <div class="row d-flex align-items-center">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                             <div class="position_relative">
-                                <img src="<?= image_url("/"); ?>Affiliate1.png" alt="Affiliate1" class="image_width_80" />
+                                <?= getSourceByType(
+                                    $sections["section_1"]['sourceType'],
+                                    $sections["section_1"]['sourceFile'],
+                                    'class="image_width_80"',
+                                    false
+                                ); ?>
                                 <div class="pink_bubble"></div>
                                 <div class="green_bubble"></div>
                                 <div class="red_bubble">
@@ -34,13 +41,15 @@
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 position_relative">
                             <h3 class="Affiliate-subtitle">
-                                <?= convertToStrip($sections["section2"]['heading']); ?>
+                                <?= convertToStrip($sections["section_1"]['mainHeadingContent']); ?>
                             </h3>
                             <p class="Affiliate-content-picture Opacity_90">
-                                <?= convertToStrip($sections["section2"]['headingDetail']); ?>
+                                <?= convertToStrip($sections["section_1"]['detailsContent']); ?>
                             </p>
-                            <button class="Affiliate-btn jsButtonAnimate">
-                                <p class="text"><?= convertToStrip($sections["section2"]['btnText']); ?></p>
+                            <button class="Affiliate-btn jsButtonAnimate" target="jsFormSection">
+                                <p class="text">
+                                    <?= convertToStrip($sections["section_1"]['buttonText']); ?>
+                                </p>
                                 <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                             </button>
                             <div class="Blue_bubble"></div>
@@ -50,11 +59,11 @@
             </div>
         </div>
     </section>
-    <section class="blue-form-section section-top-padding">
+    <section class="blue-form-section section-top-padding" id="jsFormSection">
         <div class="row">
             <div class="col-sm-12 margin-bottom-20">
                 <p class="text-center affiliate-screen-top-heading">
-                    <?= convertToStrip($sections["section3"]['heading']); ?>
+                    <?= convertToStrip($sections["section_2"]['mainHeading']); ?>
                 </p>
             </div>
         </div>
@@ -66,11 +75,14 @@
                         <div class=" row">
                             <div class="col-sm-12">
                                 <p class="highlighted-div text-white opacity-90-product margin-top-60" style="font-size: 28px;">
-                                   <strong> <span class="highlighted-light-blue-div background">Up to</span>
-                                    <?= convertToStrip($sections["section3"]['heading1']); ?></strong>
+                                    <strong> <span class="highlighted-light-blue-div background">
+                                            <?= substr($sections["section_2"]["subHeading"], 0, 4); ?>
+                                        </span>
+                                        <?= convertToStrip(substr($sections["section_2"]['subHeading'], 4)); ?>
+                                    </strong>
                                 </p>
                                 <h1 class="white-heading-product text-white margin-bottom-40">
-                                    <?= convertToStrip($sections["section3"]['heading2']); ?>
+                                    <?= convertToStrip($sections["section_2"]['formHeading']); ?>
                                 </h1>
                                 <?php if ($this->session->flashdata("errors")) { ?>
                                     <div class="alert alert-danger">
@@ -195,29 +207,24 @@
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 margin-bottom-30">
                                 <p class="text-white extra-text">
-                                    Please Acknowledge that you have Read and Agree with the
-                                    AutomotoHR Terms of Service and Privacy Policy and by
-                                    adding a check mark below and proceeding with the
-                                    application you are giving your express permission to
-                                    contact you, store your personal data for the purpose of
-                                    the AutomotoHR Affiliate Program tracking and payments.
-                                    Please mark the box if you Agree. Please mark the box if
-                                    you Agree.
+                                    <?= convertToStrip($sections["section_2"]['terms']); ?>
                                 </p>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                                 <input class="form-check-input checkbox" type="checkbox" value="" id="flexCheckDefault" name="terms_and_condition" />
                                 <label class="form-check-label text-white checkbox-label">
                                     By checking this box, you agree to our
-                                    <a href="#" class="under-line affiliate-anchor-color">Terms of Service</a>
+                                    <a href="#" class="under-line affiliate-anchor-color jsTermsOfServicePopUp">Terms of Service</a>
                                     and
-                                    <a href="#" class="under-line affiliate-anchor-color">
+                                    <a href="#" class="under-line affiliate-anchor-color jsPrivacyPolicyPopUp">
                                         Privacy Policy.</a>
                                 </label>
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 text-center margin-top-30">
                                 <button class="d-flex justify-content-center align-items-center affiliate-submit jsButtonAnimate jsFrmBtn">
-                                    <p class="text"><?= convertToStrip($sections["section3"]['btnText']); ?></p>
+                                    <p class="text">
+                                        <?= convertToStrip($sections["section_2"]['buttonText']); ?>
+                                    </p>
                                     <i class="fa-solid fa-arrow-right top-button-icon ps-3"></i>
                                 </button>
                             </div>
@@ -234,55 +241,60 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 padding_LR position_relative order-2-products">
                             <h3 class="first-heading">
-                                <?= convertToStrip($sections["section4"]['heading']); ?>
+                                <?= convertToStrip($sections["section_3"]['mainHeading']); ?>
                             </h3>
 
                             <h3 class="second-heading">
-                                <?= convertToStrip($sections["section4"]['heading1']); ?>
+                                <?= convertToStrip($sections["section_3"]['details']); ?>
                             </h3>
 
                             <ul class="padding_top_29">
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick1']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point1']); ?>
                                     </li>
                                 </div>
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick2']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point2']); ?>
                                     </li>
                                 </div>
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick3']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point3']); ?>
                                     </li>
                                 </div>
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick4']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point4']); ?>
                                     </li>
                                 </div>
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick5']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point5']); ?>
                                     </li>
                                 </div>
                                 <div class="d-flex">
-                                    <img src="<?= image_url("/"); ?>tick.png" alt="tick" class="image_size" />
+                                    <img src="<?= image_url("tick.png"); ?>" alt="tick" class="image_size" />
                                     <li class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section4"]['tick6']); ?>
+                                        <?= convertToStrip($sections["section_3"]['point6']); ?>
                                     </li>
                                 </div>
                             </ul>
                             <div class="blue_Bubble"></div>
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 image_end_on position_relative order-1-products d-flex align-items-center">
-                            <img src="<?= image_url("/"); ?>whyChoose.png" alt="whyChoose" class="image_width_on_medium" />
+                            <?= getSourceByType(
+                                $sections["section_3"]['sourceType'],
+                                $sections["section_3"]['sourceFile'],
+                                'class="image_width_on_medium"',
+                                false
+                            ); ?>
                             <div class="Ellipse"></div>
                         </div>
                     </div>
@@ -297,24 +309,29 @@
                 <div class="w-80">
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 position-relative">
-                            <img src="<?= image_url("/"); ?>halfredcircle.png" class="half-red-circle" alt="half-red-circle" />
-                            <img src="<?= image_url("/"); ?>womenwithlaptop.png" alt="women-with-laptop" class="product-image-div" />
+                            <img src="<?= image_url("halfredcircle.png"); ?>" class="half-red-circle" alt="half-red-circle" />
+                            <?= getSourceByType(
+                                $sections["section_4"]['sourceType'],
+                                $sections["section_4"]['sourceFile'],
+                                'class="product-image-div"',
+                                false
+                            ); ?>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 position-relative">
-                            <img src="<?= image_url("/"); ?>fullsmallyellow.png" class="fullsmallyellow" alt="full-small-yellow" />
+                            <img src="<?= image_url("fullsmallyellow.png"); ?>" class="fullsmallyellow" alt="full-small-yellow" />
                             <h2 class="text-white first-heading text-left margin-bottom-20">
-                                <?= convertToStrip($sections["section5"]['heading']); ?>
+                                <?= convertToStrip($sections["section_4"]['mainHeading']); ?>
                             </h2>
 
                             <h3 class="text-white second-heading margin-bottom-10">
-                                <?= convertToStrip($sections["section5"]['heading1']); ?>
+                                <?= convertToStrip($sections["section_4"]['details']); ?>
                             </h3>
                             <div class="tick-div-affiliate-screen d-flex justify-center">
                                 <div class="tick-icon-div-affiliate">
                                     <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
                                 </div>
                                 <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick1']); ?>
+                                    <?= convertToStrip($sections["section_4"]['point1']); ?>
                                 </p>
                             </div>
                             <div class="tick-div-affiliate-screen d-flex justify-center">
@@ -322,7 +339,7 @@
                                     <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
                                 </div>
                                 <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick2']); ?>
+                                    <?= convertToStrip($sections["section_4"]['point2']); ?>
                                 </p>
                             </div>
                             <div class="tick-div-affiliate-screen d-flex justify-center">
@@ -330,16 +347,7 @@
                                     <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
                                 </div>
                                 <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick3']); ?>
-                                </p>
-                            </div>
-
-                            <div class="tick-div-affiliate-screen d-flex justify-center">
-                                <div class="tick-icon-div-affiliate">
-                                    <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
-                                </div>
-                                <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick4']); ?>
+                                    <?= convertToStrip($sections["section_4"]['point3']); ?>
                                 </p>
                             </div>
 
@@ -348,7 +356,7 @@
                                     <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
                                 </div>
                                 <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick5']); ?>
+                                    <?= convertToStrip($sections["section_4"]['point4']); ?>
                                 </p>
                             </div>
 
@@ -357,7 +365,16 @@
                                     <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
                                 </div>
                                 <p class="text-white">
-                                    <?= convertToStrip($sections["section5"]['tick6']); ?>
+                                    <?= convertToStrip($sections["section_4"]['point5']); ?>
+                                </p>
+                            </div>
+
+                            <div class="tick-div-affiliate-screen d-flex justify-center">
+                                <div class="tick-icon-div-affiliate">
+                                    <span><i class="fa-sharp fa-solid fa-check tick-span-affiliate"></i></span>
+                                </div>
+                                <p class="text-white">
+                                    <?= convertToStrip($sections["section_4"]['point6']); ?>
                                 </p>
                             </div>
                         </div>
@@ -373,28 +390,35 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12 col-sm-12 padding_LR order-2-products">
                             <h3 class="first-heading">
-                                <?= convertToStrip($sections["section6"]['heading']); ?>
+                                <?= convertToStrip($sections["section_5"]['mainHeading']); ?>
                             </h3>
                             <div class="row margin_top position_relative">
                                 <div class="col-xl-5 col-lg-6 col-md-12 col-sm-12 col-xs-12">
                                     <h3 class="second-heading">
-                                        <?= convertToStrip($sections["section6"]['heading1']); ?>
+                                        <?= convertToStrip($sections["section_5"]['heading1']); ?>
                                     </h3>
                                     <p class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section6"]['heading1Detail']); ?>
+                                        <?= convertToStrip($sections["section_5"]['details1']); ?>
                                     </p>
                                 </div>
                                 <div class="col-xl-5 col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                                    <h3 class="second-heading"><?= convertToStrip($sections["section6"]['heading2']); ?></h3>
+                                    <h3 class="second-heading">
+                                        <?= convertToStrip($sections["section_5"]['heading2']); ?>
+                                    </h3>
                                     <p class="affiliate-paragraph">
-                                        <?= convertToStrip($sections["section6"]['heading2Detail']); ?>
+                                        <?= convertToStrip($sections["section_5"]['details2']); ?>
                                     </p>
                                 </div>
                                 <div class="light_blue_Bubble"></div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 d-flex align-items-center position_relative image_center_on_tab order-1-products">
-                            <img src="<?= image_url("/"); ?>image 80.png" alt="image_80" class="image_width_100" />
+                            <?= getSourceByType(
+                                $sections["section_5"]['sourceType'],
+                                $sections["section_5"]['sourceFile'],
+                                'class="image_width_100"',
+                                false
+                            ); ?>
                             <div class="light_pink_bubble"></div>
                         </div>
                     </div>
@@ -403,27 +427,28 @@
         </div>
     </section>
     <section class="fifth-section-audience light-grey-background-affiliate position-relative mobile-section-padding">
-        <img src="<?= image_url("/"); ?>fullsmallpinkcircle.png" class="small-pink-fith-section" alt="small-pink-circle" />
+        <img src="<?= image_url("fullsmallpinkcircle.png"); ?>" class="small-pink-fith-section" alt="small-pink-circle" />
         <div class="row">
             <div class="col-xs-12 column-flex-center affiliate-blue-section-padding">
                 <div class="w-80">
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 position-relative">
-                            <img src="<?= image_url("/"); ?>smallfulllightblue.png" class="small-lightblue-fith-section" alt="small-light-blue-circle" />
-                            <img src="<?= image_url("/"); ?>Group 6966.png" class="product-image-div" alt="girl-with-glasses" />
-                            <img src="<?= image_url("/"); ?>smallfullyellow.png" class="small-fullyellow-fith-section" alt="small-yellow-circle" />
+                            <img src="<?= image_url("smallfulllightblue.png"); ?>" class="small-lightblue-fith-section" alt="small-light-blue-circle" />
+                            <?= getSourceByType(
+                                $sections["section_6"]['sourceType'],
+                                $sections["section_6"]['sourceFile'],
+                                'class="product-image-div"',
+                                false
+                            ); ?>
+                            <img src="<?= image_url("smallfullyellow.png"); ?>" class="small-fullyellow-fith-section" alt="small-yellow-circle" />
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 position-relative">
                             <img src="<?= image_url("/"); ?>smallfullred.png" class="small-fullred-fith-section" alt="small-red-circle" />
                             <h2 class="first-heading dark-grey-affiliate text-left">
-                                <?= convertToStrip($sections["section7"]['heading']); ?>
+                                <?= convertToStrip($sections["section_6"]['mainHeading']); ?>
                             </h2>
                             <p class="affiliate-paragraph opacity-90-product">
-                                <?= convertToStrip($sections["section7"]['headingDetail']); ?>
-                            </p>
-                            <h3 class="third-heading">The most powerful platform</h3>
-                            <p class="opacity-90-product affiliate-paragraph">
-                                We are trusted by thousands of business owners, entrepreneurs and business teams, from every industry.
+                                <?= convertToStrip($sections["section_6"]['details']); ?>
                             </p>
                             <div class="row">
                                 <div class="col-xs-12">
@@ -433,7 +458,7 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick1']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point1']); ?>
                                         </p>
                                     </div>
                                     <div class="tick-blue-div-affiliate-screen d-flex justify-center">
@@ -441,7 +466,7 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick2']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point2']); ?>
                                         </p>
                                     </div>
                                     <div class="tick-blue-div-affiliate-screen d-flex justify-center">
@@ -449,7 +474,7 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick3']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point3']); ?>
                                         </p>
                                     </div>
                                     <div class="tick-blue-div-affiliate-screen d-flex justify-center">
@@ -457,7 +482,7 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick4']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point4']); ?>
                                         </p>
                                     </div>
                                     <div class="tick-blue-div-affiliate-screen d-flex justify-center">
@@ -465,7 +490,7 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick5']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point5']); ?>
                                         </p>
                                     </div>
                                     <div class="tick-blue-div-affiliate-screen d-flex justify-center">
@@ -473,11 +498,11 @@
                                             <span><i class="fa-sharp fa-solid fa-check tick-blue-span-affiliate"></i></span>
                                         </div>
                                         <p class="opacity-90-product affiliate-paragraph">
-                                            <?= convertToStrip($sections["section7"]['tick6']); ?>
+                                            <?= convertToStrip($sections["section_6"]['point6']); ?>
                                         </p>
                                     </div>
                                     <p class="opacity-90-product affiliate-paragraph margin-top-10">
-                                        <?= convertToStrip($sections["section7"]['headingDetail1']); ?>
+                                        <?= convertToStrip($sections["section_6"]['detailsBottom']); ?>
                                     </p>
                                 </div>
                             </div>
@@ -494,26 +519,33 @@
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 column-center padding-20-products">
                             <h1 class="first-heading text-center">
-                                <?= convertToStrip($sections["section8"]['heading']); ?>
+                                <?= convertToStrip($sections["section_7"]['mainHeading']); ?>
                             </h1>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6 column-center padding-20-products">
                             <h3 class="affiliate-sub-heading margin-bottom-10">
-                                <span class="big-number-affiliate">1</span><?= convertToStrip($sections["section8"]['heading1']); ?>
+                                <span class="big-number-affiliate">1</span>
+                                <?= convertToStrip($sections["section_7"]['heading1']); ?>
                             </h3>
                             <p class="opacity-90-product affiliate-paragraph margin-bottom-20 margin-left-20">
-                                <?= convertToStrip($sections["section8"]['heading1Detail']); ?>
+                                <?= convertToStrip($sections["section_7"]['details1']); ?>
                             </p>
                             <h3 class="affiliate-sub-heading margin-bottom-10">
-                                <span class="big-number-affiliate">2</span><?= convertToStrip($sections["section8"]['heading2']); ?>
+                                <span class="big-number-affiliate">2</span>
+                                <?= convertToStrip($sections["section_7"]['heading2']); ?>
                             </h3>
                             <p class="opacity-90-product affiliate-paragraph margin-left-20">
-                                <?= convertToStrip($sections["section8"]['heading2Detail']); ?>
+                                <?= convertToStrip($sections["section_7"]['details2']); ?>
                             </p>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-5">
                             <div class="text-center width-height-100 d-flex align-items-center">
-                                <img class="w-100" src="<?= image_url("/"); ?>image 81.png" alt="dashboard" />
+                                <?= getSourceByType(
+                                    $sections["section_7"]['sourceType'],
+                                    $sections["section_7"]['sourceFile'],
+                                    'class="w-100"',
+                                    false
+                                ); ?>
                             </div>
                         </div>
                     </div>
@@ -523,18 +555,18 @@
         <div class="w-100 flex">
             <div class="w-80 column-flex-center padding_top_60">
                 <h3 class="first-heading text-center">
-                    <?= convertToStrip($sections["section9"]['heading']); ?>
+                    <?= convertToStrip($sections["section_8"]['mainHeading']); ?>
                 </h3>
                 <p class="affiliate-paragraph text-center margin-top-10 opacity-90-product">
-                    <?= convertToStrip($sections["section9"]['headingDetail']); ?>
+                    <?= convertToStrip($sections["section_8"]['details']); ?>
                 </p>
                 <div class="row margin_top padding_square_side">
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 box_center_on_mobile">
                         <div class="common_card_box">
                             <div class="padding_top_left">
-                                <p class="box_heading"><?= convertToStrip($sections["section9"]['heading1']); ?></p>
+                                <p class="box_heading"><?= convertToStrip($sections["section_8"]['heading1']); ?></p>
                                 <p class="affiliate-paragraph opacity-90-product">
-                                    <?= convertToStrip($sections["section9"]['heading1Detail']); ?>
+                                    <?= convertToStrip($sections["section_8"]['details1']); ?>
                                 </p>
                             </div>
                         </div>
@@ -542,9 +574,9 @@
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 box_center_on_mobile">
                         <div class="common_card_box">
                             <div class="padding_top_left">
-                                <p class="box_heading"><?= convertToStrip($sections["section9"]['heading2']); ?></p>
+                                <p class="box_heading"><?= convertToStrip($sections["section_8"]['heading2']); ?></p>
                                 <p class="affiliate-paragraph opacity-90-product">
-                                    <?= convertToStrip($sections["section9"]['heading2Detail']); ?>
+                                    <?= convertToStrip($sections["section_8"]['details2']); ?>
                                 </p>
                             </div>
                         </div>
@@ -552,9 +584,9 @@
                     <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12 box_center_on_mobile">
                         <div class="common_card_box">
                             <div class="padding_top_left">
-                                <p class="box_heading"><?= convertToStrip($sections["section9"]['heading3']); ?></p>
+                                <p class="box_heading"><?= convertToStrip($sections["section_8"]['heading3']); ?></p>
                                 <p class="affiliate-paragraph opacity-90-product">
-                                    <?= convertToStrip($sections["section9"]['heading3Detail']); ?>
+                                    <?= convertToStrip($sections["section_8"]['details3']); ?>
                                 </p>
                             </div>
                         </div>
@@ -570,7 +602,7 @@
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-5 position-relative">
                             <div class="text-center width-height-100 not-show-on-mob">
-                                <img class="w-100 man-standing-image" src="<?= image_url("/"); ?>image 42.png" alt="dashboard" />
+                                <img class="w-100 man-standing-image" src="<?= image_url("image 42.png"); ?>" alt="dashboard" />
                             </div>
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-7 column-center padding-20-products">

@@ -1979,7 +1979,7 @@ if (!file_exists("getSourceByType")) {
     {
         if ($type === "upload") {
             if (isImage($path)) {
-                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' />';
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="'.(splitPathAndFileName($path)["name"]).'" />';
             } else {
                 return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
             }

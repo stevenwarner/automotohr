@@ -124,7 +124,6 @@ $(function () {
 	});
 
 	// section 3
-	ClassicEditor.create(document.querySelector("#jsSection3Details"));
 
 	$("#jsSection3File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
@@ -193,7 +192,6 @@ $(function () {
 	});
 
 	// section 4
-	ClassicEditor.create(document.querySelector("#jsSection4Details"));
 	$("#jsSection4File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
@@ -261,7 +259,6 @@ $(function () {
 	});
 
 	// section 5
-	ClassicEditor.create(document.querySelector("#jsSection5Details"));
 	$("#jsSection5File").msFileUploader({
 		allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 		allowLinks: true,
@@ -382,8 +379,8 @@ $(function () {
 	$("#jsSection0File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
-		activeLink: section6.sourceType,
-		placeholderImage: section6.sourceFile,
+		activeLink: section0.sourceType,
+		placeholderImage: section0.sourceFile,
 		fileLimit: "10mb",
 	});
 

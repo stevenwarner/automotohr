@@ -1,6 +1,14 @@
 $(function () {
 	let XHR = null;
 
+	// section 5
+	$("#jsSection0File").msFileUploader({
+		allowedTypes: ["jpg", "jpeg", "png", "webp"],
+		allowLinks: false,
+		activeLink: section0.sourceType,
+		placeholderImage: section0.sourceFile,
+		fileLimit: "10mb",
+	});
 	// section 0
 	$("#jsSection0Form").validate({
 		rules: {
@@ -39,6 +47,20 @@ $(function () {
 			//
 			let formDataObj = formArrayToObj($(form).serializeArray());
 			formDataObj.append("section", "section_0");
+			const fileObject = $("#jsSection0File").msFileUploader("get");
+			//
+			if (!isValidFile(fileObject)) {
+				return _error("Please select a valid source.");
+			}
+			//
+			if (fileObject.link !== undefined) {
+				formDataObj.append("source_type", fileObject.type);
+				formDataObj.append("source_link", fileObject.link);
+			} else {
+				formDataObj.append("source_type", "upload");
+				formDataObj.append("file", fileObject);
+			}
+
 			return processData(formDataObj, $("#jsSection0Btn"), "section_0");
 		},
 	});

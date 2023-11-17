@@ -176,7 +176,7 @@
                         <div class="anchor-span">
                             <a href="#" class="simple-anchor-icons"><i class="fa-solid fa-envelope"></i></a>
                         </div>
-                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailSales"]; ?>"><?= $salesSupportDetail["emailSales"]; ?> </a>
+                        <a class="icon-text-adj" href="mailto:<?= $salesSupportDetail["emailAddressSales"]; ?>"><?= $salesSupportDetail["emailAddressSales"]; ?> </a>
                     </div>
                 </div>
                 <div class="margin-top-40">

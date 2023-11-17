@@ -10,7 +10,7 @@
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title"><i class="fa fa-envelope-o"></i>CMS</h1>
+                                        <h1 class="page-title"><i class="fa fa-files-o"></i>Content Management System</h1>
                                     </div>
 
                                     <div class="hr-box">
@@ -49,7 +49,7 @@
                                                                     <tr>
                                                                         <td style="vertical-align: middle;"><?php echo $page['title']; ?></td>
                                                                         <td style="vertical-align: middle;">
-                                                                            <a href="<?php echo $page['slug']; ?>" target="_blank">
+                                                                            <a href="#" target="_blank">
                                                                                 <?php echo $page['slug']; ?>
                                                                             </a>
                                                                         </td>

@@ -60,7 +60,7 @@ define('ROOTPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 define('MINIFIED', in_array($_SERVER['HTTP_HOST'], ['automotohr.local']) ?  '' : '.min');
 
 
-require_once(dirname(__FILE__).'/../../protected_files/main.php');
+require_once(dirname(__FILE__) . '/../../protected_files/main.php');
 
 
 /*
@@ -286,8 +286,7 @@ if (!isset($view_folder[0]) && is_dir(APPPATH . 'views' . DIRECTORY_SEPARATOR)) 
 
 define('VIEWPATH', $view_folder . DIRECTORY_SEPARATOR);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+turnOnErrorReporting(0);
 
 /*
  * --------------------------------------------------------------------

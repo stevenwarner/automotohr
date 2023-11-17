@@ -65,7 +65,7 @@ $route['privacy-policy']['get'] = 'v1/App/privacyPolicy';
 $route['terms-of-service']['get'] = 'v1/App/termsOfService';
 $route['sitemap']['get'] = 'v1/App/siteMap';
 $route['products/(:any)']['get'] = 'v1/App/products/$1';
-$route['get-your-account']['get'] = 'v1/App/getYourAccount';
+$route['get-your-free-account']['get'] = 'v1/App/getYourAccount';
 $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 
@@ -78,6 +78,7 @@ $route['resources/(:any)'] = 'v1/Resources/readMore/$1';
 $route['resources/blog/load']['get'] = 'v1/Resources/loadMoreBlogs';
 $route['resources/resource/load']['get'] = 'v1/Resources/loadMoreResources';
 
+$route["popup/(:any)"]["get"] = "v1/App/getPopup/$1";
 
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';

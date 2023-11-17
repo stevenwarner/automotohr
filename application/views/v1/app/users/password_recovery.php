@@ -12,13 +12,13 @@
                                     <div class="high-lighted-text-div">
                                         <div class="highlighted-text-upper-div">
                                             <p class="highlighted-text">
-                                                <?php echo $passwordRecoveryContent['page']['heading'] ?>
+                                                <?= convertToStrip($passwordRecoveryContent['page']["sections"]["section_0"]['mainHeading']); ?>
                                             </p>
                                         </div>
 
                                         <div class="login-section">
                                             <p>
-                                                <?php echo $passwordRecoveryContent['page']['subHeading'] ?>
+                                                <?= convertToStrip($passwordRecoveryContent['page']["sections"]["section_0"]['details']); ?>
                                             </p>
                                             <?php $this->load->view('v1/app/partials/admin_flash_message'); ?>
                                             <input class="d-block login-inputs" placeholder="Password" value="<?php echo set_value('password'); ?>" type="password" id="password" name="password" style="margin-left: 20px;margin-right: 20px;" />
@@ -32,7 +32,7 @@
                                 <div class="second-div ">
                                     <div class="first-child  position-relative column-flex-center">
                                         <button class="jsButtonAnimationSecond login-screen-btns margin-top-30" value="Submit">
-                                            <?php echo $passwordRecoveryContent['page']['btnText'] ?>
+                                            <?= convertToStrip($passwordRecoveryContent['page']["sections"]["section_0"]['buttonText']); ?>
                                         </button>
                                     </div>
                                 </div>
@@ -46,7 +46,7 @@
                                 <div class="high-lighted-text-div">
                                     <div class="highlighted-text-upper-div">
                                         <p class="highlighted-text">
-                                            <?php echo $passwordRecoveryContent['page']['heading'] ?>
+                                            <?= convertToStrip($passwordRecoveryContent['page']["sections"]["section_0"]['mainHeading']); ?>
                                         </p>
                                     </div>
                                     <div class="login-section">
@@ -73,7 +73,7 @@
                             <div class="high-lighted-text-div">
                                 <div class="highlighted-text-upper-div">
                                     <p class="highlighted-text">
-                                        <?php echo $passwordRecoveryContent['page']['heading'] ?>
+                                        <?= convertToStrip($passwordRecoveryContent['page']["sections"]["section_0"]['mainHeading']); ?>
                                     </p>
                                 </div>
                                 <div class="login-section">

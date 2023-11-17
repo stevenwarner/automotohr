@@ -144,7 +144,7 @@ class App extends CI_Controller
     public function siteMap()
     {
         //
-        $pageContent = getPageContent('sitemap', true);
+        $pageContent = getPageContent('site_map', false);
         // meta titles
         $data['meta'] = [];
         $data['meta']['title'] = $pageContent['page']['meta']['title'];
@@ -188,13 +188,12 @@ class App extends CI_Controller
     public function getYourAccount()
     {
         //
-        //
-        $pageContent = getPageContent('get-account', true);
+        $pageContent = getPageContent('get_your_free_account', false)["page"];
         // meta titles
         $data['meta'] = [];
-        $data['meta']['title'] = $pageContent['page']['meta']['title'];
-        $data['meta']['description'] = $pageContent['page']['meta']['description'];
-        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+        $data['meta']['title'] = $pageContent['meta']['title'];
+        $data['meta']['description'] = $pageContent['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['meta']['keywords'];
         //
         $this->getCommon($data, "get-your-account");
         //
@@ -675,5 +674,27 @@ class App extends CI_Controller
                 ]
             ]
         );
+    }
+
+    /**
+     * get popups for front end
+     */
+    public function getPopup(string $pageName)
+    {
+        $pageData = $this->db
+            ->select("content")
+            ->where("page", $pageName)
+            ->get("cms_pages_new")
+            ->row_array();
+        //
+        if (!$pageData) {
+            return SendResponse(400, ["errors" => ["No page found."]]);
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/app/partials/popup", [
+                "contentToShow" => json_decode($pageData["content"], true)["page"]["sections"]["section_0"]["details"]
+            ], true)
+        ]);
     }
 }

@@ -67,7 +67,7 @@ class Dashboard extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             //
-            $loginContent = getPageContent('forgot_password_affiliate');
+            $loginContent = getPageContent('affiliate_forgot_password');
             // meta titles
             $data['meta'] = [];
             $data['meta']['title'] = $loginContent['page']['meta']['title'];
