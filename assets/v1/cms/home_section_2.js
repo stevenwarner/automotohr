@@ -91,7 +91,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: true,
 					activeLink: "upload",
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 				//
 				$("#jsAddHomeProduct").validate({
@@ -167,7 +167,7 @@ $(function () {
 					allowLinks: true,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 				//
 				$("#jsEditHomeProduct").validate({

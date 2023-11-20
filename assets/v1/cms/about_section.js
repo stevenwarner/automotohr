@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsAboutSectionForm").validate({

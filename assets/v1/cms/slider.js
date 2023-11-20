@@ -71,7 +71,7 @@ $(function () {
 				$("#jsAddSliderModalBody").html(resp.view);
 				//
 				$("#bannerImage").msFileUploader({
-					fileLimit: "2MB",
+					fileLimit: "20MB",
 					allowedTypes: ["jpg", "jpeg", "png", "gif", "webp"],
 				});
 				//
@@ -128,7 +128,7 @@ $(function () {
 				$("#jsEditSliderModalBody").html(resp.view);
 				//
 				$("#bannerEditImage").msFileUploader({
-					fileLimit: "2MB",
+					fileLimit: "20MB",
 					allowedTypes: ["jpg", "jpeg", "png", "gif", "webp"],
 					placeholderImage: resp.data.image,
 				});

@@ -7,7 +7,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 	$("#jsSection0Form").validate({
 		rules: {
@@ -56,7 +56,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection1Form").validate({

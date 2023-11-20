@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section1.sourceType,
 		placeholderImage: section1.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -57,7 +57,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section8.sourceType,
 		placeholderImage: section8.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection8Form").validate({
@@ -129,7 +129,7 @@ $(function () {
 			allowLinks: true,
 			activeLink: sectionFile.sourceType,
 			placeholderImage: sectionFile.sourceFile,
-			fileLimit: "10mb",
+			fileLimit: "20mb",
 		});
 
 		$.each(sectionPoints, function (i, v) {
@@ -139,7 +139,7 @@ $(function () {
 				allowLinks: false,
 				activeLink: v.sourceType,
 				placeholderImage: v.sourceFile,
-				fileLimit: "10mb",
+				fileLimit: "20mb",
 			});
 		});
 

@@ -22,7 +22,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsProductAboutForm").validate({
@@ -189,7 +189,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: true,
 					activeLink: "upload",
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 				//
 				$("#jsAdd").validate({
@@ -294,7 +294,7 @@ $(function () {
 					allowLinks: true,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 				//
 				$("#jsEditHomeProduct").validate({

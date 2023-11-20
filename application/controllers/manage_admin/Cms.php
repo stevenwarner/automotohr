@@ -196,7 +196,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'image');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
         //
         if ($errors) {
             return SendResponse(
@@ -307,7 +307,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image', 10);
+                $errors = hasFileErrors($_FILES, "file", 'image', 20);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -356,7 +356,7 @@ class Cms extends Admin_Controller
             );
         }
         // check and run for image
-        $errors = hasFileErrors($_FILES, "banner_image", 'image');
+        $errors = hasFileErrors($_FILES, "banner_image", 'imag2');
         //
         if ($errors) {
             return SendResponse(
@@ -421,7 +421,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -517,7 +517,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
             //
             if ($errors) {
                 return SendResponse(
@@ -580,7 +580,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -654,7 +654,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                    $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -686,7 +686,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_1"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 10);
+                    $errors = hasFileErrors($_FILES, "file_point_1", 'image|video', 20);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -717,7 +717,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_2"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 10);
+                    $errors = hasFileErrors($_FILES, "file_point_2", 'image|video', 20);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -748,7 +748,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_point_3"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 10);
+                    $errors = hasFileErrors($_FILES, "file_point_3", 'image|video', 20);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -779,7 +779,7 @@ class Cms extends Admin_Controller
                     $fileLink = $post["source_link_logo"];
                 } else {
                     // check and run for image
-                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 10);
+                    $errors = hasFileErrors($_FILES, "file_logo", 'image|video', 20);
                     //
                     if ($errors) {
                         return SendResponse(
@@ -883,7 +883,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
             //
             if ($errors) {
                 return SendResponse(
@@ -963,7 +963,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                 //
                 if ($errors) {
                     return SendResponse(
@@ -1051,7 +1051,7 @@ class Cms extends Admin_Controller
         if ($post["source_type"] === "upload") {
             //
             // check and run for image
-            $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
             //
             if ($errors) {
                 return SendResponse(
@@ -1130,7 +1130,7 @@ class Cms extends Admin_Controller
                 $fileLink = $post["source_link"];
             } else {
                 // check and run for image
-                $errors = hasFileErrors($_FILES, "file", 'image|video', 10);
+                $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                 //
                 if ($errors) {
                     return SendResponse(

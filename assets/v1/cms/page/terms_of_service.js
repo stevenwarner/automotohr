@@ -8,7 +8,7 @@ $(function () {
 		allowLinks: false,
 		activeLink: section0.sourceType,
 		placeholderImage: section0.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection0Form").validate({

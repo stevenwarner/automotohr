@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: homeSection1FileObj.sourceType,
 		placeholderImage: homeSection1FileObj.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsHomeSection1Form").validate({

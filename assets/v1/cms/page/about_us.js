@@ -6,7 +6,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: aboutObj.sourceType,
 		placeholderImage: aboutObj.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection1Form").validate({
@@ -51,7 +51,7 @@ $(function () {
 		allowLinks: true,
 		activeLink: section2.sourceType,
 		placeholderImage: section2.sourceFile,
-		fileLimit: "10mb",
+		fileLimit: "20mb",
 	});
 
 	$("#jsSection2Form").validate({
@@ -219,7 +219,7 @@ $(function () {
 					allowedTypes: ["mov", "mp4", "jpg", "jpeg", "png", "webp"],
 					allowLinks: false,
 					activeLink: "upload",
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 
 				ClassicEditor.create(document.querySelector("#detailsAddTeam"));
@@ -294,7 +294,7 @@ $(function () {
 					allowLinks: false,
 					activeLink: resp.sourceType,
 					placeholderImage: resp.sourceFile,
-					fileLimit: "10mb",
+					fileLimit: "20mb",
 				});
 				ClassicEditor.create(
 					document.querySelector("#detailsEditTeam")
