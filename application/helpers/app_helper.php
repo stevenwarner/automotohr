@@ -1844,3 +1844,151 @@ if (!function_exists('findCompanyUser')) {
         return $result;
     }
 }
+
+//
+if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
+
+    function updateEmployeeDepartmentToComplyNet(int $employeeId, int $companyId)
+    {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'clib');
+        $CI->load->model('2022/complynet_model');
+        // fetch the old department
+        $employeeOldDepartmentId = $CI->complynet_model->getEmployeeOldComplyNetDepartment($employeeId);
+        //
+        if ($employeeOldDepartmentId == '') {echo "zero dd<br>";
+            return false;
+        }
+
+        // get name aur id
+        $employeeNewDepartment = $CI->complynet_model->getDepartmentName($employeeId);
+        //
+        if (!$employeeNewDepartment) {echo "one dd<br>";
+            return false;
+        }
+
+        // get new department id
+        $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
+        _e($employeeOldDepartmentId,true);
+        _e($employeeNewDepartmentId,true);
+        // when both ids are equal
+        if ($employeeNewDepartmentId == $employeeOldDepartmentId) {echo "two dd<br>";
+            return false;
+        }
+
+        // Create New Department On Comply Net
+        if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId == 0) {
+            // $employeeNewDepartment['name']='New Department Test';
+            $employeeNewDepartmentId = $CI->complynet_model->checkAndCreateDepartmentOnComplyNet(
+                $employeeNewDepartment['sid'],
+                $employeeNewDepartment['name'],
+                $companyId
+            );
+        }
+
+        //
+        if ($employeeNewDepartmentId == '') {echo "three dd<br>";
+            return false;
+        }
+        //
+        $employee = $CI->complynet_model->getemployeeComplyNetJobTitle($employeeId);
+        //
+        $complyJobRoleId = $CI->complynet_model->getAndSetJobRoleId(
+            $employeeNewDepartmentId,
+            $employee['complynet_job_title']
+        );
+        //
+        if ($complyJobRoleId === 0) {echo "four dd<br>";
+            return false;
+        }
+        //
+        if (empty($complyJobRoleId)) {echo "five dd<br>";
+            return false;
+        }
+
+        //
+        return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
+            $employeeId,
+            $employeeNewDepartmentId,
+            $complyJobRoleId
+        );
+    }
+}
+
+//
+if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
+
+    function updateEmployeeJobRoleToComplyNet(int $employeeId, int $companyId)
+    {
+        //
+        $CI = &get_instance();
+        //
+        $CI->load->library('Complynet/Complynet_lib', '', 'clib');
+        $CI->load->model('2022/complynet_model');
+
+        //
+        $employeeDepartmentId = $CI->complynet_model->getEmployeeOldComplyNetDepartment($employeeId);
+        //
+        if ($employeeDepartmentId == '') {echo "one<br>";
+            return false;
+        }
+        // Get company job roles
+        $employeeOldJobRoleId = $CI->complynet_model->getEmployeeOldComplyNetJobRole($employeeId);
+        //
+        if ($employeeOldJobRoleId == '') {echo "two<br>";
+            return false;
+        }
+
+        //
+        $employeeComplyNetJobTitle = $CI->complynet_model->getComplyNetJobTitle($employeeId);
+
+        if ($employeeComplyNetJobTitle['complynet_job_title'] == '') {echo "three<br>";
+            return false;
+        }
+
+        $employeeNewJobRoleId = $CI->complynet_model->getEmployeeNewComplyNetJobRole($employeeDepartmentId, $employeeComplyNetJobTitle['complynet_job_title']);
+
+        //
+        if ($employeeNewJobRoleId == $employeeOldJobRoleId) {echo "four<br>";
+            return false;
+        }
+
+        if ($employeeNewJobRoleId != '') {
+            // Just Bind
+            $updateData['complynet_department_sid'] = $employeeDepartmentId;
+            $updateData['complynet_job_role_sid'] = $employeeNewJobRoleId;
+            $CI->complynet_model->updateComplyNetEmployeeJobTitle(
+                $employeeId,
+                $companyId,
+                $updateData
+            );
+
+            return false;
+        }
+
+        // Create New Job Role on Comply Net
+        $complyJobRoleId = $CI->complynet_model->getAndSetComplyNetJobRoleId(
+            $employeeDepartmentId,
+            $employeeComplyNetJobTitle['complynet_job_title']
+        );
+
+        //
+        if ($complyJobRoleId === 0) {
+            return false;
+        }
+        //
+        if (empty($complyJobRoleId)) {
+            return false;
+        }
+
+        //
+        return $CI->complynet_model->updateEmployeeJobTitleOnComplyNet(
+            $employeeId,
+            $employeeDepartmentId,
+            $complyJobRoleId
+        );
+    }
+}
+
