@@ -1986,8 +1986,17 @@ $route['job_info_delete/(:any)'] = 'employee_management/JobInfoDelete/$1';
 
 
 
+$route['job_compensation_add/(:any)'] = 'employee_management/JobCompensationAdd/$1';
+$route['job_compensation_edit/(:any)/(:any)'] = 'employee_management/JobCompensationEdit/$1/$2';
+$route['job_compensation_delete/(:any)/(:any)'] = 'employee_management/JobCompensationDelete/$1/$2';
 
 
+$route['job_compensation_primary_check/(:any)'] = 'employee_management/checkPrimaryCompensation/$1';
+
+
+
+
+//$route['job_info/applicant/(:any)/(:any)'] = 'application_tracking_system/JobInfo/$1/$2';
 //$route['equipment_info/(:any)/(:any)'] = 'settings/equipment_info/$1/$2';
 
 

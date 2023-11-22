@@ -2095,7 +2095,7 @@
 
 
     //
-    function addjobCompensation($sid, $employeeType, $data)
+    function addjobInformation($sid, $employeeType, $data)
     {
 
         //
@@ -2107,12 +2107,17 @@
                 $dataToUpdate['is_primary'] = 0;
                 $this->db->where('employee_sid', $sid);
                 $this->db->where('employee_type', $employeeType);
-                $this->db->update('payroll_employee_garnishments', $dataToUpdate);
+                $this->db->update('gusto_employees_jobs', $dataToUpdate);
             }
         }
 
         //
-        $this->db->insert('payroll_employee_garnishments', $data);
+        if ($data['is_primary'] == 1) {
+            $data['is_active'] = 1;
+        }
+
+        //
+        $this->db->insert('gusto_employees_jobs', $data);
         return $this->db->insert_id();
     }
 
@@ -2120,6 +2125,18 @@
     function addjobCompensationDetails($data)
     {
         $this->db->insert('payroll_employee_job_compensations', $data);
+    }
+
+
+
+    //
+    function getPrimaryCompensation($sid)
+    {
+        return
+            $this->db
+            ->where("gusto_employees_jobs_sid", $sid)
+            ->where("is_primary", 1)
+            ->count_all_results("gusto_employees_jobs_compensations");
     }
 
 
@@ -2131,7 +2148,7 @@
             ->where("employee_sid", $sid)
             ->where("employee_type", $employeeType)
             ->where("is_primary", 1)
-            ->count_all_results("payroll_employee_garnishments");
+            ->count_all_results("gusto_employees_jobs");
     }
 
 
@@ -2139,46 +2156,21 @@
     {
 
         //
-        $this->db->select(
-            "
-            payroll_employee_garnishments.sid,
-            payroll_employee_garnishments.job_title,
-            payroll_employee_garnishments.flsa,
-            payroll_employee_garnishments.is_primary,
-            payroll_employee_garnishments.is_active,
-            payroll_employee_garnishments.employee_type,
-            payroll_employee_job_compensations.normal_shift_start_time,
-            payroll_employee_job_compensations.normal_shift_end_time,
-            payroll_employee_job_compensations.normal_break_hour,
-            payroll_employee_job_compensations.normal_break_minutes,
-            payroll_employee_job_compensations.normal_week_days_off,
-            payroll_employee_job_compensations.normal_rate,
-            payroll_employee_job_compensations.normal_per,
-            payroll_employee_job_compensations.normal_effected_date,
-            payroll_employee_job_compensations.overtime_shift_start_time,
-            payroll_employee_job_compensations.overtime_shift_end_time,
-            payroll_employee_job_compensations.overtime_rate,
-            payroll_employee_job_compensations.overtime_is_allowed,
-            payroll_employee_job_compensations.double_overtime_shift_start_time,
-            payroll_employee_job_compensations.double_overtime_shift_end_time,
-            payroll_employee_job_compensations.double_overtime_is_allowed,
-            payroll_employee_job_compensations.holiday_rate,
-            payroll_employee_job_compensations.holiday_overtime_is_allowed,
-            payroll_employee_job_compensations.double_overtime_rate
-            "
-        );
-        $this->db->where("payroll_employee_garnishments.employee_sid", $sid);
-        $this->db->where("payroll_employee_garnishments.employee_type", $employeeType);
+
+        $this->db->where("employee_sid", $sid);
+        $this->db->where("employee_type", $employeeType);
         //
         if ($jobStatus != '') {
-            $this->db->where("payroll_employee_garnishments.is_active", $jobStatus);
+            $this->db->where("is_active", $jobStatus);
         }
         if ($primaryJob != '') {
-            $this->db->where("payroll_employee_garnishments.is_primary", $primaryJob);
+            $this->db->where("is_primary", $primaryJob);
         }
-        $this->db->join('payroll_employee_job_compensations', 'payroll_employee_job_compensations.payroll_job_sid = payroll_employee_garnishments.sid');
 
-        $records =  $this->db->get('payroll_employee_garnishments')->result_array();
+        $records =  $this->db->get('gusto_employees_jobs')->result_array();
+
+
+        //_e($records,true,true);
 
         //   $sql = $this->db->last_query();
         //       die($sql);
@@ -2192,7 +2184,7 @@
 
 
 
-    function getjobInformationById($sid)
+    function getjobInformationById_old($sid)
     {
 
         //
@@ -2233,7 +2225,6 @@
         $records =  $this->db->get('payroll_employee_garnishments')->row_array();
 
         //   $sql = $this->db->last_query();
-        //       die($sql);
         //
         if (!empty($records)) {
             return $records;
@@ -2244,36 +2235,202 @@
 
 
 
+
+    //
+    function getjobInformationById($sid)
+    {
+
+        //
+        $this->db->select(
+            "
+            sid,
+            employee_sid,
+            is_primary,
+            title,
+            rate,
+            current_compensation_uuid,
+            is_active,
+            shift_start_time,
+            shift_end_time,
+            break_hour,
+            break_minutes,
+            week_days_off,
+            employee_type
+            "
+        );
+
+        $this->db->where("sid", $sid);
+        //
+        $records =  $this->db->get('gusto_employees_jobs')->row_array();
+
+        //   $sql = $this->db->last_query();
+        //
+        if (!empty($records)) {
+            return $records;
+        } else {
+            return [];
+        }
+    }
+
+
+    //
+    function addjobCompensation($sid, $data)
+    {
+
+        //
+        if ($data['is_primary'] == 1) {
+            $primaryCount = $this->getPrimaryCompensation($sid);
+
+            if ($primaryCount > 0) {
+                $dataToUpdate['is_primary'] = 0;
+                $this->db->where('gusto_employees_jobs_sid', $sid);
+                $this->db->update('gusto_employees_jobs_compensations', $dataToUpdate);
+            }
+        }
+
+        //
+        if ($data['is_primary'] == 1) {
+            $data['is_active'] = 1;
+        }
+
+        //
+        $this->db->insert('gusto_employees_jobs_compensations', $data);
+        return $this->db->insert_id();
+    }
+
+
+    //
+    function getJobCompensations($sid)
+    {
+
+        return
+            $this->db
+            ->where("gusto_employees_jobs_sid", $sid)
+            ->order_by("is_primary", 'Desc')
+            ->get('gusto_employees_jobs_compensations')
+            ->result_array();
+    }
+
+    //
+    function getJobCompensationsById($sid)
+    {
+
+        return
+            $this->db
+            ->where("sid", $sid)
+            ->get('gusto_employees_jobs_compensations')
+            ->row_array();
+    }
+
+
     //
     function updatejobCompensation($sid, $dataToUpdate)
     {
+
         //
+        if ($dataToUpdate['is_primary'] == 1) {
+            $primaryCount = $this->getPrimaryCompensation($dataToUpdate['gusto_employees_jobs_sid']);
+
+            if ($primaryCount > 0) {
+                $dataToUpdateUp['is_primary'] = 0;
+                $this->db->where('gusto_employees_jobs_sid', $dataToUpdate['gusto_employees_jobs_sid']);
+                $this->db->update('gusto_employees_jobs_compensations', $dataToUpdateUp);
+            }
+        }
+
+        //
+        if ($dataToUpdate['is_primary'] == 1) {
+            $dataToUpdate['is_active'] = 1;
+        }
+
+
         $this->db->where('sid', $sid);
-        $this->db->update('payroll_employee_garnishments', $dataToUpdate);
+        $this->db->update('gusto_employees_jobs_compensations', $dataToUpdate);
+
+        //Update User
+        if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
+
+            //  $updateUser['job_title'] = $dataToUpdate['job_title'];
+
+            //  $this->db->where('sid', $dataToUpdate['employee_sid']);
+            // $this->db->update('users', $updateUser);
+        }
     }
 
-    function updatejobCompensationDetails($sid, $dataToUpdate)
+
+
+    //
+    function updatejobDetail($sid, $dataToUpdate)
     {
         //
-        $this->db->where('payroll_job_sid', $sid);
-        $this->db->update('payroll_employee_job_compensations', $dataToUpdate);
+        if ($dataToUpdate['is_primary'] == 1) {
+            $primaryCount = $this->getPrimaryJob($dataToUpdate['employee_type'], $dataToUpdate['employee_sid']);
+
+            if ($primaryCount > 0) {
+                $dataToUpdateUp['is_primary'] = 0;
+                $this->db->where('employee_sid', $dataToUpdate['employee_sid']);
+                $this->db->where('employee_type', $dataToUpdate['employee_type']);
+                $this->db->update('gusto_employees_jobs', $dataToUpdateUp);
+            }
+        }
+
+        //
+        if ($dataToUpdate['is_primary'] == 1) {
+            $dataToUpdate['is_active'] = 1;
+        }
+
+        $this->db->where('sid', $sid);
+        $this->db->update('gusto_employees_jobs', $dataToUpdate);
+        //Update User
+        if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
+
+            //  $updateUser['job_title'] = $dataToUpdate['job_title'];
+            //  $this->db->where('sid', $dataToUpdate['employee_sid']);
+            // $this->db->update('users', $updateUser);
+        }
     }
 
-
-
+    //
     function deletejobCompensation($sid)
     {
         //
         $this->db->where('sid', $sid);
-        $this->db->delete('payroll_employee_garnishments');
+        $this->db->delete('gusto_employees_jobs_compensations');
     }
 
-    function deletejobCompensationDetails($sid)
+    //
+    function deleteJobInfo($sid)
     {
         //
-        $this->db->where('payroll_job_sid', $sid);
-        $this->db->delete('payroll_employee_job_compensations');
+        $this->db->where('gusto_employees_jobs_sid', $sid);
+        $this->db->delete('gusto_employees_jobs_compensations');
+        //
+        $this->db->where('sid', $sid);
+        $this->db->delete('gusto_employees_jobs');
     }
 
 
+    //
+    function getJobEarnings($sid)
+    {
+        return
+            $this->db
+            ->where("gusto_employees_jobs_sid", $sid)
+            ->get('user_earnings')
+            ->result_array();
+    }
+
+
+    function addjobEarnings($data)
+    {
+        $this->db->insert('user_earnings', $data);
+    }
+
+    //
+    function updatejobEarnings($data)
+    {
+        $this->db->where('gusto_employees_jobs_sid', $data['gusto_employees_jobs_sid']);
+        $this->db->where('type', $data['type']);
+        $this->db->update('user_earnings', $data);
+    }
 }

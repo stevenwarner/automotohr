@@ -1,9 +1,3 @@
-<style>
-    .normal {
-        font-weight: normal;
-
-    }
-</style>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -35,18 +29,18 @@
                                             <div class="form-title-section"><br>
                                                 <h2>Job Information</h2>
                                                 <div class="text-right">
-                                                <a href="<?php echo base_url('job_info') . '/employee/' . $employer["sid"]; ?>" class="btn btn-success">Add Earnings</a>&nbsp;
-
                                                     <input type="button" value="Save" onclick="submitResult();" class="btn btn-success">
-                                                    <a href="<?php echo base_url('job_info') . '/employee/' . $employer["sid"]; ?>" class="btn btn-danger">Cancel</a>&nbsp;
-                                                    <a href="<?php echo base_url('job_info') . '/employee/' . $employer["sid"]; ?>" class="btn black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Manage Jobs</a>
+                                                    <a href="<?php echo base_url('job_info') . '/employee/' . $employer["sid"]; ?>" class="btn btn-danger">Cancel</a>
                                                 </div>
                                             </div>
 
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                     <p class="text-danger csF16">
-
+                                                        <strong>
+                                                            <em>
+                                                                Note: The FLSA status for this compensation. Salaried ('Exempt') employees are paid a fixed salary every pay period. Salaried with overtime ('Salaried Nonexempt') employees are paid a fixed salary every pay period, and receive overtime pay when applicable. Hourly ('Nonexempt') employees are paid for the hours they work, and receive overtime pay when applicable. Owners ('Owner') are employees that own at least twenty percent of the company. </em>
+                                                        </strong>
                                                     </p>
                                                 </div>
                                             </div>
@@ -62,7 +56,7 @@
                                                             <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $employer['job_title_type'] == '0' ? 'checked' : '' ?>> Custom Job Title &nbsp;
                                                         <?php } ?>
                                                     </label>
-                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $jobTitleData["title"]); ?>" type="text" name="job_title" id="job_title">
+                                                    <input class="invoice-fields" value="<?php echo set_value('job_title', $jobTitleData["job_title"]); ?>" type="text" name="job_title" id="job_title">
                                                     <?php if ($templateTitles) { ?>
                                                         <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
                                                             <option value="0">Please select job title</option>
@@ -76,6 +70,16 @@
                                                     <?php echo form_error('job_title'); ?>
                                                 </div>
 
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 form-group">
+                                                    <label>FLSA Status:</label>
+                                                    <select class="invoice-fields" id="flsa" name="flsa">
+                                                        <option value="Exempt">Exempt</option>
+                                                        <option value="Salaried Nonexempt">Salaried Nonexempt</option>
+                                                        <option value="Nonexempt">Nonexempt</option>
+                                                        <option value="Owner">Owner</option>
+                                                    </select>
+                                                    <?php echo form_error('flsa'); ?>
+                                                </div>
 
 
                                                 <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
@@ -100,8 +104,8 @@
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <?php
-                                                    $shift_start = isset($jobTitleData['shift_start_time']) && !empty($jobTitleData['shift_start_time']) ? $jobTitleData['shift_start_time'] : SHIFT_START;
-                                                    $shift_end = isset($jobTitleData['shift_end_time']) && !empty($jobTitleData['shift_end_time']) ? $jobTitleData['shift_end_time'] : SHIFT_END;
+                                                    $shift_start = isset($jobTitleData['normal_shift_start_time']) && !empty($jobTitleData['normal_shift_start_time']) ? $jobTitleData['normal_shift_start_time'] : SHIFT_START;
+                                                    $shift_end = isset($jobTitleData['normal_shift_end_time']) && !empty($jobTitleData['normal_shift_end_time']) ? $jobTitleData['normal_shift_end_time'] : SHIFT_END;
                                                     ?>
                                                     <div class="row">
                                                         <div class="col-sm-6">
@@ -118,8 +122,8 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Break</label>
                                                     <?php
-                                                    $break_hours = isset($jobTitleData['break_hour']) ? $jobTitleData['break_hour'] : BREAK_HOURS;
-                                                    $break_minutes = isset($jobTitleData['break_minutes']) && !empty($jobTitleData['break_minutes']) ? $jobTitleData['break_minutes'] : BREAK_MINUTES;
+                                                    $break_hours = isset($jobTitleData['normal_break_hour']) ? $jobTitleData['normal_break_hour'] : BREAK_HOURS;
+                                                    $break_minutes = isset($jobTitleData['normal_break_minutes']) && !empty($jobTitleData['normal_break_minutes']) ? $jobTitleData['normal_break_minutes'] : BREAK_MINUTES;
                                                     ?>
                                                     <div class="row">
                                                         <div class="col-sm-6 shift_div">
@@ -143,7 +147,7 @@
                                                 <!--  -->
                                                 <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
                                                     <label>Week Days Off:</label>
-                                                    <?php $dayoffs = isset($jobTitleData['week_days_off']) && !empty($jobTitleData['week_days_off']) ? explode(',', $jobTitleData['week_days_off']) : [DAY_OFF]; ?>
+                                                    <?php $dayoffs = isset($jobTitleData['normal_week_days_off']) && !empty($jobTitleData['normal_week_days_off']) ? explode(',', $jobTitleData['normal_week_days_off']) : [DAY_OFF]; ?>
                                                     <select class="show_employee_working_info" name="normal_week_days_off[]" id="js_offdays" multiple="true">
                                                         <option value="Monday" <?php echo in_array("Monday", $dayoffs) ? 'selected="true"' : ''; ?>>
                                                             Monday</option>
@@ -162,137 +166,49 @@
                                                     </select>
                                                 </div>
 
-                                            </div>
 
-
-                                            <div class="panel panel-success">
-                                                <div class="panel-heading">
-
-                                                    <h1 class="csF16 csW m0">
-                                                        <strong>
-                                                            Compensations
-                                                        </strong>
-                                                        <p class="text-right" style="margin-top: -25px;"> <strong><a href="<?php echo base_url('job_compensation_add/' . $jobTitleData['sid']) ?>" class="btn btn-success text-right" title="Add Compensation"><i class="fa fa-plus"></i>Add Compensation</a></strong></p>
-                                                    </h1>
-
-                                                </div>
-                                                <div class="panel-body">
-
-                                                    <div class="row">
-
-                                                        <?php
-
-                                                        if (!empty($jobCompensationData)) {
-                                                            foreach ($jobCompensationData as $compensationRow) {
-                                                        ?>
-
-                                                                <table class="table table-bordered table-striped fixTable-header">
-
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td>
-                                                                                <div class="row">
-                                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-
-                                                                                        <h4 style="margin-top: 0">
-                                                                                        </h4>
-
-
-                                                                                        <p class="csF16 normal">
-                                                                                            <strong>FLSA Status:</strong> <?php echo $compensationRow['flsa_status'] ?>
-                                                                                        </p>
-
-
-                                                                                        <p class="csF16 normal">
-                                                                                            <strong>Effective Date:</strong> <?php echo $compensationRow['effective_date'] ?>
-                                                                                        </p>
-
-                                                                                        <p class="csF16 normal">
-                                                                                            <strong>Per:</strong> <?php echo $compensationRow['per'] ?>
-                                                                                        </p>
-                                                                                        <p class="csF16 normal">
-                                                                                            <strong>Multiplier:</strong> <?php echo $compensationRow['compensation_multiplier'] ?>
-                                                                                        </p>
-
-                                                                                    </div>
-
-                                                                                    <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
-
-                                                                                        <p class="csF16">
-
-                                                                                            <?php if ($compensationRow['is_primary']) { ?>
-                                                                                                <i class="fa fa-check csF16 text-success" aria-hidden="true"></i>&nbsp;<?php } else { ?>
-                                                                                                <i class="fa fa-close csF16 text-danger" aria-hidden="true"></i>&nbsp;
-
-                                                                                            <?php } ?>
-
-                                                                                            is Primary?
-                                                                                        </p>
-
-
-                                                                                        <p class="csF16">
-                                                                                            <?php if ($compensationRow['is_active']) { ?>
-                                                                                                black-btn pull-right                                 <i class="fa fa-check csF16 text-success" aria-hidden="true"></i>&nbsp;<?php } else { ?>
-                                                                                                <i class="fa fa-close csF16 text-danger" aria-hidden="true"></i>&nbsp;
-
-                                                                                            <?php } ?>
-                                                                                            is Active?
-                                                                                        </p>
-
-
-                                                                                    </div>
-
-                                                                                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1 form-group">
-
-                                                                                        <p class="csF16">
-                                                                                            <strong><a href="<?php echo base_url('job_compensation_edit/' . $jobTitleData['sid'] . '/' . $compensationRow['sid']) ?>" class="btn btn-success btn-sm" title="Edit Job"><i class="fa fa-pencil"></i></a></strong>
-                                                                                        </p>
-                                                                                        <p class="csF16">
-                                                                                            <?php if ($compensationRow['is_primary'] != 1) { ?>
-
-                                                                                                <strong><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Compensation" onclick="deleteCompensation('<?php echo $jobTitleData['sid'] ?>','<?php echo $compensationRow['sid'] ?>')"><i class="fa fa-times"></i></a></strong>
-                                                                                            <?php } ?>
-                                                                                        </p>
-
-                                                                                    </div>
-
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                        <?php }
-                                                        } ?>
-
+                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
+                                                    <label class="csF16">Rate <strong class="text-danger">*</strong></label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
+                                                        </span>
+                                                        <input type="text" class="form-control input-lg rate" placeholder="0.0" value="<?php echo $jobTitleData['normal_rate'] ?>" name="normal_rate">
                                                     </div>
+                                                    <?php echo form_error('normal_rate'); ?>
+
                                                 </div>
+
+
+                                                <div class=" col-lg-2 col-md-2 col-xs-12 col-sm-2  form-group">
+                                                    <label class="csF16">Per <strong class="text-danger">*</strong></label>
+                                                    <select class="form-control input-lg rate_per" name="normal_per" id="normal_per">
+                                                        <option value="Hour">Per hour</option>
+                                                        <option value="Week">Per week</option>
+                                                        <option value="Month">Per month</option>
+                                                        <option value="Year">Per year</option>
+                                                        <option value="Paycheck">Per paycheck</option>
+                                                    </select>
+                                                    <?php echo form_error('normal_per'); ?>
+
+
+                                                </div>
+
+
+                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
+                                                    <label>Effected Date: <strong class="text-danger">*</strong></label>
+
+                                                    <?php
+                                                    $effectedDate = $jobTitleData['normal_effected_date'] != NULL && $jobTitleData['normal_effected_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $jobTitleData['normal_effected_date'])->format('m-d-Y') : '';
+                                                    ?>
+                                                    <input class="invoice-fields js-rehireDate" id="normal_effected_date" readonly="" type="text" name="normal_effected_date" value="<?php echo $effectedDate; ?>">
+                                                    <?php echo form_error('normal_effected_date'); ?>
+                                                </div>
+
                                             </div>
 
+
                                             <div class="panel panel-success">
-                                                <?php foreach ($jobEarningsData as $overtimedata) {
-
-                                                    if ($overtimedata['type'] == 'overtime') {
-                                                        $overtime_shift_start_time = $overtimedata['shift_start_time'];
-                                                        $overtime_shift_end_time = $overtimedata['shift_end_time'];
-                                                        $overtime_rate = $overtimedata['rate'];
-                                                        $overtime_is_allowed = $overtimedata['is_allowed'];
-                                                    }
-
-                                                    if ($overtimedata['type'] == 'double_overtime') {
-                                                        $double_overtime_shift_start_time = $overtimedata['shift_start_time'];
-                                                        $double_overtime_shift_end_time = $overtimedata['shift_end_time'];
-                                                        $double_overtime_rate = $overtimedata['rate'];
-                                                        $double_overtime_is_allowed = $overtimedata['is_allowed'];
-                                                    }
-
-                                                    if ($overtimedata['type'] == 'holiday') {
-                                                        $holiday_rate = $overtimedata['rate'];
-                                                        $holiday_overtime_is_allowed = $overtimedata['is_allowed'];
-                                                    }
-                                                }
-
-                                                ?>
-
                                                 <div class="panel-heading">
                                                     <h1 class="csF16 csW m0">
                                                         <strong>
@@ -305,8 +221,8 @@
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                             <?php
-                                                            $shift_start = isset($overtime_shift_start_time) && !empty($overtime_shift_start_time) ? $overtime_shift_start_time : SHIFT_START;
-                                                            $shift_end = isset($overtime_shift_end_time) && !empty($overtime_shift_end_time) ? $overtime_shift_end_time : SHIFT_END;
+                                                            $shift_start = isset($jobTitleData['overtime_shift_start_time']) && !empty($jobTitleData['overtime_shift_start_time']) ? $jobTitleData['overtime_shift_start_time'] : SHIFT_START;
+                                                            $shift_end = isset($jobTitleData['overtime_shift_end_time']) && !empty($jobTitleData['overtime_shift_end_time']) ? $jobTitleData['overtime_shift_end_time'] : SHIFT_END;
                                                             ?>
                                                             <div class="row">
                                                                 <div class="col-sm-6">
@@ -321,12 +237,12 @@
                                                         </div>
 
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
-                                                            <label class="csF16">Rate</label>
+                                                            <label class="csF16">Rate <strong class="text-danger">*</strong></label>
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-dollar" aria-hidden="true"></i>
                                                                 </span>
-                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $overtime_rate; ?>" name="overtime_rate">
+                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $jobTitleData['overtime_rate']; ?>" name="overtime_rate">
                                                             </div>
                                                             <?php echo form_error('overtime_rate'); ?>
 
@@ -335,13 +251,14 @@
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
                                                             <!--  --><br>
                                                             <label class="control control--checkbox">
-                                                                <input type="checkbox" name="overtime_is_allowed" value="1" <?= $overtime_is_allowed != 0 ? 'checked' : ''; ?> /> is Allowed?
+                                                                <input type="checkbox" name="overtime_is_allowed" value="1" <?= $jobTitleData['overtime_is_allowed'] != 0 ? 'checked' : ''; ?> /> is Allowed?
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+
 
                                             <div class="panel panel-success">
                                                 <div class="panel-heading">
@@ -355,8 +272,8 @@
                                                     <div class="row">
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                             <?php
-                                                            $shift_start = isset($double_overtime_shift_start_time) && !empty($double_overtime_shift_start_time) ? $double_overtime_shift_start_time : SHIFT_START;
-                                                            $shift_end = isset($double_overtime_shift_end_time) && !empty($double_overtime_shift_end_time) ? $double_overtime_shift_end_time : SHIFT_END;
+                                                            $shift_start = isset($jobTitleData['double_overtime_shift_start_time']) && !empty($jobTitleData['double_overtime_shift_start_time']) ? $jobTitleData['double_overtime_shift_start_time'] : SHIFT_START;
+                                                            $shift_end = isset($jobTitleData['double_overtime_shift_end_time']) && !empty($jobTitleData['double_overtime_shift_end_time']) ? $jobTitleData['double_overtime_shift_end_time'] : SHIFT_END;
                                                             ?>
                                                             <div class="row">
                                                                 <div class="col-sm-6">
@@ -371,12 +288,12 @@
                                                         </div>
 
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
-                                                            <label class="csF16">Rate</label>
+                                                            <label class="csF16">Rate <strong class="text-danger">*</strong></label>
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-dollar" aria-hidden="true"></i>
                                                                 </span>
-                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $double_overtime_rate; ?>" name="double_overtime_rate">
+                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $jobTitleData['double_overtime_rate']; ?>" name="double_overtime_rate">
                                                             </div>
                                                             <?php echo form_error('double_overtime_rate'); ?>
 
@@ -385,13 +302,15 @@
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
                                                             <!--  --><br>
                                                             <label class="control control--checkbox">
-                                                                <input type="checkbox" name="double_overtime_is_allowed" value="1" <?= $double_overtime_is_allowed != 0 ? 'checked' : ''; ?> /> is Allowed?
+                                                                <input type="checkbox" name="double_overtime_is_allowed" value="1" <?= $jobTitleData['double_overtime_is_allowed'] != 0 ? 'checked' : ''; ?> /> is Allowed?
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
+
 
                                             <div class="panel panel-success">
                                                 <div class="panel-heading">
@@ -405,12 +324,12 @@
                                                     <div class="row">
 
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
-                                                            <label class="csF16">Rate</label>
+                                                            <label class="csF16">Rate <strong class="text-danger">*</strong></label>
                                                             <div class="input-group">
                                                                 <span class="input-group-addon">
                                                                     <i class="fa fa-dollar" aria-hidden="true"></i>
                                                                 </span>
-                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $holiday_rate; ?>" name="holiday_rate">
+                                                                <input type="text" class="form-control input-lg jsEmployeeFlowAmount rate" placeholder="0.0" value="<?php echo $jobTitleData['holiday_rate']; ?>" name="holiday_rate">
                                                             </div>
                                                             <?php echo form_error('holiday_rate'); ?>
 
@@ -419,17 +338,21 @@
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
                                                             <!--  --><br>
                                                             <label class="control control--checkbox">
-                                                                <input type="checkbox" name="holiday_overtime_is_allowed" value="1" <?= $holiday_overtime_is_allowed != 0 ? 'checked' : ''; ?> /> is Allowed?
+                                                                <input type="checkbox" name="holiday_overtime_is_allowed" value="1" <?= $jobTitleData['holiday_overtime_is_allowed'] != 0 ? 'checked' : ''; ?> /> is Allowed?
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
+
                                         </form>
                                     </div>
                                 </div>
+
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -594,22 +517,7 @@
             this.value = 1;
         }
     });
-
-
-
-    function deleteCompensation(jobsid, sid) {
-        alertify.confirm('Confirmation', 'Are you sure you want to delete this compensation', function() {
-            window.location = "<?php echo base_url('job_compensation_delete') ?>/" + jobsid + '/' + sid;
-
-        }, function() {
-
-        });
-
-    }
 </script>
-
-
-
 
 <style>
     .select2-container--default .select2-selection--single {

@@ -1,3 +1,9 @@
+<style>
+    .normal {
+        font-weight: normal;
+
+    }
+</style>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -28,43 +34,52 @@
 
                                     <div class="panel-body">
 
-                                        <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                        <?php
 
-                                                <h4 style="margin-top: 0">
-                                                </h4>
-                                                <p class="csF16">
-                                                    <strong>Job Title: <?php echo $primaryJobData[0]['job_title'] ?></strong>
-                                                </p>
+                                      //  _e($primaryJobData, true);
+                                        if (!empty($primaryJobData)) { ?>
 
-                                                <p class="csF16">
-                                                    <strong>Rate: $<?php echo $primaryJobData[0]['normal_rate'] ?> (Per <?php echo $primaryJobData[0]['normal_per'] ?>)</strong>
-                                                </p>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 ">
 
-                                                <p class="csF16">
-                                                    <i class="fa fa-check csF16 text-success" aria-hidden="true"></i>&nbsp;
-                                                    Overtime Allowed?
-                                                </p>
+                                                    <h4 style="margin-top: 0">
+                                                    </h4>
+                                                    <p class="csF16 normal">
+                                                        <strong>Job Title:</strong> <?php echo $primaryJobData[0]['title'] ?>
+                                                    </p>
 
+
+                                                    <p class="csF16 normal">
+                                                        <strong> Week Days Off: </strong> <?php echo $primaryJobData[0]['week_days_off'] ?>
+                                                    </p>
+
+                                                </div>
+
+                                                <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
+
+                                                    <p class="csF16 normal">
+                                                        <strong>Shift: </strong> <?php echo $primaryJobData[0]['shift_start_time'] ?> - <?php echo $primaryJobData[0]['shift_end_time'] ?>
+                                                    </p>
+
+                                                    <p class="csF16 normal">
+                                                        <strong>Break: </strong> <?php echo $primaryJobData[0]['break_hour'] ?>:<?php echo $primaryJobData[0]['break_minutes'] ?>
+                                                    </p>
+
+
+                                                </div>
+
+                                                <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1 form-group">
+
+                                                    <p class="csF16">
+                                                        <strong><a href="<?php echo base_url('job_info_edit/' . $primaryJobData[0]['sid']) ?>" class="btn btn-success btn-sm" title="Edit Job"><i class="fa fa-pencil"></i></a></strong>
+                                                    </p>
+                                                    <p class="csF16">
+                                                    </p>
+
+                                                </div>
                                             </div>
+                                        <?php } ?>
 
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-
-                                                <p class="csF16">
-                                                    <strong>Overtime: <?php echo $primaryJobData[0]['overtime_shift_start_time'] ?> - <?php echo $primaryJobData[0]['overtime_shift_end_time'] ?></strong>
-                                                </p>
-                                                <p class="csF16">
-                                                    <strong>Over Time: $<?php echo $primaryJobData[0]['overtime_rate'] ?></strong>
-                                                </p>
-
-                                                <p class="csF16">
-                                                    <strong>Double Overtime: <?php echo $primaryJobData[0]['double_overtime_shift_start_time'] ?> - <?php echo $primaryJobData[0]['double_overtime_shift_end_time'] ?></strong>
-                                                </p>
-                                                <p class="csF16">
-                                                    <strong>Over Time: $<?php echo $primaryJobData[0]['double_overtime_rate'] ?></strong>
-                                                </p>
-                                            </div>
-                                        </div>
                                     </div>
 
                                 </div>
@@ -98,45 +113,32 @@
                                                     <tr>
                                                         <td>
                                                             <div class="row">
-                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 ">
 
                                                                     <h4 style="margin-top: 0">
                                                                     </h4>
-                                                                    <p class="csF16">
-                                                                        <strong>Job Title: <?php echo $activeDataRow['job_title'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Job Title:</strong> <?php echo $activeDataRow['title'] ?>
                                                                     </p>
 
-                                                                    <p class="csF16">
-                                                                        <strong>Rate: $<?php echo $activeDataRow['normal_rate'] ?> (Per <?php echo $activeDataRow['normal_per'] ?>)</strong>
-                                                                    </p>
 
-                                                                    <p class="csF16">
-
-                                                                        <?php if ($activeDataRow['overtime_is_allowed']) { ?>
-                                                                            <i class="fa fa-check csF16 text-success" aria-hidden="true"></i>&nbsp;<?php } else { ?>
-                                                                            <i class="fa fa-close csF16 text-danger" aria-hidden="true"></i>&nbsp;
-
-                                                                        <?php } ?>
-                                                                        Overtime Allowed?
+                                                                    <p class="csF16 normal">
+                                                                        <strong> Week Days Off: </strong> <?php echo $activeDataRow['week_days_off'] ?>
                                                                     </p>
 
                                                                 </div>
 
                                                                 <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
 
-                                                                    <p class="csF16">
-                                                                        <strong>Overtime: <?php echo $activeDataRow['overtime_shift_start_time'] ?> - <?php echo $activeDataRow['overtime_shift_end_time'] ?></strong>
-                                                                    </p>
-                                                                    <p class="csF16">
-                                                                        <strong>Over Time: $<?php echo $activeDataRow['overtime_rate'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Shift: </strong> <?php echo $activeDataRow['shift_start_time'] ?> - <?php echo $activeDataRow['shift_end_time'] ?>
                                                                     </p>
 
-                                                                    <p class="csF16">
-                                                                        <strong>Double Overtime: <?php echo $activeDataRow['double_overtime_shift_start_time'] ?> - <?php echo $activeDataRow['double_overtime_shift_end_time'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Break: </strong> <?php echo $activeDataRow['break_hour'] ?>:<?php echo $activeDataRow['break_minutes'] ?>
                                                                     </p>
-                                                                    <p class="csF16">
-                                                                        <strong>Over Time: $<?php echo $activeDataRow['double_overtime_rate'] ?></strong>
-                                                                    </p>
+
+
                                                                 </div>
 
                                                                 <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1 form-group">
@@ -191,47 +193,33 @@
                                                     <tr>
                                                         <td>
                                                             <div class="row">
-                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 ">
 
                                                                     <h4 style="margin-top: 0">
                                                                     </h4>
-                                                                    <p class="csF16">
-                                                                        <strong>Job Title: <?php echo $inactiveDataRow['job_title'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Job Title:</strong> <?php echo $inactiveDataRow['title'] ?>
                                                                     </p>
 
-                                                                    <p class="csF16">
-                                                                        <strong>Rate: $<?php echo $inactiveDataRow['normal_rate'] ?> (Per <?php echo $inactiveDataRow['normal_per'] ?>)</strong>
-                                                                    </p>
 
-                                                                    <p class="csF16">
-
-                                                                        <?php if ($inactiveDataRow['overtime_is_allowed']) { ?>
-                                                                            <i class="fa fa-check csF16 text-success" aria-hidden="true"></i>&nbsp;<?php } else { ?>
-                                                                            <i class="fa fa-close csF16 text-danger" aria-hidden="true"></i>&nbsp;
-
-                                                                        <?php } ?>
-                                                                        Overtime Allowed?
+                                                                    <p class="csF16 normal">
+                                                                        <strong> Week Days Off: </strong> <?php echo $inactiveDataRow['week_days_off'] ?>
                                                                     </p>
 
                                                                 </div>
 
                                                                 <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5 form-group">
 
-                                                                    <p class="csF16">
-                                                                        <strong>Overtime: <?php echo $inactiveDataRow['overtime_shift_start_time'] ?> - <?php echo $inactiveDataRow['overtime_shift_end_time'] ?></strong>
-                                                                    </p>
-                                                                    <p class="csF16">
-                                                                        <strong>Over Time: $<?php echo $inactiveDataRow['overtime_rate'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Shift: </strong> <?php echo $inactiveDataRow['shift_start_time'] ?> - <?php echo $inactiveDataRow['shift_end_time'] ?>
                                                                     </p>
 
-                                                                    <p class="csF16">
-                                                                        <strong>Double Overtime: <?php echo $inactiveDataRow['double_overtime_shift_start_time'] ?> - <?php echo $inactiveDataRow['double_overtime_shift_end_time'] ?></strong>
+                                                                    <p class="csF16 normal">
+                                                                        <strong>Break: </strong> <?php echo $inactiveDataRow['break_hour'] ?>:<?php echo $inactiveDataRow['break_minutes'] ?>
                                                                     </p>
-                                                                    <p class="csF16">
-                                                                        <strong>Over Time: $<?php echo $inactiveDataRow['double_overtime_rate'] ?></strong>
-                                                                    </p>
+
+
                                                                 </div>
-
 
                                                                 <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1 form-group">
 
@@ -268,7 +256,7 @@
 <script>
     function deleteJob(sid) {
         alertify.confirm('Confirmation', 'Are you sure you want to delete this job', function() {
-            window.location = "<?php echo base_url('job_info_delete') ?>/" + sid;
+           window.location = "<?php echo base_url('job_info_delete') ?>/" + sid;
 
         }, function() {
 

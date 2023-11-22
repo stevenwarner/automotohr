@@ -76,9 +76,6 @@ if (checkIfAppIsEnabled('timeoff')) {
                                     </li>
                                 <?php } ?>
 
-                                <li id="tab8_nav"><a href="javascript:;">Job Info</a></li>
-
-
                             </ul>
                         <?php } ?>
                         <div class="resp-tabs-container hor_1">
