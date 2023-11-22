@@ -8932,7 +8932,8 @@ class Onboarding extends CI_Controller
                     // );
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
-                        $view = $this->load->view('form_w4/form_w4', $data, TRUE);
+                        //$view = $this->load->view('form_w4/form_w4', $data, TRUE);
+                        $view = $this->load->view('form_w4/download_w4_2023', $data,TRUE);
                         $this->pdfgenerator->generate($view, 'Form W4', true, 'A4');
                     }
 
@@ -9715,7 +9716,9 @@ class Onboarding extends CI_Controller
 
             $previous_form = $this->onboarding_model->get_original_w4_form('applicant', $applicant_sid);
             $data['pre_form'] = $previous_form;
-            $this->load->view('form_w4/print_w4_form', $data);
+           // $this->load->view('form_w4/print_w4_form', $data);
+            $this->load->view('form_w4/print_w4_2023', $data);
+
         } else {
             redirect('login', "refresh");
         }

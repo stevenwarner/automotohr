@@ -1287,8 +1287,10 @@
             <div id="review_modal_body" class="modal-body">
                 <?php $form_values['pre_form'] = $pre_form;
                 $form_values['pre_form']['dated'] = !empty($pre_form['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $pre_form['signature_timestamp'])->format('M d Y') : '';
-                $view = $this->load->view('form_w4/index-pdf', $form_values, TRUE);
-                echo $view; ?>
+              //  $view = $this->load->view('form_w4/index-pdf', $form_values, TRUE);
+                $view = $this->load->view('form_w4/preview_w4_2023', $form_values, TRUE);
+
+               echo $view; ?>
             </div>
             <div id="review_modal_footer" class="modal-footer">
 
