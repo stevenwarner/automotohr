@@ -1829,8 +1829,6 @@ class Employee_management extends Public_Controller
                             $employer_id
                         );
                         //
-                        echo "kkdkkdkd";
-                        die("Stop here now");
                     }
                     //
 

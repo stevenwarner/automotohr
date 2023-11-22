@@ -1060,20 +1060,37 @@
 
     function checkAndAddEmployeeToTeam ($departmentId, $teamId, $employeeId) {
         //
-        _e($departmentId,true);
-        _e($teamId,true);
-        _e($employeeId,true);
-        $this->db->select('team_sid, department_sid');
+        // get last record of employee in table
+        $this->db->select('id, team_sid, department_sid');
         $this->db->where('employee_sid', $employeeId);
         $this->db->order_by('id', 'desc');
         $this->db->limit(1);
         //
         $record_obj = $this->db->get('departments_employee_2_team');
-        $record_arr = $record_obj->result_array();
+        $record_arr = $record_obj->row_array();
         $record_obj->free_result();
         //
         if (!empty($record_arr)) {
-            _e("found in kk",true);
+            //
+            if ($record_arr['team_sid'] == $teamId && $record_arr['department_sid'] == $departmentId) {
+                //
+                $this->db
+                    ->where('team_sid', $teamId)
+                    ->where('department_sid', $departmentId)
+                    ->where('employee_sid', $employeeId)
+                    ->where('id <>', $record_arr['id'])
+                    ->delete('departments_employee_2_team');
+            } else {
+                //
+                // first delete old record 
+                $this->db
+                    ->where('team_sid', $teamId)
+                    ->where('department_sid', $departmentId)
+                    ->where('employee_sid', $employeeId)
+                    ->delete('departments_employee_2_team');
+                //
+                $this->addEmployeeToTeam($departmentId, $teamId, $employeeId);
+            }
         } else {
             $this->addEmployeeToTeam($departmentId, $teamId, $employeeId);
         }

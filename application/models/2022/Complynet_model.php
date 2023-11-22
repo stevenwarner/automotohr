@@ -313,13 +313,14 @@ class Complynet_model extends CI_Model
                 'departments_management.is_deleted' => 0,
                 'departments_employee_2_team.employee_sid' => $employeeId
             ])
+            ->order_by('id', 'desc')
             ->from('departments_employee_2_team')
             ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
             ->get()
             ->row_array();
         //
         if ($record) {
-            if ($returnComplyId) {echo "I am in<br>"; echo $record['sid']."dep id<br>";
+            if ($returnComplyId) {
                 return $this->getComplyNetLinkedDepartmentById($record['sid'], $employeeId);
             } else {
                 return $record['sid'];
