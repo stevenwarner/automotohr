@@ -437,9 +437,9 @@
                                     <p>Do <strong>only one</strong> of the following.</p>
                                     <p><strong>(a)</strong> Reserved for future use.</p>
                                     <p><strong>(b)</strong> Use the Multiple Jobs Worksheet on page 3 and enter the result in Step 4(c) below; <strong>or</strong></p>
-                                    <p><strong>(c)</strong>  If there are only two jobs total, you may check this box. Do the same on Form W-4 for the other job. This 
-option is generally more accurate than (b) if pay at the lower paying job is more than half of the pay at the 
-higher paying job. Otherwise, (b) is more accurate . . . . . ▶ <input type="checkbox" value="" disabled <?php echo !empty($pre_form['mjsw_status']) && isset($pre_form['marriage_status']) ? 'checked="checked"' : '' ?> /></p>
+                                    <p><strong>(c)</strong> If there are only two jobs total, you may check this box. Do the same on Form W-4 for the other job. This
+                                        option is generally more accurate than (b) if pay at the lower paying job is more than half of the pay at the
+                                        higher paying job. Otherwise, (b) is more accurate . . . . . ▶ <input type="checkbox" value="" disabled <?php echo !empty($pre_form['mjsw_status']) && isset($pre_form['marriage_status']) ? 'checked="checked"' : '' ?> /></p>
                                     <br>
                                     <p><strong>TIP:</strong> If you have self-employment income, see page 2.</p>
                                 </td>
@@ -498,14 +498,14 @@ higher paying job. Otherwise, (b) is more accurate . . . . . ▶ <input type="ch
                                             </tr>
                                             <tr>
                                                 <td>
-                                                Add the amounts above for qualifying children and other dependents. You may add to 
-this the amount of any other credits. Enter the total here . . . . . . . . . .
+                                                    Add the amounts above for qualifying children and other dependents. You may add to
+                                                    this the amount of any other credits. Enter the total here . . . . . . . . . .
                                                 </td>
                                                 <td style="width: 6%; border-left: 1px solid #000; padding-left: 5px; vertical-align:bottom;">
                                                     <strong>3</strong>
                                                 </td>
                                                 <td style="width: 16%; border-left: 1px solid #000; padding-left: 5px; vertical-align:bottom;">
-                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['claim_total_amount']) ? '$ ' . $pre_form['claim_total_amount'] : '' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
+                                                     <input class="plane-input" type="text" value="<?php echo isset($pre_form['claim_total_amount']) ? '$ ' . $pre_form['claim_total_amount'] : '$' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -534,7 +534,7 @@ this the amount of any other credits. Enter the total here . . . . . . . . . .
                                                     <strong>4(a)</strong>
                                                 </td>
                                                 <td style="width: 16%; border-left: 1px solid #000; border-bottom: 1px solid #000; padding-left: 5px; vertical-align:bottom;">
-                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['other_income']) ? '$ ' . $pre_form['other_income'] : '' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
+                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['other_income']) ? '$ ' . $pre_form['other_income'] : '$' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -545,7 +545,7 @@ this the amount of any other credits. Enter the total here . . . . . . . . . .
                                                     <strong>4(b)</strong>
                                                 </td>
                                                 <td style="width: 16%; border-left: 1px solid #000; border-bottom: 1px solid #000; padding-left: 5px; vertical-align:bottom;">
-                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['other_deductions']) ? '$ ' . $pre_form['other_deductions'] : '' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
+                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['other_deductions']) ? '$ ' . $pre_form['other_deductions'] : '$' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -556,7 +556,7 @@ this the amount of any other credits. Enter the total here . . . . . . . . . .
                                                     <strong>4(c)</strong>
                                                 </td>
                                                 <td style="width: 16%; border-left: 1px solid #000; padding-left: 5px; vertical-align:bottom;">
-                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['additional_tax']) ? '$ ' . $pre_form['additional_tax'] : '' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
+                                                    <input class="plane-input" type="text" value="<?php echo isset($pre_form['additional_tax']) ? '$ ' . $pre_form['additional_tax'] : '$' ?>" readonly style="border: none; font-weight: bold; display: inline-block;" />
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -637,43 +637,67 @@ this the amount of any other credits. Enter the total here . . . . . . . . . .
                             <tr>
                                 <td style="width: 50%;">
                                     <h3>General Instructions</h3>
+                                    <br> Section references are to the Internal Revenue Code.<br>
                                     <span class="heading-text">Future Developments</span><br> For the latest information about developments related to Form W-4, such as legislation enacted after it was published, go to www.irs.gov/FormW4.<br>
                                     <span class="heading-text">Purpose of Form</span><br> Complete Form W-4 so that your employer can withhold the correct federal income tax from your pay. If too little is withheld, you will generally owe tax when you file your tax return and may owe a penalty. If too much is withheld, you will generally be due a refund. Complete a new Form W-4 when changes to your personal or financial situation would change the entries on the form. For more information on withholding and when you must furnish a new Form W-4, see Pub. 505.Tax Withholding and Estimated Tax.<br>
-                                    <span class="heading-text">Exemption from withholding.</span> <?php echo W4_EXEMPTION_FROM_WITHHOLDING; ?><br>
-                                    <span class="heading-text">Your privacy.</span>  If you prefer to limit information provided in Steps 2 through 4, use the online estimator, which will also increase accuracy.
-  As an alternative to the estimator: if you have concerns with Step 2(c), you may choose Step 2(b); if you have concerns with Step 4(a), you may enter an additional amount you want withheld per pay period in Step 4(c). If this is the only job in your household, you may instead check the box in Step 2(c), which will increase your withholding and significantly reduce your paycheck (often by thousands of dollars over the year).<br>
-                                   <!-- <span class="heading-text">When to use the estimator.</span> Consider using the estimator at www.irs.gov/W4App if you:<br>
+                                    <span class="heading-text">Exemption from withholding.</span> <?php echo W4_EXEMPTION_FROM_WITHHOLDING_23; ?><br>
+                                    <span class="heading-text">Your privacy.</span>
+                                    If you have concerns with Step 2(c), you may
+                                    choose Step 2(b); if you have concerns with Step 4(a), you
+                                    may enter an additional amount you want withheld per pay
+                                    period in Step 4(c). <br>
+
+
+                                    <!-- <span class="heading-text">When to use the estimator.</span> Consider using the estimator at www.irs.gov/W4App if you:<br>
                                     1. Expect to work only part of the year; <br>
                                     2. Have dividend or capital gain income, or are subject to additional taxes, such as the additional Medicare tax; <br>
                                     3. Have self-employment income (see below); or <br>
                                     4. Prefer the most accurate withholding for multiple job situations. <br> -->
-                                    <span class="heading-text">Self-employment.</span> Generally, you will owe both income and 
-self-employment taxes on any self-employment income you 
-receive separate from the wages you receive as an 
-employee. If you want to pay income and self-employment 
-taxes through withholding from your wages, you should 
-enter the self-employment income on Step 4(a). Then 
-compute your self-employment tax, divide that tax by the 
-number of pay periods remaining in the year, and include 
-that resulting amount per pay period on Step 4(c). You can 
-also add half of the annual amount of self-employment tax to 
-Step 4(b) as a deduction. To calculate self-employment tax, 
-you generally multiply the self-employment income by 
-14.13% (this rate is a quick way to figure your selfemployment tax and equals the sum of the 12.4% social 
-security tax and the 2.9% Medicare tax multiplied by 
-0.9235). See Pub. 505 for more information, especially if the 
-sum of self-employment income multiplied by 0.9235 and 
-wages exceeds $160,200 for a given individual. <br>
+                                    <span class="heading-text">Self-employment.</span> Generally, you will owe both income and
+                                    self-employment taxes on any self-employment income you
+                                    receive separate from the wages you receive as an
+                                    employee. If you want to pay income and self-employment
+                                    taxes through withholding from your wages, you should
+                                    enter the self-employment income on Step 4(a). Then
+                                    compute your self-employment tax, divide that tax by the
+                                    number of pay periods remaining in the year, and include
+                                    that resulting amount per pay period on Step 4(c). You can
+                                    also add half of the annual amount of self-employment tax to
+                                    Step 4(b) as a deduction. To calculate self-employment tax,
+                                    you generally multiply the self-employment income by
+                                    14.13% (this rate is a quick way to figure your selfemployment tax and equals the sum of the 12.4% social
+                                    security tax and the 2.9% Medicare tax multiplied by
+                                    0.9235). See Pub. 505 for more information, especially if the
+                                    sum of self-employment income multiplied by 0.9235 and
+                                    wages exceeds $160,200 for a given individual. <br>
                                     <span class="heading-text">Nonresident alien.</span> If you’re a nonresident alien, see Notice 1392, Supplemental Form W-4 Instructions for Nonresident Aliens, before completing this form <br>
                                 </td>
                                 <td style="width: 50%;">
                                     <h3>Specific Instructions</h3>
                                     <span class="heading-text">Step 1(c).</span> Check your anticipated filing status. This will determine the standard deduction and tax rates used to compute your withholding.<br>
                                     <span class="heading-text">Step 2. </span> Use this step if you (1) have more than one job at the same time, or (2) are married filing jointly and you and your spouse both work. .<br>
-                                    &nbsp;&nbsp;Option <strong>(a)</strong> most accurately calculates the additional tax you need to have withheld, while option <strong>(b)</strong> does so with a little less accuracy.<br>
-                                    &nbsp;&nbsp;If you (and your spouse) have a total of only two jobs, you may instead check the box in option (c). The box must also be checked on the Form W-4 for the other job. If the box is checked, the standard deduction and tax brackets will be cut in half for each job to calculate withholding. This option is roughly accurate for jobs with similar pay; otherwise, more tax than necessary may be withheld, and this extra amount will be larger the greater the difference in pay is between the two jobs<br>
+                                    &nbsp;&nbsp;
+                                    If you (and your spouse) have a total of only two jobs, you may instead check the box in option (c). The box must also be checked on the Form W-4 for the other job. If the box is checked, the standard deduction and tax brackets will be cut in half for each job to calculate withholding. This option is roughly accurate for jobs with similar pay; otherwise, more tax than necessary may be withheld, and this extra amount will be larger the greater the difference in pay is between the two jobs<br>
                                     ▲! CAUTION Multiple jobs. Complete Steps 3 through 4(b) on only one Form W-4. Withholding will be most accurate if you do this on the Form W-4 for the highest paying job. <br>
-                                    <span class="heading-text">Step 3.</span>  This step provides instructions for determining the amount of the child tax credit and the credit for other dependents that you may be able to claim when you file your tax return. To qualify for the child tax credit, the child must be under age 17 as of December 31, must be your dependent who generally lives with you for more than half the year, and must have the required social security number. You may be able to claim a credit for other dependents for whom a child tax credit can’t be claimed, such as an older child or a qualifying relative. For additional eligibility requirements for these credits, see Pub. 501, Dependents, Standard Deduction, and Filing Information. You can also include other tax credits for which you are eligible in this step, such as the foreign tax credit and the education tax credits. To do so, add an estimate of the amount for the year to your credits for dependents and enter the total amount in Step 3. Including these credits will increase your paycheck and reduce the amount of any refund you may receive when you file your tax return.<br>
+                                    <span class="heading-text">Step 3.</span> This step provides instructions for determining the
+                                    amount of the child tax credit and the credit for other
+                                    dependents that you may be able to claim when you file your
+                                    tax return. To qualify for the child tax credit, the child must
+                                    be under age 17 as of December 31, must be your
+                                    dependent who generally lives with you for more than half
+                                    the year, and must have the required social security number.
+                                    You may be able to claim a credit for other dependents for
+                                    whom a child tax credit can’t be claimed, such as an older
+                                    child or a qualifying relative. For additional eligibility
+                                    requirements for these credits, see Pub. 501, Dependents,
+                                    Standard Deduction, and Filing Information. You can also
+                                    include other tax credits for which you are eligible in this
+                                    step, such as the foreign tax credit and the education tax
+                                    credits. To do so, add an estimate of the amount for the year
+                                    to your credits for dependents and enter the total amount in
+                                    Step 3. Including these credits will increase your paycheck
+                                    and reduce the amount of any refund you may receive when
+                                    you file your tax return.<br>
                                     <span class="heading-text">Step 4 (optional).</span><br>
                                     <span class="heading-text">Step 4(a).</span> Enter in this step the total of your other estimated income for the year, if any. You shouldn’t include income from any jobs or self-employment. If you complete Step 4(a), you likely won’t have to make estimated tax payments for that income. If you prefer to pay estimated tax rather than having tax on other income withheld from your paycheck, see Form 1040-ES, Estimated Tax for Individuals.<br>
                                     <span class="heading-text">Step 4(b).</span> Enter in this step the amount from the Deductions Worksheet, line 5, if you expect to claim deductions other than the basic standard deduction on your <?php echo W4_YEAR; ?> tax return and want to reduce your withholding to account for these deductions. This includes both itemized deductions and other deductions such as for student loan interest and IRAs.<br>
@@ -716,7 +740,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">1</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_two_jobs']) ? $pre_form['mjw_two_jobs'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_two_jobs']) ? '$ '.$pre_form['mjw_two_jobs'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -744,7 +768,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">2a</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_a']) ? $pre_form['mjw_three_jobs_a'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_a']) ? '$ '.$pre_form['mjw_three_jobs_a'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -758,7 +782,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">2b</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_b']) ? $pre_form['mjw_three_jobs_b'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_b']) ? '$ '.$pre_form['mjw_three_jobs_b'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -772,7 +796,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">2c</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_c']) ? $pre_form['mjw_three_jobs_c'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_three_jobs_c']) ? '$ '.$pre_form['mjw_three_jobs_c'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -786,7 +810,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">3</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_pp_py']) ? $pre_form['mjw_pp_py'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_pp_py']) ? $pre_form['mjw_pp_py'] : '' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -800,7 +824,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">4</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_divide']) ? $pre_form['mjw_divide'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['mjw_divide']) ? '$ '.$pre_form['mjw_divide'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                             </tbody>
@@ -830,7 +854,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">1</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_1']) ? $pre_form['dw_input_1'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_1']) ? '$ '.$pre_form['dw_input_1'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -847,7 +871,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">2</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_2']) ? $pre_form['dw_input_2'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_2']) ? '$ '.$pre_form['dw_input_2'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -861,7 +885,7 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box-2">3</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_3']) ? $pre_form['dw_input_3'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_3']) ? '$ '.$pre_form['dw_input_3'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -869,14 +893,14 @@ wages exceeds $160,200 for a given individual. <br>
                                         <strong class="indicator-box">4</strong>
                                     </td>
                                     <td width="86%">
-                                    Enter an estimate of your student loan interest, deductible IRA contributions, and certain other 
-adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more information
+                                        Enter an estimate of your student loan interest, deductible IRA contributions, and certain other
+                                        adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more information
                                     </td>
                                     <td width="2%">
                                         <strong class="indicator-box-2">4</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_4']) ? $pre_form['dw_input_4'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_4']) ? '$ '.$pre_form['dw_input_4'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                                 <tr>
@@ -890,7 +914,7 @@ adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more info
                                         <strong class="indicator-box-2">5</strong>
                                     </td>
                                     <td width="10%">
-                                        <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_5']) ? $pre_form['dw_input_5'] : '' ?>" readonly />
+                                       <input class="input-with-bottom-border" style="border: none; border-bottom: 1px solid #000; width: 100%; height: 20px;" type="text" value="<?php echo isset($pre_form['dw_input_5']) ? '$ '.$pre_form['dw_input_5'] : '$' ?>" readonly />
                                     </td>
                                 </tr>
                             </tbody>
@@ -923,7 +947,7 @@ adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more info
                             <thead>
                                 <tr>
                                     <th colspan="4" class="text-center border-bottom">
-            <span class="heading-text">Married Filing Jointly or Qualifying Surviving Spouse</span>
+                                        <span class="heading-text">Married Filing Jointly or Qualifying Surviving Spouse</span>
                                     </th>
                                 </tr>
                             </thead>
@@ -1704,9 +1728,9 @@ adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more info
                 </div>
             <?php } ?>
         </div>
-        <?php if(isset($doUpload)) {?>
+        <?php if (isset($doUpload)) { ?>
             <script type="text/javascript" src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></script>
-        <?php }?>
+        <?php } ?>
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
         <script type="text/javascript">
             <?php if (isset($doUpload)) { ?>
@@ -1716,7 +1740,7 @@ adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more info
                         data: data,
                         token: "<?= $token; ?>",
                         employeeSid: "<?= $employeeSid; ?>",
-                        userFullNameSlug: "<?=$userFullNameSlug;?>",
+                        userFullNameSlug: "<?= $userFullNameSlug; ?>",
                         type: typo,
                     }, () => {
                         has['W4'] = true;
@@ -1790,4 +1814,3 @@ adjustments (from Part II of Schedule 1 (Form 1040)). See Pub. 505 for more info
 <?php } else { ?>
     </div>
 <?php } ?>
-
