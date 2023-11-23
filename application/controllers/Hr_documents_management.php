@@ -3667,7 +3667,7 @@ class Hr_documents_management extends Public_Controller
                             $no_action_required_payroll_documents[] = $assigned_document;
                             unset($assigned_documents[$key]);
                         }
-                    }    
+                    }
                 } else {
                     //
                     $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -3866,23 +3866,21 @@ class Hr_documents_management extends Public_Controller
                                             $no_action_required_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
-                                        
                                     } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                         if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
                                             $no_action_required_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
-                                        }    
+                                        }
                                     }
                                 }
                             } else {
                                 $revoked_sids[] = $assigned_document['document_sid'];
                             }
                         }
-
                     } else if ($assigned_document['archive'] == 1) {
                         unset($assigned_documents[$key]);
-                    }  
-                }    
+                    }
+                }
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -4034,8 +4032,8 @@ class Hr_documents_management extends Public_Controller
             }
 
             $data['assigned_documents']             = $assigned_documents; // not completed Documemts
-            
-            
+
+
             $data['uncompleted_payroll_documents']  = $uncompleted_payroll_documents;
             $data['completed_payroll_documents']    = $completed_payroll_documents;
             $data['payroll_documents_sids']         = $payroll_documents_sids;
@@ -5516,7 +5514,7 @@ class Hr_documents_management extends Public_Controller
                 //
                 if ($assigned_document['document_sid'] == 0) {
                     if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
-                        if ($assigned_document['pay_roll_catgory'] == 0) { 
+                        if ($assigned_document['pay_roll_catgory'] == 0) {
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $no_action_required_sids[] = $assigned_document['document_sid'];
                             $no_action_required_documents[] = $assigned_document;
@@ -5527,7 +5525,7 @@ class Hr_documents_management extends Public_Controller
                                 unset($assigned_documents[$key]);
                             }
                         }
-                    }    
+                    }
                 } else {
                     //
                     $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -5666,7 +5664,7 @@ class Hr_documents_management extends Public_Controller
                                         }
                                         //
                                         $assigned_sids[] = $assigned_document['document_sid'];
-                                    } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                    } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                         $assigned_sids[] = $assigned_document['document_sid'];
                                         $no_action_required_sids[] = $assigned_document['document_sid'];
                                         $no_action_required_documents[] = $assigned_document;
@@ -5677,7 +5675,7 @@ class Hr_documents_management extends Public_Controller
                                             unset($assigned_documents[$key]);
                                         }
                                     }
-                                }    
+                                }
                             } else {
                                 $revoked_sids[] = $assigned_document['document_sid'];
                             }
@@ -5685,7 +5683,7 @@ class Hr_documents_management extends Public_Controller
                     } else if ($assigned_document['archive'] == 1) {
                         unset($assigned_documents[$key]);
                     }
-                }    
+                }
             }
             //
             $data['history_doc_sids'] = $history_doc_sids;
@@ -9350,7 +9348,7 @@ class Hr_documents_management extends Public_Controller
             $status_to_update['status'] = 0;
             $status_to_update['archive'] = 1;
             $this->hr_documents_management_model->change_document_status($document_sid, $status_to_update);
-        }    
+        }
     }
 
     //
@@ -11036,7 +11034,7 @@ class Hr_documents_management extends Public_Controller
                 $this->res['Status'] = TRUE;
                 $this->res['Response'] = 'Manual document update successfully.';
                 $this->resp();
-                break;       
+                break;
         }
         //
         $this->resp();
@@ -13538,7 +13536,7 @@ class Hr_documents_management extends Public_Controller
                     }
                 } else if ($assigned_document['archive'] == 1) {
                     unset($assigned_documents[$key]);
-                } 
+                }
             }
 
             $uncomplete_documents_count = $uncomplete_documents_count + sizeof($assigned_documents);
@@ -14353,6 +14351,7 @@ class Hr_documents_management extends Public_Controller
 
     public function get_all_completed_document($document_sid, $document_type, $document_section)
     {
+
         //
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
         //
@@ -14364,7 +14363,9 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'W4_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original");
-            $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
+            // $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
+            $html = $this->load->view('form_w4/preview_w4_2023', $data, true);
+
             $name = 'W4 Fillable';
         }
         //
@@ -16460,7 +16461,7 @@ class Hr_documents_management extends Public_Controller
         //
 
         $d = $this->hr_documents_management_model->getDocumentByIdResourceDocuments($i);
-      // _e( $d,true,true);
+        // _e( $d,true,true);
 
         $d['user_type'] = null;
         $d['user_sid'] = null;
@@ -16468,7 +16469,7 @@ class Hr_documents_management extends Public_Controller
         $data["s3_path"] = $d['file_code'];
 
         $d['document_description'] =  $d['word_content'];
-        
+
         $document_body = $this->convertMagicCodeToHTML($d);
         $data["document_body"] = $document_body;
         //     
