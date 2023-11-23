@@ -331,11 +331,11 @@ class employers extends Admin_Controller
         } else {
             $sid = $this->input->post('sid');
             $action = $this->input->post('submit');
+            //
             $data = array(
                 'username' => $this->input->post('username'),
                 'email' => $this->input->post('email')
             );
-
             //
             $employeeData = $this->company_model->GetEmployeeById($sid, 'extra_info');
             //
@@ -366,9 +366,8 @@ class employers extends Admin_Controller
             $data['languages_speak'] = null;
             //
             $languages_speak = $this->input->post('secondaryLanguages');
-
             //
-
+            _e($_POST,true,true);
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
 
@@ -509,6 +508,11 @@ class employers extends Admin_Controller
                     'email' => $oldData['email'],
                     'PhoneNumber' => $oldData['PhoneNumber']
                 ]);
+
+                // update employee job titile on complynet
+                if ($employer_detail[0]['job_title'] != $data['job_title']) {
+                    updateEmployeeJobRoleToComplyNet($sid, $company_detail[0]['sid']);
+                }
             }
 
             //

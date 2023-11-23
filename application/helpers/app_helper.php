@@ -1872,24 +1872,23 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         // get new department id
         $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
         
-        _e($employeeOldDepartmentId,true);
         // when both ids are equal
         if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
             return false;
         }
-        _e($employeeNewDepartmentId,true);
+
         // Create New Department On Comply Net
-        if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId == 0) {echo "one<br>";
+        if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId === 0) {
             // $employeeNewDepartment['name']='New Department Test';
             $employeeNewDepartmentId = $CI->complynet_model->checkAndCreateDepartmentOnComplyNet(
                 $employeeNewDepartment['sid'],
                 $employeeNewDepartment['name'],
                 $companyId
             );
-        }die();
+        }
 
         //
-        if ($employeeNewDepartmentId == '') {echo "two<br>";
+        if ($employeeNewDepartmentId == '') {
             return false;
         }
         //
@@ -1900,11 +1899,11 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
             $employee['complynet_job_title']
         );
         //
-        if ($complyJobRoleId === 0) {echo "three<br>";
+        if ($complyJobRoleId === 0) {
             return false;
         }
         //
-        if (empty($complyJobRoleId)) {echo "four<br>";
+        if (empty($complyJobRoleId)) {
             return false;
         }
 
