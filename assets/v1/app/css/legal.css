@@ -1,0 +1,37 @@
+.csHeading {
+	text-align: center;
+	font-weight: 700;
+	color: rgb(64, 67, 71);
+	font-size: 48px;
+	line-height: 60px;
+	scroll-margin: 88px;
+	margin-top: 64px;
+	margin-bottom: 64px;
+}
+
+.csCard {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 20px;
+	box-shadow: rgba(29, 147, 54, 0.5) 0px 30px 60px -40px;
+	min-height: 250px;
+}
+
+.csCard h4 {
+	font-size: 20px;
+	line-height: 20px;
+	margin-top: 0.625rem;
+	margin-bottom: 40px;
+}
+
+.csCard p {
+	font-size: 14px;
+	line-height: 1.5;
+	font-style: normal;
+	font-weight: 100;
+	margin-bottom: 30px;
+}
+
+.csCard:hover {
+	border-color: #315eff52;
+}

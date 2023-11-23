@@ -68,6 +68,7 @@ $route['products/(:any)']['get'] = 'v1/App/products/$1';
 $route['get-your-free-account']['get'] = 'v1/App/getYourAccount';
 $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
+$route['legal']['get'] = 'v1/App/legalHub';
 
 //
 $route['resources']['get'] = 'v1/Resources/index';
@@ -2043,3 +2044,14 @@ $route["cms/page/(:num)/(:any)/(:num)"]["delete"] = "manage_admin/Cms/processDel
 
 // get states by country
 $route["states/(:any)"]["get"] = "v1/App/getStatesByCountry/$1";
+
+// get the add page
+$route["cms/ui/(:any)"]["get"] = "manage_admin/Cms/getPageUI/$1";
+$route["cms/ui/(:any)"]["post"] = "manage_admin/Cms/getPageUI/$1";
+$route["cms/(:num)/page/section"]["post"] = "manage_admin/Cms/updatePageSections/$1";
+$route["cms/(:num)/tag/(:num)"]["delete"] =
+  "manage_admin/Cms/deletePageTag/$1/$2";
+$route["cms/(:num)/tag/card"]["post"] =
+  "manage_admin/Cms/addPageTag/$1";
+$route["cms/(:num)/tag/(:num)/(:num)"]["delete"] =
+  "manage_admin/Cms/deleteTagCard/$1/$2/$3";

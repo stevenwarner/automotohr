@@ -2029,3 +2029,11 @@ if (!file_exists("getSourceByType")) {
         }
     }
 }
+
+
+if (!file_exists("generateLink")) {
+    function generateLink(string $link): string
+    {
+        return strpos($link, "http") === false ? base_url($link) : $link;
+    }
+}

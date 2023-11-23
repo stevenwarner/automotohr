@@ -156,6 +156,28 @@ class App extends CI_Controller
         $this->load->view('v1/app/sitemap');
         $this->load->view($this->footer);
     }
+    
+    /**
+     * legal hub
+     */
+    public function legalHub()
+    {
+        //
+        $pageContent = getPageContent('legal', true);
+        // meta titles
+        $data['meta'] = [];
+        $data['meta']['title'] = $pageContent['page']['meta']['title'];
+        $data['meta']['description'] = $pageContent['page']['meta']['description'];
+        $data['meta']['keywords'] = $pageContent['page']['meta']['keywords'];
+
+        $this->setCommon("v1/app/css/legal", "css");
+        //
+        $this->getCommon($data, "sitemap");
+        $data['pageContent'] = $pageContent;
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/legal');
+        $this->load->view($this->footer);
+    }
 
     /**
      * products

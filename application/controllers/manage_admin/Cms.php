@@ -87,11 +87,12 @@ class Cms extends Admin_Controller
         $this->data['page_title'] = "Modify " . ucwords($page_data["page"]) . " :: " . STORE_NAME;
         //
         $this->data['pageContent'] = json_decode($page_data["content"], true);
+        $this->data['page'] = $page_data;
 
         $this->data["appCSS"] = bundleCSS([
             "v1/plugins/ms_modal/main",
             "v1/plugins/ms_uploader/main",
-        ], "public/v1/app/", "app_" . $page_data["page"], true);
+        ], "public/v1/app/", "app_" . $page_data["page"], false);
         //
         $files = [];
         // for home page
@@ -129,7 +130,8 @@ class Cms extends Admin_Controller
             "v1/plugins/ms_uploader/main",
             "js/app_helper",
             "v1/cms/meta",
-        ], $files), "public/v1/app/", "app_" . $page_data["page"], true);
+            "v1/cms/page",
+        ], $files), "public/v1/app/", "app_" . $page_data["page"], false);
 
         $this->render('manage_admin/cms/v1/' . $page_data['page']);
     }
@@ -800,8 +802,15 @@ class Cms extends Admin_Controller
             unset($post["source_type_logo"]);
         }
 
+        //
+        if ($pageContent["page"]["sections"][$post["section"]]["tags"]) {
+            $tags = $pageContent["page"]["sections"][$post["section"]]["tags"];
+            $pageContent["page"]["sections"][$post["section"]] = $post;
+            $pageContent["page"]["sections"][$post["section"]]["tags"] = $tags;
+        } else {
+            $pageContent["page"]["sections"][$post["section"]] = $post;
+        }
 
-        $pageContent["page"]["sections"][$post["section"]] = $post;
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully updated the section."]);
@@ -1175,5 +1184,152 @@ class Cms extends Admin_Controller
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected section."]);
+    }
+
+
+    /**
+     * get add page by page name
+     *
+     * @param string $page
+     */
+    public function getPageUI(string $page)
+    {
+        $data = [];
+        //
+        $post = $this->input->post(null, true);
+        //
+        if ($post) {
+            // get the page record
+            $pageContent = $this->cms_model->get_page_data(
+                $post["pageId"]
+            )["content"];
+            // 
+            $pageContent = json_decode($pageContent, true);
+            $paths = explode("|", $post["section"]);
+            //
+            $data = $pageContent["page"]["sections"];
+            foreach ($paths as $path) {
+                $data = $data[$path];
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view(
+                "manage_admin/cms/v1/partials/dynamic/" . (strtolower($page)),
+                [
+                    "data" => $data
+                ],
+                true
+            )
+        ]);
+    }
+
+    /**
+     * updates page section
+     *
+     * @param int $pageId
+     */
+    public function updatePageSections(int $pageId)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        $pageContent["page"]["sections"][$post["section"]][$post["index"]][] = $post;
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "You have successfully updated the selected section."]);
+    }
+
+    /**
+     * deletes page section
+     *
+     * @param int $pageId
+     * @param int $index
+     */
+    public function deletePageTag(int $pageId, int $index)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        unset(
+            $pageContent["page"]["sections"]["section0"]["tags"][$index]
+        );
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "You have successfully deleted the selected section."]);
+    }
+
+    /**
+     * add page section card
+     *
+     * @param int $pageId
+     */
+    public function addPageTag(int $pageId)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        if (isset($post["index"])) {
+            $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"][$post["index"]] = $post;
+            $msg = "You have successfully updated a card section.";
+        } else {
+            $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"][] = $post;
+            $msg = "You have successfully added a card section.";
+        }
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
+    }
+
+
+    /**
+     * deletes tag card
+     *
+     * @param int $pageId
+     * @param int $index
+     */
+    public function deleteTagCard(int $pageId, int $index, int $tagIndex)
+    {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $pageContent = json_decode($pageContent, true);
+
+        unset(
+            $pageContent["page"]["sections"]["section0"]["tags"][$tagIndex]["cards"][$index]
+        );
+
+
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, ["msg" => "You have successfully deleted the selected card."]);
     }
 }

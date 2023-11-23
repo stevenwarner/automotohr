@@ -54,7 +54,7 @@
 		options["placeholderImage"] =
 			(opt !== undefined && opt.placeholderImage) || "";
 		options["fileLimit"] =
-			opt === undefined || $.inArray("mp4", opt.allowedTypes) === -1
+			opt === undefined
 				? -1
 				: opt.fileLimit;
 		options["allowedTypes"] = (opt !== undefined && opt.allowedTypes) || [
