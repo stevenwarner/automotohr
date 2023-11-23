@@ -1831,6 +1831,7 @@ if (!function_exists('getPageContent')) {
         } else {
             $CI->db->where('page', $page);
         }
+        $CI->db->where('status', 1);
         $pageContent =   $CI->db->get('cms_pages_new')->row_array();
         return json_decode($pageContent['content'], true);
     }
