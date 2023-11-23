@@ -385,7 +385,7 @@ higher paying job. Otherwise, (b) is more accurate
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                                             <div class="form-group autoheight">
-                                                <label>1. Enter an estimate of your 2020 itemized deductions (from Schedule A (Form 1040 or 1040-SR)). Such deductions may include qualifying home mortgage interest, charitable contributions, state and local taxes (up to $10,000), and medical expenses in excess of 7.5% of your income</label>
+                                                <label>1. Enter an estimate of your 2023 itemized deductions (from Schedule A (Form 1040 or 1040-SR)). Such deductions may include qualifying home mortgage interest, charitable contributions, state and local taxes (up to $10,000), and medical expenses in excess of 7.5% of your income</label>
                                                 <input type="text" value="<?php echo !empty($pre_form) && isset($pre_form['dw_input_1']) ? $pre_form['dw_input_1']: ''?>" name="dw_input_1" class="form-control" />
                                             </div>
                                         </div>
