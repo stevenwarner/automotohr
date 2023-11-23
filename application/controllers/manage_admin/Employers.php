@@ -367,7 +367,6 @@ class employers extends Admin_Controller
             //
             $languages_speak = $this->input->post('secondaryLanguages');
             //
-            _e($_POST,true,true);
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
 
@@ -497,6 +496,10 @@ class employers extends Admin_Controller
 
             $this->company_model->update_user($sid, $data, 'Employer');
 
+            //
+            $teamId = $this->input->post('teamId');
+            handleEmployeeDepartmentAndTeam($sid, $teamId);
+
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
                 //
@@ -511,13 +514,17 @@ class employers extends Admin_Controller
 
                 // update employee job titile on complynet
                 if ($employer_detail[0]['job_title'] != $data['job_title']) {
-                    updateEmployeeJobRoleToComplyNet($sid, $company_detail[0]['sid']);
+                    updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
+                }
+
+                // update employee department on complynet
+                //
+                $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
+                //
+                if ($employer_detail[0]['department_sid'] != $departmentId) {
+                    updateEmployeeDepartmentToComplyNet($sid, $oldData['parent_sid']);
                 }
             }
-
-            //
-            $teamId = $this->input->post('teamId');
-            handleEmployeeDepartmentAndTeam($sid, $teamId);
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
