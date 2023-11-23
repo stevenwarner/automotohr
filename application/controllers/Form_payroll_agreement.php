@@ -52,25 +52,6 @@ class Form_payroll_agreement extends CI_Controller
                     $this->form_validation->set_rules('client_date', 'Date', 'xss_clean|trim');
                     $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'xss_clean|trim');
                 } else { 
-                    // if ($is_pre_fill == 1) {
-                    // _e($_POST,true,true);
-                    // $this->form_validation->set_rules('company_sid', 'company_sid', 'xss_clean|trim');
-                    // $this->form_validation->set_rules('the_entity', 'Entity', 'xss_clean|trim');
-                    // $this->form_validation->set_rules('the_client', 'Client', 'xss_clean|trim');
-                    // $this->form_validation->set_rules('development_fee', 'Fee', 'xss_clean|trim|numeric');
-                    // $this->form_validation->set_rules('monthly_fee', 'Fee', 'xss_clean|trim|numeric');
-                    // $this->form_validation->set_rules('number_of_rooftops_locations', 'Rooftop Locations', 'xss_clean|trim|numeric');
-                    // $this->form_validation->set_rules('number_of_employees', 'Number of Employees', 'xss_clean|trim|numeric');
-
-                    // if ($this->input->post('payment_method') == 'trial_period') {
-                    //     $this->form_validation->set_rules('trial_fee', 'Trial Fee', 'xss_clean|trim|numeric');
-                    //     $this->form_validation->set_rules('recurring_payment_day', 'Recurring Trial Payment Day', 'xss_clean|trim|numeric');
-                    //     $this->form_validation->set_rules('payment_method', 'Method', 'xss_clean|trim');
-                    //     $this->form_validation->set_rules('trial_limit', 'Trial Limit', 'xss_clean|trim|numeric');
-                    //     $this->form_validation->set_rules('number_of_rooftops_locations_trial', 'Rooftop Locations', 'xss_clean|trim|numeric');
-                    //     $this->form_validation->set_rules('number_of_employees_trial', 'Number of Employees', 'xss_clean|trim|numeric');
-                    // }
-
                     $this->form_validation->set_rules('company_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('client_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('client_name', 'Name', 'required|xss_clean|trim');
@@ -92,28 +73,30 @@ class Form_payroll_agreement extends CI_Controller
                     $dataToSave['client_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $this->input->post('client_date'))));
                     $dataToSave['client_signature'] = $this->input->post('client_signature');
 
-                    $dataToSave['the_entity'] = $this->input->post('the_entity');
-                    $dataToSave['the_client'] = $this->input->post('the_client');
-                    $dataToSave['development_fee'] = $this->input->post('development_fee');
+                    if ($is_pre_fill == 1) {
+                        $dataToSave['the_entity'] = $this->input->post('the_entity');
+                        $dataToSave['the_client'] = $this->input->post('the_client');
+                        $dataToSave['development_fee'] = $this->input->post('development_fee');
 
-                    if ($this->input->post('payment_method') == 'monthly_subscription') {
-                        $dataToSave['monthly_fee'] = $this->input->post('monthly_fee');
-                        $dataToSave['is_trial_period'] = 0;
-                        $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations');
-                        $dataToSave['no_of_employees'] = $this->input->post('number_of_employees');
-                    } else {
-                        $dataToSave['monthly_fee'] = $this->input->post('trial_fee');
-                        $dataToSave['recurring_payment_day'] = $this->input->post('recurring_payment_day');
-                        $dataToSave['is_trial_period'] = 1;
-                        $dataToSave['trial_limit'] = $this->input->post('trial_limit');
-                        $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations_trial');
-                        $dataToSave['no_of_employees'] = $this->input->post('number_of_employees_trial');
-                    }
-                    
-                    //
-                    if (!$dataToSave['number_of_rooftops_locations']) {
-                        $dataToSave['number_of_rooftops_locations'] = $document_record['number_of_rooftops_locations'];
-                    }
+                        if ($this->input->post('payment_method') == 'monthly_subscription') {
+                            $dataToSave['monthly_fee'] = $this->input->post('monthly_fee');
+                            $dataToSave['is_trial_period'] = 0;
+                            $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations');
+                            $dataToSave['no_of_employees'] = $this->input->post('number_of_employees');
+                        } else {
+                            $dataToSave['monthly_fee'] = $this->input->post('trial_fee');
+                            $dataToSave['recurring_payment_day'] = $this->input->post('recurring_payment_day');
+                            $dataToSave['is_trial_period'] = 1;
+                            $dataToSave['trial_limit'] = $this->input->post('trial_limit');
+                            $dataToSave['number_of_rooftops_locations'] = $this->input->post('number_of_rooftops_locations_trial');
+                            $dataToSave['no_of_employees'] = $this->input->post('number_of_employees_trial');
+                        }
+                        
+                        //
+                        if (!$dataToSave['number_of_rooftops_locations']) {
+                            $dataToSave['number_of_rooftops_locations'] = $document_record['number_of_rooftops_locations'];
+                        }
+                    }    
                     //
                     $is_pre_fill = $this->input->post('is_pre_fill');
                     $status = '';
@@ -125,8 +108,6 @@ class Form_payroll_agreement extends CI_Controller
                         $dataToSave['client_ip'] = getUserIP();
                     }
                     // 
-                    //
-                    // _e($dataToSave,true,true);
                     $this->documents_model->update_document_record('form_payroll_agreement', $verification_key, $dataToSave, $status);
 
                     if ($pre_fill_flag != null && $pre_fill_flag == 'pre_fill') {
