@@ -345,7 +345,7 @@ $route['cron_google_hire'] = "Cron_google_hire/index";
 
 $route['services/(:any)'] = "home/services/$1";
 $route['default_controller'] = 'home';
-$route['404_override'] = '';
+$route['404_override'] = 'Home/checkPage';
 $route['translate_uri_dashes'] = FALSE;
 //Employer Side
 $route['schedule_your_free_demo'] = 'demo/schedule_your_free_demo';
@@ -2055,3 +2055,15 @@ $route["cms/(:num)/tag/card"]["post"] =
   "manage_admin/Cms/addPageTag/$1";
 $route["cms/(:num)/tag/(:num)/(:num)"]["delete"] =
   "manage_admin/Cms/deleteTagCard/$1/$2/$3";
+
+$route["manage_admin/cms/page/add"]["get"] =
+  "manage_admin/Cms/addDynamicPage";
+
+$route["manage_admin/cms/page/add"]["post"] =
+  "manage_admin/Cms/addDynamicPageProcess";
+
+
+$route["manage_admin/cms/page/edit/(:num)"]["get"] =
+"manage_admin/Cms/editDynamicPage/$1";
+$route["manage_admin/cms/page/edit/(:num)"]["post"] =
+"manage_admin/Cms/editDynamicPageProcess/$1";

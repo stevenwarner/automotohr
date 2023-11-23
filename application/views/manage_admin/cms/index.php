@@ -21,13 +21,16 @@
                                         </div>
                                         <div class="hr-innerpadding">
                                             <div class="row">
-                                                <div class="col-xs-12">
-                                                    <span class="pull-left">
-                                                        <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $total_records ?></p>
-                                                    </span>
-                                                    <span>
-                                                        <?php echo $links; ?>
-                                                    </span>
+                                                <div class="col-sm-10">
+                                                    <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $total_records ?></p>
+                                                    <br />
+                                                    <?php echo $links; ?>
+                                                </div>
+                                                <div class="col-sm-2 text-right">
+                                                    <a href="<?= base_url("manage_admin/cms/page/add"); ?>" class="btn btn-success">
+                                                        <i class="fa fa-plus-circle"></i>
+                                                        Add Page
+                                                    </a>
                                                 </div>
                                             </div>
                                             <hr />
@@ -40,6 +43,7 @@
                                                                 <tr>
                                                                     <th class="col-xs-3">Name</th>
                                                                     <th class="col-xs-2">Slug</th>
+                                                                    <th class="col-xs-2 text-center">Status</th>
                                                                     <th class="col-xs-2">Last updated at</th>
                                                                     <th class="col-xs-1">Actions</th>
                                                                 </tr>
@@ -60,11 +64,27 @@
                                                                                 DATE_WITH_TIME
                                                                             ); ?>
                                                                         </td>
+                                                                        <td style="vertical-align: middle;" class="text-center bg-<?= $page["status"] ? "success" : "danger"; ?>">
+                                                                            <strong>
+                                                                                <?= $page["status"] ? "PUBLISHED" : "UNPUBLISHED"; ?>
+                                                                            </strong>
+                                                                        </td>
                                                                         <td style="vertical-align: middle;">
-                                                                            <a href="<?php echo base_url('manage_admin/edit_page/' . $page['sid']) ?>" class="btn btn-warning">
-                                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                                &nbsp;Edit Page
-                                                                            </a>
+                                                                            <?php if ($page['is_dynamic']) { ?>
+                                                                                <a href="<?php echo base_url('manage_admin/cms/page/edit/' . $page['sid']) ?>" class="btn btn-warning">
+                                                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                                    &nbsp;Edit Page
+                                                                                </a>
+                                                                                <button class="btn btn-danger hidden">
+                                                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                                                    &nbsp;Delete Page
+                                                                                </button>
+                                                                            <?php } else { ?>
+                                                                                <a href="<?php echo base_url('manage_admin/edit_page/' . $page['sid']) ?>" class="btn btn-warning">
+                                                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                                    &nbsp;Edit Page
+                                                                                </a>
+                                                                            <?php } ?>
                                                                         </td>
                                                                     </tr>
                                                                 <?php } ?>

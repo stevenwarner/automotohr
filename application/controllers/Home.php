@@ -2210,4 +2210,51 @@ class Home extends CI_Controller
             'hf' => $hf
         ]);
     }
+
+    /**
+     * why us route
+     */
+    public function checkPage()
+    {
+        // set slug
+        $slug = $this->uri->uri_string();
+        // check if page is dynamic
+        $pageContent = getPageContent($slug, true);
+        // if not throw error
+        if (!$pageContent) {
+            return show_404();
+        }
+        //
+        $data['pageContent'] = $pageContent;
+        // set meta
+        $data["meta"] = $pageContent["meta"];
+        // css
+        $data['pageCSS'] = [
+            'v1/plugins/bootstrap5/css/bootstrap.min',
+            'v1/plugins/fontawesome/css/all',
+        ];
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js",
+            "https://code.jquery.com/jquery-3.5.1.min.js",
+        ];
+        // css bundle
+        $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, 'd_page', true);
+        // js bundle
+        $data['appJs'] = bundleJs([
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            'v1/app/js/pages/schedule_demo',
+        ], $this->js, 'd_page', $this->disableMinifiedFiles);
+
+        $this->load->view($this->header, $data);
+        $this->load->view('v1/app/dynamic_pages');
+        $this->load->view($this->footer);
+    }
 }

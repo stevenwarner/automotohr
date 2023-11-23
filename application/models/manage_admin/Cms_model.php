@@ -52,4 +52,98 @@ class cms_model extends CI_Model
                 "updated_at" => getSystemDate()
             ]);
     }
+
+    /**
+     * check if slug already exists
+     *
+     * @param string $pageSlug
+     * @return int
+     */
+    public function isPageExists(string $pageSlug): int
+    {
+        return $this->db
+            ->where("slug", $pageSlug)
+            ->count_all_results("cms_pages_new");
+    }
+
+    /**
+     * check if slug already exists
+     *
+     * @param string $pageSlug
+     * @param int    $pageId
+     * @return int
+     */
+    public function isPageExistsWithId(string $pageSlug, int $pageId): int
+    {
+        return $this->db
+            ->where("slug", $pageSlug)
+            ->where("sid <>", $pageId)
+            ->count_all_results("cms_pages_new");
+    }
+
+    /**
+     * create a new page
+     *
+     * @param array $data
+     * @return int
+     */
+    public function createPage(array $data): int
+    {
+        $this->db
+            ->insert(
+                "cms_pages_new",
+                [
+                    "title" => $data["title"],
+                    "slug" => $data["slug"],
+                    "content" => "{}",
+                    "created_at" => getSystemDate(),
+                    "updated_at" => getSystemDate(),
+                    "page" => str_replace('-', '_', $data["slug"]),
+                    "is_dynamic" => 1,
+                    "status" => 0,
+                ]
+            );
+        //
+        return $this->db->insert_id();
+    }
+
+    /**
+     * updates a page
+     *
+     * @param array $data
+     * @param int   $pageId
+     */
+    public function updateDynamicPage(array $data, int $pageId)
+    {
+        $this->db
+            ->where("sid", $pageId)
+            ->update(
+                "cms_pages_new",
+                [
+                    "title" => $data["title"],
+                    "slug" => $data["slug"],
+                    "updated_at" => getSystemDate(),
+                    "page" => str_replace('-', '_', $data["slug"]),
+                ]
+            );
+    }
+
+    /**
+     * updates a page status
+     *
+     * @param string $status
+     * @param int    $pageId
+     */
+    public function updatePageStatus(string $status, int $pageId)
+    {
+        $this->db
+            ->where("sid", $pageId)
+            ->update(
+                "cms_pages_new",
+                [
+                    "status" => $status,
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+    }
 }

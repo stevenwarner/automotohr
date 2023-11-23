@@ -76,6 +76,93 @@ class Cms extends Admin_Controller
         $this->render('manage_admin/cms/index');
     }
 
+    /**
+     * dynamic page add
+     */
+    public function addDynamicPage()
+    {
+        //
+        $this->data["page_title"] = "Add dynamic page :: AutomotoHR.com";
+        //
+        $commonFileBundle = bundleJs(
+            [
+                "js/app_helper"
+            ],
+            "public/v1/app/",
+            "app_common",
+            false
+        );
+        //
+        $pageBundle = bundleJs(
+            [
+                "v1/cms/page/create_dynamic_page"
+            ],
+            "public/v1/app/",
+            "app_page",
+            false
+        );
+        $this->data["appJs"] = combineBundle([
+            $commonFileBundle,
+            $pageBundle
+        ]);
+        //
+        $this->render('manage_admin/cms/v1/partials/dynamic_pages/add_dynamic_page');
+    }
+
+    /**
+     * dynamic page edit
+     */
+    public function editDynamicPage(int $pageId)
+    {
+        //
+        $this->data["page_title"] = "Edit a dynamic page :: AutomotoHR.com";
+        // get the page
+        $this->data["page"] = $this->cms_model->get_page_data($pageId);
+        $this->data["pageContent"] = json_decode($this->data["page"]["content"], true);
+        $this->data["PageScripts"] = [
+            "v1/plugins/ckeditor5/main"
+        ];
+        //
+        $commonFileBundleCSS = bundleCSS(
+            [
+                "v1/plugins/ms_modal/main",
+                "v1/plugins/ms_uploader/main",
+            ],
+            "public/v1/app/",
+            "app_common_edit",
+            true
+        );
+        //
+        $commonFileBundle = bundleJs(
+            [
+                "v1/plugins/ms_modal/main",
+                "v1/plugins/ms_uploader/main",
+                "js/app_helper"
+            ],
+            "public/v1/app/",
+            "app_common_edit",
+            true
+        );
+        //
+        $pageBundle = bundleJs(
+            [
+                "v1/cms/page/edit_dynamic_page"
+            ],
+            "public/v1/app/",
+            "app_edit_page",
+            true
+        );
+        $this->data["appJs"] = combineBundle([
+            $commonFileBundle,
+            $pageBundle
+        ]);
+        $this->data["appCSS"] = combineBundle([
+            $commonFileBundleCSS,
+        ]);
+        //
+        $this->render('manage_admin/cms/v1/partials/dynamic_pages/edit_dynamic_page');
+    }
+
     //
     public function edit_page($sid)
     {
@@ -1331,5 +1418,131 @@ class Cms extends Admin_Controller
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, ["msg" => "You have successfully deleted the selected card."]);
+    }
+
+
+    /**
+     * create a new page process
+     */
+    public function addDynamicPageProcess()
+    {
+        $this->form_validation->set_rules("title", "Page name", "xss_clean|required|trim");
+        $this->form_validation->set_rules("slug", "Page slug", "xss_clean|required|trim");
+        //
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        // check if the page slug already exists
+        if ($this->cms_model->isPageExists($post["slug"])) {
+            return SendResponse(
+                400,
+                ["errors" => ["Page already exists."]]
+            );
+        }
+        // create the page
+        $pageId = $this->cms_model->createPage($post);
+        //
+        if (!$pageId) {
+            return SendResponse(
+                400,
+                ["errors" => ["Failed to create page."]]
+            );
+        }
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully created the page.",
+                "pageId" => $pageId
+            ]
+        );
+    }
+
+    /**
+     * create a new page process
+     *
+     * @param int $pageId
+     */
+    public function editDynamicPageProcess(int $pageId)
+    {
+        // get sanitized post
+        $post = $this->input->post(null, true);
+        //
+        if ($post["section"] === "main") {
+            // check if the page slug already exists
+            if ($this->cms_model->isPageExistsWithId($post["slug"], $pageId)) {
+                return SendResponse(
+                    400,
+                    ["errors" => ["Page already exists."]]
+                );
+            }
+            // update the page
+            $this->cms_model->updateDynamicPage($post, $pageId);
+        } elseif ($post["section"] === "status") {
+            // update the page
+            $this->cms_model->updatePageStatus($post["status"], $pageId);
+        } else {
+            // get the page record
+            $pageContent = json_decode(
+                $this->cms_model
+                    ->get_page_data(
+                        $pageId
+                    )["content"],
+                true
+            );
+
+            if ($post["source_type"]) {
+                //
+                $fileLink = $post["source_link"];
+                //
+                if (
+                    $post["source_type"] === "upload"
+                ) {
+                    //
+                    if (
+                        !$_FILES['file'] && $post['source_link']
+                    ) {
+                        $fileLink = $post["source_link"];
+                    } else {
+                        // check and run for image
+                        $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                        //
+                        if ($errors) {
+                            return SendResponse(
+                                400,
+                                ["errors" => $errors]
+                            );
+                        }
+                        $fileLink = upload_file_to_aws(
+                            "file",
+                            0,
+                            "product_page_",
+                        );
+                    }
+                }
+                //
+                $post["sourceFile"] = $fileLink;
+                $post["sourceType"] = $post["source_type"];
+            }
+
+            // update the section
+            $pageContent[$post["section"]] = $post;
+            //
+            $this->cms_model->updatePage(
+                $pageId,
+                json_encode($pageContent)
+            );
+        }
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully updated the page.",
+                "pageId" => $pageId
+            ]
+        );
     }
 }

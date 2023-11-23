@@ -6,10 +6,10 @@
 	line-height: 60px;
 	scroll-margin: 88px;
 	margin-top: 64px;
-	margin-bottom: 64px;
 }
 
 .csCard {
+	margin-top: 64px;
 	border: 1px solid #ccc;
 	border-radius: 5px;
 	padding: 20px;

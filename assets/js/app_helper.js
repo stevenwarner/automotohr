@@ -28,6 +28,17 @@ String.prototype.isValidInteger = function () {
 	return this.match(/^[1-9]\d*$/g) === null ? false : true;
 };
 
+/**
+ * converts a string to a slug
+ * @returns string
+ */
+String.prototype.toSlug = function () {
+	return this.replace(/[^a-z0-9]/gi, "-")
+		.replace(/-+/g, "-")
+		.replace(/-$/, "")
+		.toLowerCase();
+};
+
 if (typeof ml === "undefined") {
 	/**
 	 * Loader

@@ -272,3 +272,23 @@ if (!function_exists('bundleCSS')) {
         )) . '" />';
     }
 }
+
+if (!function_exists("combineBundles")) {
+    /**
+     * combine bundles
+     *
+     * @param array $bundles
+     * @return string
+     */
+    function combineBundle(array $bundles): string
+    {
+        // holder for bundles
+        $bundlesString = '';
+        // loop through the bundles
+        foreach ($bundles as $bundle) {
+            $bundlesString .= "\n" . $bundle;
+        }
+        // return bundle string
+        return $bundlesString;
+    }
+}

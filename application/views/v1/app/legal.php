@@ -21,10 +21,10 @@
                         </h3>
                     </div>
                 </div>
-                <?php if ($tag["cards"]) {
-                    foreach ($tag["cards"] as $card) {
-                ?>
-                        <div class="row">
+                <div class="row">
+                    <?php if ($tag["cards"]) {
+                        foreach ($tag["cards"] as $key => $card) {
+                    ?>
                             <div class="col-sm-6 col-md-6 col-lg-4 col-xs-12">
                                 <div class="csCard">
                                     <h4>
@@ -33,17 +33,17 @@
                                     <p>
                                         <?= convertToStrip($card["details"]); ?>
                                     </p>
-                                    <a href="<?= generateLink($card["buttonLink"]) ?>" title="Read More">
+                                    <a href="<?= generateLink($card["buttonLink"]) ?>">
                                         <?= convertToStrip($card["buttonText"]); ?>
                                         <i class="fa fa-chevron-right"></i>
                                     </a>
                                 </div>
                             </div>
-                        </div>
-                <?php
+                    <?php
+                        }
                     }
-                }
-                ?>
+                    ?>
+                </div>
         <?php
             }
         }
