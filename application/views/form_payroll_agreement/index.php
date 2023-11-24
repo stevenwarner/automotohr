@@ -150,140 +150,52 @@
                                         Customer must contact <?php echo STORE_NAME; ?> / AutomotoSocial LLC at least fifteen (15) business days prior to the end of the Trial Period if Customer wishes to cancel the Services beyond the Trial Period.
                                     </p>
                                 </div>
+
+
                                 <br>
+
                                 <div class="end-user-form-wrp">
-                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
-                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">COMPANY </span>
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">CONTRACT INFORMATION</span>
                                         <div class="field-row">
                                             <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>By:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <?php
-                                                    $company_by = $company_document['company_by'];
-                                                    if ($company_by == '') {
-                                                        $company_by = STORE_NAME;
-                                                    }
-                                                    ?>
-                                                    <input type="text" class="invoice-fields" id="company_by" name="company_by" value="<?php echo set_value('company_by', $company_by); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
-                                                    <?php echo form_error('company_by'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>Name:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <?php
-                                                    $company_name = $company_document['company_name'];
-                                                    if ($company_name == '') {
-                                                        $company_name = 'Steven Warner';
-                                                    }
-                                                    ?>
-                                                    <input type="text" class="invoice-fields" id="company_name" name="company_name" value="<?php echo set_value('company_name', $company_name); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
-                                                    <?php echo form_error('company_name'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>Title:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <?php
-                                                    $company_title = $company_document['company_title'];
-                                                    if ($company_title == '') {
-                                                        $company_title = 'CEO';
-                                                    }
-                                                    ?>
-                                                    <input type="text" class="invoice-fields" id="company_title" name="company_title" value="<?php echo set_value('company_title', $company_title); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
-                                                    <?php echo form_error('company_title'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>DATE:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <?php
-                                                    if ($company_document['status'] == 'signed') {
-                                                        $company_document['company_date'] = date('m-d-Y', strtotime(str_replace('-', '/', $company_document['company_date'])));
-                                                    } else {
-                                                        $company_document['company_date'] = date('m-d-Y');
-                                                    }
+                                                <div class="recurring-payment-text-area col-lg-12">
+                                                    <br>
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-lg-6 col-md-6 col-xs-6 col-sm-12">
 
-                                                    ?>
-                                                    <input type="text" class="invoice-fields startdate" id="company_date" name="company_date" value="<?php echo set_value('company_date', $company_document['company_date']); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
-                                                    <?php echo form_error('company_date'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
-                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">CLIENT</span>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>By:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <input type="text" class="invoice-fields" id="client_by" name="client_by" value="<?php echo set_value('client_by', $company_document['client_by']); ?>" <?php echo $readonly; ?> />
-                                                    <?php echo form_error('client_by'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>Name:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <input type="text" class="invoice-fields" id="client_name" name="client_name" value="<?php echo set_value('client_name', $company_document['client_name']); ?>" <?php echo $readonly; ?> />
-                                                    <?php echo form_error('client_name'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>Title:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <input type="text" class="invoice-fields" id="client_title" name="client_title" value="<?php echo set_value('client_title', $company_document['client_title']); ?>" <?php echo $readonly; ?> />
-                                                    <?php echo form_error('client_title'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field-row">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <label>DATE:</label>
-                                                </div>
-                                                <div class="col-lg-10">
-                                                    <?php
-                                                    if ($company_document['status'] == 'signed') {
-                                                        $company_document['client_date'] = date('m-d-Y', strtotime(str_replace('-', '/', $company_document['client_date'])));
-                                                    } else {
-                                                        $company_document['client_date'] = date('m-d-Y');
-                                                    }
+                                                            Contract Term <div class="form-outer">
+                                                                <select class="invoice-fields" id="contract_term" name="contract_term">
+                                                                    <option value="">Please Select</option>
 
-                                                    ?>
+                                                                    <option value="Year">Year</option>
+                                                                    <option value="Month">Month</option>
 
-                                                    <input type="text" class="invoice-fields startdate" id="client_date" name="client_date" value="<?php echo set_value('client_date', $company_document['client_date']); ?>" <?php echo $readonly; ?> />
-                                                    <?php echo form_error('client_date'); ?>
+                                                                </select>
+                                                                <?php echo form_error('contract_term'); ?>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-12 col-lg-6 col-md-6 col-xs-6 col-sm-12">
+
+                                                            Number Of <div class="form-outer">
+                                                                <input type="text" name="term_number_of" id="term_number_of" value="<?php echo set_value('billing_email_address', $company_document['term_number_of']); ?>" class="invoice-fields" />
+                                                                <?php echo form_error('term_number_of'); ?>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
+
                                 <br>
-                                <div class="end-user-form-wrp">
+                                <div class="end-user-form-wrp" style="margin-top: 30px;">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <span class="page-heading down-arrow affiliate_end_user_agreement_color">CREDIT CARD AUTHORIZATION</span>
                                         <div class="field-row">
@@ -338,7 +250,7 @@
                                                     </div>
                                                 </div>
 
-                                                <span class="credit-card-form-heading underline-text col-lg-12" style="font-size: 14px;">Check only one:</span>
+                                                <span class="credit-card-form-heading underline-text col-lg-12" style="font-size: 14px;margin-top: 10px;">Check only one:<br></span>
                                                 <?php $is_default_self = false;
                                                 $is_default_company = false;
 
@@ -350,7 +262,7 @@
                                                     $is_default_company = true;
                                                 } ?>
                                                 <div>
-                                                    <div class="recurring-payment-text-area col-lg-12">
+                                                    <div class="recurring-payment-text-area col-lg-12" style="margin-top: 10px;">
 
                                                         <div class="row">
                                                             <div class="col-lg-8">
@@ -374,7 +286,7 @@
                                                     <?php echo form_error('authorization_on_behalf_of'); ?>
                                                 </div>
 
-                                                <span class="credit-card-form-heading col-lg-12" style="font-size: 14px;">Credit Card Billing Address:</span>
+                                                <span class="credit-card-form-heading col-lg-12" style="font-size: 14px; margin-top:10px;">Credit Card Billing Address:</span>
                                                 <div class="row">
                                                     <div class="col-lg-8 col-md-8 col-xs-12 col-sm-8">
                                                         <div class="card-fields-row">
@@ -583,40 +495,134 @@
                                     </div>
                                 </div>
 
-                                <br>
-                                <div class="end-user-form-wrp">
-                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">CONTRACT INFORMATION</span>
+
+
+                                <div class="end-user-form-wrp" style="margin-top: 30px;">
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">COMPANY </span>
                                         <div class="field-row">
                                             <div class="row">
-                                                <div class="recurring-payment-text-area col-lg-12">
-                                                    <br>
-                                                    <div class="row">
-                                                        <div class="col-lg-12 col-lg-6 col-md-6 col-xs-6 col-sm-12">
-
-                                                            Contract Term <div class="form-outer">
-                                                                <select class="invoice-fields" id="contract_term" name="contract_term">
-                                                                    <option value="">Please Select</option>
-
-                                                                    <option value="Year">Year</option>
-                                                                    <option value="Month">Month</option>
-
-                                                                </select>
-                                                                <?php echo form_error('contract_term'); ?>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-lg-12 col-lg-6 col-md-6 col-xs-6 col-sm-12">
-
-                                                            Number Of <div class="form-outer">
-                                                                <input type="text" name="term_number_of" id="term_number_of" value="<?php echo set_value('billing_email_address', $company_document['term_number_of']); ?>" class="invoice-fields" />
-                                                                <?php echo form_error('term_number_of'); ?>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
+                                                <div class="col-lg-2">
+                                                    <label>By:</label>
                                                 </div>
-                                                <div>
+                                                <div class="col-lg-10">
+                                                    <?php
+                                                    $company_by = $company_document['company_by'];
+                                                    if ($company_by == '') {
+                                                        $company_by = STORE_NAME;
+                                                    }
+                                                    ?>
+                                                    <input type="text" class="invoice-fields" id="company_by" name="company_by" value="<?php echo set_value('company_by', $company_by); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
+                                                    <?php echo form_error('company_by'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>Name:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <?php
+                                                    $company_name = $company_document['company_name'];
+                                                    if ($company_name == '') {
+                                                        $company_name = 'Steven Warner';
+                                                    }
+                                                    ?>
+                                                    <input type="text" class="invoice-fields" id="company_name" name="company_name" value="<?php echo set_value('company_name', $company_name); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
+                                                    <?php echo form_error('company_name'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>Title:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <?php
+                                                    $company_title = $company_document['company_title'];
+                                                    if ($company_title == '') {
+                                                        $company_title = 'CEO';
+                                                    }
+                                                    ?>
+                                                    <input type="text" class="invoice-fields" id="company_title" name="company_title" value="<?php echo set_value('company_title', $company_title); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
+                                                    <?php echo form_error('company_title'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>DATE:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <?php
+                                                    if ($company_document['status'] == 'signed') {
+                                                        $company_document['company_date'] = date('m-d-Y', strtotime(str_replace('-', '/', $company_document['company_date'])));
+                                                    } else {
+                                                        $company_document['company_date'] = date('m-d-Y');
+                                                    }
+
+                                                    ?>
+                                                    <input type="text" class="invoice-fields startdate" id="company_date" name="company_date" value="<?php echo set_value('company_date', $company_document['company_date']); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> />
+                                                    <?php echo form_error('company_date'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+                                        <span class="page-heading down-arrow affiliate_end_user_agreement_color">CLIENT</span>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>By:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <input type="text" class="invoice-fields" id="client_by" name="client_by" value="<?php echo set_value('client_by', $company_document['client_by']); ?>" <?php echo $readonly; ?> />
+                                                    <?php echo form_error('client_by'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>Name:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <input type="text" class="invoice-fields" id="client_name" name="client_name" value="<?php echo set_value('client_name', $company_document['client_name']); ?>" <?php echo $readonly; ?> />
+                                                    <?php echo form_error('client_name'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>Title:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <input type="text" class="invoice-fields" id="client_title" name="client_title" value="<?php echo set_value('client_title', $company_document['client_title']); ?>" <?php echo $readonly; ?> />
+                                                    <?php echo form_error('client_title'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="field-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <label>DATE:</label>
+                                                </div>
+                                                <div class="col-lg-10">
+                                                    <?php
+                                                    if ($company_document['status'] == 'signed') {
+                                                        $company_document['client_date'] = date('m-d-Y', strtotime(str_replace('-', '/', $company_document['client_date'])));
+                                                    } else {
+                                                        $company_document['client_date'] = date('m-d-Y');
+                                                    }
+
+                                                    ?>
+
+                                                    <input type="text" class="invoice-fields startdate" id="client_date" name="client_date" value="<?php echo set_value('client_date', $company_document['client_date']); ?>" <?php echo $readonly; ?> />
+                                                    <?php echo form_error('client_date'); ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -624,9 +630,10 @@
                                 </div>
 
 
+
                                 <br>
 
-                                <p style="float:left; width:100%;" class="col-lg-12">IN WITNESS WHEREOF, the parties have caused this Agreement to be executed in its name and attested to by its duly authorized officers or individuals as of the Date below. </p>
+                                <p style="float:left; width:100%; margin-top: 30px;" class="col-lg-12">IN WITNESS WHEREOF, the parties have caused this Agreement to be executed in its name and attested to by its duly authorized officers or individuals as of the Date below. </p>
 
                                 <div class="card-fields-row">
                                     <div class="row">
@@ -833,8 +840,8 @@
         }
 
 
-        $('#contract_term').val('<?php echo $company_document['contract_term']?>');
-        
+        $('#contract_term').val('<?php echo $company_document['contract_term'] ?>');
+
 
         $('#term_number_of').on('change', function() {
             var termNumberOf = this.value;
