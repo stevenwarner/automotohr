@@ -598,6 +598,7 @@ class Documents extends Admin_Controller {
         $data_to_insert = $fpa_info;
         $data_to_insert['document_fpa_sid'] = $record_sid;
         unset($data_to_insert['sid']);
+
         $this->documents_model->insert_enduser_payroll_agreement_history($data_to_insert);
 
         $data_to_update = array();

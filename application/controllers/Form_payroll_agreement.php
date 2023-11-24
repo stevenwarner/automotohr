@@ -58,8 +58,47 @@ class Form_payroll_agreement extends CI_Controller
                     $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'required|xss_clean|trim');
                 }
 
+
+
+                ////
+                
+                $this->form_validation->set_rules('client_by', 'By', 'required|xss_clean|trim');
+                $this->form_validation->set_rules('client_name', 'Name', 'required|xss_clean|trim');
+                $this->form_validation->set_rules('client_title', 'Name', 'required|xss_clean|trim');
+
+                $this->form_validation->set_rules('contract_term', 'Contract Term', 'required|xss_clean|trim');
+                $this->form_validation->set_rules('term_number_of', 'Number of', 'required|xss_clean|trim');
+
+
+
+                // Credit Card 
+                $this->form_validation->set_rules('authorized_person_full_name', 'Name', 'xss_clean|trim');
+                $this->form_validation->set_rules('recurring_amount', 'Recurring Amount', 'xss_clean|trim|numeric');
+                $this->form_validation->set_rules('day_of_payment', 'Payment Day', 'xss_clean|trim');
+                $this->form_validation->set_rules('authorization_on_behalf_of', 'Individual or Company', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_address', 'Billing Address', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_phone_number', 'Phone Number', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_city', 'City', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_state', 'State', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_zip_code', 'Zip Code', 'xss_clean|trim');
+                $this->form_validation->set_rules('billing_email_address', 'Email', 'xss_clean|trim|valid_email');
+                $this->form_validation->set_rules('cc_type', '', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_holder_name', 'Name', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_number', 'Number', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_expiration_month', 'Expiration Month', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_expiration_year', 'Expiration Year', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_front_image', 'Front Image', 'xss_clean|trim');
+                $this->form_validation->set_rules('cc_back_image', 'Back Image', 'xss_clean|trim');
+                $this->form_validation->set_rules('driving_license_front_image', 'Front Image', 'xss_clean|trim');
+                $this->form_validation->set_rules('authorization_date', 'Date', 'xss_clean|trim');
+                $this->form_validation->set_rules('additional_fee', 'Additional Fee', 'xss_clean|trim|numeric');
+                $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'xss_clean|trim');
+
+
+
                 if (!$this->form_validation->run()) {
                 } else {
+
                     //
                     $is_pre_fill = $this->input->post('is_pre_fill');
                     $clientName = $this->input->post('client_name');
@@ -108,6 +147,26 @@ class Form_payroll_agreement extends CI_Controller
                         $dataToSave['client_ip'] = getUserIP();
                     }
                     // 
+                    
+                    $dataToSave['term_number_of'] = $this->input->post('term_number_of');
+                    $dataToSave['contract_term'] = $this->input->post('contract_term');
+
+                    $dataToSave['authorized_person_full_name'] = $this->input->post('authorized_person_full_name');
+                    $dataToSave['recurring_amount'] = $this->input->post('recurring_amount');
+                    $dataToSave['day_of_payment'] = $this->input->post('day_of_payment');
+                    $dataToSave['authorization_on_behalf_of'] = $this->input->post('authorization_on_behalf_of');
+                    $dataToSave['billing_address'] = $this->input->post('billing_address');
+                    $dataToSave['billing_phone_number'] = $this->input->post('billing_phone_number');
+                    $dataToSave['billing_city'] = $this->input->post('billing_city');
+                    $dataToSave['billing_state'] = $this->input->post('billing_state');
+                    $dataToSave['billing_zip_code'] = $this->input->post('billing_zip_code');
+                    $dataToSave['billing_email_address'] = $this->input->post('billing_email_address');
+                    $dataToSave['cc_type'] = $this->input->post('cc_type');
+                    $dataToSave['cc_holder_name'] = $this->input->post('cc_holder_name');
+                    $dataToSave['cc_number'] = $this->input->post('cc_number');
+                    $dataToSave['cc_expiration_month'] = $this->input->post('cc_expiration_month');
+                    $dataToSave['cc_expiration_year'] = $this->input->post('cc_expiration_year');
+
                     $this->documents_model->update_document_record('form_payroll_agreement', $verification_key, $dataToSave, $status);
 
                     if ($pre_fill_flag != null && $pre_fill_flag == 'pre_fill') {
