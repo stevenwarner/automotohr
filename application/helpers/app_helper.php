@@ -1844,3 +1844,16 @@ if (!function_exists('findCompanyUser')) {
         return $result;
     }
 }
+
+//
+if (!function_exists('acceptGustoAgreement')) {
+  
+    function acceptGustoAgreement($name)
+    {
+        if ($name != '' && $name != null) {
+        }
+    
+        return false;
+
+    }
+}

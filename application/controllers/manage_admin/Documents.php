@@ -26,6 +26,7 @@ class Documents extends Admin_Controller {
             $this->data['company_sid'] = $company_sid;
             $companies_uploaded_documents = $this->documents_model->get_all_forms_documents_uploaded($company_sid);
             $this->data['companies_uploaded_documents'] = $companies_uploaded_documents;
+        
         }
         // echo '<pre>'; print_r($companies_documents); exit;
         $this->form_validation->set_rules('company_sid', 'company sid', 'required');
@@ -53,6 +54,9 @@ class Documents extends Admin_Controller {
                     } elseif ($form_name == 'company_contacts') {
                         $verification_key = random_key(80);
                         $this->documents_model->insert_document_record('company_contacts', $company_sid, $verification_key, 'generated');
+                    }elseif ($form_name == 'fpa') {
+                        $verification_key = random_key(80);
+                        $this->documents_model->insert_document_record('payroll_agreement', $company_sid, $verification_key, 'generated');
                     }
 
                     redirect('manage_admin/documents/' . $company_sid, 'refresh');
@@ -136,11 +140,16 @@ class Documents extends Admin_Controller {
                 $contacts = $this->input->post('contacts');
                 $uploaded_documents = $this->input->post('documents');
                 $message = $this->input->post('message');
+
+                $fpa = $this->input->post('fpa');
+
+
                 $link_cc_auth = '';
                 $link_eula = '';
                 $link_contacts = '';
+                
 
-                if (strlen($cc_auth) > 1) {
+               if (strlen($cc_auth) > 1) {
                     $link_cc_auth = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('form_credit_card_authorization/' . $cc_auth) . '">Credit Card Authorization Form</a>';
                     $cc_auth_sid = $this->documents_model->get_document_sid('credit_card_authorization', $cc_auth);
                     $this->documents_model->update_document_status('credit_card_authorization', $cc_auth, 'sent');
@@ -157,6 +166,14 @@ class Documents extends Admin_Controller {
                     $contacts_sid = $this->documents_model->get_document_sid('company_contacts', $contacts);
                     $this->documents_model->update_document_status('company_contacts', $contacts, 'sent');
                 }
+
+
+                if (strlen($fpa) > 1) {
+                    $link_fpa = '<a style="' . DEF_EMAIL_BTN_STYLE_DANGER . '" target="_blank" href="' . base_url('form_payroll_agreement/' . $fpa) . '">Payroll Agreement</a>';
+                    $fpa_sid = $this->documents_model->get_document_sid('form_payroll_agreement', $fpa);
+                    $this->documents_model->update_document_status('form_payroll_agreement', $fpa, 'sent');
+                }
+
 
                 $documents_links = '';
                 $temp_link = '';
@@ -181,6 +198,14 @@ class Documents extends Admin_Controller {
                     $links .= $link_eula;
                     $links .= '<br />';
                 }
+
+
+                if ($link_fpa != '') {
+                    $links .= '<br />';
+                    $links .= $link_fpa;
+                    $links .= '<br />';
+                }
+
 
                 if ($link_cc_auth != '') {
                     $links .= '<br />';
@@ -224,6 +249,12 @@ class Documents extends Admin_Controller {
                         if (isset($eula_sid) && $eula_sid != 0) {
                             $this->documents_model->insert_document_email_history_record($company_sid, $eula_sid, 'Manual Email', $email_address);
                         }
+
+
+                        if (isset($fpa_sid) && $fpa_sid != 0) {
+                            $this->documents_model->insert_document_email_history_record($company_sid, $fpa_sid, 'Manual Email', $email_address);
+                        }
+
 
                         if (isset($contacts_sid) && $contacts_sid != 0) {
                             $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Manual Email', $email_address);
@@ -349,8 +380,7 @@ class Documents extends Admin_Controller {
                             $replacement_array['email_address'] = $email;
                             $replacement_array['links'] = $links;
                             $replacement_array['message'] = $message;
-                            $system_notification_emails = get_system_notification_emails('documents_management_emails');
-
+ 
                             if (!empty($system_notification_emails)) {
                                 foreach ($system_notification_emails as $system_notification_email) {
                                     log_and_send_templated_email(FORMS_NOTIFICATION_TO_ADMIN, $system_notification_email['email'], $replacement_array);
@@ -551,4 +581,34 @@ class Documents extends Admin_Controller {
         $this->session->set_flashdata('message', '<strong>Success</strong> : Company Contacts Document Regenerate Successfully!');
         redirect('manage_admin/documents/' . $company_sid, 'refresh');
     }
+
+
+    function regenerate_enduser_payroll_agreement ($verification_key = null) {
+        $redirect_url = 'manage_admin/';
+        $function_name = 'regenerate_enduser_license_agreement';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+        $fpa_info = $this->documents_model->get_enduser_payroll_agreement_information($verification_key);
+        $record_sid = $fpa_info['sid'];
+        $company_sid = $fpa_info['company_sid'];
+        
+        $data_to_insert = array();
+        $data_to_insert = $fpa_info;
+        $data_to_insert['document_fpa_sid'] = $record_sid;
+        unset($data_to_insert['sid']);
+        $this->documents_model->insert_enduser_payroll_agreement_history($data_to_insert);
+
+        $data_to_update = array();
+        $data_to_update['status'] = 'generated';
+        $data_to_update['status_date'] = date('Y-m-d H:i:s');
+        $data_to_update['acknowledgement'] = NULL;
+        $data_to_update['client_ip'] = NULL;
+        $this->documents_model->regenerate_enduser_payroll_agreement($record_sid, $data_to_update);
+        $this->session->set_flashdata('message', '<strong>Success</strong> : Payroll Agreement Regenerate Successfully!');
+        redirect('manage_admin/documents/' . $company_sid, 'refresh');
+    }
+
+
 }
