@@ -60,19 +60,20 @@ class Form_payroll_agreement extends CI_Controller
 
                 if (!$this->form_validation->run()) {
                 } else {
-
+                    //
+                    $is_pre_fill = $this->input->post('is_pre_fill');
                     $clientName = $this->input->post('client_name');
-                    
+                    //
                     $dataToSave = array();
                     $dataToSave['company_sid'] = $this->input->post('company_sid');
                     $dataToSave['acknowledgement'] = $this->input->post('acknowledgement');
                     $dataToSave['client_name'] = $clientName;
-
+                    //
                     $dataToSave['client_by'] = $this->input->post('client_by');
                     $dataToSave['client_title'] = $this->input->post('client_title');
                     $dataToSave['client_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $this->input->post('client_date'))));
                     $dataToSave['client_signature'] = $this->input->post('client_signature');
-
+                    //
                     if ($is_pre_fill == 1) {
                         $dataToSave['the_entity'] = $this->input->post('the_entity');
                         $dataToSave['the_client'] = $this->input->post('the_client');
@@ -98,9 +99,8 @@ class Form_payroll_agreement extends CI_Controller
                         }
                     }    
                     //
-                    $is_pre_fill = $this->input->post('is_pre_fill');
                     $status = '';
-
+                    //
                     if ($is_pre_fill == 1) {
                         $status = 'pre-filled';
                     } else {
