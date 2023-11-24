@@ -3305,3 +3305,17 @@ button.color_light_grey {
 .get-your-account-image {
 	width: 100%;
 }
+
+.csPt100 {
+	padding-top: 200px;
+}
+
+.csAboutUsImage {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 200px;
+	bottom: 0;
+	margin: 0 auto;
+	max-width: 50%;
+}

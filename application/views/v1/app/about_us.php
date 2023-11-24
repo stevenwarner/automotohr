@@ -1,37 +1,31 @@
 <main>
-    <section class="aboutus-first">
-        <div class="row">
-            <div class="col-xs-12 column-flex-center">
-                <div class="w-80 first-section-padding-whyus">
-                    <div class="row">
-                        <div class="col-xs-12 col-lg-12">
-                            <div class="col-xs-12">
-                                <h1 class="automotoH1 text-start why-us-heading text-center w-100">
-                                    <?= convertToStrip($pageContent["page"]["sections"]["section_1"]["mainHeading"]); ?>
-                                </h1>
-                            </div>
-                            <div class="col-xs-12 center-horizontally">
-                                <div class="aboutus-first-sec-margin-bottom">
-                                    <p class="autmotoPara opacity-70 w-100 why-us-first-para padding-x-35 about-us-first-para text-center"></p>
+    <div style="position: relative">
+        <section class="aboutus-first">
+            <div class="row">
+                <div class="col-xs-12 column-flex-center">
+                    <div class="w-80 first-section-padding-whyus">
+                        <div class="row">
+                            <div class="col-xs-12 col-lg-12">
+                                <div class="col-xs-12">
+                                    <h1 class="automotoH1 text-start why-us-heading text-center w-100">
+                                        <?= convertToStrip($pageContent["page"]["sections"]["section_1"]["mainHeading"]); ?>
+                                    </h1>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-lg-12">
-                            <div class="text-center">
-                                <?=
-                                getSourceByType(
-                                    $pageContent["page"]["sections"]["section_1"]["sourceType"],
-                                    $pageContent["page"]["sections"]["section_1"]["sourceFile"],
-                                    'class="whyus-center-image"',
-                                    false
-                                ); ?>
-                            </div>
+                        <div class="csPt100"></div>
+                        <div class="csAboutUsImage">
+                            <?=
+                            getSourceByType(
+                                $pageContent["page"]["sections"]["section_1"]["sourceType"],
+                                $pageContent["page"]["sections"]["section_1"]["sourceFile"]
+                            ); ?>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
     <section class="aboutus-second about-us-dark-blue-bg">
         <div class="row">
             <div class="col-xs-12 column-flex-center">
@@ -54,6 +48,7 @@
             </div>
         </div>
     </section>
+
     <?php if ($pageContent["page"]["sections"]["section_2"]["status"] == "on") { ?>
         <section class="whyus-second why-us">
             <div class="row">

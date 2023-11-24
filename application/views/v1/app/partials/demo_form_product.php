@@ -1,12 +1,16 @@
+<?php $popupContent = getPageContent("schedule_demo_popup", false); ?>
 <form method="post" action="javascript:void(0)" class="form <?= $buttonClass2 ?? "w-80" ?>" id="<?= $formId ?? "jsScheduleFreeDemoMain"; ?>">
     <div class="position-relative">
         <img src="<?= image_url("/"); ?>Ellipse 9.png" class="purple-half-div" alt="half-purple-circle" />
         <div class="form-div">
             <div class="highlighted-div column-flex-center opacity-80-product">
-                <p><span class="highlighted-light-blue-div">Want</span>the Inside Secret on People Operations?</p>
+                <p>
+                    <span class="highlighted-light-blue-div"><?= convertToStrip(substr($popupContent["page"]["sections"]["pageDetails"]["heading"], 0, 4)); ?></span>
+                    <?= convertToStrip(substr($popupContent["page"]["sections"]["pageDetails"]["heading"], 4)); ?>
+                </p>
             </div>
             <h2>
-                <?php echo $heading; ?>
+                <?= convertToStrip($popupContent["page"]["sections"]["pageDetails"]["subHeading"]); ?>
             </h2>
             <div class="form-group">
                 <input type="text" class="form-control" id="name" placeholder="Name*" name="name" />
@@ -87,12 +91,12 @@
 
             <button class="button p-3 explore_btn schedule-btn schedule-btn-demo d-flex text-white mt-4 width_100 mb-lg-0 mb-5 auto-schedule-btn jsButtonAnimate jsScheduleDemoMainBtn <?= $buttonClass ?? ""; ?>" id="schedule-free-demo-form-submit" type="submit">
                 <p class="mb-0 btn-text">
-                    Schedule Your No Obligation Consultation
+                    <?= convertToStrip($popupContent["page"]["sections"]["pageDetails"]["buttonText"]); ?>
                 </p>
                 <i class="fa-solid fa-arrow-right schedule-btn-adj top-button-icon ps-3"></i>
             </button>
         </div>
-        <img src="<?= image_url("/"); ?>Ellipse 2.png" class="yellow-half-circle-form" alt="half-purple-circle" />
-        <img src="<?= image_url("/"); ?>Ellipse 10.png" class="light-blue-half-circle-form" alt="half-purple-circle" />
+        <img src="<?= image_url("Ellipse 2.png"); ?>" class="yellow-half-circle-form" alt="half-purple-circle" />
+        <img src="<?= image_url("Ellipse 10.png"); ?>" class="light-blue-half-circle-form" alt="half-purple-circle" />
     </div>
 </form>

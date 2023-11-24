@@ -1,3 +1,4 @@
+<?php $popupContent = getPageContent("schedule_demo_popup", false); ?>
 <style>
     .modal-content {
         border-radius: 40px;
@@ -11,19 +12,19 @@
                 <div class="form_section px-3 d-flex flex-column justify-content-center">
                     <div class="d-flex flex-column align-items-center mb-5">
                         <br />
-                        <p class="sora-family autmotoPara automotoGreytext">
-                            <span class="highlighted-light-blue-div">Look</span> in Your Demo
-                      
+                        <p>
+                            <span class="highlighted-light-blue-div"><?= convertToStrip(substr($popupContent["page"]["sections"]["pageDetails"]["heading"], 0, 4)); ?></span>
+                            <?= convertToStrip(substr($popupContent["page"]["sections"]["pageDetails"]["heading"], 4)); ?>
                         </p>
                         <h3 class="automotoH3 darkGreyColor line_height ">
-                            Contact Our Talent Partners
+                            <?= convertToStrip($popupContent["page"]["sections"]["pageDetails"]["subHeading"]); ?>
                         </h3>
                     </div>
                 </div>
                 <?php $this->load->view("v1/app/partials/demo_form", [
                     "id" => "jsScheduleFreeDemoPopUp",
                     "buttonClass"  => "w-100",
-                    "buttonText" => "Schedule My Free Demo"
+                    "buttonText" => convertToStrip($popupContent["page"]["sections"]["pageDetails"]["buttonText"])
                 ]); ?>
             </div>
         </div>

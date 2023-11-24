@@ -74,7 +74,7 @@
                     <form action="<?= base_url("affiliate_program/process") ?>" enctype="multipart/form-data" method="post" id="affiliated-form">
                         <div class=" row">
                             <div class="col-sm-12">
-                                <p class="highlighted-div text-white opacity-90-product margin-top-60" style="font-size: 28px;">
+                                <p class="highlighted-div text-white opacity-90-product margin-top-60" style="font-size: 36px; line-height: 36px;">
                                     <strong> <span class="highlighted-light-blue-div background">
                                             <?= substr($sections["section_2"]["subHeading"], 0, 4); ?>
                                         </span>
