@@ -4305,9 +4305,6 @@ class Employee_management extends Public_Controller
     }
 
 
-
-
-
     //
     public function JobInfoAdd($employeeType, $sid = NULL)
     {
@@ -4383,6 +4380,33 @@ class Employee_management extends Public_Controller
 
                     //
                     $jobSid = $this->employee_model->addjobInformation($sid, $employeeType, $insertJobData);
+                    //
+                    $insertJobOverTimeData = [];
+                    $insertJobOverTimeData['type'] = 'overtime';
+                    $insertJobOverTimeData['shift_start_time'] = $this->input->post('overtime_shift_start_time');
+                    $insertJobOverTimeData['shift_end_time'] = $this->input->post('overtime_shift_end_time');
+                    $insertJobOverTimeData['rate'] = $this->input->post('overtime_rate');
+                    $insertJobOverTimeData['is_allowed'] = $this->input->post('overtime_is_allowed') ? '1' : '0';
+                    $insertJobOverTimeData['gusto_employees_jobs_sid'] = $jobSid;
+
+                    $insertJobDoubleOverTimeData = [];
+                    $insertJobDoubleOverTimeData['type'] = 'double_overtime';
+                    $insertJobDoubleOverTimeData['shift_start_time'] = $this->input->post('double_overtime_shift_start_time');
+                    $insertJobDoubleOverTimeData['shift_end_time'] = $this->input->post('double_overtime_shift_end_time');
+                    $insertJobDoubleOverTimeData['rate'] = $this->input->post('double_overtime_rate');
+                    $insertJobDoubleOverTimeData['is_allowed'] = $this->input->post('double_overtime_is_allowed') ? '1' : '0';
+                    $insertJobDoubleOverTimeData['gusto_employees_jobs_sid'] = $jobSid;
+
+                    $insertJobHolidayData = [];
+                    $insertJobHolidayData['type'] = 'holiday';
+                    $insertJobHolidayData['rate'] = $this->input->post('holiday_rate');
+                    $insertJobHolidayData['is_allowed'] = $this->input->post('holiday_overtime_is_allowed') ? '1' : '0';
+                    $insertJobHolidayData['gusto_employees_jobs_sid'] = $jobSid;
+
+                    //
+                    $this->employee_model->addjobEarnings($insertJobOverTimeData);
+                    $this->employee_model->addjobEarnings($insertJobDoubleOverTimeData);
+                    $this->employee_model->addjobEarnings($insertJobHolidayData);
 
                     $this->session->set_flashdata('message', '<b>Success:</b>  Job Information successfully Added');
                     redirect(base_url('job_info_edit/' . $jobSid), "refresh");
@@ -4446,11 +4470,19 @@ class Employee_management extends Public_Controller
                 $data['jobTitleData'] = $jobTitleData;
 
                 $data['jobEarningsData'] = $this->employee_model->getJobEarnings($jobsid);
-
                 $data['jobCompensationData'] = $this->getJobCompensations($jobsid);
+
+                //
+                $data['isOvertimeAllowed'] = 1;
+                foreach ($data['jobCompensationData'] as $row) {
+                    if (($row['is_primary'] == 1) && ($row['flsa_status'] == 'Exempt' || $row['flsa_status'] == 'Owner' )) {
+                        $data['isOvertimeAllowed'] = 0;
+                    }
+                }
 
                 $this->form_validation->set_rules('job_title', 'Job Title', 'required|trim|xss_clean');
 
+                $data['jobEarningsDetail'] = $this->employee_model->getJobEarningsDetail($jobsid);
 
                 if ($this->form_validation->run() === FALSE) {
 
@@ -4502,7 +4534,6 @@ class Employee_management extends Public_Controller
                     $insertJobHolidayData['rate'] = $this->input->post('holiday_rate');
                     $insertJobHolidayData['is_allowed'] = $this->input->post('holiday_overtime_is_allowed') ? '1' : '0';
                     $insertJobHolidayData['gusto_employees_jobs_sid'] = $jobsid;
-
 
                     //
                     $this->employee_model->updatejobDetail($jobsid, $insertJobData);
@@ -4731,7 +4762,6 @@ class Employee_management extends Public_Controller
                     $this->load->view('main/footer');
                 } else {
 
-
                     $insertJobcompensationData['flsa_status'] = $this->input->post('flsa');
                     $insertJobcompensationData['is_primary'] =  $this->input->post('is_primary') ? '1' : '0';
                     $insertJobcompensationData['is_active'] = $this->input->post('is_active') ? '1' : '0';
@@ -4865,6 +4895,91 @@ class Employee_management extends Public_Controller
             return $conpensationData;
         } else {
             return [];
+        }
+    }
+
+
+    //
+    public function JobEarningsAdd($jobsid = NULL)
+    {
+        if ($jobsid == NULL) {
+            $this->session->set_flashdata('message', '<b>Error:</b> No Job found!');
+            redirect('employee_management', 'refresh');
+        } else {
+            if ($this->session->userdata('logged_in')) {
+
+                $jobTitleData = $this->employee_model->getjobInformationById($jobsid);
+
+                $sid = $jobTitleData['employee_sid'];
+                $employeeType = $jobTitleData['employee_type'];
+
+                $data = employee_right_nav($sid);
+                $data['show_timezone'] = $data['session']['company_detail']['timezone'];
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                check_access_permissions($security_details, 'employee_management', 'employee_profile'); // Param2: Redirect URL, Param3: Function Name
+                $company_id = $data["session"]["company_detail"]["sid"];
+                $employer_access_level = $data["session"]["employer_detail"]["access_level"];
+                $data['access_level_plus'] = $data["session"]["employer_detail"]["access_level_plus"];
+                $employer_id = $sid;
+                $data['title'] = "Employee / Team Members Profile";
+                $data['employer_sid'] = $security_sid;
+                $data['main_employer_id'] = $security_sid;
+                $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
+                //
+                $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
+                $data['company_accounts'] = $company_accounts;
+                //
+                $data['employer_access_level'] = $employer_access_level;
+                $full_access = false;
+
+                if ($employer_access_level == 'Admin') {
+                    $full_access = true;
+                }
+
+                $data['full_access'] = $full_access;
+                $data["access_level"] = db_get_enum_values('users', 'access_level');
+                $data['employer']['state_name'] = '';
+                $data['employer']['country_name'] = '';
+
+                $data['employeetype'] = $employeeType;
+                $data['employeesid'] = $sid;
+                //
+                $data['jobTitleData'] = $jobTitleData;
+
+                //
+                $this->load->model("v1/Payroll_model", "payroll_model");
+
+                $data['earnings'] = $this->payroll_model
+                    ->getCompanyEarningTypes($company_id);
+
+
+                //
+                $jobearnings = $this->employee_model->getJobEarnings($jobsid);
+                $data['companiesEarning'] = array_column($jobearnings, 'gusto_companies_earning_sid');
+
+
+                $this->form_validation->set_rules('earningtype', 'Earnings', 'required|trim|xss_clean');
+
+                if ($this->form_validation->run() === FALSE) {
+                    $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                    //
+                    $this->load->view('main/header', $data);
+                    $this->load->view('manage_employer/employee_management/job_earnings_form');
+                    $this->load->view('main/footer');
+                } else {
+
+                    $earningIds = $this->input->post('checkit');
+                    //
+                    $this->employee_model->addEarnings($jobsid, $earningIds);
+
+                    $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' Job Earnings successfully Added');
+                    redirect(base_url('job_info_edit/' . $jobsid), "refresh");
+                }
+            } else {
+                redirect(base_url('login'), "refresh");
+            }
         }
     }
 }

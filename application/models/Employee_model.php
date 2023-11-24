@@ -2121,13 +2121,6 @@
         return $this->db->insert_id();
     }
 
-    //
-    function addjobCompensationDetails($data)
-    {
-        $this->db->insert('payroll_employee_job_compensations', $data);
-    }
-
-
 
     //
     function getPrimaryCompensation($sid)
@@ -2151,12 +2144,11 @@
             ->count_all_results("gusto_employees_jobs");
     }
 
-
+    //
     function getEmployeejobInformation($employeeType, $sid, $jobStatus, $primaryJob)
     {
 
         //
-
         $this->db->where("employee_sid", $sid);
         $this->db->where("employee_type", $employeeType);
         //
@@ -2168,12 +2160,6 @@
         }
 
         $records =  $this->db->get('gusto_employees_jobs')->result_array();
-
-
-        //_e($records,true,true);
-
-        //   $sql = $this->db->last_query();
-        //       die($sql);
         //
         if (!empty($records)) {
             return $records;
@@ -2181,65 +2167,11 @@
             return [];
         }
     }
-
-
-
-    function getjobInformationById_old($sid)
-    {
-
-        //
-        $this->db->select(
-            "
-            payroll_employee_garnishments.sid,
-            payroll_employee_garnishments.employee_sid,
-            payroll_employee_garnishments.job_title,
-            payroll_employee_garnishments.flsa,
-            payroll_employee_garnishments.is_primary,
-            payroll_employee_garnishments.is_active,
-            payroll_employee_garnishments.employee_type,
-            payroll_employee_job_compensations.normal_shift_start_time,
-            payroll_employee_job_compensations.normal_shift_end_time,
-            payroll_employee_job_compensations.normal_break_hour,
-            payroll_employee_job_compensations.normal_break_minutes,
-            payroll_employee_job_compensations.normal_week_days_off,
-            payroll_employee_job_compensations.normal_rate,
-            payroll_employee_job_compensations.normal_per,
-            payroll_employee_job_compensations.normal_effected_date,
-            payroll_employee_job_compensations.overtime_shift_start_time,
-            payroll_employee_job_compensations.overtime_shift_end_time,
-            payroll_employee_job_compensations.overtime_rate,
-            payroll_employee_job_compensations.overtime_is_allowed,
-            payroll_employee_job_compensations.double_overtime_shift_start_time,
-            payroll_employee_job_compensations.double_overtime_shift_end_time,
-            payroll_employee_job_compensations.double_overtime_is_allowed,
-            payroll_employee_job_compensations.holiday_rate,
-            payroll_employee_job_compensations.holiday_overtime_is_allowed,
-            payroll_employee_job_compensations.double_overtime_rate
-            "
-        );
-        $this->db->where("payroll_employee_garnishments.sid", $sid);
-        //
-
-        $this->db->join('payroll_employee_job_compensations', 'payroll_employee_job_compensations.payroll_job_sid = payroll_employee_garnishments.sid');
-
-        $records =  $this->db->get('payroll_employee_garnishments')->row_array();
-
-        //   $sql = $this->db->last_query();
-        //
-        if (!empty($records)) {
-            return $records;
-        } else {
-            return [];
-        }
-    }
-
-
 
 
     //
     function getjobInformationById($sid)
     {
-
         //
         $this->db->select(
             "
@@ -2285,6 +2217,20 @@
                 $dataToUpdate['is_primary'] = 0;
                 $this->db->where('gusto_employees_jobs_sid', $sid);
                 $this->db->update('gusto_employees_jobs_compensations', $dataToUpdate);
+            }
+
+            //
+            if ($data['flsa_status'] == 'Exempt' || $data['flsa_status'] == 'Owner' ) {
+
+                $dataToUpdate['is_allowed'] = 0;
+
+                $this->db->where('gusto_employees_jobs_sid', $sid);
+                $this->db->where('gusto_companies_earning_sid', null);
+                $this->db->group_start();
+                $this->db->where('type', 'overtime');
+                $this->db->or_where('type', 'double_overtime');
+                $this->db->group_end();
+                $this->db->update('user_earnings', $dataToUpdate);
             }
         }
 
@@ -2336,6 +2282,19 @@
                 $this->db->where('gusto_employees_jobs_sid', $dataToUpdate['gusto_employees_jobs_sid']);
                 $this->db->update('gusto_employees_jobs_compensations', $dataToUpdateUp);
             }
+
+            if ($dataToUpdate['flsa_status'] == 'Exempt' || $dataToUpdate['flsa_status'] == 'Owner' ) {
+
+                $dataToUpdateEarning['is_allowed'] = 0;
+
+                $this->db->where('gusto_employees_jobs_sid', $dataToUpdate['gusto_employees_jobs_sid']);
+                $this->db->where('gusto_companies_earning_sid', null);
+                $this->db->group_start();
+                $this->db->where('type', 'overtime');
+                $this->db->or_where('type', 'double_overtime');
+                $this->db->group_end();
+                $this->db->update('user_earnings', $dataToUpdateEarning);
+            }
         }
 
         //
@@ -2351,12 +2310,10 @@
         if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
 
             //  $updateUser['job_title'] = $dataToUpdate['job_title'];
-
             //  $this->db->where('sid', $dataToUpdate['employee_sid']);
             // $this->db->update('users', $updateUser);
         }
     }
-
 
 
     //
@@ -2431,6 +2388,50 @@
     {
         $this->db->where('gusto_employees_jobs_sid', $data['gusto_employees_jobs_sid']);
         $this->db->where('type', $data['type']);
+        $this->db->where('gusto_companies_earning_sid', null);
         $this->db->update('user_earnings', $data);
+    }
+
+
+    //
+    function addEarnings($sid, $data)
+    {
+
+        //
+        $jobearnings = $this->employee_model->getJobEarnings($sid);
+        $companiesEarning = array_column($jobearnings, 'gusto_companies_earning_sid');
+        //
+        foreach ($companiesEarning as $earningid) {
+            if ($earningid != null) {
+                if (!in_array($earningid, $data)) {
+                    $this->db->where('gusto_companies_earning_sid', $earningid);
+                    $this->db->where('gusto_employees_jobs_sid', $sid);
+                    $this->db->delete('user_earnings');
+                }
+            }
+        }
+        //
+        foreach ($data as $earningid) {
+            if ($earningid != null) {
+                if (!in_array($earningid, $companiesEarning)) {
+                    $insertdata = [];
+                    $insertdata['gusto_employees_jobs_sid'] = $sid;
+                    $insertdata['gusto_companies_earning_sid'] = $earningid;
+                    $this->db->insert('user_earnings', $insertdata);
+                }
+            }
+        }
+    }
+
+
+    //
+    function getJobEarningsDetail($sid)
+    {
+        return   $this->db
+            ->select("user_earnings.sid,gusto_companies_earning_types.name,gusto_companies_earning_types.is_default")
+            ->where("user_earnings.gusto_employees_jobs_sid", $sid)
+            ->join('gusto_companies_earning_types', 'user_earnings.gusto_companies_earning_sid = gusto_companies_earning_types.sid')
+            ->get('user_earnings')
+            ->result_array();
     }
 }

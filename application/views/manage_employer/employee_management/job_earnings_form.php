@@ -25,90 +25,84 @@
                                 <div id="jsPrimaryEmployeeBox">
 
                                     <div class="universal-form-style-v2 info_edit">
-                                        <form id="save_jobinfo" method="POST" enctype="multipart/form-data">
+                                        <form id="save_earnings" method="POST" enctype="multipart/form-data">
                                             <div class="form-title-section"><br>
-                                                <h2>Add Job Compensation</h2>
+                                                <h2>Earnings Types</h2>
                                                 <div class="text-right">
-                                                    <input type="button" value="Save" onclick="submitResult();" class="btn btn-success">
+                                                    <input type="button" value="Save" class="btn btn-success execute_multiple">
                                                     <a href="<?php echo base_url('job_info_edit/') .  $jobTitleData["sid"]; ?>" class="btn btn-danger">Cancel</a>
+                                                    <input hidden value="" name='earningtype' id="earningtype">
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                     <p class="text-danger csF16">
-                                                        <strong>
-                                                            <em>
-                                                                Note: The FLSA status for this compensation. <br>Salaried ('Exempt') employees are paid a fixed salary every pay period. <br>Salaried with overtime ('Salaried Nonexempt') employees are paid a fixed salary every pay period, and receive overtime pay when applicable.<br> Hourly ('Nonexempt') employees are paid for the hours they work, and receive overtime pay when applicable.<br> Owners ('Owner') are employees that own at least twenty percent of the company. </em>
-                                                        </strong>
+
                                                     </p>
                                                 </div>
                                             </div>
 
                                             <div class="row">
 
-                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 form-group">
-                                                    <label>FLSA Status:</label>
-                                                    <select class="invoice-fields" id="flsa" name="flsa">
-                                                        <option value="Exempt">Exempt</option>
-                                                        <option value="Salaried Nonexempt">Salaried Nonexempt</option>
-                                                        <option value="Nonexempt">Nonexempt</option>
-                                                        <option value="Owner">Owner</option>
-                                                    </select>
-                                                    <?php echo form_error('flsa'); ?>
-                                                </div>
+                                                <div class="hr-innerpadding">
+                                                    <div class="table-responsive">
 
-                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 form-group">
-                                                    <label class="csF16">Amount <strong class="text-danger">*</strong></label>
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon">
-                                                            <i class="fa fa-dollar" aria-hidden="true"></i>
-                                                        </span>
-                                                        <input type="text" class="form-control input-lg rate" placeholder="0.0" value="<?php echo $compensationData['compensation_multiplier'] ?>" name="compensation_multiplier">
+                                                        <table class="table table-bordered table-hover table-striped">
+                                                            <caption></caption>
+                                                            <thead>
+                                                                <th><input type="checkbox" id="check_all"></th>
+                                                                <th>Name</th>
+                                                                <th class="text-center">Is Default?</th>
+                                                                <th class="text-right">Created At</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php
+                                                                if ($earnings) {
+
+                                                                    foreach ($earnings as $earning) {
+                                                                ?>
+                                                                        <tr data-id="<?= $earning['sid']; ?>">
+                                                                            <td><input type="checkbox" name="checkit[]" value="<?= $earning['sid']; ?>" class="my_checkbox" <?= in_array($earning['sid'], $companiesEarning) ? ' checked' : '' ?>></td>
+                                                                            <td><?= $earning['name']; ?></td>
+                                                                            <td class="text-center"><?= $earning['is_default'] ? "Yes" : "No"; ?></td>
+                                                                            <td class="text-right">
+                                                                                <?= formatDateToDB(
+                                                                                    $earning['created_at'],
+                                                                                    DB_DATE_WITH_TIME,
+                                                                                    DATE_WITH_TIME
+                                                                                ); ?>
+                                                                            </td>
+
+                                                                        </tr>
+                                                                    <?php
+                                                                    }
+                                                                } else {
+                                                                    ?>
+                                                                    <tr>
+                                                                        <th scope="row" colspan="4">
+                                                                            <div class="alert alert-info text-center">
+                                                                                <p>
+                                                                                    No records found.
+                                                                                </p>
+                                                                            </div>
+                                                                        </th>
+                                                                    </tr>
+                                                                <?php
+                                                                }
+                                                                ?>
+                                                                <tr>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
                                                     </div>
-                                                    <?php echo form_error('compensation_multiplier'); ?>
-
-                                                </div>
-
-                                                <div class=" col-lg-3 col-md-3 col-xs-12 col-sm-3  form-group">
-                                                    <label class="csF16">Per <strong class="text-danger">*</strong></label>
-                                                    <select class="form-control input-lg rate_per" name="per" id="normal_per">
-                                                        <option value="Hour">Per hour</option>
-                                                        <option value="Week">Per week</option>
-                                                        <option value="Month">Per month</option>
-                                                        <option value="Year">Per year</option>
-                                                        <option value="Paycheck">Per paycheck</option>
-                                                    </select>
-                                                    <?php echo form_error('per'); ?>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 form-group">
-                                                    <label>Effected Date: <strong class="text-danger">*</strong></label>
-                                                    <?php
-                                                    $effectedDate = $compensationData['effective_date'] != NULL && $compensationData['effective_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $compensationData['effective_date'])->format('m-d-Y') : '';
-                                                    ?>
-                                                    <input class="invoice-fields js-rehireDate" id="effective_date" readonly="" type="text" name="effective_date" value="<?php echo $effectedDate; ?>">
-                                                    <?php echo form_error('effective_date'); ?>
-                                                </div>
-
-                                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
-                                                    <!--  --><br>
-                                                    <label class="control control--checkbox">
-                                                        <input type="checkbox" name="is_primary" id="is_primary" value="1" <?= $compensationData['is_primary'] != 0 ? 'checked' : ''; ?> /> Primary?
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
-
-                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 form-group">
-                                                    <!--  --><br>
-                                                    <label class="control control--checkbox">
-                                                        <input type="checkbox" name="is_active" value="1" <?= $compensationData['is_active'] != 0 ? 'checked' : ''; ?> /> Is Avtive?
-                                                        <div class="control__indicator"></div>
-                                                    </label>
                                                 </div>
 
                                             </div>
+
+
+
+
 
                                         </form>
                                     </div>
@@ -148,8 +142,45 @@
 
 
     //
-    $('#flsa').val('<?php echo $compensationData['flsa_status'] ?>');
-    $('#normal_per').val('<?php echo $compensationData['per'] ?>');
+    $('#check_all').click(function() {
+        if ($('#check_all').is(":checked")) {
+            $('.my_checkbox:checkbox').each(function() {
+                this.checked = true;
+            });
+        } else {
+            $('.my_checkbox:checkbox').each(function() {
+                this.checked = false;
+            });
+        }
+    });
+
+
+
+
+    $('.execute_multiple').click(function() {
+        //  var action = $('#top_select_box').val();
+        var type = $('#type').val();
+        var popup_msg = 'Are you sure?';
+
+        if ($(".my_checkbox:checked").size() > 0) {
+            $('#earningtype').val(1);
+
+            /* alertify.confirm('Please confirm ' + action, popup_msg,
+                 function() {
+                     $('#multiple_actions_' + type).append('<input type="hidden" name="action" value="' + action + '" />');
+                     $("#multiple_actions_" + type).submit();
+                     alertify.success('Success');
+                 },
+                 function() {
+                     alertify.error('Cancel');
+                 });
+                 */
+            $("#save_earnings").submit();
+
+        } else {
+            alertify.alert('Error! No ' + type + ' selected', 'Please Select at-least one earning type ');
+        }
+    });
 
 
 

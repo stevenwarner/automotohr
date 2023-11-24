@@ -1970,7 +1970,6 @@ $route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyComp
 $route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/manageAdmins/$1';
 $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
 
-
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
 
@@ -1978,21 +1977,16 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 //
 $route['job_info/(:any)/(:any)'] = 'employee_management/JobInfo/$1/$2';
 $route['job_info_add/(:any)/(:any)'] = 'employee_management/JobInfoAdd/$1/$2';
-
 $route['job_info_primary_check/(:any)/(:any)'] = 'employee_management/checkPrimaryJob/$1/$2';
-
 $route['job_info_edit/(:any)'] = 'employee_management/JobInfoEdit/$1';
 $route['job_info_delete/(:any)'] = 'employee_management/JobInfoDelete/$1';
-
-
 
 $route['job_compensation_add/(:any)'] = 'employee_management/JobCompensationAdd/$1';
 $route['job_compensation_edit/(:any)/(:any)'] = 'employee_management/JobCompensationEdit/$1/$2';
 $route['job_compensation_delete/(:any)/(:any)'] = 'employee_management/JobCompensationDelete/$1/$2';
-
-
 $route['job_compensation_primary_check/(:any)'] = 'employee_management/checkPrimaryCompensation/$1';
 
+$route['job_earnings_add/(:any)'] = 'employee_management/JobEarningsAdd/$1';
 
 
 
