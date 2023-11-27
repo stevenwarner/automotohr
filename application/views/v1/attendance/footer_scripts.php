@@ -8,9 +8,7 @@
                             ); ?>";
     </script>
     <?= bundleJs([
-        "v1/plugins/moment/moment-timezone.min",
-        "js/app_helper",
         "v1/common",
-        "v1/attendance/js/timer"
+        "v1/attendance/js/timer",
     ], "public/v1/js/attendance/", "timer",  true); ?>
 <?php endif; ?>

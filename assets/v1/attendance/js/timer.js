@@ -50,7 +50,8 @@ $(function markAttendance() {
 			.always(function () {
 				XHR = null;
 			})
-			.success(function (resp) {
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				//
 				clearInterval(timerREF);
 				clearInterval(clockREF);
@@ -70,8 +71,7 @@ $(function markAttendance() {
 				}
 				//
 				clockREF = setInterval(startClock, 1000);
-			})
-			.fail(handleErrorResponse);
+			});
 	}
 
 	/**
@@ -99,11 +99,11 @@ $(function markAttendance() {
 				closeAlert(ref);
 				XHR = null;
 			})
-			.success(function () {
+			.fail(handleErrorResponse)
+			.done(function () {
 				_success("You have successfully " + getType(eventType) + ".");
 				fetchAttendance();
-			})
-			.fail(handleErrorResponse);
+			});
 	}
 
 	/**
@@ -116,9 +116,10 @@ $(function markAttendance() {
 		// clear the interval
 		clearInterval(timerREF);
 		//
-		$(".jsAttendanceClockHour").html("00");
-		$(".jsAttendanceClockMinute").html("00");
-		$(".jsAttendanceClockSeconds").html("00");
+		$(".jsAttendanceClockHour").html("");
+		$(".jsAttendanceClockMinute").html("");
+		$(".jsAttendanceClockSeconds").html("");
+		$(".jsAttendanceClockSeparator").html("");
 		//
 		$(".jsAttendanceBTNs").html("");
 		$(".jsAttendanceClockHeaderBTNs").html("");
@@ -132,6 +133,7 @@ $(function markAttendance() {
 			$(".jsAttendanceClockHour").html("00");
 			$(".jsAttendanceClockMinute").html("00");
 			$(".jsAttendanceClockSeconds").html("00");
+			$(".jsAttendanceClockSeparator").html(":");
 
 			return;
 		}
@@ -148,6 +150,7 @@ $(function markAttendance() {
 		$(".jsAttendanceClockHour").html(dt.format("HH"));
 		$(".jsAttendanceClockMinute").html(dt.format("mm"));
 		$(".jsAttendanceClockSeconds").html(dt.format("ss"));
+		$(".jsAttendanceClockSeparator").html(":");
 	}
 	/**
 	 * handles timer
@@ -158,6 +161,7 @@ $(function markAttendance() {
 		$(".jsAttendanceClockHour").html(obj.hours);
 		$(".jsAttendanceClockMinute").html(obj.minutes);
 		$(".jsAttendanceClockSeconds").html(obj.seconds);
+		$(".jsAttendanceClockSeparator").html(":");
 	}
 
 	/**
@@ -207,28 +211,28 @@ $(function markAttendance() {
 		//
 		if (type === "clocked_in") {
 			html +=
-				'<button class="btn csBG3 csW csF16 jsAttendanceBtn" data-type="clocked_in">';
+				'<button class="btn btn-orange jsAttendanceBtn" data-type="clocked_in">';
 			html +=
 				'	<i class="fa fa-play-circle csF16" aria-hidden="true"></i>';
 			html += "	&nbsp;Clock in";
 			html += "</button>";
 		} else if (type === "clocked_out") {
 			html +=
-				'&nbsp;<button class="btn btn-danger jsAttendanceBtn" data-type="clocked_out">';
+				'&nbsp;<button class="btn btn-red jsAttendanceBtn" data-type="clocked_out">';
 			html +=
 				'	<i class="fa fa-stop-circle csF16" aria-hidden="true"></i>';
 			html += "	&nbsp;Clock out";
 			html += "</button>";
 		} else if (type === "break_start") {
 			html +=
-				'&nbsp;<button class="btn csBG4 csW jsAttendanceBtn" data-type="break_started">';
+				'&nbsp;<button class="btn btn-black jsAttendanceBtn" data-type="break_started">';
 			html +=
 				'	<i class="fa fa-pause-circle csF16" aria-hidden="true"></i>';
 			html += "	&nbsp;Break start";
 			html += "</button>";
 		} else if (type === "break_end") {
 			html +=
-				'&nbsp;<button class="btn btn-warning jsAttendanceBtn" data-type="break_ended">';
+				'&nbsp;<button class="btn btn-yellow jsAttendanceBtn" data-type="break_ended">';
 			html += '	<i class="fa fa-stop csF16" aria-hidden="true"></i>';
 			html += "	&nbsp;Break end & clock in";
 			html += "</button>";

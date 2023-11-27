@@ -1892,13 +1892,14 @@ if (!function_exists("getCommonFiles")) {
         // set css defaults
         $arr["css"] = [
             "v1/plugins/daterangepicker/css/daterangepicker.min",
+            "v1/plugins/alertifyjs/css/alertify.min",
         ];
         // set js defaults
         $arr["js"] = [
-            "v1/plugins/jquery/jquery-3.7.min",
+            "v1/plugins/moment/moment.min",
             "v1/plugins/moment/moment-timezone.min",
             "v1/plugins/daterangepicker/daterangepicker.min",
-            "js/app_helper",
+            "v1/plugins/alertifyjs/alertify.min",
         ];
         //
         return $arr[$type];

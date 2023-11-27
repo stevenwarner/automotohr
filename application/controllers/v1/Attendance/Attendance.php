@@ -73,7 +73,7 @@ class Attendance extends Public_Controller
      */
     public function myDashboard()
     {
-        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = $this->session->userdata("logged_in");
 
         $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         // get access token
@@ -84,13 +84,16 @@ class Attendance extends Public_Controller
         //
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/app/css/loader", "css");
-        $this->setCommon("v1/attendance/js/my_dashboard", "js");
-        //
-        $data["load_view"] = true;
-        $data["PageScripts"] = [
-            "v1/plugins/Highcharts-Maps-11.2.0/code/highcharts.js"
+        $this->setCommon("v1/attendance/js/my/dashboard", "js");
+        $data["pageJs"] = [
+            // high charts
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/highcharts.min.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/data.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/exporting.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/accessibility.js?v=3.0"),
         ];
         $this->getCommon($data, "my_dashboard");
+        $data["sanitizedView"] = true;
 
         $this->load->view("main/header", $data);
         $this->load->view("v1/attendance/my_dashboard");
@@ -102,8 +105,6 @@ class Attendance extends Public_Controller
      */
     public function myTimeSheet()
     {
-        $data["employee"] = $this->loggedInEmployee;
-
         $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         // get access token
         $data['apiAccessToken'] = getApiAccessToken(

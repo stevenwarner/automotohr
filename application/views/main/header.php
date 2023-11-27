@@ -1,3 +1,6 @@
+<?php if ($sanitizedView) {
+    $this->load->view("main/header_sanitized");
+} else {?>
 <?php $load_view = isset($load_view) ? $load_view : false; ?>
 
 <?php if (!$load_view) { ?>
@@ -2020,3 +2023,4 @@
                                 .error();
                         }
                     </script>
+                    <?php } ?>
