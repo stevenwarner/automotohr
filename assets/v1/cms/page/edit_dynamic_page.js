@@ -46,9 +46,7 @@ $(function () {
 		},
 	});
 	// section 1
-	// ClassicEditor.create(document.querySelector("#jsSection1Details"));
-	CKEDITOR.replace("jsSection1Details");
-
+	ClassicEditor.create(document.querySelector("#jsSection1Details"));
 	//
 	$("#jsSection1Banner").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
