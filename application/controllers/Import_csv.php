@@ -716,6 +716,7 @@ class Import_csv extends Public_Controller
         }
         //
         if (isset($data['status']) && !empty($data['status']) && preg_match('/terminat|rehire/i', $data['status'])) {
+       
             //
             $statusArray = [];
             $statusArray['employee_status'] = 2;
@@ -742,6 +743,8 @@ class Import_csv extends Public_Controller
                 $this->import_csv_model->UpdateRehireDateInUsers(formatDateToDB($data['rehire_date']), $employeeId);
             }
             //
+
+            $statusArray['source'] = 'csv';
             $this->import_csv_model->AddEmployeeStatus($statusArray);
         }
     }
