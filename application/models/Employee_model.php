@@ -2162,10 +2162,22 @@
         $records =  $this->db->get('gusto_employees_jobs')->result_array();
         //
         if (!empty($records)) {
+
+            foreach ($records  as $akey => $record) {
+                $records[$akey]["compensation"] = $this->getJobCompensations($record['sid']);
+                $records[$akey]["earnings"] = $this->getJobEarningsDetail($record['sid']);
+            }
             return $records;
         } else {
+
             return [];
         }
+
+
+        // Compensation
+        // Earnings
+        // Overtime information
+
     }
 
 
@@ -2220,7 +2232,7 @@
             }
 
             //
-            if ($data['flsa_status'] == 'Exempt' || $data['flsa_status'] == 'Owner' ) {
+            if ($data['flsa_status'] == 'Exempt' || $data['flsa_status'] == 'Owner') {
 
                 $dataToUpdate['is_allowed'] = 0;
 
@@ -2283,7 +2295,7 @@
                 $this->db->update('gusto_employees_jobs_compensations', $dataToUpdateUp);
             }
 
-            if ($dataToUpdate['flsa_status'] == 'Exempt' || $dataToUpdate['flsa_status'] == 'Owner' ) {
+            if ($dataToUpdate['flsa_status'] == 'Exempt' || $dataToUpdate['flsa_status'] == 'Owner') {
 
                 $dataToUpdateEarning['is_allowed'] = 0;
 

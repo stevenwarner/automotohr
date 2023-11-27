@@ -4289,6 +4289,7 @@ class Employee_management extends Public_Controller
 
                 //
                 $data["primaryJobData"] = $this->getEmployeejobInformation($userType, $sid, '1', '1');
+               
                 $data["activeJobData"] = $this->getEmployeejobInformation($userType, $sid, '1', '0');
                 $data["inActiveJobData"] = $this->getEmployeejobInformation($userType, $sid, '0');
 
