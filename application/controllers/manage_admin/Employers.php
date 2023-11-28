@@ -329,13 +329,14 @@ class employers extends Admin_Controller
             $this->load->helper('form');
             $this->render('manage_admin/company/edit_employer');
         } else {
+            //
             $sid = $this->input->post('sid');
             $action = $this->input->post('submit');
+            //
             $data = array(
                 'username' => $this->input->post('username'),
                 'email' => $this->input->post('email')
             );
-
             //
             $employeeData = $this->company_model->GetEmployeeById($sid, 'extra_info');
             //
@@ -366,9 +367,7 @@ class employers extends Admin_Controller
             $data['languages_speak'] = null;
             //
             $languages_speak = $this->input->post('secondaryLanguages');
-
             //
-
             $data['union_name'] = $this->input->post('union_name');
             $data['union_member'] = $this->input->post('union_member');
 
@@ -498,6 +497,10 @@ class employers extends Admin_Controller
 
             $this->company_model->update_user($sid, $data, 'Employer');
 
+            //
+            $teamId = $this->input->post('teamId');
+            handleEmployeeDepartmentAndTeam($sid, $teamId);
+
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
                 //
@@ -509,11 +512,20 @@ class employers extends Admin_Controller
                     'email' => $oldData['email'],
                     'PhoneNumber' => $oldData['PhoneNumber']
                 ]);
-            }
 
-            //
-            $teamId = $this->input->post('teamId');
-            handleEmployeeDepartmentAndTeam($sid, $teamId);
+                // update employee complynet job title on complynet
+                if ($employer_detail[0]['complynet_job_title'] != $data['complynet_job_title']) {
+                    updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
+                }
+
+                // update employee department on complynet
+                //
+                $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
+                //
+                if ($employer_detail[0]['department_sid'] != $departmentId) {
+                    updateEmployeeDepartmentToComplyNet($sid, $oldData['parent_sid']);
+                }
+            }
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');

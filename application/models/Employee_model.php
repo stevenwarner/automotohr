@@ -1058,6 +1058,44 @@
             ->delete('departments_employee_2_team');
     }
 
+    function checkAndAddEmployeeToTeam ($departmentId, $teamId, $employeeId) {
+        //
+        // get last record of employee in table
+        $this->db->select('id, team_sid, department_sid');
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->order_by('id', 'desc');
+        $this->db->limit(1);
+        //
+        $record_obj = $this->db->get('departments_employee_2_team');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            //
+            if ($record_arr['team_sid'] == $teamId && $record_arr['department_sid'] == $departmentId) {
+                //
+                $this->db
+                    ->where('team_sid', $teamId)
+                    ->where('department_sid', $departmentId)
+                    ->where('employee_sid', $employeeId)
+                    ->where('id <>', $record_arr['id'])
+                    ->delete('departments_employee_2_team');
+            } else {
+                //
+                // first delete old record 
+                $this->db
+                    ->where('team_sid', $teamId)
+                    ->where('department_sid', $departmentId)
+                    ->where('employee_sid', $employeeId)
+                    ->delete('departments_employee_2_team');
+                //
+                $this->addEmployeeToTeam($departmentId, $teamId, $employeeId);
+            }
+        } else {
+            $this->addEmployeeToTeam($departmentId, $teamId, $employeeId);
+        }
+    }
+
     function manageEmployeeTeamHistory($data_to_insert)
     {
         $this->db->insert('employee_team_history', $data_to_insert);

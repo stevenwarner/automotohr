@@ -16311,16 +16311,24 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
                 ]
             );
         // Make entry in teams table
-        $CI->db
-            ->insert(
-                'departments_employee_2_team',
-                [
-                    'department_sid' => $departmentId,
-                    'team_sid' => $teamId,
-                    'employee_sid' => $employeeId,
-                    'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-                ]
-            );
+        $CI->load->model('employee_model');
+        //
+        $CI->employee_model->checkAndAddEmployeeToTeam(
+            $departmentId,
+            $teamId,
+            $employeeId
+        );
+        //
+        // $CI->db
+        //     ->insert(
+        //         'departments_employee_2_team',
+        //         [
+        //             'department_sid' => $departmentId,
+        //             'team_sid' => $teamId,
+        //             'employee_sid' => $employeeId,
+        //             'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        //         ]
+        //     );
         //
         return true;
     }

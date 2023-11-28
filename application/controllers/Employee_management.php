@@ -1460,7 +1460,7 @@ class Employee_management extends Public_Controller
                     //
                     $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
                 }
-
+                //
                 if ($this->form_validation->run() === FALSE) { //checking if the form is submitted so i can open the form screen again
                     $this->load->model('portal_email_templates_model');
                     $data['edit_form'] = false;
@@ -1641,9 +1641,9 @@ class Employee_management extends Public_Controller
                     if (!$teamId) {
                         $teamId = 0;
                     }
+                    //
                     $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
-
-
+                    //
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1772,20 +1772,20 @@ class Employee_management extends Public_Controller
                     // Update dept/team table
                     $department = $this->input->post('department');
                     $teams = $this->input->post('teams');
-
-                    if (isset($teams) && !empty($teams) && $department != 0) {
-                        $old_ssign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
+                    //
+                    if (isset($teams) && !empty($teams) && $department != 0) {    
+                        $old_assign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
                         $add_team_sids = array();
                         $delete_team_sids = array();
 
                         foreach ($teams as $team) {
-                            if (!in_array($team, $old_ssign_teams)) {
+                            if (!in_array($team, $old_assign_teams)) {
                                 array_push($add_team_sids, $team);
                             }
                         }
 
-                        if ($old_ssign_teams) {
-                            foreach ($old_ssign_teams as $old_team) {
+                        if ($old_assign_teams) {
+                            foreach ($old_assign_teams as $old_team) {
                                 if (!in_array($old_team, $teams)) {
                                     array_push($delete_team_sids, $old_team);
                                 }
@@ -1821,6 +1821,14 @@ class Employee_management extends Public_Controller
                         $maintain_employee_team_history['employee_sid'] = $security_sid;
                         $maintain_employee_team_history['event_data'] = serialize($event_array);
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
+                    } else if ($teamId != 0 && $departmentId != 0) {
+                        //
+                        $this->employee_model->checkAndAddEmployeeToTeam(
+                            $departmentId,
+                            $teamId,
+                            $employer_id
+                        );
+                        //
                     }
                     //
 
@@ -1914,6 +1922,12 @@ class Employee_management extends Public_Controller
                             'email' => $employee_detail['email'],
                             'PhoneNumber' => $employee_detail['PhoneNumber']
                         ]);
+
+                        // update employee department on complynet
+                        if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
+                            updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                        }
+                        
                     }
 
                     //
