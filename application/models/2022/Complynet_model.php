@@ -241,6 +241,32 @@ class Complynet_model extends CI_Model
         return array_column($records, 'department_sid');
     }
 
+     /**
+     * Check and insert department
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getComplyNetLinkedDepartmentsSid(
+        int $companyId
+    ) {
+        //
+        $records =
+            $this->db
+            ->select('complynet_department_sid')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('complynet_departments')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        return array_column($records, 'complynet_department_sid');
+    }
+
     /**
      * Get company job roles
      *
@@ -576,6 +602,11 @@ class Complynet_model extends CI_Model
     public function syncDepartments(
         int $companyId
     ) {
+        //
+        $this->deleteAllPreviousDepartment(
+            $companyId
+        );
+        //
         $company = $this->getIntegratedCompany(
             $companyId
         );
@@ -730,6 +761,21 @@ class Complynet_model extends CI_Model
                 $this->checkAndInsertDepartmentLink($ins);
             }
         }
+
+        //
+        // Get all departments from ComplyNet after sync
+        // $complySyncDepartments = $this->clib->getComplyNetDepartments(
+        //     $complyLocationId
+        // );
+        // //
+        // $ahrDepartments = $this->complynet_model->getComplyNetLinkedDepartmentsSid($companyId);
+        // $complynetDepartmentsIds = array_column($complySyncDepartments, 'Id');
+        // //
+        // foreach ($ahrDepartments as $departmentId) {
+        //     if (!in_array($departmentId, $complynetDepartmentsIds)) {
+        //         $this->complynet_model->deleteDepartmentLinkAndJobRoll($departmentId);
+        //     }
+        // }
     }
 
     //
@@ -2256,4 +2302,27 @@ class Complynet_model extends CI_Model
             return $complyRoleId;
         }
     }
-}
+
+    function deleteAllPreviousDepartment ($companyId) {
+        //
+        $linkDepartments = $this->getComplyNetLinkedDepartmentsSid($companyId);
+        //
+        foreach ($linkDepartments as $departmentId) {
+            // delete linked department
+            $this->db->where('complynet_department_sid', $departmentId);
+            $this->db->delete('complynet_departments');
+        }
+    }
+
+    function deleteDepartmentLinkAndJobRoll($departmentId)
+    {
+        // delete linked department
+        $this->db->where('complynet_department_sid', $departmentId);
+        $this->db->delete('complynet_departments');
+        //
+        // delete above departments jobRolls
+        $this->db->where('complynet_department_sid', $departmentId);
+        $this->db->delete('complynet_jobRole');
+    }
+
+}    

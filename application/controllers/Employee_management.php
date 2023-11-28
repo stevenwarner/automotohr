@@ -1923,11 +1923,6 @@ class Employee_management extends Public_Controller
                             'PhoneNumber' => $employee_detail['PhoneNumber']
                         ]);
 
-                        // update employee job titile on complynet
-                        if ($employee_detail['job_title'] != $data_to_insert['job_title']) {
-                            updateEmployeeJobRoleToComplyNet($sid, $company_id);
-                        }
-
                         // update employee department on complynet
                         if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);

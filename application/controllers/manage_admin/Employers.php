@@ -329,6 +329,7 @@ class employers extends Admin_Controller
             $this->load->helper('form');
             $this->render('manage_admin/company/edit_employer');
         } else {
+            //
             $sid = $this->input->post('sid');
             $action = $this->input->post('submit');
             //
@@ -512,8 +513,8 @@ class employers extends Admin_Controller
                     'PhoneNumber' => $oldData['PhoneNumber']
                 ]);
 
-                // update employee job titile on complynet
-                if ($employer_detail[0]['job_title'] != $data['job_title']) {
+                // update employee complynet job title on complynet
+                if ($employer_detail[0]['complynet_job_title'] != $data['complynet_job_title']) {
                     updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
                 }
 
