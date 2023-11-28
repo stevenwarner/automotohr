@@ -443,4 +443,11 @@ class Testing extends CI_Controller
         );
     }
 
+    public function syncDepartments () {
+        $this->load->model('2022/complynet_model', 'complynet_model');
+        //
+        $this->complynet_model->syncDepartments(8578);
+    }
+
+
 }

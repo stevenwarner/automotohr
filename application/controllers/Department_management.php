@@ -447,6 +447,13 @@ class Department_management extends Public_Controller
                         $this->department_management_model->updateDepartmentTeamForEmployee($department_sid, $team_sid, $employee_sid);
                         $this->department_management_model->assign_employee_to_team($data_to_insert);
                     }
+
+                    // ComplyNet interjection
+                    if (isCompanyOnComplyNet($company_sid)) {
+                        //
+                        // update employee department on complynet
+                        updateEmployeeDepartmentToComplyNet($employee_sid, $company_sid);
+                    }
                 }
 
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Employees Update Successfully!');
