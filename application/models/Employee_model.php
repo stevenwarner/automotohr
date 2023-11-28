@@ -2166,17 +2166,13 @@
             foreach ($records  as $akey => $record) {
                 $records[$akey]["compensation"] = $this->getJobCompensations($record['sid']);
                 $records[$akey]["earnings"] = $this->getJobEarningsDetail($record['sid']);
+                $records[$akey]["overtimeinformation"] = $this->getJobEarnings($record['sid'],1);
             }
             return $records;
         } else {
 
             return [];
         }
-
-
-        // Compensation
-        // Earnings
-        // Overtime information
 
     }
 
@@ -2380,13 +2376,14 @@
 
 
     //
-    function getJobEarnings($sid)
+    function getJobEarnings($sid, $overtimeinfo = null)
     {
-        return
-            $this->db
-            ->where("gusto_employees_jobs_sid", $sid)
-            ->get('user_earnings')
-            ->result_array();
+
+        $this->db->where("gusto_employees_jobs_sid", $sid);
+        if ($overtimeinfo != null) {
+            $this->db->where('gusto_companies_earning_sid', null);
+        }
+        return $this->db->get('user_earnings')->result_array();
     }
 
 
