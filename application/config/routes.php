@@ -831,6 +831,10 @@ $route['manage_admin/documents/regenerate_company_contacts_document/(:any)'] = '
 
 $route['manage_admin/documents/regenerate_enduser_payroll_agreement/(:any)'] = 'manage_admin/documents/regenerate_enduser_payroll_agreement/$1';
 
+//
+$route['manage_admin/documents/payroll_regenerate_credit_card_authorization/(:any)'] = 'manage_admin/documents/payroll_regenerate_credit_card_authorization/$1';
+
+
 
 $route['manage_admin/documents/(:any)/(:any)'] = 'manage_admin/documents/index/$1/$2';
 $route['manage_admin/documents'] = 'manage_admin/documents';
@@ -1987,3 +1991,9 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 // Payroll Agreement
 $route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
 $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';
+
+//Payroll Credit Card
+
+$route['payroll_form_credit_card_authorization/(:any)'] = 'payroll_form_credit_card_authorization/index/$1';
+$route['payroll_form_credit_card_authorization/regenerate/(:any)'] = 'payroll_form_credit_card_authorization/regenerate_credit_card_authorization/$1';
+$route['payroll_form_credit_card_authorization/(:any)/(:any)'] = 'payroll_form_credit_card_authorization/index/$1/$2';

@@ -59,11 +59,17 @@
                                                                 <tr>
                                                                     <th style="width: 250px;" class="text-left" colspan="1" rowspan="2">Company Name</th>
                                                                     <th class="text-center" colspan="3">Credit Card Authorization</th>
+                                                                    <th class="text-center" colspan="3">Payroll Credit Card Authorization</th>
+
+
                                                                     <th class="text-center" colspan="3">End User License Agreement</th>
                                                                     <th class="text-center" colspan="3">Company Contacts</th>
                                                                     <th class="text-center" colspan="3">Payroll Agreement</th>
                                                                 </tr>
                                                                 <tr>
+                                                                    <th class="text-center" colspan="2">Status</th>
+                                                                    <th class="text-center">Action</th>
+
                                                                     <th class="text-center" colspan="2">Status</th>
                                                                     <th class="text-center">Action</th>
                                                                     <th class="text-center" colspan="2">Status</th>
@@ -93,6 +99,8 @@
 
                                                                     $fpa_status = 'Not Sent';
 
+                                                                    $payroll_cc_status = 'Not Sent';
+
                                                                     if (!empty($company_documents['rec_payment_auth'])) {
                                                                         $rec_status = $company_documents['rec_payment_auth']['status'];
                                                                     }
@@ -113,6 +121,11 @@
 
                                                                     if (!empty($company_documents['fpa'])) {
                                                                         $fpa_status = $company_documents['fpa']['status'];
+                                                                    }
+
+                                                                    //
+                                                                    if (!empty($company_documents['payroll_cc_auth'])) {
+                                                                        $payroll_cc_status = $company_documents['payroll_cc_auth']['status'];
                                                                     }
 
                                                                 ?>
@@ -156,6 +169,46 @@
                                                                                 <a href="<?php echo base_url('manage_admin/documents/regenerate_credit_card_authorization' . '/' . $company_documents['cc_auth']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
                                                                             </td>
                                                                         <?php } ?>
+
+
+
+
+
+                                                                        <td class="text-center">
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $payroll_cc_status)); ?>"><?php echo ucwords(str_replace('-', ' ', $payroll_cc_status)) ?></span>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <?php if (strtolower($payroll_cc_status) == 'not sent' || strtolower($payroll_cc_status) == 'generated' || strtolower($payroll_cc_status) == 'pre-filled' || strtolower($payroll_cc_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($payroll_cc_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </td>
+                                                                        <?php if (strtolower($payroll_cc_status) == 'not sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <form id="form_generate_payroll_credit_card_authorization_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="payroll_credit_card_authorization" />
+                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('payroll_credit_card_authorization', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                </form>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_status) == 'generated') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_status) == 'pre-filled' || strtolower($payroll_cc_status) == 'sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_status) == 'signed') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/payroll_regenerate_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate</a>
+                                                                            </td>
+                                                                        <?php } ?>
+
+
+
 
 
 
@@ -211,7 +264,7 @@
                                                                                     <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('company_contacts', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
                                                                                 </form>
                                                                             </td>
-                                                                            
+
                                                                         <?php } elseif (strtolower($company_contacts_status) == 'generated') { ?>
                                                                             <td class="text-center">
                                                                                 <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
@@ -538,6 +591,8 @@
             message_name = 'End User License Agreement';
         } else if (form_name == 'fpa') {
             message_name = 'Payroll Agreement';
+        } else if (form_name == 'payroll_credit_card_authorization') {
+            message_name = 'Payroll Credit Card Authorization';
         }
 
         alertify.confirm(

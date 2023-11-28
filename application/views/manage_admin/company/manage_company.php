@@ -535,7 +535,7 @@
                                                 </article>
 
                                                 <article class="information-box">
-                                                    <header class="hr-box-header">Document Management
+                                                    <header class="hr-box-header">Document Management 
                                                         <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/documents/' . $company_sid); ?>">Manage</a>
                                                         <a class="site-btn pull-right" href="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>">Send</a>
                                                     </header>
@@ -588,6 +588,18 @@
                                                                         <span class="<?php echo strtolower(str_replace(' ', '-', $fpa_status)); ?>">
                                                                             <?php echo ucwords(str_replace('-', ' ', $fpa_status)) ?>
                                                                             <?php if (strtolower($fpa_status) == 'not sent' || strtolower($fpa_status) == 'generated' || strtolower($fpa_status) == 'pre-filled' || strtolower($fpa_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($fpa_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+
+
+                                                                <li>
+                                                                    <label>Payroll Credit Card Authorization</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $payroll_cc_auth_status =  ($company_documents_status['payroll_cc_auth_status'] != '' ? $company_documents_status['payroll_cc_auth_status'] : 'Not Generated'); ?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $payroll_cc_auth_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $payroll_cc_auth_status)) ?>
+                                                                            <?php if (strtolower($payroll_cc_auth_status) == 'not sent' || strtolower($payroll_cc_auth_status) == 'generated' || strtolower($payroll_cc_auth_status) == 'pre-filled' || strtolower($payroll_cc_auth_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($payroll_cc_auth_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
                                                                         </span>
                                                                     </div>
                                                                 </li>

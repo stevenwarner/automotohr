@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Documents extends Admin_Controller {
-    function __construct() {
+class Documents extends Admin_Controller
+{
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->library('form_validation');
@@ -10,7 +12,8 @@ class Documents extends Admin_Controller {
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
 
-    public function index($company_sid = null, $company_name = null) {
+    public function index($company_sid = null, $company_name = null)
+    {
         $redirect_url = 'manage_admin/';
         $function_name = 'admin_forms_and_documents';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -26,12 +29,11 @@ class Documents extends Admin_Controller {
             $this->data['company_sid'] = $company_sid;
             $companies_uploaded_documents = $this->documents_model->get_all_forms_documents_uploaded($company_sid);
             $this->data['companies_uploaded_documents'] = $companies_uploaded_documents;
-        
         }
         // echo '<pre>'; print_r($companies_documents); exit;
         $this->form_validation->set_rules('company_sid', 'company sid', 'required');
         $this->data['flag'] = true;
-        
+
         if ($this->form_validation->run() == false) {
             $this->data['companies_documents'] = $companies_documents;
             $this->render('manage_admin/documents/index', 'admin_master');
@@ -54,9 +56,12 @@ class Documents extends Admin_Controller {
                     } elseif ($form_name == 'company_contacts') {
                         $verification_key = random_key(80);
                         $this->documents_model->insert_document_record('company_contacts', $company_sid, $verification_key, 'generated');
-                    }elseif ($form_name == 'fpa') {
+                    } elseif ($form_name == 'fpa') {
                         $verification_key = random_key(80);
                         $this->documents_model->insert_document_record('payroll_agreement', $company_sid, $verification_key, 'generated');
+                    } elseif ($form_name == 'payroll_credit_card_authorization') {
+                        $verification_key = random_key(80);
+                        $this->documents_model->insert_document_record('form_payroll_credit_card_authorization', $company_sid, $verification_key, 'generated');
                     }
 
                     redirect('manage_admin/documents/' . $company_sid, 'refresh');
@@ -93,7 +98,7 @@ class Documents extends Admin_Controller {
                         $this->session->set_flashdata('message', '<strong>Success</strong> : Credit Card Authorization Form Sent!');
                         redirect('manage_admin/documents/' . $company_sid, 'refresh');
                     }
-                    
+
                     break;
                 case 'upload_document':
                     $verification_key = random_key(80);
@@ -115,7 +120,8 @@ class Documents extends Admin_Controller {
         }
     }
 
-    public function send($company_sid = null) {
+    public function send($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -142,14 +148,18 @@ class Documents extends Admin_Controller {
                 $message = $this->input->post('message');
 
                 $fpa = $this->input->post('fpa');
+                $payroll_cc_auth = $this->input->post('payroll_cc_auth');
+
 
 
                 $link_cc_auth = '';
                 $link_eula = '';
                 $link_contacts = '';
-                
+                $link_payroll_cc_auth = '';
 
-               if (strlen($cc_auth) > 1) {
+
+
+                if (strlen($cc_auth) > 1) {
                     $link_cc_auth = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('form_credit_card_authorization/' . $cc_auth) . '">Credit Card Authorization Form</a>';
                     $cc_auth_sid = $this->documents_model->get_document_sid('credit_card_authorization', $cc_auth);
                     $this->documents_model->update_document_status('credit_card_authorization', $cc_auth, 'sent');
@@ -172,6 +182,13 @@ class Documents extends Admin_Controller {
                     $link_fpa = '<a style="' . DEF_EMAIL_BTN_STYLE_DANGER . '" target="_blank" href="' . base_url('form_payroll_agreement/' . $fpa) . '">Payroll Agreement</a>';
                     $fpa_sid = $this->documents_model->get_document_sid('form_payroll_agreement', $fpa);
                     $this->documents_model->update_document_status('form_payroll_agreement', $fpa, 'sent');
+                }
+
+
+                if (strlen($payroll_cc_auth) > 1) {
+                    $link_payroll_cc_auth = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('payroll_form_credit_card_authorization/' . $payroll_cc_auth) . '">Payroll Credit Card Authorization Form</a>';
+                    $payroll_cc_auth_sid = $this->documents_model->get_document_sid('payroll_credit_card_authorization', $payroll_cc_auth);
+                    $this->documents_model->update_document_status('payroll_credit_card_authorization', $payroll_cc_auth, 'sent');
                 }
 
 
@@ -219,6 +236,12 @@ class Documents extends Admin_Controller {
                     $links .= '<br />';
                 }
 
+                if ($link_payroll_cc_auth != '') {
+                    $links .= '<br />';
+                    $links .= $link_payroll_cc_auth;
+                    $links .= '<br />';
+                }
+
                 if ($documents_links != '') {
                     $links .= $documents_links;
                 }
@@ -260,6 +283,11 @@ class Documents extends Admin_Controller {
                             $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Manual Email', $email_address);
                         }
 
+                        if (isset($payroll_cc_auth_sid) && $payroll_cc_auth_sid != 0) {
+                            $this->documents_model->insert_document_email_history_record($company_sid, $payroll_cc_auth_sid, 'Manual Email', $email_address);
+                        }
+
+
                         $this->session->set_flashdata('message', '<b>Success:</b> Documents Successfully Forwarded.');
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
@@ -296,6 +324,10 @@ class Documents extends Admin_Controller {
                                 $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Company Admin', $primary_email);
                             }
 
+                            if (isset($payroll_cc_auth_sid) && $payroll_cc_auth_sid != 0) {
+                                $this->documents_model->insert_document_email_history_record($company_sid, $payroll_cc_auth_sid, 'Company Admin', $primary_email);
+                            }
+
                         } elseif ($send_to == 'alternate') {
                             $replacement_array = array();
                             $replacement_array['company_name'] = '<strong>' . ucwords($company_name) . '</strong>';
@@ -322,6 +354,10 @@ class Documents extends Admin_Controller {
 
                             if (isset($contacts_sid) && $contacts_sid != 0) {
                                 $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Company Admin', $alternate_email);
+                            }
+
+                            if (isset($payroll_cc_auth_sid) && $payroll_cc_auth_sid != 0) {
+                                $this->documents_model->insert_document_email_history_record($company_sid, $payroll_cc_auth_sid, 'Company Admin', $alternate_email);
                             }
 
                         } elseif ($send_to == 'both') {
@@ -365,6 +401,10 @@ class Documents extends Admin_Controller {
                             if (isset($contacts_sid) && $contacts_sid != 0) {
                                 $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Company Admin', $alternate_email);
                             }
+
+                            if (isset($payroll_cc_auth_sid) && $payroll_cc_auth_sid != 0) {
+                                $this->documents_model->insert_document_email_history_record($company_sid, $payroll_cc_auth_sid, 'Company Admin', $primary_email);
+                            }
                         }
 
                         $this->session->set_flashdata('message', '<b>Success:</b> Documents Successfully Forwarded.');
@@ -380,7 +420,7 @@ class Documents extends Admin_Controller {
                             $replacement_array['email_address'] = $email;
                             $replacement_array['links'] = $links;
                             $replacement_array['message'] = $message;
- 
+
                             if (!empty($system_notification_emails)) {
                                 foreach ($system_notification_emails as $system_notification_email) {
                                     log_and_send_templated_email(FORMS_NOTIFICATION_TO_ADMIN, $system_notification_email['email'], $replacement_array);
@@ -400,6 +440,11 @@ class Documents extends Admin_Controller {
                             if (isset($contacts_sid) && $contacts_sid != 0) {
                                 $this->documents_model->insert_document_email_history_record($company_sid, $contacts_sid, 'Employee', $email);
                             }
+
+                            if (isset($payroll_cc_auth_sid) && $payroll_cc_auth_sid != 0) {
+                                $this->documents_model->insert_document_email_history_record($company_sid, $payroll_cc_auth_sid, 'Employee', $email);
+                            }
+
                         }
 
                         $this->session->set_flashdata('message', '<b>Success:</b> Documents Successfuly Forwarded.');
@@ -412,7 +457,8 @@ class Documents extends Admin_Controller {
         }
     }
 
-    public function check_signed_forms() {
+    public function check_signed_forms()
+    {
         $companies_documents = $this->documents_model->get_cc_auth();
 
         foreach ($companies_documents as $key => $value) {
@@ -434,7 +480,8 @@ class Documents extends Admin_Controller {
         }
     }
 
-    function regenerate_credit_card_authorization ($verification_key = null) {
+    function regenerate_credit_card_authorization($verification_key = null)
+    {
         $redirect_url = 'manage_admin/';
         $function_name = 'regenerate_credit_card_authorization';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -445,12 +492,12 @@ class Documents extends Admin_Controller {
         $credit_card_info = $this->documents_model->get_credit_card_information($verification_key);
         $record_sid = $credit_card_info['sid'];
         $company_sid = $credit_card_info['company_sid'];
-        
+
         $data_to_insert = array();
         $data_to_insert = $credit_card_info;
         $data_to_insert['credit_card_document_sid'] = $record_sid;
         unset($data_to_insert['sid']);
-        $this->documents_model->insert_credit_card_authorization_history($data_to_insert);
+        $this->documents_model->insert_payroll_credit_card_authorization_history($data_to_insert);
 
         $data_to_update = array();
         $data_to_update['status'] = 'generated';
@@ -492,7 +539,8 @@ class Documents extends Admin_Controller {
         redirect('manage_admin/documents/' . $company_sid, 'refresh');
     }
 
-    function regenerate_enduser_license_agreement ($verification_key = null) {
+    function regenerate_enduser_license_agreement($verification_key = null)
+    {
         $redirect_url = 'manage_admin/';
         $function_name = 'regenerate_enduser_license_agreement';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -502,7 +550,7 @@ class Documents extends Admin_Controller {
         $eula_info = $this->documents_model->get_enduser_license_agreement_information($verification_key);
         $record_sid = $eula_info['sid'];
         $company_sid = $eula_info['company_sid'];
-        
+
         $data_to_insert = array();
         $data_to_insert = $eula_info;
         $data_to_insert['document_eula_sid'] = $record_sid;
@@ -537,7 +585,8 @@ class Documents extends Admin_Controller {
         redirect('manage_admin/documents/' . $company_sid, 'refresh');
     }
 
-    function regenerate_company_contacts_document ($verification_key = null) {
+    function regenerate_company_contacts_document($verification_key = null)
+    {
         $redirect_url = 'manage_admin/';
         $function_name = 'regenerate_company_contacts_document';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -566,7 +615,7 @@ class Documents extends Admin_Controller {
         $data_to_update['cp_meeting_date'] = NULL;
         $data_to_update['cp_meeting_time'] = NULL;
         $this->documents_model->regenerate_company_contacts_document($record_sid, $data_to_update);
-        $cc_details_info = $this->documents_model->get_company_contacts_details_information($company_sid ,$record_sid);
+        $cc_details_info = $this->documents_model->get_company_contacts_details_information($company_sid, $record_sid);
 
         foreach ($cc_details_info as $info) {
             $detail_sid = $info['sid'];
@@ -583,7 +632,8 @@ class Documents extends Admin_Controller {
     }
 
 
-    function regenerate_enduser_payroll_agreement ($verification_key = null) {
+    function regenerate_enduser_payroll_agreement($verification_key = null)
+    {
         $redirect_url = 'manage_admin/';
         $function_name = 'regenerate_enduser_license_agreement';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -593,7 +643,7 @@ class Documents extends Admin_Controller {
         $fpa_info = $this->documents_model->get_enduser_payroll_agreement_information($verification_key);
         $record_sid = $fpa_info['sid'];
         $company_sid = $fpa_info['company_sid'];
-        
+
         $data_to_insert = array();
         $data_to_insert = $fpa_info;
         $data_to_insert['document_fpa_sid'] = $record_sid;
@@ -611,4 +661,62 @@ class Documents extends Admin_Controller {
     }
 
 
+    function payroll_regenerate_credit_card_authorization($verification_key = null)
+    {
+        $redirect_url = 'manage_admin/';
+        $function_name = 'regenerate_credit_card_authorization';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+
+        $credit_card_info = $this->documents_model->get_payroll_credit_card_information($verification_key);
+        $record_sid = $credit_card_info['sid'];
+        $company_sid = $credit_card_info['company_sid'];
+
+        $data_to_insert = array();
+        $data_to_insert = $credit_card_info;
+        $data_to_insert['credit_card_document_sid'] = $record_sid;
+        unset($data_to_insert['sid']);
+        $this->documents_model->insert_payroll_credit_card_authorization_history($data_to_insert);
+
+        $data_to_update = array();
+        $data_to_update['status'] = 'generated';
+        $data_to_update['status_date'] = date('Y-m-d H:i:s');
+        $data_to_update['authorized_person_full_name'] = NULL;
+        $data_to_update['recurring_amount'] = 0;
+        $data_to_update['day_of_payment'] = 0;
+        $data_to_update['authorization_on_behalf_of'] = NULL;
+        $data_to_update['billing_address'] = NULL;
+        $data_to_update['billing_phone_number'] = NULL;
+        $data_to_update['billing_city'] = NULL;
+        $data_to_update['billing_state'] = NULL;
+        $data_to_update['billing_zip_code'] = NULL;
+        $data_to_update['billing_email_address'] = NULL;
+        $data_to_update['bank_account_type'] = NULL;
+        $data_to_update['bank_name'] = NULL;
+        $data_to_update['bank_account_title'] = NULL;
+        $data_to_update['bank_account_number'] = NULL;
+        $data_to_update['bank_routing_number'] = NULL;
+        $data_to_update['bank_state'] = NULL;
+        $data_to_update['bank_city'] = NULL;
+        $data_to_update['cc_type'] = NULL;
+        $data_to_update['cc_holder_name'] = NULL;
+        $data_to_update['cc_number'] = NULL;
+        $data_to_update['cc_expiration_month'] = NULL;
+        $data_to_update['cc_expiration_year'] = NULL;
+        $data_to_update['cc_front_image'] = NULL;
+        $data_to_update['cc_back_image'] = NULL;
+        $data_to_update['driving_license_front_image'] = NULL;
+        $data_to_update['authorized_signature'] = NULL;
+        $data_to_update['authorization_date'] = NULL;
+        $data_to_update['additional_fee'] = 0;
+        $data_to_update['acknowledgement'] = NULL;
+        $data_to_update['processed'] = 0;
+        $data_to_update['client_ip'] = NULL;
+        $data_to_update['client_signature_timestamp'] = NULL;
+        $this->documents_model->regenerate_payroll_credit_card_authorization($record_sid, $data_to_update);
+        $this->session->set_flashdata('message', '<strong>Success</strong> : Payroll Credit Card Regenerate Successfully!');
+        redirect('manage_admin/documents/' . $company_sid, 'refresh');
+    }
 }

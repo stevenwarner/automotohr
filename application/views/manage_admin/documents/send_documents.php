@@ -89,6 +89,22 @@
                                                     <?php } ?>
 
 
+                                                    <?php if (!empty($companies_documents['payroll_cc_auth'])) { ?>
+                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
+                                                            <label class="package_label" for="payroll_cc_auth">
+                                                                <div class="img-thumbnail text-center package-info-box eq-height">
+                                                                    <figure><i class="fa fa-file-o" style="font-size: 75px"></i></figure>
+                                                                    <br />
+                                                                    <div class="caption">
+                                                                        <p>Payroll Credit Card Authorization Form</p>
+                                                                    </div>
+                                                                    <input class="select-package" type="checkbox" id="payroll_cc_auth" name="forms[]" value="payroll_cc_auth" data-k="<?php echo $companies_documents['payroll_cc_auth']['verification_key']; ?>" />
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    <?php } ?>
+
+
                                                 </div>
 
                                                 <div class="heading-title">
@@ -147,6 +163,8 @@
                                                                         <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
                                                                         <input type="hidden" id="company_name" name="company_name" value="<?php echo $companies_documents['CompanyName']; ?>" />
                                                                         <input type="hidden" id="fpa" name="fpa" value="0" class="fpa" />
+                                                                        <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
+
 
 
                                                                         <?php if (!empty($companies_documents['uploaded_documents'])) { ?>
@@ -186,6 +204,8 @@
                                                             <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
                                                             <input type="hidden" id="company_name" name="company_name" value="<?php echo $companies_documents['CompanyName']; ?>" />
                                                             <input type="hidden" id="fpa" name="fpa" value="0" class="fpa" />
+                                                            <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
+
 
 
                                                             <?php if (!empty($companies_documents['uploaded_documents'])) { ?>
@@ -226,6 +246,8 @@
                                                                 <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
                                                                 <input type="hidden" id="company_name" name="company_name" value="<?php echo $companies_documents['CompanyName']; ?>" />
                                                                 <input type="hidden" id="fpa" name="fpa" value="0" class="fpa" />
+                                                                <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
+
 
                                                                 <?php if (!empty($companies_documents['uploaded_documents'])) { ?>
                                                                     <?php foreach ($companies_documents['uploaded_documents'] as $uploaded_document) { ?>
