@@ -3461,4 +3461,69 @@ class Settings extends Public_Controller
             redirect('login', 'refresh');
         }
     }
+
+    /**
+     * list company page schedules
+     */
+    public function schedules()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Pay Schedules | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/index');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * add a pay schedule
+     */
+    public function addSchedule()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Add Company Pay Schedule | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/schedules/add"
+        ], "public/v1/schedules/add/", "add_schedule", false);
+        // load views
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/add');
+        $this->load->view('main/footer');
+    }
 }

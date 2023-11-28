@@ -1,7 +1,7 @@
 :root {
 	/* Buttons common */
 	--btnSize: 16px;
-	--btnWeight: 500;
+	--btnWeight: 600;
 	--btnRadius: 5px;
 	--txColor: #f1f1f1;
 	/* Orange */
@@ -70,6 +70,8 @@
 	font-size: var(--btnSize);
 	text-transform: capitalize;
 	border-radius: var(--btnRadius) !important;
+	background-color: var(--bgBlackColor);
+	color: var(--txColor);
 }
 .btn-black i {
 	font-size: var(--btnSize) !important;
@@ -186,8 +188,8 @@
 /* Backgrounds */
 /* Orange */
 .bg-orange {
-	background: var(--bgOrangeColor);
-	color: var(--txColor);
+	background: var(--bgOrangeColor) !important;
+	color: var(--txColor) !important;
 	border: var(--bgOrangeColorSoft);
 }
 .bg-orange-hover:hover,
@@ -198,8 +200,8 @@
 
 /* Blue */
 .bg-blue {
-	background: var(--bgBlueColor);
-	color: var(--txColor);
+	background: var(--bgBlueColor) !important;
+	color: var(--txColor) !important;
 }
 .bg-blue-hover:hover,
 .bg-blue-hover:focus {
@@ -209,8 +211,8 @@
 
 /* Black */
 .bg-black {
-	background: var(--bgBlackColor);
-	color: var(--txColor);
+	background: var(--bgBlackColor) !important;
+	color: var(--txColor) !important;
 }
 .bg-black-hover:hover,
 .bg-black-hover:focus {
@@ -220,8 +222,8 @@
 
 /* Red */
 .bg-red {
-	background: var(--bgRedColor);
-	color: var(--txColor);
+	background: var(--bgRedColor) !important;
+	color: var(--txColor) !important;
 }
 .bg-red-hover:hover,
 .bg-red-hover:focus {
@@ -231,8 +233,8 @@
 
 /* Yellow */
 .bg-yellow {
-	background: var(--bgYellowColor);
-	color: var(--txColor);
+	background: var(--bgYellowColor) !important;
+	color: var(--txColor) !important;
 }
 .bg-yellow-hover:hover,
 .bg-yellow-hover:focus {
@@ -242,8 +244,8 @@
 
 /* Green */
 .bg-green {
-	background: var(--bgGreenColor);
-	color: var(--txColor);
+	background: var(--bgGreenColor) !important;
+	color: var(--txColor) !important;
 }
 .bg-green-hover:hover,
 .bg-green-hover:focus {
@@ -266,6 +268,16 @@ button.ajs-button.ajs-cancel {
 	background-color: var(--bgBlackColor);
 	color: var(--txColor);
 	border-color: var(--bgBlackColorSoft) !important;
+}
+
+/* Panel */
+.panel-heading-text {
+	padding: 0;
+	margin: 0;
+	padding-top: 8px;
+}
+.panel-default .panel-heading {
+	background-color: #000ccc1a;
 }
 
 /* Old CSS */

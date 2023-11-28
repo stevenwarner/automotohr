@@ -1915,3 +1915,34 @@ if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
         }
     }
 }
+
+
+if (!function_exists("getFile")) {
+    /**
+     * get the plugin
+     *
+     * @param string $index
+     * @param string $type
+     * @return string
+     */
+    function getPlugin(string $index, string $type): string
+    {
+        // set plugins array
+        $plugins = [];
+        // set alertify plugin
+        $plugins["alertify"] = [
+            "css" =>
+            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            "js" =>   main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
+        ];
+        // set alertify plugin
+        $plugins["validator"] = [
+            "js" =>  main_url("public/v1/plugins/validator/jquery.validate.min.js?v=3.0")
+        ];
+        $plugins["additionalMethods"] = [
+            "js" =>  main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
+        ];
+        //
+        return $plugins[$index][$type] ?? "";
+    }
+}
