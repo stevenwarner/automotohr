@@ -1258,12 +1258,14 @@ class Company_model extends CI_Model
         $this->db->select('form_document_eula.status as eula_status');
         $this->db->select('form_document_company_contacts.status as company_contacts_status');
         $this->db->select('form_payroll_agreement.status as fpa_status');
+        $this->db->select('form_document_payroll_credit_card_authorization.status as payroll_cc_auth_status');
 
         $this->db->where('users.sid', $company_sid);
         $this->db->join('form_document_credit_card_authorization', 'form_document_credit_card_authorization.company_sid = users.sid', 'left');
         $this->db->join('form_document_eula', 'form_document_eula.company_sid = users.sid', 'left');
         $this->db->join('form_document_company_contacts', 'form_document_company_contacts.company_sid = users.sid', 'left');
         $this->db->join('form_payroll_agreement', 'form_payroll_agreement.company_sid = users.sid', 'left');
+        $this->db->join('form_document_payroll_credit_card_authorization', 'form_document_payroll_credit_card_authorization.company_sid = users.sid', 'left');
 
         $record_obj = $this->db->get('users');
         $data = $record_obj->result_array();

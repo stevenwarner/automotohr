@@ -59,6 +59,7 @@
                                                                 <tr>
                                                                     <th style="width: 250px;" class="text-left" colspan="1" rowspan="2">Company Name</th>
                                                                     <th class="text-center" colspan="3">Credit Card Authorization</th>
+                                                                    <th class="text-center" colspan="3">Payroll Credit Card Authorization</th>
                                                                     <th class="text-center" colspan="3">End User License Agreement</th>
                                                                     <th class="text-center" colspan="3">Company Contacts</th>
                                                                     <th class="text-center" colspan="3">Payroll Agreement</th>
@@ -71,6 +72,8 @@
                                                                     <th class="text-center" colspan="2">Status</th>
                                                                     <th class="text-center">Action</th>
 
+                                                                    <th class="text-center" colspan="2">Status</th>
+                                                                    <th class="text-center">Action</th>
                                                                     <th class="text-center" colspan="2">Status</th>
                                                                     <th class="text-center">Action</th>
 
@@ -88,6 +91,7 @@
 
                                                                     $rec_status = 'Not Sent';
                                                                     $cc_status = 'Not Sent';
+                                                                    $payroll_cc_auth = 'Not Sent';
                                                                     $eula_status = 'Not Sent';
                                                                     $company_contacts_status = 'Not Sent';
 
@@ -99,6 +103,9 @@
 
                                                                     if (!empty($company_documents['cc_auth'])) {
                                                                         $cc_status = $company_documents['cc_auth']['status'];
+                                                                    }
+                                                                    if (!empty($company_documents['payroll_cc_auth'])) {
+                                                                        $payroll_cc_auth = $company_documents['payroll_cc_auth']['status'];
                                                                     }
 
                                                                     if (!empty($company_documents['eula'])) {
@@ -157,6 +164,43 @@
                                                                             </td>
                                                                         <?php } ?>
 
+                                                                        <!-- Payroll CC -->
+
+                                                                        <td class="text-center">
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $payroll_cc_auth)); ?>"><?php echo ucwords(str_replace('-', ' ', $payroll_cc_auth)) ?></span>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <?php if (strtolower($payroll_cc_auth) == 'not sent' || strtolower($payroll_cc_auth) == 'generated' || strtolower($payroll_cc_auth) == 'pre-filled' || strtolower($payroll_cc_auth) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($payroll_cc_auth) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </td>
+                                                                        <?php if (strtolower($payroll_cc_auth) == 'not sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <form id="form_generate_fpa_<?php echo $company_documents['sid'] ?>" method="post" action="<?php echo base_url('manage_admin/documents'); ?>">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="generate_form" />
+                                                                                    <input type="hidden" id="form_to_send" name="form_to_send" value="payroll_cc_auth" />
+                                                                                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_documents['sid']; ?>" />
+                                                                                    <input type="hidden" id="company_name" name="company_name" value="<?php echo $company_documents['CompanyName']; ?>" />
+                                                                                    <input type="hidden" id="company_admin_email" name="company_admin_email" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['email'] : 'mubashar@automotohr.com'); ?>" />
+                                                                                    <input type="hidden" id="company_admin_full_name" name="company_admin_full_name" value="<?php echo (!empty($company_documents['administrator']) ? $company_documents['administrator']['first_name'] . ' ' . $company_documents['administrator']['last_name'] : 'James Taylor'); ?>" />
+                                                                                    <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('fpa', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
+                                                                                </form>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_auth) == 'generated') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_auth) == 'pre-filled' || strtolower($payroll_cc_auth) == 'sent') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Edit</a>
+                                                                            </td>
+                                                                        <?php } elseif (strtolower($payroll_cc_auth) == 'signed') { ?>
+                                                                            <td class="text-center">
+                                                                                <a href="<?php echo base_url('payroll_form_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key'] . '/view'); ?>" class="hr-edit-btn btn-block">View</a>
+                                                                                <a href="<?php echo base_url('manage_admin/documents/regenerate_payroll_credit_card_authorization' . '/' . $company_documents['payroll_cc_auth']['verification_key']); ?>" class="hr-edit-btn btn-block">Re-Generate </a>
+                                                                            </td>
+                                                                        <?php } ?>
+
+                                                                        <!-- -->
+
 
 
                                                                         <td class="text-center">
@@ -211,7 +255,7 @@
                                                                                     <button type="button" class="hr-edit-btn btn-block" onclick="fSendForm('company_contacts', 'generate', '<?php echo ucwords($company_documents['CompanyName']); ?>', '<?php echo $company_documents['sid']; ?>');">Generate</button>
                                                                                 </form>
                                                                             </td>
-                                                                            
+
                                                                         <?php } elseif (strtolower($company_contacts_status) == 'generated') { ?>
                                                                             <td class="text-center">
                                                                                 <a href="<?php echo base_url('form_company_contacts' . '/' . $company_documents['contacts']['verification_key'] . '/pre_fill'); ?>" class="hr-edit-btn btn-block">Pre-fill</a>
