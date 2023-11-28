@@ -18,7 +18,7 @@ class Payroll_form_credit_card_authorization extends CI_Controller
                 $status = $document_record['status'];
                 $data['dont_show_it'] = $pre_fill_flag;
                 $company_sid = $document_record['company_sid'];
-                $ip_track = $this->documents_model->get_document_ip_tracking_record($company_sid, 'credit_card_authorization_form');
+                $ip_track = $this->documents_model->get_document_ip_tracking_record($company_sid, 'payroll_credit_card_authorization_form');
                 $data['ip_track'] = $ip_track;
                 $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
                 $this->form_validation->set_message('required', '%s Required');
