@@ -2000,4 +2000,13 @@ $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$
 
 // Schedule routes
 $route["schedules"]["get"] = "settings/schedules";
+$route["schedules/active"]["get"] = "settings/schedules/active";
+$route["schedules/inactive"]["get"] = "settings/schedules/inactive";
+// get deadline date
+$route["schedules/deadline/(:any)"]["get"] = "settings/getScheduleDeadlineDate/$1";
+// add
 $route["schedules/add"]["get"] = "settings/addSchedule";
+$route["schedules"]["post"] = "settings/processSchedule";
+// edit
+$route["schedules/edit/(:num)"]["get"] = "settings/editSchedule/$1";
+$route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";

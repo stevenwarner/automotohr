@@ -253,6 +253,12 @@
 	color: var(--txColor);
 }
 
+/* default */
+.bg-default {
+	background: #000ccc1a !important;
+	color: var(--txColor) !important;
+}
+
 /* Radius */
 .cs-radius {
 	border-radius: var(--btnRadius);
@@ -274,10 +280,20 @@ button.ajs-button.ajs-cancel {
 .panel-heading-text {
 	padding: 0;
 	margin: 0;
-	padding-top: 8px;
+	padding-top: 10px;
 }
 .panel-default .panel-heading {
 	background-color: #000ccc1a;
+}
+
+/* Positions */
+.csRelative{
+	position: relative;
+}
+.csAbsoluteBox{
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 
 /* Old CSS */

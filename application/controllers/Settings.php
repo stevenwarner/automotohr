@@ -3464,8 +3464,10 @@ class Settings extends Public_Controller
 
     /**
      * list company page schedules
+     *
+     * @param string $status Optional
      */
-    public function schedules()
+    public function schedules(string $status = "active")
     {
         // check if plus or don't have access to the module
         if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
@@ -3482,6 +3484,14 @@ class Settings extends Public_Controller
         $data["loggedInEmployee"] = $loggedInEmployee;
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
         $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedules
+        $data["schedules"] = $this->schedule_model
+            ->getCompanySchedules(
+                $loggedInCompany["sid"],
+                $status === "active" ? 1 : 0
+            );
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/index');
@@ -3511,19 +3521,256 @@ class Settings extends Public_Controller
         // set common files bundle
         $data["pageCSS"] = [
             getPlugin("alertify", "css"),
+            getPlugin("daterangepicker", "css"),
         ];
         $data["pageJs"] = [
             getPlugin("alertify", "js"),
             getPlugin("validator", "js"),
+            getPlugin("daterangepicker", "js"),
             getPlugin("additionalMethods", "js"),
         ];
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/schedules/add"
-        ], "public/v1/schedules/add/", "add_schedule", false);
+        ], "public/v1/schedules/add/", "add_schedule", true);
         // load views
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/add');
         $this->load->view('main/footer');
+    }
+
+    /**
+     * edit a pay schedule
+     *
+     * @param int $scheduleId
+     */
+    public function editSchedule(int $scheduleId)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedule
+        $data["schedule"] = $this->schedule_model
+            ->getScheduleById(
+                $scheduleId
+            );
+        if (!$data["schedule"]) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Schedule not found.");
+            return redirect("schedules");
+        }
+        $data["title"] = "Edit Company Pay Schedule | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("additionalMethods", "js"),
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/schedules/edit"
+        ], "public/v1/schedules/edit/", "edit_schedule", true);
+        // load views
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/edit');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * get schedule deadline date
+     *
+     * @param string $firstPayDate
+     */
+    public function getScheduleDeadlineDate(string $firstPayDate)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the company holidays
+        $holidaysDates = $this->schedule_model->getCompanyHolidays($loggedInCompany["sid"]);
+        //
+        if ($firstPayDate < getSystemDate("Y-m-d")) {
+            // use next pay date
+        }
+        // get the deadline date
+        $deadlineDate = getPastDate(
+            $firstPayDate,
+            $holidaysDates,
+            2
+        );
+        // send back the response
+        return SendResponse(
+            200,
+            [
+                "deadlineDate" => $deadlineDate
+            ]
+        );
+    }
+
+    /**
+     * process schedule
+     */
+    public function processSchedule()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // add validation rules
+        $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
+        $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
+        // for dealine
+        if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
+            $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
+        }
+        // for days 1 and 2
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
+            $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        }
+        $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // prepare array
+        $ins = [];
+        $ins["company_sid"] = $loggedInCompany["sid"];
+        $ins["frequency"] = $post["pay_frequency"];
+        $ins["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $ins["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        $ins["custom_name"] = $post["name"];
+        $ins["day_1"] = $post["day_1"];
+        $ins["day_2"] = $post["day_2"];
+        $ins["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
+        $ins["active"] = $post["status"];
+        $ins["updated_at"] = $ins["created_at"] = getSystemDate();
+        //
+        $this->db->insert(
+            "companies_pay_schedules",
+            $ins
+        );
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully added a new schedule."
+        ]);
+    }
+
+
+    /**
+     * process edit schedule
+     */
+    public function processEditSchedule(int $scheduleId)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // add validation rules
+        $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
+        $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
+        // for dealine
+        if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
+            $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
+        }
+        // for days 1 and 2
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
+            $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        }
+        $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // prepare array
+        $upd = [];
+        $upd["frequency"] = $post["pay_frequency"];
+        $upd["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $upd["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        $upd["custom_name"] = $post["name"];
+        $upd["day_1"] = $post["day_1"];
+        $upd["day_2"] = $post["day_2"];
+        $upd["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
+        $upd["active"] = $post["status"];
+        $upd["updated_at"] = getSystemDate();
+        //
+        $this->db
+            ->where("sid", $scheduleId)
+            ->update(
+                "companies_pay_schedules",
+                $upd
+            );
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully updated schedule."
+        ]);
+    }
+
+    /**
+     * validate site date
+     *
+     * @param string $siteDate
+     * @return bool
+     */
+    public function validDate(string $siteDate): bool
+    {
+        $this->form_validation->set_message("validDate", "The date format is invalid for %s.");
+        return preg_match("/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/", $siteDate);
     }
 }

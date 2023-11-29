@@ -1942,6 +1942,12 @@ if (!function_exists("getFile")) {
         $plugins["additionalMethods"] = [
             "js" =>  main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
         ];
+        
+        // set date range picker plugin
+        $plugins["daterangepicker"] = [
+            "css" => main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
+            "js" =>  main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
+        ];
         //
         return $plugins[$index][$type] ?? "";
     }

@@ -35,13 +35,13 @@
                                         <i class="fa fa-plus-circle text-orange" aria-hidden="true"></i>
                                         &nbsp;
                                         <strong>
-                                            Add A Company Pay Schedule
+                                            Edit A Company Pay Schedule
                                         </strong>
                                     </h2>
                                 </div>
                             </div>
                         </div>
-                        <form action="javascript:void(0)" id="jsAddScheduleForm">
+                        <form action="javascript:void(0)" id="jsEditScheduleForm">
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -69,7 +69,7 @@
                                     <label class="text-medium">
                                         Name
                                     </label>
-                                    <input type="text" class="form-control" name="name" placeholder="Weekly" />
+                                    <input type="text" class="form-control" name="name" placeholder="Weekly" value="<?= $schedule["custom_name"]; ?>" />
                                 </div>
 
                                 <!--  -->
@@ -81,16 +81,16 @@
                                         </strong>
                                     </label>
                                     <select name="pay_frequency" class="form-control">
-                                        <option selected="selected" value="Every week">Every week</option>
-                                        <option value="Every other week">Every other week</option>
-                                        <option value="Twice per month">Twice a month: 15th and last day of the month</option>
-                                        <option value="Twice per month">Twice a month: Custom</option>
-                                        <option value="Monthly">Monthly: last day of the month</option>
+                                        <option <?= $schedule["frequency"] === "Every week" ? "selected" : ""; ?> value="Every week">Every week</option>
+                                        <option <?= $schedule["frequency"] === "Every other week" ? "selected" : ""; ?> value="Every other week">Every other week</option>
+                                        <option <?= $schedule["frequency"] === "Twice per month" && empty($schedule["day_1"]) ? "selected" : ""; ?> value="Twice per month">Twice a month: 15th and last day of the month</option>
+                                        <option <?= $schedule["frequency"] === "Twice per month" && !empty($schedule["day_1"]) ? "selected" : ""; ?> value="Twice per month">Twice a month: Custom</option>
+                                        <option <?= $schedule["frequency"] === "Monthly" ? "selected" : ""; ?> value="Monthly">Monthly: last day of the month</option>
                                     </select>
                                 </div>
 
                                 <!--  -->
-                                <div class="form-group jsFrequency hidden">
+                                <div class="form-group jsFrequency <?= $schedule["frequency"] === "Twice per month" && !empty($schedule["day_1"]) ? "" : "hidden"; ?>">
                                     <label class="text-medium">
                                         First pay day of month
                                         <strong class="text-red">
@@ -99,13 +99,13 @@
                                     </label>
                                     <select name="day_1" class="form-control">
                                         <?php for ($i = 1; $i <= 17; $i++) { ?>
-                                            <option value="<?= $i; ?>"><?= $i; ?></option>
+                                            <option value="<?= $i; ?>" <?= $schedule["day_1"] === $i ? "selected" : ""; ?>><?= $i; ?></option>
                                         <?php } ?>
                                     </select>
                                 </div>
 
                                 <!--  -->
-                                <div class="form-group jsFrequency hidden">
+                                <div class="form-group jsFrequency <?= $schedule["frequency"] === "Twice per month" && !empty($schedule["day_1"]) ? "" : "hidden"; ?>">
                                     <label class="text-medium">
                                         Second pay day of month
                                         <strong class="text-red">
@@ -114,9 +114,9 @@
                                     </label>
                                     <select name="day_2" class="form-control">
                                         <?php for ($i = 14; $i <= 30; $i++) { ?>
-                                            <option value="<?= $i; ?>"><?= $i; ?></option>
+                                            <option value="<?= $i; ?>" <?= $schedule["day_2"] === $i ? "selected" : ""; ?>><?= $i; ?></option>
                                         <?php } ?>
-                                        <option value="31">Last day of month</option>
+                                        <option value="31" <?= $schedule["day_2"] === "31" ? "selected" : ""; ?>>Last day of month</option>
                                     </select>
                                 </div>
 
@@ -128,7 +128,7 @@
                                             *
                                         </strong>
                                     </label>
-                                    <input type="text" class="form-control" name="first_pay_date" placeholder="MM/DD/YYYY" readonly />
+                                    <input type="text" class="form-control" name="first_pay_date" placeholder="MM/DD/YYYY" readonly value="<?= formatDateToDB($schedule["anchor_pay_date"], DB_DATE, SITE_DATE); ?>" />
                                 </div>
 
                                 <!--  -->
@@ -139,7 +139,7 @@
                                             *
                                         </strong>
                                     </label>
-                                    <input type="text" class="form-control" name="deadline_to_run_payroll" placeholder="MM/DD/YYYY" readonly />
+                                    <input type="text" class="form-control" name="deadline_to_run_payroll" placeholder="MM/DD/YYYY" readonly value="<?= formatDateToDB($schedule["deadline_to_run_payroll"], DB_DATE, SITE_DATE); ?>" />
                                 </div>
                                 <!--  -->
                                 <div class="form-group">
@@ -154,7 +154,7 @@
                                             The last date of the first pay period to help calculate future pay periods. This can be the same date as the first pay date.
                                         </strong>
                                     </p>
-                                    <input type="text" class="form-control" name="first_pay_period_end_date" placeholder="MM/DD/YYYY" readonly />
+                                    <input type="text" class="form-control" name="first_pay_period_end_date" placeholder="MM/DD/YYYY" readonly value="<?= formatDateToDB($schedule["anchor_end_of_pay_period"], DB_DATE, SITE_DATE); ?>" />
                                 </div>
 
                                 <!--  -->
@@ -167,22 +167,22 @@
                                     </label>
                                     <br />
                                     <label class="control control--radio">
-                                        <input type="radio" name="status" value="1" /> Enabled
+                                        <input type="radio" name="status" value="1" <?= $schedule["active"] == 1 ? "checked" : ""; ?> /> Enabled
                                         <div class="control__indicator"></div>
                                     </label>
                                     &nbsp;
                                     &nbsp;
                                     <label class="control control--radio">
-                                        <input type="radio" name="status" value="0" /> Disabled
+                                        <input type="radio" name="status" value="0" <?= $schedule["active"] == 0 ? "checked" : ""; ?> /> Disabled
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
 
                             </div>
                             <div class="panel-footer text-center">
-                                <button class="btn btn-orange jsAddScheduleBtn" type="submit">
-                                    <i class="fa fa-save" aria-hidden="true"></i>
-                                    &nbsp;Save
+                                <button class="btn btn-orange jsEditScheduleBtn" type="submit">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                    &nbsp;Update
                                 </button>
                                 <a href="<?= base_url("schedules"); ?>" class="btn btn-black">
                                     <i class="fa fa-times-circle" aria-hidden="true"></i>

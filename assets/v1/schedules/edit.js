@@ -1,4 +1,4 @@
-$(function addSchedule() {
+$(function editSchedule() {
 	/**
 	 * holds xhr call
 	 * @var object
@@ -27,7 +27,7 @@ $(function addSchedule() {
 	);
 
 	// apply validator
-	const validator = $("#jsAddScheduleForm").validate({
+	const validator = $("#jsEditScheduleForm").validate({
 		rules: {
 			pay_frequency: { required: true },
 			first_pay_date: { required: true, date: true },
@@ -38,6 +38,8 @@ $(function addSchedule() {
 		submitHandler: function (form) {
 			// get the form object
 			const formObj = convertFormArrayToObject($(form).serializeArray());
+			//
+			formObj.id = getSegment(2);
 			// convert dates to moment
 			// first_pay_date
 			const fpd = moment(formObj.first_pay_date, "MM/DD/YYYY");
@@ -60,7 +62,7 @@ $(function addSchedule() {
 				});
 			}
 			// convert the dates to moment
-			return processScheduleProcess(formObj, $(".jsAddScheduleBtn"));
+			return processScheduleProcess(formObj, $(".jsEditScheduleBtn"));
 		},
 	});
 
@@ -159,7 +161,7 @@ $(function addSchedule() {
 		const buttonHook = callButtonHook(buttonRef, true, true);
 		//
 		XHR = $.ajax({
-			url: baseUrl("schedules"),
+			url: baseUrl("schedules/edit/" + getSegment(2)),
 			method: "POST",
 			data: formObj,
 		})

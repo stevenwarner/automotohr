@@ -7,8 +7,5 @@
                                 $this->session->userdata("logged_in")['company_detail']['sid']
                             ); ?>";
     </script>
-    <?= bundleJs([
-        "v1/common",
-        "v1/attendance/js/timer",
-    ], "public/v1/js/attendance/", "timer",  true); ?>
+    <?php // echo bundleJs(["v1/common","v1/attendance/js/timer",], "public/v1/js/attendance/", "timer",  true); ?>
 <?php endif; ?>
