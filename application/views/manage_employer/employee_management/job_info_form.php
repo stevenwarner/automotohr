@@ -205,7 +205,7 @@
                                                                                                 <strong>Per:</strong> <?php echo $compensationRow['per'] ?>
                                                                                             </p>
                                                                                             <p class="csF16 normal">
-                                                                                                <strong>Amount:</strong> $ <?php echo $compensationRow['compensation_multiplier'] ?>
+                                                                                                <strong>Amount:</strong> $<?php echo  number_format($compensationRow['compensation_multiplier'], 2);?>
                                                                                             </p>
                                                                                         </div>
 

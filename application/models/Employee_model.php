@@ -2280,7 +2280,7 @@
     //
     function updatejobCompensation($sid, $dataToUpdate)
     {
-
+       // _e($dataToUpdate,true,true);
         //
         if ($dataToUpdate['is_primary'] == 1) {
             $primaryCount = $this->getPrimaryCompensation($dataToUpdate['gusto_employees_jobs_sid']);
@@ -2315,12 +2315,17 @@
         $this->db->update('gusto_employees_jobs_compensations', $dataToUpdate);
 
         //Update User
+        
+        /*
         if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
 
-            //  $updateUser['job_title'] = $dataToUpdate['job_title'];
-            //  $this->db->where('sid', $dataToUpdate['employee_sid']);
-            // $this->db->update('users', $updateUser);
+             $updateUser['job_title'] = $dataToUpdate['job_title'];
+             $this->db->where('sid', $dataToUpdate['employee_sid']);
+             $this->db->update('users', $updateUser);
         }
+        */
+
+
     }
 
 
