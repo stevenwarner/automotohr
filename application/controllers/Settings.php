@@ -3492,6 +3492,7 @@ class Settings extends Public_Controller
                 $loggedInCompany["sid"],
                 $status === "active" ? 1 : 0
             );
+        $data["status"]= $status;
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/index');

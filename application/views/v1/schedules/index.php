@@ -28,13 +28,13 @@
                     <div role="tabpanel">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active text-medium">
-                                <a href="<?= base_url("schedule/active"); ?>">
+                            <li role="presentation" class="text-medium <?= $status === "active" ? "active" : "bg-default"; ?>">
+                                <a href="<?= base_url("schedules/active"); ?>">
                                     Active Schedules
                                 </a>
                             </li>
-                            <li role="presentation" class=" text-medium bg-default">
-                                <a href="<?= base_url("schedule/inactive"); ?>">
+                            <li role="presentation" class="text-medium <?= $status === "inactive" ? "active" : "bg-default"; ?>">
+                                <a href="<?= base_url("schedules/inactive"); ?>">
                                     InActive Schedules
                                 </a>
                             </li>
