@@ -4493,7 +4493,6 @@ class Employee_management extends Public_Controller
                     $this->load->view('main/footer');
                 } else {
 
-
                     //$jobsid
                     $insertJobData['title'] = $this->input->post('job_title');
                     $insertJobData['is_primary'] =  $this->input->post('is_primary') ? '1' : '0';

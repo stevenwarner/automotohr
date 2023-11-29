@@ -2166,14 +2166,13 @@
             foreach ($records  as $akey => $record) {
                 $records[$akey]["compensation"] = $this->getJobCompensations($record['sid']);
                 $records[$akey]["earnings"] = $this->getJobEarningsDetail($record['sid']);
-                $records[$akey]["overtimeinformation"] = $this->getJobEarnings($record['sid'],1);
+                $records[$akey]["overtimeinformation"] = $this->getJobEarnings($record['sid'], 1);
             }
             return $records;
         } else {
 
             return [];
         }
-
     }
 
 
@@ -2280,7 +2279,6 @@
     //
     function updatejobCompensation($sid, $dataToUpdate)
     {
-       // _e($dataToUpdate,true,true);
         //
         if ($dataToUpdate['is_primary'] == 1) {
             $primaryCount = $this->getPrimaryCompensation($dataToUpdate['gusto_employees_jobs_sid']);
@@ -2313,19 +2311,7 @@
 
         $this->db->where('sid', $sid);
         $this->db->update('gusto_employees_jobs_compensations', $dataToUpdate);
-
-        //Update User
-        
-        /*
-        if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
-
-             $updateUser['job_title'] = $dataToUpdate['job_title'];
-             $this->db->where('sid', $dataToUpdate['employee_sid']);
-             $this->db->update('users', $updateUser);
-        }
-        */
-
-
+  
     }
 
 
@@ -2351,12 +2337,18 @@
 
         $this->db->where('sid', $sid);
         $this->db->update('gusto_employees_jobs', $dataToUpdate);
+
         //Update User
         if ($dataToUpdate['is_primary'] == 1 && $dataToUpdate['employee_type'] == 'employee') {
 
-            //  $updateUser['job_title'] = $dataToUpdate['job_title'];
-            //  $this->db->where('sid', $dataToUpdate['employee_sid']);
-            // $this->db->update('users', $updateUser);
+            $updateUser['job_title'] = $dataToUpdate['title'];
+            $updateUser['shift_start_time'] = $dataToUpdate['shift_start_time'];
+            $updateUser['shift_end_time'] = $dataToUpdate['shift_end_time'];
+            $updateUser['break_hours'] = $dataToUpdate['break_hour'];
+            $updateUser['break_mins'] = $dataToUpdate['break_minutes'];
+
+            $this->db->where('sid', $dataToUpdate['employee_sid']);
+            $this->db->update('users', $updateUser);
         }
     }
 
