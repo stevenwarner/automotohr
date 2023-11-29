@@ -24,6 +24,10 @@
                                 <a href="<?php echo $y_url; ?>" class="simple-anchor-icons"><i class="fa-brands fa-youtube"></i></a>
                             <?php } ?>
                         </div>
+
+
+                        <?php if (!$this->session->userdata('logged_in')) {?>
+
                         <?php
                         $i_url = get_slug_data('instagram_url', 'settings');
                         if (!empty($i_url)) {
@@ -40,7 +44,7 @@
                                         } else {
                                             echo "https://twitter.com/AutomotoSocial";
                                         }
-                                        ?>" class="simple-anchor-icons"><i class="fa-brands fa-twitter"></i></a>
+                                        ?>" class="simple-anchor-icons"><i class="fa-brands ">X</i></a>
                         </div>
                         <div class="anchor-span">
                             <a href="<?php
@@ -62,6 +66,10 @@
                                         }
                                         ?>" class="simple-anchor-icons"><i class="fa-brands fa-linkedin-in"></i></a>
                         </div>
+
+<?php }?>
+
+
                     </div>
                 </div>
             </div>

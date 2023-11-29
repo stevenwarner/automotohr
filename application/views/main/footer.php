@@ -313,9 +313,15 @@ if ($company_sid != 'logout') {
                             </a>
                         <?php } ?>
                     </div>
+                    
+
+
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                         <div class="social-links">
                             <ul>
+
+                            <?php if (!$this->session->userdata('logged_in')) {?>
+
                                 <li><a class="google-plus" href="<?php
                                                                     $g_url = get_slug_data('google_plus_url', 'settings');
                                                                     if (!empty($g_url)) {
@@ -348,12 +354,17 @@ if ($company_sid != 'logout') {
                                                                     echo "https://www.linkedin.com/grp/home?gid=6735083&goback=%2Egna_6735083";
                                                                 }
                                                                 ?>" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                                
+<?php }?>
+
                                 <?php
                                 $y_url = get_slug_data('youtube_url', 'settings');
                                 if (!empty($y_url)) {
                                 ?>
                                     <li><a class="youtube" href="<?php echo $y_url; ?>" target="_blank"><i class="fa fa-youtube"></i></a></li>
                                 <?php } ?>
+
+
                                 <?php
                                 $i_url = get_slug_data('instagram_url', 'settings');
                                 if (!empty($i_url)) {
@@ -367,6 +378,8 @@ if ($company_sid != 'logout') {
                             </ul>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
