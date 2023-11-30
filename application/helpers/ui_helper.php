@@ -166,7 +166,7 @@ if (!function_exists('bundleJs')) {
         }
         //
         if (!is_dir($absolutePath)) {
-            mkdir($absolutePath, true, 0777) || exit('Failed to create path "'.($absolutePath).'"');
+            mkdir($absolutePath, true, 0777) || exit('Failed to create path "' . ($absolutePath) . '"');
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
@@ -188,6 +188,7 @@ if (!function_exists('bundleJs')) {
         }
         //
         fclose($handler);
+        @unlink($absolutePathMin);
         //
         shell_exec(
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
@@ -220,7 +221,7 @@ if (!function_exists('bundleCSS')) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
         // check if served over production
-        if (MINIFIED ==='.min' || $lockFile) {
+        if (MINIFIED === '.min' || $lockFile) {
             //
             $fileName = $destination . $file;
             //
@@ -231,7 +232,7 @@ if (!function_exists('bundleCSS')) {
         }
         //
         if (!is_dir($absolutePath)) {
-            mkdir($absolutePath, true) || exit('Failed to create path "'.($absolutePath).'"');
+            mkdir($absolutePath, true) || exit('Failed to create path "' . ($absolutePath) . '"');
         }
         // add file to destination
         $absolutePathMin = $absolutePath;
@@ -252,6 +253,7 @@ if (!function_exists('bundleCSS')) {
         }
         //
         fclose($handler);
+        @unlink($absolutePathMin);
         //
         shell_exec(
             "uglifycss {$absolutePath} > {$absolutePathMin}"

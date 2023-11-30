@@ -259,6 +259,19 @@
                                                 <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
                                             <?php } ?>
                                         <?php } ?>
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+                                            <!-- Attendance module settings -->
+                                            <li>
+                                                <a href="<?= base_url("schedules"); ?>">
+                                                    Company Pay Schedules
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("attendance/settings"); ?>">
+                                                    Attendance Management
+                                                </a>
+                                            </li>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>
