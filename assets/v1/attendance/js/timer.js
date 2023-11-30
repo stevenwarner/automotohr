@@ -116,10 +116,10 @@ $(function markAttendance() {
 		// clear the interval
 		clearInterval(timerREF);
 		//
-		$(".jsAttendanceClockHour").html("");
-		$(".jsAttendanceClockMinute").html("");
-		$(".jsAttendanceClockSeconds").html("");
-		$(".jsAttendanceClockSeparator").html("");
+		$(".jsAttendanceClockHour").html("00");
+		$(".jsAttendanceClockMinute").html("00");
+		$(".jsAttendanceClockSeconds").html("00");
+		$(".jsAttendanceClockSeparator").html(":");
 		//
 		$(".jsAttendanceBTNs").html("");
 		$(".jsAttendanceClockHeaderBTNs").html("");

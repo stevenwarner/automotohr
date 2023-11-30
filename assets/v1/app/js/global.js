@@ -16,7 +16,6 @@ $(function notifications() {
 						.parent()
 						.find("i")
 						.removeClass("faa-shake animated");
-					console.log(resp.Response);
 					return;
 				}
 				//

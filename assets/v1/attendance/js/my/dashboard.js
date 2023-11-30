@@ -1,15 +1,18 @@
 $(function myAttendanceDashboard() {
 	/**
-	 * holds the XHR
+	 * get the week worked graph
 	 */
-	let XHR = null;
-
 	function getGraphs() {
+		// starts the loader
 		ml(true, "jsWeekGraph", "");
 		//
 		$.ajax({
 			url: apiURL + "attendance/graph/week_worked_time",
 			method: "GET",
+			cache: false,
+			headers: {
+				Authorization: "Bearer " + apiAccessToken,
+			},
 		})
 			.always(function () {
 				ml(false, "jsWeekGraph");
@@ -21,10 +24,9 @@ $(function myAttendanceDashboard() {
 				//
 				let total = 0;
 				//
-				values &&
-					values.map(function (value) {
-						total += parseFloat(value);
-					});
+				values?.map(function (value) {
+					total += parseFloat(value);
+				});
 				//
 				Highcharts.chart("container", {
 					chart: {

@@ -1,11 +1,11 @@
-<?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata('logged_in')) : ?>
-    <!-- Attendance -->
-    <script>
-        apiURL = "<?= getCreds('AHR')->API_BROWSER_URL; ?>";
-        apiAccessToken = "<?= getApiAccessToken(
-                                $this->session->userdata("logged_in")['employer_detail']['sid'],
-                                $this->session->userdata("logged_in")['company_detail']['sid']
-                            ); ?>";
-    </script>
-    <?php // echo bundleJs(["v1/common","v1/attendance/js/timer",], "public/v1/js/attendance/", "timer",  true); ?>
+<?php if (checkIfAppIsEnabled(MODULE_ATTENDANCE) && $this->session->userdata('logged_in')) : ?>
+    <?php
+    //
+    $attendanceAdditionalScripts = ["js/app_helper"];
+    $attendanceScripts = [];
+    $attendanceScripts[] = "v1/common";
+    $attendanceScripts[] = "v1/attendance/js/timer";
+    ?>
+    <?= $this->uri->segment(1) !== "attendance" ?  bundleJs($attendanceAdditionalScripts, "public/v1/js/attendance/", "attendance_page_common",  true) : ""; ?>
+    <?php// echo bundleJs($attendanceScripts, "public/v1/js/attendance/", "timer",  true); ?>
 <?php endif; ?>

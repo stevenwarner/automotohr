@@ -45,20 +45,20 @@
                         <div class="col-sm-12">
                             <hr />
                             <div class="row">
-                                <div class="col-sm-4">
+                                <div class="col-md-4">
                                     <p>
                                         <strong>This week</strong>
                                         <br> 23h 00m
                                     </p>
                                 </div>
-                                <div class="col-sm-4">
+                                <div class="col-md-4">
                                     <p>
                                         <strong>Pay period</strong>
                                         <br> 23h 00m
                                     </p>
                                 </div>
-                                <div class="col-sm-4">
-                                    <a href="<?= base_url("attendance/timesheet/my"); ?>" class="btn btn-orange ">
+                                <div class="col-md-4">
+                                    <a href="<?= base_url("attendance/timesheet/my"); ?>" class="btn btn-orange">
                                         Time Sheet
                                     </a>
                                 </div>

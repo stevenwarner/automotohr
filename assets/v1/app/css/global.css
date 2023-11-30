@@ -184,6 +184,9 @@
 .text-yellow {
 	color: var(--bgYellowColor);
 }
+.text-black {
+	color: var(--bgBlackColor);
+}
 
 /* Backgrounds */
 /* Orange */
@@ -277,6 +280,9 @@ button.ajs-button.ajs-cancel {
 }
 
 /* Panel */
+.panel-body{
+	min-height: 200px;
+}
 .panel-heading-text {
 	padding: 0;
 	margin: 0;
@@ -591,4 +597,30 @@ button.ajs-button.ajs-cancel {
 	.notify-me .dropdown-menu.dropdown-menu-wide {
 		right: 10px !important;
 	}
+}
+
+/* new */
+/* loader */
+.csPageLoader {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.9);
+}
+.csPageLoader div {
+	text-align: center;
+	margin-top: 100px;
+}
+.csPageLoader div i {
+	font-size: 50px;
+    color: #fd7a2a;
+	left: 0 !important;
+}
+.csPageLoader div p {
+    margin-top: 10px;
+	padding: 10px;
+    font-size: 16px;
 }

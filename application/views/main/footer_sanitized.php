@@ -222,19 +222,29 @@
 
 <?php } ?>
 <!-- JS -->
-<script src="<?= main_url("public/v1/plugins/jquery/jquery-3.7.1.min.js?v=3.0"); ?>"></script>
+<?php if (!$loadJsFiles) { ?>
+    <script src="<?= main_url("public/v1/plugins/jquery/jquery-3.7.1.min.js?v=3.0"); ?>"></script>
+<?php } ?>
 <script src="<?= main_url("public/v1/plugins/bootstrap/js/bootstrap.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment-timezone.min.js?v=3.0"); ?>"></script>
+<!-- API -->
+<script>
+    apiURL = "<?= getCreds('AHR')->API_BROWSER_URL; ?>";
+    apiAccessToken = "<?= getApiAccessToken(
+                            $this->session->userdata("logged_in")['employer_detail']['sid'],
+                            $this->session->userdata("logged_in")['company_detail']['sid']
+                        ); ?>";
+</script>
 <!-- JS Bundles -->
 <?= $pageJs ? GetScripts($pageJs) : ""; ?>
 <?= bundleJs([
     "js/app_helper",
     "v1/app/js/global",
-], "public/v1/app/", "global", false); ?>
+], "public/v1/app/", "global", true); ?>
 <!--  -->
-<?php $this->load->view("v1/attendance/footer_scripts"); ?>
 <?= $appJs ?? ""; ?>
+<?php $this->load->view("v1/attendance/footer_scripts"); ?>
 </body>
 
 </html>

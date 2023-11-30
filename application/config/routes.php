@@ -1480,14 +1480,17 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
 // $route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
 // $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
-//
-// employee routes for attendance
-$route["timesheet"]["get"] = "v1/Attendance/Attendance/timeSheet";
-$route["attendance/overview"]["get"] = "v1/Attendance/Attendance/myDashboard";
-$route["attendance/timesheet/my"]["get"] = "v1/Attendance/Attendance/myTimeSheet";
+/**
+ * Attendance
+ * @version 1.0
+ */
+// employee
+$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+// payroll dashboard
+$route["payrolls/dashboard/(:any)/(:num)"]["get"] =
+  "v1/Attendance/Payroll/dashboard/$2/$1";
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
-$route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 
 /**
@@ -2010,3 +2013,8 @@ $route["schedules"]["post"] = "settings/processSchedule";
 // edit
 $route["schedules/edit/(:num)"]["get"] = "settings/editSchedule/$1";
 $route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";
+
+/**
+ * employee payroll dashboard
+ */
+$route["attendance/page/(:any)/(:num)/(:any)"]["get"] = "v1/Attendance/Payroll/getPageBySlug/$2/$3/$1";
