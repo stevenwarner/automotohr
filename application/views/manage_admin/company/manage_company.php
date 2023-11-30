@@ -558,6 +558,17 @@
                                                                         </span>
                                                                     </div>
                                                                 </li>
+                                                                
+                                                                <li>
+                                                                    <label>Payroll Credit Card Authorization</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $payroll_cc_auth_status =  ($company_documents_status['payroll_cc_auth_status'] != '' ? $company_documents_status['payroll_cc_auth_status'] : 'Not Generated'); ?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $payroll_cc_auth_status)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $payroll_cc_auth_status)) ?>
+                                                                            <?php if (strtolower($payroll_cc_auth_status) == 'not sent' || strtolower($payroll_cc_auth_status) == 'generated' || strtolower($payroll_cc_auth_status) == 'pre-filled' || strtolower($payroll_cc_auth_status) == 'sent') { ?><img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>"><?php } elseif (strtolower($payroll_cc_auth_status) == 'signed') { ?><img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"><?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
                                                                 <li>
                                                                     <label>End User License Agreement</label>
                                                                     <div class="text text-center">

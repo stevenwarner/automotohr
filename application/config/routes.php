@@ -800,9 +800,14 @@ $route['form_end_user_license_agreement/(:any)'] = 'form_end_user_license_agreem
 $route['form_end_user_license_agreement/(:any)/(:any)'] = 'form_end_user_license_agreement/index/$1/$2';
 $route['form_affiliate_end_user_license_agreement/(:any)'] = 'form_affiliate_end_user_license_agreement/index/$1';
 $route['form_affiliate_end_user_license_agreement/(:any)/(:any)'] = 'form_affiliate_end_user_license_agreement/index/$1/$2';
+
 $route['form_credit_card_authorization/(:any)'] = 'form_credit_card_authorization/index/$1';
 $route['form_credit_card_authorization/regenerate/(:any)'] = 'form_credit_card_authorization/regenerate_credit_card_authorization/$1';
 $route['form_credit_card_authorization/(:any)/(:any)'] = 'form_credit_card_authorization/index/$1/$2';
+// payroll cc
+$route['payroll_form_credit_card_authorization/(:any)'] = 'Payroll_form_credit_card_authorization/index/$1';
+$route['payroll_form_credit_card_authorization/regenerate/(:any)'] = 'Payroll_form_credit_card_authorization/regenerate_credit_card_authorization/$1';
+$route['payroll_form_credit_card_authorization/(:any)/(:any)'] = 'Payroll_form_credit_card_authorization/index/$1/$2';
 $route['form_company_contacts/(:any)'] = 'form_company_contacts/index/$1';
 $route['form_company_contacts/(:any)/(:any)'] = 'form_company_contacts/index/$1/$2';
 $route['form_company_agreements/(:any)'] = 'form_company_agreements/index/$1';
@@ -826,6 +831,7 @@ $route['manage_admin/company_note/delete'] = 'manage_admin/companies/delete_admi
 $route['manage_admin/documents/send/(:any)'] = 'manage_admin/documents/send/$1';
 $route['manage_admin/documents/(:any)'] = 'manage_admin/documents/index/$1';
 $route['manage_admin/documents/regenerate_credit_card_authorization/(:any)'] = 'manage_admin/documents/regenerate_credit_card_authorization/$1';
+$route['manage_admin/documents/regenerate_payroll_credit_card_authorization/(:any)'] = 'manage_admin/documents/regenerate_payroll_credit_card_authorization/$1';
 $route['manage_admin/documents/regenerate_enduser_license_agreement/(:any)'] = 'manage_admin/documents/regenerate_enduser_license_agreement/$1';
 $route['manage_admin/documents/regenerate_company_contacts_document/(:any)'] = 'manage_admin/documents/regenerate_company_contacts_document/$1';
 

@@ -51,6 +51,19 @@ class Documents_model extends CI_Model
                     $companies[$key]['cc_auth'] = array();
                 }
 
+                //Get payroll Credit Card Authorization Form
+                $this->db->select('*');
+                $this->db->limit(1);
+                $this->db->order_by('sid', 'DESC');
+                $this->db->where('company_sid', $company_sid);
+                $payroll_cc_auth = $this->db->get('form_document_payroll_credit_card_authorization')->result_array();
+
+                if (!empty($payroll_cc_auth)) {
+                    $companies[$key]['payroll_cc_auth'] = $payroll_cc_auth[0];
+                } else {
+                    $companies[$key]['payroll_cc_auth'] = array();
+                }
+
                 //Get End User License Agreement Form
                 $this->db->select('*');
                 $this->db->limit(1);
@@ -150,6 +163,8 @@ class Documents_model extends CI_Model
             $this->db->insert('forms_documents_uploaded', $dataToSave);
         } elseif (strtolower($document) == 'payroll_agreement') {
             $this->db->insert('form_payroll_agreement', $dataToSave);
+        } elseif (strtolower($document) == 'payroll_credit_card_authorization_form') {
+            $this->db->insert('form_document_payroll_credit_card_authorization', $dataToSave);
         }
 
         $this->insert_document_ip_tracking_record($company_sid, 0, getUserIP(), $document, 'new_generated', $_SERVER['HTTP_USER_AGENT']);
@@ -191,6 +206,8 @@ class Documents_model extends CI_Model
                 $this->db->update('forms_documents_uploaded', $dataToSave);
             } elseif (strtolower($document) == 'form_payroll_agreement') {
                 $this->db->update('form_payroll_agreement', $dataToSave);
+            } elseif (strtolower($document) == 'payroll_credit_card_authorization_form') {
+                $this->db->update('form_document_payroll_credit_card_authorization', $dataToSave);
             }
         }
     }
@@ -232,6 +249,17 @@ class Documents_model extends CI_Model
             $this->db->join('users', 'users.sid = form_document_credit_card_authorization.company_sid', 'left');
 
             $document_data = $this->db->get('form_document_credit_card_authorization')->result_array();
+        } elseif ($document == 'payroll_credit_card_authorization_form') {
+            $this->db->select('form_document_payroll_credit_card_authorization.*');
+            $this->db->select('users.CompanyName, users.sid as users_company_sid');
+            $this->db->limit(1);
+
+            $this->db->where('form_document_payroll_credit_card_authorization.verification_key', $verification_key);
+            //$this->db->where('form_document_eula.status', 'sent');
+
+            $this->db->join('users', 'users.sid = form_document_payroll_credit_card_authorization.company_sid', 'left');
+
+            $document_data = $this->db->get('form_document_payroll_credit_card_authorization')->result_array();
         } elseif ($document == 'company_contacts') {
             $this->db->select('form_document_company_contacts.*');
             $this->db->select('users.CompanyName, users.sid as users_company_sid');
@@ -375,6 +403,8 @@ class Documents_model extends CI_Model
                 $this->db->update('forms_documents_uploaded', $dataToSave);
             } elseif (strtolower($document) == 'form_payroll_agreement') {
                 $this->db->update('form_payroll_agreement', $dataToSave);
+            } elseif (strtolower($document) == 'payroll_form_credit_card_authorization') {
+                $this->db->update('form_document_payroll_credit_card_authorization', $dataToSave);
             }
         }
     }
@@ -428,6 +458,8 @@ class Documents_model extends CI_Model
             $data = $this->db->get('form_document_company_contacts')->result_array();
         } elseif (strtolower($document) == 'form_payroll_agreement') {
             $data = $this->db->get('form_payroll_agreement')->result_array();
+        } elseif (strtolower($document) == 'payroll_form_credit_card_authorization') {
+            $data = $this->db->get('form_document_payroll_credit_card_authorization')->result_array();
         }
 
         if (!empty($data)) {
@@ -588,6 +620,35 @@ class Documents_model extends CI_Model
         } else {
             return array();
         }
+    }
+
+
+    function get_payroll_credit_card_information($verification_key)
+    {
+        $this->db->select('*');
+        $this->db->where('verification_key', $verification_key);
+        $records_obj = $this->db->get('form_document_payroll_credit_card_authorization');
+
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+
+    function insert_payroll_credit_card_authorization_history($data_to_insert)
+    {
+        $this->db->insert('form_document_payroll_credit_card_authorization_history', $data_to_insert);
+    }
+
+    function regenerate_payroll_credit_card_authorization($record_sid, $data_to_update)
+    {
+        $this->db->where('sid', $record_sid);
+        $this->db->update('form_document_payroll_credit_card_authorization', $data_to_update);
     }
 
     function insert_credit_card_authorization_history($data_to_insert)

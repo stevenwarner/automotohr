@@ -41,6 +41,22 @@
                                                         </div>
                                                     <?php } ?>
 
+                                                    <?php if (!empty($companies_documents['payroll_cc_auth'])) { ?>
+                                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
+                                                            <label class="package_label" for="payroll_cc_auth">
+                                                                <div class="img-thumbnail text-center package-info-box eq-height">
+                                                                    <figure><i class="fa fa-file-o" style="font-size: 75px"></i></figure>
+                                                                    <br />
+                                                                    <div class="caption">
+                                                                        <p>Payroll Credit Card Authorization Form</p>
+                                                                    </div>
+                                                                    <input class="select-package" type="checkbox" id="payroll_cc_auth" name="forms[]" value="payroll_cc_auth" data-k="<?php echo $companies_documents['payroll_cc_auth']['verification_key']; ?>" />
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    <?php } ?>
+
+
                                                     <?php if (!empty($companies_documents['eula'])) { ?>
                                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                             <label class="package_label" for="eula">
@@ -141,6 +157,7 @@
                                                                 <div class="hr-user-form">
                                                                     <form id="form_send_to_single_email" method="post" enctype="multipart/form-data" action="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>">
                                                                         <input type="hidden" id="cc_auth" name="cc_auth" value="0" class="cc_auth" />
+                                                                        <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
                                                                         <input type="hidden" id="eula" name="eula" value="0" class="eula" />
                                                                         <input type="hidden" id="contacts" name="contacts" value="0" class="contacts" />
                                                                         <input type="hidden" id="perform_action" name="perform_action" value="send_to_single_email" />
@@ -181,6 +198,7 @@
                                                         <form id="form_send_to_employees" method="post" enctype="multipart/form-data" action="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>">
                                                             <input type="hidden" id="cc_auth" name="cc_auth" value="0" class="cc_auth" />
                                                             <input type="hidden" id="eula" name="eula" value="0" class="eula" />
+                                                            <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
                                                             <input type="hidden" id="contacts" name="contacts" value="0" class="contacts" />
                                                             <input type="hidden" id="perform_action" name="perform_action" value="send_to_employees" />
                                                             <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
@@ -221,6 +239,7 @@
                                                             <form id="form_send_to_admin" method="post" enctype="multipart/form-data" action="<?php echo base_url('manage_admin/documents/send/' . $company_sid); ?>">
                                                                 <input type="hidden" id="cc_auth" name="cc_auth" value="0" class="cc_auth" />
                                                                 <input type="hidden" id="eula" name="eula" value="0" class="eula" />
+                                                                <input type="hidden" id="payroll_cc_auth" name="payroll_cc_auth" value="0" class="payroll_cc_auth" />
                                                                 <input type="hidden" id="contacts" name="contacts" value="0" class="contacts" />
                                                                 <input type="hidden" id="perform_action" name="perform_action" value="send_to_company_admin" />
                                                                 <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
