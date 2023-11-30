@@ -93,6 +93,10 @@ $(function manageEmployeesGarnishments() {
 			deduct_as_percentage: $(
 				".jsGarnishmentDeductAsPercentage option:selected"
 			).val(),
+			beneficiaryName: $(".jsBeneficiaryName").val(),
+			beneficiaryAddress: $(".jsBeneficiaryAddress").val(),
+			beneficiaryPhone: $(".jsBeneficiaryPhone").val(),
+			beneficiaryPaymentType: $('input[name="payment_type"]:checked').val(),
 		};
 		//
 		const errorsArray = [];
@@ -105,6 +109,43 @@ $(function manageEmployeesGarnishments() {
 		}
 		if (!obj.court_ordered) {
 			errorsArray.push('"Court ordered" is required.');
+		}
+		//
+		if (!obj.beneficiaryName) {
+			errorsArray.push('"Contact name" is required.');
+		}
+		// if (!obj.beneficiaryAddress) {
+		// 	errorsArray.push('"Contact Address" is required.');
+		// }
+		// if (!obj.beneficiaryPhone) {
+		// 	errorsArray.push('"Contact Phone" is required.');
+		// }
+		//
+		if (obj.beneficiaryPaymentType == 'bank') {
+			obj.bankAccountTitle = $(".jsBankAccountTitle").val();
+			obj.bankAccountType = $('input[name="beneficiary_banking_type"]:checked').val();
+			obj.bankName = $(".jsBankName").val();
+			obj.bankRoutingNumber = $(".jsBankRoutingNumber").val().replace(/[^\d]/g, "");
+			obj.bankAccountNumber = $(".jsBankAccountNumber").val().replace(/[^\d]/g, "");
+			//
+			if (!obj.bankAccountTitle) {
+				errorsArray.push('"Bank account title" is required.');
+			}
+			if (!obj.bankName) {
+				errorsArray.push('"Bank name" is required.');
+			}
+			if (!obj.bankRoutingNumber) {
+				errorsArray.push('"Routing number" is required.');
+			}
+			if (obj.bankRoutingNumber.length !== 9) {
+				errorsArray.push('Routing number must be of 9 digits.');
+			}
+			if (!obj.bankAccountNumber) {
+				errorsArray.push('"Account number" is required.');
+			}
+			if (obj.bankAccountNumber.length !== 9) {
+				errorsArray.push('Account number must be of 9 digits.');
+			}
 		}
 		//
 		if (errorsArray.length) {
@@ -148,7 +189,12 @@ $(function manageEmployeesGarnishments() {
 			deduct_as_percentage: $(
 				".jsGarnishmentDeductAsPercentage option:selected"
 			).val(),
+			beneficiaryName: $(".jsBeneficiaryName").val(),
+			beneficiaryAddress: $(".jsBeneficiaryAddress").val(),
+			beneficiaryPhone: $(".jsBeneficiaryPhone").val(),
+			beneficiaryPaymentType: $('input[name="payment_type"]:checked').val(),
 		};
+		//
 		const garnishmentId = $(".jsGarnishmentKey").val();
 		//
 		const errorsArray = [];
@@ -166,12 +212,55 @@ $(function manageEmployeesGarnishments() {
 			errorsArray.push('"Key" is required.');
 		}
 		//
+		if (!obj.beneficiaryName) {
+			errorsArray.push('"Contact name" is required.');
+		}
+		if (obj.beneficiaryPaymentType == 'bank') {
+			obj.bankAccountTitle = $(".jsBankAccountTitle").val();
+			obj.bankAccountType = $('input[name="beneficiary_banking_type"]:checked').val();
+			obj.bankName = $(".jsBankName").val();
+			obj.bankRoutingNumber = $(".jsBankRoutingNumber").val().replace(/[^\d]/g, "");
+			obj.bankAccountNumber = $(".jsBankAccountNumber").val().replace(/[^\d]/g, "");
+			//
+			if (!obj.bankAccountTitle) {
+				errorsArray.push('"Bank account title" is required.');
+			}
+			if (!obj.bankName) {
+				errorsArray.push('"Bank name" is required.');
+			}
+			if (!obj.bankRoutingNumber) {
+				errorsArray.push('"Routing number" is required.');
+			}
+			if (obj.bankRoutingNumber.length !== 9) {
+				errorsArray.push('Routing number must be of 9 digits.');
+			}
+			if (!obj.bankAccountNumber) {
+				errorsArray.push('"Account number" is required.');
+			}
+			if (obj.bankAccountNumber.length !== 9) {
+				errorsArray.push('Account number must be of 9 digits.');
+			}
+		}
+		//
+		//
 		if (errorsArray.length) {
 			return _error(getErrorsStringFromArray(errorsArray));
 		}
-
 		//
 		updateGarnishment(obj, garnishmentId);
+	});
+
+	$(document).on("change", ".jsPaymentType", function (event) {
+		//
+		event.preventDefault();
+		//
+		var type = $('input[name="payment_type"]:checked').val();
+		//
+		if (type == 'bank') {
+			$(".jsBankInfoSection").removeClass("dn")
+		} else if (type == 'cheque') {
+			$(".jsBankInfoSection").addClass("dn")
+		}
 	});
 
 	/**

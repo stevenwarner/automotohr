@@ -65,6 +65,25 @@ class Garnishments_model extends Payroll_model
     }
 
     /**
+     * get beneficiary info by id
+     *
+     * @param int $garnishmentId
+     * @param string $method
+     * 
+     * @return array|int
+     */
+    public function getBeneficiaryInfoById(int $garnishmentId, string $method = "row_array")
+    {
+        return $this->db
+            ->select('
+                payrolls.employee_garnishments_beneficiary.*
+            ')
+            ->where('payrolls.employee_garnishments_beneficiary.garnishment_sid', $garnishmentId)
+            ->get('payrolls.employee_garnishments_beneficiary')
+            ->$method();
+    }
+
+    /**
      * get employee with company details
      *
      * @param int $employeeId
@@ -161,7 +180,7 @@ class Garnishments_model extends Payroll_model
                 $ins
             );
         //
-        return ['success' => true, 'msg' => 'You have successfully created a garnishment.'];
+        return ['success' => true, 'msg' => 'You have successfully created a garnishment.', 'Id' => $this->db->insert_id()];
     }
 
     /**
@@ -237,6 +256,40 @@ class Garnishments_model extends Payroll_model
                 'payrolls.employee_garnishments',
                 $upd
             );
+        //
+        return ['success' => true, 'msg' => 'You have successfully updated a garnishment.'];
+    }
+
+    
+    /**
+     * update garnishment Beneficiary
+     *
+     * @param int $garnishmentId
+     * @param array $data
+     * @return array
+     */
+    public function updateGarnishmentBeneficiary(
+        int $garnishmentId,
+        array $data
+    ): array {
+        //
+        if ($this->getBeneficiaryInfoById($garnishmentId, 'num_rows')) {
+            $this->db
+            ->where('garnishment_sid', $garnishmentId)
+            ->update(
+                'payrolls.employee_garnishments_beneficiary',
+                $data
+            );
+        } else {
+            $ins = $data;
+            $ins['garnishment_sid'] = $garnishmentId;
+            //
+            $this->db
+            ->insert(
+                'payrolls.employee_garnishments_beneficiary',
+                $ins
+            );
+        }
         //
         return ['success' => true, 'msg' => 'You have successfully updated a garnishment.'];
     }

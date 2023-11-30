@@ -108,11 +108,17 @@ class Garnishments extends Public_controller
                 $garnishmentId
             );
         //
+        $beneficiary = $this->garnishments_model
+            ->getBeneficiaryInfoById(
+                $garnishmentId
+            );
+        //
         return SendResponse(
             200,
             [
                 'view' => $this->load->view('v1/payroll/garnishments/edit', [
-                    'garnishment' => $garnishment
+                    'garnishment' => $garnishment,
+                    'beneficiary' => $beneficiary
                 ], true)
             ]
         );
@@ -162,14 +168,54 @@ class Garnishments extends Public_controller
             );
         }
         //
+        $garnishment_data = [];
+        $garnishment_data['active'] = $post['active'];
+        $garnishment_data['amount'] = $post['amount'];
+        $garnishment_data['description'] = $post['description'];
+        $garnishment_data['court_ordered'] = $post['court_ordered'];
+        $garnishment_data['times'] = $post['times'];
+        $garnishment_data['recurring'] = $post['recurring'];
+        $garnishment_data['annual_maximum'] = $post['annual_maximum'];
+        $garnishment_data['pay_period_maximum'] = $post['pay_period_maximum'];
+        $garnishment_data['deduct_as_percentage'] = $post['deduct_as_percentage'];
+        //
         $gustoResponse = $this
             ->garnishments_model
             ->saveGarnishment(
                 $session['company_detail']['sid'],
                 $session['employer_detail']['sid'],
                 $employeeId,
-                $post
+                $garnishment_data
             );
+        //
+        if ($gustoResponse['success']) {
+            //
+            $garnishmentId = $gustoResponse['Id'];
+            //
+            $beneficiary_data = [];
+            $beneficiary_data['name'] = $post['beneficiaryName'];
+            $beneficiary_data['address'] = $post['beneficiaryAddress'];
+            $beneficiary_data['phone'] = $post['beneficiaryPhone'];
+            $beneficiary_data['payment_type'] = $post['beneficiaryPaymentType'];
+            //
+            if ($post['beneficiaryPaymentType'] == 'bank') {
+                $beneficiary_data['bank_detail'] = serialize([
+                    'account_title' => $post['bankAccountTitle'],
+                    'banking_type' => $post['bankAccountType'],
+                    'financial_institution' => $post['bankName'],
+                    'bank_routing_number' => $post['bankRoutingNumber'],
+                    'bank_account_number' => $post['bankAccountNumber']
+                ]);
+            } else {
+                $beneficiary_data['bank_detail'] = null;
+            }
+            //
+            $this->garnishments_model->updateGarnishmentBeneficiary(
+                $garnishmentId,
+                $beneficiary_data
+            );
+        }
+        
         //
         return SendResponse(
             $gustoResponse['errors'] ? 400 : 200,
@@ -197,6 +243,7 @@ class Garnishments extends Public_controller
         //
         $errorArray = [];
         //
+        //
         if (!$post) {
             $errorArray[] =  '"Data" is missing.';
         }
@@ -222,6 +269,17 @@ class Garnishments extends Public_controller
             );
         }
         //
+        $garnishment_data = [];
+        $garnishment_data['active'] = $post['active'];
+        $garnishment_data['amount'] = $post['amount'];
+        $garnishment_data['description'] = $post['description'];
+        $garnishment_data['court_ordered'] = $post['court_ordered'];
+        $garnishment_data['times'] = $post['times'];
+        $garnishment_data['recurring'] = $post['recurring'];
+        $garnishment_data['annual_maximum'] = $post['annual_maximum'];
+        $garnishment_data['pay_period_maximum'] = $post['pay_period_maximum'];
+        $garnishment_data['deduct_as_percentage'] = $post['deduct_as_percentage'];
+        //
         $gustoResponse = $this
             ->garnishments_model
             ->updateGarnishment(
@@ -229,8 +287,31 @@ class Garnishments extends Public_controller
                 $session['employer_detail']['sid'],
                 $employeeId,
                 $garnishmentId,
-                $post
+                $garnishment_data
             );
+        //
+        $beneficiary_data = [];
+        $beneficiary_data['name'] = $post['beneficiaryName'];
+        $beneficiary_data['address'] = $post['beneficiaryAddress'];
+        $beneficiary_data['phone'] = $post['beneficiaryPhone'];
+        $beneficiary_data['payment_type'] = $post['beneficiaryPaymentType'];
+        //
+        if ($post['beneficiaryPaymentType'] == 'bank') {
+            $beneficiary_data['bank_detail'] = serialize([
+                'account_title' => $post['bankAccountTitle'],
+                'banking_type' => $post['bankAccountType'],
+                'financial_institution' => $post['bankName'],
+                'bank_routing_number' => $post['bankRoutingNumber'],
+                'bank_account_number' => $post['bankAccountNumber']
+            ]);
+        } else {
+            $beneficiary_data['bank_detail'] = null;
+        }
+        //
+        $this->garnishments_model->updateGarnishmentBeneficiary(
+            $garnishmentId,
+            $beneficiary_data
+        );    
         //
         return SendResponse(
             $gustoResponse['errors'] ? 400 : 200,
