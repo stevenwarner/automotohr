@@ -45,6 +45,52 @@ $(function dashboard() {
 	});
 
 	/**
+	 * save company configuration
+	 */
+	$(".jsSaveConfiguration").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		const obj = {
+			fast_speed_limit: $("#jsFastPaymentLimit").val().trim() || 0,
+			payment_speed: $("#jsPaymentSpeed option:selected").val(),
+		};
+		//
+		updateCompanyPaymentConfiguration(obj);
+	});
+
+	/**
+	 *
+	 * @returns
+	 */
+	function updateCompanyPaymentConfiguration(dataOBJ) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		$(".jsSaveConfiguration span").html("Syncing...");
+		//
+		XHR = $.ajax({
+			url: baseUrl("sa/payrolls/company/" + companyId + "/payment/configuration"),
+			method: "POST",
+			data: dataOBJ,
+		})
+			.success(function () {
+				return alertify.alert(
+					"Success!",
+					"Company payment configuration successfully updated.",
+					CB
+				);
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				$(".jsSaveConfiguration span").html("Save Payment Configuration");
+			});
+	}
+
+	/**
 	 *
 	 * @returns
 	 */

@@ -366,6 +366,22 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * Get gusto employees details for gusto
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyPaymentConfiguration(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('fast_payment_limit, payment_speed')
+            ->where('company_sid', $companyId)
+            ->get('companies_payment_configs')
+            ->row_array();
+    }
+
+    /**
      * check company onboard
      *
      * @param int $companyId
@@ -5375,4 +5391,27 @@ class Payroll_model extends CI_Model
             ->get('users')
             ->result_array();
     }
+
+    /**
+     * Get company payroll details
+     * @param integer $companyId
+     * @return
+     */
+    function GetPayrollCompany($companyId)
+    {
+        //
+        return $this->db
+            ->select('refresh_token, access_token, gusto_company_uid, onbording_level, onboarding_status')
+            ->where('company_sid', $companyId)
+            ->get('payroll_companies')
+            ->row_array();
+    }
+   
+	//
+	public function updatePaymentConfiguration($table, $dataArray, $whereArray){
+		//
+		$this->db
+		->where($whereArray)
+		->update($table, $dataArray);
+	}
 }
