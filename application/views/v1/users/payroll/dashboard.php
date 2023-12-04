@@ -17,9 +17,9 @@
                             <!-- main buttons area -->
                             <div class="row">
                                 <div class="col-sm-12 text-right">
-                                    <a class="btn btn-black" href="<?= base_url() . 'employee_profile/' . $userId; ?>">
+                                    <a class="btn btn-black" href="<?= $return_title_heading_link; ?>">
                                         <i class="fa fa-arrow-left"></i>
-                                        Employee Profile
+                                        <?= $return_title_heading; ?>
                                     </a>
                                 </div>
                             </div>
@@ -27,7 +27,7 @@
                             <!-- main content area -->
                             <div class="row">
                                 <!-- pay schedule -->
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h3 class="text-medium panel-heading-text">
@@ -37,19 +37,31 @@
                                         </div>
                                         <div class="panel-body">
                                             <p class="text-medium">
-                                                <strong>Weekly</strong>
+                                                <span class="text-small">Name</span>
                                                 <br />
-                                                <span class="text-small">Pay frequency</span>
+                                                <strong><?= GetVal($paySchedule["custom_name"]); ?></strong>
                                             </p>
                                             <p class="text-medium">
-                                                <strong>Twice per month</strong>
-                                                <br />
                                                 <span class="text-small">Pay frequency</span>
-                                            </p>
-                                            <p class="text-medium">
-                                                <strong><?= formatDateToDB("2023-11-29", DB_DATE, DATE); ?></strong>
                                                 <br />
+                                                <strong><?= GetVal($paySchedule["frequency"]); ?></strong>
+                                            </p>
+                                            <?php if ($paySchedule["day_1"] && $paySchedule["day_2"]) { ?>
+                                                <p class="text-medium">
+                                                    <span class="text-small">First day of payment</span>
+                                                    <br />
+                                                    <strong>"<?= GetVal($paySchedule["day_1"]); ?>" of the month</strong>
+                                                </p>
+                                                <p class="text-medium">
+                                                    <span class="text-small">Second day of payment</span>
+                                                    <br />
+                                                    <strong>"<?= GetVal($paySchedule["day_2"]); ?>" of the month</strong>
+                                                </p>
+                                            <?php } ?>
+                                            <p class="text-medium">
                                                 <span class="text-small">Pay period start date</span>
+                                                <br />
+                                                <strong><?= $paySchedule["anchor_pay_date"] ? formatDateToDB($paySchedule["anchor_pay_date"], DB_DATE, DATE) : "Not specified"; ?></strong>
                                             </p>
                                         </div>
                                         <div class="panel-footer text-center">
@@ -62,7 +74,7 @@
                                 </div>
 
                                 <!-- wage -->
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h3 class="text-medium panel-heading-text">
@@ -102,7 +114,7 @@
                                 </div>
 
                                 <!-- rules -->
-                                <div class="col-md-4">
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h3 class="text-medium panel-heading-text">

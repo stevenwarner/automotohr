@@ -21,7 +21,7 @@
                         <?php if ($companyPaySchedules) {
                             foreach ($companyPaySchedules as $v0) {
                         ?>
-                                <option value="<?= $v0["sid"]; ?>"><?= $v0["custom_name"] ?? $v0["frequency"]; ?></option>
+                                <option value="<?= $v0["sid"]; ?>" <?=$v0["sid"] === $userPaySchedule["pay_schedule_sid"] ? "selected" : "";?>><?= $v0["custom_name"] ?? $v0["frequency"]; ?></option>
                         <?php
                             }
                         } ?>

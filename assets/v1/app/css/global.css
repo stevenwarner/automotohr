@@ -288,6 +288,9 @@ button.ajs-button.ajs-cancel {
 	margin: 0;
 	padding-top: 10px;
 }
+.panel-heading-text i{
+	margin-right: 10px;
+}
 .panel-default .panel-heading {
 	background-color: #000ccc1a;
 }

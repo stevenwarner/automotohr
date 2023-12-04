@@ -21,15 +21,15 @@ $(function payrollDashboard() {
 	/**
 	 * edit a pay schedule
 	 */
-	$(".jsPagePayScheduleForm").click(function (event) {
+	$(".jsEditPaySchedule").click(function (event) {
 		// stop the event
 		event.preventDefault();
 		//
-		makePage(profileUserInfo.nameWithRole, "pay_schedule", function (data) {
+		makePage(profileUserInfo.nameWithRole, "pay_schedule", function () {
 			// hides the loader
 			ml(false, modalLoader);
 			//
-			$("#jsPagePaySchedule").validate({
+			$("#jsPagePayScheduleForm").validate({
 				rules: {
 					pay_schedule: { required: true },
 				},
@@ -84,7 +84,7 @@ $(function payrollDashboard() {
 		// make a new call
 		XHR = $.ajax({
 			url: baseUrl(
-				"attendance/page/" +
+				"payrolls/page/" +
 					pageSlug +
 					"/" +
 					profileUserInfo.userId +
@@ -120,9 +120,11 @@ $(function payrollDashboard() {
 		const btnRef = callButtonHook(buttonRef, true);
 		// make a new call
 		XHR = $.ajax({
-			url: baseUrl("attendance/page/update"),
+			url: baseUrl("payrolls/page/update"),
 			method: "POST",
 			data: formObj,
+			processData: false,
+			contentType: false,
 		})
 			.always(function () {
 				//

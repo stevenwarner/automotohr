@@ -1492,9 +1492,6 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
  */
 // employee
 $route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
-// payroll dashboard
-$route["payrolls/dashboard/(:any)/(:num)"]["get"] =
-  "v1/Attendance/Payroll/dashboard/$2/$1";
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
@@ -2024,3 +2021,17 @@ $route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";
  * employee payroll dashboard
  */
 $route["attendance/page/(:any)/(:num)/(:any)"]["get"] = "v1/Attendance/Payroll/getPageBySlug/$2/$3/$1";
+
+
+/**
+ * user routes
+ */
+// user payroll dashboard
+$route["payrolls/dashboard/(:any)/(:num)"]["get"] =
+  "v1/Users/Main/dashboard/$2/$1";
+// user payroll dashboard page
+$route["payrolls/page/(:any)/(:num)/(:any)"]["get"] =
+  "v1/Users/Main/getPageBySlug/$2/$3/$1";
+// user payroll dashboard page process
+$route["payrolls/page/update"]["post"] =
+  "v1/Users/Main/updatePage";
