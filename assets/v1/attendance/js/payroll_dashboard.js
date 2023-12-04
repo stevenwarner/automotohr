@@ -21,7 +21,7 @@ $(function payrollDashboard() {
 	/**
 	 * edit a pay schedule
 	 */
-	$(".jsEditPaySchedule").click(function (event) {
+	$(".jsPagePayScheduleForm").click(function (event) {
 		// stop the event
 		event.preventDefault();
 		//
@@ -33,12 +33,18 @@ $(function payrollDashboard() {
 				rules: {
 					pay_schedule: { required: true },
 				},
-                messages: {
-                    pay_schedule: {required: "Please select a pay schedule."}
-                },
+				messages: {
+					pay_schedule: { required: "Please select a pay schedule." },
+				},
 				submitHandler: function (form) {
-                    //
-					alert("loaded");
+					// convert form to form object
+					const formObj = formArrayToObj($(form).serializeArray());
+					//
+					formObj.append("page", "pay_schedule");
+					formObj.append("userId", profileUserInfo.userId);
+					formObj.append("userType", profileUserInfo.userType);
+					//
+					return processCall(formObj, $(".jsPagePayScheduleBtn"));
 				},
 			});
 		});
@@ -96,6 +102,44 @@ $(function payrollDashboard() {
 				$("#" + modalBody).html(resp.view);
 				// call the callback
 				cb(resp);
+			});
+	}
+
+	/**
+	 * process the call
+	 * @param {object} formObj
+	 * @param {string} buttonRef
+	 */
+	function processCall(formObj, buttonRef) {
+		// check if call is already made
+		if (XHR !== null) {
+			// abort the call
+			return;
+		}
+		//
+		const btnRef = callButtonHook(buttonRef, true);
+		// make a new call
+		XHR = $.ajax({
+			url: baseUrl("attendance/page/update"),
+			method: "POST",
+			data: formObj,
+		})
+			.always(function () {
+				//
+				callButtonHook(btnRef, false);
+				//
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"payrolls/dashboard/" +
+							profileUserInfo.userType +
+							"/" +
+							profileUserInfo.userId
+					);
+				});
 			});
 	}
 });

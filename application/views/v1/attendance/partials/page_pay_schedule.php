@@ -1,5 +1,5 @@
 <div class="container">
-    <form action="javascript:void(0)" id="jsPagePaySchedule">
+    <form action="javascript:void(0)" id="jsPagePayScheduleForm">
         <!--  -->
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="panel-footer text-center">
-                <button class="btn btn-orange jsPagePaySchedule">
+                <button class="btn btn-orange jsPagePayScheduleBtn">
                     <i class="fa fa-edit" aria-hidden="true"></i>
                     Update
                 </button>
