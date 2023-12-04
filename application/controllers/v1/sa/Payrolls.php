@@ -42,7 +42,7 @@ class Payrolls extends Admin_Controller
         $this->data['loggedInCompanyId'] = $companyId;
         //
         $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
-       
+        $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
         // set title
         $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
         // set JS
@@ -50,6 +50,10 @@ class Payrolls extends Admin_Controller
             'js/app_helper',
             'v1/sa/payrolls/dashboard'
         ], $this->js, 'dashboard', $this->createMinifyFiles);
+        // $this->data['PageScripts'] = [
+        //     [getAssetTag('1.0.3'), 'js/app_helper'],
+        //     [getAssetTag('1.0.3'), 'v1/sa/payrolls/dashboard'],
+        // ];
         // render the page
         $this->render('v1/sa/payrolls/dashboard', 'admin_master');
     }
@@ -387,6 +391,25 @@ class Payrolls extends Admin_Controller
         $request['payment_speed'] = $post['payment_speed'];
         //
         $response = $this->payroll_model->UpdatePaymentConfig($companyId, $request);
+        //
+        return SendResponse(
+            200,
+            ['msg' => $response['msg']]
+        );
+    }
+
+    /**
+    * update company payment configuration
+    *
+    * @param int $companyId
+    * @return
+    */
+    public function updatePrimaryAdmin(int $companyId): array
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $response = $this->payroll_model->addOrUpdatePrimaryAdmin($companyId, $post);
         //
         return SendResponse(
             200,

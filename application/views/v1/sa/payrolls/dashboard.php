@@ -92,33 +92,35 @@
                                                 </em>
                                             </p>
                                             <form action="javascript:void(0)" id="jsPaymentConfigurationForm">
+                                                <?php 
+                                                    $adminStatus = "";
+                                                    if ($primaryAdmin['is_sync'] == 1) {
+                                                        $adminStatus = "disabled";
+                                                    }
+                                                ?>
                                                 <div class="form-group">
-                                                    <label>Payment Speed <span class="text-danger">*</span></label>
-                                                    <?php 
-                                                        $speed = '1-day';
-                                                        //
-                                                        if (!empty($companyPaymentConfiguration['payment_speed'])) {
-                                                            $speed = $companyPaymentConfiguration['payment_speed'];
-                                                        }
-                                                    ?>
-                                                    <select name="payment_speed" class="form-control" id="jsPaymentSpeed">
-                                                        <option value="1-day" <?= $speed == '1-day' ? 'selected' : ''; ?>>1 Day</option>
-                                                        <option value="2-day" <?= $speed == '2-day' ? 'selected' : ''; ?>>2 Day</option>
-                                                        <option value="4-day" <?= $speed == '4-day' ? 'selected' : ''; ?>>4 Day</option>
-                                                    </select>
+                                                    <label>First Name <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" value="<?= $primaryAdmin['first_name'] ?>" <?=$adminStatus?> id="jsFirstName"/>
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label>Fast Payment Limit</label>
-                                                    <input type="text" class="form-control" value="<?= !empty($companyPaymentConfiguration['fast_payment_limit']) ? $companyPaymentConfiguration['fast_payment_limit'] : 0; ?>" id="jsFastPaymentLimit"/>
+                                                    <label>Last Name <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" value="<?= $primaryAdmin['last_name'] ?>" <?=$adminStatus?> id="jsLastName"/>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Email <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control" value="<?= $primaryAdmin['email_address'] ?>" <?=$adminStatus?> id="jsEmail"/>
                                                 </div>
                                                 
-                                                <div class="form-group text-right">
-                                                    <button class="btn btn-success jsSaveConfiguration csF16">
-                                                        <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                                        <span>Save Payment Configuration</span>
-                                                    </button>
-                                                </div>
+                                                <?php if ($primaryAdmin['is_sync'] == 0) { ?>
+                                                    <div class="form-group text-right">
+                                                        <button class="btn btn-success jsSaveDefaultAdmin csF16">
+                                                            <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                                            <span>Save Primary Admin</span>
+                                                        </button>
+                                                    </div>
+                                                <?php } ?>
                                             </form>
                                         </div>
                                     </div>

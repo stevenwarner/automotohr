@@ -45,7 +45,7 @@ $(function dashboard() {
 	});
 
 	/**
-	 * save company configuration
+	 * save company payment configuration
 	 */
 	$(".jsSaveConfiguration").click(function (event) {
 		//
@@ -87,6 +87,68 @@ $(function dashboard() {
 			.always(function () {
 				XHR = null;
 				$(".jsSaveConfiguration span").html("Save Payment Configuration");
+			});
+	}
+
+	/**
+	 * save company configuration
+	 */
+	$(".jsSaveDefaultAdmin").click(function (event) {
+		//
+		event.preventDefault();
+		//
+		const obj = {
+			first_name: $("#jsFirstName").val().trim(),
+			last_name: $("#jsLastName").val().trim(),
+			email_address: $("#jsEmail").val().trim(),
+		};
+		const errorsArray = [];
+		// validation
+		if (!obj.first_name) {
+			errorsArray.push('"First name" is required.');
+		}
+		if (!obj.last_name) {
+			errorsArray.push('"Last name" is required.');
+		}
+		if (!obj.email_address) {
+			errorsArray.push('"Email" is required.');
+		}
+		//
+		if (errorsArray.length) {
+			return _error(getErrorsStringFromArray(errorsArray));
+		}
+		//
+		saveCompanyPrimaryAdmin(obj);
+	});
+
+	/**
+	 *
+	 * @returns
+	 */
+	function saveCompanyPrimaryAdmin(dataOBJ) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		$(".jsSaveDefaultAdmin span").html("Saving...");
+		//
+		XHR = $.ajax({
+			url: baseUrl("sa/payrolls/company/" + companyId + "/primary/admin"),
+			method: "POST",
+			data: dataOBJ,
+		})
+			.success(function () {
+				return alertify.alert(
+					"Success!",
+					"Company primary admin save successfully.",
+					CB
+				);
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				$(".jsSaveDefaultAdmin span").html("Save Primary Admin");
 			});
 	}
 

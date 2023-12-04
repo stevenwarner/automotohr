@@ -1981,6 +1981,7 @@ $route['sa/payrolls/(:num)']['get'] = 'v1/sa/Payrolls/index/$1';
 $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payrolls/syncCompanyWithGusto/$1';
 $route['sa/payrolls/company/(:num)/setup_payroll']['get'] = 'v1/sa/Payrolls/setupCompanyPayroll/$1';
 $route['sa/payrolls/company/(:num)/payment/configuration']['post'] = 'v1/sa/Payrolls/updatePaymentConfiguration/$1';
+$route['sa/payrolls/company/(:num)/primary/admin']['post'] = 'v1/sa/Payrolls/updatePrimaryAdmin/$1';
 $route['sa/payrolls/company/(:num)/bank/verify']['get'] = 'v1/sa/Payrolls/verifyCompanyBankAccount/$1';
 $route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyCompany/$1';
 //

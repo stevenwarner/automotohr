@@ -531,15 +531,34 @@ class Payroll_model extends CI_Model
         if ($this->db->where($whereArray)->count_all_results('gusto_companies_admin')) {
             return 0;
         }
+        //
+        $firstName = $this->adminArray['first_name'];
+        $lastName = $this->adminArray['last_name'];
+        $email = $this->adminArray['email_address'];
+        //
+        if (
+            $this->checkDefaultAdminExist($companyId)
+        ) {
+            $defaultAdmin = $this->db
+                ->select('first_name, last_name, email_address')
+                ->where('company_sid', $companyId)
+                ->get('gusto_companies_default_admin')
+                ->row_array();
+            //
+            $firstName = $defaultAdmin['first_name'];
+            $lastName = $defaultAdmin['last_name'];
+            $email = $defaultAdmin['email_address'];
+        }
+        //
         // insert the admin
         $this->db->insert(
             'gusto_companies_admin',
             [
                 'company_sid' => $companyId,
                 'is_store_admin' => 1,
-                'first_name' => $this->adminArray['first_name'],
-                'last_name' => $this->adminArray['last_name'],
-                'email_address' => $this->adminArray['email_address'],
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email_address' => $email,
                 'gusto_uuid' => null,
                 'created_at' => getSystemDate(),
                 'updated_at' => getSystemDate()
@@ -5414,4 +5433,94 @@ class Payroll_model extends CI_Model
 		->where($whereArray)
 		->update($table, $dataArray);
 	}
+
+    /**
+     * Get company primary Admin
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyPrimaryAdmin(int $companyId): array
+    {
+        $primaryAdmin = [];
+        //
+        $gustoPrimaryAdmin = $this->db
+            ->select('first_name, last_name, email_address')
+            ->where('company_sid', $companyId)
+            ->where('is_store_admin', 1)
+            ->get('gusto_companies_admin')
+            ->row_array();
+        //
+        if (empty($gustoPrimaryAdmin)) {
+            $defaultAdmin = $this->db
+                ->select('first_name, last_name, email_address')
+                ->where('company_sid', $companyId)
+                ->get('gusto_companies_default_admin')
+                ->row_array();
+            //
+            if (!empty($defaultAdmin)) {
+                $defaultAdmin['is_sync'] = 0;
+                $primaryAdmin = $defaultAdmin;
+            } else {
+                $primaryAdmin['first_name'] = 'Steven';
+                $primaryAdmin['last_name'] = 'Warner';
+                $primaryAdmin['email_address'] = 'steven@automotohr.com';
+                $primaryAdmin['is_sync'] = 0;
+            }
+        } else {
+            $gustoPrimaryAdmin['is_sync'] = 1;
+            $primaryAdmin = $gustoPrimaryAdmin;
+        }
+        //
+        return $primaryAdmin;
+    }
+
+    /**
+     * add or update primary Admin
+     *
+     * @param int   $companyId
+     * @param array   $post
+     * @return array
+     */
+    public function addOrUpdatePrimaryAdmin(int $companyId, array $post): array
+    {
+        //
+        if (
+            $this->checkDefaultAdminExist($companyId)
+        ) {
+            $this->db
+                ->where('company_sid', $companyId)
+                ->update('gusto_companies_default_admin', $post);
+            //
+            return ["success" => true, "msg" => "Primary Admin update successfully"];    
+        } else {
+            $this->db->insert(
+                'gusto_companies_default_admin',
+                [
+                    'company_sid' => $companyId,
+                    'email_address' => $post['email_address'],
+                    'first_name' => $post['first_name'],
+                    'last_name' => $post['last_name'],
+                    'created_at' => getSystemDate(),
+                ]
+            );
+            //
+            return ["success" => true, "msg" => "Primary Admin save successfully"];
+        }    
+    }  
+
+    /**
+     * add or update primary Admin
+     *
+     * @param int   $companyId
+     * @return int
+     */
+    public function checkDefaultAdminExist(int $companyId): int
+    {
+        return $this->db
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->from('gusto_companies_default_admin')
+            ->count_all_results();
+    }
 }
