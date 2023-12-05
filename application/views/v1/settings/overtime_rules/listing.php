@@ -64,52 +64,39 @@
                             </div>
                             <div class="panel-body">
                                 <div class="row">
-                                    <?php if ($schedules) {
-                                        foreach ($schedules as $v0) {
+                                    <?php if ($overtimeRules) {
+                                        foreach ($overtimeRules as $v0) {
                                     ?>
-                                            <div class="col-md-3">
+                                            <div class="col-md-3 jsBox" data-id="<?= $v0["sid"]; ?>">
                                                 <div class="panel panel-default csRelative">
                                                     <div class="panel-body">
-                                                        <?php if ($v0["gusto_uuid"]) { ?>
-                                                            <div class="csAbsoluteBox">
-                                                                <label class="label bg-orange" title="This pay schedule is used for Payroll." placement="top">
-                                                                    Payroll
-                                                                </label>
-                                                            </div>
-                                                        <?php } ?>
+
                                                         <p class="text-medium">
-                                                            <strong><?= $v0["custom_name"] ?? "Default"; ?></strong>
-                                                            <br />
                                                             <span class="text-small">Name</span>
+                                                            <br />
+                                                            <strong><?= $v0["rule_name"] ?></strong>
+                                                        </p>
+
+                                                        <p class="text-medium">
+                                                            <span class="text-small">Overtime multiplier</span>
+                                                            <br />
+                                                            <strong><?= $v0["overtime_multiplier"] ?>x</strong>
                                                         </p>
                                                         <p class="text-medium">
-                                                            <strong><?= $v0["frequency"]; ?></strong>
+                                                            <span class="text-small">Double time multiplier</span>
                                                             <br />
-                                                            <span class="text-small">Pay frequency</span>
-                                                        </p>
-                                                        <p class="text-medium">
-                                                            <strong><?= formatDateToDB($v0["anchor_pay_date"], DB_DATE, DATE); ?></strong>
-                                                            <br />
-                                                            <span class="text-small">First pay date</span>
-                                                        </p>
-                                                        <p class="text-medium">
-                                                            <strong><?= $v0["deadline_to_run_payroll"] ? formatDateToDB($v0["deadline_to_run_payroll"], DB_DATE, DATE) : "-"; ?></strong>
-                                                            <br />
-                                                            <span class="text-small">Deadline to run payroll</span>
+                                                            <strong><?= $v0["double_overtime_multiplier"] ?>x</strong>
                                                         </p>
                                                     </div>
                                                     <div class="panel-footer text-center">
-                                                        <?php if ($v0["gusto_uuid"]) { ?>
-                                                            <a href="#" class="btn btn-yellow disabled">
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit a Pay Schedule
-                                                            </a>
-                                                        <?php } else { ?>
-                                                            <a href="<?= base_url("schedules/edit/" . $v0['sid']); ?>" class="btn btn-yellow">
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit a Pay Schedule
-                                                            </a>
-                                                        <?php } ?>
+                                                        <button class="btn btn-yellow jsEditOvertimeRuleBtn">
+                                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                            &nbsp;Edit
+                                                        </button>
+                                                        <button class="btn btn-red jsDeleteOvertimeRuleBtn">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            &nbsp;Delete
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>

@@ -2019,6 +2019,8 @@ $route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";
 // Overtime rules routes
 $route["overtimerules"]["get"] = "Settings/overtimeRules";
 $route["settings/page/(:any)/(:num)"]["get"] = "Settings/getPageBySlug/$1/$2";
+$route["overtimerules"]["post"] = "Settings/processOvertimeRules";
+$route["overtimerules/(:num)"]["delete"] = "Settings/processDeleteOvertimeRules/$1";
 
 
 /**

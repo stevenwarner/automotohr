@@ -190,8 +190,9 @@ class Main extends Public_Controller
         checkAndGetSession();
         // set up the rules
         $this->form_validation->set_rules("page", "Page name", "trim|xss_clean|required");
-        $this->form_validation->set_rules("userId", "User reference", "trim|xss_clean|required");
-        $this->form_validation->set_rules("userType", "User reference type", "trim|xss_clean|required");
+        $this->form_validation->set_rules("rule_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("overtime_multiplier", "Overtime rate", "trim|xss_clean|required");
+        $this->form_validation->set_rules("double_overtime_multiplier", "Double time rate", "trim|xss_clean|required");
         // run the validation
         if (!$this->form_validation->run()) {
             return SendResponse(400, getFormErrors());

@@ -148,6 +148,6 @@ class Main_model extends CI_Model
         }
         // update
         //
-        return SendResponse($status, $response);
+        return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
     }
 }

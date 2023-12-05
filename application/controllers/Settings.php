@@ -3801,11 +3801,11 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
         // get the schedules
-        // $data["overtimeRules"] = $this->overtime_rules_model
-        //     ->getCompanySchedules(
-        //         $loggedInCompany["sid"],
-        //         $status === "active" ? 1 : 0
-        //     );
+        $data["overtimeRules"] = $this->overtime_rules_model
+            ->getOvertimeRules(
+                $loggedInCompany["sid"],
+                $status === "active" ? 1 : 0
+            );
         $data["status"] = $status;
         // set common files bundle
         $data["pageCSS"] = [
@@ -3851,6 +3851,55 @@ class Settings extends Public_Controller
     }
 
     /**
+     * get the page by slug
+     *
+     * @return array
+     */
+    public function processOvertimeRules()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("rule_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("overtime_multiplier", "Overtime rate", "trim|xss_clean|required");
+        $this->form_validation->set_rules("double_overtime_multiplier", "Double time rate", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // call the function
+        $this->overtime_rules_model
+            ->processOvertimeRules(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     * delete the overtime rule
+     *
+     * @param int $ruleId
+     * @return array
+     */
+    public function processDeleteOvertimeRules(int $ruleId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // call the function
+        $this->overtime_rules_model
+            ->processDeleteOvertimeRules(
+                $session["company_detail"]["sid"],
+                $ruleId
+            );
+    }
+
+    /**
      * set page overtime rules
      *
      * @param string $pageSlug
@@ -3859,8 +3908,32 @@ class Settings extends Public_Controller
      */
     private function pageOvertimeRules(string $pageSlug, int $pageId): array
     {
-        //
+        // set default array
         $data = [];
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+            // check and generate error for session
+            $session = checkAndGetSession();
+            //
+            $data["overtimeRule"] = $this->overtime_rules_model
+                ->getOvertimeRuleById(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["overtimeRule"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the rule."
+                        ]
+                    ]
+                );
+            }
+        }
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/overtime_rules/partials/" . (!$pageId ? "add" : "edit"), $data, true),
