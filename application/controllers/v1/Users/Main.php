@@ -152,6 +152,7 @@ class Main extends Public_Controller
     /**
      * get the page by slug
      *
+     * @method pagePaySchedule
      * @param int    $userId
      * @param string $userType
      * @param string $slug

@@ -2016,6 +2016,10 @@ $route["schedules"]["post"] = "settings/processSchedule";
 // edit
 $route["schedules/edit/(:num)"]["get"] = "settings/editSchedule/$1";
 $route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";
+// Overtime rules routes
+$route["overtimerules"]["get"] = "Settings/overtimeRules";
+$route["settings/page/(:any)/(:num)"]["get"] = "Settings/getPageBySlug/$1/$2";
+
 
 /**
  * employee payroll dashboard

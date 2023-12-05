@@ -84,24 +84,34 @@
                                         </div>
                                         <div class="panel-body">
                                             <p class="text-medium">
-                                                <strong>Software Engineer II</strong>
-                                                <br />
                                                 <span class="text-small">Position</span>
+                                                <br />
+                                                <strong>Software Engineer II</strong>
                                             </p>
                                             <p class="text-medium">
-                                                <strong>$20.00 /hour</strong>
+                                                <span class="text-small">Employment type</span>
                                                 <br />
+                                                <strong>Full time</strong>
+                                            </p>
+                                            <p class="text-medium">
+                                                <span class="text-small">Hire date</span>
+                                                <br />
+                                                <strong>2023-04-55 time</strong>
+                                            </p>
+                                            <p class="text-medium">
                                                 <span class="text-small">Wage</span>
+                                                <br />
+                                                <strong>$20.00 /hour</strong>
                                             </p>
                                             <p class="text-medium">
-                                                <strong>x1.5</strong>
-                                                <br />
                                                 <span class="text-small">Overtime Multiplier</span>
+                                                <br />
+                                                <strong>x1.5</strong>
                                             </p>
                                             <p class="text-medium">
-                                                <strong>x2.0</strong>
-                                                <br />
                                                 <span class="text-small">Double Overtime Multiplier</span>
+                                                <br />
+                                                <strong>x2.0</strong>
                                             </p>
                                         </div>
                                         <div class="panel-footer text-center">

@@ -627,3 +627,13 @@ button.ajs-button.ajs-cancel {
 	padding: 10px;
     font-size: 16px;
 }
+
+/*  */
+.csVerticalAlignMiddle{
+	vertical-align: middle !important;
+}
+
+/* margins */
+.mt-5{
+	margin-top: 5px;
+}

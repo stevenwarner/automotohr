@@ -3470,7 +3470,7 @@ class Settings extends Public_Controller
     public function schedules(string $status = "active")
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3492,7 +3492,7 @@ class Settings extends Public_Controller
                 $loggedInCompany["sid"],
                 $status === "active" ? 1 : 0
             );
-        $data["status"]= $status;
+        $data["status"] = $status;
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/index');
@@ -3505,7 +3505,7 @@ class Settings extends Public_Controller
     public function addSchedule()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3548,7 +3548,7 @@ class Settings extends Public_Controller
     public function editSchedule(int $scheduleId)
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3602,7 +3602,7 @@ class Settings extends Public_Controller
     public function getScheduleDeadlineDate(string $firstPayDate)
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             return SendResponse(
                 400,
                 [
@@ -3643,7 +3643,7 @@ class Settings extends Public_Controller
     public function processSchedule()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             return SendResponse(
                 400,
                 [
@@ -3707,7 +3707,7 @@ class Settings extends Public_Controller
     public function processEditSchedule(int $scheduleId)
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(MODULE_ATTENDANCE)) {
+        if (!isPayrollOrPlus(true)) {
             return SendResponse(
                 400,
                 [
@@ -3773,5 +3773,98 @@ class Settings extends Public_Controller
     {
         $this->form_validation->set_message("validDate", "The date format is invalid for %s.");
         return preg_match("/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/", $siteDate);
+    }
+
+
+    /**
+     * list company overtime rules
+     *
+     * @param string $status Optional
+     */
+    public function overTimeRules(string $status = "active")
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Overtime rules | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // get the schedules
+        // $data["overtimeRules"] = $this->overtime_rules_model
+        //     ->getCompanySchedules(
+        //         $loggedInCompany["sid"],
+        //         $status === "active" ? 1 : 0
+        //     );
+        $data["status"] = $status;
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/overtimerules/main"
+        ], "public/v1/overtimerules/", "main", false);
+        // load views
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/overtime_rules/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * get the page by slug
+     *
+     * @method pageOvertimeRules
+     * @param string $slug
+     * @param int    $pageId
+     * @return array
+     */
+    public function getPageBySlug(string $slug, int $pageId)
+    {
+        // check and generate error for session
+        checkAndGetSession();
+        // convert the slug to function
+        $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
+        // get the data
+        $this->$func(
+            $slug,
+            $pageId
+        );
+    }
+
+    /**
+     * set page overtime rules
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageOvertimeRules(string $pageSlug, int $pageId): array
+    {
+        //
+        $data = [];
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/overtime_rules/partials/" . (!$pageId ? "add" : "edit"), $data, true),
+            "data" => $data["return"] ?? []
+        ]);
     }
 }

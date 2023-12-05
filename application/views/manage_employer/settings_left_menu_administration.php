@@ -217,13 +217,23 @@
             </li>
         <?php } ?>
 
-        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+        <?php if (isPayrollOrPlus(true)) { ?>
             <li>
                 <a <?= uri_string() === "schedules" ? 'class="active"' : ""; ?> href="<?php echo base_url('schedules'); ?>">
                     <figure>
                         <i class="fa fa-cogs" aria-hidden="true"></i>
                     </figure>
                     Company Pay Schedules
+                </a>
+            </li>
+        <?php } ?>
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?= uri_string() === "overtimerules" ? 'class="active"' : ""; ?> href="<?php echo base_url('overtimerules'); ?>">
+                    <figure>
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                    </figure>
+                    Company Overtime Rules
                 </a>
             </li>
         <?php } ?>
