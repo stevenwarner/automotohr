@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
-                    <?php $this->load->view('manage_employer/settings_left_menu_administration'); ?>
+                    <?php $this->load->view('main/employer_column_left_view'); ?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <!-- Page header -->
@@ -47,7 +47,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <h2 class="text-medium panel-heading-text">
-                                            <i class="fa fa-cogs text-orange" aria-hidden="true"></i>
+                                            <i class="fa fa-calendar text-orange" aria-hidden="true"></i>
                                             &nbsp;
                                             <strong>
                                                 Company Pay Schedules

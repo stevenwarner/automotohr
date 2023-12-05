@@ -2011,3 +2011,5 @@ $route["overtimerules"]["get"] = "Settings/overtimeRules";
 $route["settings/page/(:any)/(:num)"]["get"] = "Settings/getPageBySlug/$1/$2";
 $route["overtimerules"]["post"] = "Settings/processOvertimeRules";
 $route["overtimerules/(:num)"]["delete"] = "Settings/processDeleteOvertimeRules/$1";
+// minimum wages
+$route["minimum_wages"]["get"] = "Settings/minimumWages";

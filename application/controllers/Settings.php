@@ -3533,7 +3533,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/schedules/add"
-        ], "public/v1/schedules/add/", "add_schedule", true);
+        ], "public/v1/schedules/add/", "add_schedule", false);
         // load views
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/add');
@@ -3587,7 +3587,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/schedules/edit"
-        ], "public/v1/schedules/edit/", "edit_schedule", true);
+        ], "public/v1/schedules/edit/", "edit_schedule", false);
         // load views
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/edit');
@@ -3699,7 +3699,6 @@ class Settings extends Public_Controller
             "msg" => "You have successfully added a new schedule."
         ]);
     }
-
 
     /**
      * process edit schedule
@@ -3821,7 +3820,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/overtimerules/main"
-        ], "public/v1/overtimerules/", "main", false);
+        ], "public/v1/overtimerules/", "main", true);
         // load views
         //
         $this->load->view('main/header', $data);
@@ -3871,12 +3870,12 @@ class Settings extends Public_Controller
         ];
         // set bundle
         $data["appJs"] = bundleJs([
-            "v1/settings/overtimerules/main"
-        ], "public/v1/overtimerules/", "main", false);
+            "v1/settings/minimum_wages/main"
+        ], "public/v1/minimum_wages/", "main", false);
         // load views
         //
         $this->load->view('main/header', $data);
-        $this->load->view('v1/settings/overtime_rules/listing');
+        $this->load->view('v1/settings/minimum_wages/listing');
         $this->load->view('main/footer');
     }
 
