@@ -270,6 +270,11 @@
                                                     Company Overtime Rules
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="<?= base_url("minimum_wages"); ?>">
+                                                    Company Minimum Wages
+                                                </a>
+                                            </li>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->

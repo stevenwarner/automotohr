@@ -26,19 +26,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
 
                     <div role="tabpanel">
-                        <!-- Nav tabs -->
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="text-medium <?= $status === "active" ? "active" : "bg-default"; ?>">
-                                <a href="<?= base_url("overtimerules/active"); ?>">
-                                    Active Overtime Rules
-                                </a>
-                            </li>
-                            <li role="presentation" class="text-medium <?= $status === "inactive" ? "active" : "bg-default"; ?>">
-                                <a href="<?= base_url("overtimerules/inactive"); ?>">
-                                    InActive Overtime Rules
-                                </a>
-                            </li>
-                        </ul>
+                        
 
                         <!-- Tab panes -->
                         <!-- Page content -->

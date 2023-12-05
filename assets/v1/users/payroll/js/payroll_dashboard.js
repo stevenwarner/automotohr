@@ -51,6 +51,38 @@ $(function payrollDashboard() {
 	});
 
 	/**
+	 * edit job & wage
+	 */
+	$(".jsEditJobWage").click(function (event) {
+		// stop the event
+		event.preventDefault();
+		//
+		makePage(profileUserInfo.nameWithRole, "job_and_wage", function () {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			$("#jsPageJobWageForm").validate({
+				rules: {
+					pay_schedule: { required: true },
+				},
+				messages: {
+					pay_schedule: { required: "Please select a pay schedule." },
+				},
+				submitHandler: function (form) {
+					// convert form to form object
+					const formObj = formArrayToObj($(form).serializeArray());
+					//
+					formObj.append("page", "pay_schedule");
+					formObj.append("userId", profileUserInfo.userId);
+					formObj.append("userType", profileUserInfo.userType);
+					//
+					return processCall(formObj, $(".jsPageJobWageBtn"));
+				},
+			});
+		});
+	});
+
+	/**
 	 * generates the modal
 	 * @param {string} pageTitle
 	 * @param {string} pageSlug

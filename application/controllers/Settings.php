@@ -3828,6 +3828,57 @@ class Settings extends Public_Controller
         $this->load->view('v1/settings/overtime_rules/listing');
         $this->load->view('main/footer');
     }
+    
+    /**
+     * list company minimum wages
+     */
+    public function minimumWages()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Minimum Wages | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        // $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // get the schedules
+        // $data["overtimeRules"] = $this->overtime_rules_model
+        //     ->getOvertimeRules(
+        //         $loggedInCompany["sid"],
+        //         $status === "active" ? 1 : 0
+        //     );
+        $data["status"] = $status;
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/overtimerules/main"
+        ], "public/v1/overtimerules/", "main", false);
+        // load views
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/overtime_rules/listing');
+        $this->load->view('main/footer');
+    }
 
     /**
      * get the page by slug

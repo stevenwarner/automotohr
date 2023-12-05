@@ -240,6 +240,20 @@ class Main extends Public_Controller
     }
 
     /**
+     * get the pay schedule
+     *
+     * @param int    $userId
+     * @param string $userType
+     * @return array
+     */
+    private function pageJobAndWage(
+        int $userId,
+        string $userType
+    ): array {
+        return [];
+    }
+
+    /**
      * Render the view in template
      *
      * @param string $path

@@ -103,19 +103,9 @@
                                                 <br />
                                                 <strong>$20.00 /hour</strong>
                                             </p>
-                                            <p class="text-medium">
-                                                <span class="text-small">Overtime Multiplier</span>
-                                                <br />
-                                                <strong>x1.5</strong>
-                                            </p>
-                                            <p class="text-medium">
-                                                <span class="text-small">Double Overtime Multiplier</span>
-                                                <br />
-                                                <strong>x2.0</strong>
-                                            </p>
                                         </div>
                                         <div class="panel-footer text-center">
-                                            <button class="btn btn-yellow">
+                                            <button class="btn btn-yellow jsEditJobWage">
                                                 <i class="fa fa-edit" aria-hidden="true"></i>
                                                 Edit wage
                                             </button>
