@@ -987,6 +987,7 @@ class employers extends Admin_Controller
         //
         if (isset($post['sid'])) {
             $this->db->where('sid <> ', $post['sid']);
+            $this->db->where('is_executive_admin', 0);
             $this->db->where('parent_sid', $parent_sid);
         }
         //
