@@ -899,7 +899,6 @@ class Cron_common extends CI_Controller
         $this->db
             ->where('employee_type is null', null, false)
             ->or_where('employee_type = ""', '', false)
-            ->or_where('employee_type = ', '0', false)
             ->update('users', [
                 'employee_type' => 'fulltime'
             ]);
