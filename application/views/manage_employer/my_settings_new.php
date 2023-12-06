@@ -255,9 +255,14 @@
                                                     Company Overtime Rules
                                                 </a>
                                             </li>
-                                            <li>
+                                            <li class="hidden">
                                                 <a href="<?= base_url("minimum_wages"); ?>">
                                                     Company Minimum Wages
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("settings/shifts/manage"); ?>">
+                                                    Manage Shifts
                                                 </a>
                                             </li>
                                         <?php } ?>

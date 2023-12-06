@@ -19,6 +19,14 @@
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Settings
                             </a>
+                            <a href="<?= base_url("settings/shifts/breaks"); ?>" class="btn btn-black">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                &nbsp;Manage Shifts
+                            </a>
+                            <a href="<?= base_url("settings/shifts/templates"); ?>" class="btn btn-orange">
+                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                                &nbsp;Manage Shift Templates
+                            </a>
                         </div>
                     </div>
                     <br />
@@ -35,68 +43,53 @@
                                             <i class="fa fa-cogs text-orange" aria-hidden="true"></i>
                                             &nbsp;
                                             <strong>
-                                                Company Minimum Wages
+                                                Breaks
                                             </strong>
                                         </h2>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <a href="javascript:void(0)" class="btn btn-orange jsAddOvertimeRuleBtn">
+                                        <button class="btn btn-orange jsAddBreakBtn">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                            &nbsp;Add Minimum Wage
-                                        </a>
+                                            &nbsp;Add Break
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
-                                    <?php if ($wages) {
-                                        foreach ($wages as $v0) {
+                                    <?php if ($records) {
+                                        foreach ($records as $v0) {
                                     ?>
                                             <div class="col-md-3 jsBox" data-id="<?= $v0["sid"]; ?>">
-                                                <div class="panel panel-default csRelative">
+                                                <div class="panel panel-default">
                                                     <div class="panel-body">
+
                                                         <p class="text-medium">
-                                                            <span class="text-small">Wage</span>
+                                                            <span class="text-small">Name</span>
                                                             <br />
-                                                            <strong>$<?= $v0["wage"] ?></strong>
+                                                            <strong><?= $v0["break_name"] ?></strong>
+                                                        </p>
+
+                                                        <p class="text-medium">
+                                                            <span class="text-small">Duration</span>
+                                                            <br />
+                                                            <strong><?= $v0["break_duration"] ?> mins</strong>
                                                         </p>
                                                         <p class="text-medium">
-                                                            <span class="text-small">Wage type</span>
+                                                            <span class="text-small">Type</span>
                                                             <br />
-                                                            <strong><?= $v0["wage_type"] ?></strong>
-                                                        </p>
-                                                        <p class="text-medium">
-                                                            <span class="text-small">Authority</span>
-                                                            <br />
-                                                            <strong><?= $v0["authority"] ?></strong>
-                                                        </p>
-                                                        <p class="text-medium">
-                                                            <span class="text-small">Effective date</span>
-                                                            <br />
-                                                            <strong><?= formatDateToDB($v0["effective_date"], DB_DATE, DATE); ?></strong>
-                                                        </p>
-                                                        <p class="text-medium">
-                                                            <span class="text-small">Notes</span>
-                                                            <br />
-                                                            <strong><?= $v0["notes"] ?></strong>
+                                                            <strong><?= ucfirst($v0["break_type"]); ?></strong>
                                                         </p>
                                                     </div>
                                                     <div class="panel-footer text-center">
-                                                        <?php if ($v0["is_custom"]) { ?>
-                                                            <button class="btn btn-yellow jsEditOvertimeRuleBtn">
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit
-                                                            </button>
-                                                            <button class="btn btn-red jsDeleteOvertimeRuleBtn">
-                                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                                                &nbsp;Delete
-                                                            </button>
-                                                        <?php } else { ?>
-                                                            <button class="btn btn-yellow" disabled>
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit
-                                                            </button>
-                                                        <?php } ?>
+                                                        <button class="btn btn-yellow jsEditShiftBreakBtn">
+                                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                            &nbsp;Edit
+                                                        </button>
+                                                        <button class="btn btn-red jsDeleteShiftBreakBtn">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                            &nbsp;Delete
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +99,6 @@
                                         $this->load->view("v1/no_data");
                                     } ?>
                                 </div>
-
                             </div>
                         </div>
                     </div>

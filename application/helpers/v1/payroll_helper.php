@@ -425,6 +425,8 @@ if (!function_exists('getUrl')) {
 
         // off cycle payrolls
         $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
+        // location minimum wages
+        $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
 
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }

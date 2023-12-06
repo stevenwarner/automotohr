@@ -361,11 +361,21 @@
         <?php  } ?>
 
         <?php if (isPayrollOrPlus(true)) { ?>
-            <li>
+            <li class="hidden">
                 <a <?php if (strpos(base_url(uri_string()), site_url('minimum_wages')) !== false) {
                         echo 'class="active"';
                     } ?> href="<?php echo base_url("minimum_wages"); ?>">
                     <figure><i class="fa fa-money"></i></figure>Company Minimum Wages
+                </a>
+            </li>
+        <?php  } ?>
+        
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('settings/shifts/manage')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("settings/shifts/manage"); ?>">
+                    <figure><i class="fa fa-calendar"></i></figure>Manage Shifts
                 </a>
             </li>
         <?php  } ?>

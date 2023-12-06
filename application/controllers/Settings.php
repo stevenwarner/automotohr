@@ -3849,14 +3849,14 @@ class Settings extends Public_Controller
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
         $data["session"] = $this->session->userdata("logged_in");
         // load schedule model
-        // $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
-        // get the schedules
-        // $data["overtimeRules"] = $this->overtime_rules_model
-        //     ->getOvertimeRules(
-        //         $loggedInCompany["sid"],
-        //         $status === "active" ? 1 : 0
-        //     );
-        $data["status"] = $status;
+        $this->load->model("v1/Minimum_wages_model", "minimum_wages_model");
+        // get ones from Gusto
+        // $this->minimum_wages_model->sync(
+        //     $loggedInCompany["sid"]
+        // );
+        // get the wages
+        $data["wages"] = $this->minimum_wages_model
+            ->get($loggedInCompany["sid"]);
         // set common files bundle
         $data["pageCSS"] = [
             getPlugin("alertify", "css"),
@@ -3871,11 +3871,83 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/minimum_wages/main"
-        ], "public/v1/minimum_wages/", "main", false);
+        ], "public/v1/minimum_wages/", "main", true);
         // load views
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/minimum_wages/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shifts
+     */
+    public function manageShifts()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shift breaks
+     */
+    public function manageShiftBreaks()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts Breaks | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get the records
+        $data["records"] = $this->shift_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/break"
+        ], "public/v1/shifts/", "break", false);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/breaks');
         $this->load->view('main/footer');
     }
 
@@ -3950,6 +4022,55 @@ class Settings extends Public_Controller
     }
 
     /**
+     * process shift break
+     *
+     * @return array
+     */
+    public function processShiftBreak()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("break_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("break_duration", "Duration", "trim|xss_clean|required");
+        $this->form_validation->set_rules("break_type", "Type", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete shift break
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteShiftBreak(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+    /**
      * set page overtime rules
      *
      * @param string $pageSlug
@@ -3987,6 +4108,48 @@ class Settings extends Public_Controller
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/overtime_rules/partials/" . (!$pageId ? "add" : "edit"), $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set shift break page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageShifts(string $pageSlug, int $pageId): array
+    {
+        // set default array
+        $data = [];
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Shift_model", "shift_model");
+            // check and generate error for session
+            $session = checkAndGetSession();
+            //
+            $data["record"] = $this->shift_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the break."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_break", $data, true),
             "data" => $data["return"] ?? []
         ]);
     }
