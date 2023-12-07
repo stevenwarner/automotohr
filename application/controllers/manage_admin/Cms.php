@@ -90,7 +90,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_common",
-            false
+            true
         );
         //
         $pageBundle = bundleJs(
@@ -99,7 +99,7 @@ class Cms extends Admin_Controller
             ],
             "public/v1/app/",
             "app_page",
-            false
+            true
         );
         $this->data["appJs"] = combineBundle([
             $commonFileBundle,
