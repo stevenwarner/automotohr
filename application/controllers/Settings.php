@@ -3926,9 +3926,9 @@ class Settings extends Public_Controller
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
         $data["session"] = $this->session->userdata("logged_in");
         // load schedule model
-        $this->load->model("v1/Shift_model", "shift_model");
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
         // get the records
-        $data["records"] = $this->shift_model
+        $data["records"] = $this->shift_break_model
             ->get($loggedInCompany["sid"]);
         // set common files bundle
         $data["pageCSS"] = [
@@ -3948,6 +3948,54 @@ class Settings extends Public_Controller
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/breaks');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shift templates
+     */
+    public function manageShiftTemplates()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts Templates | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // get the records
+        $data["records"] = $this->shift_template_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/templates"
+        ], "public/v1/shifts/", "templates", false);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/templates');
         $this->load->view('main/footer');
     }
 
@@ -4041,9 +4089,9 @@ class Settings extends Public_Controller
         // set the sanitized post
         $post = $this->input->post(null, true);
         // load schedule model
-        $this->load->model("v1/Shift_model", "shift_model");
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
         // call the function
-        $this->shift_model
+        $this->shift_break_model
             ->process(
                 $session["company_detail"]["sid"],
                 $post
@@ -4061,9 +4109,57 @@ class Settings extends Public_Controller
         // check and generate error for session
         $session = checkAndGetSession();
         // load schedule model
-        $this->load->model("v1/Shift_model", "shift_model");
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
         // call the function
-        $this->shift_model
+        $this->shift_break_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+     /**
+     * process  shift templates
+     *
+     * @return array
+     */
+    public function processShiftTemplate()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("start_time", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "Duration", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // call the function
+        $this->shift_template_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete shift template
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteShiftTemplate(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // call the function
+        $this->shift_template_model
             ->delete(
                 $session["company_detail"]["sid"],
                 $breakId
@@ -4126,11 +4222,11 @@ class Settings extends Public_Controller
         // check if page id i set
         if ($pageId) {
             // load schedule model
-            $this->load->model("v1/Shift_model", "shift_model");
+            $this->load->model("v1/Shift_break_model", "shift_break_model");
             // check and generate error for session
             $session = checkAndGetSession();
             //
-            $data["record"] = $this->shift_model
+            $data["record"] = $this->shift_break_model
                 ->getSingle(
                     $session["company_detail"]["sid"],
                     $pageId
@@ -4150,6 +4246,55 @@ class Settings extends Public_Controller
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_break", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set shift break page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageShiftTemplate(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set default array
+        $data = [];
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Shift_template_model", "shift_template_model");
+
+            //
+            $data["record"] = $this->shift_template_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the break."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_template", $data, true),
             "data" => $data["return"] ?? []
         ]);
     }

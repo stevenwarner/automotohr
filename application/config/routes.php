@@ -2018,3 +2018,7 @@ $route["settings/shifts/manage"]["get"] = "Settings/manageShifts";
 $route["settings/shifts/breaks"]["get"] = "Settings/manageShiftBreaks";
 $route["settings/shifts/breaks"]["post"] = "Settings/processShiftBreak";
 $route["settings/shifts/breaks/(:num)"]["delete"] = "Settings/processDeleteShiftBreak/$1";
+// templates
+$route["settings/shifts/templates"]["get"] = "Settings/manageShiftTemplates";
+$route["settings/shifts/templates"]["post"] = "Settings/processShiftTemplate";
+$route["settings/shifts/template/(:num)"]["delete"] = "Settings/processDeleteShiftTemplate/$1";

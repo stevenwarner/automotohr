@@ -23,9 +23,9 @@
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Manage Shifts
                             </a>
-                            <a href="<?= base_url("settings/shifts/templates"); ?>" class="btn btn-orange">
+                            <a href="<?= base_url("settings/shifts/breaks"); ?>" class="btn btn-orange">
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
-                                &nbsp;Manage Shift Templates
+                                &nbsp;Manage Breaks
                             </a>
                         </div>
                     </div>
@@ -43,14 +43,14 @@
                                             <i class="fa fa-cogs text-orange" aria-hidden="true"></i>
                                             &nbsp;
                                             <strong>
-                                                Breaks
+                                                Shift Templates
                                             </strong>
                                         </h2>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <button class="btn btn-orange jsAddBreakBtn">
+                                        <button class="btn btn-orange jsAddShiftTemplateBtn">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                            &nbsp;Add Break
+                                            &nbsp;Add Shift Template
                                         </button>
                                     </div>
                                 </div>
@@ -65,28 +65,39 @@
                                                     <div class="panel-body">
 
                                                         <p class="text-medium">
-                                                            <span class="text-small">Name</span>
+                                                            <span class="text-small">Time</span>
                                                             <br />
-                                                            <strong><?= $v0["break_name"] ?></strong>
+                                                            <strong>
+                                                                <?= formatDateToDB(
+                                                                    $v0["start_time"],
+                                                                    "H:i:s",
+                                                                    "h:i A"
+                                                                ); ?> -
+                                                                <?= formatDateToDB(
+                                                                    $v0["end_time"],
+                                                                    "H:i:s",
+                                                                    "h:i A"
+                                                                ); ?>
+                                                            </strong>
                                                         </p>
 
                                                         <p class="text-medium">
-                                                            <span class="text-small">Duration</span>
+                                                            <span class="text-small">Breaks</span>
                                                             <br />
-                                                            <strong><?= $v0["break_duration"] ?> mins</strong>
+                                                            <strong><?= $v0["breaks_count"] ?></strong>
                                                         </p>
                                                         <p class="text-medium">
-                                                            <span class="text-small">Type</span>
+                                                            <span class="text-small">Note</span>
                                                             <br />
-                                                            <strong><?= ucfirst($v0["break_type"]); ?></strong>
+                                                            <strong><?= $v0["notes"] ?? "-"; ?></strong>
                                                         </p>
                                                     </div>
                                                     <div class="panel-footer text-center">
-                                                        <button class="btn btn-yellow jsEditShiftBreakBtn">
+                                                        <button class="btn btn-yellow jsEditShiftTemplateBtn">
                                                             <i class="fa fa-edit" aria-hidden="true"></i>
                                                             &nbsp;Edit
                                                         </button>
-                                                        <button class="btn btn-red jsDeleteShiftBreakBtn">
+                                                        <button class="btn btn-red jsDeleteShiftTemplateBtn">
                                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                                             &nbsp;Delete
                                                         </button>

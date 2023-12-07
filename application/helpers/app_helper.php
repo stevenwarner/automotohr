@@ -2035,6 +2035,12 @@ if (!function_exists("getFile")) {
             "css" => main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
             "js" =>  main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
         ];
+
+        // set time picker
+        $plugins["timepicker"] = [
+                "css" => main_url("public/v1/plugins/timepicker/css/jquery.timepicker.min.css?v=3.0"),
+                "js" =>  main_url("public/v1/plugins/timepicker/jquery.timepicker.min.js?v=3.0")
+            ];
         //
         return $plugins[$index][$type] ?? "";
     }

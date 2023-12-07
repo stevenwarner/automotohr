@@ -400,8 +400,6 @@ if (typeof getRandomCode === "undefined") {
 	}
 }
 
-
-
 if (typeof closeAlert === "undefined") {
 	/**
 	 * Generates a random number
@@ -415,9 +413,19 @@ if (typeof closeAlert === "undefined") {
 if (typeof formArrayToObj === "undefined") {
 	/**
 	 * Converts form array to object
+	 * @param {array} formArray
+	 * @param {bool} toPlainObject
 	 * @returns
 	 */
-	function formArrayToObj(formArray) {
+	function formArrayToObj(formArray, toPlainObject = false) {
+		//
+		if (toPlainObject) {
+			let formObj = {};
+			formArray.map(function (v) {
+				formObj[v.name] = v.value;
+			});
+			return formObj;
+		}
 		//
 		let formData = new FormData();
 		//
@@ -462,4 +470,26 @@ if (window.location.refresh === undefined) {
 	window.location.refresh = function () {
 		window.location.href = window.location.href;
 	};
+}
+
+/**
+ * validation addons
+ */
+if (jQuery !== undefined && jQuery.validator !== undefined) {
+	// check time in 12 hours format
+	jQuery.validator.addMethod(
+		"timeIn12Format",
+		function (value) {
+			return value.match(/^\d{1,2}:\d{1,2}\s(pm|am)$/gi);
+		},
+		"The time format is invalid."
+	);
+	// value should be greater than 0
+	jQuery.validator.addMethod(
+		"greaterThanZero",
+		function (value) {
+			return value > 0;
+		},
+		"The value must be greater than zero."
+	);
 }

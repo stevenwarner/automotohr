@@ -672,3 +672,7 @@ button.ajs-button.ajs-cancel {
 .control input:checked~.control__indicator:hover{
 	background: var(--bgOrangeColorSoft) !important;
 }
+
+div.ui-timepicker-container.ui-timepicker-standard{
+	z-index: 9999 !important;
+}
