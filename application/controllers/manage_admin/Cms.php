@@ -120,7 +120,7 @@ class Cms extends Admin_Controller
         $this->data["page"] = $this->cms_model->get_page_data($pageId);
         $this->data["pageContent"] = json_decode($this->data["page"]["content"], true);
         $this->data["PageScripts"] = [
-            "v1/plugins/ckeditor5/main"
+            "ckeditor/ckeditor"
         ];
         //
         $commonFileBundleCSS = bundleCSS(
@@ -208,7 +208,7 @@ class Cms extends Admin_Controller
         }
 
         $this->data["PageScripts"] = [
-            "v1/plugins/ckeditor5/main"
+            "ckeditor/ckeditor"
         ];
 
         //
