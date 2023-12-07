@@ -80,6 +80,11 @@ $(function () {
 				formDataObj.append("source_type", "upload");
 				formDataObj.append("file", fileObject);
 			}
+
+			formDataObj.append(
+				"details",
+				CKEDITOR.instances.jsSection1Details.getData()
+			);
 			//
 			return processPageSection(
 				formDataObj,
