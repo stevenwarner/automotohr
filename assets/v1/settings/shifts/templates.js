@@ -61,7 +61,7 @@ $(function shiftTemplates() {
 	/**
 	 * edit
 	 */
-	$(".jsEditShiftBreakBtn").click(function (event) {
+	$(".jsEditShiftTemplateBtn").click(function (event) {
 		// stop the event
 		event.preventDefault();
 		// holds the reference
@@ -69,29 +69,61 @@ $(function shiftTemplates() {
 		// holds the id event
 		const id = reference.data("id");
 		//
-		makePage("Edit Break", "shifts", id, function () {
+		makePage("Edit Shift Template", "shift_template", id, function () {
 			// hides the loader
 			ml(false, modalLoader);
+
+			//
+			if (usedBreaksObject.length) {
+				//
+				usedBreaksObject.map(function (singleBreak, i) {
+					$(".jsBreakContainer").append(
+						generateBreakHtml(i, singleBreak)
+					);
+				});
+			}
+			//
+			applyTimePicker();
 			//
 			validatorRef = $("#jsPageShiftBreakForm").validate({
 				rules: {
-					rule_name: { required: true },
-					overtime_multiplier: { required: true },
-					double_overtime_multiplier: { required: true },
+					start_time: { required: true, timeIn12Format: true },
+					end_time: { required: true, timeIn12Format: true },
+				},
+				errorPlacement: function (error, element) {
+					if ($(element).parent().hasClass("input-group")) {
+						$(element).parent().after(error);
+					} else {
+						$(element).after(error);
+					}
 				},
 				submitHandler: function (form) {
-					// convert form to form object
 					const formObj = formArrayToObj($(form).serializeArray());
-					// add id
 					formObj.append("id", id);
-					//
 					return processCall(
 						formObj,
 						$(".jsPageShiftBreakBtn"),
-						"settings/shifts/breaks"
+						"settings/shifts/templates"
 					);
 				},
 			});
+
+			//
+			if (usedBreaksObject.length) {
+				//
+				usedBreaksObject.map(function (singleBreak, i) {
+					//
+					$('[name="breaks[' + i + '][break]"]').rules("add", {
+						required: true,
+					});
+					$('[name="breaks[' + i + '][duration]"]').rules("add", {
+						required: true,
+						number: true,
+						digits: true,
+						greaterThanZero: true,
+					});
+				});
+			}
 		});
 	});
 
@@ -105,7 +137,9 @@ $(function shiftTemplates() {
 		// generate html
 		$(".jsBreakContainer").append(generateBreakHtml(uniqId));
 		//
-		$('[name="breaks[' + uniqId + '][break]"]').rules("add", { required: true });
+		$('[name="breaks[' + uniqId + '][break]"]').rules("add", {
+			required: true,
+		});
 		$('[name="breaks[' + uniqId + '][duration]"]').rules("add", {
 			required: true,
 			number: true,
@@ -318,7 +352,11 @@ $(function shiftTemplates() {
 				v.break_name +
 				'" data-duration="' +
 				v.break_duration +
-				'">' +
+				'" ' +
+				(data !== undefined && data.break === v.break_name
+					? "selected"
+					: "") +
+				">" +
 				v.break_name +
 				" (" +
 				v.break_type +
@@ -326,43 +364,60 @@ $(function shiftTemplates() {
 		});
 
 		//
-		let html = '';
-        html+='<div class="row jsBreakRow" data-key="'+(uniqId)+'">';
-        html+='    <br> ';
-        html+='     <div class="col-sm-5">';
-        html+='        <label class="text-medium">';
-        html+='            Break ';
-        html+='            <strong class="text-red">*</strong>';
-        html+='         </label>';
-        html+='         <select name="breaks['+uniqId+'][break]" class="form-control jsBreakSelect">';
-        html+=          breakOptions;
-        html+='         </select>';
-        html+='     </div>';
-        html+='     <div class="col-sm-3">';
-        html+='         <label class="text-medium">';
-        html+='             Duration ';
-        html+='             <strong class="text-red">*</strong>';
-        html+='         </label>';
-        html+='         <div class="input-group">';
-        html+='             <input type="number" class="form-control jsDuration" name="breaks['+uniqId+'][duration]" />';
-        html+='             <div class="input-group-addon">mins</div>';
-        html+='         </div>';
-        html+='     </div>';
-        html+='     <div class="col-sm-3">';
-        html+='         <label class="text-medium">';
-        html+='             Start TIme ';
-        html+='         </label>';
-        html+='         <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" name="breaks['+uniqId+'][start_time]" />';
-        html+='     </div>';
-        html+='     <div class="col-sm-1">';
-        html+='         <br>';
-        html+='         <button class="btn btn-red jsDeleteBreakRow" title="Delete this break" type="button">';
-        html+='             <i class="fa fa-trash" style="margin-right: 0"></i>';
-        html+='         </button>';
-        html+='     </div>';
-        html+='</div>';
-        //
-        return html;
+		let html = "";
+		html += '<div class="row jsBreakRow" data-key="' + uniqId + '">';
+		html += "    <br> ";
+		html += '     <div class="col-sm-5">';
+		html += '        <label class="text-medium">';
+		html += "            Break ";
+		html += '            <strong class="text-red">*</strong>';
+		html += "         </label>";
+		html +=
+			'         <select name="breaks[' +
+			uniqId +
+			'][break]" class="form-control jsBreakSelect">';
+		html += breakOptions;
+		html += "         </select>";
+		html += "     </div>";
+		html += '     <div class="col-sm-3">';
+		html += '         <label class="text-medium">';
+		html += "             Duration ";
+		html += '             <strong class="text-red">*</strong>';
+		html += "         </label>";
+		html += '         <div class="input-group">';
+		html +=
+			'             <input type="number" class="form-control jsDuration" name="breaks[' +
+			uniqId +
+			'][duration]" value="' +
+			(data?.duration || "") +
+			'" />';
+		html += '             <div class="input-group-addon">mins</div>';
+		html += "         </div>";
+		html += "     </div>";
+		html += '     <div class="col-sm-3">';
+		html += '         <label class="text-medium">';
+		html += "             Start TIme ";
+		html += "         </label>";
+		html +=
+			'         <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" name="breaks[' +
+			uniqId +
+			'][start_time]"value="' +
+			(data?.start_time
+				? moment(data.start_time, "HH:mm").format("h:mm a")
+				: "") +
+			'" />';
+		html += "     </div>";
+		html += '     <div class="col-sm-1">';
+		html += "         <br>";
+		html +=
+			'         <button class="btn btn-red jsDeleteBreakRow" title="Delete this break" type="button">';
+		html +=
+			'             <i class="fa fa-trash" style="margin-right: 0"></i>';
+		html += "         </button>";
+		html += "     </div>";
+		html += "</div>";
+		//
+		return html;
 	}
 
 	/**
