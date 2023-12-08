@@ -300,6 +300,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 ];
             }
         }
+        
 
         // get consumed time
         $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
@@ -308,6 +309,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
             $policyPlansDates['lastAnniversaryDate'],
             $policyPlansDates['upcomingAnniversaryDate']
         );
+      
         //
         $compareDateOBJ = DateTime::createfromformat(DB_DATE, $policyPlansDates['upcomingAnniversaryDate']);
         //
@@ -363,11 +365,10 @@ if (!function_exists('getEmployeeAccrualNew')) {
         $accruals['carryOverCycle'] = 2;
         $testArray = [];
         //
+      
         if ($accruals['carryOverCheck'] == 'yes') {
             //
-            // $employeeService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['lastAnniversaryDate']);
-            //
-            if ($accruals['carryOverCycle'] == 0) {
+            if ($accruals['carryOverCycle'] == 0 || count($policyPlansDates['breakdown']) == 1) {
                 //
                 $totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate']);
                 //
@@ -385,6 +386,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                         $yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
                         $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
                     }
+                    
                     //
                     $consumedPolicyTime = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
                         $policyId,
@@ -434,7 +436,6 @@ if (!function_exists('getEmployeeAccrualNew')) {
                     $carryOverTime = $totalAllowedTime;
                 }
             } else {
-                // _e($policyPlansDates,true,true);
                 //
                 $currentCycleKey = 0;
                 $currentDate = date('Y-m-d', strtotime('now'));
@@ -458,7 +459,6 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 $totalAllowedTime = 0;
                 $totalConsumedTime = 0;
                 //
-                // _e($currentCycleKey,true);
                 for ($i = 0; $i < $accruals['carryOverCycle']; $i++) {
                     $index = --$currentCycleKey;
                     //
@@ -470,7 +470,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                         $allowedPlanTime = ($accruals['rate'] * 60);
                     }
                     //
-                    // $consumedPlanTime = 0;
+                    //
                     $consumedPlanTime = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
                         $policyId,
                         $employeeId,
@@ -749,7 +749,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $employeeAnniversaryDate
             );
         }
-        _e($policyId." pakistan zindabad", true,true);
+        //
         // Get award time for permanent employee
         if ($employementStatus != 'probation') {
             // Get awarded rate
@@ -828,6 +828,85 @@ if (!function_exists('getEmployeeAccrual')) {
                 $monthsWorked,
                 $accrualRateInMinutesWithoutAward
             );
+            //
+            $accruals['carryOverCycle'] = 2;
+            $timeOffCycle = [];
+            
+            //
+            if ($accruals['carryOverCycle'] == 0) {
+                $totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate']);
+                $joiningYear = date('Y', strtotime($employeeAnniversaryDate['ad']));
+                //
+                for ($i = 0; $i < $totalService; $i++) {
+                    //
+                    if ($i == 0) {
+                        $yearStart = $employeeAnniversaryDate['ad'];
+                        $yearEnd= preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                    } else {
+                        $yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                    }
+                    //
+                    $timeOffCycle[$i]['yearStart'] = $yearStart;
+                    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
+                }    
+            } else {
+                //
+                $joiningYear = date('Y', strtotime($employeeAnniversaryDate['upcomingAnniversaryDate']));
+                for ($i = 0; $i < $accruals['carryOverCycle']; $i++) {
+                    //
+                    if ($i == 0) {
+                        $yearEnd = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+                        $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i+1), $employeeAnniversaryDate['ad']);
+                    } else {
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear - $i, $employeeAnniversaryDate['ad']);
+                        $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i+1), $employeeAnniversaryDate['ad']);
+                    }
+                    //
+                    $timeOffCycle[$i]['yearStart'] = $yearStart;
+                    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
+                    
+                    //
+                    // $consumedPolicyTime = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
+                    //     $policyId,
+                    //     $employeeId,
+                    //     $yearStart,
+                    //     $yearEnd
+                    // );
+                    // //
+                    // $testArray[$i]['yearStart'] = $yearStart; 
+                    // $testArray[$i]['yearEnd'] = $yearEnd; 
+                    // $testArray[$i]['consumedTime'] = $consumedPolicyTime; 
+                    // //
+                    // $totalConsumedTime = $totalConsumedTime + $consumedPolicyTime;
+                    // //
+                    // $cycleYear = date('Y-m-d', strtotime($yearStart));
+                    // //
+                    // foreach ($policyPlansDates['breakdown'] as $key => $cycle) {
+                    //     //
+                    //     $lastAnniversaryDate = date('Y-m-d', strtotime($cycle['lastAnniversaryDate']));
+                    //     $upcomingAnniversaryDate = date('Y-m-d', strtotime($cycle['upcomingAnniversaryDate']));
+                    //     //
+                    //     if (($cycleYear >= $lastAnniversaryDate) && ($cycleYear <= $upcomingAnniversaryDate)){
+                    //         $allowedPolicyTime = 0;
+                    //         if (isset($plans[$cycle['lastAnniversaryDate']])) {
+                    //             $allowedPolicyTime = $plans[$cycle['lastAnniversaryDate']]['minutes'];
+                    //         } else {
+                    //             $allowedPolicyTime = ($accruals['rate'] * 60);
+                    //         }
+                    //         //
+                    //         $testArray[$i]['allowedTime'] = $allowedPolicyTime;
+                    //         $totalAllowedTime = $totalAllowedTime + $allowedPolicyTime;
+                    //     }
+                    // }
+                    // //    
+                }
+               
+            }
+            _e($r,true);
+            _e($accruals,true);
+            _e($timeOffCycle,true,true);
+            
         }
         // Set negative time
         if ($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off') {
@@ -846,6 +925,8 @@ if (!function_exists('getEmployeeAccrual')) {
             $actualTime = $accrualRateInMinutes;
             $allowedTime = $carryOverTimeInMinutes + $accrualRateInMinutes;
         }
+        // _e($carryOverTimeInMinutes,true);
+        // _e($accrualRateInMinutes,true);
         // Set the frequency
         //
         if ($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
@@ -867,7 +948,7 @@ if (!function_exists('getEmployeeAccrual')) {
             //
             $workedSlots = $workedSlots == 0 ? 1 : $workedSlots;
             $newAllowedTime = ($allowedTime / $slots) * $workedSlots;
-            //
+            //https://www.youtube.com/watch?v=sZt108pefpI
             $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
         }
         //
@@ -901,6 +982,7 @@ if (!function_exists('getEmployeeAccrual')) {
             $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
             $r['ConsumedTime'] = $tmp;
         }
+        
         // for adding time off balance
         if (
             $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
@@ -932,8 +1014,6 @@ if (!function_exists('getEmployeeAccrual')) {
                     $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
                     $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
                     //
-
-                    $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
                 }
             }
         }
