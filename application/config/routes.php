@@ -2022,3 +2022,8 @@ $route["settings/shifts/breaks/(:num)"]["delete"] = "Settings/processDeleteShift
 $route["settings/shifts/templates"]["get"] = "Settings/manageShiftTemplates";
 $route["settings/shifts/templates"]["post"] = "Settings/processShiftTemplate";
 $route["settings/shifts/template/(:num)"]["delete"] = "Settings/processDeleteShiftTemplate/$1";
+
+// job sites
+$route["settings/job_sites"]["get"] = "Settings/manageJobSites";
+$route["settings/job_sites"]["post"] = "Settings/processJobSites";
+$route["settings/job_sites/(:num)"]["delete"] = "Settings/processDeleteJobSite/$1";

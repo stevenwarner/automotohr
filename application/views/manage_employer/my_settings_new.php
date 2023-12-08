@@ -261,6 +261,11 @@
                                                 </a>
                                             </li>
                                             <li>
+                                                <a href="<?= base_url("settings/job_sites"); ?>">
+                                                    Manage Job Sites
+                                                </a>
+                                            </li>
+                                            <li>
                                                 <a href="<?= base_url("settings/shifts/manage"); ?>">
                                                     Manage Shifts
                                                 </a>

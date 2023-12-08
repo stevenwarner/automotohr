@@ -4000,6 +4000,56 @@ class Settings extends Public_Controller
     }
 
     /**
+     * Manage job sites
+     */
+    public function manageJobSites()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Job Sites | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["records"] = $this->job_sites_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/job_sites/main"
+        ], "public/v1/job_sites/", "main", true);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/job_sites/main');
+        $this->load->view('main/footer');
+    }
+
+    /**
      * get the page by slug
      *
      * @method pageOvertimeRules
@@ -4118,7 +4168,7 @@ class Settings extends Public_Controller
             );
     }
 
-     /**
+    /**
      * process  shift templates
      *
      * @return array
@@ -4160,6 +4210,60 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_template_model", "shift_template_model");
         // call the function
         $this->shift_template_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+    /**
+     * process job site
+     *
+     * @return array
+     */
+    public function processJobSites()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("site_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("street_1", "Street 1", "trim|xss_clean|required");
+        $this->form_validation->set_rules("city", "City", "trim|xss_clean|required");
+        $this->form_validation->set_rules("state", "State", "trim|xss_clean|required");
+        $this->form_validation->set_rules("zip_code", "Zip code", "trim|xss_clean|required|numeric|exact_length[5]");
+        $this->form_validation->set_rules("site_radius", "Radius", "trim|xss_clean|required");
+        $this->form_validation->set_rules("lat", "Latitude", "trim|xss_clean|required");
+        $this->form_validation->set_rules("lng", "Longitude", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // call the function
+        $this->job_sites_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete job site
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteJobSite(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // call the function
+        $this->job_sites_model
             ->delete(
                 $session["company_detail"]["sid"],
                 $breakId
@@ -4286,7 +4390,7 @@ class Settings extends Public_Controller
                     400,
                     [
                         "errors" => [
-                            "System failed to verify the break."
+                            "System failed to verify the shift template."
                         ]
                     ]
                 );
@@ -4295,6 +4399,60 @@ class Settings extends Public_Controller
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_template", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set job site page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageJobSite(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set default array
+        $data = [];
+        //
+        $data["states"] = $this->db
+            ->select("sid, state_name, state_code")
+            ->where("active", 1)
+            ->where("country_sid", 227)
+            ->get("states")
+            ->result_array();
+        // check if page id i set
+        if ($pageId) {
+            // load job site model
+            $this->load->model("v1/Job_sites_model", "job_sites_model");
+            //
+            $data["record"] = $this->job_sites_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            $data["return"] = [
+                "lat" => (float)$data["record"]["lat"],
+                "lng" => (float)$data["record"]["lng"],
+            ];
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the job site."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/job_sites/partials/" . (!$pageId ? "add" : "edit") . "_job_site", $data, true),
             "data" => $data["return"] ?? []
         ]);
     }

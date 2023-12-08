@@ -369,7 +369,17 @@
                 </a>
             </li>
         <?php  } ?>
-        
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('settings/job_sites')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("settings/job_sites"); ?>">
+                    <figure><i class="fa fa-map"></i></figure>Company Job Sites
+                </a>
+            </li>
+        <?php  } ?>
+
         <?php if (isPayrollOrPlus(true)) { ?>
             <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('settings/shifts/manage')) !== false) {
