@@ -450,4 +450,12 @@ class Testing extends CI_Controller
     }
 
 
+
+    public function page(){
+
+        $this->load->view('v1/fillable_documents/notice_of_separation');
+
+
+    }
+
 }

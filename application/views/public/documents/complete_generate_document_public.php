@@ -5,13 +5,39 @@
     <div class="col-sm-12">
         <div>
             <div id="jstopdf2">
-                <?= html_entity_decode($document['document_description']); ?>
+
+                <?php
+                $consentOnly = false;
+                if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
+                    <?php
+                    $document_filename = !empty($document['fillable_documents_slug']) ? $document['fillable_documents_slug'] : '';
+                    $document_file = pathinfo($document_filename);
+                    $document_extension = strtolower($document['document_extension']);
+                    //
+
+                    $doc = str_replace('-', '_', $document['fillable_documents_slug']);
+                    ?>
+
+                    <?php $this->load->view('v1/fillable_documents/' . $doc, $document); ?>
+
+                    <?php
+                    if ($document['signature_required'] == 1) {
+                        $consentOnly = true;
+                    } else {
+                        $consentOnly = false;
+                    } ?>
+
+                <?php } else { ?>
+
+
+                    <?= html_entity_decode($document['document_description']); ?>
+                <?php } ?>
             </div>
             <div id="jstopdf" style="display: none;">
                 <?= html_entity_decode($document['print_content']); ?>
             </div>
 
-            <?php if ($document['save_offer_letter_type'] == 'save_only') { ?>
+            <?php if ($document['save_offer_letter_type'] == 'save_only' || $consentOnly == false) { ?>
                 <form id="user_consent_form" enctype="multipart/form-data" method="post" action="">
                     <input type="hidden" name="perform_action" value="sign_document" />
                     <input type="hidden" name="page_content" value="">
@@ -33,7 +59,7 @@
                     <?php } ?>
                     <hr />
                 </form>
-            <?php } else if ($document['save_offer_letter_type'] == 'consent_only') { ?>
+            <?php } else if ($document['save_offer_letter_type'] == 'consent_only' || $consentOnly ==true) { ?>
                 <form id="user_consent_form" enctype="multipart/form-data" method="post" action="<?= current_url(); ?>">
                     <input type="hidden" name="perform_action" value="sign_document" />
                     <input type="hidden" name="page_content" value="">
@@ -144,6 +170,11 @@
                     input_values_obj[this.name] = this.value;
                 }).get();
 
+                $('#jstopdf2 textarea.long_textbox').map(function() {
+                    input_values_obj[this.name] = this.value;
+                }).get();
+
+
                 $('#jstopdf2 input#signature_person_name').map(function() {
                     input_values_obj[this.name] = this.value;
                 }).get();
@@ -236,6 +267,11 @@
             }).get();
 
             $('#jstopdf2 input.long_textbox').map(function() {
+                input_values_obj[this.name] = this.value;
+            }).get();
+
+
+            $('#jstopdf2 textarea.long_textbox').map(function() {
                 input_values_obj[this.name] = this.value;
             }).get();
 

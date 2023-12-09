@@ -1540,9 +1540,17 @@ if ($user_type == 'applicant') {
                                                                                     <?php } else { ?>
                                                                                         <!-- <button type="button" onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>,'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-success btn-sm btn-block">View Doc</button> -->
 
-                                                                                        <button class="btn btn-success btn-sm btn-block" type="button" onclick="preview_latest_generic_function(this);" date-letter-type="generated" data-doc-sid="<?php echo $document['sid']; ?>" data-on-action="company" data-from="company_document">
-                                                                                            View Doc
-                                                                                        </button>
+                                                                                        <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+                                                                                        ?>
+                                                                                            <button type="button" class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>">View Doc
+                                                                                            </button>
+                                                                                        <?php } else { ?>
+
+                                                                                            <button class="btn btn-success btn-sm btn-block" type="button" onclick="preview_latest_generic_function(this);" date-letter-type="generated" data-doc-sid="<?php echo $document['sid']; ?>" data-on-action="company" data-from="company_document">
+                                                                                                View Doc
+                                                                                            </button>
+
+                                                                                        <?php } ?>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                             </tr>
@@ -3769,6 +3777,44 @@ if ($user_type == 'applicant') {
         }
 
     });
+
+
+
+
+    function fLaunchModalFillable(source) {
+        var url_segment_original = $(source).attr('data-print-url');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var document_sid = $(source).attr('data-document-sid');
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+        if (document_preview_url != '') {
+            iframe_url = '<?php echo base_url('v1/fillable_documents/previeFillable/'); ?>' + document_preview_url;
+            modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        //
+        var download_url = '';
+        var print_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/original/' + 'print';
+        var download_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/original/' + 'download';
+
+        footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
+        footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
+
+        $('#document_modal_body').html(modal_content);
+        $('#document_modal_footer').html(footer_content);
+        $('#document_modal_footer').append(footer_print_btn);
+        $('#document_modal_title').html(document_title);
+        $('#document_modal').modal("toggle");
+
+    }
 </script>
 
 <!--  -->

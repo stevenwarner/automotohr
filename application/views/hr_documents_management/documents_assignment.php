@@ -562,10 +562,20 @@ $assignIdObj = $confidential_sids;
                                                                                                         $document_file = pathinfo($document_filename);
                                                                                                         $name = explode(".", $document_filename);
                                                                                                         $url_segment_original = $name[0]; ?>
+
                                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+
                                                                                                     <?php } else { ?>
-                                                                                                        <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
-                                                                                                    <?php } ?>
+                                                                                                        <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+                                                                                                        ?>
+                                                                                                            <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>">View Doc
+                                                                                                            </button>
+                                                                                                        <?php } else { ?>
+
+                                                                                                            <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc gg</button>
+                                                                                                    <?php }
+                                                                                                    }
+                                                                                                    ?>
                                                                                                 </td>
                                                                                                 <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                                     <td class="col-lg-1">
@@ -592,19 +602,45 @@ $assignIdObj = $confidential_sids;
                                                                                                                 Print
                                                                                                             </a>
                                                                                                         <?php } else { ?>
+
                                                                                                             <a class="btn btn-success btn-sm btn-block" href="javascript:void(0);" onclick="fLaunchModal(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-file-name="<?php echo $document_filename; ?>" data-document-title="<?php echo $document_filename; ?>" data-preview-ext="<?php echo $document_extension ?>">Print</a>
+
                                                                                                         <?php } ?>
                                                                                                     </td>
                                                                                                     <td class="col-lg-1">
-                                                                                                        <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['uploaded_document_s3_name']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                        <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+
+                                                                                                            <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download'); ?>" class="btn btn-success btn-sm btn-block">
+                                                                                                                Download</a>
+                                                                                                        <?php } else { ?>
+
+
+                                                                                                            <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['uploaded_document_s3_name']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                        <?php } ?>
                                                                                                     </td>
                                                                                                 <?php } else { ?>
-                                                                                                    <td class="col-lg-1">
-                                                                                                        <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                                    </td>
+
 
                                                                                                     <td class="col-lg-1">
-                                                                                                        <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid'] . '/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                        <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+
+                                                                                                            <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print'); ?>" class="btn btn-success btn-sm btn-block">Print</a>
+
+                                                                                                        <?php } else { ?>
+                                                                                                            <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+
+                                                                                                        <?php } ?>
+                                                                                                    </td>
+
+
+                                                                                                    <td class="col-lg-1">
+                                                                                                        <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+
+                                                                                                            <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download'); ?>" class="btn btn-success btn-sm btn-block">Download</a>
+
+                                                                                                        <?php } else { ?>
+                                                                                                            <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid'] . '/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                        <?php } ?>
                                                                                                     </td>
 
                                                                                                 <?php } ?>
@@ -845,7 +881,13 @@ $assignIdObj = $confidential_sids;
                                                                                                 $name = explode(".", $document_filename);
                                                                                                 $url_segment_original = $name[0];
                                                                                                 ?>
-                                                                                                <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+                                                                                                <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+                                                                                                ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>">View Doc
+                                                                                                    </button>
+                                                                                                <?php } else { ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+                                                                                                <?php } ?>
                                                                                             <?php } else { ?>
                                                                                                 <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
                                                                                             <?php } ?>
@@ -877,12 +919,25 @@ $assignIdObj = $confidential_sids;
                                                                                                     <a target="_blank" href="<?php echo base_url('hr_documents_management/print_assign_document/' . $user_type . '/' . $user_sid . '/' . $document_sid . '/original'); ?>" class="btn btn-success btn-sm btn-block">
                                                                                                         Print
                                                                                                     </a>
+                                                                                                <?php } else if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') {
+
+                                                                                                ?>
+
+                                                                                                    <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print'); ?>" class="btn btn-success btn-sm btn-block">
+                                                                                                        Print
+                                                                                                    </a>
                                                                                                 <?php } else { ?>
                                                                                                     <a class="btn btn-success btn-sm btn-block" href="javascript:void(0);" onclick="fLaunchModal(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>" data-file-name="<?php echo $document_filename; ?>" data-document-title="<?php echo $document_filename; ?>" data-preview-ext="<?php echo $document_extension ?>">Print</a>
                                                                                                 <?php } ?>
                                                                                             </td>
                                                                                             <td class="col-lg-1">
-                                                                                                <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['uploaded_document_s3_name']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+                                                                                                    <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download'); ?>" class="btn btn-success btn-sm btn-block">
+                                                                                                        Download</a>
+                                                                                                <?php } else { ?>
+                                                                                                    <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['uploaded_document_s3_name']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+
+                                                                                                <?php } ?>
                                                                                             </td>
                                                                                         <?php } else { ?>
                                                                                             <td class="col-lg-1">
@@ -1539,6 +1594,7 @@ $assignIdObj = $confidential_sids;
 
                                                                                                                     <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                                 <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
+
                                                                                                                     <button class="btn blue-button btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Completed and Reassign</button>
                                                                                                                 <?php } else { ?>
                                                                                                                     <!-- revoke doc re-assign here -->
@@ -1563,9 +1619,17 @@ $assignIdObj = $confidential_sids;
                                                                                                 $name = explode(".", $document_filename);
                                                                                                 $url_segment_original = $name[0];
                                                                                                 ?>
+
                                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
+
                                                                                             <?php } else { ?>
-                                                                                                <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                                <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+                                                                                                ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>">View Doc
+                                                                                                    </button>
+                                                                                                <?php } else { ?>
+                                                                                                    <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                                <?php } ?>
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                         <?php if ($document['document_type'] == 'hybrid_document') { ?>
@@ -1602,12 +1666,28 @@ $assignIdObj = $confidential_sids;
                                                                                                 <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['uploaded_document_s3_name']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                                             </td>
                                                                                         <?php } else { ?>
+
+
                                                                                             <td class="col-lg-1">
-                                                                                                <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                                                <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+
+                                                                                                    <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print'); ?>" class="btn btn-success btn-sm btn-block">
+                                                                                                        Print
+                                                                                                    </a> <?php } else { ?>
+                                                                                                    <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid']); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                                                <?php } ?>
                                                                                             </td>
 
                                                                                             <td class="col-lg-1">
-                                                                                                <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid'] . '/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+
+                                                                                                    <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download'); ?>" class="btn btn-success btn-sm btn-block">
+                                                                                                        Download
+                                                                                                    </a>
+
+                                                                                                <?php } else { ?>
+                                                                                                    <a href="<?= base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document['sid'] . '/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                                <?php } ?>
                                                                                             </td>
 
                                                                                         <?php } ?>
@@ -1686,7 +1766,7 @@ $assignIdObj = $confidential_sids;
                                                                     <th scope="column" class="col-lg-2 text-center">Acknowledged</th>
                                                                     <th scope="column" class="col-lg-2 text-center">Downloaded</th>
                                                                     <th scope="column" class="col-lg-1 text-center">Uploaded</th>
-                                                                    <th scope="column" class="col-lg-1 text-center">Actions</th>
+                                                                    <th scope="column" class="col-lg-1 text-center">Actions ff</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -2506,36 +2586,38 @@ if ($user_type == 'employee') {
         </div>
     </div>
 </div>
-<?php //if ($i9_form['version'] && $i9_form['version'] != '2023') : ?>
-    <!-- I9 Employer Section Modal -->
-    <div id="update_i9_employer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <?php
-        $pre_form = $i9_form;
-        $first_name = $employer_first_name;
-        $last_name = $employer_last_name;
-        $email = $employer_email;
-        $states = db_get_active_states(227);
-        $signed_flag = isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1 ? true : false;
-        ?>
+<?php //if ($i9_form['version'] && $i9_form['version'] != '2023') : 
+?>
+<!-- I9 Employer Section Modal -->
+<div id="update_i9_employer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <?php
+    $pre_form = $i9_form;
+    $first_name = $employer_first_name;
+    $last_name = $employer_last_name;
+    $email = $employer_email;
+    $states = db_get_active_states(227);
+    $signed_flag = isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1 ? true : false;
+    ?>
 
-        <?php if (sizeof($pre_form)) { ?>
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header modal-header-bg">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="uploaded_document_modal_title">Form I9 Employer Section</h4>
-                    </div>
-                    <div id="uploaded_document_modal_body" class="modal-body form-wrp">
-                        <?php $this->load->view('form_i9/form_i9_employer_section'); ?>
-                    </div>
-                    <div id="uploaded_document_modal_footer" class="modal-footer">
+    <?php if (sizeof($pre_form)) { ?>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="uploaded_document_modal_title">Form I9 Employer Section</h4>
+                </div>
+                <div id="uploaded_document_modal_body" class="modal-body form-wrp">
+                    <?php $this->load->view('form_i9/form_i9_employer_section'); ?>
+                </div>
+                <div id="uploaded_document_modal_footer" class="modal-footer">
 
-                    </div>
                 </div>
             </div>
-        <?php } ?>
-    </div>
-<?php //endif; ?>
+        </div>
+    <?php } ?>
+</div>
+<?php //endif; 
+?>
 
 <!-- Preview Offer Letter Modal Start -->
 <div id="show_uploaded_offer_letter_modal" class="modal fade" role="dialog">
@@ -5309,6 +5391,27 @@ if (!empty($assigned_documents_history)) {
                             Preview submitted
                             </button>';
             }
+        } else if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+            $row .= '<button
+                            class="btn btn-success btn-sm btn-block"
+                            onclick="fLaunchModalFillable(this);"
+                            data-preview-url="' . ($document['fillable_documents_slug']) . '"
+                            data-download-url=""
+                            data-file-name="' . ($document['fillable_documents_slug']) . '"
+                            data-document-title="' . ($document['fillable_documents_slug']) . '">
+                            Preview Assigned
+                        </button>';
+            if ($document_all_permission) {
+                $row .= '<button
+                                class="btn btn-success btn-sm btn-block"
+                                onclick="fLaunchModalFillable(this);"
+                                data-preview-url="' . ($document['fillable_documents_slug']) . '"
+                                data-download-url=""
+                                data-file-name="' . ($document['fillable_documents_slug']) . '"
+                                data-document-title="' . $document['fillable_documents_slug'] . '" ' . (!$document['uploaded'] ? 'disabled' : '') . '>
+                                Preview Submitted
+                            </button>';
+            }
         } else if ($document['document_type'] == 'uploaded') {
             $row .= '<button
                             class="btn btn-success btn-sm btn-block"
@@ -5365,6 +5468,7 @@ if (!empty($assigned_documents_history)) {
         assignedHistory = <?= json_encode($assigned_documents_history); ?>,
         adt = <?= json_encode($adt) ?>,
         adn = <?= json_encode($adn) ?>;
+
 
     if (adn == '') adn = ` <tr><td colspan="7" class="col-lg-12 text-center"><b>No History Available</b></td></tr>`;
     if (adt == '') adt = ` <tr><td colspan="7" class="col-lg-12 text-center"><b>No History Available</b></td></tr>`;
@@ -5596,6 +5700,82 @@ $this->load->view('hr_documents_management/scripts/index', [
             cancel: 'NO'
         });
     });
+
+
+
+    //
+    function fLaunchModalFillable(source) {
+        var url_segment_original = $(source).attr('data-print-url');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var document_sid = $(source).attr('data-document-sid');
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+        if (document_preview_url != '') {
+            iframe_url = '<?php echo base_url('v1/fillable_documents/previeFillable/'); ?>' + document_preview_url;
+            modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        //
+        var download_url = '';
+        var print_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/original/' + 'print';
+        var download_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/original/' + 'download';
+
+        footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
+        footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
+
+        $('#document_modal_body').html(modal_content);
+        $('#document_modal_footer').html(footer_content);
+        $('#document_modal_footer').append(footer_print_btn);
+        $('#document_modal_title').html(document_title);
+        $('#document_modal').modal("toggle");
+
+    }
+
+
+
+    function preview_latest_generic_fillable_function(source) {
+
+
+        var url_segment_original = $(source).attr('data-print-url');
+        var document_preview_url = $(source).attr('data-preview-url');
+        var document_download_url = $(source).attr('data-download-url');
+        var document_title = $(source).attr('data-document-title');
+        var document_file_name = $(source).attr('data-file-name');
+        var document_sid = $(source).attr('data-document-sid');
+        var modal_content = '';
+        var footer_content = '';
+        var iframe_url = '';
+
+        if (document_preview_url != '') {
+            iframe_url = '<?php echo base_url('v1/fillable_documents/previeFillableSubmited/'); ?>' + document_preview_url + '/' + document_sid;
+            modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+        } else {
+            modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
+            footer_content = '';
+        }
+
+        //
+        var download_url = '';
+        var print_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/submited/' + 'print';
+        var download_url = '<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/'); ?>' + document_preview_url + '/' + document_sid + '/submited/' + 'download';
+
+        footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
+        footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
+
+        $('#document_modal_body').html(modal_content);
+        $('#document_modal_footer').html(footer_content);
+        $('#document_modal_footer').append(footer_print_btn);
+        $('#document_modal_title').html(document_title);
+        $('#document_modal').modal("toggle");
+    }
 </script>
 
 

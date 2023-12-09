@@ -113,6 +113,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 ]); ?>
 <script>
 	//
+
+	let do_fillable = false;
+
 	function func_show_instructions_modal() {
 		var myRequest;
 		var myData = {
@@ -256,7 +259,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		}
 
 		// Modify and Assign
-		function StartModifyAndAssignProcess(
+		async function StartModifyAndAssignProcess(
 			e
 		) {
 			//
@@ -276,22 +279,54 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' ? true : false;
 			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' ? true : false;
+
+			do_fillable = false;
+
+			//
+			if (d.fillable_documents_slug) {
+				do_descpt = false;
+			}
+
 			//
 			rows += '<h4 id="gen_document_label">Are you sure you want to assign this document: [<b>' + (d.document_title) + '</b>]</h4>';
 			rows += '<b> Please review this document and make any necessary modifications.</b>';
 			rows += '<hr />';
 			//
 			// Check if the document type
-			console.log(getUploadContent());
+			//	console.log(getUploadContent());
+
+			if (d.fillable_documents_slug) {
+				do_fillable = true;
+				let rowData = await getFillableDocumentContent(d.fillable_documents_slug);
+				rows += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>Description</label>'
+				rows += rowData.key;
+			}
+
+
 			if (do_upload) rows += getUploadContent();
+
 			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
+
+
 			<?php if (ASSIGNEDOCIMPL) { ?>
-				rows += getConsentTypes(do_descpt);
+
+				let signerFlag = false;
+				if (do_descpt || do_fillable) {
+					signerFlag = true;
+
+				}
+
+				rows += getConsentTypes(signerFlag);
 			<?php } ?>
 			if (do_descpt) rows += getSigners();
+
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+				rows += getSigners();
+			}
+
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'], true); ?>`;
 			//
 			rows += getEmailContent();
 			rows += getRequiredRow();
@@ -321,13 +356,22 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			// }
 			//
+
+			let signerDivID = '#js-modify-assign-document-signers';
+
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+				signerDivID = '#js-modify-assign-document-signers';
+			}
+			do_descpt ? signerDivID = '#js-modify-assign-document-signers' : '';
+
+
 			Modal(
 				'Modify & Assign This Document',
 				rows,
 				'<button class="btn btn-success js-modify-assign-submit-btn">Assign This Document</button>',
 				'modify-assign-document-modal',
 				do_descpt ? ['js-modify-assign-document-description'] : [],
-				do_descpt ? ['#js-modify-assign-document-signers'] : [],
+				[signerDivID],
 				function() {
 					//
 					do_descpt ? CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description) : '';
@@ -341,6 +385,13 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					} else if (d.managers_list != null && d.managers_list != '') {
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
 					}
+
+					//
+					if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+						if (d.signers != null && d.signers != '') {} else if (d.managers_list != null && d.managers_list != '') {}
+					}
+
+
 					//
 					if (d.visible_to_payroll) {
 						$('#jsVisibleToPayroll').prop('checked', true);
@@ -396,9 +447,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
 					//
 
-					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
+					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
 					//
-					if(d.confidential_employees){
+					if (d.confidential_employees) {
 						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 
@@ -409,27 +462,27 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowAND',
-			            containerIdx: '.jsApproverFlowContainerAND',
-			            addEmployeeIdx: '.jsAddDocumentApproversAND',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
-			            approverNoteIdx: '.jsApproversNoteAND',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowAND',
+						containerIdx: '.jsApproverFlowContainerAND',
+						addEmployeeIdx: '.jsAddDocumentApproversAND',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
+						approverNoteIdx: '.jsApproversNoteAND',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
-			        //
+					//
+					$("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
+					//
 					$('.jsModifyModalLoader').fadeOut(300);
 					//
 					$('#modify_assign_document').mFileUploader({
@@ -453,8 +506,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			var obj = {};
 			//
+
+
 			obj.documentTitle = selectedTemplate.document_title;
 			obj.documentType = selectedTemplate.document_type;
+			obj.fillable_documents_slug = selectedTemplate.fillable_documents_slug;
+
 			obj.managerList = $('#js-modify-assign-document-signers').val();
 			obj.isSignature = $('#js-modify-assign-document-signature').val();
 			obj.isDownload = $('#js-modify-assign-document-download').val();
@@ -466,7 +523,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
-				obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				if (do_fillable == false) {
+					obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				}
+
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document') {
 				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
@@ -481,15 +541,15 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.confidentialSelectedEmployees = '';
 			//
 			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
-          	//
-          	// approver flow
+			//
+			// approver flow
 			var approverInfo = $('#jsModifyAndAssignNewDocument').documentApprovalFlow('get');
 			$('#jsModifyAndAssignNewDocument').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -526,7 +586,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		}
 
 		// Modify Assigned Document
-		function StartModifyAssignedDocumentProcess(
+		async function StartModifyAssignedDocumentProcess(
 			e
 		) {
 			//
@@ -541,7 +601,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_upload,
 				do_descpt;
 			//
-			if(!Object.keys(d).length){
+			if (!Object.keys(d).length) {
 				d = getAssignedDocument(
 					$(this).data('id'),
 					"noActionDocuments"
@@ -551,7 +611,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					return alertify.alert(
 						"Error!",
 						"You don't have permission to this document.",
-						function(){}
+						function() {}
 					)
 				}
 			}
@@ -559,29 +619,62 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 			selectedTemplate = d;
 
+
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'uploaded' || d.offer_letter_type == 'hybrid_document' ? true : false;
 			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'generated' || d.offer_letter_type == 'hybrid_document' ? true : false;
+			//do_fillable = false;
+
+			//
+			if (d.fillable_documents_slug) {
+				do_descpt = false;
+			}
+
 			//
 			rows += '<h4 id="gen_document_label">Are you sure you want to assign this document: [<b>' + (d.document_title) + '</b>]</h4>';
 			rows += '<b> Please review this document and make any necessary modifications.</b>';
 			rows += '<hr />';
 			//
 			// Check if the document type
+			//
+			if (d.fillable_documents_slug) {
+				do_fillable = true;
+				let rowData = await getFillableDocumentContent(d.fillable_documents_slug);
+				rows += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label>Description</label>'
+				rows += rowData.key;
+			}
+
+
 			if (do_upload) rows += getUploadContent();
+
+
 			if (do_descpt) rows += getGeneratedContent('js-modify-assigned-document-description');
+
+
+
 			<?php if (ASSIGNEDOCIMPL) { ?>
-				rows += getConsentTypes(do_descpt);
+				let signerFlag = false;
+				if (do_descpt || do_fillable) {
+					signerFlag = true;
+
+				}
+
+				rows += getConsentTypes(signerFlag);
 			<?php } ?>
 			if (do_descpt) rows += getSigners('js-modify-assigned-document-signers');
 			//
+			//
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+				rows += getSigners('js-modify-assigned-document-signers');
+			}
+
 			rows += getVisibilty(do_descpt);
 			//
 			if (d.approver_document == 1) {
 				rows += getApproversManager();
 			}
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'], true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -591,7 +684,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
 			rows += getSettings();
+
+
 			if (do_descpt) rows += getTags();
+
+
 			//
 			// if(do_descpt){
 			if ($('#jsRoles').data('select2')) {
@@ -620,6 +717,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				select2s.push('#js-modify-assigned-document-signers');
 			}
 			//
+
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+				select2s.push('#js-modify-assigned-document-signers');
+			}
+
+			//
 			if (d.approver_document == 1) {
 				select2s.push('#js-modify-assign-document-approvers');
 			}
@@ -639,6 +742,13 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.managersList != null && d.managersList != '' ? d.managersList.split(',') : null) : '';
 
+					//
+
+					if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+						$('#js-modify-assigned-document-signers').select2('val', d.managersList != null && d.managersList != '' ? d.managersList.split(',') : null)
+					}
+
+
 					$('.js-modify-assign-document-required[value="' + (selectedTemplate.is_required) + '"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="' + (selectedTemplate.is_signature_required) + '"]').prop('checked', true);
 					//
@@ -648,27 +758,27 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					//
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowMAD',
-			            containerIdx: '.jsApproverFlowContainerMAD',
-			            addEmployeeIdx: '.jsAddDocumentApproversMAD',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
-			            approverNoteIdx: '.jsApproversNoteMAD',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: d.sid
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowMAD',
+						containerIdx: '.jsApproverFlowContainerMAD',
+						addEmployeeIdx: '.jsAddDocumentApproversMAD',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
+						approverNoteIdx: '.jsApproversNoteMAD',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: d.sid
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
-			        //
+					//
+					$("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
+					//
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
 					//
 					if (do_descpt) {
@@ -697,9 +807,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					});
 					//
 					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
-					$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
+					$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
 					//
-					if(d.confidential_employees){
+					if (d.confidential_employees) {
 						$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 					//
@@ -726,6 +838,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			e
 		) {
 			//
+
 			e.preventDefault();
 			//
 			var obj = {};
@@ -734,6 +847,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			obj.reset = $('.js-modify-assigned-document-reset:checked').val();
 			//
+
 			obj.documentTitle = selectedTemplate.document_title;
 			obj.documentType = selectedTemplate.document_type == 'offer_letter' ? selectedTemplate.offer_letter_type : selectedTemplate.document_type;
 			obj.managerList = $('#js-modify-assigned-document-signers').val();
@@ -744,7 +858,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			// obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
 			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'generated')
-				obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				if (do_fillable == false) {
+					obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				}
+
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'uploaded') {
 				obj.file = file.name === undefined ? selectedTemplate.document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.document_original_name;
@@ -766,14 +883,14 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
 			//
-          	// approver flow
+			// approver flow
 			var approverInfo = $('#jsModifyAssignedDocument').documentApprovalFlow('get');
 			$('#jsModifyAssignedDocument').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -839,7 +956,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'], true); ?>`;
 
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']], TRUE); ?>`;
 
@@ -908,26 +1025,26 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					//
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
-			            containerIdx: '.jsApproverFlowContainerAOL',
-			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-			            approverNoteIdx: '.jsApproversNoteAOL',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowAOL',
+						containerIdx: '.jsApproverFlowContainerAOL',
+						addEmployeeIdx: '.jsAddDocumentApproversAOL',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+						approverNoteIdx: '.jsApproversNoteAOL',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
+					//
+					$("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
 					//
 					if (d.is_available_for_na) {
 						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
@@ -965,7 +1082,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('.jsSelectedEmployee').select2();
 					//
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
-					
+
 				}
 			);
 		}
@@ -1010,10 +1127,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			var approverInfo = $('#jsModifyAndAssignOfferLetter').documentApprovalFlow('get');
 			$('#jsModifyAndAssignOfferLetter').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -1642,15 +1759,15 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$("#js-popup #confidentialSelectedEmployees").select2();
 
 					$("#jsAddSpecificOfferLetter").documentApprovalFlow({
-			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
-			            containerIdx: '.jsApproverFlowContainerAOL',
-			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-			            approverNoteIdx: '.jsApproversNoteAOL',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        });
+						appCheckboxIdx: '.jsHasApprovalFlowAOL',
+						containerIdx: '.jsApproverFlowContainerAOL',
+						addEmployeeIdx: '.jsAddDocumentApproversAOL',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+						approverNoteIdx: '.jsApproversNoteAOL',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					});
 				}
 			);
 			//
@@ -1726,12 +1843,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				approvers_list: ''
 			};
 			var approverInfo = $("#jsAddSpecificOfferLetter").documentApprovalFlow("get");
-	        //
-	        if (approverInfo.isChecked === true) {
-	        	o.has_approval_flow = 'on';
+			//
+			if (approverInfo.isChecked === true) {
+				o.has_approval_flow = 'on';
 				o.approvers_note = approverInfo.approverNote;
 				o.approvers_list = approverInfo.approversList.toString();
-	        }
+			}
 			//
 			if (o.type == 'template') {
 				o.type = selectedTemplate.letter_type;
@@ -2065,9 +2182,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		//
 		function UseTemplate(e) {
 			var l = getOfferLetter($(this).val());
-			if (Object.keys(l).length !== 0) 
-			//
-			selectedTemplate = l;
+			if (Object.keys(l).length !== 0)
+				//
+				selectedTemplate = l;
 			$('#remove_image').hide(0);
 			$('#remove_image').parent().find('.cs-error').css('padding-left', '5px');
 			//
@@ -2138,31 +2255,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			//
 			var approverPrefill = {};
-            var approverSection = {
-                    appCheckboxIdx: '.jsHasApprovalFlowAOL',
-		            containerIdx: '.jsApproverFlowContainerAOL',
-		            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-		            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-		            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-		            approverNoteIdx: '.jsApproversNoteAOL',
-                    employeesList: <?= json_encode($employeesList); ?>,
-                    documentId: 0
-                };
+			var approverSection = {
+				appCheckboxIdx: '.jsHasApprovalFlowAOL',
+				containerIdx: '.jsApproverFlowContainerAOL',
+				addEmployeeIdx: '.jsAddDocumentApproversAOL',
+				intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+				extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+				approverNoteIdx: '.jsApproversNoteAOL',
+				employeesList: <?= json_encode($employeesList); ?>,
+				documentId: 0
+			};
 
 
 			// Approval flow 
 			if (l.has_approval_flow == 1) {
 				approverPrefill.isChecked = true;
-                approverPrefill.approverNote = l.document_approval_note;
-                approverPrefill.approversList = l.document_approval_employees.split(','); 
-                //
-                approverSection.prefill = approverPrefill;
+				approverPrefill.approverNote = l.document_approval_note;
+				approverPrefill.approversList = l.document_approval_employees.split(',');
+				//
+				approverSection.prefill = approverPrefill;
 			} else {
 				approverPrefill.isChecked = false;
-                approverPrefill.approverNote = "";
-                approverPrefill.approversList = ''; 
-                //
-                approverSection.prefill = approverPrefill;
+				approverPrefill.approverNote = "";
+				approverPrefill.approversList = '';
+				//
+				approverSection.prefill = approverPrefill;
 			}
 			//
 			// $("#jsOfferLetterModal").documentApprovalFlow(approverSection);
@@ -2671,6 +2788,33 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			return html;
 		}
 	});
+
+
+
+
+	//
+
+	function getFillableDocumentContent(fillableSlug) {
+		var rows = '';
+
+		return new Promise(function(resolve) {
+			// push the file to server
+			$.ajax({
+					url: '<?php echo base_url('v1/fillable_documents/previeFillableAjax/'); ?>' + fillableSlug,
+					method: "GET",
+				})
+				.success(function(response) {
+					resolve({
+						'key': response
+					});
+					//resolve(response);
+				})
+				.fail(function() {
+					resolve({});
+				});
+		});
+
+	}
 </script>
 
 <style>

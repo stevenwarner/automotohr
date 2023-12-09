@@ -1993,3 +1993,7 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 // Payroll Agreement
 $route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
 $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';
+
+//
+$route['manage_admin/setfillabledoc'] = 'v1/fillable_documents/index';
+

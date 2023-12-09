@@ -133,11 +133,11 @@ if (!function_exists('get_form_view')) {
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
             //
             if (!empty($form_values["pre_form"]["section1_preparer_or_translator"]) && empty($form_values["pre_form"]["section1_preparer_json"])) {
-                $form_values["pre_form"]["section1_preparer_json"] = copyPrepareI9Json( $form_values["pre_form"]);
+                $form_values["pre_form"]["section1_preparer_json"] = copyPrepareI9Json($form_values["pre_form"]);
             }
             //
             if (!empty($form_values["pre_form"]["section3_emp_sign"]) && empty($form_values["pre_form"]["section3_authorized_json"])) {
-                $form_values["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json( $form_values["pre_form"]);
+                $form_values["pre_form"]["section3_authorized_json"] = copyAuthorizedI9Json($form_values["pre_form"]);
             }
             //
             if (!empty($form_values["pre_form"]["version"]) && $form_values["pre_form"]["version"] == "2023") {
@@ -1483,8 +1483,8 @@ if (!function_exists('get_print_document_url')) {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid . '/download');
             } else if ($document_type == 'hybrid_document') {
-                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/'.$document_sid);
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/original/print/both/' . $document_sid);
             }
             // End of Original Documents
         } else if ($request_type == 'assigned') {
@@ -1536,8 +1536,8 @@ if (!function_exists('get_print_document_url')) {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid . '/download');
             } else if ($document_type == 'hybrid_document') {
-                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/'.$document_sid);
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/assigned/print/both/' . $document_sid);
             }
         } else if ($request_type == 'submitted') {
             if ($document_type == 'MS') {
@@ -1577,8 +1577,8 @@ if (!function_exists('get_print_document_url')) {
                 $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid);
                 $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid . '/download');
             } else if ($document_type == 'hybrid_document') {
-                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/'.$document_sid);
+                $urls['print_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_download_hybird_document/submitted/print/both/' . $document_sid);
             }
         } else if ($request_type == 'offer_letter') {
             $CI = &get_instance();
@@ -3158,46 +3158,117 @@ if (!function_exists('getGroupOtherDocuments')) {
     }
 
 
-//
+    //
     if (!function_exists('get_print_document_url_secure')) {
         function get_print_document_url_secure($document_sid)
         {
             $urls = [];
-                    $CI = &get_instance();
-                    $CI->db->select('*');
-                    $CI->db->where('sid', $document_sid);
-                    $CI->db->from('company_secure_documents');
-                    $CI->db->limit(1);
-                    $result = $CI->db->get()->result_array();
-                    $upload_document = $result[0]['document_s3_name'];
-                    $file_name = explode(".", $upload_document);
-                    $document_name = $file_name[0];
-                    $document_extension = $file_name[1];
-                    if ($document_extension == 'pdf') {
-                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
-                    } else if ($document_extension == 'doc') {
-                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
-                    } else if ($document_extension == 'docx') {
-                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
-                    } else if ($document_extension == 'ppt') {
-                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
-                    } else if ($document_extension == 'pptx') {
-                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
-                    } else if ($document_extension == 'xls') {
-                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
-                    } else if ($document_extension == 'xlsx') {
-                        $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
-                    } else if ($document_extension == 'csv') {
-                        $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
-                    } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                       $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later_secure/' . $document_sid);
-                    }
-    
-                    $document_path = $result[0]['document_s3_name'];
-                    $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
-    
-                    return $urls;
+            $CI = &get_instance();
+            $CI->db->select('*');
+            $CI->db->where('sid', $document_sid);
+            $CI->db->from('company_secure_documents');
+            $CI->db->limit(1);
+            $result = $CI->db->get()->result_array();
+            $upload_document = $result[0]['document_s3_name'];
+            $file_name = explode(".", $upload_document);
+            $document_name = $file_name[0];
+            $document_extension = $file_name[1];
+            if ($document_extension == 'pdf') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+            } else if ($document_extension == 'doc') {
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+            } else if ($document_extension == 'docx') {
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+            } else if ($document_extension == 'ppt') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+            } else if ($document_extension == 'pptx') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
+            } else if ($document_extension == 'xls') {
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
+            } else if ($document_extension == 'xlsx') {
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+            } else if ($document_extension == 'csv') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
+            } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later_secure/' . $document_sid);
+            }
+
+            $document_path = $result[0]['document_s3_name'];
+            $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
+
+            return $urls;
         }
     }
+}
 
+
+//
+if (!function_exists('get_employee_profile_info_detail')) {
+    function get_employee_profile_info_detail($emp_id, $userType)
+    {
+
+        $CI = &get_instance();
+
+        if ($userType == 'employee') {
+
+            $CI->db->select('users.first_name,users.last_name,users.job_title,users.PhoneNumber,users.Location_Address,departments_management.name as departmentname,departments_management.supervisor');
+            $CI->db->join('departments_management', 'users.department_sid = departments_management.sid', 'left');
+            $CI->db->where('users.sid', $emp_id);
+
+            $dataArray = $CI->db->get('users')->row_array();
+
+            if (!empty($dataArray)) {
+                $userPrefillData['empName'] = $dataArray['first_name'] . ' ' . $dataArray['last_name'];
+                $userPrefillData['empJobTitle'] = $dataArray['job_title'];
+                $userPrefillData['empPhoneNumber'] = $dataArray['PhoneNumber'];
+                $userPrefillData['empLocationAddress'] = $dataArray['Location_Address'];
+                $userPrefillData['empDepartment'] = $dataArray['departmentname'];
+                $userPrefillData['empSupervisor'] = '';
+                if (!empty($dataArray['supervisor'])) {
+                    $supervisoAaray = explode(',', $dataArray['supervisor']);
+                    $supervisoAaray[0];
+
+                    $CI->db->select('first_name,last_name');
+                    $CI->db->where('sid', $supervisoAaray[0]);
+                    $supervisiorData = $CI->db->get('users')->row_array();
+
+                    if (!empty($supervisiorData)) {
+                        $userPrefillData['empSupervisor'] = $supervisiorData['first_name'] . ' ' . $supervisiorData['last_name'];
+                    }
+                }
+
+                return $userPrefillData;
+            } else {
+                return [];
+            }
+        }
+
+
+        if ($userType == 'applicant') {
+
+            $CI->db->select('portal_job_applications.first_name');
+            $CI->db->select('portal_job_applications.last_name');
+            $CI->db->select('portal_job_applications.phone_number');
+            $CI->db->select('portal_applicant_jobs_list.desired_job_title');
+            $CI->db->select('portal_job_listings.Title as job_title');
+            $CI->db->where('portal_job_applications.sid', $emp_id);
+            $CI->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
+            $CI->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+
+            $dataArray = $CI->db->get('portal_applicant_jobs_list')->row_array();
+
+            if (!empty($dataArray)) {
+                $userPrefillData['empName'] = $dataArray['first_name'] . ' ' . $dataArray['last_name'];
+                $userPrefillData['empJobTitle'] =  $dataArray['desired_job_title'] ? $dataArray['desired_job_title'] : $dataArray['job_title'];
+                $userPrefillData['empPhoneNumber'] = $dataArray['phone_number'];
+                $userPrefillData['empLocationAddress'] = '';
+                $userPrefillData['empDepartment'] = '';
+                $userPrefillData['empSupervisor'] = '';
+
+                return $userPrefillData;
+            } else {
+                return [];
+            }
+        }
+    }
 }

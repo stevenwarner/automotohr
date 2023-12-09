@@ -12178,7 +12178,20 @@ if (!function_exists('')) {
                 }
             }
         }
-        //_e($document, true);
+
+        //
+
+        if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+            if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
+                $printURL =  base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/print');
+                $downloadURL = base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/download');
+            } else {
+                $printURL =  base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print');
+                $downloadURL = base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download');
+            }
+        }
+
+
         //
         $r['pw'] = '<a href="' . ($printURL) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
         $r['pm'] = '<a href="' . ($printURL) . '" class="btn ' . ($cls) . ' btn-orange"  style="margin-right: 5px" target="_blank">Print</a>';

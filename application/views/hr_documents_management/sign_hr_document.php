@@ -1,6 +1,11 @@
 <?php $company_name = ucwords($session['company_detail']['CompanyName']); ?>
 <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
 
+<?php
+//_e($document,true);
+// _e(json_decode($form_input_data, true), true); 
+?>
+
 <div class="main jsmaincontent" style="background: #fff;">
     <div class="container">
         <div class="row">
@@ -44,6 +49,7 @@
                             <div class="hr-innerpadding">
                                 <div class="row">
                                     <div class="col-xs-12" id="required_fields_div" style="padding: 0 30px">
+
                                         <?php if ((isset($document['document_type']) && $document['document_type'] == 'hybrid_document') || (isset($document['letter_type']) && $document['letter_type'] == 'hybrid_document')) { ?>
 
                                             <?php
@@ -81,7 +87,23 @@
                                                 <iframe src="<?php echo $document['submitted_description']; ?>" name="printf" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
                                             <?php } ?>
 
-                                        <?php } else if ($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { ?>
+                                        <?php } else if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
+                                            <div class="img-thumbnail text-center" style="width: 100%; max-height: 100%;">
+                                                <?php
+                                                $document_filename = !empty($document['fillable_documents_slug']) ? $document['fillable_documents_slug'] : '';
+                                                $document_file = pathinfo($document_filename);
+                                                $document_extension = strtolower($document['document_extension']);
+                                                //
+
+                                                $doc = str_replace('-', '_', $document['fillable_documents_slug']);
+                                                ?>
+
+                                                <?php $this->load->view('v1/fillable_documents/' . $doc, $document); ?>
+                                                <br>
+                                            </div>
+
+
+                                        <?php    } else if ($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { ?>
                                             <div class="img-thumbnail text-center" style="width: 100%; max-height: 82em;">
                                                 <?php
                                                 $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
@@ -106,6 +128,10 @@
                                                     <iframe src="<?php echo 'https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $document_filename); ?>&embedded=true" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>
                                                 <?php } ?>
                                             </div>
+
+
+
+
                                         <?php } else { ?>
                                             <?php $consent = isset($document['user_consent']) ? $document['user_consent'] : 0; ?>
 
@@ -136,7 +162,7 @@
                                                     </div>
                                                 <?php } ?>
                                             </form>
-                                        <?php } else if (($document['signature_required'] == 1 || $save_offer_letter_type == 'consent_only') && ($document_type == 'generated' || $document_type == 'hybrid_document' || ($document_type == 'offer_letter' &&  $document['offer_letter_type'] == 'generated'))) { ?>
+                                        <?php } else if (($document['signature_required'] == 1 || $save_offer_letter_type == 'consent_only') && ($document_type == 'generated' || $document_type == 'hybrid_document' || ($document_type == 'offer_letter' &&  $document['offer_letter_type'] == 'generated' || !empty($document['fillable_documents_slug'])))) { ?>
                                             <form id="user_consent_form" enctype="multipart/form-data" method="post" action="<?php echo $save_post_url; ?>">
                                                 <input type="hidden" name="perform_action" value="sign_document" />
                                                 <input type="hidden" name="page_content" value="">
@@ -235,7 +261,7 @@
                                 </div>
                             <?php } ?>
 
-                            <?php if ($document['acknowledgment_required'] == 1 || $document['download_required'] == 1 || $document['signature_required'] == 1) { ?>
+                            <?php if ($document['acknowledgment_required'] == 1 || $document['download_required'] == 1 || $document['signature_required'] == 1) {?>
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <?php if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 0 && $save_offer_letter_type != 'consent_only') { ?>
@@ -290,12 +316,25 @@
                                                         }
                                                         ?>
                                                         <?php echo $document_type; ?>
-                                                        <a target="_blank" href="<?php echo $download_button_action; ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" onclick="save_print()">
-                                                            <?php echo $download_button_txt; ?>
-                                                        </a>
-                                                        <a target="_blank" href="<?php echo $print_button_action; ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
-                                                            print Document
-                                                        </a>
+
+                                                        <?php if ($document['fillable_documents_slug']!=null &&  $document['fillable_documents_slug']!='' ) { ?>
+                                                            <a target="_blank" href="<?=base_url('v1/fillable_documents/downloadFillable/'.$document['fillable_documents_slug'].'/'.$document['sid'].'/original/download') ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" >
+                                                                <?php echo $download_button_txt; ?>
+                                                            </a>
+                                                            <a target="_blank" href="<?=base_url('v1/fillable_documents/downloadFillable/'.$document['fillable_documents_slug'].'/'.$document['sid'].'/original/print') ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
+                                                                print Document
+                                                            </a>
+                                                        <?php } else { ?>
+                                                            <a target="_blank" href="<?php echo $download_button_action; ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" onclick="save_print()">
+                                                                <?php echo $download_button_txt; ?>
+                                                            </a>
+                                                            <a target="_blank" href="<?php echo $print_button_action; ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
+                                                                print Document
+                                                            </a>
+
+                                                        <?php } ?>
+
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -414,6 +453,7 @@
         }
 
         <?php if (!empty($document['form_input_data'])) { ?>
+
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
 
@@ -424,6 +464,7 @@
                     $('#' + input_field_id).val(input_field_val);
                     $('.js_' + input_field_id).val(input_field_val);
                 } else {
+
                     var input_field_id = input_value[0] + '_id';
                     var input_field_val = input_value[1];
                     var input_type = $('#' + input_field_id).attr('data-type');
@@ -446,7 +487,7 @@
                             $('#' + input_field_id).hide();
                             $('#' + input_field_id + '_sec').show();
                             $('#' + input_field_id + '_sec').html(input_field_val);
-                            $('#' + input_field_id + '_sec').html(input_field_val);
+                            //  $('#' + input_field_id + '_sec').html(input_field_val);
                         <?php else : ?>
                             $('#' + input_field_id).show();
                             $('#' + input_field_id + '').val(input_field_val);
@@ -769,7 +810,6 @@
             var is_sign = "";
             var is_init = "";
             var is_date = "";
-
             if ($('.get_signature')[0]) {
                 is_sign = $('#is_signature').val();
             } else {
@@ -791,6 +831,7 @@
                 $('#save_signature_date').val('no');
             }
 
+
             if (is_sign == 'true' && is_init == 'true' && is_date == 'true') {
                 var input_values_obj = {};
 
@@ -800,6 +841,11 @@
 
 
                 $('input.long_textbox').map(function() {
+                    input_values_obj[this.name] = this.value;
+                }).get();
+
+                //
+                $('textarea.long_textbox').map(function() {
                     input_values_obj[this.name] = this.value;
                 }).get();
 
@@ -918,6 +964,12 @@
                                 input_values_obj[this.name] = this.value;
                             }).get();
 
+                            //
+                            $('textarea.long_textbox').map(function() {
+                                input_values_obj[this.name] = this.value;
+                            }).get();
+
+
                             $('input#signature_person_name').map(function() {
                                 input_values_obj[this.name] = this.value;
                             }).get();
@@ -995,6 +1047,7 @@
 </style>
 
 <?php $this->load->view('iframeLoader'); ?>
+
 
 <script>
     loadIframe(
