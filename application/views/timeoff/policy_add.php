@@ -463,6 +463,23 @@
             </div>
         </div>
     </div>
+
+    <div class="row mb10 js-hider-edit js-carryover-box-add">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <h5 class="timeline-title allowed-time-off-title-custom"><?php echo $get_policy_item_info['carryover_cycle_label']; ?>
+                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="caryCycle"></i>
+                </h5>
+                <div class="js-hint js-hint-caryCycle">
+                    <?php echo $get_policy_item_info['carryover_cycle_info']; ?></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input class="form-control" name="template" id="js-carryover-cycle-add" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--  -->
     <div class="js-step-buttons" data-type="add" data-step="4">
         <hr />

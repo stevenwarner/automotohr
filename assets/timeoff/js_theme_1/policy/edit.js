@@ -30,6 +30,7 @@ $(function () {
             carryOverCheck: 'no',
             carryOverType: 'days',
             carryOverVal: 0,
+            carryOverCycle: 0,
             negativeBalanceCheck: 'no',
             negativeBalanceVal: 0,
             negativeBalanceType: 'days',
@@ -547,6 +548,7 @@ $(function () {
         policy.carryOverCheck = accruals.carryOverCheck;
         policy.carryOverType = accruals.carryOverType;
         policy.carryOverVal = parseInt(accruals.carryOverVal);
+        policy.carryOverCycle = parseInt(accruals.carryOverCycle);
         policy.negativeBalanceCheck = accruals.negativeBalanceCheck;
         policy.negativeBalanceVal = accruals.negativeBalanceVal;
         policy.negativeBalanceType = accruals.negativeBalanceType;
@@ -615,6 +617,7 @@ $(function () {
         $('#js-carryover-cap-check-edit').select2('val', policy.carryOverCheck);
         $('#js-carryover-cap-check-edit').trigger('change');
         $('#js-carryover-cap-edit').val(policy.carryOverVal);
+        $('#js-carryover-cycle-edit').val(policy.carryOverCycle);
         // Set negative balance
         $('#js-accrual-balance-edit').select2('val', policy.negativeBalanceCheck);
         $('#js-accrual-balance-edit').trigger('change');
@@ -669,6 +672,7 @@ $(function () {
         resetPolicy.carryOverCheck = resetAccrual.carryOverCheck;
         resetPolicy.carryOverType = resetAccrual.carryOverType;
         resetPolicy.carryOverVal = resetAccrual.carryOverVal;
+        resetPolicy.carryOverCycle = resetAccrual.carryOverCycle;
         resetPolicy.negativeBalanceCheck = resetAccrual.negativeBalanceCheck;
         resetPolicy.negativeBalanceVal = resetAccrual.negativeBalanceVal;
         resetPolicy.negativeBalanceType = resetAccrual.negativeBalanceType;
@@ -725,6 +729,7 @@ $(function () {
         $('#js-carryover-cap-check-reset').select2('val', resetAccrual.carryOverCheck);
         $('#js-carryover-cap-check-reset').trigger('change');
         $('#js-carryover-cap-reset').val(resetAccrual.carryOverVal);
+        $('#js-carryover-cycle-reset').val(resetAccrual.carryOverCycle);
         // Set negative balance
         $('#js-accrual-balance-reset').select2('val', resetAccrual.negativeBalanceCheck);
         $('#js-accrual-balance-reset').trigger('change');
@@ -852,6 +857,8 @@ $(function () {
             policyOBJ.carryOverVal = getField('#js-carryover-cap-edit');
             // Set policy carryover
             policyOBJ.carryOverType = getField('#js-accrual-carryover-type-edit option:selected');
+            // Set policy carryover
+            policyOBJ.carryOverCycle = getField('#js-carryover-cycle-edit');
             //
             saveStep(policyOBJ);
             //
@@ -1022,6 +1029,8 @@ $(function () {
             resetPolicy.carryOverVal = getField('#js-carryover-cap-reset');
             // Set policy carryover
             resetPolicy.carryOverType = getField('#js-accrual-carryover-type option:selected');
+            // Set policy carryover
+            policyOBJ.carryOverCycle = getField('#js-carryover-cycle-edit');
             //
             saveStep(resetPolicy);
             //

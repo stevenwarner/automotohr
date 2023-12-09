@@ -2631,6 +2631,7 @@ class Time_off extends Public_Controller
                 $accruals['carryOverCheck'] = $post['carryOverCheck'];
                 $accruals['carryOverType'] = $post['carryOverType'];
                 $accruals['carryOverVal'] = $post['carryOverVal'];
+                $accruals['carryOverCycle'] = !empty($post['carryOverCycle']) ? $post['carryOverCycle'] : 0;
                 $accruals['negativeBalanceCheck'] = $post['negativeBalanceCheck'];
                 $accruals['negativeBalanceType'] = $post['negativeBalanceType'];
                 $accruals['negativeBalanceVal'] = $post['negativeBalanceVal'];
@@ -2732,6 +2733,7 @@ class Time_off extends Public_Controller
                 $accruals['carryOverCheck'] = $post['carryOverCheck'];
                 $accruals['carryOverType'] = $post['carryOverType'];
                 $accruals['carryOverVal'] = $post['carryOverVal'];
+                $accruals['carryOverCycle'] = !empty($post['carryOverCycle']) ? $post['carryOverCycle'] : 0;
                 $accruals['negativeBalanceCheck'] = $post['negativeBalanceCheck'];
                 $accruals['negativeBalanceType'] = $post['negativeBalanceType'];
                 $accruals['negativeBalanceVal'] = $post['negativeBalanceVal'];
