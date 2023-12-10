@@ -2,7 +2,8 @@ $(function () {
 	let XHR = null;
 
 	// section 0
-	ClassicEditor.create(document.querySelector("#jsSection0Details"));
+	CKEDITOR.replace("jsSection0Details");
+
 	$("#jsSection0File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
 		allowLinks: false,
@@ -42,6 +43,11 @@ $(function () {
 				formDataObj.append("source_type", "upload");
 				formDataObj.append("file", fileObject);
 			}
+
+			formDataObj.append(
+				"details",
+				CKEDITOR.instances.jsSection0Details.getData()
+			);
 
 			return processData(formDataObj, $("#jsSection0Btn"), "section_0");
 		},

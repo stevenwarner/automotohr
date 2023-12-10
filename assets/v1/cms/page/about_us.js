@@ -221,16 +221,13 @@ $(function () {
 					activeLink: "upload",
 					fileLimit: "20mb",
 				});
-
-				ClassicEditor.create(document.querySelector("#detailsAddTeam"));
+				//
+				CKEDITOR.replace("detailsAddTeam");
 				//
 				$("#jsAddTeamForm").validate({
 					ignore: [],
 					rules: {
 						mainHeading: {
-							required: true,
-						},
-						details: {
 							required: true,
 						},
 					},
@@ -254,6 +251,10 @@ $(function () {
 							formDataObj.append("source_type", "upload");
 							formDataObj.append("file", fileObject);
 						}
+						formDataObj.append(
+							"details",
+							CKEDITOR.instances.detailsAddTeam.getData()
+						);
 
 						formDataObj.append("section", "teams");
 
@@ -296,17 +297,12 @@ $(function () {
 					placeholderImage: resp.sourceFile,
 					fileLimit: "20mb",
 				});
-				ClassicEditor.create(
-					document.querySelector("#detailsEditTeam")
-				);
+				CKEDITOR.replace("detailsEditTeam");
 				//
 				$("#jsEditTeamForm").validate({
 					ignore: [],
 					rules: {
 						mainHeading: {
-							required: true,
-						},
-						details: {
 							required: true,
 						},
 					},
@@ -330,6 +326,10 @@ $(function () {
 							formDataObj.append("source_type", "upload");
 							formDataObj.append("file", fileObject);
 						}
+						formDataObj.append(
+							"details",
+							CKEDITOR.instances.detailsEditTeam.getData()
+						);
 
 						formDataObj.append("section", "teams");
 
