@@ -3587,7 +3587,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/schedules/edit"
-        ], "public/v1/schedules/edit/", "edit_schedule", false);
+        ], "public/v1/schedules/edit/", "edit_schedule", true);
         // load views
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/edit');
