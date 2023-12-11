@@ -40,6 +40,33 @@ class Payrolls extends Admin_Controller
     {
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
+        //
+        $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
+        $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
+        // set title
+        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        // set JS
+        $this->data['appJs'] = bundleJs([
+            'js/app_helper',
+            'v1/sa/payrolls/dashboard'
+        ], $this->js, 'dashboard', $this->createMinifyFiles);
+        // $this->data['PageScripts'] = [
+        //     [getAssetTag('1.0.3'), 'js/app_helper'],
+        //     [getAssetTag('1.0.3'), 'v1/sa/payrolls/dashboard'],
+        // ];
+        // render the page
+        $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+    }
+
+    /**
+     * main page
+     *
+     * @param int $companyId
+     */
+    public function setupCompanyPayroll(int $companyId)
+    {
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
         // get gusto details
         $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
         // load set up page
@@ -78,13 +105,18 @@ class Payrolls extends Admin_Controller
         );
         // set title
         $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "css/theme-2021"
+        ], $this->css, "admins", $this->createMinifyFiles);
+        //
         // set JS
         $this->data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/sa/payrolls/dashboard'
         ], $this->js, 'dashboard', $this->createMinifyFiles);
         // render the page
-        $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+        $this->render('v1/sa/payrolls/setup_payroll', 'admin_master');
     }
 
     /**
@@ -341,5 +373,47 @@ class Payrolls extends Admin_Controller
         }
         //
         return SendResponse(400, ['errors' => $returnArray]);
+    }
+
+    /**
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function updatePaymentConfiguration(int $companyId): array
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $request = [];
+        $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
+        $request['payment_speed'] = $post['payment_speed'];
+        //
+        $response = $this->payroll_model->UpdatePaymentConfig($companyId, $request);
+        //
+        return SendResponse(
+            200,
+            ['msg' => $response['msg']]
+        );
+    }
+
+    /**
+    * update company payment configuration
+    *
+    * @param int $companyId
+    * @return
+    */
+    public function updatePrimaryAdmin(int $companyId): array
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $response = $this->payroll_model->addOrUpdatePrimaryAdmin($companyId, $post);
+        //
+        return SendResponse(
+            200,
+            ['msg' => $response['msg']]
+        );
     }
 }
