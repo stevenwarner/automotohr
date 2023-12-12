@@ -30,7 +30,7 @@ $(function () {
             carryOverCheck: 'no',
             carryOverType: 'days',
             carryOverVal: 0,
-            carryOverCycle: 0,
+            carryOverCycle: 1,
             negativeBalanceCheck: 'no',
             negativeBalanceVal: 0,
             negativeBalanceType: 'days',

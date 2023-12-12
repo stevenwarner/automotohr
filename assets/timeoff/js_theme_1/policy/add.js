@@ -25,7 +25,7 @@ $(function () {
         carryOverCheck: 'no',
         carryOverType: 'hours',
         carryOverVal: 0,
-        carryOverCycle: 0,
+        carryOverCycle: 1,
         negativeBalanceCheck: 'no',
         negativeBalanceVal: 0,
         negativeBalanceType: 'hours',
