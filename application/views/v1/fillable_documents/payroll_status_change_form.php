@@ -65,21 +65,21 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Employee name:</label>
+                        <label>Employee Name:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName'];?>" name="short_textbox_0" id="short_textbox_0_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Effective Date:</label>
+                        <label>Effective Date:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox date_picker" type="text" value="" name="short_textbox_1" id="short_textbox_1_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Department:</label>
+                        <label>Department:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="<?php echo $userPrefillInfo['empDepartment'];?>" name="short_textbox_2" id="short_textbox_2_id" data-type='text' autocomplete="off" />
 
                     </td>
@@ -87,7 +87,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Supervisor:</label>
+                        <label>Supervisor:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="<?php echo $userPrefillInfo['empSupervisor'];?>" name="short_textbox_3" id="short_textbox_3_id" data-type='text' autocomplete="off"/>
                     </td>
                 </tr>
@@ -104,7 +104,7 @@
                             <tbody>
                                 <tr>
                                     <td class="text-left" width="20%">
-                                        &nbsp; <label> Rate From:</label>
+                                        &nbsp; <label> Rate From:<span class="staric">*</span></label>
                                         <div class="input-group">
                                             <div class="input-group-addon"> $ </div>
                                             <input class="invoice-fields short_textbox " type="text" value="" name="short_textbox_4" id="short_textbox_4_id" data-type='text' autocomplete="off" />
@@ -112,7 +112,7 @@
                                         </div>
                                     </td>
                                     <td class="text-left" width="20%">
-                                        &nbsp; <label> Rate To:</label>
+                                        &nbsp; <label> Rate To:<span class="staric">*</span></label>
                                         <div class="input-group">
                                             <div class="input-group-addon"> $ </div>
                                             <input class="invoice-fields short_textbox " type="text" value="" name="short_textbox_5" id="short_textbox_5_id" data-type='text' autocomplete="off" />
@@ -130,7 +130,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Job:</label>
+                        <label>Job:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="<?php echo $userPrefillInfo['empJobTitle'];?>" name="short_textbox_6" id="short_textbox_6_id" data-type='text' autocomplete="off" />
 
                     </td>
@@ -138,14 +138,14 @@
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Department:</label>
+                        <label>Department:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="<?php echo $userPrefillInfo['empDepartment'];?>" name="short_textbox_7" id="short_textbox_7_id" data-type='text' autocomplete="off" />
 
                     </td>
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Location:</label>
+                        <label>Location:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="<?php echo $userPrefillInfo['empLocationAddress'];?>" name="short_textbox_8" id="short_textbox_8_id" data-type='text' autocomplete="off"/>
                     </td>
                 </tr>
@@ -153,7 +153,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Shift:</label>
+                        <label>Shift:<span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox " type="text" value="" name="short_textbox_9" id="short_textbox_9_id" data-type='text' autocomplete="off"/>
 
                     </td>

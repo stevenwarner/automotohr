@@ -2,7 +2,7 @@
 <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
 
 <?php
-//_e($document,true);
+_e($document, true);
 // _e(json_decode($form_input_data, true), true); 
 ?>
 
@@ -261,7 +261,7 @@
                                 </div>
                             <?php } ?>
 
-                            <?php if ($document['acknowledgment_required'] == 1 || $document['download_required'] == 1 || $document['signature_required'] == 1) {?>
+                            <?php if ($document['acknowledgment_required'] == 1 || $document['download_required'] == 1 || $document['signature_required'] == 1) { ?>
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <?php if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 0 && $save_offer_letter_type != 'consent_only') { ?>
@@ -317,11 +317,11 @@
                                                         ?>
                                                         <?php echo $document_type; ?>
 
-                                                        <?php if ($document['fillable_documents_slug']!=null &&  $document['fillable_documents_slug']!='' ) { ?>
-                                                            <a target="_blank" href="<?=base_url('v1/fillable_documents/downloadFillable/'.$document['fillable_documents_slug'].'/'.$document['sid'].'/original/download') ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right" >
+                                                        <?php if ($document['fillable_documents_slug'] != null &&  $document['fillable_documents_slug'] != '') { ?>
+                                                            <a target="_blank" href="<?= base_url('v1/fillable_documents/downloadFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download') ?>" id="download_btn_click" class="btn <?php echo $download_button_css; ?> pull-right">
                                                                 <?php echo $download_button_txt; ?>
                                                             </a>
-                                                            <a target="_blank" href="<?=base_url('v1/fillable_documents/downloadFillable/'.$document['fillable_documents_slug'].'/'.$document['sid'].'/original/print') ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
+                                                            <a target="_blank" href="<?= base_url('v1/fillable_documents/downloadFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print') ?>" class="btn pull-right <?php echo $download_button_css; ?>" style="margin-right: 10px;" id="print_btn_click">
                                                                 print Document
                                                             </a>
                                                         <?php } else { ?>
@@ -934,6 +934,22 @@
 
     function func_save_document_only() {
         if ($('#user_consent_form').valid()) {
+
+            //
+            <?php if ($document['fillable_documents_slug'] == 'payroll-status-change-form') { ?>
+                if (payrollStatusChangeFormValidation() == true) {
+                    retrun;
+                }
+            <?php }
+            if ($document['fillable_documents_slug'] == 'oral-employee-counseling-report-form') { ?>
+                if (oralEmployeeCounselingReportFormValidation() == true) {
+                    retrun;
+                }
+
+            <?php }  ?>
+
+
+
             alertify.confirm(
                 'Are you Sure?',
                 'Are you sure you want to Save this Document?',
@@ -1022,6 +1038,223 @@
     }
     $('.hr-innerpadding').find('input,textarea,select').addClass('gray-background');
     $('#div_editable_text').addClass('gray-background-div');
+
+
+
+    function payrollStatusChangeFormValidation() {
+
+
+        var validationError = false;
+
+        var regex = /^\d+(?:\.\d{0,2})$/;
+        var rateFrom = $('#short_textbox_4_id').val();
+        var rateTo = $('#short_textbox_5_id').val();
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please provide Effective Date');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please provide Supervisor');
+            validationError = true;
+        }
+        //
+        if (isNaN(rateFrom)) {
+            alertify.error('Rate From is not valid');
+            validationError = true;
+        } else if (rateFrom == '') {
+            alertify.error('Please provide Rate From');
+
+        }
+
+        if (isNaN(rateTo)) {
+            alertify.error('Rate To is not valid');
+            validationError = true;
+        } else if (rateTo == '') {
+            alertify.error('Please provide Rate To');
+
+        }
+
+        //
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please provide Job');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_7_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        if ($('#short_textbox_8_id').val() == '') {
+            alertify.error('Please provide Location');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_9_id').val() == '') {
+            alertify.error('Please provide Shift');
+            validationError = true;
+        }
+
+
+        return validationError;
+
+    }
+
+
+    function oralEmployeeCounselingReportFormValidation() {
+
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please provide Effective Date');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please provide Supervisor');
+            validationError = true;
+        }
+        //
+        if (isNaN(rateFrom)) {
+            alertify.error('Rate From is not valid');
+            validationError = true;
+        } else if (rateFrom == '') {
+            alertify.error('Please provide Rate From');
+
+        }
+
+        if (isNaN(rateTo)) {
+            alertify.error('Rate To is not valid');
+            validationError = true;
+        } else if (rateTo == '') {
+            alertify.error('Please provide Rate To');
+
+        }
+
+        //
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please provide Job');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_7_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        if ($('#short_textbox_8_id').val() == '') {
+            alertify.error('Please provide Location');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_9_id').val() == '') {
+            alertify.error('Please provide Shift');
+            validationError = true;
+        }
+
+
+        return validationError;
+
+    }
+
+
+
+    //pp
+    function writtenEmployeeCounselingReportFormValidation() {
+
+        var validationError = false;
+
+        var regex = /^\d+(?:\.\d{0,2})$/;
+        var rateFrom = $('#short_textbox_4_id').val();
+        var rateTo = $('#short_textbox_5_id').val();
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please provide Effective Date');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please provide Supervisor');
+            validationError = true;
+        }
+        //
+        if (isNaN(rateFrom)) {
+            alertify.error('Rate From is not valid');
+            validationError = true;
+        } else if (rateFrom == '') {
+            alertify.error('Please provide Rate From');
+
+        }
+
+        if (isNaN(rateTo)) {
+            alertify.error('Rate To is not valid');
+            validationError = true;
+        } else if (rateTo == '') {
+            alertify.error('Please provide Rate To');
+
+        }
+
+        //
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please provide Job');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_7_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        if ($('#short_textbox_8_id').val() == '') {
+            alertify.error('Please provide Location');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_9_id').val() == '') {
+            alertify.error('Please provide Shift');
+            validationError = true;
+        }
+
+
+        return validationError;
+
+    }
 </script>
 
 <style type="text/css">
