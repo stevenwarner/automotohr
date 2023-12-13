@@ -167,4 +167,22 @@ class Shift_model extends CI_Model
         //
         return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
     }
+
+    /**
+     * get the company employees
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyEmployees(int $companyId): array
+    {
+        return $this->db
+            ->select(getUserFields())
+            ->where([
+                "parent_sid" => $companyId,
+            ])
+            ->order_by("first_name", "ASC")
+            ->get("users")
+            ->result_array();
+    }
 }

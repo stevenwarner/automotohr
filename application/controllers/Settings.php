@@ -3899,6 +3899,14 @@ class Settings extends Public_Controller
         $data["loggedInEmployee"] = $loggedInEmployee;
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
         $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get all active employees
+        $data["employees"] = $this->shift_model->getCompanyEmployees(
+            $loggedInCompany["sid"]
+        );
+        $data["month"] = $this->input->get("month", true) ?? getSystemDate("m");
+        $data["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');

@@ -2071,3 +2071,31 @@ if (!function_exists("makeAddress")) {
         return $str;
     }
 }
+
+
+if (!function_exists("getMonthDatesByYearAndMonth")) {
+    /**
+     * get the dates array of a year and month
+     * @param int $year
+     * @param int $month
+     * @param string $format
+     * @return array
+     */
+    function getMonthDatesByYearAndMonth(int $year, int $month, string $format = "D d"): array
+    {
+        // Create a DateTime object for the first day of the month
+        $firstDay = new DateTime("$year-$month-01");
+        // Get the number of days in the month
+        $lastDay = new DateTime($firstDay->format('Y-m-t'));
+        // Initialize an array to store weeks and their corresponding dates
+        $dates = [];
+        // Loop through the days of the month
+        while ($firstDay <= $lastDay) {
+            $dates[] = $firstDay->format($format);
+            // Move to the next day
+            $firstDay->modify('+1 day');
+        }
+        // return dates array
+        return $dates;
+    }
+}
