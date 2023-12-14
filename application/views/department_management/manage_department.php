@@ -42,7 +42,6 @@
                                         <th class="col-lg-3">Team Description</th> 
                                         <th class="col-lg-3">Team Lead(s)</th>
                                         <th class="col-lg-3">Approver(s)</th>
-                                        <th class="col-lg-3">Reporting Manager(s)</th>
                                         <th class="col-lg-3 text-center">Actions</th>
                                     </tr> 
                                 </thead>
@@ -87,7 +86,6 @@
                                                 ?>
                                                 <td><?php echo $spName; ?></td>
                                                 <td><?php echo $approvers; ?></td>
-                                                <td><?php echo $rm; ?></td>
                                                 <td class="text-center">
                                                     <a href="<?php echo base_url('department_management/add_edit_team').'/'.$department_sid.'/'.$team['sid']; ?>" class="btn btn-primary btn-sm" >
                                                         <i class="fa fa-pencil"></i>
