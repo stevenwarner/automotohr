@@ -2759,6 +2759,8 @@ class Company_model extends CI_Model
         $this->db->where('terminated_user_id', $sid);
         $this->db->where('terminated_record_sid', 0);
         $this->db->update('terminated_employees_documents', $data_to_update);
+        //
+        return $record_sid;
     }
 
     public function change_terminate_user_status($sid, $data_to_update)

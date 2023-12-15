@@ -169,8 +169,30 @@ class Terminate_employee extends Public_Controller
                     $data_to_update['terminated_status'] = 0;
                 }
 
+                $rowId = $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
 
-                $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
+                if ($status == 1 || $status == 8) {
+                    //
+                    $effective_date = $data_to_insert['status_change_date'];
+                    //
+                    if ($status == 1) {
+                        $effective_date = $data_to_insert['termination_date'];
+                    }
+                    //
+                    $employeeData[] = [
+                        'sid' => $rowId,
+                        'effective_date' => $effective_date,
+                        'employee_status' => $status
+                    ];
+                    //
+                    $this->load->model("v1/payroll_model", "payroll_model");
+                    //
+                    $this->payroll_model->syncEmployeeStatus(
+                        $sid,
+                        $employeeData
+                    );
+                    //
+                }
 
                 if ($status == 9) {
                     $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
@@ -317,7 +339,34 @@ class Terminate_employee extends Public_Controller
                 //
                 $this->terminate_employee_model->update_terminate_user($status_id, $data_to_insert);
                 //
-
+                if ($status == 1 || $status == 8) {
+                    $old_effective_date = @unserialize($status_data['payroll_object'])['effective_date'];
+                    $oldDate = strtotime($old_effective_date);
+                    $newDate = strtotime($data_to_insert['status_change_date']);
+                    $effectiveDate = $data_to_insert['status_change_date'];
+                    //
+                    if ($status == 1) {
+                        $newDate = strtotime($data_to_insert['termination_date']);
+                        $effectiveDate = $data_to_insert['termination_date'];
+                    }
+                    //
+                    if ($oldDate != $newDate) {
+                        $employeeData = [];
+                        $employeeData['sid'] = $status_id;
+                        $employeeData['effective_date'] = $effectiveDate;
+                        $employeeData['version'] = $status_data['payroll_version'];
+                        $employeeData['employee_status'] = $status;
+                        //
+                        $this->load->model("v1/payroll_model", "payroll_model");
+                        //
+                        $this->payroll_model->updateEmployeeStatusOnGusto(
+                            $sid,
+                            $employer_parent_sid,
+                            $employeeData
+                        );
+                    }
+                }
+                //
                 if ($status == 9) {
                     $data_transfer_log_update['from_company_sid'] = 0;
                     $data_transfer_log_update['previous_employee_sid'] = 0;

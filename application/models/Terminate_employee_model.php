@@ -18,7 +18,10 @@ class Terminate_employee_model extends CI_Model {
         $this->db->where('terminated_user_id', $sid);
         $this->db->where('terminated_record_sid', 0);
         $this->db->update('terminated_employees_documents',$data_to_update);
+        //
+        return $record_sid; 
     }
+
     public function update_terminate_user($sid, $data){
         $this->db->where('sid',$sid);
         $this->db->update('terminated_employees', $data);
