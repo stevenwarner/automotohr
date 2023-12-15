@@ -5631,4 +5631,68 @@ class Payroll_model extends CI_Model
             ->where('sid', $rowId)
             ->update('terminated_employees', $updateArray);
     }
+
+    function GetCompanyPayrollStatus($companyId) {
+        $this->db->select('is_active');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('module_sid', 7);
+        
+        $record_obj = $this->db->get('company_modules');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            if ($record_arr['is_active'] == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    function checkEmployeePayrollStatus ($employeeId, $companyId) {
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $this->db->from('gusto_companies_employees');
+        $record_count = $this->db->count_all_results();
+    
+        if ($record_count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getGustoCompanyDetail ($companyId) {
+        //
+        $this->db->select('refresh_token, access_token, gusto_uuid');
+        $this->db->where('company_sid', $companyId);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }    
+    }
+
+    public function getEmployeeGustoId ($employeeId, $companyId) {
+        //
+        $this->db->select('gusto_uuid');
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $record_obj = $this->db->get('gusto_companies_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr['gusto_uuid'];
+        } else {
+            return '';
+        }    
+    }
 }
