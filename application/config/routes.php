@@ -1996,3 +1996,12 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 // Payroll Agreement
 $route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
 $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';
+
+
+
+//indeed
+$route['jobs/(:any)/questionnaire.json'] = 'Indeed_feed_new/questionnaireJson/$1';
+
+
+//url: https://www.automotohr.com/jobs/[job id from xml]/questionnaire.json
+//jobs/(:any)/(:any)

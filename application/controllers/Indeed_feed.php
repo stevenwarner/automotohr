@@ -145,7 +145,7 @@ class Indeed_feed extends CI_Controller
                     <jobtype><![CDATA[" . $jobType . "]]></jobtype>
                     <category><![CDATA[" . $job_category . "]]></category>
                     <description><![CDATA[" . $jobDesc . "]]></description>
-                    <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $job['sid']) . "&indeed-apply-jobid=" . $job['sid'] . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($company_id, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1]]></indeed-apply-data>
+                    <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $job['sid']) . "&indeed-apply-jobid=" . $job['sid'] . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($company_id, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "/indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required&indeed-apply-allow-apply-on-indeed=1&indeed-apply-questions=" . urlencode(base_url('jobs/' . $job['sid'] . '/questionnaire.json')) . "]]></indeed-apply-data>
                     </job>";
                 }
             }
@@ -182,6 +182,7 @@ class Indeed_feed extends CI_Controller
 
     public function indeedPostUrl()
     {
+        //_e(file_get_contents('php://input'),true,true);
         // error_reporting(E_ALL);
         //
         $this->addLastRead(9);
@@ -210,6 +211,19 @@ class Indeed_feed extends CI_Controller
 
 
             $job_sid = $data['job']['jobId'];
+
+
+
+            //Ni
+            $questionAnswer = [];
+            $questionsAndAnswers = $data['questionsAndAnswers']['questionsAndAnswers'];
+
+            /*
+            foreach ($questionsAndAnswers as $ansQuesRow) {
+                $questionAnswer['data'][] = array('questionId'=>$ansQuesRow['question']['id'],'answer'=>$ansQuesRow['answer']);
+            }
+          */
+
 
             if (!is_numeric($job_sid)) {
                 $job_sid = $this->all_feed_model->fetch_job_id_from_random_key($job_sid);
@@ -348,9 +362,13 @@ class Indeed_feed extends CI_Controller
                 $applicationData['ip_address'] = $data['analytics']['ip'];
                 $applicationData['user_agent'] = $userAgent;
 
+                //  remove ni
+                /*
                 if (checkForBlockedEmail($applicant_email) == 'blocked') {
                     exit(0);
                 }
+                */
+
 
                 // Check if user has already applied in this company for any other job
                 $portal_job_applications_sid = $this->all_feed_model->check_job_applicant('company_check', $applicant_email, $companyId);
@@ -413,6 +431,10 @@ class Indeed_feed extends CI_Controller
                 //check if the user has already applied for this job
                 $already_applied = $this->all_feed_model->check_job_applicant($job_sid, $applicant_email, $companyId);
 
+                // remove ni
+                $already_applied = 0;
+
+
                 if ($already_applied <= 0) {
                     $insert_job_list = array(
                         'portal_job_applications_sid' => $job_applications_sid,
@@ -432,6 +454,9 @@ class Indeed_feed extends CI_Controller
                     );
                     sleep(1);
                     $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);
+
+                    // remove ni
+                    $final_check = 0;
 
                     if ($final_check <= 0) {
 
@@ -513,86 +538,273 @@ class Indeed_feed extends CI_Controller
                             $questionnaire_sid = $job_details['questionnaire_sid'];
                         }
 
-                        if ($questionnaire_sid > 0) {
-                            $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
+                        //  _e($job_details,true);
 
-                            if ($questionnaire_status == 'found') {
-                                $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
-                                $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
+                        ////////////////////////
+                        $answerFoundOnIndeed = false;
+                        foreach ($questionsAndAnswers as $ansQuesRow) {
 
-                                if (empty($email_template_information)) {
-                                    $email_template_information = array(
-                                        'subject' => '{{company_name}} - Screening Questionnaire for {{job_title}}',
-                                        'text' => '<p>Dear {{applicant_name}},</p>
+                            // _e($ansQuesRow,true,true);
+                            if (!empty($ansQuesRow['answer'])) {
+                                $answerFoundOnIndeed = true;
+                                $questionAnswer['data'][] = array('questionId' => $ansQuesRow['question']['id'], 'type' => $ansQuesRow['question']['type'], 'answer' => $ansQuesRow['answer']);
+                            }
+                        }
+
+
+                        //
+                        if ($answerFoundOnIndeed == true) {
+
+                            $this->load->model('job_screening_questionnaire_model');
+
+                           // _e($questionAnswer['data'], true, true);
+
+                            foreach ($questionAnswer['data'] as $dataRow) {
+
+
+
+                                $q_passing = 0;
+
+
+                                $questionType = '';
+                                if ($dataRow['type'] == 'select') {
+                                    $questionType = 'list';
+                                } elseif ($dataRow['type'] == 'multiselect') {
+                                    $questionType = 'multilist';
+                                } elseif ($dataRow['question_type'] == 'text') {
+                                    $questionType = 'string';
+                                }
+
+                                $postQuestionsSid = $dataRow['questionId'];
+
+                                $my_answer = NULL;
+
+                                if ($questionType != 'string') { // get the question possible score
+                                    $q_passing = $this->job_screening_questionnaire_model->get_possible_score_of_questions($postQuestionsSid, $questionType);
+                                    //  _e($q_passing,true);
+                                }
+
+                                //
+                                $my_answer = $dataRow['answer'];
+
+
+                                if ($my_answer != NULL) { // It is required question           
+
+                                    if ($questionType == 'list') {
+
+                                        _e($my_answer,true,true);
+
+                                        //$question_details = $this->job_screening_questionnaire_model->get_individual_question_details($postQuestionsSid);
+                                        $question_details = $this->job_screening_questionnaire_model-> get_individual_question_details_indeed($my_answer['label'],$my_answer['value']) ;
+                                      
+
+
+                                        //         if (!empty($question_details)) {
+                                        //             $questions_score = $question_details['score'];
+                                        //             $questions_result_status = $question_details['result_status'];
+                                        //             $questions_result_value = $question_details['value'];
+                                        //         }
+    
+                                        //         $score = $questions_score;
+                                        //         $total_score += $questions_score;
+                                        //         $individual_score += $questions_score;
+                                        //         $individual_passing_score = $q_passing;
+                                        //         $answered[] = $a;
+                                        //         $result_status[] = $questions_result_status;
+                                        //         $answered_result_status[] = $questions_result_status;
+                                        //         $answered_question_score[] = $questions_score;
+
+
+
+
+
+                                    }
+
+
+                                    
+                                    // if (is_array($my_answer)) {
+
+                                    //     $answered = array();
+                                    //     $answered_result_status = array();
+                                    //     $answered_question_score = array();
+                                    //     $total_questionnaire_score += $q_passing;
+                                    //     $is_string = 1;
+
+
+                                    //     _e($my_answer, true);
+
+                                    //     foreach ($my_answer as $answers) {
+                                    //         _e($answers, true, true);
+                                    //         //  $result = explode('@#$', $answers);
+                                    //         //   $a = $result[0];
+                                    //         //   $answered_question_sid = $result[1];
+                                    //         $question_details = $this->job_screening_questionnaire_model->get_individual_question_details($postQuestionsSid);
+
+                                    //         if (!empty($question_details)) {
+                                    //             $questions_score = $question_details['score'];
+                                    //             $questions_result_status = $question_details['result_status'];
+                                    //             $questions_result_value = $question_details['value'];
+                                    //         }
+
+                                    //         $score = $questions_score;
+                                    //         $total_score += $questions_score;
+                                    //         $individual_score += $questions_score;
+                                    //         $individual_passing_score = $q_passing;
+                                    //         $answered[] = $a;
+                                    //         $result_status[] = $questions_result_status;
+                                    //         $answered_result_status[] = $questions_result_status;
+                                    //         $answered_question_score[] = $questions_score;
+                                    //     }
+                                    // } else {
+                                    //     $result = explode('@#$', $my_answer);
+                                    //     $total_questionnaire_score += $q_passing;
+                                    //     $a = $result[0];
+                                    //     $answered = $a;
+                                    //     $answered_result_status = '';
+                                    //     $answered_question_score = 0;
+
+                                    //     if (isset($result[1])) {
+                                    //         $answered_question_sid = $result[1];
+                                    //         $question_details = $this->job_screening_questionnaire_model->get_individual_question_details($answered_question_sid);
+
+                                    //         if (!empty($question_details)) {
+                                    //             $questions_score = $question_details['score'];
+                                    //             $questions_result_status = $question_details['result_status'];
+                                    //             $questions_result_value = $question_details['value'];
+                                    //         }
+
+                                    //         $is_string = 1;
+                                    //         $score = $questions_score;
+                                    //         $total_score += $questions_score;
+                                    //         $individual_score += $questions_score;
+                                    //         $individual_passing_score = $q_passing;
+                                    //         $result_status[] = $questions_result_status;
+                                    //         $answered_result_status = $questions_result_status;
+                                    //         $answered_question_score = $questions_score;
+                                    //     }
+                                    // }
+
+                                    // if (!empty($result_status)) {
+                                    //     if (in_array('Fail', $result_status)) {
+                                    //         $individual_status = 'Fail';
+                                    //         $overall_status = 'Fail';
+                                    //     }
+                                    // }
+
+
+
+
+
+                                } else { // it is optional question
+                                    $answered = '';
+                                    $individual_passing_score = $q_passing;
+                                    $individual_score = 0;
+                                    $individual_status = 'Candidate did not answer the question';
+                                    $answered_result_status = '';
+                                    $answered_question_score = 0;
+                                }
+
+                                $array_questionnaire[$my_question] = array(
+                                    'answer' => $answered,
+                                    'passing_score' => $individual_passing_score,
+                                    'score' => $individual_score,
+                                    'status' => $individual_status,
+                                    'answered_result_status' => $answered_result_status,
+                                    'answered_question_score' => $answered_question_score
+                                );
+                            }
+
+
+                            die('ddd');
+
+
+
+                            _e($questionAnswer, true, true);
+                        } else {
+
+                            if ($questionnaire_sid > 0) {
+                                $questionnaire_status = $this->all_feed_model->check_screening_questionnaires($questionnaire_sid);
+
+                                if ($questionnaire_status == 'found') {
+                                    $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
+                                    $screening_questionnaire_key = $this->all_feed_model->generate_questionnaire_key($portal_applicant_jobs_list_sid);
+
+                                    if (empty($email_template_information)) {
+                                        $email_template_information = array(
+                                            'subject' => '{{company_name}} - Screening Questionnaire for {{job_title}}',
+                                            'text' => '<p>Dear {{applicant_name}},</p>
                                                                                 <p>You have successfully applied for the job: "{{job_title}}" and your job application is in our system. </p>
                                                                                 <p><strong>Please complete the Job Screening Questionnaire by clicking on the link below. We are excited to learn more about you. </strong></p>
                                                                                 <p>{{url}}</p>
                                                                                 <p>Thank you, again, for your interest in {{company_name}}</p>',
-                                        'from_name' => '{{company_name}}'
-                                    );
-                                }
-
-                                $emailTemplateBody = $email_template_information['text'];
-                                $emailTemplateSubject = $email_template_information['subject'];
-                                $emailTemplateFromName = $email_template_information['from_name'];
-                                $replacement_array = array();
-                                $replacement_array['company_name'] = $company_name;
-
-                                if ($original_job_title != '') {
-                                    $replacement_array['job_title'] = $original_job_title;
-                                } else {
-                                    $replacement_array['job_title'] = $jobTitle;
-                                }
-
-                                $replacement_array['applicant_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
-                                $replacement_array['url'] = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
-
-                                if (!empty($replacement_array)) {
-                                    foreach ($replacement_array as $key => $value) {
-                                        $emailTemplateBody = str_replace('{{' . $key . '}}', $value, $emailTemplateBody);
-                                        $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
-                                        $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
+                                            'from_name' => '{{company_name}}'
+                                        );
                                     }
+
+                                    $emailTemplateBody = $email_template_information['text'];
+                                    $emailTemplateSubject = $email_template_information['subject'];
+                                    $emailTemplateFromName = $email_template_information['from_name'];
+                                    $replacement_array = array();
+                                    $replacement_array['company_name'] = $company_name;
+
+                                    if ($original_job_title != '') {
+                                        $replacement_array['job_title'] = $original_job_title;
+                                    } else {
+                                        $replacement_array['job_title'] = $jobTitle;
+                                    }
+
+                                    $replacement_array['applicant_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
+                                    $replacement_array['url'] = '<a style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . base_url() . 'Job_screening_questionnaire/' . $screening_questionnaire_key . '" target="_blank">Screening Questionnaire</a>';
+
+                                    if (!empty($replacement_array)) {
+                                        foreach ($replacement_array as $key => $value) {
+                                            $emailTemplateBody = str_replace('{{' . $key . '}}', $value, $emailTemplateBody);
+                                            $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
+                                            $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
+                                        }
+                                    }
+
+                                    if (!empty($emailTemplateBody)) {
+                                        $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
+                                        $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
+                                    }
+
+                                    $message_data = array();
+                                    $message_data['to_id'] = $applicant_email;
+                                    $message_data['from_type'] = 'employer';
+                                    $message_data['to_type'] = 'admin';
+                                    $message_data['job_id'] = $job_applications_sid;
+                                    $message_data['users_type'] = 'applicant';
+                                    $message_data['subject'] = $emailTemplateSubject;
+                                    $message_data['message'] = $emailTemplateBody;
+                                    $message_data['date'] = $date_applied;
+                                    $message_data['from_id'] = REPLY_TO;
+                                    $message_data['contact_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
+                                    $message_data['identity_key'] = generateRandomString(48);
+                                    $message_hf = message_header_footer_domain($company_sid, $company_name);
+                                    $secret_key = $message_data['identity_key'] . "__";
+                                    $autoemailbody = FROM_INFO_EMAIL_DISCLAIMER_MSG . $message_hf['header']
+                                        . $emailTemplateBody
+                                        . $message_hf['footer']
+                                        . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                        . $secret_key . '</div>';
+
+                                    $autoemailbody .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
+
+                                    sendMail(FROM_EMAIL_INFO, $applicant_email, $emailTemplateSubject, $autoemailbody, $company_name, FROM_EMAIL_INFO);
+                                    //sendMail(REPLY_TO, $this->debug_email, $emailTemplateSubject, $autoemailbody, $company_name, REPLY_TO);
+                                    $sent_to_pm = common_save_message($message_data, NULL);
+                                    $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                                 }
-
-                                if (!empty($emailTemplateBody)) {
-                                    $emailTemplateBody     = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{firstname}}', $nameArray[0], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{lastname}}', $nameArray[1], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{applicant_name}}', $nameArray[0] . ' ' . $nameArray[1], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{job_title}}', $replacement_array['job_title'], $emailTemplateBody);
-                                    $emailTemplateBody     = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
-                                }
-
-                                $message_data = array();
-                                $message_data['to_id'] = $applicant_email;
-                                $message_data['from_type'] = 'employer';
-                                $message_data['to_type'] = 'admin';
-                                $message_data['job_id'] = $job_applications_sid;
-                                $message_data['users_type'] = 'applicant';
-                                $message_data['subject'] = $emailTemplateSubject;
-                                $message_data['message'] = $emailTemplateBody;
-                                $message_data['date'] = $date_applied;
-                                $message_data['from_id'] = REPLY_TO;
-                                $message_data['contact_name'] = $nameArray[0] . '&nbsp;' . $nameArray[1];
-                                $message_data['identity_key'] = generateRandomString(48);
-                                $message_hf = message_header_footer_domain($company_sid, $company_name);
-                                $secret_key = $message_data['identity_key'] . "__";
-                                $autoemailbody = FROM_INFO_EMAIL_DISCLAIMER_MSG . $message_hf['header']
-                                    . $emailTemplateBody
-                                    . $message_hf['footer']
-                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                    . $secret_key . '</div>';
-
-                                $autoemailbody .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
-
-                                sendMail(FROM_EMAIL_INFO, $applicant_email, $emailTemplateSubject, $autoemailbody, $company_name, FROM_EMAIL_INFO);
-                                //sendMail(REPLY_TO, $this->debug_email, $emailTemplateSubject, $autoemailbody, $company_name, REPLY_TO);
-                                $sent_to_pm = common_save_message($message_data, NULL);
-                                $this->all_feed_model->update_questionnaire_status($portal_applicant_jobs_list_sid);
                             }
                         }
+
+
                         // *** END - Screening Questionnaire Email ***
                         /*END END END*/
                     }

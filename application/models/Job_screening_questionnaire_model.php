@@ -262,4 +262,26 @@ class Job_screening_questionnaire_model extends CI_Model {
      
       return $result;
     }
+
+
+
+
+    function get_individual_question_details_indeed($val,$score) {
+        $this->db->select('value, score, result_status');
+        $this->db->where('LOWER(value)', strtolower($val));
+        $this->db->where('score', $score);
+        $records_obj = $this->db->get('portal_question_option');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $result = array();
+        
+        if(!empty($records_arr)){
+            $result = $records_arr[0];
+        }
+        
+        return $result;
+    }
+
+
+
 }

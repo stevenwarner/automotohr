@@ -135,7 +135,6 @@ class Job_screening_questionnaire extends CI_Controller {
                                 if($questions_type != 'string') { // get the question possible score
                                     $q_passing = $this->job_screening_questionnaire_model->get_possible_score_of_questions($post_questions_sid, $questions_type);
                                 }
-
                                 if($my_answer != NULL) { // It is required question           
                                     if (is_array($my_answer)) {
                                         $answered = array();
