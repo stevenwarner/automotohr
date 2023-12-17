@@ -388,9 +388,20 @@
                     </tr>
 
                     <tr>
+                    <td class="text-left" width="50%">
+                        <label>Authorize Signature:</label>
+                        <?php if ($document['authorized_signature'] != '' || $document['authorized_signature'] != null) { ?>
+                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $document['authorized_signature']; ?>" />
+                        <?php } else { ?>
+
+                        <?php } ?>
+                    </td>
+                </tr>
+
+                    <tr>
                         <td width="100%">
                             <strong style="font-size: 14px;">Date: Authorize Sign Date: </strong>
-                            <input class="invoice-fields sign_date" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="authorize_sign_date" />
+                            <input class="invoice-fields sign_date" type="text" value="<?php echo $document['authorized_signature_date']?>" name="authorize_sign_date" />
                         </td>
 
                     </tr>

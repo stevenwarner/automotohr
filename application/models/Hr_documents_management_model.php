@@ -380,6 +380,15 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
         $this->db->group_end();
+
+      
+        //
+        $this->db->or_group_start();
+        $this->db->where('documents_assigned.fillable_documents_slug', 'written-employee-counseling-report-form');
+        $this->db->or_where('documents_assigned.fillable_documents_slug', 'notice-of-separation');
+        $this->db->group_end();
+
+
         if ($limit != null) {
             $this->db->limit($limit, $start);
         }

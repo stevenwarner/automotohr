@@ -334,6 +334,14 @@ class Dashboard extends Public_Controller
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
 
+
+                //
+                if ($assigned_document['fillable_documents_slug'] != '' || $assigned_document['fillable_documents_slug'] != null) {
+                    $is_magic_tag_exist = 1;
+                }
+
+
+
                 if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
                     // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
@@ -502,6 +510,17 @@ class Dashboard extends Public_Controller
             $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            
+            //
+            $total_assigned_auth_doc_fillable_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_auth_doc =$total_assigned_auth_doc + $total_assigned_auth_doc_fillable_doc;
+                       
+            $total_pending_auth_doc_fillable_doc     = $this->dashboard_model->get_all_pending_auth_documents_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_pending_auth_doc=$total_pending_auth_doc+$total_pending_auth_doc_fillable_doc;
+
+            $total_assigned_today_doc_fillable_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_today_doc= $total_assigned_today_doc+$total_assigned_today_doc_fillable_doc;
+            
             //
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
@@ -616,9 +635,9 @@ class Dashboard extends Public_Controller
                 $this->load->model('v1/course_model');
                 //
                 $data['coursesInfo'] =
-                $this->course_model->getCompanyCoursesInfo(
-                    $data['session']['company_detail']['sid']
-                );
+                    $this->course_model->getCompanyCoursesInfo(
+                        $data['session']['company_detail']['sid']
+                    );
                 // get pending course count
                 $data['pendingTrainings'] =
                     $this->course_model->getEmployeePendingCourseCount(
@@ -634,7 +653,7 @@ class Dashboard extends Public_Controller
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
                     $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }    
+                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -675,8 +694,9 @@ class Dashboard extends Public_Controller
         }
     }
 
-    public function employee_management_system() {
-    
+    public function employee_management_system()
+    {
+
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
@@ -843,13 +863,13 @@ class Dashboard extends Public_Controller
                     }
                 }
                 //
-              
+
                 if ($assigned_document['approval_process'] == 0) {
-                    
+
                     if ($assigned_document['document_type'] != 'offer_letter') {
                         if ($assigned_document['status'] == 1) {
                             if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0) {
-                               
+
                                 if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;
@@ -1081,7 +1101,7 @@ class Dashboard extends Public_Controller
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
                     $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }   
+                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;

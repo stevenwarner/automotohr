@@ -202,7 +202,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Summary of violation:</label>
+                        <label>Summary of violation: <span class="staric">*</span></label>
                         <textarea id="long_textbox_0_id" name="long_textbox_0" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                         <div id='long_textbox_0_id_sec'></div>
                     </td>
@@ -211,7 +211,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Summary of corrective plan:</label>
+                        <label>Summary of corrective plan: <span class="staric">*</span></label>
                         <textarea id="long_textbox_1_id" name="long_textbox_1" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                         <div id='long_textbox_1_id_sec'></div>
                     </td>
@@ -219,7 +219,7 @@
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Follow up dates: </label>
+                        <label>Follow up dates: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox date_picker" type="text" value="" name="short_textbox_4" id="short_textbox_4_id" data-type='text' />
 
                     </td>

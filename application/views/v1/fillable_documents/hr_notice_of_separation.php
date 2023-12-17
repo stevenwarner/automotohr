@@ -380,6 +380,18 @@
                 </tr>
 
                 <tr>
+                        <td width="100%" style="border-top:0px;">
+                        <p>
+                            <strong style="font-size: 14px;">Authorize Signature: </strong>
+                            <?php if ($document['authorized_signature'] != '' || $document['authorized_signature'] != null) { ?>
+                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>; vertical-align: middle;" src="<?php echo $document['authorized_signature']; ?>" />
+                            <?php } ?>
+                            </p>
+                        </td>
+
+                    </tr>
+
+                <tr>
                     <td width="100%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Date: Authorize Sign Date: </strong>
                         <input class="invoice-fields-line sign_date" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="authorize_sign_date" />

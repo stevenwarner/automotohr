@@ -3431,4 +3431,158 @@ class Dashboard_model extends CI_Model
 
         return array_column($b, 'sid');
     }
+
+
+
+    //
+
+    function get_all_auth_documents_assigned_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
+    {
+        if (!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if (!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
+        //
+        $data = $this->db
+            ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            // ->where('authorized_document_assigned_manager.assigned_status', 1)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
+            ->group_start()
+            ->where('documents_assigned.fillable_documents_slug', 'written-employee-counseling-report-form')
+            ->or_where('documents_assigned.fillable_documents_slug', 'notice-of-separation')
+
+            ->group_end()
+            ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+
+        $sldd = $this->db->last_query();
+        //die($sldd);
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj);
+    }
+
+
+    //
+    function get_all_pending_auth_documents_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
+    {
+        if (!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if (!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
+        //
+        $this->db
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1);
+   
+        $data = $this->db
+            ->select("user_type, user_sid")
+            ->group_start()
+            ->where('documents_assigned.fillable_documents_slug', 'written-employee-counseling-report-form')
+            ->or_where('documents_assigned.fillable_documents_slug', 'notice-of-separation')
+            ->group_end()
+            ->group_start()
+            ->where('documents_assigned.authorized_signature IS NULL', null)
+            ->or_where('documents_assigned.authorized_signature = ""', null)
+            ->group_end()
+            ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj);
+    }
+
+
+    function get_all_auth_documents_assigned_today_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
+    {
+        if (!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if (!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
+        //
+        $this->db
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where("assigned_by_date >= ", date('Y-m-d 00:00:00'))
+            ->where("assigned_by_date <= ", date('Y-m-d 23:59:59'))
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1);
+        //
+   
+        $data = $this->db
+            ->select("user_type, user_sid")
+            ->group_start()
+            ->where('documents_assigned.fillable_documents_slug', 'written-employee-counseling-report-form')
+            ->or_where('documents_assigned.fillable_documents_slug', 'notice-of-separation')
+            ->group_end()
+            ->group_start()
+            ->where('documents_assigned.authorized_signature IS NULL', null)
+            ->or_where('documents_assigned.authorized_signature = ""', null)
+            ->group_end()
+            ->get('authorized_document_assigned_manager');
+        $data_obj = $data->result_array();
+        // ->count_all_results('authorized_document_assigned_manager');
+        //
+        foreach ($data_obj as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj);
+    }
+
 }

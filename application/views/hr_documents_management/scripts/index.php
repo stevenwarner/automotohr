@@ -320,7 +320,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			<?php } ?>
 			if (do_descpt) rows += getSigners();
 
-			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation' ) {
 				rows += getSigners();
 			}
 
@@ -359,7 +359,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 			let signerDivID = '#js-modify-assign-document-signers';
 
-			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation') {
 				signerDivID = '#js-modify-assign-document-signers';
 			}
 			do_descpt ? signerDivID = '#js-modify-assign-document-signers' : '';
@@ -387,7 +387,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					}
 
 					//
-					if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+					if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation') {
 						if (d.signers != null && d.signers != '') {} else if (d.managers_list != null && d.managers_list != '') {}
 					}
 
@@ -664,7 +664,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners('js-modify-assigned-document-signers');
 			//
 			//
-			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation') {
 				rows += getSigners('js-modify-assigned-document-signers');
 			}
 
@@ -718,7 +718,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			//
 
-			if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+			if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation') {
 				select2s.push('#js-modify-assigned-document-signers');
 			}
 
@@ -744,7 +744,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 					//
 
-					if (d.fillable_documents_slug == 'written-employee-counseling-report-form') {
+					if (d.fillable_documents_slug == 'written-employee-counseling-report-form' || d.fillable_documents_slug == 'notice-of-separation') {
 						$('#js-modify-assigned-document-signers').select2('val', d.managersList != null && d.managersList != '' ? d.managersList.split(',') : null)
 					}
 
@@ -905,6 +905,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			$.each(obj, function(index, val) {
 				post.append(index, val);
 			});
+
+			
 			//
 			$('.jsModifyModalLoader').fadeIn(300);
 			$.ajax({

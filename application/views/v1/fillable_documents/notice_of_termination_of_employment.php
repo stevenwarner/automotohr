@@ -67,14 +67,14 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Employee name:</label>
+                        <label>Employee name: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName'];?>" name="short_textbox_0" id="short_textbox_0_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Title:</label>
+                        <label>Job Title: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empJobTitle'];?>" name="short_textbox_1" id="short_textbox_1_id" data-type='text' autocomplete="off"/>
                     </td>
 
@@ -82,14 +82,14 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Supervisor:</label>
+                        <label>Supervisor: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empSupervisor'];?>" name="short_textbox_2" id="short_textbox_2_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Last day of work:</label>
+                        <label>Last day of work: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="" name="short_textbox_3" id="short_textbox_3_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>

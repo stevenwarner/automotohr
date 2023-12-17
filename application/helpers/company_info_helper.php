@@ -3211,7 +3211,7 @@ if (!function_exists('get_employee_profile_info_detail')) {
 
         if ($userType == 'employee') {
 
-            $CI->db->select('users.first_name,users.last_name,users.job_title,users.PhoneNumber,users.Location_Address,departments_management.name as departmentname,departments_management.supervisor');
+            $CI->db->select('users.first_name,users.last_name,users.job_title,users.employee_number,users.Location_Address,departments_management.name as departmentname,departments_management.supervisor');
             $CI->db->join('departments_management', 'users.department_sid = departments_management.sid', 'left');
             $CI->db->where('users.sid', $emp_id);
 
@@ -3248,7 +3248,7 @@ if (!function_exists('get_employee_profile_info_detail')) {
 
             $CI->db->select('portal_job_applications.first_name');
             $CI->db->select('portal_job_applications.last_name');
-            $CI->db->select('portal_job_applications.phone_number');
+            $CI->db->select('portal_job_applications.employee_number');
             $CI->db->select('portal_applicant_jobs_list.desired_job_title');
             $CI->db->select('portal_job_listings.Title as job_title');
             $CI->db->where('portal_job_applications.sid', $emp_id);
@@ -3260,7 +3260,7 @@ if (!function_exists('get_employee_profile_info_detail')) {
             if (!empty($dataArray)) {
                 $userPrefillData['empName'] = $dataArray['first_name'] . ' ' . $dataArray['last_name'];
                 $userPrefillData['empJobTitle'] =  $dataArray['desired_job_title'] ? $dataArray['desired_job_title'] : $dataArray['job_title'];
-                $userPrefillData['empPhoneNumber'] = $dataArray['phone_number'];
+                $userPrefillData['employee_number'] = $dataArray['employee_number'];
                 $userPrefillData['empLocationAddress'] = '';
                 $userPrefillData['empDepartment'] = '';
                 $userPrefillData['empSupervisor'] = '';

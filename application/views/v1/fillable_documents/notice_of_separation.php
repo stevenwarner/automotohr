@@ -59,32 +59,32 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
             <tbody>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Your Name:</label>
+                        <label>Your Name: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName'];?>" name="short_textbox_0" id="short_textbox_0_id" data-type='text'  autocomplete="off"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="text-left" width="50%"> 
-                        <label>Your Supervisor:</label>
+                        <label>Your Supervisor: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empSupervisor'];?>" name="short_textbox_1" id="short_textbox_1_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Your Department:</label>
+                        <label>Your Department: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empDepartment'];?>" name="short_textbox_2" id="short_textbox_2_id" data-type='text' autocomplete="off" />
                     </td>
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Your Job Title:</label>
+                        <label>Your Job Title: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empJobTitle'];?>" name="short_textbox_3" id="short_textbox_3_id" data-type='text' autocomplete="off" />
                     </td>
 
                 </tr>
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Last day of work:</label>
+                        <label>Last day of work: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="" name="short_textbox_4" id="short_textbox_4_id" data-type='text' autocomplete="off" />
                     </td>
 
@@ -92,7 +92,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Please fully explain the reasons you are leaving the company:</label><br>
+                        <label>Please fully explain the reasons you are leaving the company: <span class="staric">*</span></label><br>
                         <textarea id="long_textbox_0_id" name="long_textbox_0" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                         <div id='long_textbox_0_id_sec'></div>
                     </td>
@@ -101,7 +101,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Forwarding information: Please include your full address:</label><br>
+                        <label>Forwarding information: Please include your full address: <span class="staric">*</span></label><br>
                         <textarea id="long_textbox_1_id" name="long_textbox_1" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                         <div id='long_textbox_1_id_sec'></div>
                     </td>
@@ -121,7 +121,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Employee Printed Name:</label>
+                        <label>Employee Printed Name: <span class="staric">*</span></label>
                         <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName'];?>" name="short_textbox_5" id="short_textbox_5_id" data-type='text' autocomplete="off" />
                     </td>
 
@@ -129,16 +129,28 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                 <tr>
                     <td class="text-left" width="50%">
-                        <label>Date:</label>
-                        <input class="invoice-fields short_textbox date_picker" type="text" value="" name="short_textbox_6" id="short_textbox_6_id" data-type='text' autocomplete="off" />
+                        <label>Date: <span class="staric">*</span></label>
+                        <input class="invoice-fields short_textbox sign_date" type="text" value="" name="short_textbox_6" id="short_textbox_6_id" data-type='text' autocomplete="off" />
                     </td>
 
                 </tr>
 
                 <tr>
                     <td class="text-left" width="50%">
+                        <label>Authorize Signature:</label>
+                        <?php if ($document['authorized_signature'] != '' || $document['authorized_signature'] != null) { ?>
+                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $document['authorized_signature']; ?>" />
+                        <?php } else { ?>
+
+                            <a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="449" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: 75px;" src="" id="show_authorized_signature">
+                        <?php } ?>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="text-left" width="50%">
                         <label>Date: Authorize Sign Date:</label>
-                        <input class="invoice-fields short_textbox date_picker" type="text" value="" name="short_textbox_7" id="short_textbox_7_id" data-type='text' autocomplete="off"/>
+                        <input class="invoice-fields short_textbox date_picker" type="text" value="<?php echo $document['authorized_signature_date']?>" name="short_textbox_7" id="short_textbox_7_id" data-type='text' autocomplete="off" disabled/>
                     </td>
 
                 </tr>

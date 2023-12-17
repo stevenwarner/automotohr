@@ -273,7 +273,7 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { 
                                                                     ?>
-                                                                    <?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' ) { ?>
+                                                                    <?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' || $document['fillable_documents_slug'] == 'notice-of-separation' ) { ?>
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                                         <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                             <?php if ($document['authorized_sign_status'] == 0) { ?>

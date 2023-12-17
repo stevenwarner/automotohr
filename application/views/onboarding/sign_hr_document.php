@@ -1,4 +1,8 @@
 <?php $company_name = ucwords($session['company_detail']['CompanyName']); ?>
+<?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' || $document['fillable_documents_slug'] == 'notice-of-separation') {
+    $save_offer_letter_type = 'consent_only';
+}
+?>
 <div class="main">
     <div class="container">
         <div class="row">
@@ -683,6 +687,19 @@
             var is_init = "";
             var is_date = "";
 
+            <?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form') { ?>
+                if (writtenEmployeeCounselingReportFormValidation() == true) {
+                    retrun;
+                }
+            <?php } ?>
+
+            <?php if ($document['fillable_documents_slug'] == 'notice-of-separation') { ?>
+                if (noticeOfSeparation() == true) {
+                    retrun;
+                }
+            <?php } ?>
+
+
             if ($('.get_signature')[0]) {
                 is_sign = $('#is_signature').val();
             } else {
@@ -809,6 +826,25 @@
 
     function func_save_document_only() {
         if ($('#user_consent_form').valid()) {
+
+
+
+            <?php if ($document['fillable_documents_slug'] == 'payroll-status-change-form') { ?>
+                if (payrollStatusChangeFormValidation() == true) {
+                    retrun;
+                }
+            <?php }
+            if ($document['fillable_documents_slug'] == 'oral-employee-counseling-report-form') { ?>
+                if (oralEmployeeCounselingReportFormValidation() == true) {
+                    retrun;
+                }
+            <?php }  ?>
+            <?php if ($document['fillable_documents_slug'] == 'notice-of-termination-of-employment') { ?>
+                if (noticeOfTerminationOfEmployment() == true) {
+                    retrun;
+                }
+            <?php } ?>
+
             alertify.confirm(
                 'Are you Sure?',
                 'Are you sure you want to Save this Document?',
@@ -891,6 +927,273 @@
                 cancel: 'Cancel'
             });
         }
+    }
+
+
+    //
+
+    function payrollStatusChangeFormValidation() {
+
+        var validationError = false;
+
+        var regex = /^\d+(?:\.\d{0,2})$/;
+        var rateFrom = $('#short_textbox_4_id').val();
+        var rateTo = $('#short_textbox_5_id').val();
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please provide Effective Date');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please provide Supervisor');
+            validationError = true;
+        }
+        //
+        if (isNaN(rateFrom)) {
+            alertify.error('Rate From is not valid');
+            validationError = true;
+        } else if (rateFrom == '') {
+            alertify.error('Please provide Rate From');
+
+        }
+
+        if (isNaN(rateTo)) {
+            alertify.error('Rate To is not valid');
+            validationError = true;
+        } else if (rateTo == '') {
+            alertify.error('Please provide Rate To');
+
+        }
+
+        //
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please provide Job');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_7_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        if ($('#short_textbox_8_id').val() == '') {
+            alertify.error('Please provide Location');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_9_id').val() == '') {
+            alertify.error('Please provide Shift');
+            validationError = true;
+        }
+
+        return validationError;
+
+    }
+
+
+    function oralEmployeeCounselingReportFormValidation() {
+
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Employee Name ');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please Provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please Provide Date of Occurrence');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please Provide Supervisor');
+            validationError = true;
+        }
+
+        //
+        if ($('#long_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Summary of Violation');
+            validationError = true;
+        }
+        //
+        if ($('#long_textbox_1_id').val() == '') {
+            alertify.error('Please provide Summary of Corrective Plan');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_4_id').val() == '') {
+            alertify.error('Please Provide  Follow Up Dates: ');
+            validationError = true;
+        }
+
+        return validationError;
+    }
+
+
+    function noticeOfTerminationOfEmployment() {
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please Provide Job Title');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please Provide Supervisor');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please Provide Last Day of Work:');
+            validationError = true;
+        }
+
+        return validationError;
+
+    }
+
+
+    function writtenEmployeeCounselingReportFormValidation() {
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please Provide Employee Number:');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please Provide Job title:');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please Provide Department:');
+            validationError = true;
+        }
+        if ($('#short_textbox_4_id').val() == '') {
+            alertify.error('Please Provide Location:');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_5_id').val() == '') {
+            alertify.error('Please Provide Supervisor');
+            validationError = true;
+        }
+        //
+        if ($('#long_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Description of Problem:');
+            validationError = true;
+        }
+        if ($('#long_textbox_1_id').val() == '') {
+            alertify.error('Please Provide Description of performance:');
+            validationError = true;
+        }
+        if ($('#long_textbox_2_id').val() == '') {
+            alertify.error('Please Provide Description of consequences:');
+            validationError = true;
+        }
+        if ($('#long_textbox_3_id').val() == '') {
+            alertify.error('Please Provide Dates and descriptions of prior discissions:');
+            validationError = true;
+        }
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please Provide Date');
+            validationError = true;
+        }
+
+        return validationError;
+
+    }
+
+
+    function noticeOfSeparation() {
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Your Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+
+            alertify.error('Please Provide Your Supervisor');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please Provide Your Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please Provide Job Title');
+            validationError = true;
+        }
+        if ($('#short_textbox_4_id').val() == '') {
+            alertify.error('Please Provide Last day of work:');
+            validationError = true;
+        }
+
+
+        if ($('#long_textbox_0_id').val() == '') {
+            alertify.error('Please Provide Please fully explain the reasons you are leaving the company:');
+            validationError = true;
+        }
+        if ($('#long_textbox_1_id').val() == '') {
+            alertify.error('Please Provide Please Forwarding information: Please include your full address:');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_5_id').val() == '') {
+            alertify.error('Please Employee Printed Name:');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please Employee Date:');
+            validationError = true;
+        }
+
+        return validationError;
+
     }
 </script>
 
