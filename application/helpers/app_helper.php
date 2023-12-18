@@ -2099,3 +2099,137 @@ if (!function_exists("getMonthDatesByYearAndMonth")) {
         return $dates;
     }
 }
+
+
+if (!function_exists("getWeekDates")) {
+    /**
+     * get current week or two week dates
+     *
+     * @param bool $nextTwoWeeks Optional
+     * @param bool $format Optional
+     * @return
+     */
+    function getWeekDates(bool $nextTwoWeeks = false, string $format = DB_DATE): array
+    {
+        // Get the current date
+        $today = new DateTime();
+
+        // Set the time to the beginning of the day
+        $today->setTime(0, 0, 0);
+
+        // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+        $currentDayOfWeek = $today->format('w');
+
+        // Calculate the difference between the current day of the week and Monday (1)
+        $daysUntilMonday = ($currentDayOfWeek + 6) % 7;
+
+        // Calculate the start date of the current week (Monday)
+        $startDate = clone $today;
+        $startDate->sub(new DateInterval('P' . $daysUntilMonday . 'D'));
+
+        // Calculate the end date of the current week (Sunday)
+        $endDate = clone $startDate;
+        $endDate->add(new DateInterval('P6D'));
+
+        // Calculate the start date of the next week (Monday)
+        $nextWeekStartDate = clone $startDate;
+        $nextWeekStartDate->add(new DateInterval('P7D'));
+
+        // Calculate the end date of the next week (Sunday)
+        $nextWeekEndDate = clone $nextWeekStartDate;
+        $nextWeekEndDate->add(new DateInterval('P6D'));
+
+        if ($nextTwoWeeks) {
+            return [
+                'current_week' => [
+                    'start_date' => $startDate->format($format),
+                    'end_date' => $endDate->format($format),
+                ],
+                'next_week' => [
+                    'start_date' => $nextWeekStartDate->format($format),
+                    'end_date' => $nextWeekEndDate->format($format),
+                ],
+            ];
+        } else {
+            return [
+                'start_date' => $startDate->format($format),
+                'end_date' => $endDate->format($format),
+            ];
+        }
+    }
+}
+
+
+if (!function_exists("getDatesInRange")) {
+    /**
+     * get dates range
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $format Optional
+     * @return array
+     */
+    function getDatesInRange(string $startDate, string $endDate, string $format = DB_DATE): array
+    {
+        $dates = [];
+        $currentDate = new DateTime($startDate);
+
+        while ($currentDate <= new DateTime($endDate)) {
+            $dates[] = $currentDate->format($format);
+            $currentDate->add(new DateInterval('P1D'));
+        }
+
+        return $dates;
+    }
+}
+
+
+if (!function_exists("getTimeBetweenTwoDates")) {
+    function getTimeBetweenTwoDates(string $date1, string $date2): string
+    {
+        //
+        $date1 = new DateTime($date1);
+        $date2 = new DateTime($date2);
+
+        // Calculate the time difference
+        return $date2->getTimestamp() - $date1->getTimestamp();
+    }
+}
+
+if (!function_exists("convertSecondsToTime")) {
+    function convertSecondsToTime(string $differenceInSeconds): string
+    {
+        // Convert seconds to hours and minutes
+        $hours = floor($differenceInSeconds / 3600);
+        $minutes = floor(($differenceInSeconds % 3600) / 60);
+
+
+        return $hours . "h" . ($minutes > 0 ? " " . $minutes . 'm' : "");
+    }
+}
+
+if (!function_exists("getSundaysAndSaturdays")) {
+    function getSundaysAndSaturdays($startDate, $endDate)
+    {
+        $sundaysSaturdays = [];
+
+        // Create DateTime objects from the input strings
+        $startDateTime = new DateTime($startDate);
+        $endDateTime = new DateTime($endDate);
+
+        // Iterate through the days
+        $currentDate = $startDateTime;
+        while ($currentDate <= $endDateTime) {
+            // Check if the current day is Sunday or Saturday
+            $dayOfWeek = $currentDate->format('N');
+            if ($dayOfWeek == 7 /* Sunday */ || $dayOfWeek == 6 /* Saturday */) {
+                $sundaysSaturdays[] = $currentDate->format('Y-m-d');
+            }
+
+            // Move to the next day
+            $currentDate->modify('+1 day');
+        }
+
+        return $sundaysSaturdays;
+    }
+}

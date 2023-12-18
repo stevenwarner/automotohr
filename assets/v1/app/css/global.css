@@ -39,7 +39,8 @@
 	padding-right: 3px;
 }
 .btn-orange:hover,
-.btn-orange:focus {
+.btn-orange:focus,
+.btn-orange.active {
 	color: var(--txColor);
 	background-color: var(--bgOrangeColorSoft) !important;
 }
@@ -770,16 +771,17 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	border: 1px solid #ccc;
 	cursor: pointer;
 }
-.schedule-column .schedule-item {
+.schedule-item {
 	display: flex;
 	align-items: end;
 	min-height: 53px;
 	background: #fff;
 	border-left: 3px solid var(--bgOrangeColor);
+	border-radius: 5px;
 	padding: 5px;
 	cursor: pointer;
 }
-.schedule-column .circle {
+.schedule-item .circle {
 	position: absolute;
 	right: 10px;
 	top: 10px;
@@ -789,4 +791,14 @@ div.ui-timepicker-container.ui-timepicker-standard {
 }
 .schedule-border{
 	border: 1px solid #ccc;
+}
+
+.schedule-item-selectable{
+	cursor: pointer;
+}
+.schedule-item-selectable:hover,
+.schedule-item-selectable:focus,
+.schedule-item-selectable.active{
+	background: var(--bgOrangeColorSoft) !important;
+	color: var(--txColor) !important;
 }

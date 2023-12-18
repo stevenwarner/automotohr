@@ -493,3 +493,17 @@ if (jQuery !== undefined && jQuery.validator !== undefined) {
 		"The value must be greater than zero."
 	);
 }
+
+if (typeof getSearchParam === "undefined") {
+	/**
+	 * get the search parameter
+	 * @param {string} index
+	 * @returns
+	 */
+	function getSearchParam(index) {
+		//
+		const param = new URLSearchParams(window.location.search);
+		//
+		return param.get(index) || false;
+	}
+}

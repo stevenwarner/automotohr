@@ -2015,6 +2015,7 @@ $route["overtimerules/(:num)"]["delete"] = "Settings/processDeleteOvertimeRules/
 $route["minimum_wages"]["get"] = "Settings/minimumWages";
 // schedule settings
 $route["settings/shifts/manage"]["get"] = "Settings/manageShifts";
+$route["settings/shifts/template/apply"]["post"] = "Settings/processApplyTemplateProcess";
 $route["settings/shifts/breaks"]["get"] = "Settings/manageShiftBreaks";
 $route["settings/shifts/breaks"]["post"] = "Settings/processShiftBreak";
 $route["settings/shifts/breaks/(:num)"]["delete"] = "Settings/processDeleteShiftBreak/$1";

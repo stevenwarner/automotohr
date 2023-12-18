@@ -1,12 +1,31 @@
-<?php $monthDates = getMonthDatesByYearAndMonth($year, $month); ?>
+<?php
+if ($filter["mode"] === "month") {
+    $monthDates = getMonthDatesByYearAndMonth($filter["year"], $filter["month"], DB_DATE);
+    $startDate = formatDateToDB(
+        $monthDates[0],
+        DB_DATE,
+        SITE_DATE
+    );
+    $endDate = formatDateToDB(
+        $monthDates[count($monthDates) - 1],
+        DB_DATE,
+        SITE_DATE
+    );
+} else {
+    $startDate = $filter["start_date"];
+    $endDate = $filter["end_date"];
+    $monthDates = getDatesInRange(
+        $filter["start_date"],
+        $filter["end_date"],
+        DB_DATE
+    );
+}
+?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
-                    <?php $this->load->view('main/employer_column_left_view'); ?>
-                </div>
-                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                <div class="col-sm-12">
                     <!-- Page header -->
                     <div class="page-header-area">
                         <span class="page-heading down-arrow">
@@ -48,8 +67,8 @@
                             <div class="panel-body">
                                 <!--  -->
                                 <div class="row">
-                                    <div class="col-sm-6 text-left">
-                                        <button class="btn btn-orange">
+                                    <div class="col-sm-4 text-left">
+                                        <button class="btn btn-orange jsApplyTemplate">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                             Apply Template
                                         </button>
@@ -62,7 +81,26 @@
                                             Delete
                                         </button>
                                     </div>
-                                    <div class="col-sm-6 text-right">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="<?= base_url("settings/shifts/manage?mode=week"); ?>" class="btn btn-orange <?= $filter["mode"] === "week" ? "disabled" : ""; ?>">
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                            Week
+                                        </a>
+                                        <a href="<?= base_url("settings/shifts/manage?mode=two_week"); ?>" class="btn btn-orange <?= $filter["mode"] === "two_week" ? "disabled" : ""; ?>">
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                            2 Week
+                                        </a>
+                                        <a href="<?= base_url("settings/shifts/manage?mode=month"); ?>" class="btn btn-orange <?= $filter["mode"] === "month" ? "disabled" : ""; ?>">
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                            Month
+                                        </a>
+                                    </div>
+
+                                    <div class="col-sm-4 text-right">
+                                        <button class="btn btn-orange" data-type="month">
+                                            <i class="fa fa-exchange" aria-hidden="true"></i>
+                                            Copy shifts from last cycle
+                                        </button>
                                         <button class="btn btn-blue">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
@@ -86,20 +124,22 @@
                                             <div class="schedule-sidebar">
                                                 <!-- navigator -->
                                                 <div class="schedule-navigator">
-                                                    <span class="schedule-navigator-arrow schedule-navigator-left-arrow">
+                                                    <span class="schedule-navigator-arrow schedule-navigator-left-arrow jsNavigateLeft">
                                                         <i class="fa fa-chevron-left" aria-hidden="true"></i>
                                                     </span>
-                                                    <span class="schedule-navigator-text">
-                                                        <?= formatDateToDB($monthDates[0], "D d", "M d, y"); ?> -
-                                                        <?= formatDateToDB($monthDates[count($monthDates) - 1], "D d", "M d, y"); ?>
+                                                    <span class="schedule-navigator-text jsWeekDaySelect">
+                                                        <?= formatDateToDB($startDate, SITE_DATE,  "M d, y"); ?> -
+                                                        <?= formatDateToDB($endDate, SITE_DATE, "M d, y"); ?>
                                                     </span>
-                                                    <span class="schedule-navigator-arrow schedule-navigator-right-arrow">
+                                                    <span class="schedule-navigator-arrow schedule-navigator-right-arrow jsNavigateRight">
                                                         <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                                     </span>
                                                 </div>
                                                 <!-- employee boxes -->
                                                 <?php if ($employees) {
                                                     foreach ($employees as $employee) {
+
+                                                        $employeeShiftRow = $shifts[$employee["userId"]];
                                                 ?>
                                                         <div class="schedule-employee-row" data-id="<?= $employee["userId"]; ?>">
                                                             <div class="row">
@@ -116,7 +156,7 @@
                                                                 </div>
                                                                 <div class="col-sm-2 text-right">
                                                                     <span class="text-small">
-                                                                        0h
+                                                                        <?= $employeeShiftRow["totalTimeText"]; ?>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -136,29 +176,44 @@
                                         <div class="col-sm-9" style="padding-left: 0">
                                             <div class="schedule-row-container">
                                                 <?php foreach ($monthDates as $monthDate) { ?>
+                                                    <?php $totalHoursInSeconds = 0; ?>
                                                     <!-- column-->
-                                                    <div class="schedule-column-container" data-date="" data-eid="">
+                                                    <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
                                                         <div class="schedule-column-header">
                                                             <p class="text-center text-small">
-                                                                <?= $monthDate; ?>
+                                                                <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                             </p>
                                                         </div>
                                                         <?php if ($employees) {
                                                             foreach ($employees as $employee) {
+                                                                // get the employee shift
+                                                                $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                         ?>
                                                                 <div class="schedule-column schedule-column-clickable schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>">
-                                                                    <?php if (false) { ?>
+                                                                    <?php if ($employeeShift) {
+                                                                        $totalHoursInSeconds += $employeeShift["totalTime"];
+                                                                    ?>
                                                                         <div class="schedule-item">
-                                                                            <span class="circle circle-orange"></span>
+                                                                            <?php if ($employeeShift["geo_fence"]) { ?>
+                                                                                <span class="circle circle-orange"></span>
+                                                                            <?php } ?>
                                                                             <p class="text-small">
-                                                                                09:00AM - 06:00PM
+                                                                                <?= formatDateToDB(
+                                                                                    $employeeShift["start_time"],
+                                                                                    "H:i:s",
+                                                                                    "h:i a"
+                                                                                ); ?> -
+                                                                                <?= formatDateToDB(
+                                                                                    $employeeShift["end_time"],
+                                                                                    "H:i:s",
+                                                                                    "h:i a"
+                                                                                ); ?>
                                                                             </p>
                                                                         </div>
-                                                                    <?php } elseif (false) { ?>
-                                                                        <div class="schedule-dayoff hidden">
+                                                                    <?php } elseif ($holidays[$monthDate]) { ?>
+                                                                        <div class="schedule-dayoff">
                                                                             <button class="btn btn-red text-small btn-xs">
-                                                                                <i class="fa fa-stamp"></i>
-                                                                                Day Off
+                                                                                <?= $holidays[$monthDate]["title"]; ?>
                                                                             </button>
                                                                         </div>
                                                                     <?php } else { ?>
@@ -171,7 +226,7 @@
                                                         ?>
                                                         <div class="schedule-footer schedule-border">
                                                             <p class="text-small text-center">
-                                                                0h
+                                                                <?= convertSecondsToTime($totalHoursInSeconds); ?>
                                                             </p>
                                                         </div>
                                                     </div>
@@ -188,25 +243,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        const rows = document.getElementsByClassName("schedule-employee-row")
-
-        for (let index in rows) {
-            if (typeof rows[index].getAttribute !== "undefined") {
-
-                const employeeId = parseInt(rows[index].getAttribute("data-id"));
-                const height = rows[index].offsetHeight
-                const cls = document.getElementsByClassName("schedule-column-" + employeeId);
-
-                for (let i0 in cls) {
-                    if (typeof cls[i0].getAttribute !== "undefined") {
-                        cls[i0].setAttribute("style", "height:" + height + "px");
-                    }
-                }
-            }
-        }
-    })
-</script>

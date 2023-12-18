@@ -3905,8 +3905,65 @@ class Settings extends Public_Controller
         $data["employees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"]
         );
-        $data["month"] = $this->input->get("month", true) ?? getSystemDate("m");
-        $data["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
+        //
+        $data["filter"] = [];
+        // set the mode
+        $data["filter"]["mode"] = $this->input->get("mode", true) ?? "month";
+
+        if ($data["filter"]["mode"] === "week") {
+            // get the current week dates
+            $weekDates = getWeekDates(false, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates['end_date'];
+        } elseif ($data["filter"]["mode"] === "two_week") {
+            // get the current week dates
+            $weekDates = getWeekDates(true, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates["current_week"]['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates["next_week"]['end_date'];
+        } else {
+            $data["filter"]["month"] = $this->input->get("month", true) ?? getSystemDate("m");
+            $data["filter"]["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
+        }
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get the shifts
+        $data["shifts"] = $this->shift_model->getShifts(
+            $data["filter"],
+            array_column($data["employees"], "userId")
+        );
+        // get off and holidays
+        $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
+            $loggedInCompany["sid"],
+            $data["filter"]
+        );
+
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("daterangepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/main"
+        ], "public/v1/shifts/", "main", false);
+
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -4279,6 +4336,36 @@ class Settings extends Public_Controller
     }
 
     /**
+     * process apply template
+     *
+     * @return array
+     */
+    public function processApplyTemplateProcess()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("schedule_id", "Schedule", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_date", "Start date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_date", "End date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->applyTemplate(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
      * set page overtime rules
      *
      * @param string $pageSlug
@@ -4461,6 +4548,31 @@ class Settings extends Public_Controller
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/job_sites/partials/" . (!$pageId ? "add" : "edit") . "_job_site", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * Apply shift template
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageApplyShiftTemplates(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["templates"] = $this->shift_template_model->get($session["company_detail"]["sid"]);
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/apply_shift_templates", $data, true),
             "data" => $data["return"] ?? []
         ]);
     }
