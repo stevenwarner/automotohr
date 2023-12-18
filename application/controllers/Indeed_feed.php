@@ -209,10 +209,7 @@ class Indeed_feed extends CI_Controller
             sleep(rand(1, 3));
 
 
-
             $job_sid = $data['job']['jobId'];
-
-
 
             //Ni
             $questionAnswer = [];
@@ -230,12 +227,15 @@ class Indeed_feed extends CI_Controller
             }
 
             $job_details = $this->all_feed_model->get_job_detail($job_sid);
+
+
             $companyId = $job_details['user_sid'];
             //
             if (check_company_status($companyId) == 0) {
                 echo '<h1>404. Company not Found!</h1>';
                 die();
             }
+
             //
             // if (in_array($companyId, array("7", "51"))) {
             if (!in_array($companyId, array("0"))) {
@@ -415,6 +415,7 @@ class Indeed_feed extends CI_Controller
                     // }
                 }
 
+
                 if (!isset($resume) || empty($resume) || $resume == '') {
                     sendResumeEmailToApplicant([
                         'company_sid' => $companyId,
@@ -540,31 +541,34 @@ class Indeed_feed extends CI_Controller
 
                         //  _e($job_details,true);
 
-                        ////////////////////////
+
+
+
+                        // Indeed question Asnwers
                         $answerFoundOnIndeed = false;
                         foreach ($questionsAndAnswers as $ansQuesRow) {
-
-                            // _e($ansQuesRow,true,true);
                             if (!empty($ansQuesRow['answer'])) {
                                 $answerFoundOnIndeed = true;
-                                $questionAnswer['data'][] = array('questionId' => $ansQuesRow['question']['id'], 'type' => $ansQuesRow['question']['type'], 'answer' => $ansQuesRow['answer']);
+                                $questionAnswer['data'][] = array('questionId' => $ansQuesRow['question']['id'], 'question' => $ansQuesRow['question']['question'], 'type' => $ansQuesRow['question']['type'], 'answer' => $ansQuesRow['answer']);
                             }
                         }
-
 
                         //
                         if ($answerFoundOnIndeed == true) {
 
                             $this->load->model('job_screening_questionnaire_model');
 
-                           // _e($questionAnswer['data'], true, true);
+                            $total_score = 0;
+                            $total_questionnaire_score = 0;
+                            $overall_status = 'Pass';
 
                             foreach ($questionAnswer['data'] as $dataRow) {
 
-
-
                                 $q_passing = 0;
-
+                                $individual_score = 0;
+                                $individual_passing_score = 0;
+                                $individual_status = 'Pass';
+                                $result_status = array();
 
                                 $questionType = '';
                                 if ($dataRow['type'] == 'select') {
@@ -576,126 +580,74 @@ class Indeed_feed extends CI_Controller
                                 }
 
                                 $postQuestionsSid = $dataRow['questionId'];
+                                $my_question = $dataRow['question'];
 
                                 $my_answer = NULL;
 
                                 if ($questionType != 'string') { // get the question possible score
                                     $q_passing = $this->job_screening_questionnaire_model->get_possible_score_of_questions($postQuestionsSid, $questionType);
-                                    //  _e($q_passing,true);
                                 }
 
                                 //
                                 $my_answer = $dataRow['answer'];
-
-
                                 if ($my_answer != NULL) { // It is required question           
 
-                                    if ($questionType == 'list') {
+                                    if ($questionType == 'multilist') {
 
-                                        _e($my_answer,true,true);
+                                        foreach ($my_answer as $answersRow) {
+                                            $question_details = $this->job_screening_questionnaire_model->get_individual_question_details_indeed($answersRow['label'], $answersRow['value'], $postQuestionsSid);
 
-                                        //$question_details = $this->job_screening_questionnaire_model->get_individual_question_details($postQuestionsSid);
-                                        $question_details = $this->job_screening_questionnaire_model-> get_individual_question_details_indeed($my_answer['label'],$my_answer['value']) ;
-                                      
+                                            if (!empty($question_details)) {
+                                                $questions_score = $question_details['score'];
+                                                $questions_result_status = $question_details['result_status'];
+                                                // $questions_result_value = $question_details['value'];
+                                            }
 
+                                            // $score = $questions_score;
+                                            $total_score += $questions_score;
+                                            $individual_score += $questions_score;
+                                            $individual_passing_score = $q_passing;
+                                            $answered[] = $my_answer['label'];
+                                            $result_status[] = $questions_result_status;
+                                            $answered_result_status[] = $questions_result_status;
+                                            $answered_question_score[] = $questions_score;
+                                        }
+                                    } else if ($questionType == 'list') {
+                                        // _e($my_answer, true);
+                                        $question_details = $this->job_screening_questionnaire_model->get_individual_question_details_indeed($my_answer['label'], $my_answer['value'], $postQuestionsSid);
 
-                                        //         if (!empty($question_details)) {
-                                        //             $questions_score = $question_details['score'];
-                                        //             $questions_result_status = $question_details['result_status'];
-                                        //             $questions_result_value = $question_details['value'];
-                                        //         }
-    
-                                        //         $score = $questions_score;
-                                        //         $total_score += $questions_score;
-                                        //         $individual_score += $questions_score;
-                                        //         $individual_passing_score = $q_passing;
-                                        //         $answered[] = $a;
-                                        //         $result_status[] = $questions_result_status;
-                                        //         $answered_result_status[] = $questions_result_status;
-                                        //         $answered_question_score[] = $questions_score;
+                                        if (!empty($question_details)) {
+                                            $questions_score = $question_details['score'];
+                                            $questions_result_status = $question_details['result_status'];
+                                            // $questions_result_value = $question_details['value'];
+                                        }
 
+                                        //  $score = $questions_score;
+                                        $total_score += $questions_score;
+                                        $individual_score += $questions_score;
+                                        $individual_passing_score = $q_passing;
+                                        $answered[] = $my_answer['label'];
+                                        $result_status[] = $questions_result_status;
+                                        $answered_result_status[] = $questions_result_status;
+                                        $answered_question_score[] = $questions_score;
+                                        // _e($question_details, true, true);
+                                    } else if ($questionType == 'string') {
 
-
-
-
+                                        $total_questionnaire_score += $q_passing;
+                                        $a = $my_answer;
+                                        $answered = $a;
+                                        $answered_result_status = '';
+                                        $answered_question_score = 0;
                                     }
 
-
-                                    
-                                    // if (is_array($my_answer)) {
-
-                                    //     $answered = array();
-                                    //     $answered_result_status = array();
-                                    //     $answered_question_score = array();
-                                    //     $total_questionnaire_score += $q_passing;
-                                    //     $is_string = 1;
-
-
-                                    //     _e($my_answer, true);
-
-                                    //     foreach ($my_answer as $answers) {
-                                    //         _e($answers, true, true);
-                                    //         //  $result = explode('@#$', $answers);
-                                    //         //   $a = $result[0];
-                                    //         //   $answered_question_sid = $result[1];
-                                    //         $question_details = $this->job_screening_questionnaire_model->get_individual_question_details($postQuestionsSid);
-
-                                    //         if (!empty($question_details)) {
-                                    //             $questions_score = $question_details['score'];
-                                    //             $questions_result_status = $question_details['result_status'];
-                                    //             $questions_result_value = $question_details['value'];
-                                    //         }
-
-                                    //         $score = $questions_score;
-                                    //         $total_score += $questions_score;
-                                    //         $individual_score += $questions_score;
-                                    //         $individual_passing_score = $q_passing;
-                                    //         $answered[] = $a;
-                                    //         $result_status[] = $questions_result_status;
-                                    //         $answered_result_status[] = $questions_result_status;
-                                    //         $answered_question_score[] = $questions_score;
-                                    //     }
-                                    // } else {
-                                    //     $result = explode('@#$', $my_answer);
-                                    //     $total_questionnaire_score += $q_passing;
-                                    //     $a = $result[0];
-                                    //     $answered = $a;
-                                    //     $answered_result_status = '';
-                                    //     $answered_question_score = 0;
-
-                                    //     if (isset($result[1])) {
-                                    //         $answered_question_sid = $result[1];
-                                    //         $question_details = $this->job_screening_questionnaire_model->get_individual_question_details($answered_question_sid);
-
-                                    //         if (!empty($question_details)) {
-                                    //             $questions_score = $question_details['score'];
-                                    //             $questions_result_status = $question_details['result_status'];
-                                    //             $questions_result_value = $question_details['value'];
-                                    //         }
-
-                                    //         $is_string = 1;
-                                    //         $score = $questions_score;
-                                    //         $total_score += $questions_score;
-                                    //         $individual_score += $questions_score;
-                                    //         $individual_passing_score = $q_passing;
-                                    //         $result_status[] = $questions_result_status;
-                                    //         $answered_result_status = $questions_result_status;
-                                    //         $answered_question_score = $questions_score;
-                                    //     }
-                                    // }
-
-                                    // if (!empty($result_status)) {
-                                    //     if (in_array('Fail', $result_status)) {
-                                    //         $individual_status = 'Fail';
-                                    //         $overall_status = 'Fail';
-                                    //     }
-                                    // }
-
-
-
-
-
-                                } else { // it is optional question
+                                    //
+                                    if (!empty($result_status)) {
+                                        if (in_array('Fail', $result_status)) {
+                                            $individual_status = 'Fail';
+                                            $overall_status = 'Fail';
+                                        }
+                                    }
+                                } else {
                                     $answered = '';
                                     $individual_passing_score = $q_passing;
                                     $individual_score = 0;
@@ -714,12 +666,62 @@ class Indeed_feed extends CI_Controller
                                 );
                             }
 
+                            //
+                            $questionnaire_result = $overall_status;
+                            $datetime = date('Y-m-d H:i:s');
+                            $remote_addr = getUserIP();
+                            $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-                            die('ddd');
+                            // die($job_applications_sid);
+                            $applicant_sid = $job_applications_sid;
+                            $applicant_jobs_list_sid = $portal_applicant_jobs_list_sid;
+                            $job_type = $job_details['JobType'];
+                            $questionnaire_name = '';
+
+                            $questionnaire_data = array(
+                                'applicant_sid' => $applicant_sid,
+                                'applicant_jobs_list_sid' => $applicant_jobs_list_sid,
+                                'job_sid' => $job_sid,
+                                'job_title' => $jobTitle,
+                                'job_type' => $job_type,
+                                'company_sid' => $company_sid,
+                                'questionnaire_name' => $questionnaire_name,
+                                'questionnaire' => $array_questionnaire,
+                                'questionnaire_result' => $questionnaire_result,
+                                'attend_timestamp' => $datetime,
+                                'questionnaire_ip_address' => $remote_addr,
+                                'questionnaire_user_agent' => $user_agent
+                            );
 
 
+                            $questionnaire_serialize = serialize($questionnaire_data);
+                            $array_questionnaire_serialize = serialize($array_questionnaire);
 
-                            _e($questionAnswer, true, true);
+                            $screening_questionnaire_results = array(
+                                'applicant_sid' => $applicant_sid,
+                                'applicant_jobs_list_sid' => $applicant_jobs_list_sid,
+                                'job_sid' => $job_sid,
+                                'job_title' => $jobTitle,
+                                'job_type' => $job_type,
+                                'company_sid' => $company_sid,
+                                'questionnaire_name' => $questionnaire_name,
+                                'questionnaire' => $array_questionnaire_serialize,
+                                'questionnaire_result' => $questionnaire_result,
+                                'attend_timestamp' => $datetime,
+                                'questionnaire_ip_address' => $remote_addr,
+                                'questionnaire_user_agent' => $user_agent
+                            );
+
+                            //
+                            $indeedHistoryData['content_json'] = $jSonData;
+                            $indeedHistoryData['source'] = 'Indeed';
+                            $indeedHistoryData['created_at'] = date('Y-m-d H:i:s');
+
+                            $this->job_screening_questionnaire_model->insert_indeed_result($indeedHistoryData);
+                            $this->job_screening_questionnaire_model->update_questionnaire_result($applicant_jobs_list_sid, $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
+                            $this->job_screening_questionnaire_model->insert_questionnaire_result($screening_questionnaire_results);
+                            
+
                         } else {
 
                             if ($questionnaire_sid > 0) {
