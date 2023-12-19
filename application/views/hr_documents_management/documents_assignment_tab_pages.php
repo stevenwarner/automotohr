@@ -209,7 +209,7 @@ $noActionRequiredDocumentsList = [];
 
                                                                     <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
 
-                                                                        <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>">
+                                                                        <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>" data-document-title="Assigned Document">
                                                                             Preview Assigned
                                                                         </button>
                                                                     <?php } else { ?>
@@ -923,7 +923,7 @@ $noActionRequiredDocumentsList = [];
 
                                                                                         <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
 
-                                                                                            <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>">
+                                                                                            <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>" data-document-title="Assigned Document">
                                                                                                 Preview Assigned
                                                                                             </button>
                                                                                         <?php } else { ?>

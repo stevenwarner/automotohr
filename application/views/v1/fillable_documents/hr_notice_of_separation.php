@@ -280,7 +280,7 @@
     }
 </style>
 
-<div class="sheet padding-10mm" id="pdf" style="width: 800px; margin: 0 auto;">
+<div class="sheet padding-10mm" id="pdf" style=" margin: 0 auto;">
     <section class="pdf-cover-page">
         <table class="table-border-collapse">
             <tbody>

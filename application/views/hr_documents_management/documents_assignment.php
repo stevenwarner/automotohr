@@ -5397,20 +5397,36 @@ if (!empty($assigned_documents_history)) {
                             onclick="fLaunchModalFillable(this);"
                             data-preview-url="' . ($document['fillable_documents_slug']) . '"
                             data-download-url=""
+                            data-document-sid="' . ($document['sid']) . '"
                             data-file-name="' . ($document['fillable_documents_slug']) . '"
                             data-document-title="' . ($document['fillable_documents_slug']) . '">
                             Preview Assigned
                         </button>';
             if ($document_all_permission) {
-                $row .= '<button
+                if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
+                    $row .= '<button
                                 class="btn btn-success btn-sm btn-block"
-                                onclick="fLaunchModalFillable(this);"
+                                onclick="preview_latest_generic_fillable_function(this);"
                                 data-preview-url="' . ($document['fillable_documents_slug']) . '"
                                 data-download-url=""
+                                date-letter-type="generated"
+                                data-document-sid="' . ($document['sid']) . '"
                                 data-file-name="' . ($document['fillable_documents_slug']) . '"
                                 data-document-title="' . $document['fillable_documents_slug'] . '" ' . (!$document['uploaded'] ? 'disabled' : '') . '>
                                 Preview Submitted
                             </button>';
+                } else {
+
+                    $row .= '<button
+                    class="btn btn-success btn-sm btn-block"
+                    onclick="fLaunchModalFillable(this);"
+                    data-preview-url="' . ($document['fillable_documents_slug']) . '"
+                    data-download-url=""
+                    data-file-name="' . ($document['fillable_documents_slug']) . '"
+                    data-document-title="' . $document['fillable_documents_slug'] . '" ' . (!$document['uploaded'] ? 'disabled' : '') . '>
+                    Preview Submitted
+                </button>';
+                }
             }
         } else if ($document['document_type'] == 'uploaded') {
             $row .= '<button
