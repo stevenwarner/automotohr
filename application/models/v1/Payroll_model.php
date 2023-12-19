@@ -5562,4 +5562,192 @@ class Payroll_model extends CI_Model
             ->from('gusto_companies_default_admin')
             ->count_all_results();
     }
+
+    public function syncEmployeeStatus ($employeeId, $employeeData) {
+        //
+        $companyId = getEmployeeUserParent_sid($employeeId);
+        //
+        $companyPayrollStatus = $this->GetCompanyPayrollStatus($companyId);
+        $employeePayrollStatus = $this->checkEmployeePayrollStatus($employeeId, $companyId);
+        //
+        if ($companyPayrollStatus && $employeePayrollStatus) {
+            // Call helper
+            $this->load->helper("payroll_helper");
+            //
+            $companyDetails = $this->getGustoCompanyDetail($companyId);
+            //
+            $gustoEmployeeUUID = $this->getEmployeeGustoId($employeeId, $companyId);
+            //
+            foreach ($employeeData as $statusInfo) {
+                if ($statusInfo['employee_status'] == 1) {
+                    //
+                    $employeeTerminateData = [];
+                    $employeeTerminateData["effective_date"] = $statusInfo['effective_date'];
+                    $employeeTerminateData["run_termination_payroll"] = '';
+                    //
+                    $response = createAnEmployeeTerminationOnGusto($employeeTerminateData, $companyDetails, $gustoEmployeeUUID, [
+                        'X-Gusto-API-Version: 2023-04-01'
+                    ]);
+                    //
+                    $this->updateEmployeeStatus($statusInfo['sid'], $response);
+                    //
+                } else if ($statusInfo['employee_status'] == 8) {
+                    //
+                    $gustoEmployeeWorkLocationId = $this->getEmployeeGustoWorkId($employeeId);
+                    //
+                    $employeeRehireData = [];
+                    $employeeRehireData["effective_date"] = $statusInfo['effective_date'];
+                    $employeeRehireData["file_new_hire_report"] = true;
+                    $employeeRehireData["work_location_uuid"] = $gustoEmployeeWorkLocationId;
+                    //
+                    $response = createAnEmployeeRehireOnGusto($employeeRehireData, $companyDetails, $gustoEmployeeUUID, [
+                        'X-Gusto-API-Version: 2023-04-01'
+                    ]);
+                    //
+                    $this->updateEmployeeStatus($statusInfo['sid'], $response);
+                    //
+                }
+            }
+        }    
+        //
+        return $response;
+    }
+    
+    public function updateEmployeeStatusOnGusto ($employeeId, $companyId, $employeeData) {
+        //
+        $companyPayrollStatus = $this->GetCompanyPayrollStatus($companyId);
+        $employeePayrollStatus = $this->checkEmployeePayrollStatus($employeeId, $companyId);
+        //
+        if ($companyPayrollStatus && $employeePayrollStatus) {
+            // Call helper
+            $this->load->helper("payroll_helper");
+            //
+            $companyDetails = $this->getGustoCompanyDetail($companyId);
+            //
+            $gustoEmployeeUUID = $this->getEmployeeGustoId($employeeId, $companyId);
+            //
+            if ($employeeData['employee_status'] == 1) {
+                //
+                $employeeTerminateData = [];
+                $employeeTerminateData["version"] = $employeeData['version'];
+                $employeeTerminateData["effective_date"] = $employeeData['effective_date'];
+                $employeeTerminateData["run_termination_payroll"] = '';
+                //
+                $response = updateAnEmployeeTerminationOnGusto($employeeTerminateData, $companyDetails, $gustoEmployeeUUID, [
+                    'X-Gusto-API-Version: 2023-04-01'
+                ]);
+                //
+                $this->updateEmployeeStatus($employeeData['sid'], $response);
+                //
+            } else if ($employeeData['employee_status'] == 8) {
+                //
+                $gustoEmployeeWorkLocationId = $this->getEmployeeGustoWorkId($employeeId);
+                //
+                $employeeRehireData = [];
+                $employeeRehireData["version"] = $employeeData['version'];
+                $employeeRehireData["effective_date"] = $employeeData['effective_date'];
+                $employeeRehireData["file_new_hire_report"] = true;
+                $employeeRehireData["work_location_uuid"] = $gustoEmployeeWorkLocationId;
+                //
+                $response = updateAnEmployeeRehireOnGusto($employeeRehireData, $companyDetails, $gustoEmployeeUUID, [
+                    'X-Gusto-API-Version: 2023-04-01'
+                ]);
+                //
+                $this->updateEmployeeStatus($employeeData['sid'], $response);
+                //
+            }
+        }
+        //
+        return $response;    
+    }
+    
+    public function updateEmployeeStatus($rowId, $data) {
+        $updateArray = [];
+        $updateArray['payroll_version'] = $data['version'];
+        $updateArray['payroll_object'] = serialize($data);
+        //
+        $this->db
+            ->where('sid', $rowId)
+            ->update('terminated_employees', $updateArray);
+    }
+
+    function GetCompanyPayrollStatus($companyId) {
+        $this->db->select('is_active');
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('module_sid', 7);
+        
+        $record_obj = $this->db->get('company_modules');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            if ($record_arr['is_active'] == 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    function checkEmployeePayrollStatus ($employeeId, $companyId) {
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $this->db->from('gusto_companies_employees');
+        $record_count = $this->db->count_all_results();
+    
+        if ($record_count > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getGustoCompanyDetail ($companyId) {
+        //
+        $this->db->select('refresh_token, access_token, gusto_uuid');
+        $this->db->where('company_sid', $companyId);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }    
+    }
+
+    public function getEmployeeGustoId ($employeeId, $companyId) {
+        //
+        $this->db->select('gusto_uuid');
+        $this->db->where('employee_sid', $employeeId);
+        $this->db->where('company_sid', $companyId);
+        $record_obj = $this->db->get('gusto_companies_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr['gusto_uuid'];
+        } else {
+            return '';
+        }    
+    }
+
+    public function getEmployeeGustoWorkId ($employeeId) {
+        //
+        $this->db->select('gusto_location_uuid');     
+        $this->db->where('employee_sid', $employeeId);
+        //
+        $record_obj = $this->db->get('gusto_companies_employees_work_addresses');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr['gusto_location_uuid'];
+        } else {
+            return '';
+        }    
+    }
 }

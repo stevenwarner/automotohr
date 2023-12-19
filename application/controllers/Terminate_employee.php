@@ -168,10 +168,45 @@ class Terminate_employee extends Public_Controller
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
-
-
-                $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
-
+                //
+                $rowId = $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
+                //
+                $this->load->model("v1/payroll_model", "payroll_model");
+                //
+                $companyPayrollStatus = $this->payroll_model->GetCompanyPayrollStatus($employer_parent_sid);
+                $employeePayrollStatus = $this->payroll_model->checkEmployeePayrollStatus($sid, $employer_parent_sid);
+                //
+                if ($companyPayrollStatus && $employeePayrollStatus) {
+                    if ($status == 1 || $status == 8) {
+                        //
+                        $effective_date = $data_to_insert['status_change_date'];
+                        //
+                        if ($status == 1) {
+                            $effective_date = $data_to_insert['termination_date'];
+                        }
+                        //
+                        $employeeData[] = [
+                            'sid' => $rowId,
+                            'effective_date' => $effective_date,
+                            'employee_status' => $status
+                        ];
+                        //
+                        $response = $this->payroll_model->syncEmployeeStatus(
+                            $sid,
+                            $employeeData
+                        );
+                        //
+                        if (isset($response['errors'])) {
+                            //
+                            // Delete inserted record because gusto error
+                            $this->terminate_employee_model->deleteEmployeeStatus($rowId);
+                            //
+                            $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                            redirect(base_url('employee_status/' . $sid), 'refresh');
+                        }
+                    }
+                }    
+                //
                 if ($status == 9) {
                     $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
                     $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
@@ -315,9 +350,46 @@ class Terminate_employee extends Public_Controller
                     $data_to_update['terminated_status'] = 0;
                 }
                 //
+                $this->load->model("v1/payroll_model", "payroll_model");
+                //
+                $companyPayrollStatus = $this->payroll_model->GetCompanyPayrollStatus($employer_parent_sid);
+                $employeePayrollStatus = $this->payroll_model->checkEmployeePayrollStatus($sid, $employer_parent_sid);
+                //
+                if ($companyPayrollStatus && $employeePayrollStatus) {
+                    if ($status == 1 || $status == 8) {
+                        $old_effective_date = @unserialize($status_data['payroll_object'])['effective_date'];
+                        $oldDate = strtotime($old_effective_date);
+                        $newDate = strtotime($data_to_insert['status_change_date']);
+                        $effectiveDate = $data_to_insert['status_change_date'];
+                        //
+                        if ($status == 1) {
+                            $newDate = strtotime($data_to_insert['termination_date']);
+                            $effectiveDate = $data_to_insert['termination_date'];
+                        }
+                        //
+                        if ($oldDate != $newDate) {
+                            $employeeData = [];
+                            $employeeData['sid'] = $status_id;
+                            $employeeData['effective_date'] = $effectiveDate;
+                            $employeeData['version'] = $status_data[0]['payroll_version'];
+                            $employeeData['employee_status'] = $status;
+                            //
+                            $response = $this->payroll_model->updateEmployeeStatusOnGusto(
+                                $sid,
+                                $employer_parent_sid,
+                                $employeeData
+                            );
+                            //
+                            if (isset($response['errors'])) {
+                                $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                                redirect(base_url('employee_status/' . $sid), 'refresh');
+                            }
+                        }
+                    }
+                }    
+                //
                 $this->terminate_employee_model->update_terminate_user($status_id, $data_to_insert);
                 //
-
                 if ($status == 9) {
                     $data_transfer_log_update['from_company_sid'] = 0;
                     $data_transfer_log_update['previous_employee_sid'] = 0;
@@ -330,6 +402,7 @@ class Terminate_employee extends Public_Controller
                 }
                 // Check its current status then update in user primary data
                 if ($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)) {
+                    //
                     if ($status != 9) {
                         $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                         //
