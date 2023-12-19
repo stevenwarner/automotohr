@@ -953,7 +953,12 @@ class Payroll extends CI_Controller
         elseif ($step === 2) : // employee listing page
             // get all employees
             $employees = $this->payroll_model->getEmployeesForPayroll(
-                $companyId
+                $companyId,
+                [
+                    'users.active' => 1,
+                    'users.employee_type != ' => 'contractual',
+                    'users.terminated_status' => 0
+                ]
             );
             return SendResponse(
                 200,

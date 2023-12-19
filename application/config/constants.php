@@ -615,16 +615,6 @@ define('DAY_OFF', ''); // Default Day Off
 define('BREAK_HOURS', '1'); // Default Break Hours
 define('BREAK_MINUTES', '0'); // Default Break Minutes
 
-// test
-define('GUSTO_URL_TEST', 'https://api.gusto-demo.com/');
-define('GUSTO_KEY_TEST', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
-// live
-define('GUSTO_URL', 'https://api.gusto.com/');
-define('GUSTO_KEY', '1f6e907f53ed30eeab7d1c32d3b8c0726934cfe60abd908bbe9fdb25158e5284');
-define('GUSTO_MODE', 'test');
-define('GUSTO_CLIENT_ID', 'hCwof-BU9Xv1PaJGqInPVilUukJvoRR_gqC_cr3KIrg');
-define('GUSTO_CLIENT_SECRET', 'eEbHTeU4AClISVNUIRLB4T8RwDkMmQxt8298kfjt-cI');
-define('GUSTO_CLIENT_REDIRECT_URL', 'https://www.automotohr.com/gusto/callback');
 
 define('BILLING_AND_INVOICE', 'The selected contacts will be notified by email when an invoice is generated.');
 define('NEW_APPLICANT', 'The selected contacts will be notified by email when an applicant applies for a job.');
@@ -640,15 +630,6 @@ define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when
 define('DEFAULT_APPROVERS', 'The selected contacts will be notified by email when a document is assigned for an approval.');
 define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any employee sends a private message to another employee, or a Candidate or person responds to an email that was sent by the employee from within the system.');
 
-
-
-
-
-
-
-
-
-
 define('I9_EXPIRES', '10/31/2022');
 define('I9_NEW_EXPIRES', '07/31/2026');
 define('W4_YEAR', '2023');
@@ -657,8 +638,6 @@ define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholdin
 define('FEED_STRIP_TAGS', '<b><h1><h2><h3><h4><h5><h6><p><br><ul><ol><li></li><strong><em><table><tbody><th><tr><td>');
 //
 define('CHARACTER_SHOW', 2);
-define('GUSTO_ACCESS_TOKEN', 'sbPrNJznXEuSc_qCgct3DHn8pkzFYjFHjXGBpDC3jx0');
-define('GUSTO_REFRESH_TOKEN', '7hY3IKva0XM__HIh3BYHVLJmKmunHuRltvvMmOVmJlw');
 define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
 
 //
@@ -703,8 +682,6 @@ define('DUE_SOON_COURSES_REMINDER_NOTIFICATION', 436);
 // W4 amounts
 define("W4_DEPENDENTS_UNDER_AGE_AMOUNT", 2000);
 define("W4_DEPENDENTS_AMOUNT", 500);
-
-
 
 
 define('W4_EXEMPTION_FROM_WITHHOLDING_23', 'You may claim exemption from withholding for 2023 if you meet both of the following conditions: you had no federal income tax liability in 2022 and you expect to have no federal income tax liability in 2023. You had no federal income tax liability in 2022 if (1) your total tax on line 24 on your 2022 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2023 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2024.');

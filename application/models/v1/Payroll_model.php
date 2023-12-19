@@ -12,14 +12,18 @@ class Payroll_model extends CI_Model
     {
         // call the parent constructor
         parent::__construct();
+        $companyId = checkAndGetSession("company", true)["sid"];
         // load the payroll helper
-        $this->load->helper('v1/payroll_helper');
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
         // set the admin
         $this->adminArray = [
             'first_name' => 'Steven',
             'last_name' => 'Warner',
-            'email_address' => 'steven@automotohr.com',
-            'phone_number' => '3331234569',
+            'email_address' => 'Steven@AutomotoHR.com',
+            'phone_number' => '951-385-8204',
         ];
     }
 
@@ -204,7 +208,12 @@ class Payroll_model extends CI_Model
      * @param int $companyId
      * @return array
      */
-    public function getEmployeesForPayroll(int $companyId): array
+    public function getEmployeesForPayroll(int $companyId, array $where = [
+        'users.active' => 1,
+        'users.is_executive_admin' => 0,
+        'users.employee_type != ' => 'contractual',
+        'users.terminated_status' => 0
+    ]): array
     {
         // Fetch employees
         $employees = $this->getCompanyEmployees($companyId, [
@@ -223,12 +232,7 @@ class Payroll_model extends CI_Model
             "users.on_payroll",
             'users.PhoneNumber',
             'gusto_companies_employees.gusto_uuid',
-        ], [
-            'users.active' => 1,
-            'users.is_executive_admin' => 0,
-            'users.employee_type != ' => 'contractual',
-            'users.terminated_status' => 0
-        ]);
+        ], $where);
         //
         $tmp = [];
         //
@@ -5425,14 +5429,15 @@ class Payroll_model extends CI_Model
             ->get('payroll_companies')
             ->row_array();
     }
-   
-	//
-	public function updatePaymentConfiguration($table, $dataArray, $whereArray){
-		//
-		$this->db
-		->where($whereArray)
-		->update($table, $dataArray);
-	}
+
+    //
+    public function updatePaymentConfiguration($table, $dataArray, $whereArray)
+    {
+        //
+        $this->db
+            ->where($whereArray)
+            ->update($table, $dataArray);
+    }
 
     /**
      * Get company primary Admin
@@ -5492,7 +5497,7 @@ class Payroll_model extends CI_Model
                 ->where('company_sid', $companyId)
                 ->update('gusto_companies_default_admin', $post);
             //
-            return ["success" => true, "msg" => "Primary Admin update successfully"];    
+            return ["success" => true, "msg" => "Primary Admin update successfully"];
         } else {
             $this->db->insert(
                 'gusto_companies_default_admin',
@@ -5506,8 +5511,8 @@ class Payroll_model extends CI_Model
             );
             //
             return ["success" => true, "msg" => "Primary Admin save successfully"];
-        }    
-    }  
+        }
+    }
 
     /**
      * add or update primary Admin

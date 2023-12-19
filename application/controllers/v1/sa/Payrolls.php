@@ -19,8 +19,6 @@ class Payrolls extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        // load gusto helper
-        $this->load->helper('v1/payroll');
         // load model
         $this->load->model('v1/Payroll_model', 'payroll_model');
         // set path to CSS file

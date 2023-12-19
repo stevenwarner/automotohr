@@ -33,4 +33,19 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+
+    public function setExistingCompanyStatus()
+    {
+        $companies = $this->db
+            ->get("gusto_companies")
+            ->result_array();
+
+        foreach ($companies as $value) {
+            $this->db->insert("gusto_companies_mode", [
+                "company_sid" => $value["company_sid"],
+                "stage" =>  "demo",
+                "created_at" => getSystemDate()
+            ]);
+        }
+    }
 }

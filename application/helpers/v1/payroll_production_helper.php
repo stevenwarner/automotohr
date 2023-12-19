@@ -179,7 +179,7 @@ if (!function_exists('refreshToken')) {
     function refreshToken(array $request)
     {
         //
-        $gustoDetails = getCreds("AHR")->GUSTO->DEMO;
+        $gustoDetails = getCreds("AHR")->GUSTO->PRODUCTION;
         //
         $body = [];
         $body['client_id'] = $gustoDetails->CLIENT_ID;
@@ -428,7 +428,7 @@ if (!function_exists('getUrl')) {
         // off cycle payrolls
         $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
 
-        return getCreds("AHR")->GUSTO->DEMO->URL . $urls[$index];
+        return getCreds("AHR")->GUSTO->PRODUCTION->URL . $urls[$index];
     }
 }
 

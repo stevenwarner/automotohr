@@ -1735,8 +1735,6 @@ $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 $route['hit_lms_cron/(:any)'] = "Cron_lms_courses/sendPendingCoursesEmails/$1";
 $route['hit2_lms_cron/(:any)'] = "Cron_lms_courses/sendTodayAssignedCoursesEmails/$1";
 
-
-
 /**
  * Payroll routes
  */
