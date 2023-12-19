@@ -1804,16 +1804,16 @@ if (!function_exists('findCompanyUser')) {
             'userName' => ''
         ];
         //
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('sid, first_name, last_name');
         $CI->db->where('parent_sid', $company_sid);
         $CI->db->where('email', $email);
         $record_row = $CI->db->get('users')->row_array();
 
-        if(!empty($record_row)){
+        if (!empty($record_row)) {
             $result['profilePath'] = base_url('employee_profile') . '/' . $record_row['sid'];
             $result['userType'] = "employee";
-            $result['userName'] = $record_row['first_name'].' '.$record_row['last_name'];
+            $result['userName'] = $record_row['first_name'] . ' ' . $record_row['last_name'];
         } else {
             $CI->db->select('sid, first_name, last_name, email');
             $CI->db->where('email', $email);
@@ -1822,10 +1822,10 @@ if (!function_exists('findCompanyUser')) {
             $record_arr = $record_obj->row_array();
             $record_obj->free_result();
 
-            if(!empty($record_arr)) {
-                $result['userName'] = $record_arr['first_name'].' '.$record_arr['last_name'];
+            if (!empty($record_arr)) {
+                $result['userName'] = $record_arr['first_name'] . ' ' . $record_arr['last_name'];
                 $portal_job_applications_sid = $record_arr['sid'];
-                
+
                 $CI->db->select('sid');
                 $CI->db->order_by('sid', 'desc');
                 $CI->db->limit(1);
@@ -1833,12 +1833,12 @@ if (!function_exists('findCompanyUser')) {
                 $obj = $CI->db->get('portal_applicant_jobs_list');
                 $result_arr = $obj->row_array();
                 $obj->free_result();
-                
-                if(!empty($result_arr)) {
-                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr['sid'];
+
+                if (!empty($result_arr)) {
+                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/' . $result_arr['sid'];
                     $result['userType'] = 'applicant';
                 }
-            } 
+            }
         }
 
         return $result;
@@ -1848,14 +1848,13 @@ if (!function_exists('findCompanyUser')) {
 //
 
 if (!function_exists('acceptGustoAgreement')) {
-  
+
     function acceptGustoAgreement($name)
     {
         if ($name != '' && $name != null) {
         }
-    
-        return false;
 
+        return false;
     }
 }
 
@@ -1884,7 +1883,7 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
 
         // get new department id
         $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
-        
+
         // when both ids are equal
         if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
             return false;
@@ -2002,4 +2001,160 @@ if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
             $complyJobRoleId
         );
     }
+
+
+
+
+
+    //
+
+    if (!function_exists('jobDispositionOnIndeed')) {
+
+        function jobDispositionOnIndeed($company_sid, $applicant_job_list_sid)
+        {
+            //
+            $CI = &get_instance();
+            //
+            $CI->load->model('job_screening_questionnaire_model');
+            //
+            $jobData = $CI->job_screening_questionnaire_model->getindeedJobData($company_sid, $applicant_job_list_sid);
+            //
+            if (!empty($jobData)) {
+
+                $MyATS = '';
+                // $status = $jobData['status'];
+                $status = mapApplicantStatusWithIndeed($jobData['status']);
+
+                $statusChangeDate = '';
+                if (!empty($jobData['status_change_date'])) {
+                    $datetime = \DateTime::createFromFormat("Y-m-d H:i:s", $jobData['status_change_date']);
+                    $statusChangeDate = $datetime->format(\DateTime::RFC3339);
+                }
+
+                $indeedpostdata = "mutation {
+                partnerDisposition {
+                  send(input: {
+                    dispositions: [{
+                        dispositionStatus: $status,
+                        rawDispositionStatus: " . $status . ",
+                        rawDispositionDetails: ,
+                        identifiedBy: {
+                          indeedApplyID: " . $jobData['indeed_apply_id'] . ",
+                        },
+                        atsName: " . $MyATS . ",
+                        statusChangeDateTime: " .  $statusChangeDate . ",
+                      }
+                    ],
+                  }) {
+                    numberGoodDispositions
+                    failedDispositions {
+                      identifiedBy {
+                        indeedApplyID
+                      }
+                      rationale
+                    }
+                  }
+                }
+              }";
+
+                //
+                $response = postApplicantStatusOnIndeed($indeedpostdata);
+                // _e($response, true, true);
+            }
+        }
+    }
+}
+
+//
+function mapApplicantStatusWithIndeed($status)
+{
+    if ($status == 'Not Contacted Yet') {
+        $status = 'UNABLE_TO_MAP';
+    } else if ($status == 'Left Message') {
+        $status = 'UNABLE_TO_MAP';
+    } else if ($status == 'Contacted') {
+        $status = 'CONTACTED';
+    } else if ($status == 'Candidate Responded') {
+        $status = 'UNABLE_TO_MAP';
+    } else if ($status == 'Interviewing') {
+        $status = 'INTERVIEW';
+    } else if ($status == 'Submitted') {
+        $status = 'UNABLE_TO_MAP';
+    } else if ($status == 'Qualifying') {
+        $status = 'UNABLE_TO_MAP';
+    } else if ($status == 'Ready to Hire') {
+        $status = 'HIRED';
+    } else if ($status == 'Do Not Hire') {
+        $status = 'NOT_SELECTED';
+    } else if ($status == 'Offered Job') {
+        $status = 'OFFER_MADE';
+    } else if ($status == 'Client Declined') {
+        $status = 'UNABLE_TO_MAP';
+    } elseif ($status == 'Not In Consideration') {
+        $status = '';
+    } else if ($status == 'Future Opportunity') {
+        $status = 'UNABLE_TO_MAP';
+    } else {
+        $status = 'UNABLE_TO_MAP';
+    }
+
+    return $status;
+}
+
+
+//
+function postApplicantStatusOnIndeed($postData)
+{
+
+    //
+    $url = "https://apis.indeed.com/graphql";
+    $method = "POST";
+
+    $curl = curl_init();
+    //
+    $lists = [
+        CURLOPT_URL =>  $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_SSL_VERIFYPEER => FALSE,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => $method
+    ];
+    //
+
+    $lists[CURLOPT_POSTFIELDS] = $postData;
+    //
+    curl_setopt_array($curl, $lists);
+    //
+    $response = curl_exec($curl);
+    $info = curl_getinfo($curl);
+
+    //Save Response 
+    $responsedata = json_decode($response, true);
+
+    $logData['request_method'] = $lists[CURLOPT_CUSTOMREQUEST];
+    $logData['request_url'] = $lists[CURLOPT_CUSTOMREQUEST];
+    $logData['request_body'] =  $lists[CURLOPT_POSTFIELDS];
+    $logData['response_body'] = $response;
+    $logData['response_headers'] = json_encode($info);
+    $logData['created_at'] = date('Y-m-d H:i:s');
+    $logData['response_code'] = $responsedata['errors'][0]['extensions']['code'] ? $responsedata['errors'][0]['extensions']['code'] : '';
+
+    $CI = &get_instance();
+    $CI->db->insert('indeed_job_calls', $logData);
+
+    //
+    $response = json_decode($response, true);
+    //
+    curl_close($curl);
+
+    //
+    if ($info['http_code'] == 500) {
+        $response['error'] = '500 internal server occurred on ComplyNet.';
+    }
+    //
+    return $response;
 }

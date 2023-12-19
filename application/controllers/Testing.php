@@ -33,4 +33,14 @@ class Testing extends CI_Controller
         redirect($complyLink);
     }
 
+
+
+    public function indeedJobDisposition()
+    {
+
+        $company_sid = 1;
+        $applicant_job_list_sid = 107;
+        jobDispositionOnIndeed($company_sid, $applicant_job_list_sid);
+
+    }
 }

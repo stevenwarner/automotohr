@@ -153,6 +153,9 @@ class Application_tracking_system extends Public_Controller
                 $employers_details  = $data['session']['employer_detail'];
                 $employer_sid       = $employers_details['sid'];
                 saveApplicantOnboardingStatusLog($sid, $employer_sid, $status, $oldStatus);
+                //
+                jobDispositionOnIndeed($company_sid, $sid );
+
                 echo 'Done';
                 exit;
             }
@@ -2466,12 +2469,14 @@ class Application_tracking_system extends Public_Controller
         $oldStatus = getApplicantOnboardingPreviousStatus($user_id);
 
         $this->application_tracking_system_model->update_applicant_status($company_sid, $user_id, $status_sid, $status);
-
         // Log 
         $data['session'] = $this->session->userdata('logged_in');
         $employers_details  = $data['session']['employer_detail'];
         $employer_sid       = $employers_details['sid'];
         saveApplicantOnboardingStatusLog($user_id, $employer_sid, $status, $oldStatus);
+        
+        //
+        jobDispositionOnIndeed($company_sid, $user_id );
 
         echo 'success';
     }
