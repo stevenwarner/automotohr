@@ -86,6 +86,11 @@ class Terminate_employee_model extends CI_Model {
         $this->db->delete('terminated_employees_documents');
     }
 
+    public function deleteEmployeeStatus ($sid) {
+        $this->db->where('sid',$sid);
+        $this->db->delete('terminated_employees');
+    }
+
     function employee_exists($user_id, $company_sid) {
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('sid', $user_id);

@@ -5571,7 +5571,7 @@ class Payroll_model extends CI_Model
             }
         }    
         //
-        return true;
+        return $response;
     }
     
     public function updateEmployeeStatusOnGusto ($employeeId, $companyId, $employeeData) {
@@ -5619,7 +5619,7 @@ class Payroll_model extends CI_Model
             }
         }
         //
-        return true;    
+        return $response;    
     }
     
     public function updateEmployeeStatus($rowId, $data) {
@@ -5691,6 +5691,22 @@ class Payroll_model extends CI_Model
         //
         if (!empty($record_arr)) {
             return $record_arr['gusto_uuid'];
+        } else {
+            return '';
+        }    
+    }
+
+    public function getEmployeeGustoWorkId ($employeeId) {
+        //
+        $this->db->select('gusto_location_uuid');     
+        $this->db->where('employee_sid', $employeeId);
+        //
+        $record_obj = $this->db->get('gusto_companies_employees_work_addresses');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr['gusto_location_uuid'];
         } else {
             return '';
         }    

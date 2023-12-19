@@ -3401,4 +3401,9 @@ class Company_model extends CI_Model
         $this->db->from('applicant_i9form');
         return $this->db->count_all_results();
     }
+
+    public function deleteEmployeeStatus ($sid) {
+        $this->db->where('sid',$sid);
+        $this->db->delete('terminated_employees');
+    }
 }

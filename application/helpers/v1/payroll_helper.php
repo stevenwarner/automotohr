@@ -984,12 +984,11 @@ if (!function_exists('createAnEmployeeTerminationOnGusto')) {
             'Accept: application/json',
             'Content-Type: application/json'
         ];
-       
         //
         $callHeaders = array_merge($callHeaders, $headers);
         //
         $response =  MakeCall(
-            PayrollURL('createEmployeeTerminationOnGusto', $payroll_employee_uuid),
+            getUrl('createEmployeeTerminationOnGusto', $payroll_employee_uuid),
             [
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode($request),
@@ -1016,7 +1015,7 @@ if (!function_exists('createAnEmployeeTerminationOnGusto')) {
             //
             if (isset($tokenResponse['access_token'])) {
                 //
-                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
                 //
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
@@ -1045,7 +1044,7 @@ if (!function_exists('createAnEmployeeRehireOnGusto')) {
         $callHeaders = array_merge($callHeaders, $headers);
         //
         $response =  MakeCall(
-            PayrollURL('createEmployeeRehireOnGusto', $payroll_employee_uuid),
+            getUrl('createEmployeeRehireOnGusto', $payroll_employee_uuid),
             [
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode($request),
@@ -1073,7 +1072,7 @@ if (!function_exists('createAnEmployeeRehireOnGusto')) {
             //
             if (isset($tokenResponse['access_token'])) {
                 //
-                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
                 //
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
@@ -1102,7 +1101,7 @@ if (!function_exists('updateAnEmployeeTerminationOnGusto')) {
         $callHeaders = array_merge($callHeaders, $headers);
         //
         $response =  MakeCall(
-            PayrollURL('UpdateEmployeeTerminationOnGusto', $payroll_employee_uuid),
+            getUrl('UpdateEmployeeTerminationOnGusto', $payroll_employee_uuid),
             [
                 CURLOPT_CUSTOMREQUEST => 'PUT',
                 CURLOPT_POSTFIELDS => json_encode($request),
@@ -1129,7 +1128,7 @@ if (!function_exists('updateAnEmployeeTerminationOnGusto')) {
             //
             if (isset($tokenResponse['access_token'])) {
                 //
-                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
                 //
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
@@ -1159,7 +1158,7 @@ if (!function_exists('updateAnEmployeeRehireOnGusto')) {
         $callHeaders = array_merge($callHeaders, $headers);
         //
         $response =  MakeCall(
-            PayrollURL('UpdateEmployeeRehireOnGusto', $payroll_employee_uuid),
+            getUrl('UpdateEmployeeRehireOnGusto', $payroll_employee_uuid),
             [
                 CURLOPT_CUSTOMREQUEST => 'PUT',
                 CURLOPT_POSTFIELDS => json_encode($request),
@@ -1187,7 +1186,7 @@ if (!function_exists('updateAnEmployeeRehireOnGusto')) {
             //
             if (isset($tokenResponse['access_token'])) {
                 //
-                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
                 //
                 $company['access_token'] = $tokenResponse['access_token'];
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
