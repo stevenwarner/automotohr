@@ -41,6 +41,25 @@ class Documents_management_model extends CI_Model
             $w4_data_to_insert['status'] = 1;
             // insert
             $this->db->insert('form_w4_original', $w4_data_to_insert);
+            // notifications
+            if ($userType === 'employee') {
+                $this->sendDocumentAssignmentNotifications(
+                    $userId,
+                    $userType,
+                    $employerDetail['parent_sid']
+                );
+            }
+            // get latest w4 id
+            $w4_sid = getVerificationDocumentSid($userId, $userType, 'w4');
+            // keep track of what happened
+            keepTrackVerificationDocument(
+                $employerDetail['sid'],
+                "employee",
+                'assign',
+                $w4_sid,
+                'w4',
+                'Payroll'
+            );
         } else {
             $w4_data_to_update = [];
             $w4_data_to_update['sent_date'] = getSystemDate();
@@ -55,29 +74,11 @@ class Documents_management_model extends CI_Model
             $w4_data_to_update['uploaded_by_sid'] = 0;
             $w4_data_to_update['user_consent'] = 0;
             // update
-            $this->db->where('user_type', $userType)
-                ->where('employer_sid', $userId)
-                ->update('form_w4_original', $w4_data_to_update);
+            // $this->db->where('user_type', $userType)
+            //     ->where('employer_sid', $userId)
+            //     ->update('form_w4_original', $w4_data_to_update);
         }
-        // notifications
-        if ($userType === 'employee') {
-            $this->sendDocumentAssignmentNotifications(
-                $userId,
-                $userType,
-                $employerDetail['parent_sid']
-            );
-        }
-        // get latest w4 id
-        $w4_sid = getVerificationDocumentSid($userId, $userType, 'w4');
-        // keep track of what happened
-        keepTrackVerificationDocument(
-            $employerDetail['sid'],
-            "employee",
-            'assign',
-            $w4_sid,
-            'w4',
-            'Payroll'
-        );
+        
         //
         return ['success' => true, 'message' => 'You have successfully assigned the W4 form.'];
     }
