@@ -191,6 +191,19 @@ $(function manageShifts() {
 	});
 
 	/**
+	 * capture click event on cell
+	 */
+	$(".schedule-item").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		event.stopPropagation();
+		//
+		callToEditBox($(this).data("sid"));
+	});
+
+	callToCreateBox(47, "2023-12-05");
+
+	/**
 	 * Apply template
 	 */
 	$(".jsApplyTemplate").click(function (event) {
@@ -295,6 +308,53 @@ $(function manageShifts() {
 	});
 
 	/**
+	 * add the break
+	 */
+	$(document).on("click", ".jsAddBreak", function (event) {
+		event.preventDefault();
+		//
+		const uniqId = getRandomCode();
+		// generate html
+		$(".jsBreakContainer").append(generateBreakHtml(uniqId));
+		//
+		$('[name="breaks[' + uniqId + '][break]"]').rules("add", {
+			required: true,
+		});
+		$('[name="breaks[' + uniqId + '][duration]"]').rules("add", {
+			required: true,
+			number: true,
+			digits: true,
+			greaterThanZero: true,
+		});
+		//
+		applyTimePicker();
+	});
+
+	/**
+	 * remove the break
+	 */
+	$(document).on("click", ".jsDeleteBreakRow", function (event) {
+		event.preventDefault();
+		//
+		const uniqId = $(this).closest(".jsBreakRow").data("key");
+		$('.jsBreakRow[data-key="' + uniqId + '"]').remove();
+		$('[name="breaks[' + uniqId + '][break]"]').rules("remove");
+		$('[name="breaks[' + uniqId + '][duration]"]').rules("remove");
+	});
+
+	/**
+	 * on break select
+	 */
+	$(document).on("change", ".jsBreakSelect", function () {
+		//
+		const uniqId = $(this).closest(".jsBreakRow").data("key");
+		//
+		$('[name="breaks[' + uniqId + '][duration]"]').val(
+			$(this).find("option:selected").data("duration")
+		);
+	});
+
+	/**
 	 * generates the modal
 	 * @param {string} pageTitle
 	 * @param {string} pageSlug
@@ -380,6 +440,43 @@ $(function manageShifts() {
 	}
 
 	/**
+	 * process the call
+	 * @param {object} formObj
+	 * @param {string} buttonRef
+	 * @param {string} url
+	 * @param {Object} cb
+	 */
+	function processCallWithoutContentType(formObj, buttonRef, url, cb) {
+		// check if call is already made
+		if (XHR !== null) {
+			// abort the call
+			return;
+		}
+		//
+		const btnRef = callButtonHook(buttonRef, true);
+		// make a new call
+		XHR = $.ajax({
+			url: baseUrl(url),
+			method: "POST",
+			data: formObj,
+			processData: false,
+			contentType: false,
+		})
+			.always(function () {
+				//
+				callButtonHook(btnRef, false);
+				//
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				//
+				validatorRef?.destroy();
+				return cb(resp);
+			});
+	}
+
+	/**
 	 * get the start date
 	 * @returns
 	 */
@@ -435,7 +532,203 @@ $(function manageShifts() {
 		return endDate;
 	}
 
+	/**
+	 * Create shift against a specific employee and date
+	 * @param {int} employeeId
+	 * @param {string} date
+	 */
 	function callToCreateBox(employeeId, date) {
-		alert(employeeId + "  " + date);
+		makePage(
+			"Create Shift",
+			"create_single_shift",
+			employeeId,
+			function (resp) {
+				// hides the loader
+				ml(false, modalLoader);
+				//
+				$('[name="shift_date"]').val(
+					moment(date, "YYYY-MM-DD").format("MM/DD/YYYY")
+				);
+
+				applyTimePicker();
+
+				//
+				validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+					rules: {
+						shift_employee: { required: true },
+						shift_date: { required: true },
+						start_time: { required: true, timeIn12Format: true },
+						end_time: { required: true, timeIn12Format: true },
+					},
+					errorPlacement: function (error, element) {
+						if ($(element).parent().hasClass("input-group")) {
+							$(element).parent().after(error);
+						} else {
+							$(element).after(error);
+						}
+					},
+					submitHandler: function (form) {
+						return processCallWithoutContentType(
+							formArrayToObj($(form).serializeArray()),
+							$(".jsPageCreateSingleShiftBtn"),
+							"settings/shifts/single/create",
+							function (resp) {
+								_success(resp.msg, function () {
+									window.location.reload();
+								});
+							}
+						);
+					},
+				});
+			}
+		);
+	}
+
+	/**
+	 * Create shift against a specific employee and date
+	 * @param {int} employeeId
+	 */
+	function callToEditBox(shiftId) {
+		makePage(
+			"Edit Shift",
+			"edit_single_shift",
+			shiftId,
+			function (resp) {
+				// hides the loader
+				ml(false, modalLoader);
+				//
+				$('[name="shift_date"]').val(
+					moment(date, "YYYY-MM-DD").format("MM/DD/YYYY")
+				);
+
+				applyTimePicker();
+
+				//
+				validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+					rules: {
+						shift_employee: { required: true },
+						shift_date: { required: true },
+						start_time: { required: true, timeIn12Format: true },
+						end_time: { required: true, timeIn12Format: true },
+					},
+					errorPlacement: function (error, element) {
+						if ($(element).parent().hasClass("input-group")) {
+							$(element).parent().after(error);
+						} else {
+							$(element).after(error);
+						}
+					},
+					submitHandler: function (form) {
+						return processCallWithoutContentType(
+							formArrayToObj($(form).serializeArray()),
+							$(".jsPageCreateSingleShiftBtn"),
+							"settings/shifts/single/create",
+							function (resp) {
+								_success(resp.msg, function () {
+									window.location.reload();
+								});
+							}
+						);
+					},
+				});
+			}
+		);
+	}
+
+	/**
+	 * apply time picker
+	 */
+	function applyTimePicker() {
+		$(".jsTimeField").timepicker({
+			timeFormat: "h:mm p",
+			dynamic: false,
+			dropdown: false,
+			scrollbar: false,
+		});
+	}
+
+	/**
+	 * generates break h*ml
+	 * @param {number} uniqId
+	 * @param {object|undefined} data
+	 * @returns
+	 */
+	function generateBreakHtml(uniqId, data) {
+		//
+		let breakOptions = "";
+		breakOptions += "<option></option>";
+		//
+		breaksObject.map(function (v) {
+			breakOptions +=
+				'<option value="' +
+				v.break_name +
+				'" data-duration="' +
+				v.break_duration +
+				'" ' +
+				(data !== undefined && data.break === v.break_name
+					? "selected"
+					: "") +
+				">" +
+				v.break_name +
+				" (" +
+				v.break_type +
+				")</option>";
+		});
+
+		//
+		let html = "";
+		html += '<div class="row jsBreakRow" data-key="' + uniqId + '">';
+		html += "    <br> ";
+		html += '     <div class="col-sm-5">';
+		html += '        <label class="text-medium">';
+		html += "            Break ";
+		html += '            <strong class="text-red">*</strong>';
+		html += "         </label>";
+		html +=
+			'         <select name="breaks[' +
+			uniqId +
+			'][break]" class="form-control jsBreakSelect">';
+		html += breakOptions;
+		html += "         </select>";
+		html += "     </div>";
+		html += '     <div class="col-sm-3">';
+		html += '         <label class="text-medium">';
+		html += "             Duration ";
+		html += '             <strong class="text-red">*</strong>';
+		html += "         </label>";
+		html += '         <div class="input-group">';
+		html +=
+			'             <input type="number" class="form-control jsDuration" name="breaks[' +
+			uniqId +
+			'][duration]" value="' +
+			(data?.duration || "") +
+			'" />';
+		html += '             <div class="input-group-addon">mins</div>';
+		html += "         </div>";
+		html += "     </div>";
+		html += '     <div class="col-sm-3">';
+		html += '         <label class="text-medium">';
+		html += "             Start TIme ";
+		html += "         </label>";
+		html +=
+			'         <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" name="breaks[' +
+			uniqId +
+			'][start_time]"value="' +
+			(data?.start_time
+				? moment(data.start_time, "HH:mm").format("h:mm a")
+				: "") +
+			'" />';
+		html += "     </div>";
+		html += '     <div class="col-sm-1">';
+		html += "         <br>";
+		html +=
+			'         <button class="btn btn-red jsDeleteBreakRow" title="Delete this break" type="button">';
+		html +=
+			'             <i class="fa fa-trash" style="margin-right: 0"></i>';
+		html += "         </button>";
+		html += "     </div>";
+		html += "</div>";
+		//
+		return html;
 	}
 });

@@ -3949,11 +3949,13 @@ class Settings extends Public_Controller
         // set common files bundle
         $data["pageCSS"] = [
             getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
             getPlugin("daterangepicker", "css"),
             "v1/plugins/ms_modal/main"
         ];
         $data["pageJs"] = [
             getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
             getPlugin("daterangepicker", "js"),
             getPlugin("validator", "js"),
             getPlugin("additionalMethods", "js"),
@@ -4575,5 +4577,107 @@ class Settings extends Public_Controller
             "view" => $this->load->view("v1/settings/shifts/partials/apply_shift_templates", $data, true),
             "data" => $data["return"] ?? []
         ]);
+    }
+
+    /**
+     * Create a single shift template
+     *
+     * @param string $pageSlug
+     * @param string $employeeId
+     * @return array
+     */
+    private function pageCreateSingleShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["employees"] = $this->shift_model->getCompanySingleEmployee(
+            $session["company_detail"]["sid"],
+            $employeeId
+        );
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/create_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * Create a single shift template
+     *
+     * @param string $pageSlug
+     * @param string $employeeId
+     * @return array
+     */
+    private function editCreateSingleShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["employees"] = $this->shift_model->getCompanySingleEmployee(
+            $session["company_detail"]["sid"],
+            $employeeId
+        );
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/edit_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * process  shift templates
+     *
+     * @return array
+     */
+    public function processCreateSingleShift()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_employee", "Employee", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date", "Shift date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_time", "Start time", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "End time", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->processCreateSingleShift(
+                $session["company_detail"]["sid"],
+                $post
+            );
     }
 }

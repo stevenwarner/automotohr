@@ -28,7 +28,7 @@ class Shift_model extends CI_Model
         int $companyId
     ): array {
         return $this->db
-            ->select("sid, break_name, break_duration, break_type")
+            ->select("sid, break_name, break_duration, break_type, job_sites")
             ->where("company_sid", $companyId)
             ->order_by("sid", "DESC")
             ->get("company_breaks")
@@ -50,7 +50,8 @@ class Shift_model extends CI_Model
             ->select("
                 break_name,
                 break_duration,
-                break_type
+                break_type,
+                job_sites
             ")
             ->where("company_sid", $companyId)
             ->where("sid", $wageId)
@@ -187,6 +188,25 @@ class Shift_model extends CI_Model
     }
 
     /**
+     * get the company single employee
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @return array
+     */
+    public function getCompanySingleEmployee(int $companyId, int $employeeId): array
+    {
+        return $this->db
+            ->select(getUserFields())
+            ->where([
+                "parent_sid" => $companyId,
+                "sid" => $employeeId
+            ])
+            ->get("users")
+            ->result_array();
+    }
+
+    /**
      * apply shift template
      *
      * @param int $companyId
@@ -291,7 +311,7 @@ class Shift_model extends CI_Model
     {
         //
         $this->db
-            ->select("sid, employee_sid, shift_date, start_time, end_time")
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites")
             ->where_in("employee_sid", $employeeIds);
 
         if ($filter["mode"] === "month") {
@@ -331,8 +351,10 @@ class Shift_model extends CI_Model
                 }
                 //
                 $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]] = [
+                    "sid" => $v0["sid"],
                     "start_time" => $v0["start_time"],
                     "end_time" => $v0["end_time"],
+                    "job_sites" => json_decode($v0["job_sites"], true),
                     "totalTime" => getTimeBetweenTwoDates(
                         $v0["shift_date"] . ' ' . $v0["start_time"],
                         $v0["shift_date"] . ' ' . $v0["end_time"],
@@ -452,5 +474,142 @@ class Shift_model extends CI_Model
         }
         //
         return $records;
+    }
+
+    /**
+     * create single shift
+     *
+     * @param int   $companyId
+     * @param array $post
+     * @return array
+     */
+    public function processCreateSingleShift(
+        int $companyId,
+        array $post
+    ): array {
+        //
+        $post["start_time"] = formatDateToDB(
+            $post["start_time"],
+            "h:i A",
+            "H:i"
+        );
+        $post["end_time"] = formatDateToDB(
+            $post["end_time"],
+            "h:i A",
+            "H:i"
+        );
+        //
+        $post["shift_date"] = formatDateToDB(
+            $post["shift_date"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $post["breaks"] = array_values($post["breaks"]);
+        //
+        if ($post["breaks"]) {
+            foreach ($post["breaks"] as $index => $break) {
+                if ($break["start_time"]) {
+                    $time = new DateTime();
+                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
+                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
+                    $post["breaks"][$index]["start_time"] = formatDateToDB(
+                        $break["start_time"],
+                        "h:i a",
+                        "H:i"
+                    );
+                }
+            }
+        } else {
+            $post["breaks"] = [];
+        }
+        //
+        $status = 400;
+        $response = ["msg" => "Something went wrong while creating shift."];
+        //
+        if ($post["id"]) {
+            // update
+            // check if entry already exists
+            if ($this->db->where([
+                "company_sid" => $companyId,
+                "employee_sid" => $post["shift_employee"],
+                "shift_date" => $post["shift_date"],
+                "start_time" => $post["start_time"],
+                "end_time" => $post["end_time"],
+            ])->where("sid <>", $post["id"])->count_all_results("cl_shifts")) {
+                $response["msg"] = "Shift already exists.";
+            } else {
+                // update
+                $this->db
+                    ->where("sid", $post["id"])
+                    ->update("cl_shifts", [
+                        "shift_date" => $post["shift_date"],
+                        "start_time" => $post["start_time"],
+                        "end_time" => $post["end_time"],
+                        "breaks_count" => count($post["breaks"]),
+                        "breaks_json" => json_encode($post["breaks"]),
+                        "job_sites" => json_encode($post["job_sites"] ?? []),
+                        "notes" => $post["notes"],
+                        "updated_at" => getSystemDate(),
+                    ]);
+
+                $ins = [];
+                $ins["cl_shift_sid"] = $post["id"];
+                $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                $ins["action"] = "updated";
+                $ins["action_json"] = "{}";
+                $ins["created_at"] = getSystemDate();
+                //
+                $this->db->insert("cl_shifts_logs", $ins);
+
+                $status = 200;
+                $response = ["msg" => "You have successfully updated shift."];
+            }
+        } else {
+            // insert
+            // check if entry already exists
+            if ($this->db->where([
+                "company_sid" => $companyId,
+                "employee_sid" => $post["shift_employee"],
+                "shift_date" => $post["shift_date"],
+                "start_time" => $post["start_time"],
+                "end_time" => $post["end_time"],
+            ])->count_all_results("cl_shifts")) {
+                $response["msg"] = "Shift already exists.";
+            } else {
+                // insert
+                $this->db
+                    ->insert("cl_shifts", [
+                        "company_sid" => $companyId,
+                        "employee_sid" => $post["shift_employee"],
+                        "shift_date" => $post["shift_date"],
+                        "start_time" => $post["start_time"],
+                        "end_time" => $post["end_time"],
+                        "breaks_count" => count($post["breaks"]),
+                        "breaks_json" => json_encode($post["breaks"]),
+                        "job_sites" => json_encode($post["job_sites"] ?? []),
+                        "notes" => $post["notes"],
+                        "created_at" => getSystemDate(),
+                        "updated_at" => getSystemDate(),
+                    ]);
+                // check and insert log
+                if ($insertId = $this->db->insert_id()) {
+                    //
+                    $ins = [];
+                    $ins["cl_shift_sid"] = $insertId;
+                    $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                    $ins["action"] = "created";
+                    $ins["action_json"] = "{}";
+                    $ins["created_at"] = getSystemDate();
+                    //
+                    $this->db->insert("cl_shifts_logs", $ins);
+                    //
+                    $status = 200;
+                    $response = ["msg" => "You have successfully add a new shift."];
+                }
+            }
+        }
+        //
+        return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
     }
 }

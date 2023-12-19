@@ -193,8 +193,8 @@ if ($filter["mode"] === "month") {
                                                                     <?php if ($employeeShift) {
                                                                         $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                     ?>
-                                                                        <div class="schedule-item">
-                                                                            <?php if ($employeeShift["geo_fence"]) { ?>
+                                                                        <div class="schedule-item" data-id="<?=$employeeShift["sid"];?>">
+                                                                            <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                 <span class="circle circle-orange"></span>
                                                                             <?php } ?>
                                                                             <p class="text-small">
