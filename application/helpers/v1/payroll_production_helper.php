@@ -448,7 +448,7 @@ if (!function_exists('createPartnerCompany')) {
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
@@ -472,7 +472,7 @@ if (!function_exists('createCompanyWebHook')) {
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
@@ -494,7 +494,7 @@ if (!function_exists('getWebHooks')) {
             [
                 CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
@@ -518,7 +518,7 @@ if (!function_exists('callWebHook')) {
                 CURLOPT_CUSTOMREQUEST => "PUT",
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
