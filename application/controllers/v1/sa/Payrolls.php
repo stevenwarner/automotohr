@@ -26,7 +26,7 @@ class Payrolls extends Admin_Controller
         // set path to JS file
         $this->js = 'public/v1/sa/js/payrolls/';
         //
-        $this->createMinifyFiles = false;
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -43,15 +43,15 @@ class Payrolls extends Admin_Controller
         $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
         // set title
         $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        $this->data["mode"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
         // set JS
         $this->data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/sa/payrolls/dashboard'
         ], $this->js, 'dashboard', $this->createMinifyFiles);
-        // $this->data['PageScripts'] = [
-        //     [getAssetTag('1.0.3'), 'js/app_helper'],
-        //     [getAssetTag('1.0.3'), 'v1/sa/payrolls/dashboard'],
-        // ];
         // render the page
         $this->render('v1/sa/payrolls/dashboard', 'admin_master');
     }
@@ -397,11 +397,25 @@ class Payrolls extends Admin_Controller
     }
 
     /**
-    * update company payment configuration
-    *
-    * @param int $companyId
-    * @return
-    */
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function updateMode(int $companyId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $this->payroll_model->updateMode($companyId, $post);
+    }
+
+    /**
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
     public function updatePrimaryAdmin(int $companyId): array
     {
         //

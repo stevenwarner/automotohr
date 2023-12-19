@@ -188,6 +188,7 @@ if (!function_exists('bundleJs')) {
         }
         //
         fclose($handler);
+        @unlink($absolutePathMin);
         //
         shell_exec(
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"

@@ -5182,6 +5182,40 @@ class Payroll_model extends CI_Model
         return ['msg' => 'You have successfully updated settings.'];
     }
 
+    /**
+     * update employee's payment method
+     *
+     * @param int   $companyId
+     * @param array $data
+     */
+    public function updateMode(
+        int $companyId,
+        array $data
+    ): array {
+        //
+        $ins = [];
+        $ins["stage"] = $data["mode"];
+        $ins["updated_at"] = getSystemDate();
+        //
+        if ($this->db->where([
+            "company_sid" => $companyId,
+        ])->count_all_results("gusto_companies_mode")) {
+            // UPDATE
+            $this->db
+                ->where('company_sid', $companyId)
+                ->update('gusto_companies_mode', $ins);
+        } else {
+            // INSERT
+            $ins["company_sid"] = $companyId;
+            $ins["created_at"] = $ins["updated_at"];
+            $this->db
+                ->insert('gusto_companies_mode', $ins);
+        }
+
+        //
+        return SendResponse(200, ['msg' => 'You have successfully updated company mode.']);
+    }
+
 
     /**
      * get onboard payroll employees

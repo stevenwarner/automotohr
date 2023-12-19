@@ -60,6 +60,19 @@ $(function dashboard() {
 	});
 
 	/**
+	 * update mode
+	 */
+	$("#jsCompanyModeForm").submit(function (event) {
+		event.preventDefault();
+		//
+		const obj = {
+			mode: $("#jsCompanyMode option:selected").val(),
+		};
+		//
+		updateCompanyMode(obj);
+	});
+
+	/**
 	 *
 	 * @returns
 	 */
@@ -72,7 +85,9 @@ $(function dashboard() {
 		$(".jsSaveConfiguration span").html("Syncing...");
 		//
 		XHR = $.ajax({
-			url: baseUrl("sa/payrolls/company/" + companyId + "/payment/configuration"),
+			url: baseUrl(
+				"sa/payrolls/company/" + companyId + "/payment/configuration"
+			),
 			method: "POST",
 			data: dataOBJ,
 		})
@@ -86,7 +101,39 @@ $(function dashboard() {
 			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
-				$(".jsSaveConfiguration span").html("Save Payment Configuration");
+				$(".jsSaveConfiguration span").html(
+					"Save Payment Configuration"
+				);
+			});
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	function updateCompanyMode(dataOBJ) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+
+		const btnHook = callButtonHook($(".jsCompanyModeBtn"), true);
+		//
+		XHR = $.ajax({
+			url: baseUrl("sa/payrolls/company/" + companyId + "/mode"),
+			method: "POST",
+			data: dataOBJ,
+		})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				callButtonHook(btnHook, false);
+			})
+			.success(function (resp) {
+				console.log(resp)
+				return _success(resp.msg, function () {
+					window.location.reload();
+				});
 			});
 	}
 
