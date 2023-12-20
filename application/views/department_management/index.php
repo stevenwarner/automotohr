@@ -49,7 +49,9 @@
                                         <th class="col-lg-3">Department Description</th> 
                                         <th class="col-lg-3">Supervisor(s)</th>
                                         <th class="col-lg-3">Approver(s)</th>
+                                        <?php if (checkIfAppIsEnabled('performance_management')) { ?>      
                                         <th class="col-lg-3">Reporting Manager(s)</th>
+                                        <?php }?>
                                         <th class="col-lg-3 text-center">Actions</th>
                                     </tr> 
                                 </thead>
@@ -95,7 +97,10 @@
                                                 ?>
                                                 <td><?php echo $spName; ?></td>
                                                 <td><?php echo $approvers; ?></td>
+                                                                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>      
+
                                                 <td><?php echo $reportingManagers; ?></td>
+                                                <?php } ?>
                                                 <td class="text-center">
                                                     <a href="<?php echo base_url('department_management/add_edit_department').'/'.$department['sid']; ?>" class="btn btn-primary btn-sm" >
                                                         <i class="fa fa-pencil"></i>

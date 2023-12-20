@@ -24,7 +24,7 @@
                     <?php if ($session['employer_detail']['access_level_plus']) { ?>
                         <a class="btn btn-success jsEmployeeQuickProfile" title="Quick View of Employee Profile" placement="top">
                             <i class="fa fa-users" aria-hidden="true"></i>
-                            Employee Profie
+                            Employee Profile
                         </a>
                     <?php  } ?>
                         <a class="btn btn-success" href="<?php echo base_url('department_management/add_edit_team').'/'.$department_sid; ?>">+ Add New Team</a>
@@ -42,7 +42,10 @@
                                         <th class="col-lg-3">Team Description</th> 
                                         <th class="col-lg-3">Team Lead(s)</th>
                                         <th class="col-lg-3">Approver(s)</th>
+                                                                                    <?php if (checkIfAppIsEnabled('performance_management')) { ?>      
+
                                         <th class="col-lg-3">Reporting Manager(s)</th>
+                                        <?php }?>
                                         <th class="col-lg-3 text-center">Actions</th>
                                     </tr> 
                                 </thead>
@@ -87,7 +90,10 @@
                                                 ?>
                                                 <td><?php echo $spName; ?></td>
                                                 <td><?php echo $approvers; ?></td>
+                                                                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>      
+
                                                 <td><?php echo $rm; ?></td>
+                                                <?php } ?>
                                                 <td class="text-center">
                                                     <a href="<?php echo base_url('department_management/add_edit_team').'/'.$department_sid.'/'.$team['sid']; ?>" class="btn btn-primary btn-sm" >
                                                         <i class="fa fa-pencil"></i>
