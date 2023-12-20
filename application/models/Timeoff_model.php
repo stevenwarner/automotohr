@@ -1,4 +1,7 @@
 <?php
+
+use function PHPSTORM_META\type;
+
 class Timeoff_model extends CI_Model
 {
     private $ids;
@@ -2418,7 +2421,6 @@ class Timeoff_model extends CI_Model
         $upcomingAnniversaryDate
 
     ) {
-
         //
         $this->db
             ->select('
@@ -2443,6 +2445,87 @@ class Timeoff_model extends CI_Model
         //
         return $record['requested_time'] == null ? 0 : $record['requested_time'];
     }
+
+    /** 
+     * Get employee consumed time
+     * 
+     * @employee  Aleem Shaukat
+     * @date      12/19/2023
+     * 
+     * @param  Integer $policyId
+     * @param  Integer $employeeId
+     * @param  String  $method
+     * @param  String  $asOfToday
+     * @param  string  $consumeDate
+     * 
+     * @return Array
+     */
+    function getEmployeeConsumedTimeByResetDateNew(
+        $policyId,
+        $employeeId,
+        $lastAnniversaryDate,
+        $upcomingAnniversaryDate
+
+    ) {
+        $this->db
+            ->select('sid')
+            ->from('timeoff_requests')
+            ->where('timeoff_policy_sid', $policyId)
+            ->where('employee_sid', $employeeId)
+            ->where('status', 'approved')
+            ->where('is_draft', 0)
+            ->where('archive', 0);
+        //
+        $this->db->group_start();
+        $this->db->where("request_to_date >=", $lastAnniversaryDate);
+        $this->db->where("request_to_date <", $upcomingAnniversaryDate);
+        $this->db->group_end();
+        //
+        $result = $this->db->get();
+        $upperLimitRecords = $result->result_array();
+        $recordIds = array_column($upperLimitRecords, 'sid');
+        //
+        $this->db
+            ->select('timeoff_days')
+            ->from('timeoff_requests')
+            ->where('timeoff_policy_sid', $policyId)
+            ->where('employee_sid', $employeeId)
+            ->where('status', 'approved')
+            ->where('is_draft', 0)
+            ->where('archive', 0);
+        //
+        if (!empty($recordIds)) {
+            $this->db->or_where_in('sid', $recordIds);
+        }
+        //
+        $this->db->group_start();
+        $this->db->where("request_from_date >=", $lastAnniversaryDate);
+        $this->db->where("request_from_date <", $upcomingAnniversaryDate);
+        $this->db->group_end();
+        //
+        $result = $this->db->get();
+        //
+        $records = $result->result_array();
+        $result->free_result();
+        //
+        $consumedTime = 0;
+        //
+        foreach ($records as $record) {
+            $timeoffDays = json_decode($record['timeoff_days'],true)['days'];
+            //
+            foreach ($timeoffDays as $dayInfo) {
+                //
+                $timeoffDate = DateTime::createFromFormat('m-d-Y', $dayInfo['date'])->format('Y-m-d');
+                //    
+                if (($timeoffDate >= $lastAnniversaryDate) && ($timeoffDate <= $upcomingAnniversaryDate)) {
+                    $consumedTime = $consumedTime + $dayInfo['time'];
+                } 
+            }
+            
+        }
+        //
+        return $consumedTime;
+    }    
 
     /** 
      * Get employee carryover time
