@@ -2004,3 +2004,4 @@ $route['gusto/callback'] = 'v1/webhook/index';
 $route["state/forms/(:num)/(:any)"]["post"] = "Hr_documents_management/handleStateForm/$1/$2";
 // sign my form
 $route["state/forms/(:num)/my/sign"]["get"] = "Hr_documents_management/signMyStateForm/$1";
+$route["state/forms/(:num)/my/sign"]["post"] = "Hr_documents_management/saveMyStateForm/$1";

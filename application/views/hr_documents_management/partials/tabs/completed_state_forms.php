@@ -1,4 +1,5 @@
-<?php if ($userCompletedStateForms) { ?>
+<?php _e($userCompletedStateForms,true);
+if ($userCompletedStateForms) { ?>
     <div class="row">
         <div class="col-xs-12">
             <br />

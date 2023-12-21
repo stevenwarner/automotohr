@@ -4259,6 +4259,7 @@ class Hr_documents_management extends Public_Controller
                     $user_sid,
                     $user_type
                 );
+                _e($companyStateForms,true,true);
             //
             $data["companyStateForms"] = $companyStateForms["all"];
             $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
@@ -16584,9 +16585,75 @@ class Hr_documents_management extends Public_Controller
             "v1/forms/".$form["form_slug"],
         ], "public/v1/forms/", $form["form_slug"], false);
 
+        $formData = [];
 
+        if (!$form['is_completed']) {
+            $formData['first_name'] = $data['employee']['first_name'];
+            $formData['initial'] = $data['employee']['middle_initial'];
+            $formData['last_name'] = $data['employee']['last_name'];
+            $formData['ssn'] = $data['employee']['ssn'];
+            $formData['street_1'] = $data['employee']['Location_Address'];
+            $formData['street_2'] = $data['employee']['Location_Address_2'];
+            $formData['city'] = $data['employee']['Location_City'];
+            $formData['state'] = !empty($data['employee']['Location_State']) ? db_get_state_name_only($data['employee']['Location_State']) : '';
+            $formData['zip_code'] = $data['employee']['Location_ZipCode'];
+            $formData['country'] = !empty($data['employee']['Location_Country']) ? db_get_country_name($data['employee']['Location_Country'])['country_name'] : '';
+            $formData['day_time_phone_number'] = $data['employee']['PhoneNumber'];
+            //
+            $marital_status = 1;
+            //
+            if ($data['employee']['marital_status'] == 'Married') {
+                $marital_status = 2;
+            } else if ($data['employee']['marital_status'] == 'Other') {
+                $marital_status = 3;
+            }
+            //
+            $formData['marital_status'] = $marital_status;
+            $data['input'] = '';
+            //
+        } else {
+            //
+            $e_signature_data = get_e_signature($companyId, $employeeId, 'employee');
+            $formData = $form['form_data'];
+            $data['input'] = 'readonly';
+            $data['signature'] = $e_signature_data['signature_bas64_image'];
+        }
+        //
+        $data["formData"] = $formData;
+        $data['helpSection'] = 'v1/forms/'.$form["form_slug"].'_employee_section';
+        //
         $this->load->view('onboarding/on_boarding_header', $data);
         $this->load->view('v1/forms/'.$form["form_slug"]);
         $this->load->view('onboarding/on_boarding_footer');
+    }
+
+    function saveMyStateForm (int $formId) {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect("login");
+        }
+        //
+        $session = $this->session->userdata('logged_in');
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $post = $this->input->post();
+        $formData = json_encode($post);
+        //
+        $dataToUpdate = [
+            'fields_json' => $formData,
+            'user_consent' => 1,
+            'user_consent_at' => getSystemDate()
+        ];
+        //
+        $this->hr_documents_management_model->updateStateForm(
+            $formId,
+            $employeeId,
+            $dataToUpdate
+        );
+        //
+        $this->res['Status'] = TRUE;
+        $this->res['Data'] = $documents;
+        $this->res['Response'] = 'Proceed';
+        $this->resp();
     }
 }

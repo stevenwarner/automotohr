@@ -2,7 +2,7 @@ $(function () {
 	/**
 	 * holds the xhr
 	 */
-	let xhr = null;
+	let XHR = null;
 
 	$('[name="date"]').datepicker({
 		format: "mm/dd/yyyy",
@@ -34,13 +34,76 @@ $(function () {
 			date: { required: true },
 			day_time_phone_number: { required: true },
 		},
-		submitHandler: function (form) {},
+		submitHandler: function (form) {
+			let signature = $("#is_signature").val();
+			//
+			if (signature == 'false') {
+				return alertify.alert(
+					"Notice!",
+					"The E-Signature is required.",
+					CB
+				);
+			}
+			//
+			let data = $("#jsStateFormW4Form").serialize();
+			//
+			saveFormData(data);
+		},
 	});
 
 	$(".jsLoadSignature").click(function () {
 
 		common_get_e_signature("employee");
 	});
+
+	function saveFormData (passOBJ) {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		loader(true);
+		//
+		XHR = $.ajax({
+			url: window.location.href,
+			method: "POST",
+			data: passOBJ,
+		})
+			.success(function () {
+				//
+				return alertify.alert(
+					"Success!",
+					"You have successfully signed the State form.",
+					function () {
+						//
+						window.location.reload();
+					}
+				);
+			})
+			.fail(function () {
+				//
+				return alertify.alert(
+					"Error!",
+					"Something went wrong, Try again!."
+				);
+			})
+			.always(function () {
+				XHR = null;
+				loader(false);
+			});
+	}
+
+	//
+	function loader(doShow){
+		//
+		if(doShow){
+			$('.my_loader').show(0);
+			$('.jsLoaderText').html('Please wait, while we are processing your request.');
+		} else{
+			$('.my_loader').hide(0);
+			$('.jsLoaderText').html('');
+		}
+	}
 
 
 });

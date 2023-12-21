@@ -10393,8 +10393,10 @@ class Hr_documents_management_model extends CI_Model
         ];
         // loop through the forms
         foreach ($forms as $index => $value) {
+            
             // get teh form status
             $value = array_merge($value, $this->checkStateFormAssignStatus($value["sid"], $userId, $userType));
+            _e($value,true);
             // push to all
             $returnArray["all"][] = $value;
             //
@@ -10440,11 +10442,12 @@ class Hr_documents_management_model extends CI_Model
             "status" => "not_assigned",
             "is_completed" => false,
             "assigned_at" => "",
-            "signed_at" => ""
+            "signed_at" => "",
+            "form_data" => []
         ];
         // get the record
         $result = $this->db
-            ->select("status, user_consent, created_at, user_consent_at")
+            ->select("status, user_consent, created_at, user_consent_at, fields_json")
             ->where("state_form_sid", $formId)
             ->where("user_sid", $userId)
             ->where("user_type", $userType)
@@ -10460,6 +10463,7 @@ class Hr_documents_management_model extends CI_Model
         if ($result["user_consent"] == 1) {
             $returnArray["is_completed"] = true;
             $returnArray["signed_at"] = $result["user_consent_at"];
+            $returnArray["form_data"] = json_decode($result["fields_json"], true);
         }
         // set to assigned
         else if ($result["status"] == 1) {
@@ -10606,6 +10610,19 @@ class Hr_documents_management_model extends CI_Model
         );
         //
         return $form;
+    }
+
+     /**
+     * save the employee state form
+     *
+     * @param int $formId
+     * @param int $employeeId
+     * @param array $dataToUpdate
+     */
+    public function updateStateForm ($formId, $employeeId, $dataToUpdate) {
+        $this->db->where('state_form_sid', $formId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->update('portal_state_form', $dataToUpdate);
     }
 
 }
