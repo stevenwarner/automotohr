@@ -55,9 +55,10 @@ class Testing extends CI_Controller
         $employees = $this->db->where([
             "parent_sid" => $companyId,
             "active" => 1,
+            "is_executive_admin" => 0,
             "terminated_status" => 0
         ])
-            ->limit(1)
+
             ->get("users")
             ->result_array();
 
