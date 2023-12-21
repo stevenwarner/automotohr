@@ -4251,6 +4251,18 @@ class Hr_documents_management extends Public_Controller
             //
             $data['completed_offer_letter']         = $completed_offer_letter;
             $data['uncompleted_offer_letter']       = $uncompleted_offer_letter;
+
+            // check and get state forms
+            $companyStateForms = $this->hr_documents_management_model
+                ->getCompanyStateForms(
+                    $company_sid,
+                    $user_sid,
+                    $user_type
+                );
+            //
+            $data["companyStateForms"] = $companyStateForms["all"];
+            $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
+            $data["userCompletedStateForms"] = $companyStateForms["completed"];
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -5853,6 +5865,18 @@ class Hr_documents_management extends Public_Controller
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
+                // check and get state forms
+                $companyStateForms = $this->hr_documents_management_model
+                    ->getCompanyStateForms(
+                        $company_sid,
+                        $employer_sid,
+                        "employee"
+                    );
+                //
+                $data["companyStateForms"] = $companyStateForms["all"];
+                $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
+                $data["userCompletedStateForms"] = $companyStateForms["completed"];
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/documents_new');
                 $this->load->view('main/footer');
@@ -16489,5 +16513,80 @@ class Hr_documents_management extends Public_Controller
         $data['title'] = $d['file_name'];
         //
         $this->load->view('hr_documents_management/hybrid/print_download_hybird_document', $data);
+    }
+
+    /**
+     * handle state form process
+     *
+     * @param int $userId
+     * @param int $userType
+     * @return
+     */
+    public function handleStateForm(int $userId, string $userType)
+    {
+        // get the post
+        $post = $this->input->post(null, true);
+        //
+        $this->hr_documents_management_model->handleStateForm(
+            $userId,
+            $userType,
+            $post["formId"],
+            $post["eventType"]
+        );
+    }
+
+    /**
+     * handle state form process
+     *
+     * @param int $formId
+     */
+    public function signMyStateForm(int $formId)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            return redirect("login");
+        }
+        //
+        $data['title'] = 'State forms sign';
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        $employeeId = $data['session']['employer_detail']['sid'];
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        $companyId = $data['session']['company_detail']['sid'];
+        $companyName = $data['session']['employer_detail']['CompanyName'];
+        $data['company_sid'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+
+        $data["signature"] = [
+            "companyId" => $companyId,
+            "companyName" => $companyName,
+            "userId" => $employeeId,
+            "userType" => "employee",
+            "firstName" => $employee["first_name"],
+            "lastName" => $employee["last_name"],
+            "email" => $employee["email"],
+        ];
+
+        // get the form
+        $form =  $this->hr_documents_management_model
+            ->getStateForm(
+                $companyId,
+                $formId,
+                $employeeId,
+                "employee"
+            );
+
+        if (!$form) {
+            return redirect("dashboard");
+        }
+
+        $data["appJs"] = bundleJs([
+            "js/app_helper",
+            "v1/forms/".$form["form_slug"],
+        ], "public/v1/forms/", $form["form_slug"], false);
+
+
+        $this->load->view('onboarding/on_boarding_header', $data);
+        $this->load->view('v1/forms/'.$form["form_slug"]);
+        $this->load->view('onboarding/on_boarding_footer');
     }
 }

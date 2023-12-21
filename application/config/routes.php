@@ -1998,3 +1998,9 @@ $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$
 
 // Gusto Webhooks
 $route['gusto/callback'] = 'v1/webhook/index';
+
+
+// state forms process
+$route["state/forms/(:num)/(:any)"]["post"] = "Hr_documents_management/handleStateForm/$1/$2";
+// sign my form
+$route["state/forms/(:num)/my/sign"]["get"] = "Hr_documents_management/signMyStateForm/$1";

@@ -616,9 +616,9 @@ class Dashboard extends Public_Controller
                 $this->load->model('v1/course_model');
                 //
                 $data['coursesInfo'] =
-                $this->course_model->getCompanyCoursesInfo(
-                    $data['session']['company_detail']['sid']
-                );
+                    $this->course_model->getCompanyCoursesInfo(
+                        $data['session']['company_detail']['sid']
+                    );
                 // get pending course count
                 $data['pendingTrainings'] =
                     $this->course_model->getEmployeePendingCourseCount(
@@ -634,7 +634,7 @@ class Dashboard extends Public_Controller
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
                     $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }    
+                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -666,6 +666,15 @@ class Dashboard extends Public_Controller
             //
             $data['appJs'] = $bundleJS;
             $data['appCSS'] = $bundleCSS;
+
+            $companyStateForms = $this->hr_documents_management_model
+                ->getCompanyStateForms(
+                    $company_id,
+                    $employer_id,
+                    "employee"
+                );
+
+            $data['documents_count'] += count($companyStateForms["not_completed"]);
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -675,8 +684,9 @@ class Dashboard extends Public_Controller
         }
     }
 
-    public function employee_management_system() {
-    
+    public function employee_management_system()
+    {
+
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
@@ -843,13 +853,13 @@ class Dashboard extends Public_Controller
                     }
                 }
                 //
-              
+
                 if ($assigned_document['approval_process'] == 0) {
-                    
+
                     if ($assigned_document['document_type'] != 'offer_letter') {
                         if ($assigned_document['status'] == 1) {
                             if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0) {
-                               
+
                                 if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;
@@ -1081,7 +1091,7 @@ class Dashboard extends Public_Controller
                 if (!empty($subordinateInfo['employees'])) {
                     $data['haveSubordinate'] = 'yes';
                     $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }   
+                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -1094,6 +1104,15 @@ class Dashboard extends Public_Controller
                 $data['employeePayStubsCount'] = $this->pay_stubs_model
                     ->getMyPayStubsCount($employer_id);
             }
+
+            $companyStateForms = $this->hr_documents_management_model
+                ->getCompanyStateForms(
+                    $company_id,
+                    $employer_id,
+                    "employee"
+                );
+
+            $data['documents_count'] += count($companyStateForms["not_completed"]);
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

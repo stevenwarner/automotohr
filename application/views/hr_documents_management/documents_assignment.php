@@ -427,6 +427,10 @@ $assignIdObj = $confidential_sids;
                                 </div>
                             <?php } ?>
 
+                            <?php if ($companyStateForms) { ?>
+                                <!-- State forms -->
+                                <?php $this->load->view('hr_documents_management/state_forms'); ?>
+                            <?php } ?>
                             <!--  -->
                             <?php $this->load->view('hr_documents_management/general_document_assignment'); ?>
 
@@ -2506,36 +2510,38 @@ if ($user_type == 'employee') {
         </div>
     </div>
 </div>
-<?php //if ($i9_form['version'] && $i9_form['version'] != '2023') : ?>
-    <!-- I9 Employer Section Modal -->
-    <div id="update_i9_employer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <?php
-        $pre_form = $i9_form;
-        $first_name = $employer_first_name;
-        $last_name = $employer_last_name;
-        $email = $employer_email;
-        $states = db_get_active_states(227);
-        $signed_flag = isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1 ? true : false;
-        ?>
+<?php //if ($i9_form['version'] && $i9_form['version'] != '2023') : 
+?>
+<!-- I9 Employer Section Modal -->
+<div id="update_i9_employer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <?php
+    $pre_form = $i9_form;
+    $first_name = $employer_first_name;
+    $last_name = $employer_last_name;
+    $email = $employer_email;
+    $states = db_get_active_states(227);
+    $signed_flag = isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1 ? true : false;
+    ?>
 
-        <?php if (sizeof($pre_form)) { ?>
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header modal-header-bg">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="uploaded_document_modal_title">Form I9 Employer Section</h4>
-                    </div>
-                    <div id="uploaded_document_modal_body" class="modal-body form-wrp">
-                        <?php $this->load->view('form_i9/form_i9_employer_section'); ?>
-                    </div>
-                    <div id="uploaded_document_modal_footer" class="modal-footer">
+    <?php if (sizeof($pre_form)) { ?>
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modal-header-bg">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="uploaded_document_modal_title">Form I9 Employer Section</h4>
+                </div>
+                <div id="uploaded_document_modal_body" class="modal-body form-wrp">
+                    <?php $this->load->view('form_i9/form_i9_employer_section'); ?>
+                </div>
+                <div id="uploaded_document_modal_footer" class="modal-footer">
 
-                    </div>
                 </div>
             </div>
-        <?php } ?>
-    </div>
-<?php //endif; ?>
+        </div>
+    <?php } ?>
+</div>
+<?php //endif; 
+?>
 
 <!-- Preview Offer Letter Modal Start -->
 <div id="show_uploaded_offer_letter_modal" class="modal fade" role="dialog">
