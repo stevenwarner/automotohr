@@ -13,7 +13,6 @@ $(function () {
 	$("#jsStateFormW4Form").validate({
 		rules: {
 			first_name: { required: true },
-			initial: { required: true, minlength: 1, maxlength: 1 },
 			last_name: { required: true },
 			ssn: {
 				required: true,
@@ -33,14 +32,15 @@ $(function () {
 			martial_status: { required: true },
 			date: { required: true },
 			day_time_phone_number: { required: true },
+			user_consent: { required: true },
 		},
 		submitHandler: function (form) {
 			let signature = $("#is_signature").val();
 			//
-			if (signature == 'false') {
+			if (signature == "false") {
 				return alertify.alert(
 					"Notice!",
-					"The E-Signature is required.",
+					"The e-Signature is required.",
 					CB
 				);
 			}
@@ -52,11 +52,10 @@ $(function () {
 	});
 
 	$(".jsLoadSignature").click(function () {
-
 		common_get_e_signature("employee");
 	});
 
-	function saveFormData (passOBJ) {
+	function saveFormData(passOBJ) {
 		//
 		if (XHR !== null) {
 			return false;
@@ -94,16 +93,16 @@ $(function () {
 	}
 
 	//
-	function loader(doShow){
+	function loader(doShow) {
 		//
-		if(doShow){
-			$('.my_loader').show(0);
-			$('.jsLoaderText').html('Please wait, while we are processing your request.');
-		} else{
-			$('.my_loader').hide(0);
-			$('.jsLoaderText').html('');
+		if (doShow) {
+			$(".my_loader").show(0);
+			$(".jsLoaderText").html(
+				"Please wait, while we are processing your request."
+			);
+		} else {
+			$(".my_loader").hide(0);
+			$(".jsLoaderText").html("");
 		}
 	}
-
-
 });

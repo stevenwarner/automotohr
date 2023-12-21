@@ -34,11 +34,23 @@
                                                                 DB_DATE_WITH_TIME,
                                                                 DATE_WITH_TIME
                                                             ); ?></p>
+                                            <p>Employer Section Status: <?= $v0["is_employer_completed"] ? "Completed" : "Pending"; ?></p>
                                         </td>
                                         <td class="vam text-right">
-                                            <button class="btn btn-success">
-                                                View Form
-                                            </button>
+                                            <?php if ($v0["is_completed"]) { ?>
+                                                <?php if ($v0["is_employer_completed"]) { ?>
+                                                    <button class="btn blue-button">
+                                                        Employer Section - Completed
+                                                    </button>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-success">
+                                                        Employer Section - Not Completed
+                                                    </button>
+                                                <?php } ?>
+                                                <button class="btn btn-success">
+                                                    View Signed
+                                                </button>
+                                            <?php } ?>
                                         </td>
                                     </tr>
                                 <?php } ?>

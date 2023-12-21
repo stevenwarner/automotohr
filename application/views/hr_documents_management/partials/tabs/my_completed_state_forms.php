@@ -39,23 +39,11 @@
                                                                 DB_DATE_WITH_TIME,
                                                                 DATE_WITH_TIME
                                                             ); ?></p>
-                                            <p>Employer Section Status: <?= $v0["is_employer_completed"] ? "Completed" : "Pending"; ?></p>
                                         </td>
                                         <td class="vam text-right">
-                                            <?php if ($v0["is_completed"]) { ?>
-                                                <?php if ($v0["is_employer_completed"]) { ?>
-                                                    <button class="btn blue-button  jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>" ">
-                                                            Employer Section - Completed
-                                                        </button>
-                                                    <?php } else { ?>
-                                                        <button class=" btn btn-success jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>" ">
-                                                        Employer Section - Not Completed
-                                                    </button>
-                                                <?php } ?>
-                                                <button class=" btn btn-success">
-                                                        View Signed
-                                                    </button>
-                                                <?php } ?>
+                                            <a href="<?= base_url("state/forms/" . $v0["sid"] . "/my/sign"); ?>" class="btn btn-info csRadius5">
+                                                View Signed Form
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php } ?>

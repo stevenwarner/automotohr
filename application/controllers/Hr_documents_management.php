@@ -16579,6 +16579,9 @@ class Hr_documents_management extends Public_Controller
             return redirect("dashboard");
         }
 
+        // get states
+        $data["states"] = $this->hr_documents_management_model->getStates();
+
         $data["appJs"] = bundleJs([
             "js/app_helper",
             "v1/forms/".$form["form_slug"],
@@ -16635,13 +16638,14 @@ class Hr_documents_management extends Public_Controller
         $session = $this->session->userdata('logged_in');
         $employeeId = $session['employer_detail']['sid'];
         //
-        $post = $this->input->post();
+        $post = $this->input->post(null, true);
         $formData = json_encode($post);
         //
         $dataToUpdate = [
             'fields_json' => $formData,
             'user_consent' => 1,
-            'user_consent_at' => getSystemDate()
+            'user_consent_at' => getSystemDate(),
+            "updated_at" => getSystemDate()
         ];
         //
         $this->hr_documents_management_model->updateStateForm(

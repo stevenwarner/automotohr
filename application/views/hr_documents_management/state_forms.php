@@ -37,6 +37,11 @@
                                         </td>
                                         <td class="text-center vam">
                                             <img src="<?= base_url("assets/manage_admin/images/" . ($companyStateForm["is_completed"] ? "on" : "off") . ".gif"); ?>" alt="<?= $companyStateForm["is_completed"] ? "Signed" : "Not signed" ?>" />
+                                            <?php if ($companyStateForm["is_completed"]) { ?>
+                                                <p>
+                                                    <?= formatDateToDB($companyStateForm["assigned_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
+                                                </p>
+                                            <?php } ?>
                                         </td>
                                         <td class="text-center vam">
                                             <?php if ($companyStateForm["status"] === "not_assigned") { ?>
@@ -59,9 +64,15 @@
                                                 History
                                             </button>
                                             <?php if ($companyStateForm["is_completed"]) { ?>
-                                                <button class="btn btn-success">
-                                                    Employer Section - Not Completed
-                                                </button>
+                                                <?php if ($companyStateForm["is_employer_completed"]) { ?>
+                                                    <button class="btn blue-button">
+                                                        Employer Section - Completed
+                                                    </button>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-success">
+                                                        Employer Section - Not Completed
+                                                    </button>
+                                                <?php } ?>
                                                 <button class="btn btn-success">
                                                     View Signed
                                                 </button>

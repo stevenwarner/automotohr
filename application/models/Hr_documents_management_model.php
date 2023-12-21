@@ -10393,15 +10393,15 @@ class Hr_documents_management_model extends CI_Model
         ];
         // loop through the forms
         foreach ($forms as $index => $value) {
-            
+
             // get teh form status
             $value = array_merge($value, $this->checkStateFormAssignStatus($value["sid"], $userId, $userType));
             // push to all
             $returnArray["all"][] = $value;
             //
-            if ($value["is_completed"] == 1) {
+            if ($value["is_completed"]) {
                 $returnArray["completed"][] = $value;
-            } else if($value["status"] == 0 && $value["status"] === "assigned") {
+            } else if (!$value["is_completed"] && $value["status"] === "assigned") {
                 $returnArray["not_completed"][] = $value;
             }
         }
@@ -10440,6 +10440,7 @@ class Hr_documents_management_model extends CI_Model
         $returnArray = [
             "status" => "not_assigned",
             "is_completed" => false,
+            "is_employer_completed" => false,
             "assigned_at" => "",
             "signed_at" => "",
             "form_data" => [],
@@ -10447,7 +10448,15 @@ class Hr_documents_management_model extends CI_Model
         ];
         // get the record
         $result = $this->db
-            ->select("status, user_consent, created_at, user_consent_at, fields_json, employer_consent")
+            ->select("
+                status, 
+                user_consent,
+                created_at,
+                user_consent_at,
+                fields_json,
+                employer_consent,
+                employer_concent_at
+            ")
             ->where("state_form_sid", $formId)
             ->where("user_sid", $userId)
             ->where("user_type", $userType)
@@ -10465,7 +10474,9 @@ class Hr_documents_management_model extends CI_Model
         $returnArray["status"] = "revoked";
         // form is completed
         if ($result["user_consent"] == 1) {
+            $returnArray["status"] = "assigned";
             $returnArray["is_completed"] = true;
+            $returnArray["assigned_at"] = $result["created_at"];
             $returnArray["signed_at"] = $result["user_consent_at"];
             $returnArray["form_data"] = json_decode($result["fields_json"], true);
         }
@@ -10473,6 +10484,10 @@ class Hr_documents_management_model extends CI_Model
         else if ($result["status"] == 1) {
             $returnArray["status"] = "assigned";
             $returnArray["assigned_at"] = $result["created_at"];
+        }
+
+        if ($result["employer_consent"] == 1) {
+            $returnArray["is_employer_completed"] = true;
         }
         //
         return $returnArray;
@@ -10591,8 +10606,7 @@ class Hr_documents_management_model extends CI_Model
         int $formId,
         int $userId,
         string $userType
-    ): array 
-    {
+    ): array {
         // get the form
         $form = $this->db
             ->select("sid, title, form_slug")
@@ -10616,14 +10630,15 @@ class Hr_documents_management_model extends CI_Model
         return $form;
     }
 
-     /**
+    /**
      * save the employee state form
      *
      * @param int $formId
      * @param int $employeeId
      * @param array $dataToUpdate
      */
-    public function updateStateForm ($formId, $employeeId, $dataToUpdate) {
+    public function updateStateForm($formId, $employeeId, $dataToUpdate)
+    {
         $this->db->where('state_form_sid', $formId);
         $this->db->where('user_sid', $employeeId);
         $this->db->update('portal_state_form', $dataToUpdate);
@@ -10637,4 +10652,23 @@ class Hr_documents_management_model extends CI_Model
             ->row_array();    
     }
 
+    /**
+     * save the employee state form
+     *
+     * @param int $formId
+     * @param int $employeeId
+     * @param array $dataToUpdate
+     */
+    public function getStates()
+    {
+        return $this->db
+            ->select("sid, state_name, state_code")
+            ->where([
+                "country_sid" => 227,
+                "active" => 1
+            ])
+            ->order_by("state_name", "ASC")
+            ->get("states")
+            ->result_array();
+    }
 }

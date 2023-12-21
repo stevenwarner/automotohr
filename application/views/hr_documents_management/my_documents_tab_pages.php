@@ -1074,6 +1074,8 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                             </div>
                         </div>
                     <?php } ?>
+
+                    <?php $this->load->view("hr_documents_management/partials/tabs/my_completed_state_forms"); ?>
                 </div>
             </div>
             <!-- Completed Document End -->
