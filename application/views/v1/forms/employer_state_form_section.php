@@ -30,8 +30,8 @@
 			.success(function (response) {
                 let title = response.title
 				$('#show_latest_preview_document_modal').modal('show');
-                    $("#jsStateEmployerSection").html(response.view);
-                    $("#jsFormTitle").html(title);
+                $("#jsStateEmployerSection").html(response.view);
+                $("#jsFormTitle").html(title);
 			});    
     });
 </script>
