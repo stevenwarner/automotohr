@@ -10,7 +10,7 @@
                             <div class="heading-title page-title">
                                 <h1 class="page-title">
                                     <i class="fa fa-cogs"></i>
-                                    <?php echo $page_title; ?>
+                                    <?php echo $page_title.' ('.$companyOnboardingStatus.')'; ?>
                                 </h1>
                             </div>
                             <!-- Main body -->
@@ -23,8 +23,31 @@
                                     <!--  -->
                                     <a href="<?= base_url("sa/payrolls/company/" . $loggedInCompanyId . "/setup_payroll"); ?>" class="btn btn-success csF16">
                                         <i class="fa fa-cog csF16"></i>
-                                        &nbsp;Setup Payroll
+                                        &nbsp;Setup Company Payroll
                                     </a>
+
+                                    <?php if ($companyOnboardingStatus != 'Not Connected') { ?>
+                                        <!-- admins -->
+                                        <a href="<?= base_url("sa/payrolls/company/" . $loggedInCompanyId . "/admins/manage"); ?>" class="btn btn-success csF16">
+                                            <i class="fa fa-users csF16"></i>
+                                            &nbsp;Manage Admins
+                                        </a>
+
+                                        <?php if ($payrollBlockers && $mode == 'Demo') { ?>
+                                            <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
+                                                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                                <span>Verify Company</span>
+                                            </button>
+                                            <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
+                                                <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                                <span>Verify Bank Account</span>
+                                            </button>
+                                        <?php } ?>
+                                        <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
+                                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                            <span>Sync</span>
+                                        </button>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <hr />
@@ -34,49 +57,29 @@
                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                     <div class="panel panel-success">
                                         <div class="panel-heading">
-                                            <strong class="csF16 csW">Company Payment Configs</strong>
+                                            <strong class="csF16 csW">Company Mode</strong>
                                         </div>
                                         <div class="panel-body">
-                                            <!--  -->
-                                            <p class="text-danger csF16">
-                                                <em>
-                                                    <strong>
-                                                        Configure 2-day & 4-day ACH, create company specific earnings, run off-cycle payroll, create historical payroll, and create pay schedules.
-                                                    </strong>
-                                                </em>
-                                            </p>
-                                            <form action="javascript:void(0)" id="jsPaymentConfigurationForm">
+                                            <form action="javascript:void(0)" id="jsCompanyModeForm">
                                                 <div class="form-group">
-                                                    <label>Payment Speed <span class="text-danger">*</span></label>
-                                                    <?php
-                                                    $speed = '1-day';
-                                                    //
-                                                    if (!empty($companyPaymentConfiguration['payment_speed'])) {
-                                                        $speed = $companyPaymentConfiguration['payment_speed'];
-                                                    }
-                                                    ?>
-                                                    <select name="payment_speed" class="form-control" id="jsPaymentSpeed">
-                                                        <option value="1-day" <?= $speed == '1-day' ? 'selected' : ''; ?>>1 Day</option>
-                                                        <option value="2-day" <?= $speed == '2-day' ? 'selected' : ''; ?>>2 Day</option>
-                                                        <option value="4-day" <?= $speed == '4-day' ? 'selected' : ''; ?>>4 Day</option>
+                                                    <label>Mode <span class="text-danger">*</span></label>
+                                                    <select name="company_mode" class="form-control" id="jsCompanyMode">
+                                                        <option value="demo" <?= $mode == 'Demo' ? 'selected' : ''; ?>>Demo</option>
+                                                        <option value="production" <?= $mode == 'Production' ? 'selected' : ''; ?>>Production</option>
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group">
-                                                    <label>Fast Payment Limit</label>
-                                                    <input type="text" class="form-control" value="<?= !empty($companyPaymentConfiguration['fast_payment_limit']) ? $companyPaymentConfiguration['fast_payment_limit'] : 0; ?>" id="jsFastPaymentLimit" />
-                                                </div>
-
                                                 <div class="form-group text-right">
-                                                    <button class="btn btn-success jsSaveConfiguration csF16">
+                                                    <button class="btn btn-success jsCompanyModeBtn csF16" type="submit">
                                                         <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                                        <span>Save Payment Configuration</span>
+                                                        <span>Update Company Mode</span>
                                                     </button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                     <div class="panel panel-success">
                                         <div class="panel-heading">
@@ -127,34 +130,182 @@
                                 </div>
                             </div>
 
-                            <!-- .row  -->
-                            <div class="row">
-                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                    <div class="panel panel-success">
-                                        <div class="panel-heading">
-                                            <strong class="csF16 csW">Company Mode</strong>
-                                        </div>
-                                        <div class="panel-body">
-                                            <form action="javascript:void(0)" id="jsCompanyModeForm">
-                                                <div class="form-group">
-                                                    <label>Mode <span class="text-danger">*</span></label>
-                                                    <select name="company_mode" class="form-control" id="jsCompanyMode">
-                                                        <option value="demo" <?= $mode == 'Demo' ? 'selected' : ''; ?>>Demo</option>
-                                                        <option value="production" <?= $mode == 'Production' ? 'selected' : ''; ?>>Production</option>
-                                                    </select>
-                                                </div>
+                            <!--  -->
+                            <?php if ($companyOnboardingStatus != 'Not Connected') { ?>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Payment Configs</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <p class="text-danger csF16">
+                                                    <em>
+                                                        <strong>
+                                                            Configure 2-day & 4-day ACH, create company specific earnings, run off-cycle payroll, create historical payroll, and create pay schedules.
+                                                        </strong>
+                                                    </em>
+                                                </p>
+                                                <form action="javascript:void(0)" id="jsPaymentConfigurationForm">
+                                                    <div class="form-group">
+                                                        <label>Payment Speed <span class="text-danger">*</span></label>
+                                                        <?php
+                                                        $speed = '1-day';
+                                                        //
+                                                        if (!empty($companyPaymentConfiguration['payment_speed'])) {
+                                                            $speed = $companyPaymentConfiguration['payment_speed'];
+                                                        }
+                                                        ?>
+                                                        <select name="payment_speed" class="form-control" id="jsPaymentSpeed">
+                                                            <option value="1-day" <?= $speed == '1-day' ? 'selected' : ''; ?>>1 Day</option>
+                                                            <option value="2-day" <?= $speed == '2-day' ? 'selected' : ''; ?>>2 Day</option>
+                                                            <option value="4-day" <?= $speed == '4-day' ? 'selected' : ''; ?>>4 Day</option>
+                                                        </select>
+                                                    </div>
 
-                                                <div class="form-group text-right">
-                                                    <button class="btn btn-success jsCompanyModeBtn csF16" type="submit">
-                                                        <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                                        <span>Update Company Mode</span>
-                                                    </button>
-                                                </div>
-                                            </form>
+                                                    <div class="form-group">
+                                                        <label>Fast Payment Limit</label>
+                                                        <input type="text" class="form-control" value="<?= !empty($companyPaymentConfiguration['fast_payment_limit']) ? $companyPaymentConfiguration['fast_payment_limit'] : 0; ?>" id="jsFastPaymentLimit" />
+                                                    </div>
+
+                                                    <div class="form-group text-right">
+                                                        <button class="btn btn-success jsSaveConfiguration csF16">
+                                                            <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                                            <span>Save Payment Configuration</span>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Signatory</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <?php if (empty($companiesSignatories)) { ?>   
+                                                    <p class="text-danger csF16">
+                                                        <em>
+                                                            <strong>
+                                                                A signatory has not been determined yet.
+                                                            </strong>
+                                                        </em>
+                                                    </p>
+                                                <?php } ?>    
+                                                <form action="javascript:void(0)">
+                                                    <div class="form-group">
+                                                        <label>First Name</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesSignatories['first_name'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Last Name</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesSignatories['last_name'] ?>" disabled  />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Email</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesSignatories['email'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Title</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesSignatories['title'] ?>" disabled />
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Bank Account</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <?php if (empty($companiesBankInfo)) { ?>   
+                                                    <p class="text-danger csF16">
+                                                        <em>
+                                                            <strong>
+                                                                A bank account has not been determined yet.
+                                                            </strong>
+                                                        </em>
+                                                    </p>
+                                                <?php } ?>    
+                                                <form action="javascript:void(0)">
+                                                    <div class="form-group">
+                                                        <label>Name</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesBankInfo['name'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Account Type</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesBankInfo['account_type'] ?>" disabled  />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Routing Number</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesBankInfo['routing_number'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Account Number</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesBankInfo['hidden_account_number'] ?>" disabled />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Federal Tax</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <?php if (empty($companiesFederalTaxInfo)) { ?>   
+                                                    <p class="text-danger csF16">
+                                                        <em>
+                                                            <strong>
+                                                                A federal tax has not been determined yet.
+                                                            </strong>
+                                                        </em>
+                                                    </p>
+                                                <?php } ?>    
+                                                <form action="javascript:void(0)">
+                                                    <div class="form-group">
+                                                        <label>Type</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesFederalTaxInfo['tax_payer_type'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Filing Form</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesFederalTaxInfo['filing_form'] ?>" disabled  />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Legal Name</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesFederalTaxInfo['legal_name'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>EIN Verified</label>
+                                                        <input type="text" class="form-control" value="<?= $companiesFederalTaxInfo['ein_verified'] == 0 ? 'No' : 'Yes';?>" disabled />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>    
+                            <?php } ?>
 
                             <!-- Main body ends -->
                         </div>
