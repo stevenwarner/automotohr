@@ -4259,7 +4259,6 @@ class Hr_documents_management extends Public_Controller
                     $user_sid,
                     $user_type
                 );
-                _e($companyStateForms,true,true);
             //
             $data["companyStateForms"] = $companyStateForms["all"];
             $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
@@ -16655,5 +16654,16 @@ class Hr_documents_management extends Public_Controller
         $this->res['Data'] = $documents;
         $this->res['Response'] = 'Proceed';
         $this->resp();
+    }
+
+    function getEmployerSection (int $formId) {
+        $formInfo = $this->hr_documents_management_model->getStateFormInfo($formId);
+     
+        //
+        $data['helpSection'] = '';
+        $view = $this->load->view('v1/forms/'.$formInfo["form_slug"].'_employer_section', ['records' => $data], true);
+        //  
+        return SendResponse(200, ['view' => $view, 'title' => $formInfo['title']]);
+
     }
 }

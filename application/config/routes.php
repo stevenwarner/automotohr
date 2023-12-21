@@ -2005,3 +2005,4 @@ $route["state/forms/(:num)/(:any)"]["post"] = "Hr_documents_management/handleSta
 // sign my form
 $route["state/forms/(:num)/my/sign"]["get"] = "Hr_documents_management/signMyStateForm/$1";
 $route["state/forms/(:num)/my/sign"]["post"] = "Hr_documents_management/saveMyStateForm/$1";
+$route["hr_documents_management/get_state_employer_section/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$1";

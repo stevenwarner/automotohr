@@ -1,5 +1,4 @@
-<?php _e($userCompletedStateForms,true);
-if ($userCompletedStateForms) { ?>
+<?php if ($userCompletedStateForms) { ?>
     <div class="row">
         <div class="col-xs-12">
             <br />
@@ -40,6 +39,15 @@ if ($userCompletedStateForms) { ?>
                                             <button class="btn btn-success">
                                                 View Form
                                             </button>
+                                            <?php $btn_show = !$v0['employee_section'] ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                           
+                                            <a class="<?php echo $btn_show; ?> jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>" href="javascript:;">
+                                                <?php if (!$v0['employee_section']) { ?>
+                                                    Employer Section - Not Completed
+                                                <?php } else { ?>
+                                                    Employer Section - Completed
+                                                <?php } ?>
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php } ?>

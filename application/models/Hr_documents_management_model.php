@@ -10396,11 +10396,10 @@ class Hr_documents_management_model extends CI_Model
             
             // get teh form status
             $value = array_merge($value, $this->checkStateFormAssignStatus($value["sid"], $userId, $userType));
-            _e($value,true);
             // push to all
             $returnArray["all"][] = $value;
             //
-            if ($value["user_consent"] == 1) {
+            if ($value["is_completed"] == 1) {
                 $returnArray["completed"][] = $value;
             } else if($value["status"] == 0 && $value["status"] === "assigned") {
                 $returnArray["not_completed"][] = $value;
@@ -10443,11 +10442,12 @@ class Hr_documents_management_model extends CI_Model
             "is_completed" => false,
             "assigned_at" => "",
             "signed_at" => "",
-            "form_data" => []
+            "form_data" => [],
+            "employee_section" => false
         ];
         // get the record
         $result = $this->db
-            ->select("status, user_consent, created_at, user_consent_at, fields_json")
+            ->select("status, user_consent, created_at, user_consent_at, fields_json, employer_consent")
             ->where("state_form_sid", $formId)
             ->where("user_sid", $userId)
             ->where("user_type", $userType)
@@ -10456,6 +10456,10 @@ class Hr_documents_management_model extends CI_Model
         // not assigned
         if (!$result) {
             return $returnArray;
+        }
+        //
+        if ($result['employer_consent'] == 1) {
+            $returnArray['employee_section'] = true;
         }
         // set it to revoked
         $returnArray["status"] = "revoked";
@@ -10623,6 +10627,14 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('state_form_sid', $formId);
         $this->db->where('user_sid', $employeeId);
         $this->db->update('portal_state_form', $dataToUpdate);
+    }
+
+    public function getStateFormInfo (int $formId) {
+        return $this->db
+            ->select("sid, title, form_slug")
+            ->where("state_forms.sid", $formId)
+            ->get("state_forms")
+            ->row_array();    
     }
 
 }

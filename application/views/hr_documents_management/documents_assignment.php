@@ -2820,6 +2820,7 @@ if ($user_type == 'employee') {
 <?php $this->load->view('static-pages/e_signature_popup'); ?>
 <?php $this->load->view('hr_documents_management/authorized_signature_popup'); ?>
 <?php $this->load->view('hr_documents_management/show_document_history'); ?>
+<?php $this->load->view('v1/forms/employer_state_form_section'); ?>
 
 <style>
     #document_preview_div ol,
