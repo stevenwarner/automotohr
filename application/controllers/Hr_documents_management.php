@@ -16584,7 +16584,7 @@ class Hr_documents_management extends Public_Controller
 
         $data["appJs"] = bundleJs([
             "js/app_helper",
-            "v1/forms/".$form["form_slug"],
+            "v1/forms/" . $form["form_slug"],
         ], "public/v1/forms/", $form["form_slug"], false);
 
         $formData = [];
@@ -16622,14 +16622,15 @@ class Hr_documents_management extends Public_Controller
         }
         //
         $data["formData"] = $formData;
-        $data['helpSection'] = 'v1/forms/'.$form["form_slug"].'_employee_section';
+        $data['helpSection'] = 'v1/forms/' . $form["form_slug"] . '_employee_section';
         //
         $this->load->view('onboarding/on_boarding_header', $data);
-        $this->load->view('v1/forms/'.$form["form_slug"]);
+        $this->load->view('v1/forms/' . $form["form_slug"]);
         $this->load->view('onboarding/on_boarding_footer');
     }
 
-    function saveMyStateForm (int $formId) {
+    function saveMyStateForm(int $formId)
+    {
         //
         if (!$this->session->userdata('logged_in')) {
             return redirect("login");
@@ -16660,14 +16661,53 @@ class Hr_documents_management extends Public_Controller
         $this->resp();
     }
 
-    function getEmployerSection (int $formId) {
-        $formInfo = $this->hr_documents_management_model->getStateFormInfo($formId);
-     
+    function getEmployerSection(
+        int $formId,
+        int $userId,
+        string $userType
+    ) {
+        $session = $this->session->userdata('logged_in');
+        $companyId = $session['company_detail']['sid'];
         //
+        $formInfo = $this->hr_documents_management_model->getStateForm(
+            $companyId,
+            $formId,
+            $userId,
+            $userType
+        );
+        //
+        $data["states"] = $this->hr_documents_management_model->getStates();
+        $data["formInfo"] = $formInfo;
+
         $data['helpSection'] = '';
-        $view = $this->load->view('v1/forms/'.$formInfo["form_slug"].'_employer_section', ['records' => $data], true);
+        // $data['helpSection'] = 'v1/forms/' . $form["form_slug"] . '_employee_section';
+
+        $view = $this->load->view('v1/forms/' . $formInfo["form_slug"] . '_employer_section', $data, true);
         //  
         return SendResponse(200, ['view' => $view, 'title' => $formInfo['title']]);
+    }
 
+    public function saveStateFormEmployerSection(
+        int $formId,
+        int $userId,
+        string $userType
+    ) {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect("login");
+        }
+        //
+        $session = $this->session->userdata('logged_in');
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $post = $this->input->post(null, true);
+        $formData = json_encode($post);
+        //
+        $this->hr_documents_management_model->saveStateFormEmployerSection(
+            $formId,
+            $userId,
+            $userType,
+            $formData
+        );
     }
 }

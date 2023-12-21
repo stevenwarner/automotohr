@@ -63,16 +63,18 @@
                                             <button class="btn btn-success jsFormHistory hidden">
                                                 History
                                             </button>
-                                            <?php if ($companyStateForm["is_completed"]) { ?>
+                                            <?php if ($companyStateForm["status"] === "assigned") { ?>
                                                 <?php if ($companyStateForm["is_employer_completed"]) { ?>
-                                                    <button class="btn blue-button">
+                                                    <button class="btn blue-button jsEmployerStateSectionPrefill" form_sid="<?php echo $companyStateForm['sid']; ?>">
                                                         Employer Section - Completed
                                                     </button>
                                                 <?php } else { ?>
-                                                    <button class="btn btn-success">
+                                                    <button class="btn btn-success jsEmployerStateSectionPrefill" form_sid="<?php echo $companyStateForm['sid']; ?>">
                                                         Employer Section - Not Completed
                                                     </button>
                                                 <?php } ?>
+                                            <?php } ?>
+                                            <?php if ($companyStateForm["is_completed"]) { ?>
                                                 <button class="btn btn-success">
                                                     View Signed
                                                 </button>
