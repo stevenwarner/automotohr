@@ -394,7 +394,7 @@
                 <tr>
                     <td width="100%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Date: Authorize Sign Date: </strong>
-                        <input class="invoice-fields-line sign_date" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="authorize_sign_date" />
+                        <input class="invoice-fields-line sign_date" type="text" value="<?php echo $document['authorized_signature_date']?>" name="authorize_sign_date" />
                     </td>
                 </tr>
 

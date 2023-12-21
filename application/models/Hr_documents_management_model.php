@@ -381,7 +381,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
         $this->db->group_end();
 
-      
+
         //
         $this->db->or_group_start();
         $this->db->where('documents_assigned.fillable_documents_slug', 'written-employee-counseling-report-form');
@@ -2197,7 +2197,8 @@ class Hr_documents_management_model extends CI_Model
                 documents_assigned.downloaded, 
                 documents_assigned.user_consent, 
                 documents_assigned.document_sid, 
-                documents_assigned.assigned_date
+                documents_assigned.assigned_date,
+                documents_assigned.fillable_documents_slug
             ');
             //
             $this->db->where_in('documents_assigned.user_sid', $activeEmployees);
@@ -8059,13 +8060,19 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('documents_assigned.status', 1);
         $this->db->where('documents_assigned.archive', 0);
         $this->db->group_start();
-        $this->db->where('documents_assigned.authorized_signature IS ', NULL);
+        $this->db->where('documents_assigned.authorized_signature ', NULL);
         $this->db->or_where('documents_assigned.authorized_signature', '');
         $this->db->group_end();
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+
+        $this->db->or_where('fillable_documents_slug', 'notice-of-separation');
+        $this->db->or_where('fillable_documents_slug', 'written-employee-counseling-report-form');
+
         $this->db->group_end();
+
+  
         $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
         $this->db->order_by('documents_assigned.authorized_signature', 'ASC', false);
         $this->db->order_by('assigned_by_date', 'DESC', false);
@@ -8073,6 +8080,8 @@ class Hr_documents_management_model extends CI_Model
         $record_obj = $this->db->get('authorized_document_assigned_manager');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
+        
+
         //
         if (empty($record_arr)) {
             return [];
@@ -10260,6 +10269,13 @@ class Hr_documents_management_model extends CI_Model
                 $is_magic_tag_exist = 1;
             }
         }
+
+
+        if ($assigned_document['fillable_documents_slug'] != null && $assigned_document['fillable_documents_slug'] != '') {
+            $is_magic_tag_exist = 1;
+        }
+
+
         //
         if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
             //

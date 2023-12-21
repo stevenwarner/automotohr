@@ -3670,10 +3670,10 @@ class Hr_documents_management extends Public_Controller
 
             foreach ($assigned_documents as $key => $assigned_document) {
 
-
-                //
+               //
                 if ($assigned_document['fillable_documents_slug'] != 'null'  &&  $assigned_document['fillable_documents_slug'] != '') {
-                    
+                              
+                  
                     if ($assigned_document['user_consent'] == 0) {
                         
                         if($assigned_document['status']==0 ){
@@ -3685,9 +3685,22 @@ class Hr_documents_management extends Public_Controller
 
 
                     } else if ($assigned_document['user_consent'] == 1) { 
-                        $signed_document_sids[] = $assigned_document['document_sid'];
-                        $signed_documents[] = $assigned_document;
-                        unset($assigned_documents[$key]);
+
+                        if($assigned_document['fillable_documents_slug']=='written-employee-counseling-report-form' || $assigned_document['fillable_documents_slug']=='notice-of-separation' ){
+                            if (!empty($assigned_document['authorized_signature'])) {
+                            $signed_document_sids[] = $assigned_document['document_sid'];
+                            $signed_documents[] = $assigned_document;
+                            unset($assigned_documents[$key]);
+                            } 
+                        }else{
+
+                            $signed_document_sids[] = $assigned_document['document_sid'];
+                            $signed_documents[] = $assigned_document;
+                            unset($assigned_documents[$key]);
+    
+                        }
+                       
+                      
                     }
                
                 } else {
@@ -7156,6 +7169,7 @@ class Hr_documents_management extends Public_Controller
                 $employer_id = $data['session']['employer_detail']['sid'];
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employee_id, 0, 0);
 
+               
                 foreach ($assigned_documents as $key => $assigned_document) {
                     //
                     $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -7174,6 +7188,12 @@ class Hr_documents_management extends Public_Controller
                             }
                         }
 
+                        //
+                        if($assigned_document['fillable_documents_slug']!=null && $assigned_document['fillable_documents_slug']!=''){
+                            $is_magic_tag_exist = 1;
+                        }
+
+                        
                         // if ($assigned_document['approval_process'] == 0) {
                         if ($assigned_document['document_type'] != 'offer_letter') {
                             if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
