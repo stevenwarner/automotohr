@@ -44,18 +44,22 @@ class Shift_model extends CI_Model
      */
     public function getSingle(
         int $companyId,
-        int $wageId
+        int $shiftId
     ): array {
         return $this->db
             ->select("
-                break_name,
-                break_duration,
-                break_type,
-                job_sites
+            sid,
+            employee_sid,
+            shift_date,
+            start_time,
+            end_time,
+            breaks_count,
+            notes,
+            job_sites,
             ")
             ->where("company_sid", $companyId)
-            ->where("sid", $wageId)
-            ->get("company_breaks")
+            ->where("sid", $shiftId)
+            ->get("cl_shifts")
             ->row_array();
     }
 
@@ -488,6 +492,7 @@ class Shift_model extends CI_Model
         array $post
     ): array {
         //
+
         $post["start_time"] = formatDateToDB(
             $post["start_time"],
             "h:i A",
@@ -498,15 +503,19 @@ class Shift_model extends CI_Model
             "h:i A",
             "H:i"
         );
+
         //
-        $post["shift_date"] = formatDateToDB(
-            $post["shift_date"],
-            SITE_DATE,
-            DB_DATE
-        );
+        if ($post["shift_date"]) {
+            $post["shift_date"] = formatDateToDB(
+                $post["shift_date"],
+                SITE_DATE,
+                DB_DATE
+            );
+        }
         //
         $post["breaks"] = array_values($post["breaks"]);
         //
+
         if ($post["breaks"]) {
             foreach ($post["breaks"] as $index => $break) {
                 if ($break["start_time"]) {
@@ -611,5 +620,128 @@ class Shift_model extends CI_Model
         }
         //
         return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
+    }
+
+
+    //
+    public function applyMultiShifts(int $companyId, array $post)
+    {
+        //
+        $post["start_time"] = formatDateToDB(
+            $post["start_time"],
+            "h:i A",
+            "H:i"
+        );
+        //
+        $post["end_time"] = formatDateToDB(
+            $post["end_time"],
+            "h:i A",
+            "H:i"
+        );
+
+        $post["breaks"] = array_values($post["breaks"]);
+        //
+
+        if ($post["breaks"]) {
+            foreach ($post["breaks"] as $index => $break) {
+                if ($break["start_time"]) {
+                    $time = new DateTime();
+                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
+                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
+                    $post["breaks"][$index]["start_time"] = formatDateToDB(
+                        $break["start_time"],
+                        "h:i a",
+                        "H:i"
+                    );
+                }
+            }
+        } else {
+            $post["breaks"] = [];
+        }
+
+        // convert the dates
+        $startDate = formatDateToDB(
+            $post["shift_date_from"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $endDate = formatDateToDB(
+            $post["shift_date_to"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $dates = getDatesInRange($startDate, $endDate, DB_DATE);
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+
+        // get company off days
+        $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+        //
+        $employeesAlreadyExists = [];
+        //
+        $currentDateAndTime = getSystemDate();
+        //
+        foreach ($post["employees"] as $employeeId) {
+            foreach ($dates as $v0) {
+                //
+                if (in_array($v0, $holidaysAndOffDays)) {
+                    continue;
+                }
+                //
+                $where = [
+                    "employee_sid" => $employeeId,
+                    "shift_date" => $v0
+                ];
+                // check if shift already assigned
+                if ($this->db->where($where)->count_all_results("cl_shifts")) {
+                    if (!$employeesAlreadyExists[$employeeId]) {
+                        $employeesAlreadyExists[$employeeId] = [
+                            "dates" => []
+                        ];
+                    }
+                    $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
+                    continue;
+                }
+                // add the shift
+                $ins = [];
+                $ins["company_sid"] = $companyId;
+                $ins["employee_sid"] = $employeeId;
+                $ins["shift_date"] = $v0;
+                $ins["start_time"] = $post["start_time"];
+                $ins["end_time"] = $post["start_time"];
+                $ins["breaks_count"] = count($post["breaks"]);
+                $ins["breaks_json"] = json_encode($post['breaks']);
+                $ins["job_sites"] = json_encode($post["job_sites"] ?? []);
+                $ins["notes"] = $post['notes'];
+                $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
+                //
+                $this->db->insert("cl_shifts", $ins);
+                //
+                $insertId = $this->db->insert_id();
+                //
+                if ($insertId) {
+                    $ins = [];
+                    $ins["cl_shift_sid"] = $insertId;
+                    $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                    $ins["action"] = "created";
+                    $ins["action_json"] = "{}";
+                    $ins["created_at"] = $currentDateAndTime;
+                    //
+                    $this->db->insert("cl_shifts_logs", $ins);
+                }
+            }
+        }
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully applied the shift to the selected employees." . (
+                    $employeesAlreadyExists ? "<p>However, the below employees already have shifts.</p>" : ""
+                ),
+                "list" => $employeesAlreadyExists
+            ]
+        );
     }
 }

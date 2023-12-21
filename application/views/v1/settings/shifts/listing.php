@@ -72,7 +72,7 @@ if ($filter["mode"] === "month") {
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                             Apply Template
                                         </button>
-                                        <button class="btn btn-orange">
+                                        <button class="btn btn-orange jsEmployeesShifts">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                             Create
                                         </button>

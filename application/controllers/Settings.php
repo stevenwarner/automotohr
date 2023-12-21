@@ -4619,21 +4619,38 @@ class Settings extends Public_Controller
      * Create a single shift template
      *
      * @param string $pageSlug
-     * @param string $employeeId
+     * @param string $shiftId
      * @return array
      */
-    private function editCreateSingleShift(string $pageSlug, int $employeeId): array
+    private function pageEditSingleShift(string $pageSlug, int $shiftId): array
     {
         // check and generate error for session
         $session = checkAndGetSession();
         // load schedule model
         $this->load->model("v1/Shift_template_model", "shift_template_model");
         $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shift"] = $this->shift_model->getSingle(
+            $session["company_detail"]["sid"],
+            $shiftId
+        );
+
+
+        // alert($shiftId);
+        if (empty($data["shift"])) {
+            return SendResponse(400, [
+                'errors' => ["Shift Not Found"]
+            ]);
+        }
+
+        $employeeId =  $data["shift"]["employee_sid"];
+        // _e($employeeId,true,true);
         //
         $data["employees"] = $this->shift_model->getCompanySingleEmployee(
             $session["company_detail"]["sid"],
             $employeeId
         );
+
         // load break model
         $this->load->model("v1/Shift_break_model", "shift_break_model");
         // get the breaks
@@ -4651,6 +4668,38 @@ class Settings extends Public_Controller
         ]);
     }
 
+
+
+    //
+    private function pageCreateMultiShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+     
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/create_multi_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
     /**
      * process  shift templates
      *
@@ -4666,16 +4715,47 @@ class Settings extends Public_Controller
         $this->form_validation->set_rules("start_time", "Start time", "trim|xss_clean|required");
         $this->form_validation->set_rules("end_time", "End time", "trim|xss_clean|required");
         // run the validation
+
         if (!$this->form_validation->run()) {
             return SendResponse(400, getFormErrors());
         }
         // set the sanitized post
         $post = $this->input->post(null, true);
+
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // call the function
         $this->shift_model
             ->processCreateSingleShift(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+
+    //
+    public function processApplyMulitProcess()
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->applyMultiShifts(
                 $session["company_detail"]["sid"],
                 $post
             );

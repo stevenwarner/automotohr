@@ -72,22 +72,22 @@ $(function manageShifts() {
 		if (mode == "month") {
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-					mode +
-					"&year=" +
-					picker.startDate.clone().format("YYYY") +
-					"&month=" +
-					picker.startDate.clone().format("MM")
+				mode +
+				"&year=" +
+				picker.startDate.clone().format("YYYY") +
+				"&month=" +
+				picker.startDate.clone().format("MM")
 			));
 		}
 
 		//
 		window.location.href = baseUrl(
 			"settings/shifts/manage?mode=" +
-				mode +
-				"&start_date=" +
-				startDate +
-				"&end_date=" +
-				endDate
+			mode +
+			"&start_date=" +
+			startDate +
+			"&end_date=" +
+			endDate
 		);
 	});
 	// navigate to previous dates
@@ -101,14 +101,14 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-					mode +
-					"&start_date=" +
-					startDate
-						.clone()
-						.subtract(mode === "week" ? 1 : 2, "week")
-						.format("MM/DD/YYYY") +
-					"&end_date=" +
-					startDate.clone().subtract(1, "day").format("MM/DD/YYYY")
+				mode +
+				"&start_date=" +
+				startDate
+					.clone()
+					.subtract(mode === "week" ? 1 : 2, "week")
+					.format("MM/DD/YYYY") +
+				"&end_date=" +
+				startDate.clone().subtract(1, "day").format("MM/DD/YYYY")
 			));
 		} else {
 			//
@@ -116,11 +116,11 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-					mode +
-					"&year=" +
-					startDateObj.clone().format("YYYY") +
-					"&month=" +
-					startDateObj.clone().format("MM")
+				mode +
+				"&year=" +
+				startDateObj.clone().format("YYYY") +
+				"&month=" +
+				startDateObj.clone().format("MM")
 			));
 		}
 	});
@@ -147,15 +147,15 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-					mode +
-					"&start_date=" +
-					endDate.clone().format("MM/DD/YYYY") +
-					"&end_date=" +
-					endDate
-						.clone()
-						.add(adder, "week")
-						.subtract(1, "day")
-						.format("MM/DD/YYYY")
+				mode +
+				"&start_date=" +
+				endDate.clone().format("MM/DD/YYYY") +
+				"&end_date=" +
+				endDate
+					.clone()
+					.add(adder, "week")
+					.subtract(1, "day")
+					.format("MM/DD/YYYY")
 			));
 		} else {
 			//
@@ -163,11 +163,11 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-					mode +
-					"&year=" +
-					startDateObj.clone().format("YYYY") +
-					"&month=" +
-					startDateObj.clone().format("MM")
+				mode +
+				"&year=" +
+				startDateObj.clone().format("YYYY") +
+				"&month=" +
+				startDateObj.clone().format("MM")
 			));
 		}
 	});
@@ -190,6 +190,17 @@ $(function manageShifts() {
 		);
 	});
 
+
+
+	//
+	$(".jsEmployeesShifts").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		//
+		callToCreateBoxMultiShifts();
+	});
+
+
 	/**
 	 * capture click event on cell
 	 */
@@ -198,10 +209,11 @@ $(function manageShifts() {
 		event.preventDefault();
 		event.stopPropagation();
 		//
-		callToEditBox($(this).data("sid"));
+		callToEditBox($(this).data("id"));
 	});
 
-	callToCreateBox(47, "2023-12-05");
+
+	//callToEditBox(1);
 
 	/**
 	 * Apply template
@@ -272,8 +284,8 @@ $(function manageShifts() {
 									html += "<p>";
 									html += $(
 										'.jsPageApplyTemplateEmployees[value="' +
-											i +
-											'"]'
+										i +
+										'"]'
 									)
 										.parent()
 										.text()
@@ -297,7 +309,7 @@ $(function manageShifts() {
 							_success(resp.msg + html, function () {
 								window.location.href = baseUrl(
 									"settings/shifts/manage" +
-										window.location.search
+									window.location.search
 								);
 							});
 						}
@@ -584,6 +596,128 @@ $(function manageShifts() {
 		);
 	}
 
+
+	//
+	function callToCreateBoxMultiShifts() {
+
+
+		makePage(
+			"Create Shift",
+			"create_multi_shift",
+			0,
+			function () {
+				// hides the loader
+				ml(false, modalLoader);
+				//
+				applyTimePicker();
+				applyDatePicker();
+
+				$(".jsSelectAll").click(function (event) {
+					event.preventDefault();
+					$(".jsPageApplyTemplateEmployees").prop("checked", true);
+				});
+				$(".jsRemoveAll").click(function (event) {
+					event.preventDefault();
+					$(".jsPageApplyTemplateEmployees").prop("checked", false);
+				});
+
+
+				validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+					rules: {
+						start_time: { required: true, timeIn12Format: true },
+						end_time: { required: true, timeIn12Format: true },
+					},
+					errorPlacement: function (error, element) {
+						if ($(element).parent().hasClass("input-group")) {
+							$(element).parent().after(error);
+						} else {
+							$(element).after(error);
+						}
+					},
+					submitHandler: function (form) {
+
+						$(form).serializeArray();
+
+						const passObj = {
+							start_date: $("#shift_date_from").val(),
+							end_date: $("#shift_date_to").val(),
+							employees: [],
+						};
+
+
+						//
+						$(".jsPageApplyTemplateEmployees:checked").map(function () {
+							passObj.employees.push($(this).val());
+						});
+
+					
+						if (!passObj.start_date.length) {
+							return _error("Please select From Date.");
+						}
+						if (!passObj.end_date.length) {
+							return _error("Please select To Datae.");
+						}
+
+						if (!passObj.employees.length) {
+							return _error("Please select at least one employee.");
+						}
+
+						//
+						processCallWithoutContentType(
+							formArrayToObj($(form).serializeArray()),
+							$(".jsPageApplyShiftTemplateBtn"),
+							"settings/shifts/multyshift/apply",
+							function (resp) {
+								//
+								let html = "";
+								// check the keys
+								if (Object.keys(resp.list).length > 0) {
+									//
+									$.each(resp.list, function (i, v) {
+										html += "<p>";
+										html += $(
+											'.jsPageApplyTemplateEmployees[value="' +
+											i +
+											'"]'
+										)
+											.parent()
+											.text()
+											.trim();
+										html +=
+											" has already shift on the following dates;";
+										html += "</p>";
+										v.dates.map(function (v0) {
+											html +=
+												"<span>" +
+												moment(v0, "YYYY-MM-DD").format(
+													"MM/DD/YYYY"
+												) +
+												"</span>, ";
+										});
+										html += "<br />";
+										html += "<br />";
+									});
+								}
+								// show the message
+								_success(resp.msg + html, function () {
+									window.location.href = baseUrl(
+										"settings/shifts/manage" +
+										window.location.search
+									);
+								});
+							}
+						);
+
+					},
+				});
+
+			}
+		);
+
+	}
+
+
+
 	/**
 	 * Create shift against a specific employee and date
 	 * @param {int} employeeId
@@ -597,9 +731,6 @@ $(function manageShifts() {
 				// hides the loader
 				ml(false, modalLoader);
 				//
-				$('[name="shift_date"]').val(
-					moment(date, "YYYY-MM-DD").format("MM/DD/YYYY")
-				);
 
 				applyTimePicker();
 
@@ -638,6 +769,8 @@ $(function manageShifts() {
 	/**
 	 * apply time picker
 	 */
+
+
 	function applyTimePicker() {
 		$(".jsTimeField").timepicker({
 			timeFormat: "h:mm p",
@@ -646,6 +779,37 @@ $(function manageShifts() {
 			scrollbar: false,
 		});
 	}
+
+
+	//
+	function applyDatePicker() {
+
+		$("#shift_date_from").daterangepicker({
+			opens: "center",
+			singleDatePicker: true,
+			showDropdowns: true,
+			autoApply: true,
+			startDate: getStartDate(),
+			locale: {
+				format: "MM/DD/YYYY",
+			}
+		});
+
+		$("#shift_date_to").daterangepicker({
+			opens: "center",
+			singleDatePicker: true,
+			showDropdowns: true,
+			autoApply: true,
+			startDate: getStartDate(),
+			locale: {
+				format: "MM/DD/YYYY",
+			}
+		});
+
+
+	}
+
+
 
 	/**
 	 * generates break h*ml
