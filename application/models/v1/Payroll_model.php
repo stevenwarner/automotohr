@@ -1117,9 +1117,9 @@ class Payroll_model extends CI_Model
         // sync the earning types
         $this->syncCompanyEarningTypes($companyId);
         // sync web hooks
-        $this->syncCompanyWebHook();
+        // $this->syncCompanyWebHook();
         // create company webhook
-        $this->createCompanyWebHook();
+        // $this->createCompanyWebHook();
 
         return SendResponse(
             200,
@@ -4501,7 +4501,7 @@ class Payroll_model extends CI_Model
         // response
         $gustoResponse = createCompanyWebHook(
             [
-                'url' => base_url('gusto/company/subscriber'),
+                'url' => base_url('gusto/subscriber'),
                 'subscription_types' => [
                     'Company'
                 ]

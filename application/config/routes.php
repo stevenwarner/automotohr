@@ -1804,7 +1804,7 @@ $route['payrolls/earnings/add']['post'] = 'v1/Payroll/processAddCustomEarningTyp
 $route['payrolls/earnings/edit/(:num)']['get'] = 'v1/Payroll/editCustomEarningType/$1';
 $route['payrolls/earnings/edit/(:num)']['post'] = 'v1/Payroll/processEditCustomEarningType/$1';
 // Company approval webhook
-$route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
+$route['webhook/gusto/(:any)'] = 'v1/payrolls/Webhook/listen/$1';
 
 // External payroll routes
 $route['payrolls/external']['get'] = 'v1/payrolls/External/index';

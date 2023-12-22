@@ -265,6 +265,8 @@ if (!function_exists('getUrl')) {
         $urls['me'] = 'v1/me';
         $urls['refreshToken'] = 'oauth/token?' . ($key);
         $urls['getWebHooks'] = 'v1/webhook_subscriptions';
+        $urls['deleteWebHook'] = "v1/webhook_subscriptions/$key";
+        $urls['requestVerificationToken'] = "v1/webhook_subscriptions/$key/request_verification_token";
 
         // company URLs
         $urls['createPartnerCompany'] = "v1/partner_managed_companies";
@@ -483,7 +485,7 @@ if (!function_exists('createCompanyWebHook')) {
 
 if (!function_exists('getWebHooks')) {
     /**
-     * create webhook
+     * get webhooks
      *
      * @return array
      */
@@ -495,6 +497,52 @@ if (!function_exists('getWebHooks')) {
                 CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+    }
+}
+
+if (!function_exists('deleteWebHook')) {
+    /**
+     * delete webhook
+     *
+     * @param string $hookId
+     * @return array
+     */
+    function deleteWebHook(string $hookId): array
+    {
+        return makeCall(
+            getUrl('deleteWebHook', $hookId),
+            [
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
+                    'Content-Type: application/json',
+                    'X-Gusto-API-Version: 2023-04-01'
+                )
+            ]
+        );
+    }
+}
+
+if (!function_exists('requestVerificationToken')) {
+    /**
+     * delete webhook
+     *
+     * @param string $hookId
+     * @return array
+     */
+    function requestVerificationToken(string $hookId): array
+    {
+        return makeCall(
+            getUrl('requestVerificationToken', $hookId),
+            [
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->DEMO->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
