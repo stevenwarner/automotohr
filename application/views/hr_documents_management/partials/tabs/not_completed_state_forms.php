@@ -37,19 +37,27 @@
                                             <p>Employer Section Status: <?= $v0["is_employer_completed"] ? "Completed" : "Pending"; ?></p>
                                         </td>
                                         <td class="vam text-right">
-                                            <?php if ($v0["is_completed"]) { ?>
+                                            <?php if ($v0["status"] === "assigned") { ?>
                                                 <?php if ($v0["is_employer_completed"]) { ?>
-                                                    <button class="btn blue-button">
+                                                    <button class="btn blue-button jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
                                                         Employer Section - Completed
                                                     </button>
                                                 <?php } else { ?>
-                                                    <button class="btn btn-success">
+                                                    <button class="btn btn-success jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
                                                         Employer Section - Not Completed
                                                     </button>
                                                 <?php } ?>
-                                                <button class="btn btn-success">
+                                            <?php } ?>
+                                            <?php if ($v0["is_completed"]) { ?>
+                                                <button class="btn btn-success jsPreviewAssignStateForm" form_sid="<?php echo $v0['sid']; ?>">
                                                     View Signed
                                                 </button>
+                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$user_sid.'/'.$user_type.'/'.$v0['sid'].'/green/print'); ?>">
+                                                    Print
+                                                </a>
+                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$user_sid.'/'.$user_type.'/'.$v0['sid'].'/green/download'); ?>">
+                                                    Download
+                                                </a>
                                             <?php } ?>
                                         </td>
                                     </tr>

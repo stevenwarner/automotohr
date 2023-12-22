@@ -10444,6 +10444,7 @@ class Hr_documents_management_model extends CI_Model
             "assigned_at" => "",
             "signed_at" => "",
             "form_data" => [],
+            "employer_json" => [],
             "employee_section" => false
         ];
         // get the record
@@ -10454,6 +10455,7 @@ class Hr_documents_management_model extends CI_Model
                 created_at,
                 user_consent_at,
                 fields_json,
+                employer_json,
                 employer_consent,
                 employer_concent_at
             ")
@@ -10487,6 +10489,7 @@ class Hr_documents_management_model extends CI_Model
         }
 
         if ($result["employer_consent"] == 1) {
+            $returnArray["employer_json"] = json_decode($result["employer_json"], true);
             $returnArray["is_employer_completed"] = true;
         }
         //
@@ -10644,12 +10647,13 @@ class Hr_documents_management_model extends CI_Model
         $this->db->update('portal_state_form', $dataToUpdate);
     }
 
-    public function getStateFormInfo (int $formId) {
+    public function getStateFormInfo(int $formId)
+    {
         return $this->db
             ->select("sid, title, form_slug")
             ->where("state_forms.sid", $formId)
             ->get("state_forms")
-            ->row_array();    
+            ->row_array();
     }
 
     /**
@@ -10670,5 +10674,57 @@ class Hr_documents_management_model extends CI_Model
             ->order_by("state_name", "ASC")
             ->get("states")
             ->result_array();
+    }
+
+
+    public function saveStateFormEmployerSection(
+        int $formId,
+        int $userId,
+        string $userType,
+        string $employerJson
+    ) {
+        $this->db->where([
+            "user_sid" => $userId,
+            "user_type" => $userType,
+            "state_form_sid" => $formId,
+        ])
+            ->update(
+                "portal_state_form",
+                [
+                    "employer_consent" => 1,
+                    "employer_concent_at" => getSystemDate(),
+                    "employer_json" => $employerJson,
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully signed the employer section."
+            ]
+        );
+    }
+
+    public function getEmployeeData (int $employeeId) {
+        //
+        return $this->db
+            ->select("
+                first_name, 
+                middle_initial, 
+                last_name, 
+                ssn, 
+                Location_Address, 
+                Location_Address_2, 
+                Location_City, 
+                Location_State, 
+                Location_ZipCode, 
+                Location_Country, 
+                PhoneNumber, 
+                marital_status
+            ")
+            ->where('sid', $employeeId)
+            ->get("users")
+            ->row_array();
     }
 }
