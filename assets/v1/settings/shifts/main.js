@@ -209,6 +209,14 @@ $(function manageShifts() {
 	});
 
 
+	$(".jsEmployeeShiftsCopy").click(function (event) {
+		// prevent the event from happening
+		//event.preventDefault();
+		//
+		callToCopyBoxShifts();
+	});
+
+
 	/**
 	 * capture click event on cell
 	 */
@@ -726,9 +734,6 @@ $(function manageShifts() {
 
 
 
-
-
-
 //
 function callToDeleteBoxMultiShifts() {
 	makePage(
@@ -806,9 +811,121 @@ function callToDeleteBoxMultiShifts() {
 }
 
 
+//
+function callToCopyBoxShifts() {
+	makePage(
+		"Copy Shifts From Last Cycle",
+		"copy_shift",
+		0,
+		function () {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			applyDatePickerCopy();
+			applyDatePicker();
+
+			$(".jsSelectAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", true);
+			});
+			$(".jsRemoveAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", false);
+			});
 
 
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+			
+				submitHandler: function (form) {
 
+					$(form).serializeArray();
+
+					const passObj = {
+						last_start_date: $("#shift_date_from").val(),
+						last_end_date: $("#shift_date_to").val(),
+						start_date: $("#shift_date_from").val(),
+						end_date: $("#shift_date_to").val(),
+						employees: [],
+					};
+
+
+					//
+					$(".jsPageApplyTemplateEmployees:checked").map(function () {
+						passObj.employees.push($(this).val());
+					});
+
+				
+					if (!passObj.last_start_date.length) {
+						return _error("Please select From Date.");
+					}
+					if (!passObj.last_end_date.length) {
+						return _error("Please select To Datae.");
+					}
+
+					if (!passObj.start_date.length) {
+						return _error("Please select From Date.");
+					}
+					if (!passObj.end_date.length) {
+						return _error("Please select To Datae.");
+					}
+
+					if (!passObj.employees.length) {
+						return _error("Please select at least one employee.");
+					}
+
+					//
+					processCallWithoutContentType(
+						formArrayToObj($(form).serializeArray()),
+						$(".jsPageApplyShiftTemplateBtn"),
+						"settings/shifts/multyshift/copy",
+							function (resp) {
+								//
+								let html = "";
+								// check the keys
+								if (Object.keys(resp.list).length > 0) {
+									//
+									$.each(resp.list, function (i, v) {
+										html += "<p>";
+										html += $(
+											'.jsPageApplyTemplateEmployees[value="' +
+											i +
+											'"]'
+										)
+											.parent()
+											.text()
+											.trim();
+										html +=
+											" has already shift on the following dates;";
+										html += "</p>";
+										v.dates.map(function (v0) {
+											html +=
+												"<span>" +
+												moment(v0, "YYYY-MM-DD").format(
+													"MM/DD/YYYY"
+												) +
+												"</span>, ";
+										});
+										html += "<br />";
+										html += "<br />";
+									});
+								}
+								// show the message
+								_success(resp.msg + html, function () {
+									window.location.href = baseUrl(
+										"settings/shifts/manage" +
+										window.location.search
+									);
+								});
+							}
+					);
+
+				},
+			});
+
+		}
+	);
+
+}
 
 
 	/**
@@ -899,8 +1016,46 @@ function callToDeleteBoxMultiShifts() {
 			}
 		});
 
+	}
+
+
+	function applyDatePickerCopy() {
+
+		$("#last_shift_date_from").daterangepicker({
+			opens: "center",
+			singleDatePicker: true,
+			showDropdowns: true,
+			autoApply: true,
+			startDate: getStartDate(),
+			locale: {
+				format: "MM/DD/YYYY",
+			}
+		});
+
+		$("#last_shift_date_to").daterangepicker({
+			opens: "center",
+			singleDatePicker: true,
+			showDropdowns: true,
+			autoApply: true,
+			startDate: getEndDate(),
+			locale: {
+				format: "MM/DD/YYYY",
+			}
+		});
 
 	}
+
+
+	$(function() {
+		$('.expander').on('click', function() {
+		  $('#TableData').toggle();
+		});
+	  });
+
+	
+	//  $('#js-filter-employee').select2('val', 'all');
+	  $('#js-filter-employee').select2();
+
 
 
 

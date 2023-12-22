@@ -749,6 +749,131 @@ class Shift_model extends CI_Model
 
 
     //
+    public function copyMultiShifts(int $companyId, array $post)
+    {
+
+        //
+        $lastStartDate = formatDateToDB(
+            $post["last_shift_date_from"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $lastEndDate = formatDateToDB(
+            $post["last_shift_date_to"],
+            SITE_DATE,
+            DB_DATE
+        );
+
+        // convert the dates
+        $startDate = formatDateToDB(
+            $post["shift_date_from"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $endDate = formatDateToDB(
+            $post["shift_date_to"],
+            SITE_DATE,
+            DB_DATE
+        );
+
+        //
+        $dates = getDatesInRange($startDate, $endDate, DB_DATE);
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+
+        // get company off days
+        $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+        //
+        $employeesAlreadyExists = [];
+        //
+        $currentDateAndTime = getSystemDate();
+        //
+        foreach ($post["employees"] as $employeeId) {
+            $this->db->select("
+                            sid,
+                            employee_sid,
+                            start_time,
+                            end_time,
+                            breaks_count,
+                            notes,
+                            job_sites,
+                            breaks_json,
+                        ");
+            $this->db->where("company_sid", $companyId);
+            $this->db->where('shift_date >=',  $lastStartDate);
+            $this->db->where('shift_date <=',  $lastEndDate);
+            $this->db->where('employee_sid',  $employeeId);
+            $lastCycleShiftData = $this->db->get("cl_shifts")->result_array();
+
+            foreach ($dates as $key => $v0) {
+
+                $shiftDataToCopy = $lastCycleShiftData[$key];
+                //
+                if ($lastCycleShiftData[$key]) {
+                    if (in_array($v0, $holidaysAndOffDays)) {
+                        continue;
+                    }
+                    //
+                    $where = [
+                        "employee_sid" => $employeeId,
+                        "shift_date" => $v0
+                    ];
+                    // check if shift already assigned
+                    if ($this->db->where($where)->count_all_results("cl_shifts")) {
+                        if (!$employeesAlreadyExists[$employeeId]) {
+                            $employeesAlreadyExists[$employeeId] = [
+                                "dates" => []
+                            ];
+                        }
+                        $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
+                        continue;
+                    }
+                    // add the shift
+                    $ins = [];
+                    $ins["company_sid"] = $companyId;
+                    $ins["employee_sid"] = $employeeId;
+                    $ins["shift_date"] = $v0;
+                    $ins["start_time"] = $shiftDataToCopy["start_time"];
+                    $ins["end_time"] = $shiftDataToCopy["end_time"];
+                    $ins["breaks_count"] = $shiftDataToCopy["breaks_count"];
+                    $ins["breaks_json"] = $shiftDataToCopy['breaks_json'];
+                    $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? [];
+                    $ins["notes"] = $shiftDataToCopy['notes'];
+                    $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
+                    //
+                    $this->db->insert("cl_shifts", $ins);
+                    //
+                    $insertId = $this->db->insert_id();
+                    //
+                    if ($insertId) {
+                        $ins = [];
+                        $ins["cl_shift_sid"] = $insertId;
+                        $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                        $ins["action"] = "created";
+                        $ins["action_json"] = "{}";
+                        $ins["created_at"] = $currentDateAndTime;
+                        //
+                        $this->db->insert("cl_shifts_logs", $ins);
+                    }
+                }
+            }
+        }
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully Copied the shift to the selected employees." . (
+                    $employeesAlreadyExists ? "<p>However, the below employees already have shifts.</p>" : ""
+                ),
+                "list" => $employeesAlreadyExists
+            ]
+        );
+    }
+
+
+    //
     public function deleteMultiShifts(int $companyId, array $post)
     {
 

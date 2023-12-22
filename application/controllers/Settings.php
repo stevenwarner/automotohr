@@ -4702,8 +4702,6 @@ class Settings extends Public_Controller
 
 
     //
-
-
     private function pageDeleteMultiShift(string $pageSlug, int $employeeId): array
     {
         // check and generate error for session
@@ -4731,6 +4729,38 @@ class Settings extends Public_Controller
             "data" => $data["return"] ?? []
         ]);
     }
+
+
+
+    private function pageCopyShift(string $pageSlug, int $employeeId): array
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/copy_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
 
     /**
      * process  shift templates
@@ -4792,6 +4822,37 @@ class Settings extends Public_Controller
                 $post
             );
     }
+
+
+
+    public function processCopyMulitProcess()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("last_shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("last_shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->copyMultiShifts(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
 
 
     //

@@ -21,6 +21,7 @@ if ($filter["mode"] === "month") {
     );
 }
 ?>
+
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -97,17 +98,19 @@ if ($filter["mode"] === "month") {
                                     </div>
 
                                     <div class="col-sm-4 text-right">
-                                        <button class="btn btn-orange" data-type="month">
+                                        <button class="btn btn-orange jsEmployeeShiftsCopy" data-type="month">
                                             <i class="fa fa-exchange" aria-hidden="true"></i>
                                             Copy shifts from last cycle
                                         </button>
-                                        <button class="btn btn-blue">
+                                        <button class="btn btn-blue expander">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
                                         </button>
                                     </div>
                                 </div>
-                                <br />
+
+                            
+
                                 <!--  -->
                                 <div class="row">
                                     <div class="col-sm-12">
@@ -193,7 +196,7 @@ if ($filter["mode"] === "month") {
                                                                     <?php if ($employeeShift) {
                                                                         $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                     ?>
-                                                                        <div class="schedule-item" data-id="<?=$employeeShift["sid"];?>">
+                                                                        <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>">
                                                                             <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                 <span class="circle circle-orange"></span>
                                                                             <?php } ?>
