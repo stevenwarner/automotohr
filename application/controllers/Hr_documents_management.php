@@ -16667,7 +16667,12 @@ class Hr_documents_management extends Public_Controller
         $data['helpSection'] = '';
         $view = $this->load->view('v1/forms/'.$formInfo["form_slug"].'_employer_section', ['records' => $data], true);
         //  
-        return SendResponse(200, ['view' => $view, 'title' => $formInfo['title']]);
+        $this->res['Status'] = TRUE;
+        $this->res['view'] = $view;
+        $this->res['title'] = $formInfo['title'];
+        $this->res['Response'] = 'Proceed';
+        $this->resp();
+        // return SendResponse(200, ['view' => $view, 'title' => $formInfo['title']]);
 
     }
 }
