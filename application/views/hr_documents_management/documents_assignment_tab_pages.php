@@ -14,6 +14,9 @@ if ($session['employer_detail']['access_level_plus'] == 1 || $canAccessDocument)
     $document_all_permission = true;
 }
 
+$ncd = count($userNotCompletedStateForms);
+$cd = count($userCompletedStateForms);
+
 // Modify Assigned document
 // only available for Access_level_plus
 // employees.

@@ -1,5 +1,5 @@
        <?php
-        $input = $formInfo["employer_json"] ? 'disabled' : "";
+        $input = $formInfo["is_employer_completed"] ? 'disabled' : "";
         ?>
 
        <form action="javascript:void(0)" autocomplete="off" id="jsStateFormW4EmployerSection">
@@ -87,7 +87,7 @@
                </div>
            </div>
 
-           <?php if (!$formInfo["employer_json"]) { ?>
+           <?php if (!$formInfo["is_employer_completed"]) { ?>
                <hr>
 
                <div class="row">

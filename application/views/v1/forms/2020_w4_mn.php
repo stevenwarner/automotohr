@@ -129,7 +129,7 @@
                             State
                             <strong class="text-danger">*</strong>
                         </label>
-                        <select name="state" class="form-control">
+                        <select name="state" class="form-control" <?php echo $input; ?>>
                             <?php foreach ($states as $state) { ?>
                                 <option value="<?= $state["sid"]; ?>" <?= $state["sid"] == $formData["state"] ? "selected" : ""; ?>><?= $state["state_name"]; ?> (<?= $state["state_code"]; ?>)</option>
                             <?php } ?>
@@ -151,7 +151,7 @@
                             Country
                             <strong class="text-danger">*</strong>
                         </label>
-                        <input type="text" name="country" value="USA" class="form-control" <?php echo $input; ?> readonly/>
+                        <input type="text" name="country" value="USA" class="form-control" <?php echo $input; ?> readonly />
                     </div>
                 </div>
             </div>
@@ -164,19 +164,19 @@
                         </label>
                         <br>
                         <label class="control control--radio">
-                            <input type="radio" name="marital_status" value="1" <?php echo $formData['marital_status'] == 1 ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?>>
+                            <input type="radio" name="marital_status" value="1" <?php echo $formData['marital_status'] == 1 ? 'checked="checked"' : ''; ?> <?php echo $input; ?>>
                             Single; Married, but legally separated; or Spouse is a nonresident alien
                             <div class="control__indicator"></div>
                         </label>
                         <br>
                         <label class="control control--radio">
-                            <input type="radio" name="marital_status" value="2" <?php echo $formData['marital_status'] == 2 ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?>>
+                            <input type="radio" name="marital_status" value="2" <?php echo $formData['marital_status'] == 2 ? 'checked="checked"' : ''; ?> <?php echo $input; ?>>
                             Married
                             <div class="control__indicator"></div>
                         </label>
                         <br>
                         <label class="control control--radio">
-                            <input type="radio" name="marital_status" value="3" <?php echo $formData['marital_status'] == 3 ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?>>
+                            <input type="radio" name="marital_status" value="3" <?php echo $formData['marital_status'] == 3 ? 'checked="checked"' : ''; ?> <?php echo $input; ?>>
                             Married, but withhold at higher Single rate
                             <div class="control__indicator"></div>
                         </label>
@@ -200,7 +200,7 @@
                     <h3>
                         <strong>
                             <label class="control control--checkbox">
-                                <input type="checkbox" name="section_1" <?php echo $formData['section_1'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                                <input type="checkbox" name="section_1" <?php echo $formData['section_1'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                                 Section 1 — Determining Minnesota Allowances
                                 <div class="control__indicator"></div>
                             </label>
@@ -335,7 +335,7 @@
                     <h3>
                         <strong>
                             <label class="control control--checkbox">
-                                <input type="checkbox" name="section_2" <?php echo $formData['section_2'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                                <input type="checkbox" name="section_2" <?php echo $formData['section_2'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                                 Section 2 — Exemption From Minnesota Withholding
                                 <div class="control__indicator"></div>
                             </label>
@@ -352,13 +352,13 @@
             <div class="row">
                 <div class="col-sm-12">
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_a" <?php echo $formData['section_2_a'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_a" <?php echo $formData['section_2_a'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         A I meet the requirements and claim exempt from both federal and Minnesota income tax withholding
                         <div class="control__indicator"></div>
                     </label>
                     <br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_b" <?php echo $formData['section_2_b'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_b" <?php echo $formData['section_2_b'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         B Even though I did not claim exempt from federal withholding, I claim exempt from Minnesota withholding, because:
                         <ul style="padding-left: 25px;">
                             <li>I had no Minnesota income tax liability last year</li>
@@ -370,7 +370,7 @@
 
                     <br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_c" <?php echo $formData['section_2_c'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_c" <?php echo $formData['section_2_c'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         C All of these apply:
                         <div class="control__indicator"></div>
                     </label>
@@ -385,7 +385,7 @@
 
                     <br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_d" <?php echo $formData['section_2_d'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_d" <?php echo $formData['section_2_d'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         D I am an American Indian that resides and works on a reservation for which I am enrolled (see instructions).
                         <div class="control__indicator"></div>
                     </label>
@@ -402,7 +402,7 @@
 
                     <br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_e" <?php echo $formData['section_2_e'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_e" <?php echo $formData['section_2_e'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         E I am a member of the Minnesota National Guard or an active-duty U.S. military member and claim exempt from Minnesota withholding
                         on my military pay
                         <div class="control__indicator"></div>
@@ -410,7 +410,7 @@
 
                     <br>
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="section_2_f" <?php echo $formData['section_2_f'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?> />
+                        <input type="checkbox" name="section_2_f" <?php echo $formData['section_2_f'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?> />
                         F I receive a military pension or other military retirement pay as calculated under U.S. Code, title 10, sections 1401 through 1414, 1447
                         through 1455, and 12733, and I claim exempt from Minnesota withholding on this retirement pay
                         <div class="control__indicator"></div>
@@ -425,7 +425,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <label class="control control--checkbox">
-                        <input type="checkbox" name="user_consent" <?php echo $formData['user_consent'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input == 'readonly' ? 'disabled' : ""; ?>>
+                        <input type="checkbox" name="user_consent" <?php echo $formData['user_consent'] == 'on' ? 'checked="checked"' : ''; ?> <?php echo $input; ?>>
                         <em>
                             I certify that all information provided in Section 1 OR Section 2 is correct. I understand there is a $500 penalty for filing a false Form W-4MN.
                         </em>
@@ -456,7 +456,7 @@
                         Date
                         <strong class="text-danger">*</strong>
                     </label>
-                    <input type="text" class="form-control" readonly name="date" value="<?php echo $formData['date']; ?>" />
+                    <input type="text" class="form-control" readonly name="date" value="<?php echo $formData['date']; ?>" <?php echo $input; ?> />
                 </div>
                 <div class="col-sm-4">
                     <label>

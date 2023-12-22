@@ -1,17 +1,20 @@
 <?php
 
-class Notification_model extends CI_Model {
+class Notification_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
 
     //
-    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE, $isEMSEnabled = 0){
+    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE, $isEMSEnabled = 0)
+    {
         $r = array();
 
-        if(!$isEMS && $isEMSEnabled ==1){
+        if (!$isEMS && $isEMSEnabled == 1) {
             // Fetch assigned documents
             $this->getAssignedDocuments($ses, $r, $companyEmployeesForVerification, $companyApplicantsForVerification);
         }
@@ -21,41 +24,42 @@ class Notification_model extends CI_Model {
         // Fetch pending documents
         $this->getEmployeePendingLarningCenterItem($ses, $r);
 
-        if(!$isEMS){
-            if(checkIfAppIsEnabled('timeoff')) $this->getTimeOff($ses, $r);
-        }   
+        if (!$isEMS) {
+            if (checkIfAppIsEnabled('timeoff')) $this->getTimeOff($ses, $r);
+        }
 
-        return $r; 
+        return $r;
     }
 
     //
-    private function getAssignedDocuments($ses, &$r, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE){
+    private function getAssignedDocuments($ses, &$r, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
+    {
         //
-        if(!$companyEmployeesForVerification) {
+        if (!$companyEmployeesForVerification) {
             $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
         }
         //
-        if(!$companyApplicantsForVerification) {
+        if (!$companyApplicantsForVerification) {
             $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
         }
         //
         $data = $this->db
-        ->select("user_type, user_sid")
-        ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
-        ->where('authorized_document_assigned_manager.assigned_to_sid', $ses['employer_detail']['sid'])
-        ->where('authorized_document_assigned_manager.company_sid', $ses['company_detail']['sid'])
-        // ->where('authorized_document_assigned_manager.assigned_status', 1)
-        ->where('documents_assigned.archive', 0)
-        ->where('documents_assigned.status', 1)
-        ->group_start()
-        ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null ,false)
-        ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null ,false)
-        ->group_end()
-        ->group_start()
-        ->where('documents_assigned.authorized_signature IS NULL', null)
-        ->or_where('documents_assigned.authorized_signature = ""', null)
-        ->group_end()
-        ->get('authorized_document_assigned_manager');
+            ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $ses['employer_detail']['sid'])
+            ->where('authorized_document_assigned_manager.company_sid', $ses['company_detail']['sid'])
+            // ->where('authorized_document_assigned_manager.assigned_status', 1)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
+            ->group_start()
+            ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
+            ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
+            ->group_end()
+            ->group_start()
+            ->where('documents_assigned.authorized_signature IS NULL', null)
+            ->or_where('documents_assigned.authorized_signature = ""', null)
+            ->group_end()
+            ->get('authorized_document_assigned_manager');
         $data_obj = $data->result_array();
         // ->count_all_results('authorized_document_assigned_manager');
         //
@@ -75,7 +79,7 @@ class Notification_model extends CI_Model {
         //
         $c = count($data_obj);
         //
-        if((int)$c !== 0){
+        if ((int)$c !== 0) {
             $r[] = array(
                 'count' => $c,
                 'link' => base_url('authorized_document'),
@@ -85,34 +89,35 @@ class Notification_model extends CI_Model {
     }
 
     //
-    private function getTimeOff($ses, &$r){
+    private function getTimeOff($ses, &$r)
+    {
         $a = $this->db
-        ->select('sid, level_at, date_format(created_at, "%Y-%m-%d") as created_at')
-        ->where('company_sid', $ses['company_detail']['sid'])
-        ->where('status', 'pending')
-        ->where('is_draft', '0')
-        ->get('timeoff_requests');
+            ->select('sid, level_at, date_format(created_at, "%Y-%m-%d") as created_at')
+            ->where('company_sid', $ses['company_detail']['sid'])
+            ->where('status', 'pending')
+            ->where('is_draft', '0')
+            ->get('timeoff_requests');
         //
         $b = $a->result_array();
         $a = $a->free_result();
         //
         $c = 0;
         //
-        if(!sizeof($b)) return $r;
+        if (!sizeof($b)) return $r;
         //
         foreach ($b as $k => $v) {
-            $role = $v['level_at'] == 1 ? 'teamlead' : ( $v['level_at'] == 2 ? 'supervisor' : 'approver');
+            $role = $v['level_at'] == 1 ? 'teamlead' : ($v['level_at'] == 2 ? 'supervisor' : 'approver');
             // Check current employee ina ssignment
             $count = $this->db
-            ->select('role')
-            ->where('timeoff_request_sid', $v['sid'])
-            ->where('employee_sid', $ses['employer_detail']['sid'])
-            ->where('role', $role)
-            ->count_all_results('timeoff_request_assignment');
-            if((int)$count !== 0) $c++;
+                ->select('role')
+                ->where('timeoff_request_sid', $v['sid'])
+                ->where('employee_sid', $ses['employer_detail']['sid'])
+                ->where('role', $role)
+                ->count_all_results('timeoff_request_assignment');
+            if ((int)$count !== 0) $c++;
         }
         //
-        if((int)$c !== 0){
+        if ((int)$c !== 0) {
             $r[] = array(
                 'count' => $c,
                 'link' => base_url('timeoff/requests'),
@@ -122,12 +127,13 @@ class Notification_model extends CI_Model {
     }
 
     //
-    private function getEmployeePendingDocuments($ses, &$r){
+    private function getEmployeePendingDocuments($ses, &$r)
+    {
         //
         $company_sid = $ses['company_detail']['sid'];
         $employee_id = $ses['employer_detail']['sid'];
         $assigned_documents = $this->get_assigned_documents($company_sid, 'employee', $employee_id, 1, 0);
-        
+
         $assigned_offer_letter = $this->get_assigned_offer_letter($company_sid, 'employee', $employee_id);
 
         foreach ($assigned_documents as $key => $assigned_document) {
@@ -146,7 +152,7 @@ class Notification_model extends CI_Model {
                         $is_magic_tag_exist = 1;
                     }
                 }
-                
+
                 if ($assigned_document['approval_process'] == 0) {
                     if ($assigned_document['document_type'] != 'offer_letter') {
                         if ($assigned_document['status'] == 1) {
@@ -241,10 +247,10 @@ class Notification_model extends CI_Model {
                     }
                 } else {
                     unset($assigned_documents[$key]);
-                }  
+                }
             } else if ($assigned_document['archive'] == 1) {
                 unset($assigned_documents[$key]);
-            }        
+            }
         }
 
         // Fetch General Documents
@@ -259,11 +265,11 @@ class Notification_model extends CI_Model {
             $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
         } else {
             $eeoc_form = 0;
-        }   
-        // $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments);
-        $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter;
+        }
+        $stateFormCount = $this->getMyPendingStateFormsCount($ses);
+        $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter + $stateFormCount;
         //
-        if((int)$c !== 0){
+        if ((int)$c !== 0) {
             $r[] = array(
                 'count' => $c,
                 'link' => base_url('hr_documents_management/my_documents'),
@@ -273,7 +279,8 @@ class Notification_model extends CI_Model {
     }
 
     //
-    private function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0) {
+    private function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0)
+    {
 
         // $payroll_sids = $this->get_payroll_documents_sids();
         // $documents_management_sids = $payroll_sids['documents_management_sids'];
@@ -292,7 +299,7 @@ class Notification_model extends CI_Model {
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
 
-        if(!$fetch_offer_letter){
+        if (!$fetch_offer_letter) {
             $this->db->where('documents_assigned.document_type <>', 'offer_letter');
         }
 
@@ -314,8 +321,8 @@ class Notification_model extends CI_Model {
         //     }
         //     $this->db->group_end();
         // }
-        
-        $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
+
+        $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
         //$this->db->order_by('documents_assigned.assigned_date', 'desc');
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
@@ -324,7 +331,8 @@ class Notification_model extends CI_Model {
         return $record_arr;
     }
 
-    private function is_w4_form_assign($user_type, $user_sid) {
+    private function is_w4_form_assign($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->where('user_consent ', 0);
@@ -334,7 +342,8 @@ class Notification_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    private function is_w9_form_assign($user_type, $user_sid) {
+    private function is_w9_form_assign($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_consent', NULL);
@@ -344,7 +353,8 @@ class Notification_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    private function is_i9_form_assign($user_type, $user_sid) {
+    private function is_i9_form_assign($user_type, $user_sid)
+    {
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_consent', NULL);
@@ -353,7 +363,8 @@ class Notification_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    private function is_eeoc_form_assign($user_type, $user_sid) {
+    private function is_eeoc_form_assign($user_type, $user_sid)
+    {
         if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
             $this->db->where('users_type', $user_type);
             $this->db->where('application_sid', $user_sid);
@@ -366,7 +377,8 @@ class Notification_model extends CI_Model {
         }
     }
 
-    private function get_payroll_documents_sids () {
+    private function get_payroll_documents_sids()
+    {
         $this->db->select('document_sid, document_type');
         $this->db->where('category_sid', PP_CATEGORY_SID);
         $record_obj = $this->db->get('documents_2_category');
@@ -377,11 +389,11 @@ class Notification_model extends CI_Model {
         $documents_assigned_sids = array();
         $return_array = array();
 
-        foreach ($record_arr as $key=> $row) {
+        foreach ($record_arr as $key => $row) {
             if ($row['document_type'] == 'documents_management') {
-                array_push($documents_management_sids,$row['document_sid']);
+                array_push($documents_management_sids, $row['document_sid']);
             } else {
-                array_push($documents_assigned_sids,$row['document_sid']);
+                array_push($documents_assigned_sids, $row['document_sid']);
             }
         }
 
@@ -396,16 +408,16 @@ class Notification_model extends CI_Model {
         $userSid,
         $userType,
         $companySid
-    ){
+    ) {
         //
         $a = $this->db
-        ->where('company_sid', $companySid)
-        ->where('user_sid', $userSid)
-        ->where('user_type', $userType)
-        ->where('status', 1)
-        ->where('is_completed', 0)
-        ->order_by('sid', 'desc')
-        ->get('documents_assigned_general');
+            ->where('company_sid', $companySid)
+            ->where('user_sid', $userSid)
+            ->where('user_type', $userType)
+            ->where('status', 1)
+            ->where('is_completed', 0)
+            ->order_by('sid', 'desc')
+            ->get('documents_assigned_general');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -413,7 +425,7 @@ class Notification_model extends CI_Model {
         return $b;
     }
 
-    private function get_assigned_offer_letter ($company_sid, $user_type, $user_sid = null)
+    private function get_assigned_offer_letter($company_sid, $user_type, $user_sid = null)
     {
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -427,7 +439,8 @@ class Notification_model extends CI_Model {
         return $this->db->count_all_results();
     }
 
-    private function getEmployeePendingLarningCenterItem ($ses, &$r) {
+    private function getEmployeePendingLarningCenterItem($ses, &$r)
+    {
         $company_sid = $ses['company_detail']['sid'];
         $user_sid = $ses['employer_detail']['sid'];
         //
@@ -445,7 +458,7 @@ class Notification_model extends CI_Model {
         // print_r($ses['employer_detail']);
         // die('stop here');
         //
-        if((int)$learning_center_count !== 0){
+        if ((int)$learning_center_count !== 0) {
             $r[] = array(
                 'count' => $learning_center_count,
                 'link' => base_url('my_learning_center'),
@@ -454,25 +467,26 @@ class Notification_model extends CI_Model {
         }
     }
 
-    private function onlineVideoCount ($company_sid, $user_sid, $user_type, $fromProfile = false) {
+    private function onlineVideoCount($company_sid, $user_sid, $user_type, $fromProfile = false)
+    {
         $r = [];
         //
-        if($user_type == 'employee'){
+        if ($user_type == 'employee') {
             // Get all employees
             $this->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date, screening_questionnaire_sid')
-            ->select('learning_center_online_videos.video_start_date')
-            ->select('learning_center_online_videos.expired_start_date')
-            ->where('company_sid', $company_sid)
-            ->where('employees_assigned_to', 'all')
-            ->order_by('created_date', 'DESC');
+                ->select('learning_center_online_videos.video_start_date')
+                ->select('learning_center_online_videos.expired_start_date')
+                ->where('company_sid', $company_sid)
+                ->where('employees_assigned_to', 'all')
+                ->order_by('created_date', 'DESC');
             //
-            if(!$fromProfile){
+            if (!$fromProfile) {
                 $this->db
-                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
-                ->group_start()
-                ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
-                ->or_where('expired_start_date IS NULL', NULL)
-                ->group_end();
+                    ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                    ->group_start()
+                    ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                    ->or_where('expired_start_date IS NULL', NULL)
+                    ->group_end();
             }
             //
             $a = $this->db->get('learning_center_online_videos');
@@ -481,45 +495,53 @@ class Notification_model extends CI_Model {
             //
             $ids = array();
             //
-            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            if (sizeof($b)) {
+                foreach ($b as $k => $v) {
+                    $ids[$v['sid']] = $v['sid'];
+                }
+            }
             //
             $r = $b;
         }
         // Get specific employees
         $this->db->select('learning_center_online_videos.sid')
-        ->select('learning_center_online_videos.created_date')
-        ->select('learning_center_online_videos.video_title')
-        ->select('learning_center_online_videos.video_description')
-        ->select('learning_center_online_videos.video_source')
-        ->select('learning_center_online_videos.video_id')
-        ->select('learning_center_online_videos.video_start_date')
-        ->select('learning_center_online_videos.expired_start_date')
-        ->select('learning_center_online_videos.screening_questionnaire_sid')
-        ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
-        ->where('learning_center_online_videos_assignments.user_type', $user_type)
-        ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
-        ->where('learning_center_online_videos_assignments.status', 1)
-        ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
-        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
+            ->select('learning_center_online_videos.created_date')
+            ->select('learning_center_online_videos.video_title')
+            ->select('learning_center_online_videos.video_description')
+            ->select('learning_center_online_videos.video_source')
+            ->select('learning_center_online_videos.video_id')
+            ->select('learning_center_online_videos.video_start_date')
+            ->select('learning_center_online_videos.expired_start_date')
+            ->select('learning_center_online_videos.screening_questionnaire_sid')
+            ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
+            ->where('learning_center_online_videos_assignments.user_type', $user_type)
+            ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
+            ->where('learning_center_online_videos_assignments.status', 1)
+            ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
+            ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
         //
-        if(!$fromProfile){
+        if (!$fromProfile) {
             $this->db
-            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
-            ->group_start()
-            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
-            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
-            ->group_end();
+                ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+                ->group_end();
         }
         //
         $a = $this->db->get('learning_center_online_videos_assignments');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+        if (sizeof($b)) {
+            foreach ($b as $k => $v) {
+                $ids[$v['sid']] = $v['sid'];
+            }
+        }
         //
         $r = array_merge($r, $b);
         //
-         $current_date = date('Y-m-d');
+        $current_date = date('Y-m-d');
         $video_count = 0;
         $screening_questionnaire_check = 1;
         //
@@ -527,7 +549,7 @@ class Notification_model extends CI_Model {
             $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
 
             if ($video_start_date < $current_date) {
-                
+
                 $this->db->select('watched,sid');
                 $this->db->where('learning_center_online_videos_sid', $single_r['sid']);
                 $this->db->where('user_sid', $user_sid);
@@ -545,7 +567,7 @@ class Notification_model extends CI_Model {
 
                         if (empty($user_video_questionnaire_result)) {
                             $video_count = $video_count + 1;
-                        } 
+                        }
                     }
                 }
             }
@@ -554,7 +576,8 @@ class Notification_model extends CI_Model {
         return $video_count;
     }
 
-    private function trainingSessionCount ($company_sid, $user_sid, $user_type) {
+    private function trainingSessionCount($company_sid, $user_sid, $user_type)
+    {
         $result = $this->db
             ->select('
             employees_assigned_to,
@@ -575,7 +598,8 @@ class Notification_model extends CI_Model {
                 //
                 if ($v0['employees_assigned_to'] == 'specific') {
                     // Check if it is assigned to login employee
-                    if ($this->db
+                    if (
+                        $this->db
                         ->where('training_session_sid', $v0['id'])
                         ->where('user_sid', $user_sid)
                         ->where('user_type', $user_type)
@@ -590,7 +614,8 @@ class Notification_model extends CI_Model {
         return $trainingSessionCount;
     }
 
-    public function getMyApprovalDocuments ($employee_sid) {
+    public function getMyApprovalDocuments($employee_sid)
+    {
         //
         $this->db->select('portal_document_assign_flow_employees.sid');
 
@@ -615,17 +640,18 @@ class Notification_model extends CI_Model {
         return $return_data;
     }
 
-    function getAllCompanyInactiveEmployee($companySid) {
+    function getAllCompanyInactiveEmployee($companySid)
+    {
         $a = $this->db
-        ->select('
+            ->select('
             sid
         ')
-        ->where('parent_sid', $companySid)
-        ->where('active', 0)
-        ->where('parent_sid <> ', 0)
-        ->or_where('terminated_status', 1)
-        ->order_by('first_name', 'ASC')
-        ->get('users');
+            ->where('parent_sid', $companySid)
+            ->where('active', 0)
+            ->where('parent_sid <> ', 0)
+            ->or_where('terminated_status', 1)
+            ->order_by('first_name', 'ASC')
+            ->get('users');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -633,20 +659,39 @@ class Notification_model extends CI_Model {
         return array_column($b, 'sid');
     }
 
-    function getAllCompanyInactiveApplicant($companySid) {
+    function getAllCompanyInactiveApplicant($companySid)
+    {
         $a = $this->db
-        ->select('
+            ->select('
             portal_applicant_jobs_list.portal_job_applications_sid as sid
         ')
-        ->where('portal_applicant_jobs_list.company_sid', $companySid)
-        ->where('portal_applicant_jobs_list.archived', 1)
-        ->or_where('portal_job_applications.hired_status', 1)
-        ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
-        ->get('portal_applicant_jobs_list');
+            ->where('portal_applicant_jobs_list.company_sid', $companySid)
+            ->where('portal_applicant_jobs_list.archived', 1)
+            ->or_where('portal_job_applications.hired_status', 1)
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
+            ->get('portal_applicant_jobs_list');
         //
         $b = $a->result_array();
         $a = $a->free_result();
 
         return array_column($b, 'sid');
+    }
+
+    /**
+     * get pending state forms for employees
+     *
+     * @param array $ses
+     * @param array $r
+     * @return int
+     */
+    private function getMyPendingStateFormsCount($ses): int
+    {
+        //
+        return $this->db
+            ->where("company_sid", $ses["company_detail"]["sid"])
+            ->where("user_sid", $ses["employer_detail"]["sid"])
+            ->where("status", 1)
+            ->where("user_consent", 0)
+            ->count_all_results("portal_state_form");
     }
 }

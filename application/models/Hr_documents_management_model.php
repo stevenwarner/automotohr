@@ -2159,18 +2159,22 @@ class Hr_documents_management_model extends CI_Model
         $employeeList = 'all',
         $documentList = 'all'
     ) {
+
+
         //
         $pendingDocuments = [];
         //
         $activeEmployees = explode(':', $employeeList);
+        $filterDocuments = explode(':', $documentList);
+        //
+        $now = time();
         //
         if (!empty($activeEmployees)) {
             //
             foreach ($activeEmployees as $employee) {
                 $pendingDocuments[$employee]['Documents'] = [];
             }
-            //
-            $now = time();
+
             //
             // Get all company assigned documents
             $this->db->select('
@@ -2435,6 +2439,29 @@ class Hr_documents_management_model extends CI_Model
                         'AssignedBy' => $assign_by
                     );
                 }
+            }
+        }
+        // get state forms
+        $stateForms = $this->getEmployeesPendingStateForms(
+            $company_sid,
+            $activeEmployees
+        );
+
+        if ($stateForms) {
+            foreach ($stateForms as $form) {
+                $userId = $form["user_sid"];
+                //
+                $datediff = $now - strtotime($employee_general['created_at']);
+                $days = round($datediff / (60 * 60 * 24));
+                //
+                $pendingDocuments[$userId]['Documents'][] = array(
+                    'ID' => 0,
+                    'Title' => $form["title"],
+                    'Type' => 'State Form',
+                    'AssignedOn' => $form["created_at"],
+                    'Days' => $days,
+                    'AssignedBy' => ""
+                );
             }
         }
         //
@@ -10475,7 +10502,7 @@ class Hr_documents_management_model extends CI_Model
         // set it to revoked
         $returnArray["status"] = "revoked";
         // form is completed
-        if ($result["user_consent"] == 1) {
+        if ($result["user_consent"] == 1 && $result["status"] == 1) {
             $returnArray["status"] = "assigned";
             $returnArray["is_completed"] = true;
             $returnArray["assigned_at"] = $result["created_at"];
@@ -10491,6 +10518,14 @@ class Hr_documents_management_model extends CI_Model
         if ($result["employer_consent"] == 1) {
             $returnArray["employer_json"] = json_decode($result["employer_json"], true);
             $returnArray["is_employer_completed"] = true;
+        }
+        //
+        if ($result["fields_json"]) {
+            $returnArray["form_data"] = json_decode($result["fields_json"], true);
+        }
+        //
+        if ($result["employer_json"]) {
+            $returnArray["employer_json"] = json_decode($result["employer_json"], true);
         }
         //
         return $returnArray;
@@ -10581,7 +10616,11 @@ class Hr_documents_management_model extends CI_Model
                     ->update(
                         "portal_state_form",
                         [
-                            "status" => 0
+                            "status" => 0,
+                            "user_consent" => 0,
+                            "user_consent_at" => null,
+                            "employer_consent" => 0,
+                            "employer_concent_at" => null
                         ]
                     );
             }
@@ -10704,5 +10743,37 @@ class Hr_documents_management_model extends CI_Model
                 "msg" => "You have successfully signed the employer section."
             ]
         );
+    }
+
+    /**
+     * get the state forms
+     */
+    public function getEmployeesPendingStateForms(
+        int $companyId,
+        array $employeeIds
+    ) {
+        //
+        $this->db
+            ->select([
+                "state_forms.title",
+                "portal_state_form.user_sid",
+                "portal_state_form.created_at",
+            ])
+            ->join(
+                "state_forms",
+                "portal_state_form.state_form_sid = state_forms.sid",
+                "inner"
+            )
+            ->where("company_sid", $companyId);
+        //
+        if (!in_array("all", $employeeIds)) {
+            $this->db
+                ->where_in("user_sid", $employeeIds)
+                ->where("user_type", "employee");
+        }
+        //
+        return $this->db
+            ->get("portal_state_form")
+            ->result_array();
     }
 }

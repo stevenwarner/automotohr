@@ -112,7 +112,7 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
                         <?php } ?>
                         <!--                        <h4><b>Download the "Adobe Scan: Doc Scanner" for Free from the <span class="text-success">Apple App Store</span> and <span class="text-danger">Google Play</span>.</b></h4>-->
 
-                        <?php if (!empty($documents) || !empty($eev_w4) || !empty($w4_form) || !empty($eev_i9) || !empty($i9_form) || !empty($eev_w9) || !empty($w9_form) || !empty($assigned_offer_letter) || !empty($NotCompletedGeneralDocuments) || !empty($CompletedGeneralDocuments)|| !empty($eeoc_form)) {?>
+                        <?php if (!empty($documents) || !empty($eev_w4) || !empty($w4_form) || !empty($eev_i9) || !empty($i9_form) || !empty($eev_w9) || !empty($w9_form) || !empty($assigned_offer_letter) || !empty($NotCompletedGeneralDocuments) || !empty($CompletedGeneralDocuments)|| !empty($eeoc_form) || $userNotCompletedStateForms || $userCompletedStateForms) {?>
                             <div class="panel panel-default ems-documents">
                                 <div class="panel-heading">
                                     <strong>Documents Details</strong>
