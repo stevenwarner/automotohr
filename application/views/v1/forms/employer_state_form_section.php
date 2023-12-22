@@ -83,6 +83,21 @@
                 });
         });
 
+        $('.jsPreviewAssignStateForm').on('click', function() {
+            var stateFormId = $(this).attr('form_sid');
+            XHR = null;
+            //
+            $.ajax({
+                    url: '<?php echo base_url('hr_documents_management/get_assigned_state_form/' . $user_sid . '/' . $user_type); ?>' + '/' + stateFormId,
+                    method: "GET",
+                })
+                .success(function(response) {
+                    $('#jsStateFormEmployerView').modal('show');
+                    $("#jsStateEmployerSection").html(response.view);
+                    $("#jsFormTitle").html(response.title);
+                });
+        });
+
 
         function saveFormData(passOBJ) {
             //

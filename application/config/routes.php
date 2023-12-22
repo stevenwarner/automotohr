@@ -2007,3 +2007,5 @@ $route["state/forms/(:num)/my/sign"]["get"] = "Hr_documents_management/signMySta
 $route["state/forms/(:num)/my/sign"]["post"] = "Hr_documents_management/saveMyStateForm/$1";
 $route["state/forms/(:num)/employer/(:num)/(:any)"]["post"] = "Hr_documents_management/saveStateFormEmployerSection/$1/$2/$3";
 $route["hr_documents_management/get_state_employer_section/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$3/$1/$2";
+$route["hr_documents_management/get_assigned_state_form/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getStateFormPreview/$1/$2/$3";
+$route["hr_documents_management/state_form_action/(:num)/(:any)/(:num)/(:any)/(:any)"]["get"] = "Hr_documents_management/stateFormPrintAndDownload/$1/$2/$3/$4/$5";

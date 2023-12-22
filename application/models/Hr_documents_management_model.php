@@ -10776,4 +10776,28 @@ class Hr_documents_management_model extends CI_Model
             ->get("portal_state_form")
             ->result_array();
     }
+
+
+    public function getEmployeeData(int $employeeId)
+    {
+        //
+        return $this->db
+            ->select("
+                first_name, 
+                middle_initial, 
+                last_name, 
+                ssn, 
+                Location_Address, 
+                Location_Address_2, 
+                Location_City, 
+                Location_State, 
+                Location_ZipCode, 
+                Location_Country, 
+                PhoneNumber, 
+                marital_status
+            ")
+            ->where('sid', $employeeId)
+            ->get("users")
+            ->row_array();
+    }
 }

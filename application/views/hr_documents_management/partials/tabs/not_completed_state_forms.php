@@ -49,9 +49,15 @@
                                                 <?php } ?>
                                             <?php } ?>
                                             <?php if ($v0["is_completed"]) { ?>
-                                                <button class="btn btn-success">
+                                                <button class="btn btn-success jsPreviewAssignStateForm" form_sid="<?php echo $v0['sid']; ?>">
                                                     View Signed
                                                 </button>
+                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$user_sid.'/'.$user_type.'/'.$v0['sid'].'/green/print'); ?>">
+                                                    Print
+                                                </a>
+                                                <a class="btn btn-success" target="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$user_sid.'/'.$user_type.'/'.$v0['sid'].'/green/download'); ?>">
+                                                    Download
+                                                </a>
                                             <?php } ?>
                                         </td>
                                     </tr>
