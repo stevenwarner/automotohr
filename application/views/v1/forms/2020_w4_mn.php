@@ -15,13 +15,13 @@
                     Document Management
                 </a>
                 <!-- print form -->
-                <a href="<?= base_url("hr_documents_management/my_documents"); ?>" class="btn btn-info csRadius5 hidden">
+                <a target="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$userId.'/'.$userType.'/'.$formId.'/blue/print'); ?>" class="btn btn-info csRadius5">
                     <i class="fa fa-print" aria-hidden="true"></i>
                     &nbsp;
                     Print
                 </a>
                 <!-- download form -->
-                <a href="<?= base_url("hr_documents_management/my_documents"); ?>" class="btn btn-info csRadius5 hidden">
+                <a htarget="_blank" href="<?php echo base_url("hr_documents_management/state_form_action/".$userId.'/'.$userType.'/'.$formId.'/blue/download'); ?>" class="btn btn-info csRadius5">
                     <i class="fa fa-download" aria-hidden="true"></i>
                     &nbsp;
                     Download
