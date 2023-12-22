@@ -429,7 +429,7 @@ if (!function_exists('getUrl')) {
 
         // off cycle payrolls
         $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
-
+        
         return getCreds("AHR")->GUSTO->PRODUCTION->URL . $urls[$index];
     }
 }
@@ -542,7 +542,7 @@ if (!function_exists('requestVerificationToken')) {
             [
                 CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->DEMO->API_TOKEN) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )

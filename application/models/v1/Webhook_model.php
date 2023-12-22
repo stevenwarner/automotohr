@@ -1,6 +1,4 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
-// load the payroll model
-loadUpModel('v1/Payroll_model', 'Payroll_model');
 /**
  * Webhook model
  * 
@@ -9,7 +7,7 @@ loadUpModel('v1/Payroll_model', 'Payroll_model');
  * @version 1.0
  * @package Payroll
  */
-class Webhook_model extends Payroll_model
+class Webhook_model extends CI_Model
 {
     private $types;
     private $post;
@@ -18,6 +16,8 @@ class Webhook_model extends Payroll_model
      */
     public function __construct()
     {
+        // load the payroll helper
+        $this->load->helper('v1/payroll_production_helper');
         // call the parent constructor
         parent::__construct();
         //
@@ -148,6 +148,48 @@ class Webhook_model extends Payroll_model
         return ['success' => true];
     }
 
+    /**
+     * verify hook
+     *
+     * @param string $type
+     * @param array $post
+     * @return array
+     */
+    public function verifyHook(string $type, array $post): array
+    {
+        // get pending webhooks
+        $result = $this->db
+            ->select("gusto_uuid")
+            ->where('webhook_type', $type)
+            ->get('payrolls.gusto_webhooks')
+            ->row_array();
+        //
+        if (!$result) {
+            return ["error" => ["No hook found."]];
+        }
+        $gustoResponse = callWebHook(
+            $result["gusto_uuid"],
+            $post
+        );
+
+        $errors = hasGustoErrors($gustoResponse);
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db
+            ->where("gusto_uuid", $gustoResponse["uuid"])
+            ->update(
+                "payrolls.gusto_webhooks",
+                [
+                    "status" => $gustoResponse["status"],
+                    "updated_at" => getSystemDate()
+                ]
+            );
+
+        return ['success' => true];
+    }
+
 
     /**
      * save webhook calls
@@ -157,7 +199,6 @@ class Webhook_model extends Payroll_model
      */
     public function saveWebhookCall(string $type, string $post)
     {
-
         $this->db
             ->insert("payrolls.gusto_webhook_calls", [
                 "call_type" => $type,
@@ -176,14 +217,50 @@ class Webhook_model extends Payroll_model
     {
         //
         $this->post = $post;
+        // we need to verify hook
+        if ($this->post["verification_token"]) {
+            $this->verifyHook("company", $this->post);
+        }
         //
-        if ($this->post["event_type"] === "company.approved") {
+        else if ($this->post["event_type"] === "company.approved") {
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
                     "status" => "approved",
                     "updated_at" => getSystemDate()
                 ]);
+        }
+    }
+
+    /**
+     * process employee events
+     *
+     * @param array $post
+     * @return array
+     */
+    public function processEmployee(array $post)
+    {
+        //
+        $this->post = $post;
+        // we need to verify hook
+        if ($this->post["verification_token"]) {
+            $this->verifyHook("employee", $this->post);
+        }
+    }
+
+    /**
+     * process employee events
+     *
+     * @param array $post
+     * @return array
+     */
+    public function processPayroll(array $post)
+    {
+        //
+        $this->post = $post;
+        // we need to verify hook
+        if ($this->post["verification_token"]) {
+            $this->verifyHook("payroll", $this->post);
         }
     }
 }
