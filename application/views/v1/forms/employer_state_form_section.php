@@ -51,6 +51,9 @@
                                 minlength: 9,
                                 maxlength: 9
                             },
+                            mn_tax_number: {
+                                required: true,
+                            },
                             street_1: {
                                 required: true
                             },
