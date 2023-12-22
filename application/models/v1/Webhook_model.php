@@ -17,7 +17,7 @@ class Webhook_model extends CI_Model
     public function __construct()
     {
         // load the payroll helper
-        $this->load->helper('v1/payroll_production_helper');
+        // $this->load->helper('v1/payroll_production_helper');
         // call the parent constructor
         parent::__construct();
         //
@@ -252,7 +252,7 @@ class Webhook_model extends CI_Model
         if ($this->post["event_type"] === "employee.onboarded") {
             // update onboard status
             $this->db
-                ->where("gusto_uuid", $this->post["resource_uuid"])
+                ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update(
                     "gusto_companies_employees",
                     [
@@ -270,7 +270,7 @@ class Webhook_model extends CI_Model
             $this
                 ->employee_payroll_model
                 ->syncForms(
-                    $this->post["resource_uuid"]
+                    $this->post["entity_uuid"]
                 );
         }
     }
