@@ -56,6 +56,7 @@ class Shift_model extends CI_Model
             breaks_count,
             notes,
             job_sites,
+            breaks_json,
             ")
             ->where("company_sid", $companyId)
             ->where("sid", $shiftId)
@@ -639,6 +640,7 @@ class Shift_model extends CI_Model
             "H:i"
         );
 
+
         $post["breaks"] = array_values($post["breaks"]);
         //
 
@@ -710,7 +712,7 @@ class Shift_model extends CI_Model
                 $ins["employee_sid"] = $employeeId;
                 $ins["shift_date"] = $v0;
                 $ins["start_time"] = $post["start_time"];
-                $ins["end_time"] = $post["start_time"];
+                $ins["end_time"] = $post["end_time"];
                 $ins["breaks_count"] = count($post["breaks"]);
                 $ins["breaks_json"] = json_encode($post['breaks']);
                 $ins["job_sites"] = json_encode($post["job_sites"] ?? []);
@@ -741,6 +743,40 @@ class Shift_model extends CI_Model
                     $employeesAlreadyExists ? "<p>However, the below employees already have shifts.</p>" : ""
                 ),
                 "list" => $employeesAlreadyExists
+            ]
+        );
+    }
+
+
+    //
+    public function deleteMultiShifts(int $companyId, array $post)
+    {
+
+        // convert the dates
+        $startDate = formatDateToDB(
+            $post["shift_date_from"],
+            SITE_DATE,
+            DB_DATE
+        );
+        //
+        $endDate = formatDateToDB(
+            $post["shift_date_to"],
+            SITE_DATE,
+            DB_DATE
+        );
+
+        $employees = $post['employees'];
+
+        $this->db->where('company_sid',  $companyId);
+        $this->db->where('shift_date >=',  $startDate);
+        $this->db->where('shift_date <=',  $endDate);
+        $this->db->where_in('employee_sid',  $employees);
+        $this->db->delete('cl_shifts');
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully Deleted the shifts to the selected employees."
             ]
         );
     }

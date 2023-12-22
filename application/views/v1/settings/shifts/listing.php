@@ -76,7 +76,7 @@ if ($filter["mode"] === "month") {
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                             Create
                                         </button>
-                                        <button class="btn btn-red">
+                                        <button class="btn btn-red jsEmployeeShiftsDelete">
                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                             Delete
                                         </button>

@@ -201,6 +201,14 @@ $(function manageShifts() {
 	});
 
 
+	$(".jsEmployeeShiftsDelete").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		//
+		callToDeleteBoxMultiShifts();
+	});
+
+
 	/**
 	 * capture click event on cell
 	 */
@@ -718,6 +726,91 @@ $(function manageShifts() {
 
 
 
+
+
+
+//
+function callToDeleteBoxMultiShifts() {
+	makePage(
+		"Delete Shift",
+		"delete_multi_shift",
+		0,
+		function () {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			applyDatePicker();
+
+			$(".jsSelectAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", true);
+			});
+			$(".jsRemoveAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", false);
+			});
+
+
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+			
+				submitHandler: function (form) {
+
+					$(form).serializeArray();
+
+					const passObj = {
+						start_date: $("#shift_date_from").val(),
+						end_date: $("#shift_date_to").val(),
+						employees: [],
+					};
+
+
+					//
+					$(".jsPageApplyTemplateEmployees:checked").map(function () {
+						passObj.employees.push($(this).val());
+					});
+
+				
+					if (!passObj.start_date.length) {
+						return _error("Please select From Date.");
+					}
+					if (!passObj.end_date.length) {
+						return _error("Please select To Datae.");
+					}
+
+					if (!passObj.employees.length) {
+						return _error("Please select at least one employee.");
+					}
+
+					//
+					processCallWithoutContentType(
+						formArrayToObj($(form).serializeArray()),
+						$(".jsPageApplyShiftTemplateBtn"),
+						"settings/shifts/multyshift/delete",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.href = baseUrl(
+									"settings/shifts/manage" +
+									window.location.search
+								);
+							});
+						}
+					);
+
+				},
+			});
+
+		}
+	);
+
+}
+
+
+
+
+
+
+
 	/**
 	 * Create shift against a specific employee and date
 	 * @param {int} employeeId
@@ -800,7 +893,7 @@ $(function manageShifts() {
 			singleDatePicker: true,
 			showDropdowns: true,
 			autoApply: true,
-			startDate: getStartDate(),
+			startDate: getEndDate(),
 			locale: {
 				format: "MM/DD/YYYY",
 			}

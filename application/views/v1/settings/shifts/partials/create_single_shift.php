@@ -99,7 +99,7 @@
             <div class="panel-footer text-right">
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>
-                    &nbsp;Save Shift Template
+                    &nbsp;Save Shift
                 </button>
                 <button class="btn btn-black jsModalCancel" type="button">
                     <i class="fa fa-times-circle" aria-hidden="true"></i>

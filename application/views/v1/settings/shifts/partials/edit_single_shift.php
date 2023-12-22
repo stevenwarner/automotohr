@@ -83,7 +83,6 @@
 
                 <!--  -->
                 <div class="form-group jsBreakContainer">
-
                     <?
                     $savedBreaks = json_decode($shift['breaks_json'], true);
                     ?>
@@ -137,7 +136,7 @@
             <div class="panel-footer text-right">
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>
-                    &nbsp;Update Shift Template
+                    &nbsp;Update Shift
                 </button>
                 <button class="btn btn-black jsModalCancel" type="button">
                     <i class="fa fa-times-circle" aria-hidden="true"></i>
