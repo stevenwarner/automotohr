@@ -222,7 +222,7 @@ class Webhook_model extends CI_Model
             $this->verifyHook("company", $this->post);
         }
         //
-        else if ($this->post["event_type"] === "company.approved") {
+        elseif ($this->post["event_type"] === "company.approved") {
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
@@ -244,7 +244,34 @@ class Webhook_model extends CI_Model
         $this->post = $post;
         // we need to verify hook
         if ($this->post["verification_token"]) {
-            $this->verifyHook("employee", $this->post);
+            return $this->verifyHook("employee", $this->post);
+        }
+        // load payroll model
+        $this->load->model("v1/Employee_payroll_model", "employee_payroll_model");
+        // when employee is onboard
+        if ($this->post["event_type"] === "employee.onboarded") {
+            // update onboard status
+            $this->db
+                ->where("gusto_uuid", $this->post["resource_uuid"])
+                ->update(
+                    "gusto_companies_employees",
+                    [
+                        "personal_details" => 1,
+                        "compensation_details" => 1,
+                        "work_address" => 1,
+                        "home_address" => 1,
+                        "federal_tax" => 1,
+                        "state_tax" => 1,
+                        "is_onboarded" => 1,
+                        "updated_at" => getSystemDate()
+                    ]
+                );
+            // handle forms
+            $this
+                ->employee_payroll_model
+                ->syncForms(
+                    $this->post["resource_uuid"]
+                );
         }
     }
 
