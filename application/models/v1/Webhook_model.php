@@ -266,6 +266,11 @@ class Webhook_model extends CI_Model
                         "updated_at" => getSystemDate()
                     ]
                 );
+        }
+        if (
+            $this->post["event_type"] === "employee.onboarded"
+            || $this->post["event_type"] === "employee.updated"
+        ) {
             // handle forms
             $this
                 ->employee_payroll_model

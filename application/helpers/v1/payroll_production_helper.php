@@ -325,6 +325,7 @@ if (!function_exists('getUrl')) {
         $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
         // forms
         $urls['getEmployeeForms'] = "v1/employees/$key1/forms";
+        $urls['getEmployeeFormPdf'] = "v1/employees/$key1/forms/$key2/pdf";
         $urls['signEmployeeForm'] = "v1/employees/$key1/forms/$key2/sign";
         // summary
         $urls['getEmployeeSummary'] = "v1/employees/$key1/onboarding_status";

@@ -16792,3 +16792,47 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
         return $doReturn ? $res : sendResponse(200, $res);
     }
 }
+
+
+if (!function_exists("uploadFileToAwsFromUrl")) {
+    /**
+     * upload file to AWS from url
+     *
+     * @param string $url
+     * @param string $extension
+     * @param string $prefix Optional
+     * @return string
+     */
+    function uploadFileToAwsFromUrl(string $url, string $extension, string $prefix = ''): string
+    {
+        // se the path
+        $path = tempnam(sys_get_temp_dir(), time() . $extension);
+        // download the file
+        downloadFileFromAWS(
+            $path,
+            $url
+        );
+        // get the CI instance
+        $CI = &get_instance();
+        // load the library
+        $CI->load->library('aws_lib');
+        // upload to AWS
+        $newFileName = time();
+        if ($prefix) {
+            $newFileName .= stringToSlug($prefix, "_");
+        }
+        $newFileName .= $extension;
+        //
+        $options = [
+            'Bucket' => AWS_S3_BUCKET_NAME,
+            'Key' => $newFileName,
+            'Body' => file_get_contents($path),
+            'ACL' => 'public-read',
+            'ContentType' => getMimeType($newFileName)
+        ];
+        //
+        $CI->aws_lib->put_object($options);
+        //
+        return $newFileName;
+    }
+}
