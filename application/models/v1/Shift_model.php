@@ -180,16 +180,26 @@ class Shift_model extends CI_Model
      * @param int $companyId
      * @return array
      */
-    public function getCompanyEmployees(int $companyId): array
+    public function getCompanyEmployees(int $companyId, $employeeFilter = []): array
     {
-        return $this->db
+
+
+        $this->db
             ->select(getUserFields())
             ->where([
-                "parent_sid" => $companyId,
-            ])
-            ->order_by("first_name", "ASC")
-            ->get("users")
-            ->result_array();
+                "users.parent_sid" => $companyId,
+            ]);
+        //
+        if ($employeeFilter['employees'][0] != 'all' && !empty($employeeFilter['employees'][0])) {
+            $this->db->where_in("users.sid", $employeeFilter['employees']);
+        }
+
+        if ($employeeFilter['team'] != 0) {
+            $this->db->where("users.team_sid", $employeeFilter['team']);
+        }
+
+        $this->db->order_by("users.first_name", "ASC");
+        return $this->db->get("users")->result_array();
     }
 
     /**
@@ -315,6 +325,10 @@ class Shift_model extends CI_Model
     public function getShifts(array $filter, array $employeeIds): array
     {
         //
+        if (empty($employeeIds)) {
+            $employeeIds = ['0'];
+        }
+
         $this->db
             ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites")
             ->where_in("employee_sid", $employeeIds);

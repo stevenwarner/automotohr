@@ -3902,9 +3902,30 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // get all active employees
+
+
+        $employees = $this->input->get("employees");
+        $toggleFilter = true;
+        if ($employees == '') {
+            $employees = 'all';
+            $toggleFilter = false;
+        }
+        $employeesArray = explode(',', $employees);
+        $team = $this->input->get("team");
+        $employeeFilter['employees'] = $employeesArray;
+        $employeeFilter['team'] = $team;
+
+
+
         $data["employees"] = $this->shift_model->getCompanyEmployees(
+            $loggedInCompany["sid"],
+            $employeeFilter
+        );
+
+        $data["allemployees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"]
         );
+
         //
         $data["filter"] = [];
         // set the mode
@@ -3936,10 +3957,20 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // get the shifts
+
+
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
             array_column($data["employees"], "userId")
         );
+
+        $data["company_sid"] =  $loggedInCompany["sid"];
+        $data["filter_team"] = $team;
+        $data["filter_employees"] = $employees;
+        $data["filter_toggle"] = $toggleFilter ;
+        
+
+
         // get off and holidays
         $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
             $loggedInCompany["sid"],

@@ -16792,3 +16792,83 @@ if (!function_exists('changeComplynetEmployeeStatus')) {
         return $doReturn ? $res : sendResponse(200, $res);
     }
 }
+
+if (!function_exists('get_company_departments_teams_dropdown')) {
+    /**
+     * Get company department and teams
+     *
+     * @param int $companyId
+     * @param string $id Optional
+     * @param int $teamId Optional
+     * @return array|string
+     */
+    function get_company_departments_teams_dropdown(int $companyId, string $id = '', $teamId = 0)
+    {
+        //
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
+        $select .= '<option value="0">All</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+        $CI = &get_instance();
+        $CI->db->select('name,sid');
+        $CI->db->where('company_sid', $companyId);
+        $CI->db->where('is_deleted', 0);
+        $departments = $CI->db->get('departments_management')->result_array();
+        //
+        if (!$departments) {
+            return $id ? $select : [];
+        }
+        //
+        $departmentIds = array_column($departments, 'sid');
+        //
+        $tmp = [];
+        //
+        foreach ($departments as $department) {
+            $tmp[$department['sid']] = [
+                'id' => $department['sid'],
+                'name' => $department['name'],
+                'teams' => []
+            ];
+        }
+        //
+        $departments = $tmp;
+        // Get teams by department ids
+        $CI->db->select('name,sid,department_sid');
+        $CI->db->where_in('department_sid', $departmentIds);
+        $CI->db->where('is_deleted', 0);
+        $CI->db->where('status', 1);
+        //
+        $teams = $CI->db->get('departments_team_management')->result_array();
+        //
+        if ($teams) {
+            //
+            foreach ($teams as $team) {
+                $departments[$team['department_sid']]['teams'][] = [
+                    'sid' => $team['sid'],
+                    'name' => $team['name']
+                ];
+            }
+        }
+        //
+        if (!empty($id)) {
+            //
+            $options = '';
+            //
+            foreach ($departments as $department) {
+                $options .= '<optgroup label="' . ($department['name']) . '">';
+                if ($department['teams']) {
+                    foreach ($department['teams'] as $team) {
+                        $options .= '<option value="' . ($team['sid']) . '" ' . ($teamId == $team['sid'] ? "selected" : "") . '>' . ($team['name']) . '</option>';
+                    }
+                }
+                $options .= '</optgroup>';
+            }
+            //
+            $select = str_replace('{{options}}', $options, $select);
+        }
+
+        //
+        return $id ? $select : $departments;
+    }
+}

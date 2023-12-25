@@ -21,6 +21,16 @@ if ($filter["mode"] === "month") {
     );
 }
 ?>
+<style>
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 34px !important;
+        padding: 0 !important;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css">
+<link rel="stylesheet" href="http://automotohr.local/assets/timeoff/css/theme2021.css?v=1703248968" />
 
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -109,7 +119,38 @@ if ($filter["mode"] === "month") {
                                     </div>
                                 </div>
 
-                            
+                                <div class="row" id="TableData" style="display: none;">
+                                    <br>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <div class="csBalanceBox" style="display: block;">
+                                            <div class="col-sm-5">
+                                                <label>Employees</label>
+                                                <select id="js-filter-employee_ooo" class="js-filter-employee" multiple="multiple">
+                                                    <option value="all">All</option>
+                                                    <?php foreach ($allemployees as $empRow) { ?>
+                                                        <option value="<?php echo $empRow['userId']; ?>"><?php echo $empRow['first_name'] . ' ' . $empRow['last_name'] . ' (' . $empRow['job_title'] . ')  [' . $empRow['access_level'] . '] (' . $empRow['timezone'] . ')'; ?></option>
+                                                    <?php } ?>
+
+                                                </select>
+                                            </div>
+
+                                            <div class="col-sm-5">
+                                                <label>Team:</label>
+                                                <br>
+                                                <?= get_company_departments_teams_dropdown($company_sid, 'teamId'); ?>
+                                            </div>
+
+                                            <div class="col-sm-2 text-right">
+                                                <span class="pull-right">
+                                                    <br>
+                                                    <button id="btn_apply" type="button" class="btn btn-orange js-apply-filter-btn">APPLY</button>
+                                                    <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
+                                                </span>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!--  -->
                                 <div class="row">
@@ -246,3 +287,8 @@ if ($filter["mode"] === "month") {
         </div>
     </div>
 </div>
+<script>
+    let filterTeam = '<?php echo $filter_team; ?>'
+    let filterEmployees = '<?php echo $filter_employees; ?>'
+    let filterToggle = '<?php echo $filter_toggle; ?>'
+</script>
