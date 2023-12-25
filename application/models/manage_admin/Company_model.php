@@ -2759,6 +2759,8 @@ class Company_model extends CI_Model
         $this->db->where('terminated_user_id', $sid);
         $this->db->where('terminated_record_sid', 0);
         $this->db->update('terminated_employees_documents', $data_to_update);
+        //
+        return $record_sid;
     }
 
     public function change_terminate_user_status($sid, $data_to_update)
@@ -3398,5 +3400,10 @@ class Company_model extends CI_Model
         $this->db->where('user_type', 'employee');
         $this->db->from('applicant_i9form');
         return $this->db->count_all_results();
+    }
+
+    public function deleteEmployeeStatus ($sid) {
+        $this->db->where('sid',$sid);
+        $this->db->delete('terminated_employees');
     }
 }

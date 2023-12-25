@@ -19,7 +19,7 @@
                     </span>
                     </div>
                     <div class="create-job-wrap">
-                        <?php if (!sizeof($documents) && !sizeof($w4_form) && !sizeof($w9_form) && !sizeof($i9_form) && !sizeof($eeoc_form) && !sizeof($NotCompletedGeneralDocuments)) { ?>
+                        <?php if (!sizeof($documents) && !sizeof($w4_form) && !sizeof($w9_form) && !sizeof($i9_form) && !sizeof($eeoc_form) && !sizeof($NotCompletedGeneralDocuments) && !$userNotCompletedStateForms) { ?>
                             <div class="archived-document-area">
                                 <div class="cloud-icon"><i class="fa fa-cloud-upload"></i></div>
                                 <div class="archived-heading-area">
@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                         <?php } else { ?>
-                            <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || !empty($eeoc_form) || count($NotCompletedGeneralDocuments)) { ?>
+                            <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || !empty($eeoc_form) || count($NotCompletedGeneralDocuments) || $userNotCompletedStateForms) { ?>
                                 <div class="table-responsive">
                                     <h3>Document Details For Employee: <b><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></b>
                                     <span class="pull-right">
@@ -164,6 +164,19 @@
                                                     </tr>
                                                 <?php } ?>  
 
+                                                <!-- State forms -->
+                                                <?php foreach($userNotCompletedStateForms as $v){ ?>
+                                                    <tr>
+                                                        <td><?=$v["title"];?> <b>(State Form)</b></td>
+                                                        <td><i class="fa fa-2x fa-file-text"></i></td>
+                                                        <td><?=reset_datetime(array('datetime' => $v['assigned_at'], '_this' => $this)); ?></td>
+                                                        <td><b>N/A</b></td>
+                                                        <td><b>N/A</b></td>
+                                                        <td><b>N/A</b></td>
+                                                        <td><b>N/A</b></td>
+                                                    </tr>
+                                                <?php } ?>
+                                                
                                                 <!-- General Documents -->
                                                 <?php foreach($NotCompletedGeneralDocuments as $v){ ?>
                                                     <tr>

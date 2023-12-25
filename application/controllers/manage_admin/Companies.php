@@ -3219,7 +3219,10 @@ class Companies extends Admin_Controller
         //
         if (!empty($this->data['company_info']['access_token'])) {
             //
-            $this->load->helper("payroll_helper");
+            $this->load->helper('v1/payroll' . ($this->db->where([
+                "company_sid" => $company_sid,
+                "stage" => "production"
+            ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
             //
             $company_status = GetCompanyStatus($this->data['company_info']);
             //

@@ -2003,3 +2003,12 @@ if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
         );
     }
 }
+
+if (!function_exists('image_url')) {
+    function image_url($path)
+    {
+        $imagePath = base_url('assets/images/'.$path);
+
+        return $imagePath;
+    }
+}

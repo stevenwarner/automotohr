@@ -9,7 +9,6 @@ if (isset($applicant)) {
     $i9_url = base_url('form_i9');
     $w4_url = base_url('form_w4');
     $w9_url = base_url('form_w9');
-
 }
 
 //
@@ -343,6 +342,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                     <?php } ?>
                 </div>
                 <br>
+                <?php $this->load->view("hr_documents_management/partials/tabs/my_not_completed_state_forms"); ?>
                 <!-- Verification Documents -->
                 <?php if ($nc > 0) { ?>
                     <div class="row">
@@ -668,11 +668,11 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                                                 <td class=" text-center hidden-xs">
 
                                                                                     <?php if ($document['document_type'] == 'hybrid_document') {
-                                                                                            echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
-                                                                                        } else {
-                                                                                            echo $pdBtn['pw'] . $pdBtn['dw'];
-                                                                                        } ?>
-                                                                                    
+                                                                                        echo $pdBtn['pwnew'] . $pdBtn['dwnew'];
+                                                                                    } else {
+                                                                                        echo $pdBtn['pw'] . $pdBtn['dw'];
+                                                                                    } ?>
+
                                                                                     <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                                                     <?php if ($document['isdoctolibrary'] == 1) { ?>
                                                                                         <a href="javascript:void(0);" class="btn btn-danger jsRevokeDocumentLibrary" title="Revoke Library Document" data-asid="<?= $document['sid']; ?>">Revoke</a>
@@ -1074,6 +1074,8 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                             </div>
                         </div>
                     <?php } ?>
+
+                    <?php $this->load->view("hr_documents_management/partials/tabs/my_completed_state_forms"); ?>
                 </div>
             </div>
             <!-- Completed Document End -->
@@ -1218,8 +1220,10 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                 </thead>
                                                 <tbody>
                                                     <?php if (!empty($no_action_required_payroll_documents)) { ?>
-                                                        <?php foreach ($no_action_required_payroll_documents as $document) { 
-                                                            if(!$document["status"]){continue;}?>
+                                                        <?php foreach ($no_action_required_payroll_documents as $document) {
+                                                            if (!$document["status"]) {
+                                                                continue;
+                                                            } ?>
                                                             <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
                                                             <?php $ncd++; ?>
                                                             <tr>

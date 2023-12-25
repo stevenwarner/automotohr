@@ -19,8 +19,6 @@ class Payrolls extends Admin_Controller
     public function __construct()
     {
         parent::__construct();
-        // load gusto helper
-        $this->load->helper('v1/payroll');
         // load model
         $this->load->model('v1/Payroll_model', 'payroll_model');
         // set path to CSS file
@@ -28,7 +26,7 @@ class Payrolls extends Admin_Controller
         // set path to JS file
         $this->js = 'public/v1/sa/js/payrolls/';
         //
-        $this->createMinifyFiles = false;
+        $this->createMinifyFiles = true;
     }
 
     /**
@@ -40,8 +38,64 @@ class Payrolls extends Admin_Controller
     {
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
+        //
+        $this->data["mode"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
+        $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
+        //
+        $this->data['companyOnboardingStatus'] = $this->payroll_model->getCompanyOnboardingStatus($companyId);
+        //
+        if ($this->data['companyOnboardingStatus'] != 'Not Connected') {
+            //
+            $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
+            $this->data['companySignatories'] = $this->payroll_model->getCompanySignatoriesInfo($companyId);
+            $this->data['companyBankInfo'] = $this->payroll_model->getCompanyBankInfo($companyId);
+            $this->data['companyFederalTaxInfo'] = $this->payroll_model->getCompanyFederalTaxInfo($companyId);
+            $this->data['companyEarningTypes'] = $this->payroll_model->getCompanyEarningTypesForDashboard($companyId);
+            $this->data['companyIndustry'] = $this->payroll_model->getCompanySelectedIndustry($companyId);
+            $this->data['companyEmployees'] = $this->payroll_model->getCompanyOnboardEmployees($companyId);
+            //
+            $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+            //
+            $this->data['payrollBlockers'] = gustoCall(
+                'getPayrollBlockers',
+                $companyGustoDetails
+            );
+            //
+
+        }
+        // _e($this->data,true,true);
+        
+        // set title
+        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        // set JS
+        $this->data['appJs'] = bundleJs([
+            'js/app_helper',
+            'v1/sa/payrolls/dashboard'
+        ], $this->js, 'dashboard', $this->createMinifyFiles);
+        // render the page
+        $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+    }
+
+    /**
+     * main page
+     *
+     * @param int $companyId
+     */
+    public function setupCompanyPayroll(int $companyId)
+    {
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
         // get gusto details
         $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+        //
+        $this->data["mode"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
+        //
         // load set up page
         if (!$this->data["companyGustoDetails"]) {
             return $this->createPartnerCompany();
@@ -78,13 +132,18 @@ class Payrolls extends Admin_Controller
         );
         // set title
         $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        // set CSS
+        $this->data['appCSS'] = bundleCSS([
+            "css/theme-2021"
+        ], $this->css, "admins", $this->createMinifyFiles);
+        //
         // set JS
         $this->data['appJs'] = bundleJs([
             'js/app_helper',
             'v1/sa/payrolls/dashboard'
         ], $this->js, 'dashboard', $this->createMinifyFiles);
         // render the page
-        $this->render('v1/sa/payrolls/dashboard', 'admin_master');
+        $this->render('v1/sa/payrolls/setup_payroll', 'admin_master');
     }
 
     /**
@@ -341,5 +400,67 @@ class Payrolls extends Admin_Controller
         }
         //
         return SendResponse(400, ['errors' => $returnArray]);
+    }
+
+    /**
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function updatePaymentConfiguration(int $companyId): array
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $request = [];
+        $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
+        $request['payment_speed'] = $post['payment_speed'];
+        //
+        $response = $this->payroll_model->updatePaymentConfig($companyId, $request);
+        //
+        if (isset($response['errors'])) {
+            $message = $response['errors'][0];
+        } else {
+            $message = $response['msg'];
+        }
+        //
+        return SendResponse(
+            200,
+            ['msg' => $message]
+        );
+    }
+
+    /**
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function updateMode(int $companyId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $this->payroll_model->updateMode($companyId, $post);
+    }
+
+    /**
+     * update company payment configuration
+     *
+     * @param int $companyId
+     * @return
+     */
+    public function updatePrimaryAdmin(int $companyId): array
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $response = $this->payroll_model->addOrUpdatePrimaryAdmin($companyId, $post);
+        //
+        return SendResponse(
+            200,
+            ['msg' => $response['msg']]
+        );
     }
 }

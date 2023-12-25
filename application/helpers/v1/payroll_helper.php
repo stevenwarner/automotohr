@@ -179,10 +179,12 @@ if (!function_exists('refreshToken')) {
     function refreshToken(array $request)
     {
         //
+        $gustoDetails = getCreds("AHR")->GUSTO->DEMO;
+        //
         $body = [];
-        $body['client_id'] = GUSTO_CLIENT_ID;
-        $body['client_secret'] = GUSTO_CLIENT_SECRET;
-        $body['redirect_uri'] = GUSTO_CLIENT_REDIRECT_URL;
+        $body['client_id'] = $gustoDetails->CLIENT_ID;
+        $body['client_secret'] = $gustoDetails->CLIENT_SECRET;
+        $body['redirect_uri'] = $gustoDetails->CALLBACK_URL;
         $body['refresh_token'] = $request['refresh_token'];
         $body['grant_type'] = 'refresh_token';
         //
@@ -263,6 +265,8 @@ if (!function_exists('getUrl')) {
         $urls['me'] = 'v1/me';
         $urls['refreshToken'] = 'oauth/token?' . ($key);
         $urls['getWebHooks'] = 'v1/webhook_subscriptions';
+        $urls['deleteWebHook'] = "v1/webhook_subscriptions/$key";
+        $urls['requestVerificationToken'] = "v1/webhook_subscriptions/$key/request_verification_token";
 
         // company URLs
         $urls['createPartnerCompany'] = "v1/partner_managed_companies";
@@ -321,6 +325,7 @@ if (!function_exists('getUrl')) {
         $urls['deleteBankAccount'] = "v1/employees/$key1/bank_accounts/$key2";
         // forms
         $urls['getEmployeeForms'] = "v1/employees/$key1/forms";
+        $urls['getEmployeeFormPdf'] = "v1/employees/$key1/forms/$key2/pdf";
         $urls['signEmployeeForm'] = "v1/employees/$key1/forms/$key2/sign";
         // summary
         $urls['getEmployeeSummary'] = "v1/employees/$key1/onboarding_status";
@@ -425,8 +430,13 @@ if (!function_exists('getUrl')) {
 
         // off cycle payrolls
         $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
+        //
+        $urls['createEmployeeTerminationOnGusto'] = 'v1/employees/' . ($key) . '/terminations';
+        $urls['createEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
+        $urls['UpdateEmployeeTerminationOnGusto'] = 'v1/terminations/' . ($key);
+        $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
 
-        return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
+        return getCreds("AHR")->GUSTO->DEMO->URL . $urls[$index];
     }
 }
 
@@ -446,7 +456,7 @@ if (!function_exists('createPartnerCompany')) {
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => json_encode($request),
                 CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
+                    'Authorization: Token ' . (getCreds("AHR")->GUSTO->DEMO->API_TOKEN) . '',
                     'Content-Type: application/json',
                     'X-Gusto-API-Version: 2023-04-01'
                 )
@@ -455,75 +465,7 @@ if (!function_exists('createPartnerCompany')) {
     }
 }
 
-if (!function_exists('createCompanyWebHook')) {
-    /**
-     * create webhook
-     *
-     * @param array $request
-     * @return array
-     */
-    function createCompanyWebHook(array $request): array
-    {
-        return makeCall(
-            getUrl('createCompanyWebHook'),
-            [
-                CURLOPT_CUSTOMREQUEST => "POST",
-                CURLOPT_POSTFIELDS => json_encode($request),
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
-                    'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
-                )
-            ]
-        );
-    }
-}
 
-if (!function_exists('getWebHooks')) {
-    /**
-     * create webhook
-     *
-     * @return array
-     */
-    function getWebHooks(): array
-    {
-        return makeCall(
-            getUrl('getWebHooks'),
-            [
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
-                    'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
-                )
-            ]
-        );
-    }
-}
-
-if (!function_exists('callWebHook')) {
-    /**
-     * verify webhook
-     *
-     * @param array $request
-     * @return array
-     */
-    function callWebHook(string $id, array $request): array
-    {
-        return makeCall(
-            getUrl('verifyCompanyWebHook', $id),
-            [
-                CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_POSTFIELDS => json_encode($request),
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: Token ' . (GUSTO_KEY_TEST) . '',
-                    'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
-                )
-            ]
-        );
-    }
-}
 
 if (!function_exists('getAdminsFromGusto')) {
     /**
@@ -966,5 +908,232 @@ if (!function_exists('getReason')) {
         $reasonsArray['transition'] = 'Transition from old pay schedule';
         //
         return $reasonsArray[$reason] ?? 'Bonus';
+    }
+}
+
+// Employee related calls
+if (!function_exists('createAnEmployeeTerminationOnGusto')) {
+    function createAnEmployeeTerminationOnGusto($request, $company, $payroll_employee_uuid, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Accept: application/json',
+            'Content-Type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            getUrl('createEmployeeTerminationOnGusto', $payroll_employee_uuid),
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        // $response = [
+        //     "uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "employee_uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "version" => "d487dd0b55dfcacdd920ccbdaeafa351",
+        //     "active" => true,
+        //     "cancelable" => true,
+        //     "effective_date" => $request['effective_date'],
+        //     "run_termination_payroll" => false
+        // ];
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createAnEmployeeTerminationOnGusto($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+// Employee related calls
+if (!function_exists('createAnEmployeeRehireOnGusto')) {
+    function createAnEmployeeRehireOnGusto($request, $company, $payroll_employee_uuid, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Accept: application/json',
+            'Content-Type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            getUrl('createEmployeeRehireOnGusto', $payroll_employee_uuid),
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        // $response = [
+        //     "version" => "2e930d43acbdb241f8f14a2d531fa417",
+        //     "employee_uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "active" => false,
+        //     "effective_date" => $request['effective_date'],
+        //     "file_new_hire_report" => false,
+        //     "work_location_uuid" => "d2c80d44-857b-4d4d-bce4-23ae52cc863b,",
+        //     "two_percent_shareholder" => false,
+        //     "employment_status" => "full_time"
+        // ];
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createAnEmployeeRehireOnGusto($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+// Employee related calls
+if (!function_exists('updateAnEmployeeTerminationOnGusto')) {
+    function updateAnEmployeeTerminationOnGusto($request, $company, $payroll_employee_uuid, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+            'content-type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            getUrl('UpdateEmployeeTerminationOnGusto', $payroll_employee_uuid),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        // $response = [
+        //     "uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "employee_uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "version" => "update12345Termination",
+        //     "active" => true,
+        //     "cancelable" => true,
+        //     "effective_date" => $request['effective_date'],
+        //     "run_termination_payroll" => false
+        // ];
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateAnEmployeeTerminationOnGusto($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+
+// Employee related calls
+if (!function_exists('updateAnEmployeeRehireOnGusto')) {
+    function updateAnEmployeeRehireOnGusto($request, $company, $payroll_employee_uuid, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'accept: application/json',
+            'content-type: application/json'
+        ];
+        //
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            getUrl('UpdateEmployeeRehireOnGusto', $payroll_employee_uuid),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        // $response = [
+        //     "version" => "update12345rehired",
+        //     "employee_uuid" => "da441196-43a9-4d23-ad5d-f37ce6bb99c0",
+        //     "active" => false,
+        //     "effective_date" => $request['effective_date'],
+        //     "file_new_hire_report" => false,
+        //     "work_location_uuid" => "d2c80d44-857b-4d4d-bce4-23ae52cc863b,",
+        //     "two_percent_shareholder" => false,
+        //     "employment_status" => "full_time"
+        // ];
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_uuid' => $company['gusto_uuid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateAnEmployeeRehireOnGusto($request, $company, $payroll_employee_uuid, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
     }
 }

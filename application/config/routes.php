@@ -1735,8 +1735,6 @@ $route['forms/i9/my/(:any)/(:num)']['get'] = "v1/I9/printOrDownload/$1/$2";
 $route['hit_lms_cron/(:any)'] = "Cron_lms_courses/sendPendingCoursesEmails/$1";
 $route['hit2_lms_cron/(:any)'] = "Cron_lms_courses/sendTodayAssignedCoursesEmails/$1";
 
-
-
 /**
  * Payroll routes
  */
@@ -1806,7 +1804,7 @@ $route['payrolls/earnings/add']['post'] = 'v1/Payroll/processAddCustomEarningTyp
 $route['payrolls/earnings/edit/(:num)']['get'] = 'v1/Payroll/editCustomEarningType/$1';
 $route['payrolls/earnings/edit/(:num)']['post'] = 'v1/Payroll/processEditCustomEarningType/$1';
 // Company approval webhook
-$route['gusto/subscriber'] = 'v1/App/gustoCompanyVerification';
+$route['webhook/gusto/(:any)'] = 'v1/payrolls/Webhook/listen/$1';
 
 // External payroll routes
 $route['payrolls/external']['get'] = 'v1/payrolls/External/index';
@@ -1979,11 +1977,15 @@ $route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clear
 $route['sa/payrolls/(:num)']['get'] = 'v1/sa/Payrolls/index/$1';
 // sync with Gusto
 $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payrolls/syncCompanyWithGusto/$1';
+$route['sa/payrolls/company/(:num)/setup_payroll']['get'] = 'v1/sa/Payrolls/setupCompanyPayroll/$1';
+$route['sa/payrolls/company/(:num)/payment/configuration']['post'] = 'v1/sa/Payrolls/updatePaymentConfiguration/$1';
+$route['sa/payrolls/company/(:num)/primary/admin']['post'] = 'v1/sa/Payrolls/updatePrimaryAdmin/$1';
 $route['sa/payrolls/company/(:num)/bank/verify']['get'] = 'v1/sa/Payrolls/verifyCompanyBankAccount/$1';
 $route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyCompany/$1';
 //
 $route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/manageAdmins/$1';
 $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
+$route['sa/payrolls/company/(:num)/mode']['post'] = 'v1/sa/Payrolls/updateMode/$1';
 
 
 
@@ -1993,3 +1995,17 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 // Payroll Agreement
 $route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
 $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';
+
+// Gusto Webhooks
+$route['gusto/callback'] = 'v1/webhook/index';
+
+
+// state forms process
+$route["state/forms/(:num)/(:any)"]["post"] = "Hr_documents_management/handleStateForm/$1/$2";
+// sign my form
+$route["state/forms/(:num)/my/sign"]["get"] = "Hr_documents_management/signMyStateForm/$1";
+$route["state/forms/(:num)/my/sign"]["post"] = "Hr_documents_management/saveMyStateForm/$1";
+$route["state/forms/(:num)/employer/(:num)/(:any)"]["post"] = "Hr_documents_management/saveStateFormEmployerSection/$1/$2/$3";
+$route["hr_documents_management/get_state_employer_section/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$3/$1/$2";
+$route["hr_documents_management/get_assigned_state_form/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getStateFormPreview/$1/$2/$3";
+$route["hr_documents_management/state_form_action/(:num)/(:any)/(:num)/(:any)/(:any)"]["get"] = "Hr_documents_management/stateFormPrintAndDownload/$1/$2/$3/$4/$5";

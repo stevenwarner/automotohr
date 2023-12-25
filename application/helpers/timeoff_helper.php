@@ -303,7 +303,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
         
 
         // get consumed time
-        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDate(
+        $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
             $policyId,
             $employeeId,
             $policyPlansDates['lastAnniversaryDate'],
@@ -892,6 +892,12 @@ if (!function_exists('getEmployeeAccrual')) {
                 $employeeAnniversaryDate['lastAnniversaryDate'],
                 $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
+            // $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+            //     $policyId,
+            //     $employeeId,
+            //     $employeeAnniversaryDate['lastAnniversaryDate'],
+            //     $employeeAnniversaryDate['upcomingAnniversaryDate']
+            // );
         } else {
             $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
                 $policyId,
@@ -901,6 +907,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $todayDate
             );
         }
+        //
         $monthsWorked = 1;
         $hasCarryOver = 0;
         //

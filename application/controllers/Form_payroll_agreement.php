@@ -14,6 +14,8 @@ class Form_payroll_agreement extends CI_Controller
         if ($verification_key != null) {
 
             $document_record = $this->documents_model->get_document_record('form_payroll_agreement', $verification_key);
+
+           // _e($document_record,true,true);
             $agent_id = $document_record['company_sid'];
             $agent_record = $this->documents_model->get_agent_record($agent_id, 'form_payroll_agreement');
 
@@ -36,6 +38,7 @@ class Form_payroll_agreement extends CI_Controller
                     $this->form_validation->set_rules('number_of_rooftops_locations', 'Rooftop Locations', 'xss_clean|trim|numeric');
                     $this->form_validation->set_rules('number_of_employees', 'Number of Employees', 'xss_clean|trim|numeric');
 
+                   
                     if ($this->input->post('payment_method') == 'trial_period') {
                         $this->form_validation->set_rules('trial_fee', 'Trial Fee', 'xss_clean|trim|numeric');
                         $this->form_validation->set_rules('recurring_payment_day', 'Recurring Trial Payment Day', 'xss_clean|trim|numeric');
@@ -51,15 +54,26 @@ class Form_payroll_agreement extends CI_Controller
                     $this->form_validation->set_rules('client_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('client_date', 'Date', 'xss_clean|trim');
                     $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'xss_clean|trim');
+
+                    $this->form_validation->set_rules('contract_type', 'Contract Type', 'xss_clean|trim');
+                    $this->form_validation->set_rules('contract_length', 'Contract Length', 'xss_clean|trim');
+
                 } else { 
                     $this->form_validation->set_rules('company_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('client_by', 'By', 'xss_clean|trim');
                     $this->form_validation->set_rules('client_name', 'Name', 'required|xss_clean|trim');
                     $this->form_validation->set_rules('acknowledgement', 'Acknowledgement', 'required|xss_clean|trim');
+                    $this->form_validation->set_rules('contract_type', 'Contract Type', 'xss_clean|trim');
+                    $this->form_validation->set_rules('contract_length', 'Contract Length', 'xss_clean|trim');
+
+                    $this->form_validation->set_rules('initial_term_month', 'intial Term of Months', 'xss_clean|trim');
+                    $this->form_validation->set_rules('number_of_each_employee', ' Per each Employee/Person ', 'xss_clean|trim');
                 }
 
                 if (!$this->form_validation->run()) {
                 } else {
+
+
                     //
                     $is_pre_fill = $this->input->post('is_pre_fill');
                     $clientName = $this->input->post('client_name');
@@ -73,6 +87,16 @@ class Form_payroll_agreement extends CI_Controller
                     $dataToSave['client_title'] = $this->input->post('client_title');
                     $dataToSave['client_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $this->input->post('client_date'))));
                     $dataToSave['client_signature'] = $this->input->post('client_signature');
+
+                   
+                    //
+                    $dataToSave['company_name'] = $this->input->post('company_name');
+                    $dataToSave['company_by'] = $this->input->post('company_by');
+                    $dataToSave['company_title'] = $this->input->post('company_title');
+                    $dataToSave['company_date'] = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $this->input->post('company_date'))));
+                    $dataToSave['company_signature'] = $this->input->post('company_signature');
+
+
                     //
                     if ($is_pre_fill == 1) {
                         $dataToSave['the_entity'] = $this->input->post('the_entity');
@@ -97,6 +121,13 @@ class Form_payroll_agreement extends CI_Controller
                         if (!$dataToSave['number_of_rooftops_locations']) {
                             $dataToSave['number_of_rooftops_locations'] = $document_record['number_of_rooftops_locations'];
                         }
+
+                        $dataToSave['contract_type'] = $this->input->post('contract_type');
+                        $dataToSave['contract_length'] = $this->input->post('contract_length');
+                        $dataToSave['initial_term_month'] = $this->input->post('initial_term_month');
+                        $dataToSave['number_of_each_employee'] = $this->input->post('number_of_each_employee');
+
+                      // _e($dataToSave,true,true);
                     }    
                     //
                     $status = '';

@@ -2159,18 +2159,22 @@ class Hr_documents_management_model extends CI_Model
         $employeeList = 'all',
         $documentList = 'all'
     ) {
+
+
         //
         $pendingDocuments = [];
         //
         $activeEmployees = explode(':', $employeeList);
+        $filterDocuments = explode(':', $documentList);
+        //
+        $now = time();
         //
         if (!empty($activeEmployees)) {
             //
             foreach ($activeEmployees as $employee) {
                 $pendingDocuments[$employee]['Documents'] = [];
             }
-            //
-            $now = time();
+
             //
             // Get all company assigned documents
             $this->db->select('
@@ -2435,6 +2439,29 @@ class Hr_documents_management_model extends CI_Model
                         'AssignedBy' => $assign_by
                     );
                 }
+            }
+        }
+        // get state forms
+        $stateForms = $this->getEmployeesPendingStateForms(
+            $company_sid,
+            $activeEmployees
+        );
+
+        if ($stateForms) {
+            foreach ($stateForms as $form) {
+                $userId = $form["user_sid"];
+                //
+                $datediff = $now - strtotime($employee_general['created_at']);
+                $days = round($datediff / (60 * 60 * 24));
+                //
+                $pendingDocuments[$userId]['Documents'][] = array(
+                    'ID' => 0,
+                    'Title' => $form["title"],
+                    'Type' => 'State Form',
+                    'AssignedOn' => $form["created_at"],
+                    'Days' => $days,
+                    'AssignedBy' => ""
+                );
             }
         }
         //
@@ -10350,5 +10377,427 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->where('sid', $documentId);
         $this->db->update('documents_assigned', $data);
+    }
+
+    /**
+     * get the company state forms
+     *
+     * @param int $companyId
+     * @param int $userId
+     * @param string $userType applicant|employee
+     * @return array
+     */
+    public function getCompanyStateForms(
+        int $companyId,
+        int $userId,
+        string $userType
+    ): array {
+        // not function for applicants yet
+        if ($userType === 'applicant') {
+            return [];
+        }
+        // get the company state
+        $companyState = $this->getCompanyState($companyId);
+        // when no state is set
+        if ($companyState === 0) {
+            return [];
+        }
+        // get the forms
+        $forms = $this->db
+            ->select("sid, title")
+            ->where("state_sid", $companyState)
+            ->get("state_forms")
+            ->result_array();
+        //
+        if (!$forms) {
+            return [];
+        }
+        //
+        $returnArray = [
+            "all" => [],
+            "completed" => [],
+            "not_completed" => []
+        ];
+        // loop through the forms
+        foreach ($forms as $index => $value) {
+
+            // get teh form status
+            $value = array_merge($value, $this->checkStateFormAssignStatus($value["sid"], $userId, $userType));
+            // push to all
+            $returnArray["all"][] = $value;
+            //
+            if ($value["is_completed"]) {
+                $returnArray["completed"][] = $value;
+            } else if (!$value["is_completed"] && $value["status"] === "assigned") {
+                $returnArray["not_completed"][] = $value;
+            }
+        }
+        //
+        return $returnArray;
+    }
+
+    /**
+     * get the company state
+     *
+     * @param int $companyId
+     * @return int
+     */
+    public function getCompanyState(int $companyId): int
+    {
+        $result = $this->db
+            ->select("Location_State")
+            ->where("users.sid", $companyId)
+            ->get("users")
+            ->row_array();
+        //
+        return $result && $result["Location_State"] ? $result["Location_State"] : 0;
+    }
+
+    /**
+     * check the form status
+     *
+     * @param int $formId
+     * @param int $userId
+     * @param string $userType
+     * @return string
+     */
+    public function checkStateFormAssignStatus(int $formId, int $userId, string $userType): array
+    {
+        // ste default array
+        $returnArray = [
+            "status" => "not_assigned",
+            "is_completed" => false,
+            "is_employer_completed" => false,
+            "assigned_at" => "",
+            "signed_at" => "",
+            "form_data" => [],
+            "employer_json" => [],
+            "employee_section" => false
+        ];
+        // get the record
+        $result = $this->db
+            ->select("
+                status, 
+                user_consent,
+                created_at,
+                user_consent_at,
+                fields_json,
+                employer_json,
+                employer_consent,
+                employer_concent_at
+            ")
+            ->where("state_form_sid", $formId)
+            ->where("user_sid", $userId)
+            ->where("user_type", $userType)
+            ->get("portal_state_form")
+            ->row_array();
+        // not assigned
+        if (!$result) {
+            return $returnArray;
+        }
+        //
+        if ($result['employer_consent'] == 1) {
+            $returnArray['employee_section'] = true;
+        }
+        // set it to revoked
+        $returnArray["status"] = "revoked";
+        // form is completed
+        if ($result["user_consent"] == 1 && $result["status"] == 1) {
+            $returnArray["status"] = "assigned";
+            $returnArray["is_completed"] = true;
+            $returnArray["assigned_at"] = $result["created_at"];
+            $returnArray["signed_at"] = $result["user_consent_at"];
+            $returnArray["form_data"] = json_decode($result["fields_json"], true);
+        }
+        // set to assigned
+        else if ($result["status"] == 1) {
+            $returnArray["status"] = "assigned";
+            $returnArray["assigned_at"] = $result["created_at"];
+        }
+
+        if ($result["employer_consent"] == 1) {
+            $returnArray["employer_json"] = json_decode($result["employer_json"], true);
+            $returnArray["is_employer_completed"] = true;
+        }
+        //
+        if ($result["fields_json"]) {
+            $returnArray["form_data"] = json_decode($result["fields_json"], true);
+        }
+        //
+        if ($result["employer_json"]) {
+            $returnArray["employer_json"] = json_decode($result["employer_json"], true);
+        }
+        //
+        return $returnArray;
+    }
+
+    /**
+     * handle form process
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param int $formId
+     * @param string $eventType
+     */
+    public function handleStateForm(int $userId, string $userType, int $formId, string $eventType)
+    {
+        $msg = "You have successfully assigned the form.";
+        //
+        $session = checkAndGetSession("all", true);
+        // assign the form
+        if ($eventType === "assign") {
+            $insertArray = [];
+            $insertArray["company_sid"] = $session["company_detail"]["sid"];
+            $insertArray["state_form_sid"] = $formId;
+            $insertArray["user_sid"] = $userId;
+            $insertArray["user_type"] = $userType;
+            $insertArray["fields_json"] = json_encode([]);
+            $insertArray["status"] = 1;
+            $insertArray["user_consent"] = 0;
+            $insertArray["user_consent_at"] = null;
+            $insertArray["created_at"] = $insertArray["updated_at"]
+                = getSystemDate();
+            //
+            $this->db->insert("portal_state_form", $insertArray);
+        }
+        // reassign form
+        elseif ($eventType === "reassign") {
+            $msg = "You have successfully re-assigned the form.";
+            $insertArray = [];
+            $insertArray["fields_json"] = json_encode([]);
+            $insertArray["status"] = 1;
+            $insertArray["user_consent"] = 0;
+            $insertArray["user_consent_at"] = null;
+            $insertArray["created_at"] = $insertArray["updated_at"]
+                = getSystemDate();
+            //
+            $this
+                ->db
+                ->where([
+                    "user_sid" => $userId,
+                    "user_type" => $userType,
+                    "state_form_sid" => $formId,
+                ])
+                ->update("portal_state_form", $insertArray);
+        }
+        // revoke form
+        else {
+            $msg = "You have successfully revoked the form.";
+            // get the form row
+            $form = $this->db
+                ->where([
+                    "user_sid" => $userId,
+                    "user_type" => $userType,
+                    "state_form_sid" => $formId,
+                ])
+                ->get("portal_state_form")
+                ->row_array();
+            //
+            $insertArray = $form;
+            //
+            unset(
+                $insertArray["user_sid"],
+                $insertArray["user_type"],
+                $insertArray["company_sid"],
+                $insertArray["sid"],
+                $insertArray["state_form_sid"],
+            );
+            //
+            $insertArray["portal_state_form_sid"] = $form["sid"];
+            // add history
+            $this->db->insert(
+                "portal_state_form_history",
+                $insertArray
+            );
+            // update status
+            if ($this->db->insert_id()) {
+                $this->db
+                    ->where("sid", $form["sid"])
+                    ->update(
+                        "portal_state_form",
+                        [
+                            "status" => 0,
+                            "user_consent" => 0,
+                            "user_consent_at" => null,
+                            "employer_consent" => 0,
+                            "employer_concent_at" => null
+                        ]
+                    );
+            }
+        }
+
+        return SendResponse(
+            200,
+            [
+                "msg" => $msg
+            ]
+        );
+    }
+
+    /**
+     * get the company state form
+     *
+     * @param int $companyId
+     * @param int $formId
+     * @param int $userId
+     * @param string $userType applicant|employee
+     * @return array
+     */
+    public function getStateForm(
+        int $companyId,
+        int $formId,
+        int $userId,
+        string $userType
+    ): array {
+        // get the form
+        $form = $this->db
+            ->select("sid, title, form_slug")
+            ->where("state_forms.sid", $formId)
+            ->get("state_forms")
+            ->row_array();
+        //
+        if (!$form) {
+            return [];
+        }
+        // get teh form status
+        $form = array_merge(
+            $form,
+            $this->checkStateFormAssignStatus(
+                $form["sid"],
+                $userId,
+                $userType
+            )
+        );
+        //
+        return $form;
+    }
+
+    /**
+     * save the employee state form
+     *
+     * @param int $formId
+     * @param int $employeeId
+     * @param array $dataToUpdate
+     */
+    public function updateStateForm($formId, $employeeId, $dataToUpdate)
+    {
+        $this->db->where('state_form_sid', $formId);
+        $this->db->where('user_sid', $employeeId);
+        $this->db->update('portal_state_form', $dataToUpdate);
+    }
+
+    public function getStateFormInfo(int $formId)
+    {
+        return $this->db
+            ->select("sid, title, form_slug")
+            ->where("state_forms.sid", $formId)
+            ->get("state_forms")
+            ->row_array();
+    }
+
+    /**
+     * save the employee state form
+     *
+     * @param int $formId
+     * @param int $employeeId
+     * @param array $dataToUpdate
+     */
+    public function getStates()
+    {
+        return $this->db
+            ->select("sid, state_name, state_code")
+            ->where([
+                "country_sid" => 227,
+                "active" => 1
+            ])
+            ->order_by("state_name", "ASC")
+            ->get("states")
+            ->result_array();
+    }
+
+
+    public function saveStateFormEmployerSection(
+        int $formId,
+        int $userId,
+        string $userType,
+        string $employerJson
+    ) {
+        $this->db->where([
+            "user_sid" => $userId,
+            "user_type" => $userType,
+            "state_form_sid" => $formId,
+        ])
+            ->update(
+                "portal_state_form",
+                [
+                    "employer_consent" => 1,
+                    "employer_concent_at" => getSystemDate(),
+                    "employer_json" => $employerJson,
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully signed the employer section."
+            ]
+        );
+    }
+
+    /**
+     * get the state forms
+     */
+    public function getEmployeesPendingStateForms(
+        int $companyId,
+        array $employeeIds
+    ) {
+        //
+        $this->db
+            ->select([
+                "state_forms.title",
+                "portal_state_form.user_sid",
+                "portal_state_form.created_at",
+            ])
+            ->join(
+                "state_forms",
+                "portal_state_form.state_form_sid = state_forms.sid",
+                "inner"
+            )
+            ->where("company_sid", $companyId);
+        //
+        if (!in_array("all", $employeeIds)) {
+            $this->db
+                ->where_in("user_sid", $employeeIds)
+                ->where("user_type", "employee");
+        }
+        //
+        return $this->db
+            ->get("portal_state_form")
+            ->result_array();
+    }
+
+
+    public function getEmployeeData(int $employeeId)
+    {
+        //
+        return $this->db
+            ->select("
+                first_name, 
+                middle_initial, 
+                last_name, 
+                ssn, 
+                Location_Address, 
+                Location_Address_2, 
+                Location_City, 
+                Location_State, 
+                Location_ZipCode, 
+                Location_Country, 
+                PhoneNumber, 
+                marital_status
+            ")
+            ->where('sid', $employeeId)
+            ->get("users")
+            ->row_array();
     }
 }

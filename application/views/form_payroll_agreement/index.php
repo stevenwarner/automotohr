@@ -32,11 +32,13 @@
 
                                 <div> <?php $this->load->view('payroll/partials/form_payroll_agreement'); ?></div>
 
-                                <div style="font-size:18px;">End User License Agreement (this “Agreement”) by and between AUTOMOTOSOCIAL, LLC (“COMPANY”) and <div class="form-outer company-name" style="max-width:700px;"><input type="text" class="invoice-fields" name="the_entity" id="the_entity" value="<?php echo set_value('the_entity', $company_document['the_entity']); ?>" <?php echo $readonly; ?> /> <?php echo form_error('the_entity'); ?></div>, an entity located at <div class="form-outer" style="max-width: 700px !important; display: inline-block;" ><input style="width: 700px !important; max-width: 100% !important;" type="text" class="invoice-fields" name="the_client" id="the_client" value="<?php echo set_value('the_client', $company_document['the_client']); ?>" <?php echo $readonly; ?> /> <?php echo form_error('the_client'); ?></div>   (the “CLIENT”).  COMPANY and CLIENT are sometimes referred to herein collectively as the “parties” or individually as a “party.”</div>
+                                <div style="font-size:18px;">End User License Agreement (this “Agreement”) by and between AUTOMOTOSOCIAL, LLC (“COMPANY”) and <div class="form-outer company-name" style="max-width:700px;"><input type="text" class="invoice-fields" name="the_entity" id="the_entity" value="<?php echo set_value('the_entity', $company_document['the_entity']); ?>" <?php echo $readonly; ?> /> <?php echo form_error('the_entity'); ?></div>, an entity located at <div class="form-outer" style="max-width: 700px !important; display: inline-block;"><input style="width: 700px !important; max-width: 100% !important;" type="text" class="invoice-fields" name="the_client" id="the_client" value="<?php echo set_value('the_client', $company_document['the_client']); ?>" <?php echo $readonly; ?> /> <?php echo form_error('the_client'); ?></div> (the “CLIENT”). COMPANY and CLIENT are sometimes referred to herein collectively as the “parties” or individually as a “party.”</div>
                                 <br>
-                                <div>	An amount equal to $ <div class="form-outer"><input type="text" class="invoice-fields" name="development_fee" id="development_fee" value="<?php echo set_value('development_fee', $company_document['development_fee']); ?>"  <?php echo $readonly; ?>  <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?>/> <?php echo form_error('development_fee'); ?></div> is due and payable at the time of this Agreement toward the setup, development, and deployment of the SOFTWARE by COMPANY to CLIENT; and</div>
+                                <div> An amount equal to $ <div class="form-outer"><input type="text" class="invoice-fields" name="development_fee" id="development_fee" value="<?php echo set_value('development_fee', $company_document['development_fee']); ?>" <?php echo $readonly; ?> <?php echo ($is_pre_fill == 0) ? 'readonly="readonly"' : ''; ?> /> <?php echo form_error('development_fee'); ?></div> is due and payable at the time of this Agreement toward the setup, development, and deployment of the SOFTWARE by COMPANY to CLIENT; and</div>
                                 <br>
-                                <div class="form-col-100" <?php if($is_pre_fill == 0) { echo 'style="visibility:hidden;"'; } ?>>
+                                <div class="form-col-100" <?php if ($is_pre_fill == 0) {
+                                                                echo 'style="visibility:hidden;"';
+                                                            } ?>>
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <label class="control control--radio">
@@ -48,7 +50,9 @@
                                         <div class="col-lg-6">
                                             <label class="control control--radio">
                                                 Trial Period
-                                                <input class="static-class" type="radio" name="payment_method" value="trial_period" <?php if((isset($company_document['payment_method']) && $company_document['payment_method'] == 'trial_period') || $company_document['is_trial_period'] == '1') { echo 'checked="checked"'; } ?>>
+                                                <input class="static-class" type="radio" name="payment_method" value="trial_period" <?php if ((isset($company_document['payment_method']) && $company_document['payment_method'] == 'trial_period') || $company_document['is_trial_period'] == '1') {
+                                                                                                                                        echo 'checked="checked"';
+                                                                                                                                    } ?>>
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
@@ -59,19 +63,70 @@
                                     <?php echo form_error('monthly_fee'); ?>
                                     <?php echo form_error('number_of_rooftops_locations'); ?>
                                     <?php echo form_error('number_of_employees'); ?>
-                                    A monthly fee of <b>$</b>
+
+                                    <?php echo form_error('number_of_each_employee'); ?>
+                                    <?php echo form_error('initial_term_month'); ?>
+
+
+                                    A base monthly Service fee of <b>$</b>
                                     <div class="form-outer">
-                                        <input type="text" class="invoice-fields" name="monthly_fee" id="monthly_fee" value="<?php if(isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '0'){ echo set_value('monthly_fee', $company_document['monthly_fee']);} ?>"  <?php echo $readonly; ?>  <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?> /> 
-                                        <?php if($is_pre_fill == 0) { ?>
-                                            <input type="hidden" name="monthly_fee" id="monthly_fee" value="<?php if(isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '0'){ echo set_value('monthly_fee', $company_document['monthly_fee']);} ?>" />
-                                            <?php } ?>
-                                        </div> 
-                                        for  <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_rooftops_locations" id="number_of_rooftops_locations" value="<?php if(isset($company_document['number_of_rooftops_locations']) && $company_document['is_trial_period'] == '0'){ echo set_value('number_of_rooftops_locations', $company_document['number_of_rooftops_locations']);} ?>"  <?php echo $readonly; ?>  <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?> /></div> Rooftop Location(s) and <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_employees" id="number_of_employees" value="<?php if(isset($company_document['no_of_employees']) && $company_document['is_trial_period'] == 0){ echo set_value('no_of_employees', $company_document['no_of_employees']);} ?>"  <?php echo $readonly; ?>  <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?> /></div> Number of employee(s). The monthly fees contracted in this Agreement do not include tax.  Additional taxes may be collected dependent on the CLIENT’s local jurisdiction tax laws.
-                                        <p>	
+                                        <input type="text" class="invoice-fields" name="monthly_fee" id="monthly_fee" value="<?php if (isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '0') {
+                                                                                                                                    echo set_value('monthly_fee', $company_document['monthly_fee']);
+                                                                                                                                } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                    echo 'disabled';
+                                                                                                                                                                } ?> />
+                                        <?php if ($is_pre_fill == 0) { ?>
+                                            <input type="hidden" name="monthly_fee" id="monthly_fee" value="<?php if (isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '0') {
+                                                                                                                echo set_value('monthly_fee', $company_document['monthly_fee']);
+                                                                                                            } ?>" />
+                                        <?php } ?>
+                                    </div>
+                                    and <b>$</b>
+
+
+
+
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_each_employee" id="number_of_each_employee" value="<?php if (isset($company_document['number_of_each_employee']) && $company_document['is_trial_period'] == '0') {
+                                                                                                                                                                                echo set_value('number_of_each_employee', $company_document['number_of_each_employee']);
+                                                                                                                                                                            } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                                echo 'disabled';
+                                                                                                                                                                                                            } ?> /></div> Per each Employee/Person for monthly Payroll services.
+
+
+
+
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_rooftops_locations" id="number_of_rooftops_locations" value="<?php if (isset($company_document['number_of_rooftops_locations']) && $company_document['is_trial_period'] == '0') {
+                                                                                                                                                                                        echo set_value('number_of_rooftops_locations', $company_document['number_of_rooftops_locations']);
+                                                                                                                                                                                    } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                                        echo 'disabled';
+                                                                                                                                                                                                                    } ?> /></div> Rooftop Location(s) and with an intial
+
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_employees" id="number_of_employees" value="<?php if (isset($company_document['no_of_employees']) && $company_document['is_trial_period'] == 0) {
+                                                                                                                                                                        echo set_value('no_of_employees', $company_document['no_of_employees']);
+                                                                                                                                                                    } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                        echo 'disabled';
+                                                                                                                                                                                                    } ?> /></div> Number of employee(s). The monthly fees contracted in this Agreement do not include tax. Additional taxes may be collected dependent on the CLIENT’s local jurisdiction tax laws. This contract is set with an intial Term of
+
+
+
+
+
+
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="initial_term_month" id="initial_term_month" value="<?php if (isset($company_document['initial_term_month']) && $company_document['is_trial_period'] == 0) {
+                                                                                                                                                                    echo set_value('initial_term_month', $company_document['initial_term_month']);
+                                                                                                                                                                } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                        echo 'disabled';
+                                                                                                                                                                                                    } ?> /></div>Months.
+
+
+
+                                    <p>
                                         Monthly fees include a multi-user, single-server license and unlimited telephone technical support, which will commence once any installation contracted on the Agreement is initiated. Monthly fees may be prorated based on the date services are initiated. CLIENT shall pay the monthly license, maintenance, and support fee on the first business day of each month, after the initiation of the SOFTWARE. SOFTWARE services by the COMPANY are subject to termination if any COMPANY invoice is more than 15 days past due. Written email notification will be given to the CLIENT prior to this termination.
                                     </p>
+
                                 </div>
-                                
+
+
                                 <div class="trial-period">
                                     <?php echo form_error('trial_limit'); ?>
                                     <?php echo form_error('trial_fee'); ?>
@@ -79,44 +134,87 @@
                                     <?php echo form_error('number_of_rooftops_locations_trial'); ?>
                                     <?php echo form_error('number_of_employees_trial'); ?>
                                     Trial Period and Requirements to Convert to a full Subscription License:<br><br>
-                                    The Trial Period for the Trial Services will be for 
-                                    <?php if($is_pre_fill == 0) { ?>
+                                    The Trial Period for the Trial Services will be for
+                                    <?php if ($is_pre_fill == 0) { ?>
                                         <?php echo $company_document['trial_limit']; ?>
                                     <?php } else { ?>
-                                        <input type="number" name="trial_limit" id="trial_limit" min="0" value="<?php echo $company_document['trial_limit']; ?>"/>
+                                        <input type="number" name="trial_limit" id="trial_limit" min="0" value="<?php echo $company_document['trial_limit']; ?>" />
                                     <?php } ?>
                                     days from the Trial Service Activation Date, unless: a) such Trial Period is for a longer term as specified by <?php echo STORE_NAME; ?> / AutomotoSocial LLC; or such Trial Period is extended by mutual Agreement of the parties. Customer acknowledges and agrees that, at the end of the Trial Period, Customer’s access to the Trial Services will be AUTOMATICALLY converted, with or without notice, to license the Services on a paid subscription basis at a rate of <b>$</b>
                                     <br>
                                     <div class="form-outer">
-                                        <input type="text" class="invoice-fields" name="trial_fee" id="trial_fee" value="<?php if(isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '1'){ echo set_value('trial_fee', $company_document['monthly_fee']);} ?>" <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?>/>
-                                        <?php if($is_pre_fill == 0) { ?>
-                                            <input type="hidden" name="trial_fee" id="trial_fee" value="<?php if(isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '1'){ echo set_value('trial_fee', $company_document['monthly_fee']);} ?>" />
+                                        <input type="text" class="invoice-fields" name="trial_fee" id="trial_fee" value="<?php if (isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '1') {
+                                                                                                                                echo set_value('trial_fee', $company_document['monthly_fee']);
+                                                                                                                            } ?>" <?php if ($is_pre_fill == 0) {
+                                                                                                                                echo 'disabled';
+                                                                                                                            } ?> />
+                                        <?php if ($is_pre_fill == 0) { ?>
+                                            <input type="hidden" name="trial_fee" id="trial_fee" value="<?php if (isset($company_document['monthly_fee']) && $company_document['is_trial_period'] == '1') {
+                                                                                                            echo set_value('trial_fee', $company_document['monthly_fee']);
+                                                                                                        } ?>" />
                                         <?php } ?>
-                                    </div> 
-                                    
+                                    </div>
+
                                     a month billed on the <br>
                                     <div class="form-outer">
-                                        <select name="recurring_payment_day" id="recurring_payment_day" class="invoice-fields" <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?>>
-                                        <?php for($i = 1; $i < 29; $i++) { 
-                                            echo '<option value="' . $i . '"';
-                                            if(isset($company_document['recurring_payment_day']) && $company_document['recurring_payment_day'] == $i)
-                                            {
-                                                echo 'selected';
-                                            }
-                                            echo '>' . $i . '</option>';
-                                        } ?>
+                                        <select name="recurring_payment_day" id="recurring_payment_day" class="invoice-fields" <?php if ($is_pre_fill == 0) {
+                                                                                                                                    echo 'disabled';
+                                                                                                                                } ?>>
+                                            <?php for ($i = 1; $i < 29; $i++) {
+                                                echo '<option value="' . $i . '"';
+                                                if (isset($company_document['recurring_payment_day']) && $company_document['recurring_payment_day'] == $i) {
+                                                    echo 'selected';
+                                                }
+                                                echo '>' . $i . '</option>';
+                                            } ?>
                                         </select>
-                                        <?php if($is_pre_fill == 0) { ?>
-                                            <input type="hidden" name="recurring_payment_day" id="recurring_payment_day" value="<?php echo $company_document['recurring_payment_day']; ?>"/>
+                                        <?php if ($is_pre_fill == 0) { ?>
+                                            <input type="hidden" name="recurring_payment_day" id="recurring_payment_day" value="<?php echo $company_document['recurring_payment_day']; ?>" />
                                         <?php } ?>
-                                        </div> 
-                                    day of the month for <br> 
-                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_rooftops_locations_trial" id="number_of_rooftops_locations" value="<?php if(isset($company_document['number_of_rooftops_locations']) && $company_document['is_trial_period'] == 1){ echo set_value('number_of_rooftops_locations', $company_document['number_of_rooftops_locations']);} ?>"  <?php echo $readonly; ?>  <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?> /></div> Rooftop Location(s) <br>
-                                    
-                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_employees_trial" id="number_of_employees" value="<?php if(isset($company_document['no_of_employees']) && $company_document['is_trial_period'] == 1){ echo set_value('no_of_employees', $company_document['no_of_employees']);} ?>"  <?php echo $readonly; ?>  <?php  if($is_pre_fill == 0) { echo 'disabled'; } ?> /></div> Number of employee(s). The monthly fees contracted in this Agreement do not include tax. Additional taxes may be collected dependent on the CLIENT’s local jurisdiction tax laws.<p>
-                                        Customer must contact <?php echo STORE_NAME; ?> / AutomotoSocial LLC at least fifteen (15) business days prior to the end of the Trial Period if Customer wishes to cancel the Services beyond the Trial Period. 
+                                    </div>
+                                    day of the month for <br>
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_rooftops_locations_trial" id="number_of_rooftops_locations" value="<?php if (isset($company_document['number_of_rooftops_locations']) && $company_document['is_trial_period'] == 1) {
+                                                                                                                                                                                                echo set_value('number_of_rooftops_locations', $company_document['number_of_rooftops_locations']);
+                                                                                                                                                                                            } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                                        echo 'disabled';
+                                                                                                                                                                                                                    } ?> /></div> Rooftop Location(s) <br>
+
+                                    <div class="form-outer"><input type="text" class="invoice-fields" name="number_of_employees_trial" id="number_of_employees" value="<?php if (isset($company_document['no_of_employees']) && $company_document['is_trial_period'] == 1) {
+                                                                                                                                                                            echo set_value('no_of_employees', $company_document['no_of_employees']);
+                                                                                                                                                                        } ?>" <?php echo $readonly; ?> <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                                    echo 'disabled';
+                                                                                                                                                                                                } ?> /></div> Number of employee(s). The monthly fees contracted in this Agreement do not include tax. Additional taxes may be collected dependent on the CLIENT’s local jurisdiction tax laws.<p>
+                                        Customer must contact <?php echo STORE_NAME; ?> / AutomotoSocial LLC at least fifteen (15) business days prior to the end of the Trial Period if Customer wishes to cancel the Services beyond the Trial Period.
                                     </p>
                                 </div>
+                                <br>
+
+
+                                <div class="end-user-form-wrp col-lg-6 col-md-6 col-xs-12 col-sm-12 recurring-payment-authorization">
+                                    <h4 class="credit-card-form-heading">Contract Type / Length:</h4>
+                                    <div>
+                                        <div class="card-checkbox-row">
+                                            <div class="row">
+                                                <div class="col-lg-2">
+                                                    <input type="text" class="form-control" name="contract_length" placeholder="1" value="<?= $company_document['contract_length']; ?>" <?php if ($is_pre_fill == 0) {
+                                                                                                                                                                                            echo 'disabled';
+                                                                                                                                                                                        } ?> />
+                                                    <?php echo form_error('contract_length'); ?>
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <select name="contract_type" class="form-control" <?php if ($is_pre_fill == 0) {
+                                                                                                            echo 'disabled';
+                                                                                                        } ?>>
+                                                        <option <?= $company_document['contract_type'] === "months" ? "selected" : ""; ?> value="months">Months</option>
+                                                        <option <?= $company_document['contract_type'] === "years" ? "selected" : ""; ?> value="years">Years</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php echo form_error('contract_type'); ?>
+                                    </div>
+                                </div>
+                                <br>
                                 <br>
                                 <div class="end-user-form-wrp">
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
@@ -372,7 +470,6 @@
 
         </div>
     </div>
-    ?>
 
     <script>
         $(document).ready(function() {
