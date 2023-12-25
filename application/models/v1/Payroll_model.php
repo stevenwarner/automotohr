@@ -5823,4 +5823,60 @@ class Payroll_model extends CI_Model
             ->get('companies_federal_tax')
             ->row_array();
     }
+
+    /**
+     * Get company earning types
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyEarningTypesForDashboard (int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('name')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_earning_types')
+            ->result_array();
+    }
+
+    /**
+     * Get company selected Industry
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanySelectedIndustry(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('title')
+            ->where('company_sid', $companyId)
+            ->get('companies_industry')
+            ->row_array();
+    }
+
+    /**
+     * Get company onboard employees
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyOnboardEmployees(int $companyId): array
+    {
+        //
+        $employees = $this->db
+            ->select('employee_sid, personal_details, compensation_details, work_address, home_address, federal_tax, state_tax, is_onboarded')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_employees')
+            ->result_array();
+        //
+        if (!empty($employees)) {
+            foreach ($employees as $eKey => $employee) {
+                $employees[$eKey]['name'] = getUserNameBySID($employee['employee_sid']);
+            }
+        }    
+        //
+        return $employees;
+    }
 }

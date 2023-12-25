@@ -48,10 +48,14 @@ class Payrolls extends Admin_Controller
         $this->data['companyOnboardingStatus'] = $this->payroll_model->getCompanyOnboardingStatus($companyId);
         //
         if ($this->data['companyOnboardingStatus'] != 'Not Connected') {
+            //
             $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
-            $this->data['companiesSignatories'] = $this->payroll_model->getCompanySignatoriesInfo($companyId);
-            $this->data['companiesBankInfo'] = $this->payroll_model->getCompanyBankInfo($companyId);
-            $this->data['companiesFederalTaxInfo'] = $this->payroll_model->getCompanyFederalTaxInfo($companyId);
+            $this->data['companySignatories'] = $this->payroll_model->getCompanySignatoriesInfo($companyId);
+            $this->data['companyBankInfo'] = $this->payroll_model->getCompanyBankInfo($companyId);
+            $this->data['companyFederalTaxInfo'] = $this->payroll_model->getCompanyFederalTaxInfo($companyId);
+            $this->data['companyEarningTypes'] = $this->payroll_model->getCompanyEarningTypesForDashboard($companyId);
+            $this->data['companyIndustry'] = $this->payroll_model->getCompanySelectedIndustry($companyId);
+            $this->data['companyEmployees'] = $this->payroll_model->getCompanyOnboardEmployees($companyId);
             //
             $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
             //
