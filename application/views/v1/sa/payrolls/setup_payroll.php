@@ -31,7 +31,7 @@
                                         &nbsp;Manage Admins
                                     </a>
 
-                                    <?php if ($payrollBlockers) { ?>
+                                    <?php if ($payrollBlockers && $mode == 'Demo') { ?>
                                         <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
                                             <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
                                             <span>Verify Company</span>

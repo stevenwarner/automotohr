@@ -5735,7 +5735,7 @@ class Payroll_model extends CI_Model
         }    
     }
 
-    public function getEmployeeGustoWorkId ($employeeId) {
+    public function getEmployeeGustoWorkId (int $employeeId) {
         //
         $this->db->select('gusto_location_uuid');     
         $this->db->where('employee_sid', $employeeId);
@@ -5749,5 +5749,134 @@ class Payroll_model extends CI_Model
         } else {
             return '';
         }    
+    }
+
+    /**
+     * check company onboarding status
+     *
+     * @param int $companyId
+     * @return string
+     */
+    public function getCompanyOnboardingStatus (int $companyId): string
+    {
+        $status = 'Not Connected';
+        //
+        $record = $this->db
+            ->select('status')
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('gusto_companies')
+            ->row_array();
+        //
+        if (!empty($record)) {
+            $status = $record['status'];
+        } 
+        //
+        return $status;
+    }
+
+    /**
+     * Get company signatories info
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanySignatoriesInfo (int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('first_name, last_name, email, title')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_signatories')
+            ->row_array();
+    }
+
+    /**
+     * Get company bank info
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyBankInfo (int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('name, account_type, routing_number, hidden_account_number')
+            ->where('company_sid', $companyId)
+            ->get('companies_bank_accounts')
+            ->row_array();
+    }
+
+    /**
+     * Get company federal tax info
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyFederalTaxInfo (int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('tax_payer_type, filing_form, legal_name, ein_verified')
+            ->where('company_sid', $companyId)
+            ->get('companies_federal_tax')
+            ->row_array();
+    }
+
+    /**
+     * Get company earning types
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyEarningTypesForDashboard (int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('name')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_earning_types')
+            ->result_array();
+    }
+
+    /**
+     * Get company selected Industry
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanySelectedIndustry(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('title')
+            ->where('company_sid', $companyId)
+            ->get('companies_industry')
+            ->row_array();
+    }
+
+    /**
+     * Get company onboard employees
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyOnboardEmployees(int $companyId): array
+    {
+        //
+        $employees = $this->db
+            ->select('employee_sid, personal_details, compensation_details, work_address, home_address, federal_tax, state_tax, is_onboarded')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_employees')
+            ->result_array();
+        //
+        if (!empty($employees)) {
+            foreach ($employees as $eKey => $employee) {
+                $employees[$eKey]['name'] = getUserNameBySID($employee['employee_sid']);
+            }
+        }    
+        //
+        return $employees;
     }
 }
