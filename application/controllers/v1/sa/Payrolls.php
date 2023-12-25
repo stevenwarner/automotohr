@@ -49,6 +49,8 @@ class Payrolls extends Admin_Controller
         //
         if ($this->data['companyOnboardingStatus'] != 'Not Connected') {
             //
+            $this->data['companyPaySchedules'] = $this->payroll_model->getCompanyPaySchedules($companyId);
+            $this->data['companyTermsCondition'] = $this->payroll_model->getCompanyTermConditionInfo($companyId);
             $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
             $this->data['companySignatories'] = $this->payroll_model->getCompanySignatoriesInfo($companyId);
             $this->data['companyBankInfo'] = $this->payroll_model->getCompanyBankInfo($companyId);

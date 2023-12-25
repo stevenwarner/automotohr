@@ -5786,7 +5786,7 @@ class Payroll_model extends CI_Model
     {
         //
         return $this->db
-            ->select('first_name, last_name, email, title')
+            ->select('first_name, last_name, email, title, ssn, phone, birthday, street_1, city, state, zip')
             ->where('company_sid', $companyId)
             ->get('gusto_companies_signatories')
             ->row_array();
@@ -5878,5 +5878,37 @@ class Payroll_model extends CI_Model
         }    
         //
         return $employees;
+    }
+
+    /**
+     * Get company onboard employees
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyTermConditionInfo(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('is_ts_accepted, ts_user_sid, ts_email, ts_ip')
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies')
+            ->row_array();
+    }
+
+    /**
+     * Get company pay schedules
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function getCompanyPaySchedules(int $companyId): array
+    {
+        //
+        return $this->db
+            ->select('frequency, anchor_pay_date, anchor_end_of_pay_period, custom_name, active')
+            ->where('company_sid', $companyId)
+            ->get('companies_pay_schedules')
+            ->result_array();
     }
 }

@@ -63,18 +63,21 @@
                                             <form action="javascript:void(0)" id="jsCompanyModeForm">
                                                 <div class="form-group">
                                                     <label>Mode <span class="text-danger">*</span></label>
-                                                    <select name="company_mode" class="form-control" id="jsCompanyMode">
+                                                    <select <?php echo $companyOnboardingStatus != 'Not Connected' ? 'disabled' : '';?> name="company_mode" class="form-control" id="jsCompanyMode">
                                                         <option value="demo" <?= $mode == 'Demo' ? 'selected' : ''; ?>>Demo</option>
                                                         <option value="production" <?= $mode == 'Production' ? 'selected' : ''; ?>>Production</option>
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group text-right">
-                                                    <button class="btn btn-success jsCompanyModeBtn csF16" type="submit">
-                                                        <i class="fa fa-save csF16" aria-hidden="true"></i>
-                                                        <span>Update Company Mode</span>
-                                                    </button>
-                                                </div>
+
+                                                <?php if ($companyOnboardingStatus == 'Not Connected') { ?>                       
+                                                    <div class="form-group text-right">
+                                                        <button class="btn btn-success jsCompanyModeBtn csF16" type="submit">
+                                                            <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                                            <span>Update Company Mode</span>
+                                                        </button>
+                                                    </div>
+                                                <?php } ?>
                                             </form>
                                         </div>
                                     </div>
@@ -134,6 +137,40 @@
                             <?php if ($companyOnboardingStatus != 'Not Connected') { ?>
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Gusto Agreement</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <?php if ($companyTermsCondition['is_ts_accepted'] != 1) { ?>
+                                                    <p class="text-danger csF16">
+                                                        <em>
+                                                            <strong>
+                                                                Gusto agreement not signed yet.
+                                                            </strong>
+                                                        </em>
+                                                    </p>
+                                                <?php } ?>
+                                                <form action="javascript:void(0)">
+                                                    <div class="form-group">
+                                                        <label>Accepted By Name</label>
+                                                        <input type="text" class="form-control" value="<?= getUserNameBySID($companyTermsCondition['ts_user_sid']) ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Accepted By Email</label>
+                                                        <input type="text" class="form-control" value="<?= $companyTermsCondition['ts_email'] ?>" disabled  />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Accepted By IP Address</label>
+                                                        <input type="text" class="form-control" value="<?= $companyTermsCondition['ts_ip'] ?>" disabled />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
                                         <div class="panel panel-success">
                                             <div class="panel-heading">
                                                 <strong class="csF16 csW">Company Payment Configs</strong>
@@ -215,6 +252,26 @@
                                                     <div class="form-group">
                                                         <label>Title</label>
                                                         <input type="text" class="form-control" value="<?= $companySignatories['title'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Phone</label>
+                                                        <input type="text" class="form-control" value="<?= $companySignatories['phone'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>SSN</label>
+                                                        <input type="text" class="form-control" value="<?= $companySignatories['ssn'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Address</label>
+                                                        <input type="text" class="form-control" value="<?= $companySignatories['street_1'] ?>, <?= $companySignatories['city'] ?>, <?= $companySignatories['zip'] ?>" disabled />
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Date of birth</label>
+                                                        <input type="text" class="form-control" value="<?= $companySignatories['birthday'] ?>" disabled />
                                                     </div>
                                                 </form>
                                             </div>
@@ -358,6 +415,75 @@
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="panel panel-success">
                                             <div class="panel-heading">
+                                                <strong class="csF16 csW">Company Pay Schedules</strong>
+                                            </div>
+                                            <div class="panel-body">
+                                                <!--  -->
+                                                <?php if (empty($companyPaySchedules)) { ?>   
+                                                    <p class="text-danger csF16">
+                                                        <em>
+                                                            <strong>
+                                                                Company pay schedule not found.
+                                                            </strong>
+                                                        </em>
+                                                    </p>
+                                                <?php } ?>    
+
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <caption></caption>
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    Name
+                                                                </th>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    frequency
+                                                                </th>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    Pay Period Start<br />date
+                                                                </th>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    Pay Period End<br />date
+                                                                </th>
+                                                                <th scope="col" class="csW csBG4">
+                                                                    Active Pay Schedule
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($companyPaySchedules as $schedule) { ?>
+                                                                <tr data-id="<?= $value['sid'] ?>">
+                                                                    <td class="vam">
+                                                                        <?= $schedule['custom_name']; ?>
+                                                                    </td>
+                                                                    <td class="vam">
+                                                                        <?= $schedule['frequency']; ?>
+                                                                    </td>
+                                                                    <td class="vam">
+                                                                        <?= $schedule['anchor_pay_date']; ?>
+                                                                    </td>
+                                                                    <td class="vam">
+                                                                        <?= $schedule['anchor_end_of_pay_period']; ?>
+                                                                    </td>
+                                                                    <td class="vam text-<?= $schedule['active'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                        <?= $schedule['active'] == 1 ? "Yes" : "No"; ?>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
                                                 <strong class="csF16 csW">Company Employees</strong>
                                             </div>
                                             <div class="panel-body">
@@ -439,7 +565,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>  
+                                </div>
                             <?php } ?>
 
                             <!-- Main body ends -->
