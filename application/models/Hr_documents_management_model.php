@@ -10683,11 +10683,17 @@ class Hr_documents_management_model extends CI_Model
      *
      * @return array
      */
-    public function getCompanyStateForm(): array
+    public function getCompanyStateForm(int $companyId): array
     {
-        // get the form
+        $companyState = $this->getCompanyState($companyId);
+        // when no state is set
+        if ($companyState === 0) {
+            return [];
+        }
+        // get the forms
         return $this->db
             ->select("sid, title")
+            ->where("state_sid", $companyState)
             ->get("state_forms")
             ->result_array();
     }

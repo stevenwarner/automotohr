@@ -8288,7 +8288,9 @@ class Hr_documents_management extends Public_Controller
             }
 
             $data["companyStateForms"] = $this->hr_documents_management_model
-                ->getCompanyStateForm();
+                ->getCompanyStateForm(
+                    $company_sid
+                );
 
             $data['group'] = $group;
             $data['selected_state_forms'] = $group["state_forms_json"] ? json_decode($group["state_forms_json"], true) : [];
