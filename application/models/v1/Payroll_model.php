@@ -13,11 +13,13 @@ class Payroll_model extends CI_Model
         // call the parent constructor
         parent::__construct();
         $companyId = checkAndGetSession("company", true)["sid"];
-        // load the payroll helper
-        $this->load->helper('v1/payroll' . ($this->db->where([
-            "company_sid" => $companyId,
-            "stage" => "production"
-        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+        if ($companyId) {
+            // load the payroll helper
+            $this->load->helper('v1/payroll' . ($this->db->where([
+                "company_sid" => $companyId,
+                "stage" => "production"
+            ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+        }
         // set the admin
         $this->adminArray = [
             'first_name' => 'Steven',
@@ -25,6 +27,15 @@ class Payroll_model extends CI_Model
             'email_address' => 'Steven@AutomotoHR.com',
             'phone_number' => '951-385-8204',
         ];
+    }
+
+
+    public function loadPayrollHelper(int $companyId) {
+        // load the payroll helper
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
     }
 
 

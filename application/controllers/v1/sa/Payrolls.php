@@ -36,6 +36,7 @@ class Payrolls extends Admin_Controller
      */
     public function index(int $companyId)
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
         //
@@ -88,6 +89,7 @@ class Payrolls extends Admin_Controller
      */
     public function setupCompanyPayroll(int $companyId)
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
         // get gusto details
@@ -153,6 +155,7 @@ class Payrolls extends Admin_Controller
      */
     public function manageAdmins(int $companyId)
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
         // set
@@ -181,6 +184,7 @@ class Payrolls extends Admin_Controller
      */
     public function addAdmin(int $companyId)
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
         // set
@@ -205,6 +209,7 @@ class Payrolls extends Admin_Controller
      */
     private function createPartnerCompany()
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set title
         $this->data['page_title'] = 'Payroll set-up :: ' . (STORE_NAME);
         // set CSS
@@ -227,6 +232,7 @@ class Payrolls extends Admin_Controller
      */
     private function agreement()
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // set title
         $this->data['page_title'] = 'Payroll agreement :: ' . (STORE_NAME);
         // set CSS
@@ -254,6 +260,7 @@ class Payrolls extends Admin_Controller
      */
     public function syncCompanyWithGusto(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         //
         return $this->payroll_model->syncCompanyWithGusto(
             $companyId
@@ -268,6 +275,7 @@ class Payrolls extends Admin_Controller
      */
     public function verifyCompanyBankAccount(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // get the company
         $companyDetails = $this->payroll_model
             ->getCompanyDetailsForGusto($companyId);
@@ -361,6 +369,7 @@ class Payrolls extends Admin_Controller
      */
     public function verifyCompany(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         // get the company
         $companyDetails = $this->payroll_model
             ->getCompanyDetailsForGusto($companyId);
@@ -394,6 +403,7 @@ class Payrolls extends Admin_Controller
      */
     public function checkCompanyRequirements(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         //
         $returnArray = $this->payroll_model->checkCompanyRequirements($companyId);
         //
@@ -412,6 +422,7 @@ class Payrolls extends Admin_Controller
      */
     public function updatePaymentConfiguration(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         //
         $post = $this->input->post(null, true);
         //
@@ -441,6 +452,7 @@ class Payrolls extends Admin_Controller
      */
     public function updateMode(int $companyId)
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         //
         $post = $this->input->post(null, true);
         //
@@ -455,6 +467,7 @@ class Payrolls extends Admin_Controller
      */
     public function updatePrimaryAdmin(int $companyId): array
     {
+        $this->payroll_model->loadPayrollHelper($companyId);
         //
         $post = $this->input->post(null, true);
         //
