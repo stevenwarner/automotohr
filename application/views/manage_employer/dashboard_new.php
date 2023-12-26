@@ -127,7 +127,7 @@
                                             <?php } ?>
                                         <?php } ?>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
-                                            <?php $this->load->view('attendance/2022/clock_green_display'); ?>
+                                            
                                             <?php if ($task_management_module_status == 1) { ?>
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
@@ -533,33 +533,6 @@
                                 </div>
                             --><?php /*} */ ?>
                                     <!--15-->
-
-                                    <?php if (check_access_permissions_for_view($security_details, 'attendance_management')) { ?>
-                                        <?php $data['session'] = $this->session->userdata('logged_in'); ?>
-                                        <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
-                                        <?php //if(in_array($company_sid, explode(',', TEST_COMPANIES))) { 
-                                        ?>
-                                        <?php if (in_array($company_sid, array())) { ?>
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                <div class="dash-box">
-                                                    <div class="dashboard-widget-box">
-                                                        <figure><i class="fa fa-calendar"></i></figure>
-                                                        <h2 class="post-title">
-                                                            <a href="<?php echo base_url('attendance'); ?>">Time &
-                                                                Attendance</a>
-                                                        </h2>
-                                                        <div class="count-box">
-                                                            <small>&nbsp;</small>
-                                                        </div>
-                                                        <div class="button-panel">
-                                                            <a href="<?php echo base_url('attendance'); ?>" class="site-btn">Manage</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php } ?>
-                                    <?php } ?>
-                                    <!--16-->
 
                                     <?php if ($EmsStatus == 1) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -972,7 +945,7 @@
 
 
 
-                                    <?php $this->load->view('attendance/2022/clock_green'); ?>
+                                    <?php $this->load->view('v1/attendance/partials/dashboard_employer_tabs'); ?>
 
                                     <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEYS)) { ?>
                                         <!-- Employee Surveyss -->

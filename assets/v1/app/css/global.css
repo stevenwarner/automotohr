@@ -39,8 +39,8 @@
 	padding-right: 3px;
 }
 .btn-orange:hover,
-.btn-orange:focus,
-.btn-orange.active {
+.btn-orange.active,
+.btn-orange:focus {
 	color: var(--txColor);
 	background-color: var(--bgOrangeColorSoft) !important;
 }
@@ -310,7 +310,7 @@ button.ajs-button.ajs-cancel {
 }
 
 /* Panel */
-.panel-body {
+.panel-body{
 	min-height: 200px;
 }
 .panel-heading-text {
@@ -318,7 +318,7 @@ button.ajs-button.ajs-cancel {
 	margin: 0;
 	padding-top: 10px;
 }
-.panel-heading-text i {
+.panel-heading-text i{
 	margin-right: 10px;
 }
 .panel-default .panel-heading {
@@ -660,6 +660,17 @@ button.ajs-button.ajs-cancel {
 
 /*  */
 .csVerticalAlignMiddle {
+    color: #fd7a2a;
+	left: 0 !important;
+}
+.csPageLoader div p {
+    margin-top: 10px;
+	padding: 10px;
+    font-size: 16px;
+}
+
+/*  */
+.csVerticalAlignMiddle{
 	vertical-align: middle !important;
 }
 
@@ -801,4 +812,6 @@ div.ui-timepicker-container.ui-timepicker-standard {
 .schedule-item-selectable.active{
 	background: var(--bgOrangeColorSoft) !important;
 	color: var(--txColor) !important;
+.mt-5{
+	margin-top: 5px;
 }

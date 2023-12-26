@@ -498,14 +498,24 @@ if (!function_exists('getApiAccessToken')) {
     function getApiAccessToken(int $companyId, int $employeeId)
     {
         // return the data
-        return get_instance()->db
+        $CI = &get_instance();
+        // load the library
+        $CI->load->library('Api_auth');
+        // call the event
+        $CI->api_auth->checkAndLogin(
+            $companyId,
+            $employeeId
+        );
+        //
+        $token = $CI->db
             ->select('access_token')
             ->where([
                 'company_sid' => $companyId,
                 'user_sid' => $employeeId
             ])
             ->get('api_credentials')
-            ->row_array()['access_token'];
+            ->row_array();
+        return $token['access_token'];
     }
 }
 
@@ -1855,6 +1865,78 @@ if (!function_exists('acceptGustoAgreement')) {
         }
 
         return false;
+    }
+}
+
+
+if (!function_exists("getCommonFiles")) {
+    /**
+     * get the CSS and Js defaults
+     *
+     * @param string $type
+     * @return array
+     */
+    function getCommonFiles(string $type = "css"): array
+    {
+        // set css defaults
+        $arr["css"] = [
+            "v1/plugins/daterangepicker/css/daterangepicker.min",
+            "v1/plugins/alertifyjs/css/alertify.min",
+        ];
+        // set js defaults
+        $arr["js"] = [
+            "v1/plugins/daterangepicker/daterangepicker.min",
+            "v1/plugins/alertifyjs/alertify.min",
+        ];
+        //
+        return $arr[$type];
+    }
+}
+
+if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
+    function onlyPlusAndPayPlanCanAccess()
+    {
+        if (!isPayrollOrPlus()) {
+            get_instance()->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+    }
+}
+
+
+if (!function_exists("getFile")) {
+    /**
+     * get the plugin
+     *
+     * @param string $index
+     * @param string $type
+     * @return string
+     */
+    function getPlugin(string $index, string $type): string
+    {
+        // set plugins array
+        $plugins = [];
+        // set alertify plugin
+        $plugins["alertify"] = [
+            "css" =>
+            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            "js" =>   main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
+        ];
+        // set alertify plugin
+        $plugins["validator"] = [
+            "js" =>  main_url("public/v1/plugins/validator/jquery.validate.min.js?v=3.0")
+        ];
+        $plugins["additionalMethods"] = [
+            "js" =>  main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
+        ];
+
+        // set date range picker plugin
+        $plugins["daterangepicker"] = [
+            "css" => main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
+            "js" =>  main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
+        ];
+        //
+        return $plugins[$index][$type] ?? "";
     }
 }
 

@@ -244,6 +244,7 @@
 ], "public/v1/app/", "global", true); ?>
 <!--  -->
 <?= $appJs ?? ""; ?>
+<?php $this->load->view("v1/attendance/footer_scripts"); ?>
 </body>
 
 </html>
