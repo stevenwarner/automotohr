@@ -324,6 +324,14 @@ class Dashboard extends Public_Controller
                 }
             }
 
+            // state forms from group
+            $this->hr_documents_management_model
+            ->assignGroupDocumentsToUser(
+                $employer_id,
+                "employee",
+                0
+            );
+
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
                 $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -836,6 +844,14 @@ class Dashboard extends Public_Controller
                     $documents_count++;
                 }
             }
+
+            // state forms from group
+            $this->hr_documents_management_model
+            ->assignGroupDocumentsToUser(
+                $employer_id,
+                "employee",
+                0
+            );
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //

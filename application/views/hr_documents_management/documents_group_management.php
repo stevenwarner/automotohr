@@ -79,6 +79,10 @@
                                                     $group_doc_count = $group_doc_count + 1;
                                                     $group_doc_name = $group_doc_name . "&rarr; Dependents<br>";
                                                 }
+                                                if (json_decode($group['state_forms_json'], true)) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; State Forms<br>";
+                                                }
 
                                                 $groups_dociments = get_all_group_documents($group['sid']);
 
@@ -98,11 +102,11 @@
                                             <td><?php echo html_entity_decode($group['description']); ?></td>
                                             <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
                                             <td>
-                                                    <a id='<?php echo $group['sid']; ?>' ><b>Total: <?php echo $group_doc_count; ?></b></a>
-                                                    <span id='docdetails_<?php echo $group['sid']; ?>' > <?php echo $group_doc_name; ?></span>
+                                                <a id='<?php echo $group['sid']; ?>'><b>Total: <?php echo $group_doc_count; ?></b></a>
+                                                <span id='docdetails_<?php echo $group['sid']; ?>'> <?php echo $group_doc_name; ?></span>
                                             </td>
                                             <td>
-                                                <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1 || $group['drivers_license'] == 1 || $group['occupational_license'] == 1 || $group['emergency_contacts'] == 1 || $group['dependents'] == 1) { ?>
+                                                <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1 || $group['drivers_license'] == 1 || $group['occupational_license'] == 1 || $group['emergency_contacts'] == 1 || $group['dependents'] == 1 || json_decode($group['state_forms_json'], true)) { ?>
                                                     <button onclick="func_assign_document_group(<?php echo $group['sid']; ?>)" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                 <?php } else { ?>
                                                     No Document Found
@@ -242,9 +246,9 @@
                         var j = 1;
 
                         arr[0] = {
-                                value: '-1',
-                                text: 'All'
-                            }
+                            value: '-1',
+                            text: 'All'
+                        }
 
                         for (var i = 0; i < employees.length; i++) {
                             arr[j++] = {
@@ -264,5 +268,4 @@
         });
         $('#assign_group_sid').val(group_sid);
     }
-
 </script>

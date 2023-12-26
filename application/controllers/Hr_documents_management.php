@@ -3590,6 +3590,14 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
+            // state forms from group
+            $this->hr_documents_management_model
+            ->assignGroupDocumentsToUser(
+                $user_sid,
+                $user_type,
+                $sendGroupEmail
+            );
+
             if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
                 $hf = message_header_footer(
@@ -5482,6 +5490,14 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
+            // state forms from group
+            $this->hr_documents_management_model
+            ->assignGroupDocumentsToUser(
+                $employer_sid,
+                "employee",
+                $sendGroupEmail
+            );
+
             if ($sendGroupEmail == 1) {
                 //
                 $hf = message_header_footer(
@@ -7226,11 +7242,11 @@ class Hr_documents_management extends Public_Controller
                     'not_completed'
                 );
                 $stateForms = $this->hr_documents_management_model
-                ->getCompanyStateForms(
-                    $company_sid,
-                    $employee_id,
-                    "employee"
-                );
+                    ->getCompanyStateForms(
+                        $company_sid,
+                        $employee_id,
+                        "employee"
+                    );
 
                 $data["userNotCompletedStateForms"] = $stateForms["not_completed"];
                 $this->load->view('main/header', $data);
@@ -8271,7 +8287,11 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
+            $data["companyStateForms"] = $this->hr_documents_management_model
+                ->getCompanyStateForm();
+
             $data['group'] = $group;
+            $data['selected_state_forms'] = $group["state_forms_json"] ? json_decode($group["state_forms_json"], true) : [];
             $data['group_name'] = $group['name'];
             $data['assigned_documents'] = $assigned_documents;
             $data['documents'] = $documents;
@@ -8285,6 +8305,7 @@ class Hr_documents_management extends Public_Controller
                 $assign_documents = $this->input->post('documents');
                 $assign_system_documents = $this->input->post('system_documents');
                 $general_documents = $this->input->post('general_documents');
+                $stateForms = $this->input->post('state_forms');
                 $this->hr_documents_management_model->unassign_system_document_from_group($group_sid);
 
                 if (!empty($assign_system_documents)) {
@@ -8316,6 +8337,16 @@ class Hr_documents_management extends Public_Controller
                         //
                         $this->hr_documents_management_model->assign_system_document_2_group($group_sid, $upd);
                     }
+                }
+
+                if ($stateForms) {
+                    $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
+                        "state_forms_json" => json_encode($stateForms)
+                    ]);
+                } else {
+                     $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
+                        "state_forms_json" => json_encode([])
+                    ]);
                 }
 
                 $this->hr_documents_management_model->delete_document_2_group($group_sid);
@@ -14247,14 +14278,19 @@ class Hr_documents_management extends Public_Controller
             $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $companyEmployeesForVerification);
             $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $companyEmployeesForVerification);
             $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, [], $companyEmployeesForVerification);
+            $pendingStateForms = $this->varification_document_model->getPendingStateForms(
+                $company_sid,
+                'employee',
+                false,
+                $companyEmployeesForVerification
+            );
             //
             $data['managers'] = array_merge(
                 $employee_pending_w4,
                 $employee_pending_i9,
-                $employee_pending
+                $employee_pending,
+                $pendingStateForms
             );
-
-            //
 
             if ($type == 'export') {
                 ob_start();
@@ -16671,10 +16707,10 @@ class Hr_documents_management extends Public_Controller
         $this->resp();
     }
 
-    function getStateFormPreview (
+    function getStateFormPreview(
         int $userId,
         string $userType,
-        int $formId   
+        int $formId
     ) {
         //
         if (!$this->session->userdata('logged_in')) {
@@ -16738,13 +16774,13 @@ class Hr_documents_management extends Public_Controller
         // 
         $view = $this->load->view('v1/forms/' . $form["form_slug"] . '_preview', $data, true);
         //  
-        return SendResponse(200, ['view' => $view, 'title' => $form['title']]); 
+        return SendResponse(200, ['view' => $view, 'title' => $form['title']]);
     }
 
-    function stateFormPrintAndDownload (
+    function stateFormPrintAndDownload(
         int $userId,
         string $userType,
-        int $formId, 
+        int $formId,
         string $location,
         string $action
     ) {
@@ -16811,7 +16847,7 @@ class Hr_documents_management extends Public_Controller
         $data["location"] = $location;
         $data['formName'] = $form["form_slug"];
         // 
-        $this->load->view('v1/forms/' . $form["form_slug"] . '_print_download',$data);
+        $this->load->view('v1/forms/' . $form["form_slug"] . '_print_download', $data);
     }
 
     function getEmployerSection(

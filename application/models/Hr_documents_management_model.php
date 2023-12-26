@@ -10538,8 +10538,9 @@ class Hr_documents_management_model extends CI_Model
      * @param string $userType
      * @param int $formId
      * @param string $eventType
+     * @param bool $returnJson Optional
      */
-    public function handleStateForm(int $userId, string $userType, int $formId, string $eventType)
+    public function handleStateForm(int $userId, string $userType, int $formId, string $eventType, bool $returnJson = true)
     {
         $msg = "You have successfully assigned the form.";
         //
@@ -10626,12 +10627,17 @@ class Hr_documents_management_model extends CI_Model
             }
         }
 
-        return SendResponse(
-            200,
-            [
-                "msg" => $msg
-            ]
-        );
+        if ($returnJson) {
+
+            return SendResponse(
+                200,
+                [
+                    "msg" => $msg
+                ]
+            );
+        } else {
+            return $msg;
+        }
     }
 
     /**
@@ -10670,6 +10676,20 @@ class Hr_documents_management_model extends CI_Model
         );
         //
         return $form;
+    }
+
+    /**
+     * get the company state form
+     *
+     * @return array
+     */
+    public function getCompanyStateForm(): array
+    {
+        // get the form
+        return $this->db
+            ->select("sid, title")
+            ->get("state_forms")
+            ->result_array();
     }
 
     /**
@@ -10799,5 +10819,204 @@ class Hr_documents_management_model extends CI_Model
             ->where('sid', $employeeId)
             ->get("users")
             ->row_array();
+    }
+
+    /**
+     * Assign the group documents to user
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param int $sendGroupEmail
+     * @return array
+     */
+    public function assignGroupDocumentsToUser(
+        int $userId,
+        string $userType,
+        int $sendGroupEmail
+    ): array {
+        // extract the group ids
+        $groupIds = $this->getUserAssignedGroups($userId, $userType);
+        // no groups found
+        if (!$groupIds) {
+            return ["errors" => ["No groups assigned."]];
+        }
+        // get the group documents
+        $documents = $this->getGroupsDocuments($groupIds, $userId, $userType);
+        //
+        if ($documents["state_forms"]) {
+            $this->handleUserStateForms(
+                $documents["state_forms"],
+                $userId,
+                $userType
+            );
+        }
+        //
+        return $documents;
+    }
+
+    /**
+     * get assigned groups of user
+     *
+     * @param int $userId
+     * @param string $userType
+     * @return array
+     */
+    private function getUserAssignedGroups(
+        int $userId,
+        string $userType
+    ): array {
+        // get the user groups with documents id
+        $groups =
+            $this->db
+            ->select("group_sid")
+            ->where($userType === "applicant" ? "applicant_sid" : "employer_sid", $userId)
+            ->where("assign_status", 1)
+            ->get("documents_group_2_employee")
+            ->result_array();
+        // no groups found
+        if (!$groups) {
+            return [];
+        }
+        // extract the group ids
+        return array_column(
+            $groups,
+            "group_sid"
+        );
+    }
+
+    /**
+     * get assigned groups documents
+     *
+     * @param array $groupIds
+     * @param int $userId
+     * @param string $userType
+     * @return array
+     */
+    private function getGroupsDocuments(
+        array $groupIds,
+        int $userId,
+        string $userType
+    ): array {
+        // get the group documents
+        $groups = $this->db
+            ->select("
+                w4,
+                w9,
+                i9,
+                eeoc,
+                dependents,
+                direct_deposit,
+                drivers_license,
+                emergency_contacts,
+                occupational_license,
+                state_forms_json
+            ")
+            ->where_in("sid", $groupIds)
+            ->where("status", 1)
+            ->get("documents_group_management")
+            ->result_array();
+        // check for empty documents
+        if (!$groups) {
+            return [];
+        }
+        // set default array
+        $returnArray = [];
+        $returnArray["w4"] = 0;
+        $returnArray["w9"] = 0;
+        $returnArray["i9"] = 0;
+        $returnArray["eeoc"] = 0;
+        $returnArray["dependents"] = 0;
+        $returnArray["direct_deposit"] = 0;
+        $returnArray["drivers_license"] = 0;
+        $returnArray["emergency_contacts"] = 0;
+        $returnArray["occupational_license"] = 0;
+        $returnArray["state_forms"] = [];
+        $returnArray["documents"] = [];
+        //
+        foreach ($groups as $v0) {
+            // for w4
+            $returnArray["w4"] = $returnArray["w4"] == 0 && $v0["w4"] != 0 ? 1 : $returnArray["w4"];
+            // for w9
+            $returnArray["w9"] = $returnArray["w9"] == 0 && $v0["w9"] != 0 ? 1 : $returnArray["w9"];
+            // for i9
+            $returnArray["i9"] = $returnArray["i9"] == 0 && $v0["i9"] != 0 ? 1 : $returnArray["i9"];
+            // for eeoc
+            $returnArray["eeoc"] = $returnArray["eeoc"] == 0 && $v0["eeoc"] != 0 ? 1 : $returnArray["eeoc"];
+            // for dependents
+            $returnArray["dependents"] = $returnArray["dependents"] == 0 && $v0["dependents"] != 0 ? 1 : $returnArray["dependents"];
+            // for direct_deposit
+            $returnArray["direct_deposit"] = $returnArray["direct_deposit"] == 0 && $v0["direct_deposit"] != 0 ? 1 : $returnArray["direct_deposit"];
+            // for drivers_license
+            $returnArray["drivers_license"] = $returnArray["drivers_license"] == 0 && $v0["drivers_license"] != 0 ? 1 : $returnArray["drivers_license"];
+            // for emergency_contacts
+            $returnArray["emergency_contacts"] = $returnArray["emergency_contacts"] == 0 && $v0["emergency_contacts"] != 0 ? 1 : $returnArray["emergency_contacts"];
+            // for occupational_license
+            $returnArray["occupational_license"] = $returnArray["occupational_license"] == 0 && $v0["occupational_license"] != 0 ? 1 : $returnArray["occupational_license"];
+            // state forms
+            $stateForms = json_decode(
+                $v0["state_forms_json"],
+                true
+            );
+            //
+            if ($stateForms) {
+                $returnArray["state_forms"] =
+                    array_merge(
+                        $returnArray["state_forms"],
+                        $stateForms
+
+                    );
+            }
+        }
+        // lets get the group documents
+        $documents = $this->db->select("document_sid")
+            ->where_in("group_sid", $groupIds)
+            ->get("documents_2_group")
+            ->result_array();
+        // when no documents found
+        if (!$documents) {
+            return $returnArray;
+        }
+        // extract document ids
+        $returnArray["documents"] = array_unique(
+            array_column(
+                $documents,
+                "document_sid"
+            )
+        );
+        //
+        return $returnArray;
+    }
+
+    /**
+     * check and assign state forms
+     *
+     * @param array $stateFormIds
+     * @param int $userId
+     * @param string $userType
+     * @return array
+     */
+    private function handleUserStateForms(
+        array $stateFormIds,
+        int $userId,
+        string $userType
+    ) {
+        //
+        foreach ($stateFormIds as $v0) {
+            $statusArray = $this->checkStateFormAssignStatus(
+                $v0,
+                $userId,
+                $userType
+            );
+            // only it was not asigned
+            if ($statusArray["status"] === "not_assigned") {
+                $this->handleStateForm(
+                    $userId,
+                    $userType,
+                    $v0,
+                    "assign",
+                    false
+                );
+            }
+        }
     }
 }
