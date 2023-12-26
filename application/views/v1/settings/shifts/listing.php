@@ -121,36 +121,34 @@ if ($filter["mode"] === "month") {
 
                                 <div class="row" id="TableData" style="display: none;">
                                     <br>
-                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <div class="csBalanceBox" style="display: block;">
-                                            <div class="col-sm-5">
-                                                <label>Employees</label>
-                                                <select id="js-filter-employee_ooo" class="js-filter-employee" multiple="multiple">
-                                                    <option value="all">All</option>
-                                                    <?php foreach ($allemployees as $empRow) { ?>
-                                                        <option value="<?php echo $empRow['userId']; ?>"><?php echo $empRow['first_name'] . ' ' . $empRow['last_name'] . ' (' . $empRow['job_title'] . ')  [' . $empRow['access_level'] . '] (' . $empRow['timezone'] . ')'; ?></option>
-                                                    <?php } ?>
 
-                                                </select>
-                                            </div>
+                                    <div class="col-sm-5">
+                                        <label>Employees</label>
+                                        <select id="js-filter-employee_ooo" class="js-filter-employee" multiple="multiple">
+                                            <option value="all">All</option>
+                                            <?php foreach ($allemployees as $empRow) { ?>
+                                                <option value="<?php echo $empRow['userId']; ?>" <?= in_array($empRow["userId"], $filter_employees) ? "selected" : ""; ?>>
+                                                    <?= remakeEmployeeName($empRow); ?>
+                                                </option>
+                                            <?php } ?>
 
-                                            <div class="col-sm-5">
-                                                <label>Team:</label>
-                                                <br>
-                                                <?= get_company_departments_teams_dropdown($company_sid, 'teamId'); ?>
-                                            </div>
-
-                                            <div class="col-sm-2 text-right">
-                                                <span class="pull-right">
-                                                    <br>
-                                                    <button id="btn_apply" type="button" class="btn btn-orange js-apply-filter-btn">APPLY</button>
-                                                    <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
-                                                </span>
-                                            </div>
-                                            <div class="clearfix"></div>
-                                        </div>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label>Departments / Teams</label>
+                                        <br>
+                                        <?= get_company_departments_teams_dropdown($company_sid, 'teamId', $filter_team ?? 0); ?>
+                                    </div>
+                                    <div class="col-sm-2 text-right">
+                                        <span class="pull-right">
+                                            <br>
+                                            <button id="btn_apply" type="button" class="btn btn-orange js-apply-filter-btn">APPLY</button>
+                                            <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
+                                        </span>
                                     </div>
                                 </div>
+
+                                <br />
 
                                 <!--  -->
                                 <div class="row">

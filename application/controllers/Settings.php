@@ -3533,7 +3533,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/schedules/add"
-        ], "public/v1/schedules/add/", "add_schedule", false);
+        ], "public/v1/schedules/add/", "add_schedule", true);
         // load views
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/add');
@@ -3783,7 +3783,7 @@ class Settings extends Public_Controller
     public function overTimeRules(string $status = "active")
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3885,7 +3885,7 @@ class Settings extends Public_Controller
     public function manageShifts()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3911,7 +3911,7 @@ class Settings extends Public_Controller
             $toggleFilter = false;
         }
         $employeesArray = explode(',', $employees);
-        $team = $this->input->get("team");
+        $team = $this->input->get("team", true);
         $employeeFilter['employees'] = $employeesArray;
         $employeeFilter['team'] = $team;
 
@@ -3966,9 +3966,10 @@ class Settings extends Public_Controller
 
         $data["company_sid"] =  $loggedInCompany["sid"];
         $data["filter_team"] = $team;
-        $data["filter_employees"] = $employees;
-        $data["filter_toggle"] = $toggleFilter ;
-        
+        $data["filter_employees"] =
+            explode(",", $employees);
+        $data["filter_toggle"] = $toggleFilter;
+
 
 
         // get off and holidays
@@ -3995,7 +3996,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", false);
+        ], "public/v1/shifts/", "main", true);
 
         //
         $this->load->view('main/header', $data);
@@ -4009,7 +4010,7 @@ class Settings extends Public_Controller
     public function manageShiftBreaks()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -4042,7 +4043,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/break"
-        ], "public/v1/shifts/", "break", false);
+        ], "public/v1/shifts/", "break", true);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/breaks');
@@ -4055,7 +4056,7 @@ class Settings extends Public_Controller
     public function manageShiftTemplates()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -4103,7 +4104,7 @@ class Settings extends Public_Controller
     public function manageJobSites()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
