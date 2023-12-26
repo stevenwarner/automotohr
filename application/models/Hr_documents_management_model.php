@@ -2451,7 +2451,7 @@ class Hr_documents_management_model extends CI_Model
             foreach ($stateForms as $form) {
                 $userId = $form["user_sid"];
                 //
-                $datediff = $now - strtotime($employee_general['created_at']);
+                $datediff = $now - strtotime($form['created_at']);
                 $days = round($datediff / (60 * 60 * 24));
                 //
                 $pendingDocuments[$userId]['Documents'][] = array(
