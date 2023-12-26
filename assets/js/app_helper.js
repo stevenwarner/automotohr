@@ -399,3 +399,111 @@ if (typeof getRandomCode === "undefined") {
 		return dt.getTime() + Math.floor(Math.random() * 5000000);
 	}
 }
+
+if (typeof closeAlert === "undefined") {
+	/**
+	 * Generates a random number
+	 * @returns
+	 */
+	function closeAlert(reference) {
+		reference.setting("closable", true).close();
+	}
+}
+
+if (typeof formArrayToObj === "undefined") {
+	/**
+	 * Converts form array to object
+	 * @param {array} formArray
+	 * @param {bool} toPlainObject
+	 * @returns
+	 */
+	function formArrayToObj(formArray, toPlainObject = false) {
+		//
+		if (toPlainObject) {
+			let formObj = {};
+			formArray.map(function (v) {
+				formObj[v.name] = v.value;
+			});
+			return formObj;
+		}
+		//
+		let formData = new FormData();
+		//
+		formArray.map(function (value) {
+			formData.append(value.name, nl2br(value.value));
+		});
+		//
+		return formData;
+	}
+}
+
+if (typeof nl2br === "undefined") {
+	function nl2br(str, is_xhtml) {
+		if (typeof str === "undefined" || str === null) {
+			return "";
+		}
+		str = str.replace(/<br(.*?)>/gi, "");
+		let breakTag =
+			is_xhtml || typeof is_xhtml === "undefined" ? "<br />" : "<br>";
+		return (str + "").replace(
+			/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g,
+			"$1" + breakTag + "$2"
+		);
+	}
+}
+
+if (typeof isValidFile === "undefined") {
+	/**
+	 * Check if the uploaded file is valid or not
+	 * @returns
+	 */
+	function isValidFile(fileObj) {
+		return Object.keys(fileObj).length !== 0 && fileObj.hasError === false;
+	}
+}
+
+if (window.location.refresh === undefined) {
+	/**
+	 * Check if the uploaded file is valid or not
+	 * @returns
+	 */
+	window.location.refresh = function () {
+		window.location.href = window.location.href;
+	};
+}
+
+/**
+ * validation addons
+ */
+if (jQuery !== undefined && jQuery.validator !== undefined) {
+	// check time in 12 hours format
+	jQuery.validator.addMethod(
+		"timeIn12Format",
+		function (value) {
+			return value.match(/^\d{1,2}:\d{1,2}\s(pm|am)$/gi);
+		},
+		"The time format is invalid."
+	);
+	// value should be greater than 0
+	jQuery.validator.addMethod(
+		"greaterThanZero",
+		function (value) {
+			return value > 0;
+		},
+		"The value must be greater than zero."
+	);
+}
+
+if (typeof getSearchParam === "undefined") {
+	/**
+	 * get the search parameter
+	 * @param {string} index
+	 * @returns
+	 */
+	function getSearchParam(index) {
+		//
+		const param = new URLSearchParams(window.location.search);
+		//
+		return param.get(index) || false;
+	}
+}

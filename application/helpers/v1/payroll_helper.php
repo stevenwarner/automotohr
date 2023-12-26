@@ -435,6 +435,8 @@ if (!function_exists('getUrl')) {
         $urls['createEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
         $urls['UpdateEmployeeTerminationOnGusto'] = 'v1/terminations/' . ($key);
         $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
+        // location minimum wages
+        $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
 
         return getCreds("AHR")->GUSTO->DEMO->URL . $urls[$index];
     }

@@ -1804,16 +1804,16 @@ if (!function_exists('findCompanyUser')) {
             'userName' => ''
         ];
         //
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('sid, first_name, last_name');
         $CI->db->where('parent_sid', $company_sid);
         $CI->db->where('email', $email);
         $record_row = $CI->db->get('users')->row_array();
 
-        if(!empty($record_row)){
+        if (!empty($record_row)) {
             $result['profilePath'] = base_url('employee_profile') . '/' . $record_row['sid'];
             $result['userType'] = "employee";
-            $result['userName'] = $record_row['first_name'].' '.$record_row['last_name'];
+            $result['userName'] = $record_row['first_name'] . ' ' . $record_row['last_name'];
         } else {
             $CI->db->select('sid, first_name, last_name, email');
             $CI->db->where('email', $email);
@@ -1822,10 +1822,10 @@ if (!function_exists('findCompanyUser')) {
             $record_arr = $record_obj->row_array();
             $record_obj->free_result();
 
-            if(!empty($record_arr)) {
-                $result['userName'] = $record_arr['first_name'].' '.$record_arr['last_name'];
+            if (!empty($record_arr)) {
+                $result['userName'] = $record_arr['first_name'] . ' ' . $record_arr['last_name'];
                 $portal_job_applications_sid = $record_arr['sid'];
-                
+
                 $CI->db->select('sid');
                 $CI->db->order_by('sid', 'desc');
                 $CI->db->limit(1);
@@ -1833,12 +1833,12 @@ if (!function_exists('findCompanyUser')) {
                 $obj = $CI->db->get('portal_applicant_jobs_list');
                 $result_arr = $obj->row_array();
                 $obj->free_result();
-                
-                if(!empty($result_arr)) {
-                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr['sid'];
+
+                if (!empty($result_arr)) {
+                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/' . $result_arr['sid'];
                     $result['userType'] = 'applicant';
                 }
-            } 
+            }
         }
 
         return $result;
@@ -1848,14 +1848,13 @@ if (!function_exists('findCompanyUser')) {
 //
 
 if (!function_exists('acceptGustoAgreement')) {
-  
+
     function acceptGustoAgreement($name)
     {
         if ($name != '' && $name != null) {
         }
-    
-        return false;
 
+        return false;
     }
 }
 
@@ -1884,7 +1883,7 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
 
         // get new department id
         $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
-        
+
         // when both ids are equal
         if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
             return false;
@@ -2010,5 +2009,235 @@ if (!function_exists('image_url')) {
         $imagePath = base_url('assets/images/'.$path);
 
         return $imagePath;
+    }
+}
+if (!function_exists("getFile")) {
+    /**
+     * get the plugin
+     *
+     * @param string $index
+     * @param string $type
+     * @return string
+     */
+    function getPlugin(string $index, string $type): string
+    {
+        // set plugins array
+        $plugins = [];
+        // set alertify plugin
+        $plugins["alertify"] = [
+            "css" =>
+            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            "js" =>   main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
+        ];
+        // set alertify plugin
+        $plugins["validator"] = [
+            "js" =>  main_url("public/v1/plugins/validator/jquery.validate.min.js?v=3.0")
+        ];
+        $plugins["additionalMethods"] = [
+            "js" =>  main_url("public/v1/plugins/validator/additional-methods.min.js?v=3.0")
+        ];
+
+        // set date range picker plugin
+        $plugins["daterangepicker"] = [
+            "css" => main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
+            "js" =>  main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0")
+        ];
+
+        // set time picker
+        $plugins["timepicker"] = [
+            "css" => main_url("public/v1/plugins/timepicker/css/jquery.timepicker.min.css?v=3.0"),
+            "js" =>  main_url("public/v1/plugins/timepicker/jquery.timepicker.min.js?v=3.0")
+        ];
+        // set google map
+        $plugins["google_map"] = [
+            "js" =>  main_url("public/v1/plugins/google_map/main.min.js?v=1.0")
+        ];
+        //
+        return $plugins[$index][$type] ?? "";
+    }
+}
+
+
+if (!function_exists("makeAddress")) {
+    /**
+     * makes address
+     *
+     * @param array $address
+     * @return string
+     */
+    function makeAddress(array $address): string
+    {
+        //
+        $str = $address["street_1"];
+        if ($address["street_2"]) {
+            $str .= ", " . $address["street_2"];
+        }
+        $str .= ", " . $address["city"];
+        $str .= ", " . $address["state_code"];
+        $str .= ", " . $address["zip_code"];
+        //
+        return $str;
+    }
+}
+
+
+if (!function_exists("getMonthDatesByYearAndMonth")) {
+    /**
+     * get the dates array of a year and month
+     * @param int $year
+     * @param int $month
+     * @param string $format
+     * @return array
+     */
+    function getMonthDatesByYearAndMonth(int $year, int $month, string $format = "D d"): array
+    {
+        // Create a DateTime object for the first day of the month
+        $firstDay = new DateTime("$year-$month-01");
+        // Get the number of days in the month
+        $lastDay = new DateTime($firstDay->format('Y-m-t'));
+        // Initialize an array to store weeks and their corresponding dates
+        $dates = [];
+        // Loop through the days of the month
+        while ($firstDay <= $lastDay) {
+            $dates[] = $firstDay->format($format);
+            // Move to the next day
+            $firstDay->modify('+1 day');
+        }
+        // return dates array
+        return $dates;
+    }
+}
+
+
+if (!function_exists("getWeekDates")) {
+    /**
+     * get current week or two week dates
+     *
+     * @param bool $nextTwoWeeks Optional
+     * @param bool $format Optional
+     * @return
+     */
+    function getWeekDates(bool $nextTwoWeeks = false, string $format = DB_DATE): array
+    {
+        // Get the current date
+        $today = new DateTime();
+
+        // Set the time to the beginning of the day
+        $today->setTime(0, 0, 0);
+
+        // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+        $currentDayOfWeek = $today->format('w');
+
+        // Calculate the difference between the current day of the week and Monday (1)
+        $daysUntilMonday = ($currentDayOfWeek + 6) % 7;
+
+        // Calculate the start date of the current week (Monday)
+        $startDate = clone $today;
+        $startDate->sub(new DateInterval('P' . $daysUntilMonday . 'D'));
+
+        // Calculate the end date of the current week (Sunday)
+        $endDate = clone $startDate;
+        $endDate->add(new DateInterval('P6D'));
+
+        // Calculate the start date of the next week (Monday)
+        $nextWeekStartDate = clone $startDate;
+        $nextWeekStartDate->add(new DateInterval('P7D'));
+
+        // Calculate the end date of the next week (Sunday)
+        $nextWeekEndDate = clone $nextWeekStartDate;
+        $nextWeekEndDate->add(new DateInterval('P6D'));
+
+        if ($nextTwoWeeks) {
+            return [
+                'current_week' => [
+                    'start_date' => $startDate->format($format),
+                    'end_date' => $endDate->format($format),
+                ],
+                'next_week' => [
+                    'start_date' => $nextWeekStartDate->format($format),
+                    'end_date' => $nextWeekEndDate->format($format),
+                ],
+            ];
+        } else {
+            return [
+                'start_date' => $startDate->format($format),
+                'end_date' => $endDate->format($format),
+            ];
+        }
+    }
+}
+
+
+if (!function_exists("getDatesInRange")) {
+    /**
+     * get dates range
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $format Optional
+     * @return array
+     */
+    function getDatesInRange(string $startDate, string $endDate, string $format = DB_DATE): array
+    {
+        $dates = [];
+        $currentDate = new DateTime($startDate);
+
+        while ($currentDate <= new DateTime($endDate)) {
+            $dates[] = $currentDate->format($format);
+            $currentDate->add(new DateInterval('P1D'));
+        }
+
+        return $dates;
+    }
+}
+
+
+if (!function_exists("getTimeBetweenTwoDates")) {
+    function getTimeBetweenTwoDates(string $date1, string $date2): string
+    {
+        //
+        $date1 = new DateTime($date1);
+        $date2 = new DateTime($date2);
+
+        // Calculate the time difference
+        return $date2->getTimestamp() - $date1->getTimestamp();
+    }
+}
+
+if (!function_exists("convertSecondsToTime")) {
+    function convertSecondsToTime(string $differenceInSeconds): string
+    {
+        // Convert seconds to hours and minutes
+        $hours = floor($differenceInSeconds / 3600);
+        $minutes = floor(($differenceInSeconds % 3600) / 60);
+
+
+        return $hours . "h" . ($minutes > 0 ? " " . $minutes . 'm' : "");
+    }
+}
+
+if (!function_exists("getSundaysAndSaturdays")) {
+    function getSundaysAndSaturdays($startDate, $endDate)
+    {
+        $sundaysSaturdays = [];
+
+        // Create DateTime objects from the input strings
+        $startDateTime = new DateTime($startDate);
+        $endDateTime = new DateTime($endDate);
+
+        // Iterate through the days
+        $currentDate = $startDateTime;
+        while ($currentDate <= $endDateTime) {
+            // Check if the current day is Sunday or Saturday
+            $dayOfWeek = $currentDate->format('N');
+            if ($dayOfWeek == 7 /* Sunday */ || $dayOfWeek == 6 /* Saturday */) {
+                $sundaysSaturdays[] = $currentDate->format('Y-m-d');
+            }
+
+            // Move to the next day
+            $currentDate->modify('+1 day');
+        }
+
+        return $sundaysSaturdays;
     }
 }

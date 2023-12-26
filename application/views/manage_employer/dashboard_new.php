@@ -807,6 +807,25 @@
                                         </div>
                                     <?php } ?>
 
+                                    <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE) && isPayrollOrPlus()) { ?>
+                                        <!-- Schedule -->
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title" style="margin: 2px 0;">
+                                                        <a href="<?=base_url("settings/shifts/manage");?>">Shifts</a>
+                                                    </h2>
+                                                    <div class="button-panel">
+                                                        <a href="<?=base_url("settings/shifts/manage");?>" class="site-btn">Manage</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
                                     <?php if (checkIfAppIsEnabled('timeoff') && $pto_user_access['dashboard'] == 1) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -1018,7 +1037,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?> 
+                                        <?php } ?>
                                         <!--  -->
                                         <?php if ($haveSubordinate == "yes") { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -1041,7 +1060,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        <?php } ?> 
+                                        <?php } ?>
                                         <!--  -->
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -1055,7 +1074,7 @@
                                                         <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>  
+                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>
                                                     </div>
                                                 </div>
                                             </div>

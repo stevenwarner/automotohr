@@ -2009,3 +2009,48 @@ $route["state/forms/(:num)/employer/(:num)/(:any)"]["post"] = "Hr_documents_mana
 $route["hr_documents_management/get_state_employer_section/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$3/$1/$2";
 $route["hr_documents_management/get_assigned_state_form/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getStateFormPreview/$1/$2/$3";
 $route["hr_documents_management/state_form_action/(:num)/(:any)/(:num)/(:any)/(:any)"]["get"] = "Hr_documents_management/stateFormPrintAndDownload/$1/$2/$3/$4/$5";
+// Schedule routes
+$route["schedules"]["get"] = "settings/schedules";
+$route["schedules/active"]["get"] = "settings/schedules/active";
+$route["schedules/inactive"]["get"] = "settings/schedules/inactive";
+// get deadline date
+$route["schedules/deadline/(:any)"]["get"] = "settings/getScheduleDeadlineDate/$1";
+// add
+$route["schedules/add"]["get"] = "settings/addSchedule";
+$route["schedules"]["post"] = "settings/processSchedule";
+// edit
+$route["schedules/edit/(:num)"]["get"] = "settings/editSchedule/$1";
+$route["schedules/edit/(:num)"]["post"] = "settings/processEditSchedule/$1";
+// Overtime rules routes
+$route["overtimerules"]["get"] = "Settings/overtimeRules";
+$route["settings/page/(:any)/(:num)"]["get"] = "Settings/getPageBySlug/$1/$2";
+$route["overtimerules"]["post"] = "Settings/processOvertimeRules";
+$route["overtimerules/(:num)"]["delete"] = "Settings/processDeleteOvertimeRules/$1";
+// minimum wages
+$route["minimum_wages"]["get"] = "Settings/minimumWages";
+// schedule settings
+$route["settings/shifts/manage"]["get"] = "Settings/manageShifts";
+$route["settings/shifts/template/apply"]["post"] = "Settings/processApplyTemplateProcess";
+$route["settings/shifts/breaks"]["get"] = "Settings/manageShiftBreaks";
+$route["settings/shifts/breaks"]["post"] = "Settings/processShiftBreak";
+$route["settings/shifts/breaks/(:num)"]["delete"] = "Settings/processDeleteShiftBreak/$1";
+// single shift
+$route["settings/shifts/single/create"]["post"] = "Settings/processCreateSingleShift";
+// templates
+$route["settings/shifts/templates"]["get"] = "Settings/manageShiftTemplates";
+$route["settings/shifts/templates"]["post"] = "Settings/processShiftTemplate";
+$route["settings/shifts/template/(:num)"]["delete"] = "Settings/processDeleteShiftTemplate/$1";
+
+// job sites
+$route["settings/job_sites"]["get"] = "Settings/manageJobSites";
+$route["settings/job_sites"]["post"] = "Settings/processJobSites";
+$route["settings/job_sites/(:num)"]["delete"] = "Settings/processDeleteJobSite/$1";
+
+//
+$route["settings/shifts/multyshift/apply"]["post"] = "Settings/processApplyMulitProcess";
+$route["settings/shifts/multyshift/delete"]["post"] = "Settings/processDeleteMulitProcess";
+$route["settings/shifts/multyshift/copy"]["post"] = "Settings/processCopyMulitProcess";
+
+
+
+

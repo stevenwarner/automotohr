@@ -1,3 +1,6 @@
+<?php if ($sanitizedView) {
+    $this->load->view("main/header_sanitized");
+} else {?>
 <?php $load_view = isset($load_view) ? $load_view : false; ?>
 
 <?php if (!$load_view) { ?>
@@ -137,6 +140,9 @@
         <?php if (in_array('performance-management', $this->uri->segment_array())) { ?>
             <?php $this->load->view("{$pp}styles"); ?>
         <?php } ?>
+        
+        <!-- Add global - v1-->
+        <link rel="stylesheet" href="<?=base_url("assets/v1/app/css/global.css");?>">
 
         <!-- Modal -->
         <div class="modal fade" id="popupmodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2020,3 +2026,4 @@
                                 .error();
                         }
                     </script>
+                    <?php } ?>

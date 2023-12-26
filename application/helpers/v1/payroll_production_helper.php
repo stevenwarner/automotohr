@@ -430,6 +430,13 @@ if (!function_exists('getUrl')) {
 
         // off cycle payrolls
         $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
+        //
+        $urls['createEmployeeTerminationOnGusto'] = 'v1/employees/' . ($key) . '/terminations';
+        $urls['createEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
+        $urls['UpdateEmployeeTerminationOnGusto'] = 'v1/terminations/' . ($key);
+        $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
+        // location minimum wages
+        $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
         
         return getCreds("AHR")->GUSTO->PRODUCTION->URL . $urls[$index];
     }

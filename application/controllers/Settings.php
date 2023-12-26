@@ -3461,4 +3461,1457 @@ class Settings extends Public_Controller
             redirect('login', 'refresh');
         }
     }
+
+    /**
+     * list company page schedules
+     *
+     * @param string $status Optional
+     */
+    public function schedules(string $status = "active")
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Pay Schedules | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedules
+        $data["schedules"] = $this->schedule_model
+            ->getCompanySchedules(
+                $loggedInCompany["sid"],
+                $status === "active" ? 1 : 0
+            );
+        $data["status"] = $status;
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/index');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * add a pay schedule
+     */
+    public function addSchedule()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Add Company Pay Schedule | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("additionalMethods", "js"),
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/schedules/add"
+        ], "public/v1/schedules/add/", "add_schedule", true);
+        // load views
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/add');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * edit a pay schedule
+     *
+     * @param int $scheduleId
+     */
+    public function editSchedule(int $scheduleId)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedule
+        $data["schedule"] = $this->schedule_model
+            ->getScheduleById(
+                $scheduleId
+            );
+        if (!$data["schedule"]) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Schedule not found.");
+            return redirect("schedules");
+        }
+        $data["title"] = "Edit Company Pay Schedule | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("additionalMethods", "js"),
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/schedules/edit"
+        ], "public/v1/schedules/edit/", "edit_schedule", true);
+        // load views
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/schedules/edit');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * get schedule deadline date
+     *
+     * @param string $firstPayDate
+     */
+    public function getScheduleDeadlineDate(string $firstPayDate)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the company holidays
+        $holidaysDates = $this->schedule_model->getCompanyHolidays($loggedInCompany["sid"]);
+        //
+        if ($firstPayDate < getSystemDate("Y-m-d")) {
+            // use next pay date
+        }
+        // get the deadline date
+        $deadlineDate = getPastDate(
+            $firstPayDate,
+            $holidaysDates,
+            2
+        );
+        // send back the response
+        return SendResponse(
+            200,
+            [
+                "deadlineDate" => $deadlineDate
+            ]
+        );
+    }
+
+    /**
+     * process schedule
+     */
+    public function processSchedule()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // add validation rules
+        $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
+        $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
+        // for dealine
+        if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
+            $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
+        }
+        // for days 1 and 2
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
+            $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        }
+        $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // prepare array
+        $ins = [];
+        $ins["company_sid"] = $loggedInCompany["sid"];
+        $ins["frequency"] = $post["pay_frequency"];
+        $ins["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $ins["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        $ins["custom_name"] = $post["name"];
+        $ins["day_1"] = $post["day_1"];
+        $ins["day_2"] = $post["day_2"];
+        $ins["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
+        $ins["active"] = $post["status"];
+        $ins["updated_at"] = $ins["created_at"] = getSystemDate();
+        //
+        $this->db->insert(
+            "companies_pay_schedules",
+            $ins
+        );
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully added a new schedule."
+        ]);
+    }
+
+    /**
+     * process edit schedule
+     */
+    public function processEditSchedule(int $scheduleId)
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // add validation rules
+        $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
+        $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
+        // for dealine
+        if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
+            $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
+        }
+        // for days 1 and 2
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
+            $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        }
+        $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // prepare array
+        $upd = [];
+        $upd["frequency"] = $post["pay_frequency"];
+        $upd["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $upd["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        $upd["custom_name"] = $post["name"];
+        $upd["day_1"] = $post["day_1"];
+        $upd["day_2"] = $post["day_2"];
+        $upd["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
+        $upd["active"] = $post["status"];
+        $upd["updated_at"] = getSystemDate();
+        //
+        $this->db
+            ->where("sid", $scheduleId)
+            ->update(
+                "companies_pay_schedules",
+                $upd
+            );
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully updated schedule."
+        ]);
+    }
+
+    /**
+     * validate site date
+     *
+     * @param string $siteDate
+     * @return bool
+     */
+    public function validDate(string $siteDate): bool
+    {
+        $this->form_validation->set_message("validDate", "The date format is invalid for %s.");
+        return preg_match("/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/", $siteDate);
+    }
+
+
+    /**
+     * list company overtime rules
+     *
+     * @param string $status Optional
+     */
+    public function overTimeRules(string $status = "active")
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Overtime rules | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // get the schedules
+        $data["overtimeRules"] = $this->overtime_rules_model
+            ->getOvertimeRules(
+                $loggedInCompany["sid"],
+                $status === "active" ? 1 : 0
+            );
+        $data["status"] = $status;
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/overtimerules/main"
+        ], "public/v1/overtimerules/", "main", true);
+        // load views
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/overtime_rules/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * list company minimum wages
+     */
+    public function minimumWages()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Company Minimum Wages | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Minimum_wages_model", "minimum_wages_model");
+        // get ones from Gusto
+        // $this->minimum_wages_model->sync(
+        //     $loggedInCompany["sid"]
+        // );
+        // get the wages
+        $data["wages"] = $this->minimum_wages_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/minimum_wages/main"
+        ], "public/v1/minimum_wages/", "main", true);
+        // load views
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/minimum_wages/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shifts
+     */
+    public function manageShifts()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get all active employees
+
+
+        $employees = $this->input->get("employees");
+        $toggleFilter = true;
+        if ($employees == '') {
+            $employees = 'all';
+            $toggleFilter = false;
+        }
+        $employeesArray = explode(',', $employees);
+        $team = $this->input->get("team", true);
+        $employeeFilter['employees'] = $employeesArray;
+        $employeeFilter['team'] = $team;
+
+
+
+        $data["employees"] = $this->shift_model->getCompanyEmployees(
+            $loggedInCompany["sid"],
+            $employeeFilter
+        );
+
+        $data["allemployees"] = $this->shift_model->getCompanyEmployees(
+            $loggedInCompany["sid"]
+        );
+
+        //
+        $data["filter"] = [];
+        // set the mode
+        $data["filter"]["mode"] = $this->input->get("mode", true) ?? "month";
+
+        if ($data["filter"]["mode"] === "week") {
+            // get the current week dates
+            $weekDates = getWeekDates(false, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates['end_date'];
+        } elseif ($data["filter"]["mode"] === "two_week") {
+            // get the current week dates
+            $weekDates = getWeekDates(true, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates["current_week"]['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates["next_week"]['end_date'];
+        } else {
+            $data["filter"]["month"] = $this->input->get("month", true) ?? getSystemDate("m");
+            $data["filter"]["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
+        }
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get the shifts
+
+
+        $data["shifts"] = $this->shift_model->getShifts(
+            $data["filter"],
+            array_column($data["employees"], "userId")
+        );
+
+        $data["company_sid"] =  $loggedInCompany["sid"];
+        $data["filter_team"] = $team;
+        $data["filter_employees"] =
+            explode(",", $employees);
+        $data["filter_toggle"] = $toggleFilter;
+
+
+
+        // get off and holidays
+        $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
+            $loggedInCompany["sid"],
+            $data["filter"]
+        );
+
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/main"
+        ], "public/v1/shifts/", "main", true);
+
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/listing');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shift breaks
+     */
+    public function manageShiftBreaks()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts Breaks | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the records
+        $data["records"] = $this->shift_break_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/break"
+        ], "public/v1/shifts/", "break", true);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/breaks');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage shift templates
+     */
+    public function manageShiftTemplates()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts Templates | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // get the records
+        $data["records"] = $this->shift_template_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/templates"
+        ], "public/v1/shifts/", "templates", true);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/templates');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * Manage job sites
+     */
+    public function manageJobSites()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Job Sites | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["records"] = $this->job_sites_model
+            ->get($loggedInCompany["sid"]);
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/job_sites/main"
+        ], "public/v1/job_sites/", "main", true);
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/job_sites/main');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * get the page by slug
+     *
+     * @method pageOvertimeRules
+     * @param string $slug
+     * @param int    $pageId
+     * @return array
+     */
+    public function getPageBySlug(string $slug, int $pageId)
+    {
+        // check and generate error for session
+        checkAndGetSession();
+        // convert the slug to function
+        $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
+        // get the data
+        $this->$func(
+            $slug,
+            $pageId
+        );
+    }
+
+    /**
+     * get the page by slug
+     *
+     * @return array
+     */
+    public function processOvertimeRules()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("rule_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("overtime_multiplier", "Overtime rate", "trim|xss_clean|required");
+        $this->form_validation->set_rules("double_overtime_multiplier", "Double time rate", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // call the function
+        $this->overtime_rules_model
+            ->processOvertimeRules(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     * delete the overtime rule
+     *
+     * @param int $ruleId
+     * @return array
+     */
+    public function processDeleteOvertimeRules(int $ruleId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+        // call the function
+        $this->overtime_rules_model
+            ->processDeleteOvertimeRules(
+                $session["company_detail"]["sid"],
+                $ruleId
+            );
+    }
+
+    /**
+     * process shift break
+     *
+     * @return array
+     */
+    public function processShiftBreak()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("break_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("break_duration", "Duration", "trim|xss_clean|required");
+        $this->form_validation->set_rules("break_type", "Type", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // call the function
+        $this->shift_break_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete shift break
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteShiftBreak(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // call the function
+        $this->shift_break_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+    /**
+     * process  shift templates
+     *
+     * @return array
+     */
+    public function processShiftTemplate()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("start_time", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "Duration", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // call the function
+        $this->shift_template_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete shift template
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteShiftTemplate(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        // call the function
+        $this->shift_template_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+    /**
+     * process job site
+     *
+     * @return array
+     */
+    public function processJobSites()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("site_name", "Name", "trim|xss_clean|required");
+        $this->form_validation->set_rules("street_1", "Street 1", "trim|xss_clean|required");
+        $this->form_validation->set_rules("city", "City", "trim|xss_clean|required");
+        $this->form_validation->set_rules("state", "State", "trim|xss_clean|required");
+        $this->form_validation->set_rules("zip_code", "Zip code", "trim|xss_clean|required|numeric|exact_length[5]");
+        $this->form_validation->set_rules("site_radius", "Radius", "trim|xss_clean|required");
+        $this->form_validation->set_rules("lat", "Latitude", "trim|xss_clean|required");
+        $this->form_validation->set_rules("lng", "Longitude", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // call the function
+        $this->job_sites_model
+            ->process(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     *  process delete job site
+     *
+     * @param int $breakId
+     * @return array
+     */
+    public function processDeleteJobSite(int $breakId)
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // call the function
+        $this->job_sites_model
+            ->delete(
+                $session["company_detail"]["sid"],
+                $breakId
+            );
+    }
+
+    /**
+     * process apply template
+     *
+     * @return array
+     */
+    public function processApplyTemplateProcess()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("schedule_id", "Schedule", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_date", "Start date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_date", "End date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->applyTemplate(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    /**
+     * set page overtime rules
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageOvertimeRules(string $pageSlug, int $pageId): array
+    {
+        // set default array
+        $data = [];
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Overtime_rules_model", "overtime_rules_model");
+            // check and generate error for session
+            $session = checkAndGetSession();
+            //
+            $data["overtimeRule"] = $this->overtime_rules_model
+                ->getOvertimeRuleById(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["overtimeRule"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the rule."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/overtime_rules/partials/" . (!$pageId ? "add" : "edit"), $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set shift break page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageShifts(string $pageSlug, int $pageId): array
+    {
+        // set default array
+        $data = [];
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Shift_break_model", "shift_break_model");
+            // check and generate error for session
+            $session = checkAndGetSession();
+            //
+            $data["record"] = $this->shift_break_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the break."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_break", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set shift break page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageShiftTemplate(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set default array
+        $data = [];
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+
+        // check if page id i set
+        if ($pageId) {
+            // load schedule model
+            $this->load->model("v1/Shift_template_model", "shift_template_model");
+
+            //
+            $data["record"] = $this->shift_template_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the shift template."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/" . (!$pageId ? "add" : "edit") . "_template", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * set job site page
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageJobSite(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set default array
+        $data = [];
+        //
+        $data["states"] = $this->db
+            ->select("sid, state_name, state_code")
+            ->where("active", 1)
+            ->where("country_sid", 227)
+            ->get("states")
+            ->result_array();
+        // check if page id i set
+        if ($pageId) {
+            // load job site model
+            $this->load->model("v1/Job_sites_model", "job_sites_model");
+            //
+            $data["record"] = $this->job_sites_model
+                ->getSingle(
+                    $session["company_detail"]["sid"],
+                    $pageId
+                );
+            //
+            $data["return"] = [
+                "lat" => (float)$data["record"]["lat"],
+                "lng" => (float)$data["record"]["lng"],
+            ];
+            //
+            if (!$data["record"]) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "System failed to verify the job site."
+                        ]
+                    ]
+                );
+            }
+        }
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/job_sites/partials/" . (!$pageId ? "add" : "edit") . "_job_site", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * Apply shift template
+     *
+     * @param string $pageSlug
+     * @param string $pageId
+     * @return array
+     */
+    private function pageApplyShiftTemplates(string $pageSlug, int $pageId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["templates"] = $this->shift_template_model->get($session["company_detail"]["sid"]);
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/apply_shift_templates", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * Create a single shift template
+     *
+     * @param string $pageSlug
+     * @param string $employeeId
+     * @return array
+     */
+    private function pageCreateSingleShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["employees"] = $this->shift_model->getCompanySingleEmployee(
+            $session["company_detail"]["sid"],
+            $employeeId
+        );
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/create_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    /**
+     * Create a single shift template
+     *
+     * @param string $pageSlug
+     * @param string $shiftId
+     * @return array
+     */
+    private function pageEditSingleShift(string $pageSlug, int $shiftId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shift"] = $this->shift_model->getSingle(
+            $session["company_detail"]["sid"],
+            $shiftId
+        );
+
+
+        // alert($shiftId);
+        if (empty($data["shift"])) {
+            return SendResponse(400, [
+                'errors' => ["Shift Not Found"]
+            ]);
+        }
+
+        $employeeId =  $data["shift"]["employee_sid"];
+        // _e($employeeId,true,true);
+        //
+        $data["employees"] = $this->shift_model->getCompanySingleEmployee(
+            $session["company_detail"]["sid"],
+            $employeeId
+        );
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/edit_single_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+
+    //
+    private function pageCreateMultiShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/create_multi_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+
+    //
+    private function pageDeleteMultiShift(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/delete_multi_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+
+    private function pageCopyShift(string $pageSlug, int $employeeId): array
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+
+        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // get the breaks
+        $data["breaks"] = $this->shift_break_model
+            ->get($session["company_detail"]["sid"]);
+        // load schedule model
+        $this->load->model("v1/Job_sites_model", "job_sites_model");
+        // get the records
+        $data["jobSites"] = $this->job_sites_model
+            ->get($session["company_detail"]["sid"]);
+        //
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/copy_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+
+    /**
+     * process  shift templates
+     *
+     * @return array
+     */
+    public function processCreateSingleShift()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_employee", "Employee", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date", "Shift date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("start_time", "Start time", "trim|xss_clean|required");
+        $this->form_validation->set_rules("end_time", "End time", "trim|xss_clean|required");
+        // run the validation
+
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->processCreateSingleShift(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+
+    //
+    public function processApplyMulitProcess()
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->applyMultiShifts(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+
+
+    public function processCopyMulitProcess()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("last_shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("last_shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->copyMultiShifts(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+
+
+    //
+    public function processDeleteMulitProcess()
+    {
+
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set up the rules
+        $this->form_validation->set_rules("shift_date_from", "From Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("shift_date_to", "To Date", "trim|xss_clean|required");
+        $this->form_validation->set_rules("employees[]", "Employees", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->deleteMultiShifts(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
 }

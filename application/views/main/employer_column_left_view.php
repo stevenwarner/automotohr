@@ -255,9 +255,9 @@
         <?php  } ?>
 
 
-        <?php 
-            $comply_status = $data["session"]["company_detail"]["complynet_status"];
-            $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
+        <?php
+        $comply_status = $data["session"]["company_detail"]["complynet_status"];
+        $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
         ?>
         <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
             <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
@@ -337,6 +337,56 @@
                     } ?> href="<?php echo base_url("govt_user"); ?>">
                     <figure><i class="fa fa-user"></i></figure>Government Agent Credentials
                     </a>
+            </li>
+        <?php  } ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('schedules')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("schedules"); ?>">
+                    <figure><i class="fa fa-calendar"></i></figure>Company Pay Schedules
+                </a>
+            </li>
+        <?php  } ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('overtimerules')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("overtimerules"); ?>">
+                    <figure><i class="fa fa-cogs"></i></figure>Company Overtime Rules
+                </a>
+            </li>
+        <?php  } ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li class="hidden">
+                <a <?php if (strpos(base_url(uri_string()), site_url('minimum_wages')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("minimum_wages"); ?>">
+                    <figure><i class="fa fa-money"></i></figure>Company Minimum Wages
+                </a>
+            </li>
+        <?php  } ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('settings/job_sites')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("settings/job_sites"); ?>">
+                    <figure><i class="fa fa-map"></i></figure>Company Job Sites
+                </a>
+            </li>
+        <?php  } ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('settings/shifts/manage')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url("settings/shifts/manage"); ?>">
+                    <figure><i class="fa fa-calendar"></i></figure>Manage Shifts
+                </a>
             </li>
         <?php  } ?>
 

@@ -244,6 +244,34 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                            <li>
+                                                <a href="<?= base_url("schedules"); ?>">
+                                                    Company Pay Schedules
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("overtimerules"); ?>">
+                                                    Company Overtime Rules
+                                                </a>
+                                            </li>
+                                            <li class="hidden">
+                                                <a href="<?= base_url("minimum_wages"); ?>">
+                                                    Company Minimum Wages
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("settings/job_sites"); ?>">
+                                                    Manage Job Sites
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("settings/shifts/manage"); ?>">
+                                                    Manage Shifts
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <?php
                                             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
