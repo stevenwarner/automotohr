@@ -311,15 +311,7 @@ $company_sid = $session['employer_detail']['parent_sid'];*/
                                         Powered by <img src="<?php echo AWS_S3_BUCKET_URL . $footer_logo_image; ?>" class="upload_logo_image">
                                     <?php } ?>
                                 </a>
-                            <?php } else { ?>
-                                <a class="footer-text-logo" href="<?php echo STORE_FULL_URL_SSL; ?>" target="_blank">
-                                    Powered by <img src="<?php echo base_url('assets/images/ahr_logo_138X80_wt.png'); ?>">
-                                <?php } else if ($footer_logo_type == 'text') { ?>
-                                    Powered by <?php echo $footer_logo_text; ?>
-                                <?php } else if ($footer_logo_type == 'logo') { ?>
-                                    Powered by <img src="<?php echo AWS_S3_BUCKET_URL . $footer_logo_image; ?>" class="upload_logo_image">
-                                <?php } ?>
-                            </a>
+                           
                         <?php } else { ?>
                             <a class="footer-text-logo" href="<?php echo STORE_FULL_URL_SSL; ?>" target="_blank">
                                 Powered by <img src="<?php echo base_url('assets/images/ahr_logo_138X80_wt.png'); ?>">
