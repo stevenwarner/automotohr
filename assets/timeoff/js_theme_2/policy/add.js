@@ -24,6 +24,7 @@ $(function () {
         carryOverCheck: 'no',
         carryOverType: 'hours',
         carryOverVal: 0,
+        carryOverCycle: 1,
         negativeBalanceCheck: 'no',
         negativeBalanceVal: 0,
         negativeBalanceType: 'hours',
@@ -351,6 +352,8 @@ $(function () {
             policyOBJ.carryOverVal = getField('#js-carryover-cap-add');
             // Set policy carryover
             policyOBJ.carryOverType = getField('#js-accrual-carryover-type option:selected');
+            // Set policy carryover
+            policyOBJ.carryOverCycle = getField('#js-carryover-cycle-add');
             //
             saveStep(policyOBJ);
             //

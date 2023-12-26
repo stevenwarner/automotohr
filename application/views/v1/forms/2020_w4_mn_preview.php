@@ -399,7 +399,8 @@
 </head>
 
 <body class="A4">
-    <div class="sheet padding-10mm" id="jsStateFormPDF" style="width: 900px; margin: 0 auto;">
+    <div class="sheet padding-10mm" id="jsStateFormPDF" style="width: 900px; margin: 0 auto; padding: 0px 16px!important;">
+        <img style="margin-top:10px !important; margin-left: 16px !important; width: 150px !important; height:150px !important;" src="<?php echo base_url('public/v1/images/forms/w4_mn.svg'); ?>" alt="">
         <h2 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">2020 W-4MN, Minnesota Employee
             Withholding Allowance/Exemption Certificate</h2>
         <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employees</h3>
@@ -410,17 +411,17 @@
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s First Name and Initial Last Name</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['first_name']) ? $formData['first_name']: ''?> <?php echo !empty($formData['initial']) ? $formData['initial']: ''?>, <?php echo !empty($formData['last_name']) ? $formData['last_name']: ''?>" readonly style="border: none; font-weight: bold; display: block;"/>
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['first_name']) ? $formData['first_name']: ''?> <?php echo !empty($formData['initial']) ? $formData['initial']: ''?>, <?php echo !empty($formData['last_name']) ? $formData['last_name']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/>
                 </td>
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s Social Security</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['ssn']) ? $formData['ssn']: ''?>" readonly style="border: none; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['ssn']) ? $formData['ssn']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/> 
                 </td>
             </tr>
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Permanent Address</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['street_1']) ? $formData['street_1']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['street_1']) ? $formData['street_1']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/> 
                 </td>
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt"
                     rowspan="2">
@@ -435,11 +436,7 @@
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">City State ZIP Code</p>
-                    <div style="display:inline-block;">
-                        <span>City State ZIP Code</span>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['city']) ? $formData['city']: ''?>, <?php echo !empty($formData['state']) ? $formData['state']: ''?>, <?php echo !empty($formData['zip_code']) ? $formData['zip_code']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
-                    </div>
-                    
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['city']) ? $formData['city']: ''?>, <?php echo !empty($formData['state']) ? $formData['state']: ''?>, <?php echo !empty($formData['zip_code']) ? $formData['zip_code']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/>
                 </td>
             </tr>
         </table>
@@ -656,21 +653,18 @@
             </p>
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <table style="border-collapse:collapse;margin-left:6pt" cellspacing="0">
-                <tr style="height:30pt">
-                    <td
-                        style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <tr style="height:48pt">
+                    <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                         <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s Signature</p>
                         <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $signature; ?>" />
                     </td>
-                    <td
-                        style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <td style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                         <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Date</p>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['date']) ? $formData['date']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                        <input class="plane-input" type="text" value="<?php echo !empty($formData['date']) ? $formData['date']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
                     </td>
-                    <td
-                        style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                    <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                         <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Daytime Phone</p>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['day_time_phone_number']) ? $formData['day_time_phone_number']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                        <input class="plane-input" type="text" value="<?php echo !empty($formData['day_time_phone_number']) ? $formData['day_time_phone_number']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
                     </td>
                 </tr>
             </table>
@@ -681,6 +675,8 @@
         <p class="s5" style="padding-left: 6pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
             Employees: <span class="s1">Give the completed form to your employer.</span>
         </p>
+
+        
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employers</h3>
         <p class="s1" style="padding-left: 6pt;text-indent: 0pt;line-height: 10pt;text-align: left;">See the employer
@@ -693,25 +689,24 @@
             <tr style="height:30pt">
                 <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Name of Employer</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name']: ''?> <?php echo !empty($employerData['last_name']) ? $employerData['last_name']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name']: ''?> <?php echo !empty($employerData['last_name']) ? $employerData['last_name']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
                 </td>
-                <td
-                    style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                <td style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Federal Employer ID Number (FEIN)</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn']: ''?>" readonly style="border: none; width: 90%; font-weight: bold; display: block; margin-left: 5px;"/> 
                 </td>
-                <td
-                    style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                     <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Minnesota Tax ID Number</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number']: ''?>" readonly style="border: none; width: 100%; display: block;"/>
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number']: '111'?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/>
                 </td>
             </tr>
         </table>
         <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Address City State ZIP Code</p>
         <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">
-            <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1']: ''?>, <?php echo !empty($employerData['city']) ? $employerData['city']: ''?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+            <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1']: ''?>, <?php echo !empty($employerData['city']) ? $employerData['city']: ''?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block;"/> 
         </p>
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
+       
         <p style="padding-left: 6pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h1 style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Form W-4MN Employee Instructions
@@ -726,6 +721,7 @@
             complete Form W-4MN?</h4>
         <p style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Complete Form W-4MN if any of the
             following apply:</p>
+
         <ul id="l8">
             <li data-list-text="•">
                 <p style="padding-top: 2pt;padding-left: 15pt;text-indent: -10pt;text-align: left;">You begin employment</p>
@@ -1025,6 +1021,12 @@
             <li data-list-text="•">
                 <p class="s16" style="padding-top: 3pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">Phone:
                     651-282-9999 or 1-800-657-3594 (toll-free)</p>
+            </li>        
+        </ul>
+        
+      
+        <ul id="l8">  
+            <li data-list-text="•">     
                 <p class="s17" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Employer
                     instructions are on the next page.</p>
                 <h1 style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Form W-4MN Employer Instructions</h1>
@@ -1125,7 +1127,8 @@
             tax withholding, you will use Table 1 and the procedure under <b>Withholding Adjustment for Nonresident Alien
                 Employees </b>in IRS Publication 15-T to determine the correct Minnesota withholding tax. Do not use this
             procedure for nonresident alien students from India and business apprentices from India.</p>
-    </div>        
+          
+    </div>      
 </body>
 
 </html>

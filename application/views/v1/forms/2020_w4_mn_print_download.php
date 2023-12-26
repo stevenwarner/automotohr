@@ -399,7 +399,9 @@
 </head>
 
 <body class="A4">
-    <div class="sheet padding-10mm" id="jsStateFormPDF" style="width: 900px; margin: 0 auto;">
+    
+    <div class="sheet padding-10mm" id="jsStateFormPDF" style="width: 900px; margin: 0 auto; padding: 0px 16px!important;">
+        <img style="margin-top:10px !important; margin-left: 16px !important; width: 150px !important; height:150px !important;" src="<?php echo base_url('public/v1/images/forms/w4_mn.svg'); ?>" alt="">
         <h2 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">2020 W-4MN, Minnesota Employee
             Withholding Allowance/Exemption Certificate</h2>
         <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employees</h3>
@@ -410,17 +412,17 @@
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s First Name and Initial Last Name</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['first_name']) ? $formData['first_name']: ''?> <?php echo !empty($formData['initial']) ? $formData['initial']: ''?>, <?php echo !empty($formData['last_name']) ? $formData['last_name']: ''?>" readonly style="border: none; font-weight: bold; display: block;"/>
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['first_name']) ? $formData['first_name']: ''?> <?php echo !empty($formData['initial']) ? $formData['initial']: ''?>, <?php echo !empty($formData['last_name']) ? $formData['last_name']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/>
                 </td>
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s Social Security</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['ssn']) ? $formData['ssn']: ''?>" readonly style="border: none; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['ssn']) ? $formData['ssn']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/> 
                 </td>
             </tr>
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Permanent Address</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($formData['street_1']) ? $formData['street_1']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['street_1']) ? $formData['street_1']: ''?>" readonly style="border: none; font-weight: bold; display: block; margin-left: 5px; width: 90%;"/> 
                 </td>
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt"
                     rowspan="2">
@@ -435,11 +437,7 @@
             <tr style="height:30pt">
                 <td style="width:330pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">City State ZIP Code</p>
-                    <div style="display:inline-block;">
-                        <span>City State ZIP Code</span>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['city']) ? $formData['city']: ''?>, <?php echo !empty($formData['state']) ? $formData['state']: ''?>, <?php echo !empty($formData['zip_code']) ? $formData['zip_code']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
-                    </div>
-                    
+                    <input class="plane-input" type="text" value="<?php echo !empty($formData['city']) ? $formData['city']: ''?>, <?php echo !empty($formData['state']) ? $formData['state']: ''?>, <?php echo !empty($formData['zip_code']) ? $formData['zip_code']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/>
                 </td>
             </tr>
         </table>
@@ -657,20 +655,17 @@
             <p style="text-indent: 0pt;text-align: left;"><br /></p>
             <table style="border-collapse:collapse;margin-left:6pt" cellspacing="0">
                 <tr style="height:48pt">
-                    <td
-                        style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                         <p class="s2" style="text-indent: 0pt;text-align: left;">Employee’s Signature</p>
                         <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $signature; ?>" />
                     </td>
-                    <td
-                        style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                    <td style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                         <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Date</p>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['date']) ? $formData['date']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                        <input class="plane-input" type="text" value="<?php echo !empty($formData['date']) ? $formData['date']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
                     </td>
-                    <td
-                        style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                    <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                         <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Daytime Phone</p>
-                        <input class="plane-input" type="text" value="<?php echo !empty($formData['day_time_phone_number']) ? $formData['day_time_phone_number']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
+                        <input class="plane-input" type="text" value="<?php echo !empty($formData['day_time_phone_number']) ? $formData['day_time_phone_number']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
                     </td>
                 </tr>
             </table>
@@ -681,37 +676,38 @@
         <p class="s5" style="padding-left: 6pt;text-indent: 0pt;line-height: 8pt;text-align: left;">
             Employees: <span class="s1">Give the completed form to your employer.</span>
         </p>
-        <p style="text-indent: 0pt;text-align: left;"><br /></p>
-        <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employers</h3>
-        <p class="s1" style="padding-left: 6pt;text-indent: 0pt;line-height: 10pt;text-align: left;">See the employer
-            instructions to determine if you must send a copy of this form to the Minnesota Department of Revenue. If
-            required, enter your</p>
-        <p class="s1" style="padding-left: 6pt;text-indent: 0pt;line-height: 109%;text-align: left;">information below and
-            mail this form to the address in the instructions. (Incomplete forms are considered invalid.) We may assess a
-            $50 penalty for each required Form W-4MN not filed with us. Keep a copy for your records.</p>
-        <table style="border-collapse:collapse;margin-left:6pt" cellspacing="0">
-            <tr style="height:30pt">
-                <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s2" style="text-indent: 0pt;text-align: left;">Name of Employer</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name']: ''?> <?php echo !empty($employerData['last_name']) ? $employerData['last_name']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
-                </td>
-                <td
-                    style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                    <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Federal Employer ID Number (FEIN)</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
-                </td>
-                <td
-                    style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                    <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Minnesota Tax ID Number</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number']: ''?>" readonly style="border: none; width: 100%; display: block;"/>
-                </td>
-            </tr>
-        </table>
-        <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Address City State ZIP Code</p>
-        <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">
-            <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1']: ''?>, <?php echo !empty($employerData['city']) ? $employerData['city']: ''?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code']: ''?>" readonly style="border: none; width: 100%; display: block;"/> 
-        </p>
-        <p style="text-indent: 0pt;text-align: left;"><br /></p>
+
+        <?php if ($location == 'green') { ?>
+            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+            <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employers</h3>
+            <p class="s1" style="padding-left: 6pt;text-indent: 0pt;line-height: 10pt;text-align: left;">See the employer
+                instructions to determine if you must send a copy of this form to the Minnesota Department of Revenue. If
+                required, enter your</p>
+            <p class="s1" style="padding-left: 6pt;text-indent: 0pt;line-height: 109%;text-align: left;">information below and
+                mail this form to the address in the instructions. (Incomplete forms are considered invalid.) We may assess a
+                $50 penalty for each required Form W-4MN not filed with us. Keep a copy for your records.</p>
+            <table style="border-collapse:collapse;margin-left:6pt" cellspacing="0">
+                <tr style="height:30pt">
+                    <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s2" style="text-indent: 0pt;text-align: left;">Name of Employer</p>
+                        <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name']: ''?> <?php echo !empty($employerData['last_name']) ? $employerData['last_name']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/> 
+                    </td>
+                    <td style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                        <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Federal Employer ID Number (FEIN)</p>
+                        <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn']: ''?>" readonly style="border: none; width: 90%; font-weight: bold; display: block; margin-left: 5px;"/> 
+                    </td>
+                    <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                        <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Minnesota Tax ID Number</p>
+                        <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number']: '111'?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;"/>
+                    </td>
+                </tr>
+            </table>
+            <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Address City State ZIP Code</p>
+            <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">
+                <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1']: ''?>, <?php echo !empty($employerData['city']) ? $employerData['city']: ''?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code']: ''?>" readonly style="border: none; font-weight: bold; width: 90%; display: block;"/> 
+            </p>
+            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+        <?php } ?>
         <p style="padding-left: 6pt;text-indent: 0pt;line-height: 1pt;text-align: left;" />
         <p style="text-indent: 0pt;text-align: left;"><br /></p>
         <h1 style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Form W-4MN Employee Instructions
@@ -726,6 +722,7 @@
             complete Form W-4MN?</h4>
         <p style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Complete Form W-4MN if any of the
             following apply:</p>
+
         <ul id="l8">
             <li data-list-text="•">
                 <p style="padding-top: 2pt;padding-left: 15pt;text-indent: -10pt;text-align: left;">You begin employment</p>
@@ -1025,113 +1022,121 @@
             <li data-list-text="•">
                 <p class="s16" style="padding-top: 3pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">Phone:
                     651-282-9999 or 1-800-657-3594 (toll-free)</p>
-                <p class="s17" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Employer
-                    instructions are on the next page.</p>
-                <h1 style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Form W-4MN Employer Instructions</h1>
-                <h4 style="padding-top: 10pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What’s
-                    New?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Beginning in 2020, federal Form W-4 will not
-                    determine withholding allowances used to determine the amount of Minnesota withholding. Employees
-                    completing a 2020 Form W-4 will need to complete 2020 Form W-4MN to determine the appropriate amount of
-                    Minnesota withholding.</p>
-                <p class="s13" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Use the amount
-                    on line 1 of page 1 for calculating the withholding tax for your employees.</p>
-                <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">When
-                    does an employee complete Form W-4MN?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Employees complete Form
-                    W-4MN when they begin employment or when their personal or financial situation changes.</p>
-                <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">How
-                    should I determine Minnesota withholding for an employee that does not complete Form W-4MN?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If an employee does not complete Form W-4MN
-                    and they have a federal Form W-4 (from 2019 or prior years) on file, use the allowances on their federal
-                    Form W-4. If the employee does not complete a Form W-4MN, withhold Minnesota tax as if the employee is
-                    single with zero withholding allowances.</p>
-                <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
-                    my employee claims to be exempt from Minnesota withholding?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If your employee claims exempt from
-                    Minnesota withholding, they must complete Section 2 of Form W-4MN. They must provide you with a new Form
-                    W-4MN by February 15 of each year.</p>
-                <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">When do I need to submit
-                    copies of a Form W-4MN to the department?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">You must send copies of Form W-4MN to us if
-                    any of the following apply:</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee claims more
-                    than 10 Minnesota withholding allowances</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee checked box
-                    A or B under Section 2, and you reasonably expect the employee’s wages to exceed $200 per week</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">You believe the employee
-                    is not entitled to the number of allowances claimed</p>
-                <p style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">You do not need to submit
-                    Form W-4MN to us if the employee is asking to have additional Minnesota withholding deducted from their
-                    pay.</p>
-                <p style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">We may assess a $50 penalty
-                    for each Form W-4MN you do not file with us when required.</p>
-                <p style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Mail Forms W-4MN to:</p>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Minnesota Department of Revenue Mail Station
-                    6501</p>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">600 N. Robert St.</p>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">St. Paul, MN 55146-6501</p>
-                <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
-                    my employee is a resident of a reciprocity state?</h4>
-                <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If your employee is a resident of North
-                    Dakota or Michigan and they do not want you to withhold Minnesota tax from their wages, they must
-                    complete Form MWR, <i>Reciprocity Exemption/Affidavit of Residency</i>. They must complete a Form MWR by
-                    February 28 of each year, or within 30 days after they begin working or change their permanent
-                    residence. See Withholding Fact Sheet 20, <i>Reciprocity - Employee Withholding, </i>for more
-                    information.</p>
-                <h4 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">What is an invalid Form
-                    W-4MN?</h4>
-                <p style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">A Form W-4MN is considered
-                    invalid if any of the following apply:</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">There is any
-                    unauthorized change or addition to the form, including any change to the language certifying the form is
-                    correct</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee indicates
-                    in any way the form is false by the date they provide you with the form</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The form is incomplete
-                    or lacks the necessary signatures</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">Both Section 1 and
-                    Section 2 were completed</p>
-            </li>
-            <li data-list-text="•">
-                <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employer information
-                    is incomplete</p>
-            </li>
+            </li>        
         </ul>
-        <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if I
-            receive an invalid form?</h4>
-        <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Do not use the invalid form to calculate Minnesota
-            income tax withholding. Have the employee complete and submit a new Form W-4MN. If the employee does not give
-            you a valid form, and you have an earlier Form W-4MN or Form W-4 (from 2019 or prior years) from them, use the
-            earlier form to calculate their withholding. Otherwise, withhold taxes as if the employee is single and claiming
-            zero withholding allowances.</p>
-        <h4 style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if my
-            employee is a nonresident alien of the United States?</h4>
-        <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If the wages to this employee are subject to income
-            tax withholding, you will use Table 1 and the procedure under <b>Withholding Adjustment for Nonresident Alien
-                Employees </b>in IRS Publication 15-T to determine the correct Minnesota withholding tax. Do not use this
-            procedure for nonresident alien students from India and business apprentices from India.</p>
-    </div>    
+        
+        <?php if ($location == 'green') { ?> 
+            <ul id="l8">  
+                <li data-list-text="•">     
+                    <p class="s17" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Employer
+                        instructions are on the next page.</p>
+                    <h1 style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Form W-4MN Employer Instructions</h1>
+                    <h4 style="padding-top: 10pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What’s
+                        New?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Beginning in 2020, federal Form W-4 will not
+                        determine withholding allowances used to determine the amount of Minnesota withholding. Employees
+                        completing a 2020 Form W-4 will need to complete 2020 Form W-4MN to determine the appropriate amount of
+                        Minnesota withholding.</p>
+                    <p class="s13" style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Use the amount
+                        on line 1 of page 1 for calculating the withholding tax for your employees.</p>
+                    <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">When
+                        does an employee complete Form W-4MN?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Employees complete Form
+                        W-4MN when they begin employment or when their personal or financial situation changes.</p>
+                    <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">How
+                        should I determine Minnesota withholding for an employee that does not complete Form W-4MN?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If an employee does not complete Form W-4MN
+                        and they have a federal Form W-4 (from 2019 or prior years) on file, use the allowances on their federal
+                        Form W-4. If the employee does not complete a Form W-4MN, withhold Minnesota tax as if the employee is
+                        single with zero withholding allowances.</p>
+                    <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
+                        my employee claims to be exempt from Minnesota withholding?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If your employee claims exempt from
+                        Minnesota withholding, they must complete Section 2 of Form W-4MN. They must provide you with a new Form
+                        W-4MN by February 15 of each year.</p>
+                    <h4 style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">When do I need to submit
+                        copies of a Form W-4MN to the department?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">You must send copies of Form W-4MN to us if
+                        any of the following apply:</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee claims more
+                        than 10 Minnesota withholding allowances</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee checked box
+                        A or B under Section 2, and you reasonably expect the employee’s wages to exceed $200 per week</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">You believe the employee
+                        is not entitled to the number of allowances claimed</p>
+                    <p style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">You do not need to submit
+                        Form W-4MN to us if the employee is asking to have additional Minnesota withholding deducted from their
+                        pay.</p>
+                    <p style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">We may assess a $50 penalty
+                        for each Form W-4MN you do not file with us when required.</p>
+                    <p style="padding-top: 5pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Mail Forms W-4MN to:</p>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Minnesota Department of Revenue Mail Station
+                        6501</p>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">600 N. Robert St.</p>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">St. Paul, MN 55146-6501</p>
+                    <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
+                        my employee is a resident of a reciprocity state?</h4>
+                    <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If your employee is a resident of North
+                        Dakota or Michigan and they do not want you to withhold Minnesota tax from their wages, they must
+                        complete Form MWR, <i>Reciprocity Exemption/Affidavit of Residency</i>. They must complete a Form MWR by
+                        February 28 of each year, or within 30 days after they begin working or change their permanent
+                        residence. See Withholding Fact Sheet 20, <i>Reciprocity - Employee Withholding, </i>for more
+                        information.</p>
+                    <h4 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">What is an invalid Form
+                        W-4MN?</h4>
+                    <p style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">A Form W-4MN is considered
+                        invalid if any of the following apply:</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">There is any
+                        unauthorized change or addition to the form, including any change to the language certifying the form is
+                        correct</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employee indicates
+                        in any way the form is false by the date they provide you with the form</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The form is incomplete
+                        or lacks the necessary signatures</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">Both Section 1 and
+                        Section 2 were completed</p>
+                </li>
+                <li data-list-text="•">
+                    <p style="padding-top: 3pt;padding-left: 17pt;text-indent: -12pt;text-align: left;">The employer information
+                        is incomplete</p>
+                </li>
+            </ul>
+            <h4 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if I
+                receive an invalid form?</h4>
+            <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Do not use the invalid form to calculate Minnesota
+                income tax withholding. Have the employee complete and submit a new Form W-4MN. If the employee does not give
+                you a valid form, and you have an earlier Form W-4MN or Form W-4 (from 2019 or prior years) from them, use the
+                earlier form to calculate their withholding. Otherwise, withhold taxes as if the employee is single and claiming
+                zero withholding allowances.</p>
+            <h4 style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if my
+                employee is a nonresident alien of the United States?</h4>
+            <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">If the wages to this employee are subject to income
+                tax withholding, you will use Table 1 and the procedure under <b>Withholding Adjustment for Nonresident Alien
+                    Employees </b>in IRS Publication 15-T to determine the correct Minnesota withholding tax. Do not use this
+                procedure for nonresident alien students from India and business apprentices from India.</p>
+        <?php } ?>    
+    </div> 
+
     <script type="text/javascript" src="<?php echo base_url('assets/js/jquery-1.11.3.min.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
     <script type="text/javascript">
         let action = '<?php echo $action; ?>';
 
-        if (action == 'download') {
+        if (action == 'downloads') {
             $(window).on("load", function() {
                 var draw = kendo.drawing;
                 draw.drawDOM($("#jsStateFormPDF"), {
@@ -1165,7 +1170,7 @@
             });
         }
         
-    </script>    
+    </script> 
 </body>
 
 </html>

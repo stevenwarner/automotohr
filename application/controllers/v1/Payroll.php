@@ -1061,29 +1061,32 @@ class Payroll extends CI_Controller
     public function getCompanyAgreement(int $companyId): array
     {
         // check for linked company
-        $this->checkForLinkedCompany(true);
-        // set
-        $data = [];
-        // check if the contract is signed
-        $data['agreement'] = $this->db
-            ->select('is_ts_accepted, ts_email, ts_ip')
-            ->where('company_sid', $companyId)
-            ->get('gusto_companies')
-            ->row_array();
-        // get company's dmins
-        $data['admins'] = $this->db
-            ->select('email_address, automotohr_reference')
-            ->where('company_sid', $companyId)
-            ->where('is_store_admin', 0)
-            ->get('gusto_companies_admin')
-            ->result_array();
-        //
-        return SendResponse(
-            200,
-            [
-                'view' => $this->load->view('v1/payroll/create_partner_company/agreement', $data, true)
-            ]
-        );
+        // $this->checkForLinkedCompany(true);
+
+        if (isCompanyOnBoard($companyId)) {
+            // set
+            $data = [];
+            // check if the contract is signed
+            $data['agreement'] = $this->db
+                ->select('is_ts_accepted, ts_email, ts_ip')
+                ->where('company_sid', $companyId)
+                ->get('gusto_companies')
+                ->row_array();
+            // get company's dmins
+            $data['admins'] = $this->db
+                ->select('email_address, automotohr_reference')
+                ->where('company_sid', $companyId)
+                ->where('is_store_admin', 0)
+                ->get('gusto_companies_admin')
+                ->result_array();
+            //
+            return SendResponse(
+                200,
+                [
+                    'view' => $this->load->view('v1/payroll/create_partner_company/agreement', $data, true)
+                ]
+            );
+        }
     }
 
     /**

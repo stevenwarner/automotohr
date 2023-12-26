@@ -39,14 +39,39 @@ class Payrolls extends Admin_Controller
         // set the company id
         $this->data['loggedInCompanyId'] = $companyId;
         //
-        $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
-        $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
-        // set title
-        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
         $this->data["mode"] = $this->db->where([
             "company_sid" => $companyId,
             "stage" => "production"
         ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
+        $this->data['primaryAdmin'] = $this->payroll_model->getCompanyPrimaryAdmin($companyId);
+        //
+        $this->data['companyOnboardingStatus'] = $this->payroll_model->getCompanyOnboardingStatus($companyId);
+        //
+        if ($this->data['companyOnboardingStatus'] != 'Not Connected') {
+            //
+            $this->data['companyPaySchedules'] = $this->payroll_model->getCompanyPaySchedules($companyId);
+            $this->data['companyTermsCondition'] = $this->payroll_model->getCompanyTermConditionInfo($companyId);
+            $this->data['companyPaymentConfiguration'] = $this->payroll_model->getCompanyPaymentConfiguration($companyId);
+            $this->data['companySignatories'] = $this->payroll_model->getCompanySignatoriesInfo($companyId);
+            $this->data['companyBankInfo'] = $this->payroll_model->getCompanyBankInfo($companyId);
+            $this->data['companyFederalTaxInfo'] = $this->payroll_model->getCompanyFederalTaxInfo($companyId);
+            $this->data['companyEarningTypes'] = $this->payroll_model->getCompanyEarningTypesForDashboard($companyId);
+            $this->data['companyIndustry'] = $this->payroll_model->getCompanySelectedIndustry($companyId);
+            $this->data['companyEmployees'] = $this->payroll_model->getCompanyOnboardEmployees($companyId);
+            //
+            $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+            //
+            $this->data['payrollBlockers'] = gustoCall(
+                'getPayrollBlockers',
+                $companyGustoDetails
+            );
+            //
+
+        }
+        // _e($this->data,true,true);
+        
+        // set title
+        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
         // set JS
         $this->data['appJs'] = bundleJs([
             'js/app_helper',
@@ -67,6 +92,12 @@ class Payrolls extends Admin_Controller
         $this->data['loggedInCompanyId'] = $companyId;
         // get gusto details
         $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+        //
+        $this->data["mode"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
+        //
         // load set up page
         if (!$this->data["companyGustoDetails"]) {
             return $this->createPartnerCompany();
@@ -388,11 +419,17 @@ class Payrolls extends Admin_Controller
         $request['fast_payment_limit'] = $post['fast_speed_limit'] ?? 0;
         $request['payment_speed'] = $post['payment_speed'];
         //
-        $response = $this->payroll_model->UpdatePaymentConfig($companyId, $request);
+        $response = $this->payroll_model->updatePaymentConfig($companyId, $request);
+        //
+        if (isset($response['errors'])) {
+            $message = $response['errors'][0];
+        } else {
+            $message = $response['msg'];
+        }
         //
         return SendResponse(
             200,
-            ['msg' => $response['msg']]
+            ['msg' => $message]
         );
     }
 

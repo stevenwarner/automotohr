@@ -16669,6 +16669,9 @@ class Hr_documents_management extends Public_Controller
         //
         $data["formData"] = $formData;
         $data['helpSection'] = 'v1/forms/' . $form["form_slug"] . '_employee_help_section';
+        $data['userId'] = $employeeId;
+        $data['userType'] = "employee";
+        $data['formId'] = $formId;
         //
         $this->load->view('onboarding/on_boarding_header', $data);
         $this->load->view('v1/forms/' . $form["form_slug"]);
