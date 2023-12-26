@@ -2005,7 +2005,6 @@ $route['hr_documents_management/print_download_hybird_document_resource_center/(
 $route['form_payroll_agreement/(:any)'] = 'form_payroll_agreement/index/$1';
 $route['form_payroll_agreement/(:any)/(:any)'] = 'form_payroll_agreement/index/$1/$2';
 
-<<<<<<< HEAD
 // Gusto Webhooks
 $route['gusto/callback'] = 'v1/webhook/index';
 
@@ -2019,9 +2018,7 @@ $route["state/forms/(:num)/employer/(:num)/(:any)"]["post"] = "Hr_documents_mana
 $route["hr_documents_management/get_state_employer_section/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$3/$1/$2";
 $route["hr_documents_management/get_assigned_state_form/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getStateFormPreview/$1/$2/$3";
 $route["hr_documents_management/state_form_action/(:num)/(:any)/(:num)/(:any)/(:any)"]["get"] = "Hr_documents_management/stateFormPrintAndDownload/$1/$2/$3/$4/$5";
-=======
 
->>>>>>> feature/attendance_v3
 // Schedule routes
 $route["schedules"]["get"] = "settings/schedules";
 $route["schedules/active"]["get"] = "settings/schedules/active";
