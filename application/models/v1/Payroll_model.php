@@ -12,14 +12,20 @@ class Payroll_model extends CI_Model
     {
         // call the parent constructor
         parent::__construct();
-        $companyId = checkAndGetSession("company", true)["sid"];
-        if ($companyId) {
-            // load the payroll helper
-            $this->load->helper('v1/payroll' . ($this->db->where([
-                "company_sid" => $companyId,
-                "stage" => "production"
-            ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+        //
+        $REQUEST_URI = $_SERVER['REQUEST_URI'];
+        //
+        if (str_replace('sa/payrolls', '', $_SERVER['REQUEST_URI']) == $_SERVER['REQUEST_URI']) {
+            $companyId = checkAndGetSession("company", true)["sid"];
+            if ($companyId) {
+                // load the payroll helper
+                $this->load->helper('v1/payroll' . ($this->db->where([
+                    "company_sid" => $companyId,
+                    "stage" => "production"
+                ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+            }
         }
+        
         // set the admin
         $this->adminArray = [
             'first_name' => 'Steven',

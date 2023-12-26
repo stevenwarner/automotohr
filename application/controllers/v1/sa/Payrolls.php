@@ -209,7 +209,7 @@ class Payrolls extends Admin_Controller
      */
     private function createPartnerCompany()
     {
-        $this->payroll_model->loadPayrollHelper($companyId);
+        // $this->payroll_model->loadPayrollHelper($companyId);
         // set title
         $this->data['page_title'] = 'Payroll set-up :: ' . (STORE_NAME);
         // set CSS
@@ -232,7 +232,7 @@ class Payrolls extends Admin_Controller
      */
     private function agreement()
     {
-        $this->payroll_model->loadPayrollHelper($companyId);
+        // $this->payroll_model->loadPayrollHelper($companyId);
         // set title
         $this->data['page_title'] = 'Payroll agreement :: ' . (STORE_NAME);
         // set CSS
