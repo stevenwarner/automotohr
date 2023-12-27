@@ -56,6 +56,7 @@
                     </div>
                 </div>
 
+                <?php if ($jobSites) {?>
                 <div class="form-group">
                     <label class="text-medium">
                         Job Sites
@@ -63,7 +64,7 @@
                     <br>
                     <div class="row">
 
-                        <?php if ($jobSites) {
+                        <?php
                             $selectedJobSotes = [];
                             $selectedJobSotes = json_decode($shift['job_sites']);
                             foreach ($jobSites as $v0) {
@@ -77,9 +78,10 @@
                                 </div>
                         <?php
                             }
-                        } ?>
+                        ?>
                     </div>
                 </div>
+                <?php }?>
 
                 <!--  -->
                 <div class="form-group jsBreakContainer">
