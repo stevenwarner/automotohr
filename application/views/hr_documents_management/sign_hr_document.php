@@ -971,6 +971,11 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
                 }
             <?php } ?>
 
+            <?php if ($document['fillable_documents_slug'] == 'employee-performance-evaluation') { ?>
+                if (employeePerformanceFormValidation() == true) {
+                    retrun;
+                }
+            <?php } ?>
 
 
 
@@ -1329,6 +1334,94 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
         }
 
 
+        return validationError;
+
+    }
+
+    //
+    function employeePerformanceFormValidation() {
+
+        var validationError = false;
+
+        //
+        if ($('#short_textbox_0_id').val() == '') {
+            alertify.error('Please provide Employee Name ');
+            validationError = true;
+        }
+
+        //
+        if ($('#short_textbox_1_id').val() == '') {
+            alertify.error('Please provide Job Title');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_2_id').val() == '') {
+            alertify.error('Please provide Department');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_3_id').val() == '') {
+            alertify.error('Please provide Manager');
+            validationError = true;
+        }
+
+
+        //
+        if ($('#short_textbox_4_id').val() == '') {
+            alertify.error('Please provide Hire Date with DeFOUW Automotive');
+            validationError = true;
+        }
+        //
+        if ($('#short_textbox_5_id').val() == '') {
+            alertify.error('Please provide Start Date in Current Position');
+            validationError = true;
+        }
+        if ($('#short_textbox_6_id').val() == '') {
+            alertify.error('Please provide Review Period Start ');
+            validationError = true;
+        }
+
+        if ($('#short_textbox_7_id').val() == '') {
+            alertify.error('Please provide Review Period End ');
+            validationError = true;
+        }
+        //
+        if ($('#long_textbox_0_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_1_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_2_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_3_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_4_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_5_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_6_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_7_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
+        if ($('#long_textbox_8_id').val() == '') {
+            alertify.error('Please provide Comment ');
+            validationError = true;
+        }
         return validationError;
 
     }

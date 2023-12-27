@@ -34,7 +34,6 @@
     }
 </style>
 
-
 <?php
 $userPrefillInfo  = [];
 if ($document['form_input_data'] == '' || $document['form_input_data'] == null) {
@@ -105,20 +104,16 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Employee Name</strong>
-
+                                            <strong> Employee Name <span class="staric">*</span></strong>
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Job Title</strong>
+                                            <strong> Job Title <span class="staric">*</span></strong>
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-
                                             <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName']; ?>" name="short_textbox_0" id="short_textbox_0_id" data-type='text' autocomplete="off" />
-
-
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
 
@@ -128,11 +123,11 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Department </strong>
+                                            <strong> Department <span class="staric">*</span></strong>
 
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Manager</strong>
+                                            <strong> Manager <span class="staric">*</span></strong>
                                         </td>
                                     </tr>
 
@@ -149,11 +144,11 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Hire Date with DeFOUW Automotive </strong>
+                                            <strong> Hire Date with DeFOUW Automotive <span class="staric">*</span></strong>
 
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Start Date in Current Position</strong>
+                                            <strong> Start Date in Current Position <span class="staric">*</span></strong>
                                         </td>
                                     </tr>
 
@@ -173,23 +168,20 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Review Period Start </strong>
+                                            <strong> Review Period Start <span class="staric">*</span></strong>
 
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong> Review Period End </strong>
+                                            <strong> Review Period End <span class="staric">*</span></strong>
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
                                             <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>" name="short_textbox_6" id="short_textbox_6_id" data-type='text' autocomplete="off" />
-
-
                                         </td>
                                         <td width="50%" style="border: 1px solid; font-size: 14px;">
                                             <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="short_textbox_7" id="short_textbox_7_id" data-type='text' autocomplete="off" />
-
                                         </td>
                                     </tr>
 
@@ -252,7 +244,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_0_id" name="long_textbox_0" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_0_id_sec'> </div>
 
@@ -318,7 +310,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_1_id" name="long_textbox_1" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_1_id_sec'> </div>
                                         </td>
@@ -381,7 +373,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
 
                                             <textarea id="long_textbox_2_id" name="long_textbox_2" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_2_id_sec'> </div>
@@ -446,7 +438,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
 
                                             <textarea id="long_textbox_3_id" name="long_textbox_3" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_3_id_sec'> </div>
@@ -511,7 +503,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
 
                                             <textarea id="long_textbox_4_id" name="long_textbox_4" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_4_id_sec'> </div>
@@ -577,13 +569,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
-
-
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_5_id" name="long_textbox_5" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_5_id_sec'> </div>
                                         </td>
-
                                     </tr>
 
                                 </tbody>
@@ -643,14 +632,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
-
-
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_6_id" name="long_textbox_6" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_6_id_sec'> </div>
-
                                         </td>
-
                                     </tr>
 
                                 </tbody>
@@ -669,9 +654,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                     <tr>
                         <td width="50%" style="border-top:0px;">
                             <strong style="font-size: 14px;">How may the employee’s adherence to policy and procedure be improved?. <?= $formInputData['short_textbox_21'] ? $formInputData['short_textbox_21'] : '' ?> </strong><br>
-
                             <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_22'] ? $formInputData['short_textbox_22'] : '' ?>
-
                         </td>
                     </tr>
 
@@ -710,7 +693,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_7_id" name="long_textbox_7" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_7_id_sec'> </div>
                                         </td>
@@ -733,9 +716,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                     <tr>
                         <td width="50%" style="border-top:0px;">
                             <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
-
                             <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_25'] ? $formInputData['short_textbox_25'] : '' ?>
-
                         </td>
                     </tr>
 
@@ -774,10 +755,9 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
                                     <tr>
                                         <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                            <strong>Comment:</strong>
+                                            <strong>Comment: <span class="staric">*</span></strong>
                                             <textarea id="long_textbox_8_id" name="long_textbox_8" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_8_id_sec'> </div>
-
                                         </td>
 
                                     </tr>
@@ -797,9 +777,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             <textarea id="long_textbox_9_id" name="long_textbox_9" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
                                             <div id='long_textbox_9_id_sec'> </div>
                                         </td>
-
                                     </tr>
-
 
                                 </tbody>
                             </table>
@@ -812,6 +790,9 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
         <section class="pdf-cover-page">
             <table class="table table-border-collapse">
+                <?php
+                $managerSectionReadonly = 'disabled';
+                ?>
                 <tbody>
                     <tr>
                         <td width="50%" style="border-top:0px;">
@@ -819,7 +800,6 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                 <br>
                                 List 3-4 top accomplishments & add a reflection on overall performance for the year.
                             </strong>
-
                         </td>
                     </tr>
 
@@ -845,11 +825,11 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             1
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_26'] ? $formInputData['short_textbox_26'] : '' ?>" name="short_textbox_26" id="short_textbox_26_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_26'] ? $formInputData['short_textbox_26'] : '' ?>" name="short_textbox_26" id="short_textbox_26_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
 
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>" name="short_textbox_27" id="short_textbox_27_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>" name="short_textbox_27" id="short_textbox_27_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
 
                                         </td>
                                     </tr>
@@ -860,10 +840,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             2
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_28'] ? $formInputData['short_textbox_28'] : '' ?>" name="short_textbox_28" id="short_textbox_28_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_28'] ? $formInputData['short_textbox_28'] : '' ?>" name="short_textbox_28" id="short_textbox_28_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_29'] ? $formInputData['short_textbox_29'] : '' ?>" name="short_textbox_29" id="short_textbox_29_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_29'] ? $formInputData['short_textbox_29'] : '' ?>" name="short_textbox_29" id="short_textbox_29_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -872,10 +852,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             3
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_30'] ? $formInputData['short_textbox_30'] : '' ?>" name="short_textbox_30" id="short_textbox_30_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_30'] ? $formInputData['short_textbox_30'] : '' ?>" name="short_textbox_30" id="short_textbox_30_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_31'] ? $formInputData['short_textbox_31'] : '' ?>" name="short_textbox_31" id="short_textbox_31_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_31'] ? $formInputData['short_textbox_31'] : '' ?>" name="short_textbox_31" id="short_textbox_31_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -883,10 +863,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                         <td style="border: 1px solid; font-size: 14px;"> 4
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_32'] ? $formInputData['short_textbox_32'] : '' ?>" name="short_textbox_32" id="short_textbox_32_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_32'] ? $formInputData['short_textbox_32'] : '' ?>" name="short_textbox_32" id="short_textbox_32_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_33'] ? $formInputData['short_textbox_33'] : '' ?>" name="short_textbox_33" id="short_textbox_33_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_33'] ? $formInputData['short_textbox_33'] : '' ?>" name="short_textbox_33" id="short_textbox_33_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -933,10 +913,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             1
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_34'] ? $formInputData['short_textbox_34'] : '' ?>" name="short_textbox_34" id="short_textbox_34_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_34'] ? $formInputData['short_textbox_34'] : '' ?>" name="short_textbox_34" id="short_textbox_34_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_35'] ? $formInputData['short_textbox_35'] : '' ?>" name="short_textbox_35" id="short_textbox_35_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_35'] ? $formInputData['short_textbox_35'] : '' ?>" name="short_textbox_35" id="short_textbox_35_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                     </tr>
 
@@ -945,12 +925,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             2
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_36'] ? $formInputData['short_textbox_36'] : '' ?>" name="short_textbox_36" id="short_textbox_36_id" data-type='text' autocomplete="off" />
-
-
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_36'] ? $formInputData['short_textbox_36'] : '' ?>" name="short_textbox_36" id="short_textbox_36_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_37'] ? $formInputData['short_textbox_37'] : '' ?>" name="short_textbox_37" id="short_textbox_37_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_37'] ? $formInputData['short_textbox_37'] : '' ?>" name="short_textbox_37" id="short_textbox_37_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                     </tr>
 
@@ -959,11 +937,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             3
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_38'] ? $formInputData['short_textbox_38'] : '' ?>" name="short_textbox_38" id="short_textbox_38_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_38'] ? $formInputData['short_textbox_38'] : '' ?>" name="short_textbox_38" id="short_textbox_38_id" data-type='text' autocomplete="off"  <?php echo  $managerSectionReadonly;?>/>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_39'] ? $formInputData['short_textbox_39'] : '' ?>" name="short_textbox_26" id="short_textbox_39_id" data-type='text' autocomplete="off" />
-
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_39'] ? $formInputData['short_textbox_39'] : '' ?>" name="short_textbox_26" id="short_textbox_39_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -971,11 +948,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                         <td style="border: 1px solid; font-size: 14px;"> 4
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_40'] ? $formInputData['short_textbox_40'] : '' ?>" name="short_textbox_40" id="short_textbox_40_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_40'] ? $formInputData['short_textbox_40'] : '' ?>" name="short_textbox_40" id="short_textbox_40_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_41'] ? $formInputData['short_textbox_41'] : '' ?>" name="short_textbox_41" id="short_textbox_41_id" data-type='text' autocomplete="off" />
-
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_41'] ? $formInputData['short_textbox_41'] : '' ?>" name="short_textbox_41" id="short_textbox_41_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -1021,10 +997,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             1
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_42'] ? $formInputData['short_textbox_42'] : '' ?>" name="short_textbox_42" id="short_textbox_42_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_42'] ? $formInputData['short_textbox_42'] : '' ?>" name="short_textbox_42" id="short_textbox_42_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_43'] ? $formInputData['short_textbox_43'] : '' ?>" name="short_textbox_43" id="short_textbox_43_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_43'] ? $formInputData['short_textbox_43'] : '' ?>" name="short_textbox_43" id="short_textbox_43_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -1034,10 +1010,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             2
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_44'] ? $formInputData['short_textbox_44'] : '' ?>" name="short_textbox_44" id="short_textbox_44_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_44'] ? $formInputData['short_textbox_44'] : '' ?>" name="short_textbox_44" id="short_textbox_44_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_45'] ? $formInputData['short_textbox_45'] : '' ?>" name="short_textbox_45" id="short_textbox_45_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_45'] ? $formInputData['short_textbox_45'] : '' ?>" name="short_textbox_45" id="short_textbox_45_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -1046,10 +1022,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                             3
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_46'] ? $formInputData['short_textbox_46'] : '' ?>" name="short_textbox_46" id="short_textbox_46_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_46'] ? $formInputData['short_textbox_46'] : '' ?>" name="short_textbox_46" id="short_textbox_46_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_47'] ? $formInputData['short_textbox_47'] : '' ?>" name="short_textbox_47" id="short_textbox_47_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_47'] ? $formInputData['short_textbox_47'] : '' ?>" name="short_textbox_47" id="short_textbox_47_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -1057,10 +1033,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                                         <td style="border: 1px solid; font-size: 14px;"> 4
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_48'] ? $formInputData['short_textbox_48'] : '' ?>" name="short_textbox_48" id="short_textbox_48_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_48'] ? $formInputData['short_textbox_48'] : '' ?>" name="short_textbox_48" id="short_textbox_48_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_49'] ? $formInputData['short_textbox_49'] : '' ?>" name="short_textbox_49" id="short_textbox_49_id" data-type='text' autocomplete="off" />
+                                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_49'] ? $formInputData['short_textbox_49'] : '' ?>" name="short_textbox_49" id="short_textbox_49_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
                                         </td>
                                     </tr>
 
@@ -1128,7 +1104,7 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
                         <td width="50%" style="border-top:0px;">
                             <strong style="font-size: 14px;">
                                 Additional Comments, Feedback - Managers Comments: <br>
-                                <textarea id="long_textbox_12_id" name="long_textbox_12" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                <textarea id="long_textbox_12_id" name="long_textbox_12" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea' <?php echo  $managerSectionReadonly;?>></textarea>
                                 <div id='long_textbox_12_id_sec'></div>
 
                             </strong>
@@ -1215,56 +1191,56 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 
         <section class="pdf-cover-page">
 
-        <table class="table table-border-collapse">
-            <tbody>
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">
-                            Section 5: Salary Recommendation </strong>
-                    </td>
-                </tr>
+            <table class="table table-border-collapse">
+                <tbody>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">
+                                Section 5: Salary Recommendation </strong>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
-                        <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_54'] ? $formInputData['short_textbox_54'] : '' ?>" name="short_textbox_54" id="short_textbox_54_id" data-type='text' autocomplete="off" />
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
-                        <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_55'] ? $formInputData['short_textbox_55'] : '' ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" />
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Approved Amount:</strong>
-                        <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_56'] ? $formInputData['short_textbox_56'] : '' ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" />
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Approved By:</strong>
-                        <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_57'] ? $formInputData['short_textbox_57'] : '' ?>" name="short_textbox_57" id="short_textbox_57_id" data-type='text' autocomplete="off" />
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Approved Date:</strong>
-                        <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_58'] ? $formInputData['short_textbox_58'] : '' ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" />
-                   </td>
-                </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
+                            <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_54'] ? $formInputData['short_textbox_54'] : '' ?>" name="short_textbox_54" id="short_textbox_54_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
+                            <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_55'] ? $formInputData['short_textbox_55'] : '' ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Approved Amount:</strong>
+                            <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_56'] ? $formInputData['short_textbox_56'] : '' ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Approved By:</strong>
+                            <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_57'] ? $formInputData['short_textbox_57'] : '' ?>" name="short_textbox_57" id="short_textbox_57_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Approved Date:</strong>
+                            <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_58'] ? $formInputData['short_textbox_58'] : '' ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td width="50%" style="border-top:0px;">
-                        <strong style="font-size: 14px;">Effective Date of Increase:</strong>
-                        <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_59'] ? $formInputData['short_textbox_59'] : '' ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" />
-                   </td>
-                </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">Effective Date of Increase:</strong>
+                            <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_59'] ? $formInputData['short_textbox_59'] : '' ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly;?> />
+                        </td>
+                    </tr>
 
-            </tbody>
-        </table>
-    </section>
+                </tbody>
+            </table>
+        </section>
 
 
     </div>
