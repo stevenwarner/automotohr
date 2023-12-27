@@ -2052,6 +2052,13 @@ if (!function_exists("getFile")) {
         $plugins["google_map"] = [
             "js" =>  main_url("public/v1/plugins/google_map/main.min.js?v=1.0")
         ];
+
+        // set select2
+        $plugins["select2"] = [
+            "css" =>
+            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            "js" =>   main_url("public/v1/plugins/select2/select2.min.js?v=3.0")
+        ];
         //
         return $plugins[$index][$type] ?? "";
     }
