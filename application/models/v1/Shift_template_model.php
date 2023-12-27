@@ -115,10 +115,11 @@ class Shift_template_model extends CI_Model
             // update
             // check if entry already exists
             if ($this->db->where([
+                "company_sid" => $companyId,
                 "start_time" => $post["start_time"],
                 "end_time" => $post["end_time"],
             ])->where("sid <>", $post["id"])->count_all_results("company_shift_templates")) {
-                $response["msg"] = "Break already exists.";
+                $response["msg"] = "Shift template already exists.";
             } else {
                 // update
                 $this->db
@@ -139,6 +140,7 @@ class Shift_template_model extends CI_Model
             // insert
             // check if entry already exists
             if ($this->db->where([
+                "company_sid" => $companyId,
                 "start_time" => $post["start_time"],
                 "end_time" => $post["end_time"],
             ])->count_all_results("company_shift_templates")) {
@@ -184,7 +186,7 @@ class Shift_template_model extends CI_Model
         $response = ["msg" => "Something went wrong while deleting shift template."];
         // check if entry already exists
         if (!$this->db->where(["company_sid" => $companyId, "sid" => $shiftTemplateId])->count_all_results("company_shift_templates")) {
-            $response["msg"] = "System failed to verify the break.";
+            $response["msg"] = "System failed to verify the shift template.";
         } else {
             // update
             $this->db
