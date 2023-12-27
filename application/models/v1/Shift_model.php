@@ -853,7 +853,7 @@ class Shift_model extends CI_Model
                     $ins["end_time"] = $shiftDataToCopy["end_time"];
                     $ins["breaks_count"] = $shiftDataToCopy["breaks_count"];
                     $ins["breaks_json"] = $shiftDataToCopy['breaks_json'];
-                    $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? [];
+                    $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? "[]";
                     $ins["notes"] = $shiftDataToCopy['notes'];
                     $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
                     //
