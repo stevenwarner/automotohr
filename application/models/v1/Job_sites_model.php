@@ -100,6 +100,7 @@ class Job_sites_model extends CI_Model
         $response = ["msg" => "Something went wrong while updating job site."];
         // set where
         $where = [
+            "company_sid" => $companyId,
             "LOWER(REGEXP_REPLACE(site_name, '[^a-zA-Z0-9]', '')) = " => strtolower(
                 preg_replace(
                     '/[^a-z]/i',

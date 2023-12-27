@@ -162,6 +162,7 @@ class Minimum_wages_model extends CI_Model
             // update
             // check if entry already exists
             if ($this->db->where([
+                "company_sid" => $companyId,
                 "LOWER(REGEXP_REPLACE(rule_name, '[^a-zA-Z]', '')) = " => strtolower(
                     preg_replace(
                         '/[^a-z]/i',
@@ -193,6 +194,7 @@ class Minimum_wages_model extends CI_Model
             // insert
             // check if entry already exists
             if ($this->db->where([
+                "company_sid" => $companyId,
                 "LOWER(REGEXP_REPLACE(rule_name, '[^a-zA-Z]', '')) = " => strtolower(
                     preg_replace(
                         '/[^a-z]/i',
