@@ -85,7 +85,7 @@
         <div class="panel-footer text-right">
             <button class="btn btn-red jsPageCreateSingleShiftBtn">
                 <i class="fa fa-trash" aria-hidden="true"></i>
-                &nbsp;Delete Shift
+                &nbsp;Delete Shifts
             </button>
             <button class="btn btn-black jsModalCancel" type="button">
                 <i class="fa fa-times-circle" aria-hidden="true"></i>

@@ -3905,17 +3905,23 @@ class Settings extends Public_Controller
 
 
         $employees = $this->input->get("employees");
-        $toggleFilter = true;
-        if ($employees == '') {
-            $employees = 'all';
-            $toggleFilter = false;
-        }
+        $toggleFilter = false;
+       
         $employeesArray = explode(',', $employees);
         $team = $this->input->get("team", true);
         $employeeFilter['employees'] = $employeesArray;
         $employeeFilter['team'] = $team;
 
+        if ($employees != '' || $team != '') {
+            $toggleFilter = true;
+        }
+        if($employees ==''){
+            $employees = 'all';
+        }
+     
 
+      
+       // _e($team,true,true);
 
         $data["employees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"],

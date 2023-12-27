@@ -52,13 +52,14 @@
                     </div>
                 </div>
 
+                <?php if ($jobSites) {?>
                 <div class="form-group">
                     <label class="text-medium">
                         Job Sites
                     </label>
                     <br>
                     <div class="row">
-                        <?php if ($jobSites) {
+                        <?php
                             foreach ($jobSites as $v0) {
                         ?>
                                 <div class="col-sm-4">
@@ -70,9 +71,10 @@
                                 </div>
                         <?php
                             }
-                        } ?>
+                        ?>
                     </div>
                 </div>
+                <?php }?>
 
                 <!--  -->
                 <div class="form-group jsBreakContainer"></div>
