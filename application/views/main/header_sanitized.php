@@ -20,12 +20,12 @@
         <script src="<?=main_url("public/v1/plugins/jquery/jquery-3.7.1.min.js?v=3.0");?>"></script>
         <script src="<?=getPlugin("validator", "js");?>"></script>
     <?php } ?>
-    <?= bundleCSS([
-        "v1/app/css/global",
-    ], "public/v1/app/", "global", false); ?>
     <?= $pageCSS ? GetCss($pageCSS) : ''; ?>
     <!-- CSS bundles -->
     <?= $appCSS ?? ""; ?>
+    <?= bundleCSS([
+        "v1/app/css/global",
+    ], "public/v1/app/", "global", false); ?>
 </head>
 
 <body>

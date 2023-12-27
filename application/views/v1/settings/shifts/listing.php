@@ -21,16 +21,6 @@ if ($filter["mode"] === "month") {
     );
 }
 ?>
-<style>
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 34px !important;
-        padding: 0 !important;
-    }
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css">
-<link rel="stylesheet" href="http://automotohr.local/assets/timeoff/css/theme2021.css?v=1703248968" />
 
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -293,11 +283,11 @@ if ($filter["mode"] === "month") {
                                     <div class="schedule-container myt-10">
                                         <div class="row">
                                             <div class="col-sm-12 text-center" style="padding-right: 0">
-                                            <span class="schedule-navigator-text jsWeekDaySelect" style="display: none;">
-                                                            <?= formatDateToDB($startDate, SITE_DATE,  "M d, y"); ?> -
-                                                            <?= formatDateToDB($endDate, SITE_DATE, "M d, y"); ?>
-                                                        </span>
-                                          <span> <b>Shifts Not Found</b> </span><br><br>
+                                                <span class="schedule-navigator-text jsWeekDaySelect" style="display: none;">
+                                                    <?= formatDateToDB($startDate, SITE_DATE,  "M d, y"); ?> -
+                                                    <?= formatDateToDB($endDate, SITE_DATE, "M d, y"); ?>
+                                                </span>
+                                                <span> <b>Shifts Not Found</b> </span><br><br>
                                             </div>
                                         </div>
                                     </div>

@@ -3989,12 +3989,14 @@ class Settings extends Public_Controller
             getPlugin("alertify", "css"),
             getPlugin("timepicker", "css"),
             getPlugin("daterangepicker", "css"),
+            getPlugin("select2", "css"),
             "v1/plugins/ms_modal/main"
         ];
         $data["pageJs"] = [
             getPlugin("alertify", "js"),
             getPlugin("timepicker", "js"),
             getPlugin("daterangepicker", "js"),
+            getPlugin("select2", "js"),
             getPlugin("validator", "js"),
             getPlugin("additionalMethods", "js"),
             "v1/plugins/ms_modal/main"
