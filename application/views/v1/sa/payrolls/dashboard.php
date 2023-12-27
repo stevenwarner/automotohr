@@ -21,6 +21,11 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 text-right">
                                     <!--  -->
+                                    <a href="<?= base_url("manage_admin/companies/manage_company/" . $loggedInCompanyId); ?>" class="btn csW csBG4 csF16">
+                                        <i class="fa fa-arrow-left csF16"></i>
+                                        &nbsp;Back to Company Management
+                                    </a>
+                                    <!--  -->
                                     <a href="<?= base_url("sa/payrolls/company/" . $loggedInCompanyId . "/setup_payroll"); ?>" class="btn btn-success csF16">
                                         <i class="fa fa-cog csF16"></i>
                                         &nbsp;Setup Company Payroll
