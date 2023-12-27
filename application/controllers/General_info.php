@@ -134,6 +134,7 @@ class General_info extends Public_Controller
 
                 switch ($perform_action) {
                     case 'update_drivers_license_information':
+
                         $employee_sid = $this->input->post('employee_sid');
                         $license_type = $this->input->post('license_type');
                         $license_authority = $this->input->post('license_authority');
@@ -178,8 +179,32 @@ class General_info extends Public_Controller
 
                         if (!empty($licenseCheck)) {
                             $license_id = $licenseCheck['sid'];
+
+                            if ($data_to_save['license_type'] == 'drivers') {
+                                $data['session'] = $this->session->userdata('logged_in');
+                                $triggerData['user_sid'] = $data_to_save['users_sid'];
+                                $triggerData['user_type'] = $data_to_save['users_type'];
+                                $triggerData['company_sid'] = $company_sid;
+                                $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                                $triggerData['changed_from'] = 'Blue panel';
+                                $triggerData['action'] = 'Update';
+                                saveDriversLicenseTrigger($triggerData);
+                            }
+
                             $this->general_info_model->update_license_info($license_id, $data_to_save, $dateOfBirth, $employee_sid);
                         } else {
+                            
+                            if ($data_to_save['license_type'] == 'drivers') {
+                                $data['session'] = $this->session->userdata('logged_in');
+                                $triggerData['user_sid'] = $data_to_save['users_sid'];
+                                $triggerData['user_type'] = $data_to_save['users_type'];
+                                $triggerData['company_sid'] = $company_sid;
+                                $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                                $triggerData['changed_from'] = 'Blue panel';
+                                $triggerData['action'] = 'Update';
+                                saveDriversLicenseTrigger($triggerData);
+                            }
+
                             $this->general_info_model->save_license_info($data_to_save, $dateOfBirth, $employee_sid);
                         }
 

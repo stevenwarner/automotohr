@@ -16916,3 +16916,55 @@ if (!function_exists('get_company_departments_teams_dropdown')) {
         return $id ? $select : $departments;
     }
 }
+
+
+//
+if (!function_exists('saveDriversLicenseTrigger')) {
+
+    function saveDriversLicenseTrigger($triggerData)
+    {
+        //
+        $CI = &get_instance();
+        $triggerData['changed_date'] = date('Y-m-d H:i:s');
+        $CI->db->insert('drivers_license_information_trigger_history', $triggerData);
+    }
+}
+
+//
+if (!function_exists('savei9Trigger')) {
+
+    function savei9Trigger($triggerData)
+    {
+        //
+        $CI = &get_instance();
+        $triggerData['changed_date'] = date('Y-m-d H:i:s');
+        $triggerData['old_data'] = json_encode($triggerData['old_data']);
+        $triggerData['new_data'] = json_encode($triggerData['new_data']);
+        $CI->db->insert('i9_trigger_history', $triggerData);
+    }
+}
+
+if (!function_exists('geti9OldData')) {
+
+    function geti9OldData($user_type, $user_sid)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db->where('user_type', $user_type);
+        $CI->db->where('user_sid', $user_sid);
+        $CI->db->from('applicant_i9form');
+        $CI->db->order_by('sid', 'Desc');
+
+        $records_obj = $CI->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+
+
+    }
+}

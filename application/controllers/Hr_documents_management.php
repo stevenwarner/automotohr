@@ -2536,6 +2536,8 @@ class Hr_documents_management extends Public_Controller
 
                             $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
 
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
                             if (empty($already_assigned_i9)) {
                                 $i9_data_to_insert = array();
                                 $i9_data_to_insert['user_sid'] = $user_sid;
@@ -2546,6 +2548,19 @@ class Hr_documents_management extends Public_Controller
                                 $i9_data_to_insert['status'] = 1;
                                 $i9_data_to_insert['version'] = getSystemDate('Y');
                                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+
+                                //
+                                $data['session'] = $this->session->userdata('logged_in');
+                                $triggerData['user_sid'] = $user_sid;
+                                $triggerData['user_type'] = $user_type;
+                                $triggerData['company_sid'] =   $company_sid;
+                                $triggerData['old_data'] =   $i9OldData;
+                                $triggerData['new_data'] =   $i9_data_to_insert;
+                                $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                                $triggerData['changed_from'] = 'Green panel Document Center';
+                                $triggerData['action'] = 'assigne';
+                                savei9Trigger($triggerData);
+
                             } else {
                                 //
                                 $data_to_update = array();
@@ -2570,6 +2585,18 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["section3_authorized_json"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
+                           
+                                $data['session'] = $this->session->userdata('logged_in');
+                                $triggerData['user_sid'] = $user_sid;
+                                $triggerData['user_type'] = $user_type;
+                                $triggerData['company_sid'] =   $company_sid;
+                                $triggerData['old_data'] =   $i9OldData;
+                                $triggerData['new_data'] =   $data_to_update;
+                                $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                                $triggerData['changed_from'] = 'Green panel Document Center';
+                                $triggerData['action'] = 'reassigne';
+                                savei9Trigger($triggerData);
+
                             }
                             //
                             $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
@@ -2587,6 +2614,8 @@ class Hr_documents_management extends Public_Controller
                         case 'remove_i9': //I9 Form Deactive
                             $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
                             //
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
                             $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
                             unset($already_assigned_i9['sid']);
                             $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
@@ -2596,6 +2625,18 @@ class Hr_documents_management extends Public_Controller
                             $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
                             keepTrackVerificationDocument($security_sid, "employee", 'revoke', $i9_sid, 'i9', 'Document Center');
                             //
+
+                            $data['session'] = $this->session->userdata('logged_in');
+                            $triggerData['user_sid'] = $user_sid;
+                            $triggerData['user_type'] = $user_type;
+                            $triggerData['company_sid'] =   $company_sid;
+                            $triggerData['old_data'] =   $i9OldData;
+                            $triggerData['new_data'] =   '';
+                            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                            $triggerData['changed_from'] = 'Green panel Document Center';
+                            $triggerData['action'] = 'revoked';
+                            savei9Trigger($triggerData);
+
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             // Need to be removed
@@ -3592,11 +3633,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $user_sid,
-                $user_type,
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $user_sid,
+                    $user_type,
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
@@ -5492,11 +5533,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $employer_sid,
-                "employee",
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $employer_sid,
+                    "employee",
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1) {
                 //
@@ -8346,7 +8387,7 @@ class Hr_documents_management extends Public_Controller
                         "state_forms_json" => json_encode($stateForms)
                     ]);
                 } else {
-                     $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
+                    $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
                         "state_forms_json" => json_encode([])
                     ]);
                 }
@@ -10782,6 +10823,17 @@ class Hr_documents_management extends Public_Controller
                 //
             case "assign_document":
                 //
+                if ($post['documentType'] == 'drivers_license') {
+                    $data['session'] = $this->session->userdata('logged_in');
+                    $triggerData['user_sid'] = $post['userSid'];
+                    $triggerData['user_type'] = $post['userType'];
+                    $triggerData['company_sid'] = $post['companySid'];
+                    $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                    $triggerData['changed_from'] = 'Green panel employee document center';
+                    $triggerData['action'] = 'assigne';
+                    saveDriversLicenseTrigger($triggerData);
+                }
+
                 $insertId = $this->hr_documents_management_model->assignGeneralDocument(
                     $post['userSid'],
                     $post['userType'],
@@ -10880,6 +10932,17 @@ class Hr_documents_management extends Public_Controller
                 //
             case "revoke_document":
                 //
+                if ($post['documentType'] == 'drivers_license') {
+                    $data['session'] = $this->session->userdata('logged_in');
+                    $triggerData['user_sid'] = $post['userSid'];
+                    $triggerData['user_type'] = $post['userType'];
+                    $triggerData['company_sid'] = $post['companySid'];
+                    $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                    $triggerData['changed_from'] = 'Green panel employee document center';
+                    $triggerData['action'] = 'revoke';
+                    saveDriversLicenseTrigger($triggerData);
+                }
+
                 $insertId = $this->hr_documents_management_model->revokeGeneralDocument(
                     $post['userSid'],
                     $post['userType'],

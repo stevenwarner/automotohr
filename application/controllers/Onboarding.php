@@ -233,7 +233,7 @@ class Onboarding extends CI_Controller
                     //
                     if ($assigned_document['document_sid'] == 0) {
                         if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
-                            if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            if ($assigned_document['pay_roll_catgory'] == 0) {
                                 $assigned_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_documents[] = $assigned_document;
@@ -244,7 +244,7 @@ class Onboarding extends CI_Controller
                                     unset($assigned_documents[$key]);
                                 }
                             }
-                        }    
+                        }
                     } else {
                         //
                         $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -267,7 +267,7 @@ class Onboarding extends CI_Controller
                             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                                 $document_body = $assigned_document['document_description'];
                                 $magic_codes = array('{{signature}}', '{{inital}}');
-    
+
                                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                     $is_magic_tag_exist = 1;
                                 }
@@ -337,12 +337,12 @@ class Onboarding extends CI_Controller
                                                 $is_document_completed = 0;
                                             }
                                         }
-    
+
                                         if ($is_document_completed > 0) {
-    
+
                                             if ($assigned_document['is_confidential'] == 0) {
                                                 if ($assigned_document['pay_roll_catgory'] == 0) {
-    
+
                                                     $signed_document_sids[] = $assigned_document['document_sid'];
                                                     $signed_documents[] = $assigned_document;
                                                     unset($assigned_documents[$key]);
@@ -359,7 +359,7 @@ class Onboarding extends CI_Controller
                                                 $uncompleted_payroll_documents[] = $assigned_document;
                                                 unset($assigned_documents[$key]);
                                             }
-    
+
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                         }
                                     } else {
@@ -383,7 +383,7 @@ class Onboarding extends CI_Controller
                                             }
                                             //
                                             $assigned_sids[] = $assigned_document['document_sid'];
-                                        } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_documents[] = $assigned_document;
@@ -394,7 +394,7 @@ class Onboarding extends CI_Controller
                                                 unset($assigned_documents[$key]);
                                             }
                                         }
-                                    }    
+                                    }
                                 } else {
                                     $revoked_sids[] = $assigned_document['document_sid'];
                                 }
@@ -402,7 +402,7 @@ class Onboarding extends CI_Controller
                         } else if ($assigned_document['archive'] == 1) {
                             unset($assigned_documents[$key]);
                         }
-                    }    
+                    }
                 }
                 //
                 $data['history_doc_sids'] = $history_doc_sids;
@@ -2239,6 +2239,18 @@ class Onboarding extends CI_Controller
 
                     if ($license_file != 'error' && !empty($license_file)) {
                         $data_to_save['license_file'] = $license_file;
+                    }
+
+
+                    if ($data_to_save['license_type'] == 'drivers') {
+                        $data['session'] = $this->session->userdata('logged_in');
+                        $triggerData['user_sid'] = $data_to_save['users_sid'];
+                        $triggerData['user_type'] = $data_to_save['users_type'];
+                        $triggerData['company_sid'] = $onboarding_details['company_info']['sid'];
+                        $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                        $triggerData['changed_from'] = 'Onboarding';
+                        $triggerData['action'] = 'Save';
+                        saveDriversLicenseTrigger($triggerData);
                     }
 
                     $this->onboarding_model->save_license_information('applicant', $applicant_sid, 'drivers', $data_to_save, $dateOfBirth);
@@ -5198,7 +5210,22 @@ class Onboarding extends CI_Controller
                             $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                             $i9_data_to_insert['status'] = 1;
                             $i9_data_to_insert['version'] = getSystemDate('Y');
+
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+
+                            $data['session'] = $this->session->userdata('logged_in');
+                            $triggerData['user_sid'] = $user_sid;
+                            $triggerData['user_type'] = $user_type;
+                            $triggerData['company_sid'] = $company_sid;
+                            $triggerData['old_data'] =   $i9OldData;
+                            $triggerData['new_data'] =   $i9_data_to_insert;
+                            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                            $triggerData['changed_from'] = 'Onboarding Green Panel';
+                            $triggerData['action'] = 'Assigne';
+                            savei9Trigger($triggerData);
+                
                         } else {
                             //
                             $data_to_update = array();
@@ -5219,7 +5246,21 @@ class Onboarding extends CI_Controller
                             $data_to_update["section1_preparer_json"] = NULL;
                             $data_to_update["section3_authorized_json"] = NULL;
                             //
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
                             $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
+                       
+                            $data['session'] = $this->session->userdata('logged_in');
+                            $triggerData['user_sid'] = $user_sid;
+                            $triggerData['user_type'] = $user_type;
+                            $triggerData['company_sid'] =   $company_sid;
+                            $triggerData['old_data'] =   $i9OldData;
+                            $triggerData['new_data'] =   $data_to_update;
+                            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                            $triggerData['changed_from'] = 'Onboarding Green Panel';
+                            $triggerData['action'] = 'Reassigne';
+                            savei9Trigger($triggerData);
+                       
                         }
                         //
                         $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
@@ -5231,11 +5272,27 @@ class Onboarding extends CI_Controller
                     case 'remove_i9': //I9 Form Deactive
                         $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
                         //
+                        $i9OldData = geti9OldData($user_type, $user_sid);
+
                         $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
                         unset($already_assigned_i9['sid']);
                         $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
                         //
                         $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
+
+                        //
+                        $data['session'] = $this->session->userdata('logged_in');
+                        $triggerData['user_sid'] = $user_sid;
+                        $triggerData['user_type'] = $user_type;
+                        $triggerData['company_sid'] =   $company_sid;
+                        $triggerData['old_data'] =   $i9OldData;
+                        $triggerData['new_data'] =   '';
+                        $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                        $triggerData['changed_from'] = 'Onboarding Green Panel';
+                        $triggerData['action'] = 'Revoked';
+                        savei9Trigger($triggerData);
+
+
                         //
                         $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
                         keepTrackVerificationDocument($security_sid, "employee", 'revoke', $i9_sid, 'i9', 'Setup Panel');
@@ -8933,7 +8990,7 @@ class Onboarding extends CI_Controller
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
                         //$view = $this->load->view('form_w4/form_w4', $data, TRUE);
-                        $view = $this->load->view('form_w4/download_w4_2023', $data,TRUE);
+                        $view = $this->load->view('form_w4/download_w4_2023', $data, TRUE);
                         $this->pdfgenerator->generate($view, 'Form W4', true, 'A4');
                     }
 
@@ -9151,7 +9208,7 @@ class Onboarding extends CI_Controller
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
             if (!empty($onboarding_details)) {
-                redirect('forms/i9/user/section/applicant/'.$onboarding_details['applicant_sid'].'/applicant_onboarding');
+                redirect('forms/i9/user/section/applicant/' . $onboarding_details['applicant_sid'] . '/applicant_onboarding');
                 $data['onboarding_details'] = $onboarding_details;
                 $applicant_info = $onboarding_details['applicant_info'];
                 $data['applicant'] = $applicant_info;
@@ -9716,9 +9773,8 @@ class Onboarding extends CI_Controller
 
             $previous_form = $this->onboarding_model->get_original_w4_form('applicant', $applicant_sid);
             $data['pre_form'] = $previous_form;
-           // $this->load->view('form_w4/print_w4_form', $data);
+            // $this->load->view('form_w4/print_w4_form', $data);
             $this->load->view('form_w4/print_w4_2023', $data);
-
         } else {
             redirect('login', "refresh");
         }
@@ -9744,7 +9800,7 @@ class Onboarding extends CI_Controller
         }
         //
         if ($d[0] == "I9") {
-            redirect('forms/i9/user/section/applicant/'.$d[1].'/public_link');
+            redirect('forms/i9/user/section/applicant/' . $d[1] . '/public_link');
         }
         //
         $document = [];
@@ -10401,6 +10457,7 @@ class Onboarding extends CI_Controller
         //
         if (!empty($_FILES['file'])) $fileName = put_file_on_aws('file');
         //
+
         if ($post['sid'] != 0) {
             $d = [
                 'license_details' => serialize([
@@ -10417,12 +10474,30 @@ class Onboarding extends CI_Controller
             //
             if ($fileName != null) $d['license_file'] = $fileName;
             //
+
+            $triggerData['user_sid'] = $post['userSid'];
+            $triggerData['user_type'] = $post['userType'];
+            $triggerData['company_sid'] = $post['companySid'];
+            $triggerData['changed_by'] = $post['userSid'];
+            $triggerData['changed_from'] = 'public link';
+            $triggerData['action'] = 'Update';
+            saveDriversLicenseTrigger($triggerData);
+
             $this->db
                 ->where('sid', $post['sid'])
                 ->update(
                     'license_information',
                     $d
                 );
+
+            //
+            $triggerData['user_sid'] = $post['userSid'];
+            $triggerData['user_type'] = $post['userType'];
+            $triggerData['company_sid'] = $post['companySid'];
+            $triggerData['changed_by'] = $post['userSid'];
+            $triggerData['changed_from'] = 'public link';
+            $triggerData['action'] = 'Update';
+            saveDriversLicenseTrigger($triggerData);
         } else {
             $this->db
                 ->insert(
@@ -10444,6 +10519,15 @@ class Onboarding extends CI_Controller
                         ])
                     ]
                 );
+
+            //
+            $triggerData['user_sid'] = $post['userSid'];
+            $triggerData['user_type'] = $post['userType'];
+            $triggerData['company_sid'] = $post['companySid'];
+            $triggerData['changed_by'] = $post['userSid'];
+            $triggerData['changed_from'] = 'public link';
+            $triggerData['action'] = 'Save';
+            saveDriversLicenseTrigger($triggerData);
         }
         //
         $this->db
@@ -11133,7 +11217,5 @@ class Onboarding extends CI_Controller
                     ]
                 );
         }
-
-       
     }
 }

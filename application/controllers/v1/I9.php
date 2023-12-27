@@ -359,6 +359,23 @@ class I9 extends Public_Controller
         $updateArray['section1_preparer_json'] = json_encode($translatorArray);
         unset($updateArray['form_mode']);
         //
+
+        $data['session'] = $this->session->userdata('logged_in');
+
+    
+        //
+       $i9OldData = geti9OldData($i9Form['user_type'], $i9Form['user_sid']);
+       
+        $triggerData['user_sid'] = $i9Form['user_sid'];
+        $triggerData['user_type'] = $i9Form['user_type'];
+        $triggerData['company_sid'] =   $data['session']['employer_detail']['parent_sid'];
+        $triggerData['old_data'] =   $i9OldData;
+        $triggerData['new_data'] =   $updateArray;
+        $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+        $triggerData['changed_from'] = 'Blue Panel';
+        $triggerData['action'] = 'Update';
+        savei9Trigger($triggerData);
+
         $this->db
             ->where('sid', $post['form_code'])
             ->update(
@@ -705,6 +722,21 @@ class I9 extends Public_Controller
             $i9TrackerData['module'] = $sid ? 'fi9/gp' : 'fi9/bp';
             //
             portalFormI9Tracker($employer_sid, "employee", $i9TrackerData);
+            
+            //
+            $i9OldData = geti9OldData($formpost['user_type'], $formpost['user_sid']);
+
+            $data['session'] = $this->session->userdata('logged_in');
+            $triggerData['user_sid'] = $formpost['user_sid'];
+            $triggerData['user_type'] = $formpost['user_type'];
+            $triggerData['company_sid'] =   $company_sid;
+            $triggerData['old_data'] =   $i9OldData;
+            $triggerData['new_data'] =   $updateArray;
+            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+            $triggerData['changed_from'] = 'Green panel Document Center';
+            $triggerData['action'] = 'Update';
+            savei9Trigger($triggerData);
+
 
             $this->db
             ->where('sid', $formId)

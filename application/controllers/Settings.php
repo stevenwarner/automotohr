@@ -2492,8 +2492,31 @@ class Settings extends Public_Controller
                 if ($licenseCheck->num_rows() > 0) {
                     $license_data = $licenseCheck->result_array();
                     $license_id = $license_data[0]['sid'];
+
+                    if ($licenseData['license_type'] == 'drivers') {
+                        $data['session'] = $this->session->userdata('logged_in');
+                        $triggerData['user_sid'] = $licenseData['users_sid'];
+                        $triggerData['user_type'] = $licenseData['users_type'];
+                        $triggerData['company_sid'] =   $company_id;
+                        $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                        $triggerData['changed_from'] = 'Green panel employee document center';
+                        $triggerData['action'] = 'Update';
+                        saveDriversLicenseTrigger($triggerData);
+                    }
+                    
                     $this->dashboard_model->update_license_info($license_id, $licenseData, $dateOfBirth, $employer_id);
                 } else {
+                    if ($licenseData['license_type'] == 'drivers') {
+                        $data['session'] = $this->session->userdata('logged_in');
+                        $triggerData['user_sid'] = $licenseData['users_sid'];
+                        $triggerData['user_type'] = $licenseData['users_type'];
+                        $triggerData['company_sid'] =   $company_id;
+                        $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                        $triggerData['changed_from'] = 'Green panel employee document center';
+                        $triggerData['action'] = 'Save';
+                        saveDriversLicenseTrigger($triggerData);
+                    }
+
                     $this->dashboard_model->save_license_info($licenseData, $dateOfBirth, $employer_id);
                 }
                 $full_emp_form['TextBoxDriversLicenseNumber'] = $this->input->post('license_number');;
