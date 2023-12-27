@@ -70,11 +70,17 @@ if (isset($cn)) {
                 <h4 class="modal-title">E-Signature</h4>
             </div>
             <div class="modal-body">
+
+                <?php if ($this->session->userdata('logged_in')) {
+                    $companyIdSession = $session['company_detail']['sid'];
+                    $sessionUserSid = $session['employer_detail']['sid'];
+                } ?>
+
                 <form id="form_e_signature" enctype="multipart/form-data" method="post" action="<?= base_url() ?>onboarding/ajax_e_signature">
                     <input type="hidden" id="perform_action" name="perform_action" value="save_e_signature" />
-                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
-                    <input type="hidden" id="user_type" name="user_type" value="<?php echo $users_type; ?>" />
-                    <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $users_sid; ?>" />
+                    <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid == 0 ? $companyIdSession : $company_sid; ?>" />
+                    <input type="hidden" id="user_type" name="user_type" value="<?php echo $users_type == '' ? 'employee' : $users_type; ?>" />
+                    <input type="hidden" id="user_sid" name="user_sid" value="<?php echo $users_sid == 0 ? $sessionUserSid : $users_sid; ?>" />
                     <input type="hidden" id="ip_address" name="ip_address" value="<?php echo getUserIP(); ?>" />
                     <input type="hidden" id="user_agent" name="user_agent" value="<?php echo $_SERVER['HTTP_USER_AGENT']; ?>" />
                     <input type="hidden" id="first_name" name="first_name" value="<?php echo $first_name; ?>" />
@@ -703,18 +709,42 @@ if (isset($cn)) {
 
     //  This function populate signature p tag when user start
     //  typing its signature. 
+
+
+    //Old
+    /*
     var inputBox = document.getElementById('common_e_signature');
     inputBox.onkeyup = function() {
         document.getElementById('tergit').innerHTML = inputBox.value;
     }
+    */
 
+    
+    var inputBoxNew = document.getElementById('common_e_signature');
+    inputBoxNew.onkeyup = function() {
+        document.getElementById('tergit').innerHTML = inputBoxNew.value;
+    }
+
+  
     //  This function convert p tag into canves and and then convert 
     //  it into base64 image formate for signature.
+
+    /* old
     $("#common_e_signature").on("change paste ", function() {
+        html2canvas(document.querySelector("#tergit")).then(canvas => {
+
+           $("#drawn_signature").val(canvas.toDataURL());
+        });
+    });
+*/
+
+    //New
+    $("#common_e_signature").on("keyup paste", function() {
         html2canvas(document.querySelector("#tergit")).then(canvas => {
             $("#drawn_signature").val(canvas.toDataURL());
         });
     });
+
 
     //  This function populate initial signature p tag when user start
     //  typing its signature initial. 
@@ -1434,12 +1464,12 @@ if (isset($cn)) {
                     return false;
                 }
                 //
-                
+
                 $('.jsSetAuthorizedSignature_' + (targets.key) + '').remove();
                 $('.authorized_signature_img_' + targets.key).prop('src', data.data.signature);
                 $('#section3_authorized_signature_' + targets.key).val(data.data.signature);
                 targets.key = '';
             }
         });
-    }    
+    }
 </script>
