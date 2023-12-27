@@ -2560,7 +2560,6 @@ class Hr_documents_management extends Public_Controller
                                 $triggerData['changed_from'] = 'Green panel Document Center';
                                 $triggerData['action'] = 'assigne';
                                 savei9Trigger($triggerData);
-
                             } else {
                                 //
                                 $data_to_update = array();
@@ -2585,7 +2584,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["section3_authorized_json"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
-                           
+
                                 $data['session'] = $this->session->userdata('logged_in');
                                 $triggerData['user_sid'] = $user_sid;
                                 $triggerData['user_type'] = $user_type;
@@ -2596,7 +2595,6 @@ class Hr_documents_management extends Public_Controller
                                 $triggerData['changed_from'] = 'Green panel Document Center';
                                 $triggerData['action'] = 'reassigne';
                                 savei9Trigger($triggerData);
-
                             }
                             //
                             $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
@@ -3594,6 +3592,10 @@ class Hr_documents_management extends Public_Controller
                         $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
 
                         if (empty($is_i9_assign)) {
+
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
+
                             $i9_data_to_insert = array();
                             $i9_data_to_insert['user_sid'] = $user_sid;
                             $i9_data_to_insert['user_type'] = $user_type;
@@ -3602,6 +3604,18 @@ class Hr_documents_management extends Public_Controller
                             $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                             $i9_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+
+                            $data['session'] = $this->session->userdata('logged_in');
+                            $triggerData['user_sid'] = $user_sid;
+                            $triggerData['user_type'] = $user_type;
+                            $triggerData['company_sid'] = $company_sid;
+                            $triggerData['old_data'] =   $i9OldData;
+                            $triggerData['new_data'] =   $i9_data_to_insert;
+                            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                            $triggerData['changed_from'] = 'Green panel bulk assigne';
+                            $triggerData['action'] = 'Assigne';
+                            savei9Trigger($triggerData);
+
                             //
                             $sendGroupEmail = 1;
                         }
@@ -5432,6 +5446,9 @@ class Hr_documents_management extends Public_Controller
                         $is_i9_assign = $this->hr_documents_management_model->check_i9_exist('employee', $employer_sid);
 
                         if (empty($is_i9_assign)) {
+                            
+                            $i9OldData = geti9OldData($user_type, $user_sid);
+
                             $i9_data_to_insert = array();
                             $i9_data_to_insert['user_sid'] = $employer_sid;
                             $i9_data_to_insert['user_type'] = 'employee';
@@ -5441,6 +5458,17 @@ class Hr_documents_management extends Public_Controller
                             $i9_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                             //
+                            $data['session'] = $this->session->userdata('logged_in');
+                            $triggerData['user_sid'] = $user_sid;
+                            $triggerData['user_type'] = $user_type;
+                            $triggerData['company_sid'] = $company_sid;
+                            $triggerData['old_data'] =   $i9OldData;
+                            $triggerData['new_data'] =   $i9_data_to_insert;
+                            $triggerData['changed_by'] = $data['session']['employer_detail']['sid'];
+                            $triggerData['changed_from'] = 'Blue panel bulk assigne';
+                            $triggerData['action'] = 'Assigne';
+                            savei9Trigger($triggerData);
+
                             $sendGroupEmail = 1;
                         }
                     }

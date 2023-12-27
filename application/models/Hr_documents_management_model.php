@@ -6796,6 +6796,19 @@ class Hr_documents_management_model extends CI_Model
                 $ins['updated_at'] = $assignedAt;
                 $ins['created_at'] = $assignedAt;
             }
+
+            if ($documentType == 'drivers_license') {
+
+                $triggerData['user_sid'] = $userSid;
+                $triggerData['user_type'] = $userType;
+                $triggerData['company_sid'] = $companySid;
+                $triggerData['changed_by'] = $companySid;
+                $triggerData['changed_from'] = 'Bulk assigne';
+                $triggerData['action'] = 'assigne';
+                saveDriversLicenseTrigger($triggerData);
+            }
+
+
             //
             $this->db
                 ->insert(
