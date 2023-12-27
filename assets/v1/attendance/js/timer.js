@@ -44,7 +44,7 @@ $(function markAttendance() {
 		}
 		// get the new attendance
 		$.ajax({
-			url: apiURL + "attendance",
+			url: baseUrl("v1/clock"),
 			method: "GET",
 		})
 			.always(function () {
@@ -90,7 +90,7 @@ $(function markAttendance() {
 		);
 		//
 		XHR = $.ajax({
-			url: apiURL + "attendance/mark",
+			url: baseUrl("v1/clock/mark"),
 			method: "POST",
 			data: JSON.stringify({ type: eventType, latitude, longitude }),
 			headers: { "content-type": "application/json" },

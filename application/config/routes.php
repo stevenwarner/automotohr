@@ -2079,3 +2079,12 @@ $route["payrolls/page/(:any)/(:num)/(:any)"]["get"] =
 // user payroll dashboard page process
 $route["payrolls/page/update"]["post"] =
   "v1/Users/Main/updatePage";
+
+
+/**
+ * Attendance routes
+ * @version 1.0
+ */
+$route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
+$route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
+$route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";

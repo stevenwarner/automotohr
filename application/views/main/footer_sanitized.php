@@ -228,14 +228,6 @@
 <script src="<?= main_url("public/v1/plugins/bootstrap/js/bootstrap.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment-timezone.min.js?v=3.0"); ?>"></script>
-<!-- API -->
-<script>
-    apiURL = "<?= getCreds('AHR')->API_BROWSER_URL; ?>";
-    apiAccessToken = "<?= getApiAccessToken(
-                            $this->session->userdata("logged_in")['employer_detail']['sid'],
-                            $this->session->userdata("logged_in")['company_detail']['sid']
-                        ); ?>";
-</script>
 <!-- JS Bundles -->
 <?= $pageJs ? GetScripts($pageJs) : ""; ?>
 <?= bundleJs([
