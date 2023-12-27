@@ -72,7 +72,7 @@ class Payrolls extends Admin_Controller
         // _e($this->data,true,true);
         
         // set title
-        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME);
+        $this->data['page_title'] = 'Payroll dashboard :: ' . (STORE_NAME).' ['.getCompanyNameBySid($companyId).']';
         // set JS
         $this->data['appJs'] = bundleJs([
             'js/app_helper',
