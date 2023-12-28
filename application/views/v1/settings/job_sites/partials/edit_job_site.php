@@ -86,8 +86,8 @@
                         Select a radius for your employees to clock in and clock out of this location. For best accuracy, ensure that the circle covers your entire physical address and provides a buffer around the location to account for minor GPS discrepancies.
                     </p>
                     <div class="input-group">
-                        <input type="number" class="form-control" name="site_radius" value="<?= $record["site_radius"]; ?>" />
-                        <div class="input-group-addon">meters</div>
+                        <input type="number" class="form-control" name="site_radius" value="<?=  round($record["site_radius"] * 3.281); ?>" />
+                        <div class="input-group-addon">Feets</div>
                     </div>
                 </div>
 

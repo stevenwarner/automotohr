@@ -3906,7 +3906,7 @@ class Settings extends Public_Controller
 
         $employees = $this->input->get("employees");
         $toggleFilter = false;
-       
+
         $employeesArray = explode(',', $employees);
         $team = $this->input->get("team", true);
         $employeeFilter['employees'] = $employeesArray;
@@ -3915,13 +3915,13 @@ class Settings extends Public_Controller
         if ($employees != '' || $team != '') {
             $toggleFilter = true;
         }
-        if($employees ==''){
+        if ($employees == '') {
             $employees = 'all';
         }
-     
 
-      
-       // _e($team,true,true);
+
+
+        // _e($team,true,true);
 
         $data["employees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"],
@@ -4347,6 +4347,7 @@ class Settings extends Public_Controller
         }
         // set the sanitized post
         $post = $this->input->post(null, true);
+
         // load schedule model
         $this->load->model("v1/Job_sites_model", "job_sites_model");
         // call the function
@@ -4570,6 +4571,7 @@ class Settings extends Public_Controller
                     $session["company_detail"]["sid"],
                     $pageId
                 );
+
             //
             $data["return"] = [
                 "lat" => (float)$data["record"]["lat"],

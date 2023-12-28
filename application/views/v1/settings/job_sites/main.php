@@ -73,7 +73,7 @@
                                                         <p class="text-medium">
                                                             <span class="text-small">Radius</span>
                                                             <br />
-                                                            <strong><?= $v0["site_radius"] ?> meters</strong>
+                                                            <strong><?=  round($v0["site_radius"] * 3.281);?> Feets</strong>
                                                         </p>
                                                     </div>
                                                     <div class="panel-footer text-center">

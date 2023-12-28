@@ -98,9 +98,12 @@ $(function jobSites() {
 		// flush the lat lng
 		currentLatLong = {};
 		//
+
+
 		makePage("Edit Job Site", "job_site", id, function (resp) {
 			// hides the loader
 			ml(false, modalLoader);
+			processAddress()
 			//
 			validatorRef = $("#jsPageJobSiteForm").validate({
 				rules: {
@@ -322,8 +325,8 @@ $(function jobSites() {
 			city: $('[name="city"]').val().trim(),
 			state: $(
 				'[name="state"] option[value="' +
-					$('[name="state"] option:selected').val() +
-					'"]'
+				$('[name="state"] option:selected').val() +
+				'"]'
 			).text(),
 			zip_code: $('[name="zip_code"]').val().trim(),
 			site_radius: $('[name="site_radius"]').val().trim(),

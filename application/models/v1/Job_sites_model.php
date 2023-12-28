@@ -110,6 +110,12 @@ class Job_sites_model extends CI_Model
             ),
         ];
         // set the insert array
+
+        $post["site_radius"];
+        $radius = 0;
+        if ($post["site_radius"] > 0) {
+            $radius = $post["site_radius"] / 3.281;
+        }
         $ins = [];
         $ins["site_name"] = $post["site_name"];
         $ins["street_1"] = $post["street_1"];
@@ -117,7 +123,7 @@ class Job_sites_model extends CI_Model
         $ins["city"] = $post["city"];
         $ins["state"] = $post["state"];
         $ins["zip_code"] = $post["zip_code"];
-        $ins["site_radius"] = $post["site_radius"];
+        $ins["site_radius"] = $radius;
         $ins["lat"] = $post["lat"];
         $ins["lng"] = $post["lng"];
         $ins["updated_at"] = getSystemDate();
