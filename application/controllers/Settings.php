@@ -3851,9 +3851,9 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Minimum_wages_model", "minimum_wages_model");
         // get ones from Gusto
-        // $this->minimum_wages_model->sync(
-        //     $loggedInCompany["sid"]
-        // );
+        $this->minimum_wages_model->sync(
+            $loggedInCompany["sid"]
+        );
         // get the wages
         $data["wages"] = $this->minimum_wages_model
             ->get($loggedInCompany["sid"]);

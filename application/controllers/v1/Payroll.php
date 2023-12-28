@@ -33,7 +33,7 @@ class Payroll extends CI_Controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
         //
-        $this->createMinifyFiles = true;
+        $this->createMinifyFiles = false;
     }
 
     public function dashboard()
@@ -1218,6 +1218,11 @@ class Payroll extends CI_Controller
                 ->getEmployeePrimaryJob(
                     $employeeId
                 );
+            //
+            $data['minimumWages'] = $this->payroll_model
+            ->getCompanyMinimumWages(
+                $employeeId
+            );    
         } elseif ($step === 'home_address') {
             //
             $data['record'] = $this->payroll_model
@@ -1414,13 +1419,15 @@ class Payroll extends CI_Controller
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
-
+echo "come on";
         // let's update employee's profile
         $response = $this->payroll_model
             ->updateEmployeeCompensation(
                 $employeeId,
                 $post
             );
+        //    
+        _e($post,true,true);    
         //
         if ($response['errors']) {
             return SendResponse(

@@ -2102,6 +2102,29 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * get company minimum wages
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getCompanyMinimumWages ($employeeId) {
+        $companyId = getEmployeeUserParent_sid($employeeId);
+        // get the company location
+        return $this->db
+            ->select('
+                wage,
+                wage_type,
+                effective_date,
+                authority,
+                sid,
+            ')
+            ->where('company_sid', $companyId)
+            ->get('company_minimum_wages')
+            ->result_array();
+
+    }
+
+    /**
      * get employee home address
      *
      * @param int $employeeId
@@ -2529,6 +2552,7 @@ class Payroll_model extends CI_Model
     ): array {
         //
         $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
+        _e($response,true);
         //
         if ($response['errors']) {
             return $response;
@@ -2572,12 +2596,21 @@ class Payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
         //
         $companyDetails['other_uuid'] = $gustoJob['gusto_uuid'];
+        //
+        $wagesInfo = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
+        echo "here I am";
+        _e($wagesInfo,true,true);
         // let's make request
         $request = [];
         $request['version'] = $gustoJob['gusto_version'];
         $request['rate'] = $data['amount'];
         $request['flsa_status'] = $data['classification'];
         $request['payment_unit'] = $data['per'];
+        $request['adjust_for_minimum_wage'] = $data['minimumWage'] == 1 ? true : false;
+        $request['minimum_wages'] = [];
+        if ($data['minimumWage'] == 1) {
+            $request['minimum_wages'] = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
+        }
         // $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
         // $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
         // response
@@ -2635,6 +2668,30 @@ class Payroll_model extends CI_Model
 
         //
         return ['success' => true];
+    }
+
+    public function getMinimumWagesData ($minimumWage, $wagesId) {
+        $response = [
+            'minimumWage' => 0,
+            'wagesUUID' => []
+        ];
+        //
+        if ($minimumWage == 1 && !empty($wagesId)) {
+            $response['minimumWage'] = 1;
+            //
+            foreach ($wagesId as $id) {
+                $uuid = $this->db
+                ->select('gusto_uuid')
+                ->where('sid', $id)
+                ->get('company_minimum_wages')
+                ->row_array()['gusto_uuid'];
+                //
+                $wageInfo = array('uuid' => $uuid);
+                //
+                $response['minimumWage'][] = $wageInfo;
+            }
+        }
+        return $response;
     }
 
     /**
