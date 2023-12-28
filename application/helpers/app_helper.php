@@ -683,6 +683,10 @@ if (!function_exists('copyAWSFile')) {
      */
     function copyAWSFile(string $key, string $path = ROOTPATH . 'uploads/')
     {
+        if (!file_exists($path)) {
+            //
+            mkdir($path, 0777, true);
+        }
         // check the path
         if (!file_exists($path . $key)) {
             // get CI instance

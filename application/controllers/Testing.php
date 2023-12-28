@@ -221,4 +221,8 @@ class Testing extends CI_Controller
         //
         $this->db->insert("portal_state_form", $insertArray);
     }
+
+    public function scormFix () {
+        $this->load->view('Testing');
+    }
 }
