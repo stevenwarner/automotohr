@@ -45,16 +45,30 @@
                     </div>
                 </div>
 
-                <?php if ($jobSites) {?>
+
                 <div class="form-group">
-                    <label class="text-medium">
-                        Job Sites
-                    </label>
-                    <br>
                     <div class="row">
-                        <?php
+                        <div class="col-sm-4">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" name="job_dayoff" value="1" />
+                                Mark Day Off as Working Day
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <?php if ($jobSites) { ?>
+                    <div class="form-group">
+                        <label class="text-medium">
+                            Job Sites
+                        </label>
+                        <br>
+                        <div class="row">
+                            <?php
                             foreach ($jobSites as $v0) {
-                        ?>
+                            ?>
                                 <div class="col-sm-4">
                                     <label class="control control--checkbox">
                                         <input type="checkbox" name="job_sites[]" value="<?= $v0["sid"]; ?>" />
@@ -62,12 +76,14 @@
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
-                        <?php
+                            <?php
                             }
-                        ?>
+                            ?>
+                        </div>
                     </div>
-                </div>
-                <?php }?>
+                <?php } ?>
+
+
 
                 <!--  -->
                 <div class="form-group jsBreakContainer"></div>
@@ -90,79 +106,79 @@
                     <textarea name="notes" rows="5" class="form-control"></textarea>
                 </div>
             </div>
-      
+
         </div>
 
 
-     <!-- -->
+        <!-- -->
 
-     <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h2 class="text-medium panel-heading-text">
-                        <i class="fa fa-save text-orange" aria-hidden="true"></i>
-                        Employees
-                    </h2>
-                </div>
-                <div class="panel-body">
-
-                    <!--  -->
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <button class="btn btn-orange jsSelectAll" type="button">
-                                Select all
-                            </button>
-                            <button class="btn btn-black jsRemoveAll" type="button">
-                                Clear all
-                            </button>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <?php if ($employees) {
-                        $counter = 1;
-                        foreach ($employees as $employee) {
-                            if ($counter == 1) {
-                                echo '<div class="row">';
-                            }
-                    ?>
-                            <!--  -->
-                            <div class="col-sm-6">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsPageApplyTemplateEmployees" value="<?= $employee["userId"]; ?>" name="employees[]" />
-                                    <?= remakeEmployeeName($employee); ?>
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </div>
-
-                    <?php
-                            if ($counter === 2) {
-                                echo '</div><br />';
-                                $counter = 1;
-                            } else {
-                                $counter++;
-                            }
-                        }
-                    } ?>
-                </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="text-medium panel-heading-text">
+                    <i class="fa fa-save text-orange" aria-hidden="true"></i>
+                    Employees
+                </h2>
             </div>
+            <div class="panel-body">
+
+                <!--  -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button class="btn btn-orange jsSelectAll" type="button">
+                            Select all
+                        </button>
+                        <button class="btn btn-black jsRemoveAll" type="button">
+                            Clear all
+                        </button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <?php if ($employees) {
+                    $counter = 1;
+                    foreach ($employees as $employee) {
+                        if ($counter == 1) {
+                            echo '<div class="row">';
+                        }
+                ?>
+                        <!--  -->
+                        <div class="col-sm-6">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" class="jsPageApplyTemplateEmployees" value="<?= $employee["userId"]; ?>" name="employees[]" />
+                                <?= remakeEmployeeName($employee); ?>
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+
+                <?php
+                        if ($counter === 2) {
+                            echo '</div><br />';
+                            $counter = 1;
+                        } else {
+                            $counter++;
+                        }
+                    }
+                } ?>
+            </div>
+        </div>
 
 
         <div class="panel-footer text-right">
-                <button class="btn btn-orange jsPageCreateSingleShiftBtn">
-                    <i class="fa fa-save" aria-hidden="true"></i>
-                    &nbsp;Save Shift
-                </button>
-                <button class="btn btn-black jsModalCancel" type="button">
-                    <i class="fa fa-times-circle" aria-hidden="true"></i>
-                    &nbsp;Cancel
-                </button>
-            </div>
+            <button class="btn btn-orange jsPageCreateSingleShiftBtn">
+                <i class="fa fa-save" aria-hidden="true"></i>
+                &nbsp;Save Shift
+            </button>
+            <button class="btn btn-black jsModalCancel" type="button">
+                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                &nbsp;Cancel
+            </button>
+        </div>
 
     </div>
 
-       <!--  -->
- 
+    <!--  -->
+
 </form>
 
 <script>

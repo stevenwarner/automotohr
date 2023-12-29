@@ -656,6 +656,13 @@ class Shift_model extends CI_Model
 
 
         $post["breaks"] = array_values($post["breaks"]);
+
+        $markoffDayAsWorking = 0;
+        if ($post["job_dayoff"]) {
+            $markoffDayAsWorking = 1;
+        } else {
+            $markoffDayAsWorking = 0;
+        }
         //
 
         if ($post["breaks"]) {
@@ -693,7 +700,10 @@ class Shift_model extends CI_Model
         $this->load->model("v1/Shift_template_model", "shift_template_model");
 
         // get company off days
-        $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+
+        if ($markoffDayAsWorking == 0) {
+            $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+        }
         //
         $employeesAlreadyExists = [];
         //
@@ -702,9 +712,12 @@ class Shift_model extends CI_Model
         foreach ($post["employees"] as $employeeId) {
             foreach ($dates as $v0) {
                 //
-                if (in_array($v0, $holidaysAndOffDays)) {
-                    continue;
+                if ($markoffDayAsWorking == 0) {
+                    if (in_array($v0, $holidaysAndOffDays)) {
+                        continue;
+                    }
                 }
+
                 //
                 $where = [
                     "employee_sid" => $employeeId,
@@ -793,12 +806,29 @@ class Shift_model extends CI_Model
         );
 
         //
+        $markoffDayAsWorking = 0;
+        if ($post["job_dayoff"]) {
+            $markoffDayAsWorking = 1;
+        } else {
+            $markoffDayAsWorking = 0;
+        }
+
+        //
         $dates = getDatesInRange($startDate, $endDate, DB_DATE);
         // load schedule model
         $this->load->model("v1/Shift_template_model", "shift_template_model");
 
+        $markoffDayAsWorking = 0;
+        if ($post["job_dayoff"]) {
+            $markoffDayAsWorking = 1;
+        } else {
+            $markoffDayAsWorking = 0;
+        }
+
         // get company off days
-        $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+        if ($markoffDayAsWorking == 0) {
+            $holidaysAndOffDays = $this->getCompanyHolidays($companyId, $startDate, $endDate);
+        }
         //
         $employeesAlreadyExists = [];
         //
@@ -826,9 +856,13 @@ class Shift_model extends CI_Model
                 $shiftDataToCopy = $lastCycleShiftData[$key];
                 //
                 if ($lastCycleShiftData[$key]) {
-                    if (in_array($v0, $holidaysAndOffDays)) {
-                        continue;
+
+                    if ($markoffDayAsWorking == 0) {
+                        if (in_array($v0, $holidaysAndOffDays)) {
+                            continue;
+                        }
                     }
+
                     //
                     $where = [
                         "employee_sid" => $employeeId,
