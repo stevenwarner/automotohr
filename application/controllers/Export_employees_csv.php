@@ -194,31 +194,34 @@ class Export_employees_csv extends Public_Controller
                                                 foreach (unserialize($drivingData['license_details']) as $key => $val) {
                                                     $export_data[$i][$key] = $val;
                                                     $header[$key] = $key;
+
+                                                    _e($header[$key], true, true);
                                                 }
                                             } else {
 
                                                 $export_data[$i]['license_type'] = '';
-                                                $header['license_type'];
+                                                $header[$key] = 'license_type';
 
                                                 $export_data[$i]['license_authority'] = '';
-                                                $header['license_authority'];
+                                                $header[$key] = 'license_authority';
 
                                                 $export_data[$i]['license_class'] = '';
-                                                $header['license_class'];
+                                                $header[$key] = 'license_class';
 
                                                 $export_data[$i]['license_number'] = '';
-                                                $header['license_number'];
+                                                $header[$key] = 'license_number';
 
                                                 $export_data[$i]['license_issue_date'] = '';
-                                                $header['license_issue_date'];
+                                                $header['$key'] = 'license_issue_date';
 
                                                 $export_data[$i]['license_expiration_date'] = '';
-                                                $header['license_expiration_date'];
+                                                $header[$key] = 'license_expiration_date';
 
                                                 $export_data[$i]['license_indefinite'] = '';
-                                                $header['license_indefinite'];
+                                                $header[$key] = 'license_indefinite';
+
                                                 $export_data[$i]['license_notes'] = '';
-                                                $header['license_notes'];
+                                                $header[$key] = 'license_notes';
                                             }
                                         } elseif ($value == 'profile_picture') {
                                             if (!empty($employee['profile_picture'])) {
