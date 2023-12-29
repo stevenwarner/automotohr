@@ -185,6 +185,7 @@ class Export_employees_csv extends Public_Controller
                                             }
                                         } elseif ($value == "drivers_license") {
                                             unset($header['drivers_license']);
+
                                             //
                                             $drivingData = get_employee_drivers_license($employee['sid']);
 
@@ -194,6 +195,30 @@ class Export_employees_csv extends Public_Controller
                                                     $export_data[$i][$key] = $val;
                                                     $header[$key] = $key;
                                                 }
+                                            } else {
+
+                                                $export_data[$i]['license_type'] = '';
+                                                $header['license_type'];
+
+                                                $export_data[$i]['license_authority'] = '';
+                                                $header['license_authority'];
+
+                                                $export_data[$i]['license_class'] = '';
+                                                $header['license_class'];
+
+                                                $export_data[$i]['license_number'] = '';
+                                                $header['license_number'];
+
+                                                $export_data[$i]['license_issue_date'] = '';
+                                                $header['license_issue_date'];
+
+                                                $export_data[$i]['license_expiration_date'] = '';
+                                                $header['license_expiration_date'];
+
+                                                $export_data[$i]['license_indefinite'] = '';
+                                                $header['license_indefinite'];
+                                                $export_data[$i]['license_notes'] = '';
+                                                $header['license_notes'];
                                             }
                                         } elseif ($value == 'profile_picture') {
                                             if (!empty($employee['profile_picture'])) {
