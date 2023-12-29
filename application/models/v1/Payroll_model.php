@@ -2112,6 +2112,7 @@ class Payroll_model extends CI_Model
         // get the company location
         return $this->db
             ->select('
+                gusto_uuid,
                 wage,
                 wage_type,
                 effective_date,
@@ -2615,8 +2616,6 @@ class Payroll_model extends CI_Model
             $request,
             'PUT'
         );
-        _e($request,true);
-        _e($gustoResponse,true,true);
         //
         $errors = hasGustoErrors($gustoResponse);
         //
@@ -2631,6 +2630,7 @@ class Payroll_model extends CI_Model
         $ins['flsa_status'] = $gustoResponse['flsa_status'];
         $ins['effective_date'] = $gustoResponse['effective_date'];
         $ins['adjust_for_minimum_wage'] = $gustoResponse['adjust_for_minimum_wage'];
+        $ins['minimum_wages'] = serialize($gustoResponse['minimum_wages']);
         $ins['updated_at'] = getSystemDate();
         //
         $this->db

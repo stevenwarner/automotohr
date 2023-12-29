@@ -1218,6 +1218,13 @@ class Payroll extends CI_Controller
                 ->getEmployeePrimaryJob(
                     $employeeId
                 );
+            //    
+
+            if ($data['primaryJob']['compensation']['adjust_for_minimum_wage'] == 1 && !empty($data['primaryJob']['compensation']['minimum_wages'])) {
+                $minimumWages = unserialize($data['primaryJob']['compensation']['minimum_wages']);
+                $selectedWages = array_column($minimumWages, 'uuid');
+                $data['selectedWages'] = $selectedWages;
+            }        
             //
             $data['minimumWages'] = $this->payroll_model
             ->getCompanyMinimumWages(
@@ -1419,7 +1426,6 @@ class Payroll extends CI_Controller
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
-echo "come on";
         // let's update employee's profile
         $response = $this->payroll_model
             ->updateEmployeeCompensation(
@@ -1427,7 +1433,7 @@ echo "come on";
                 $post
             );
         //    
-        _e($post,true,true);    
+        // _e($post,true,true);    
         //
         if ($response['errors']) {
             return SendResponse(
