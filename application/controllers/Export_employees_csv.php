@@ -194,8 +194,6 @@ class Export_employees_csv extends Public_Controller
                                                 foreach (unserialize($drivingData['license_details']) as $key => $val) {
                                                     $export_data[$i][$key] = $val;
                                                     $header[$key] = $key;
-
-                                                    _e($header[$key], true, true);
                                                 }
                                             } else {
 
