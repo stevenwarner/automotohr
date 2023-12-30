@@ -195,7 +195,7 @@ $noActionRequiredDocumentsList = [];
                                                                     <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
                                                                         <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print'); ?>" class="btn btn-success btn-sm btn-block">Print</a>
 
-                                                                        <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print'); ?>" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                        <a target="_blank" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download'); ?>" class="btn btn-success btn-sm btn-block">Download</a>
 
                                                                     <?php } else { ?>
 
@@ -206,9 +206,7 @@ $noActionRequiredDocumentsList = [];
                                                                 </td>
 
                                                                 <td class="col-lg-2">
-
                                                                     <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
-
                                                                         <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>" data-document-title="Assigned Document">
                                                                             Preview Assigned
                                                                         </button>
@@ -216,7 +214,7 @@ $noActionRequiredDocumentsList = [];
                                                                         <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="generated" data-doc-sid="<?php echo $document['sid']; ?>" data-on-action="assigned" data-from="assigned_document">
                                                                             Preview Assigned
                                                                         </button>
-
+                                                                        dashboard
                                                                     <?php } ?>
 
 
