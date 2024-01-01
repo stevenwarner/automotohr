@@ -2512,8 +2512,15 @@ class Timeoff_model extends CI_Model
         //
         foreach ($records as $record) {
             $timeoffDays = json_decode($record['timeoff_days'],true)['days'];
-            //
+//
             foreach ($timeoffDays as $dayInfo) {
+ if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dayInfo['date'])){
+                    $dayInfo["date"] = formatDateToDB(
+                        $dayInfo["date"],
+                        DB_DATE,
+                        "m-d-Y"
+                    );
+                }
                 //
                 $timeoffDate = DateTime::createFromFormat('m-d-Y', $dayInfo['date'])->format('Y-m-d');
                 //    

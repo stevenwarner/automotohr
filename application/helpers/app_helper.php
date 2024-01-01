@@ -481,6 +481,9 @@ if (!function_exists('getEmployeeAnniversary')) {
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear + 1, $effectiveDate);
         }
+$newDateObj = new DateTime($returnArray["upcomingAnniversaryDate"]);
+        $newDateObj->modify("-1 day");
+        $returnArray['upcomingAnniversaryDate'] = $newDateObj->format("Y-m-d");
         //
         return $returnArray;
     }
