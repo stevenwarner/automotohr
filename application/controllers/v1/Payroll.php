@@ -1552,6 +1552,7 @@ class Payroll extends CI_Controller
                 ['errors' => 'The selected employee is not on payroll.']
             );
         }
+
         // get the job
         $gustoFederalTax = $this->db
             ->where('employee_sid', $employeeId)
@@ -1571,6 +1572,14 @@ class Payroll extends CI_Controller
                 $response
             );
         }
+
+
+        //
+        $usersession = checkUserSession();
+        $comapnySid = $usersession['company_detail']['sid'];
+        updateW4Info($employeeId, $comapnySid, $post, 'employee');
+
+        //
 
         return SendResponse(
             200,

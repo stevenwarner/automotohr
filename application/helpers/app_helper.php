@@ -2010,7 +2010,7 @@ if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
 if (!function_exists('image_url')) {
     function image_url($path)
     {
-        $imagePath = base_url('assets/images/'.$path);
+        $imagePath = base_url('assets/images/' . $path);
 
         return $imagePath;
     }
@@ -2251,4 +2251,170 @@ if (!function_exists("getSundaysAndSaturdays")) {
 
         return $sundaysSaturdays;
     }
+}
+
+
+//
+if (!function_exists("updateW4Info")) {
+    function updateW4Info($employeeSid, $comapnySid, $postData, $employeeType)
+    {
+
+        // get CI instance
+        $CI = &get_instance();
+        $w4Details = $CI->db
+            ->select('*')
+            ->where('employer_sid', $employeeSid)
+            ->where('company_sid', $comapnySid)
+            ->where('user_type', $employeeType)
+            ->get('form_w4_original')
+            ->row_array();
+        // check the details
+        $sql = $CI->db->last_query();
+
+        if (empty($w4Details)) {
+            return;
+        } else {
+
+            $filing_status = '';
+            if ($postData['filing_status'] == 'Single') {
+                $filing_status = 'separately';
+            }
+            if ($postData['filing_status'] == 'Married') {
+                $filing_status = 'jointly';
+            }
+            if ($postData['filing_status'] == 'Head of Household') {
+                $filing_status = 'head';
+            }
+
+
+            if ($w4Details['user_consent'] == 0) {
+
+                $newCompareData = [];
+
+                $newCompareData['filing_status'] = $filing_status;
+                $newCompareData['two_jobs'] = $postData['two_jobs'];
+                $newCompareData['dependents_amount'] = $postData['dependents_amount'];
+                $newCompareData['extra_withholding'] = $postData['extra_withholding'];
+                $newCompareData['other_income'] = $postData['other_income'];
+                $newCompareData['deductions'] = $postData['deductions'];
+
+                $oldCompareData = [];
+                $oldCompareData['filing_status'] = $w4Details['marriage_status'];
+                $oldCompareData['two_jobs'] = $w4Details['mjsw_status'];
+                $oldCompareData['dependents_amount'] = $w4Details['other_dependents'];
+                $oldCompareData['extra_withholding'] = $w4Details['additional_tax'];
+                $oldCompareData['other_income'] = $w4Details['other_income'];
+                $oldCompareData['deductions'] = $w4Details['other_deductions'];
+
+                $difference =  findDifference($oldCompareData, $newCompareData);
+
+                if ($difference['w4_changed'] == 0) {
+                    return;
+                }
+
+                // Save Difference
+
+                $updateData = [];
+
+                if ($difference['data']['filing_status']['new']) {
+                    $updateData['marriage_status'] = $difference['data']['filing_status']['new'];
+                }
+                if ($difference['data']['two_jobs']) {
+                    $updateData['mjsw_status'] = $difference['data']['two_jobs']['new'];
+                }
+                if ($difference['data']['dependents_amount']) {
+                    $updateData['other_dependents'] =  $difference['data']['dependents_amount']['new'];
+                }
+                if ($difference['data']['extra_withholding']) {
+                    $updateData['additional_tax'] =  $difference['data']['extra_withholding']['new'];
+                }
+                if ($difference['data']['other_income']) {
+                    $updateData['other_income'] =   $difference['data']['other_income']['new'];
+                }
+
+                if ($difference['data']['deductions']) {
+                    $updateData['other_deductions'] =  $difference['data']['deductions']['new'];
+                }
+
+                // Move Previous Data To history
+                $w4_form_history = $w4Details;
+                $w4_form_history['form_w4_ref_sid'] = $w4Details['sid'];
+                unset($w4_form_history['sid']);
+
+                $CI->db->insert('form_w4_original_history', $w4_form_history);
+
+                // Update W4
+                $CI->db->where('employer_sid', $employeeSid)
+                    ->where('company_sid', $comapnySid)
+                    ->where('user_type', $employeeType)
+                    ->where('user_consent', 0)
+                    ->update('form_w4_original', $updateData);
+                //
+            } else {
+
+                $newCompareData = [];
+                $newCompareData['filing_status'] = $postData['filing_status'];
+                $newCompareData['two_jobs'] = $postData['two_jobs'];
+                $newCompareData['dependents_amount'] = $postData['dependents_amount'];
+                $newCompareData['extra_withholding'] = $postData['extra_withholding'];
+                $newCompareData['other_income'] = $postData['other_income'];
+                $newCompareData['deductions'] = $postData['deductions'];
+
+                $oldCompareData = [];
+                $oldCompareData['filing_status'] = $w4Details['marriage_status'];
+                $oldCompareData['two_jobs'] = $w4Details['mjsw_status'];
+                $oldCompareData['dependents_amount'] = $w4Details['other_dependents'];
+                $oldCompareData['extra_withholding'] = $w4Details['additional_tax'];
+                $oldCompareData['other_income'] = $w4Details['other_income'];
+                $oldCompareData['deductions'] = $w4Details['other_deductions'];
+
+                $difference =  findDifference($oldCompareData, $newCompareData);
+
+                if ($difference['w4_changed'] == 0) {
+                    return;
+                }
+                //
+                $w4_form_history['form_w4_ref_sid'] = $w4Details['sid'];
+                $w4_form_history['marriage_status'] = $filing_status;
+                $w4_form_history['mjsw_status'] = $postData['two_jobs'];
+                $w4_form_history['other_dependents'] =  $postData['dependents_amount'];
+                $w4_form_history['additional_tax'] =  $postData['extra_withholding'];
+                $w4_form_history['other_income'] =   $postData['other_income'];
+                $w4_form_history['other_deductions'] =  $postData['deductions'];
+                $CI->db->insert('form_w4_original_history', $w4_form_history);
+            }
+        }
+    }
+}
+
+//
+
+function findDifference($previous_data, $form_data)
+{
+    // 
+    $w4_changed = 0;
+    //
+    $dt = [];
+    //
+    if (!empty($previous_data)) {
+        foreach ($previous_data as $key => $data) {
+            //
+            if (!isset($form_data[$key])) {
+                continue;
+            }
+            //   
+            if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
+                //
+                $dt[$key] = [
+                    'old' => $data,
+                    'new' => $form_data[$key]
+                ];
+                //
+                $w4_changed = 1;
+            }
+        }
+    }
+    //
+
+    return ['w4_changed' => $w4_changed, 'data' => $dt];
 }
