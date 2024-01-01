@@ -2658,6 +2658,7 @@ class Time_off extends Public_Controller
                 $in['for_admin'] = $post['approver'];
                 $in['is_archived'] = $post['deactivate'];
                 $in['is_included'] = $post['include'];
+                $in['is_esst'] = $post['isESST'];
                 $in['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
                 $in['creator_type'] = 'employee';
                 $in['status'] = 1;
@@ -2758,6 +2759,7 @@ class Time_off extends Public_Controller
                 $up['is_archived'] = $post['deactivate'];
                 $up['is_included'] = $post['include'];
                 $up['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
+                $up['is_esst'] = $post['isESST'];
                 $up['sort_order'] = $post['order'];
                 $up['off_days'] = implode(',', $post['offDays']);
                 $up['accruals'] = json_encode($accruals);

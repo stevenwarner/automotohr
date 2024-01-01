@@ -12,6 +12,7 @@ $(function () {
         approverList: [],
         deactivate: 0,
         include: 1,
+        isESST:0,
         employeeTypes: [],
         method: 'none',
         time: 'none',
@@ -290,7 +291,8 @@ $(function () {
             policyOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
             // // Set deactivate check
             policyOBJ.include = $('#js-include-check-add').prop('checked') === true ? 1 : 0;
-
+            // // Set deactivate check
+            policyOBJ.isESST = $('#js-is-esst-add').prop('checked') === true ? 1 : 0;
             //
             policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //

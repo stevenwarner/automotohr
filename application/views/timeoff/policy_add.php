@@ -218,6 +218,20 @@
         </div>
     </div>
 
+    <div class="row mb10">
+        <div class="col-sm-6 col-xs-12">
+            <div class="">
+                <label class="control control--checkbox">
+                    <input type="checkbox" id="js-is-policy-esst" />
+                    <?php echo $get_policy_item_info['is_esst_policy_label']; ?>
+                    <span class="control__indicator"></span>
+                </label>
+                <i class="fa fa-question-circle" data-hint="js-hint" data-target="balance"></i>
+                <div class="js-hint js-hint-balance"><?php echo $get_policy_item_info['is_esst_policy_hint']; ?></div>
+            </div>
+        </div>
+    </div>
+
     <!-- FMLA Range -->
     <div class="row mb10 js-fmla-range-wrap-add hidden" style="display: none;">
         <div class="col-sm-12">

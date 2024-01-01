@@ -747,6 +747,23 @@ if (!function_exists('getEmployeeAccrual')) {
             $durationInMinutes,
             $todayDate
         );
+        //
+        if (checkPolicyESST($policyId) == 1) {
+            //
+            return processESSTPolicy(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r
+            );
+        }
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -1757,3 +1774,104 @@ if (!function_exists('getCycleTimeDifference')) {
         return $difference->$type;
     }
 }
+
+if (!function_exists('checkPolicyESST')) {
+    /**
+     * Check is policy is ESST
+     * 
+     * @param int $policyId
+     * 
+     * @return int
+     */
+    function checkPolicyESST(
+        int $policyId
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('is_esst');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result['is_esst'];
+    }
+}    
+
+if (!function_exists('processESSTPolicy')) {
+    /**
+     * 
+     */
+    function processESSTPolicy(
+        $policyId,
+        $employeeId,
+        $employementStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $r
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('policy_start_date');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
+        $todayDate = getFormatedDate($todayDate);
+        //
+        // $employeeJoiningDate = '2024-06-24';
+        // $todayDate = '2024-09-24';
+        //
+        if ($employeeJoiningDate < $result['policy_start_date']) {
+            $employeeAnniversaryDate = getEmployeeAnniversary($result['policy_start_date'], $todayDate);
+        } else {
+            $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
+        }
+        //
+        $totalShiftMinutes = 0;
+        //
+        if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+           // todo
+        } else {
+            $CI->db->select('start_time,end_time');
+            $CI->db->where('shift_date >=', $employeeAnniversaryDate['lastAnniversaryDate']);
+            $CI->db->where('shift_date <=', $todayDate);
+            $CI->db->where('employee_sid', $employeeId);
+            $result = $CI->db->get('cl_shifts')->result_array();
+            //
+            if (!$result) {
+                $r['Reason'] = 'Employee do not have a shift between '.$employeeAnniversaryDate['lastAnniversaryDate']. ' and '. $todayDate;
+                return $r;
+            }
+            //
+            foreach ($result as $row) {
+                $startTime = DateTime::createFromFormat("H:i:s", $row['start_time']);
+                $endTime = DateTime::createFromFormat("H:i:s", $row['end_time']);
+                $difference = $endTime->diff($startTime);
+                //
+                $totalShiftMinutes += ($difference->h * 60) + $difference->i;
+                //
+            }
+        }
+        //
+        if ($totalShiftMinutes < 4800) {
+            $r['Reason'] = 'Employee do not meet this policy';
+            return $r;
+        }
+        //
+        $allowedTime  = (($totalShiftMinutes / 60) / 30) * 60;
+        $r['AllowedTime'] = $allowedTime;
+        $r['RemainingTime'] = $allowedTime;
+        $r['EmployementStatus'] = $employementStatus;
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+        //
+        // _e($r,true,true);
+        return $r;
+    }
+}    
