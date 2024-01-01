@@ -660,8 +660,8 @@ button.ajs-button.ajs-cancel {
 
 /*  */
 .csVerticalAlignMiddle {
-    color: #fd7a2a;
-	left: 0 !important;
+    /* color: #fd7a2a; */
+	/* left: 0 !important; */
 }
 .csPageLoader div p {
     margin-top: 10px;

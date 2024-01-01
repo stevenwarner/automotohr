@@ -69,6 +69,7 @@ class Base extends Public_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->library("attendance_lib");
         //
         $this->appSession = checkAndGetSession("all");
         $this->loggedInEmployee = $this->appSession["employer_detail"];

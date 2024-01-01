@@ -136,7 +136,7 @@ class Attendance_lib
      * @param bool $doFormat Optional
      * @return array
      */
-    public function convertSecondsToHours(string $seconds, bool $doFormat = false): array
+    public function convertSecondsToHours(string $seconds, bool $doFormat = false)
     {
         // set the object
         $obj = [
@@ -146,7 +146,7 @@ class Attendance_lib
         ];
         //
         if ($doFormat) {
-            return $obj["hours"];
+            return round($obj["hours"]) . "h " . round($obj["minutes"]) . "m";
         }
         //
         return $obj;

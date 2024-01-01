@@ -16110,12 +16110,13 @@ if (!function_exists('getSystemDateInUTC')) {
      *
      * @param string $format
      * @param string $timestamp
+     * @param string $customDate Optional
      * @return string
      */
-    function getSystemDateInUTC(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    function getSystemDateInUTC(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now', string $customDate = "")
     {
         // get the date in current timezone
-        $pstDateObject = new DateTime(getSystemDate($format, $timestamp));
+        $pstDateObject = new DateTime($customDate ?? getSystemDate($format, $timestamp));
         // set the timezone to utc
         $pstDateObject->setTimezone(new DateTimeZone("UTC"));
         // return the date

@@ -25,6 +25,12 @@ class Clock_model extends Base_model
     private $employeeId;
 
     /**
+     * holds the date
+     * @var string
+     */
+    private $date;
+
+    /**
      * holds the date in UTC
      * @var string
      */
@@ -35,34 +41,53 @@ class Clock_model extends Base_model
      *
      * @param int $companyId
      * @param int $employeeId
+     * @param string $date
+     * @param bool $doReturn
      * @return array
      */
     public function getClockWithState(
         int $companyId,
-        int $employeeId
+        int $employeeId,
+        string $date = "",
+        bool $doReturn = false
     ) {
         // set companyId
         $this->companyId = $companyId;
         // set employeeId
         $this->employeeId = $employeeId;
-        // get todays date in UTC
-        $this->dateInUTC = getSystemDateInUTC(DB_DATE);
+        if ($date) {
+            $this->date = $date;
+            $this->dateInUTC = getSystemDateInUTC(DB_DATE, "now", $this->date);
+        } else {
+            // get todays date
+            $this->date = getSystemDate(DB_DATE);
+            // get todays date in UTC
+            $this->dateInUTC = getSystemDateInUTC(DB_DATE);
+        }
         // set return array
         $clockArray = [
             "clock_time" => "",
             "state" => "",
             "breaks" => [],
-            "jobs" => $this->getJobs(),
+            "job_sites" => [],
+            "allowed_breaks" => [],
+            "current_job_id" => 0,
         ];
+        // set job sites
+        $clockArray["job_sites"] = $this->getEmployeeJobSites();
+        // set breaks
+        $clockArray["allowed_breaks"] = $this->getAllowedBreaks();
         // get the attendance state and time
         $record = $this->getAttendanceStateAndTime();
         // when no entry is found
         if (!$record) {
             //
-            return SendResponse(
-                200,
-                $clockArray
-            );
+            return $doReturn
+                ? $clockArray
+                : SendResponse(
+                    200,
+                    $clockArray
+                );
         }
         // get the attendance logs
         $records = $this->getAttendanceLogs($record["sid"]);
@@ -74,6 +99,8 @@ class Clock_model extends Base_model
         // when records found
         if ($records) {
             foreach ($records as $v) {
+                // set current job id
+                $clockArray["current_job_id"] = $v["job_site_sid"];
                 //
                 $timeInMinutes += $v["duration"];
                 //
@@ -84,9 +111,12 @@ class Clock_model extends Base_model
                 //
                 if ($v["break_start"]) {
                     $clockArray["breaks"][] = [
+                        "id" => $v["break_id"],
                         "start" => $v["break_start"],
                         "end" => $v["break_end"],
                         "duration" => $v["duration"],
+                        "text" => $this->attendance_lib
+                            ->convertSecondsToHours($v["duration"], true)
                     ];
                 }
             }
@@ -95,15 +125,20 @@ class Clock_model extends Base_model
         $clockArray["clock_time"] = $lastClockInTime;
         $clockArray["state"] = $record["last_event"];
         $clockArray["time"] = $found ? $timeInMinutes : 0;
+        $clockArray["reference"] = $record["sid"];
         //
         if ($record["last_event"] === "clocked_out") {
             $clockArray["time"] = $timeInMinutes;
         }
+        $clockArray["text"] = $this->attendance_lib
+            ->convertSecondsToHours($clockArray["time"], true);
         //
-        return SendResponse(
-            200,
-            $clockArray
-        );
+        return $doReturn
+            ? $clockArray
+            : SendResponse(
+                200,
+                $clockArray
+            );
     }
 
     /**
@@ -219,6 +254,154 @@ class Clock_model extends Base_model
     }
 
     /**
+     * get the attendance logs
+     *
+     * @param int $attendanceId
+     * @param array $breaks
+     * @return array
+     */
+    public function getAttendanceFootprints(int $attendanceId, array $breaks): array
+    {
+        // set return array
+        $returnArray = [
+            "logs" => [],
+            "locations" => []
+        ];
+        //
+        $logs = $this->db
+            ->select("
+                sid,
+                job_site_sid,
+                clocked_in,
+                clocked_out,
+                break_id,
+                break_start,
+                break_end,
+                duration,
+                lat,
+                lng,
+                lat_2,
+                lng_2
+            ")
+            ->where("cl_attendance_sid", $attendanceId)
+            ->order_by("sid", "ASC")
+            ->get("cl_attendance_log")
+            ->result_array();
+
+        if (!$logs) {
+            return $returnArray;
+        }
+
+        foreach ($logs as $v0) {
+            //
+            $log = [
+                "sid" => $v0["sid"],
+                "text" => "Clock in/out",
+                "startTime" => "",
+                "endTime" => "",
+                "durationText" => convertSecondsToTime($v0["duration"]),
+                "duration" => $v0["duration"],
+                "jobSite" => [],
+                "break" => [],
+            ];
+            // set locations
+            $locationArray = [];
+            // set the text
+            if ($v0["clocked_in"]) {
+                $locationArray["clocked_in"] = [
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "title" => "Clocked in"
+                ];
+                //
+                if ($v0["clocked_out"]) {
+                    $locationArray["clocked_out"] = [
+                        "lat" => $v0["lat_2"],
+                        "lng" => $v0["lng_2"],
+                        "title" => "Clocked out"
+                    ];
+                }
+                $log["text"] = "Clocked in/out";
+                $log["startTime"] = $v0["clocked_in"];
+                $log["is_ended"] = $v0["clocked_in"] ? true : false;
+                $log["endTime"] = $v0["clocked_out"] ?? "";
+            } else {
+                $locationArray["break_start"] = [
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "title" => "Break started"
+                ];
+                //
+                if ($v0["break_end"]) {
+                    $locationArray["break_end"] = [
+                        "lat" => $v0["lat_2"],
+                        "lng" => $v0["lng_2"],
+                        "title" => "Break end"
+                    ];
+                }
+                $log["text"] = "Break start/end";
+                $log["startTime"] = $v0["break_start"];
+                $log["is_ended"] = $v0["break_end"] ? true : false;
+                $log["endTime"] = $v0["break_end"] ?? "";
+            }
+            //
+            if ($v0["job_site_sid"] && $v0["job_site_sid"] != 0) {
+                $log["jobSite"] = $this->getJobSiteDetails($v0["job_site_sid"]);
+            }
+            //
+            if ($v0["break_id"] && $v0["break_id"] != 0) {
+                foreach ($breaks as $break) {
+                    if ($break["id"] == $v0["break_id"]) {
+                        $log["break"] = $break;
+                    }
+                }
+            }
+
+            //
+            if ($log["jobSite"]) {
+                $locationArray["clocked_in"]["title"] .= " at " . $log["jobSite"]["site_name"];
+                $locationArray["clocked_in"]["constraint"] = [
+                    "lat" => $log["jobSite"]["lat"],
+                    "lng" => $log["jobSite"]["lng"],
+                    "allowed" => $log["jobSite"]["site_radius"],
+                    "title" => $log["jobSite"]["site_name"]
+                ];
+            }
+
+            //
+            if ($log["break"]) {
+                $locationArray["break_start"]["title"] .= " for " . $log["break"]["break"];
+            }
+
+            //
+            $returnArray["logs"][] = $log;
+            $returnArray["locations"] = array_merge(
+                $returnArray["locations"],
+                array_values($locationArray)
+            );
+        }
+
+        return $returnArray;
+    }
+
+    /**
+     * get a single job site
+     */
+    private function getJobSiteDetails(int $jobSiteId): array
+    {
+        return $this->db
+            ->select("
+            site_name,
+            site_radius,
+            lat,
+            lng
+        ")
+            ->where("sid", $jobSiteId)
+            ->get("company_job_sites")
+            ->row_array();
+    }
+
+    /**
      * get the attendance state and time
      *
      * @return array
@@ -254,15 +437,18 @@ class Clock_model extends Base_model
             ->select("
                 clocked_in,
                 clocked_out,
+                break_id,
                 break_start,
                 break_end,
                 duration,
+                job_site_sid,
             ")
             ->where("cl_attendance_sid", $attendanceId)
             ->order_by("sid", "DESC")
             ->get("cl_attendance_log")
             ->result_array();
     }
+
 
     /**
      * check the event type
@@ -357,6 +543,7 @@ class Clock_model extends Base_model
             $insLog["clocked_in"] = $ins["clocked_in"];
             $insLog["lat"] = $post["latitude"];
             $insLog["lng"] = $post["longitude"];
+            $insLog["job_site_sid"] = $post["job_site"];
             $insLog["created_at"] = $ins["created_at"];
             $insLog["updated_at"] = $ins["updated_at"];
             // insert log
@@ -440,6 +627,8 @@ class Clock_model extends Base_model
         $insLog["break_start"] = getSystemDateInUTC();
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
+        $insLog["job_site_sid"] = $response["job_site_sid"];
+        $insLog["break_id"] = $post["job_site"];
         $insLog["created_at"] = $insLog["break_start"];
         $insLog["updated_at"] = $insLog["created_at"];
         // insert break
@@ -461,21 +650,27 @@ class Clock_model extends Base_model
      */
     private function endBreak(array $post, int $attendanceId)
     {
-        // first clock out
-        $response = $this->clockIn($post, $attendanceId);
-        // check for errors
-        if ($response["errors"]) {
-            return $response;
-        }
         // get last open break
         $record = $this->db
-            ->select("sid, break_start")
+            ->select("sid, break_start, job_site_sid")
             ->where("cl_attendance_sid", $attendanceId)
             ->where("break_start is not null", null, null)
             ->where("break_end is null", null, null)
             ->limit(1)
             ->get("cl_attendance_log")
             ->row_array();
+        //
+        $post["job_site"] = 0;
+        //
+        if ($record) {
+            $post["job_site"] = $record["job_site_sid"];
+        }
+        // first clock out
+        $response = $this->clockIn($post, $attendanceId);
+        // check for errors
+        if ($response["errors"]) {
+            return $response;
+        }
         // when there is no open slot
         if (!$record) {
             return [
@@ -521,6 +716,7 @@ class Clock_model extends Base_model
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
         $insLog["clocked_in"] = getSystemDateInUTC();
+        $insLog["job_site_sid"] = $post["job_site"];
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
         $insLog["created_at"] = $insLog["clocked_in"];
@@ -546,7 +742,7 @@ class Clock_model extends Base_model
     {
         // get the last open clock in
         $record = $this->db
-            ->select("sid, clocked_in")
+            ->select("sid, clocked_in, job_site_sid")
             ->where("cl_attendance_sid", $attendanceId)
             ->where("clocked_in is not null", null, null)
             ->where("clocked_out is null", null, null)
@@ -557,7 +753,8 @@ class Clock_model extends Base_model
         if (!$record) {
             return [
                 "success" => true,
-                "duration" => 0
+                "duration" => 0,
+                "job_site_sid" => 0
             ];
         }
         // update table log
@@ -581,7 +778,8 @@ class Clock_model extends Base_model
         //
         return [
             "success" => true,
-            "duration" => $updLog["duration"]
+            "duration" => $updLog["duration"],
+            "job_site_sid" => $record["job_site_sid"]
         ];
     }
 
@@ -772,12 +970,109 @@ class Clock_model extends Base_model
     }
 
     /**
-     * get employee jobs by shift
+     * get employee shift for a specific date
      *
      * @return array
      */
-    private function getJobs()
+    private function getEmployeeJobSites(): array
     {
         // get the employee shifts
+        $shift = $this->db
+            ->select("
+                job_sites
+            ")
+            ->where([
+                "company_sid" => $this->companyId,
+                "employee_sid" => $this->employeeId,
+                "shift_date" => $this->date,
+            ])
+            ->get("cl_shifts")
+            ->row_array();
+        //
+        if (!$shift) {
+            return [];
+        }
+        //
+        $jobSites = json_decode(
+            $shift["job_sites"],
+            true
+        );
+        //
+        if (!$jobSites) {
+            return [];
+        }
+        //
+        return $this->getJobSitesById(
+            $jobSites
+        );
+    }
+
+
+    /**
+     * get employee shift for a specific date
+     *
+     * @return array
+     */
+    private function getAllowedBreaks(): array
+    {
+        // get the employee shifts
+        $shift = $this->db
+            ->select("
+                breaks_json
+            ")
+            ->where([
+                "company_sid" => $this->companyId,
+                "employee_sid" => $this->employeeId,
+                "shift_date" => $this->date,
+            ])
+            ->get("cl_shifts")
+            ->row_array();
+        //
+        if (!$shift) {
+            return [];
+        }
+        //
+        if (!$shift["breaks_json"]) {
+            return [];
+        }
+        //
+        $breaks = json_decode($shift["breaks_json"], true);
+        //
+        foreach ($breaks as $index => $v0) {
+            //
+            if ($v0["start_time"]) {
+                $breaks[$index]["start_time"] = formatDateToDB(
+                    $v0["start_time"],
+                    "H:i",
+                    "h:i a"
+                );
+                $breaks[$index]["end_time"] = formatDateToDB(
+                    $v0["end_time"],
+                    "H:i",
+                    "h:i a"
+                );
+            }
+        }
+        //
+        return $breaks;
+    }
+
+    /**
+     * get job shifts by ids
+     *
+     * @param array $jobSiteIds
+     * @return array
+     */
+    private function getJobSitesById(array $jobSiteIds): array
+    {
+        // get the employee shifts
+        return $this->db
+            ->select("
+                sid,
+                site_name
+            ")
+            ->where_in("sid", $jobSiteIds)
+            ->get("company_job_sites")
+            ->result_array();
     }
 }

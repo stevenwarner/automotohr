@@ -19,6 +19,10 @@ $(function markAttendance() {
 	 * holds the clock ref
 	 */
 	let clockREF;
+	/**
+	 * holds the attendance reference
+	 */
+	let attendanceObj = {};
 
 	/**
 	 * capture the mark attendance event
@@ -30,10 +34,210 @@ $(function markAttendance() {
 		return _confirm(
 			"Do you want to " + getType(eventType + "_confirm") + "?",
 			function () {
-				checkLocationPosition(eventType);
+				if (
+					eventType === "clocked_in" &&
+					attendanceObj.job_sites.length
+				) {
+					// check and show
+					showJobSitesModal();
+				} else if (
+					eventType === "break_started" &&
+					attendanceObj.allowed_breaks.length
+				) {
+					// check and show
+					showBreaksModal();
+				} else {
+					checkLocationPosition(eventType);
+				}
 			}
 		);
 	});
+
+	/**
+	 * show the job site selection modal
+	 */
+	function showJobSitesModal() {
+		Modal(
+			{
+				Id: "jsJobSiteModal",
+				Title: "Select a job site.",
+				Loader: "jsJobSiteModalLoader",
+				Body: generateJobSiteBody(),
+			},
+			function () {
+				ml(false, "jsJobSiteModalLoader");
+				$("#jsJobSiteModalBody").submit(function (event) {
+					event.preventDefault();
+					checkLocationPosition(
+						"clocked_in",
+						$(".jsJobSiteModalSelect option:selected").val()
+					);
+					$("#jsJobSiteModal").find(".jsModalCancel").click();
+				});
+			}
+		);
+	}
+
+	/**
+	 * show the breaks selection modal
+	 */
+	function showBreaksModal() {
+		Modal(
+			{
+				Id: "jsBreaksModal",
+				Title: "Select a break.",
+				Loader: "jsBreaksModalLoader",
+				Body: generateBreaksBody(),
+			},
+			function () {
+				ml(false, "jsBreaksModalLoader");
+				$("#jsBreaksModalBody").submit(function (event) {
+					event.preventDefault();
+					//
+					const breakTimeId = $(
+						".jsBreaksModelSelect option:selected"
+					).val();
+
+					// check for breaks count
+					if (
+						attendanceObj.allowed_breaks &&
+						attendanceObj.allowed_breaks.length ==
+							attendanceObj.breaks
+					) {
+						return _error("You have already taken allowed breaks.");
+					}
+
+					// get the break
+					let selectedBreak = attendanceObj.allowed_breaks.filter(
+						function (currentBreak) {
+							return currentBreak["id"] == breakTimeId;
+						}
+					);
+					// check on break start time
+					if (
+						selectedBreak[0]["start_time"] &&
+						moment() <
+							moment(selectedBreak[0]["start_time"], "hh:mm a")
+					) {
+						return _error(
+							'You can not start break before "' +
+								selectedBreak[0]["start_time"] +
+								'".'
+						);
+					}
+					// check the end time
+					if (
+						selectedBreak[0]["end_time"] &&
+						moment() >
+							moment(selectedBreak[0]["end_time"], "hh:mm a")
+					) {
+						return _error(
+							'You can not start break after "' +
+								selectedBreak[0]["end_time"] +
+								'".'
+						);
+					}
+					//
+					checkLocationPosition("break_started", breakTimeId);
+					$("#jsBreaksModal").find(".jsModalCancel").click();
+				});
+			}
+		);
+	}
+
+	/**
+	 * generates body for the job sites
+	 *
+	 * @returns string
+	 */
+	function generateJobSiteBody() {
+		let html = "";
+
+		html += '<div class="container" id="jsJobSiteModalBody">';
+		html += '	<br /><div class="row">';
+		html += '		<div class="col-sm-12">';
+		html += '			<form id="jsJobSiteModalForm">';
+		html += '				<div class="form-group">';
+		html += '					<label class="tex-medium">';
+		html += "						Please select a job site";
+		html += '						<strong class="text-danger"></strong>';
+		html += "					</label>";
+		html += '					<select class="form-control jsJobSiteModalSelect">';
+		html += '						<option value="0">Clock in without job site</option>';
+		attendanceObj.job_sites.map(function (jobSite) {
+			html +=
+				'						<option value="' +
+				jobSite.sid +
+				'">' +
+				jobSite.site_name +
+				"</option>";
+		});
+		html += "					</select>";
+		html += "				</div>";
+		html += '				<div class="form-group text-right">';
+		html += '					<button class="btn btn-success">';
+		html += "						Clock In";
+		html += "					</button>";
+		html += "				</div>";
+		html += "			</form>";
+		html += "		</div>";
+		html += "	</div>";
+		html += "</div>";
+
+		return html;
+	}
+
+	/**
+	 * generates body for the job sites
+	 *
+	 * @returns string
+	 */
+	function generateBreaksBody() {
+		let html = "";
+
+		html += '<div class="container" id="jsBreaksModalBody">';
+		html += '	<br /><div class="row">';
+		html += '		<div class="col-sm-12">';
+		html += '			<form id="jsBreaksModelForm">';
+		html += '				<div class="form-group">';
+		html += '					<label class="tex-medium">';
+		html += "						Please select a break";
+		html += '						<strong class="text-danger"></strong>';
+		html += "					</label>";
+		html += '					<select class="form-control jsBreaksModelSelect">';
+		attendanceObj.allowed_breaks.map(function (v0) {
+			//
+			let duration = v0.duration + "m";
+			if (v0.start_time) {
+				duration = v0.start_time + " - " + v0.end_time;
+			}
+			//
+			let isDisabled = isBreakAlreadyTaken(v0["id"]);
+			html +=
+				"						<option " +
+				(isDisabled ? "disabled" : "") +
+				' value="' +
+				v0.id +
+				'">' +
+				v0.break +
+				" (" +
+				duration +
+				")</option>";
+		});
+		html += "					</select>";
+		html += "				</div>";
+		html += '				<div class="form-group text-right">';
+		html += '					<button class="btn btn-success">';
+		html += "						Start Break";
+		html += "					</button>";
+		html += "				</div>";
+		html += "			</form>";
+		html += "		</div>";
+		html += "	</div>";
+		html += "</div>";
+
+		return html;
+	}
 
 	/**
 	 * fetch the attendance
@@ -52,6 +256,7 @@ $(function markAttendance() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
+				attendanceObj = resp;
 				//
 				clearInterval(timerREF);
 				clearInterval(clockREF);
@@ -79,8 +284,9 @@ $(function markAttendance() {
 	 * @param {string} eventType
 	 * @param {string} latitude
 	 * @param {string} longitude
+	 * @param {number} jobSiteId
 	 */
-	function markAttendance(eventType, latitude, longitude) {
+	function markAttendance(eventType, latitude, longitude, jobSiteId) {
 		// check if the call is already been made
 		if (XHR !== null) {
 			return;
@@ -92,7 +298,12 @@ $(function markAttendance() {
 		XHR = $.ajax({
 			url: baseUrl("v1/clock/mark"),
 			method: "POST",
-			data: JSON.stringify({ type: eventType, latitude, longitude }),
+			data: JSON.stringify({
+				type: eventType,
+				latitude,
+				longitude,
+				job_site: jobSiteId,
+			}),
 			headers: { "content-type": "application/json" },
 		})
 			.always(function () {
@@ -244,7 +455,7 @@ $(function markAttendance() {
 	/**
 	 * check location permission
 	 */
-	function checkLocationPosition(eventType) {
+	function checkLocationPosition(eventType, jobSiteId = null) {
 		if (navigator.geolocation) {
 			/**
 			 * Retrieves lat lon
@@ -254,7 +465,8 @@ $(function markAttendance() {
 				markAttendance(
 					eventType,
 					position.coords.latitude,
-					position.coords.longitude
+					position.coords.longitude,
+					jobSiteId
 				);
 			}
 
@@ -341,6 +553,25 @@ $(function markAttendance() {
 		};
 		//
 		return types[type];
+	}
+
+	/**
+	 * check if break already taken
+	 * @param {string} breakId
+	 * @returns bool
+	 */
+	function isBreakAlreadyTaken(breakId) {
+		let isSelected = false;
+		const arraySize = attendanceObj.breaks.length;
+		//
+		for (let i = 0; i < arraySize; i++) {
+			const cp = attendanceObj.breaks[i];
+			if (cp["id"] == breakId) {
+				isSelected = true;
+				break;
+			}
+		}
+		return isSelected;
 	}
 
 	// sync clock in every 10 seconds

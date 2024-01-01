@@ -41,29 +41,6 @@
                             </p>
                             <div class="jsAttendanceBTNs text-center"></div>
                         </div>
-
-                        <div class="col-sm-12">
-                            <hr />
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <p>
-                                        <strong>This week</strong>
-                                        <br> 23h 00m
-                                    </p>
-                                </div>
-                                <div class="col-md-4">
-                                    <p>
-                                        <strong>Pay period</strong>
-                                        <br> 23h 00m
-                                    </p>
-                                </div>
-                                <div class="col-md-4">
-                                    <a href="<?= base_url("attendance/timesheet/my"); ?>" class="btn btn-orange">
-                                        Time Sheet
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -75,7 +52,7 @@
                     <h2 class="text-large">
                         <strong>
                             <i class="fa fa-clock-o text-orange" aria-hidden="true"></i>
-                            &nbsp;Time logged in this Week (9th October, 2023 - 15 October, 2023)
+                            &nbsp;Time logged between (<?= formatDateToDB($startDate, DB_DATE, DATE); ?> - <?= formatDateToDB($endDate, DB_DATE, DATE); ?>)
                         </strong>
                     </h2>
                 </div>
@@ -97,7 +74,7 @@
                     </h2>
                 </div>
                 <div class="panel-body">
-                    <iframe src="" frameborder="0" width="100%" height="500"></iframe>
+                    <div id="map" style="width: 100%; height: 400px;"></div>
                 </div>
             </div>
 
@@ -119,28 +96,55 @@
                                     <th class="csW csBG4" scope="col">Type</th>
                                     <th class="csW csBG4 text-right" scope="col">Time</th>
                                     <th class="csW csBG4 text-right" scope="col">Duration</th>
-                                    <th class="csW csBG4 text-right" scope="col">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="csVam">
-                                        <p class="csF16">Clock in / out</p>
-                                    </td>
-                                    <td class="csVam text-right">
-                                        <p class="csF16">06:00 PM - 06:00 PM</p>
-                                    </td>
-                                    <td class="csVam text-right">
-                                        <p class="csF16">10h 5m</p>
-                                    </td>
-                                    <td class="csVam text-right">
-                                        <button class="btn csW csBG3 csRadius5 csF16">
-                                            <i class="fa fa-map" aria-hidden="true"></i>
-                                            &nbsp;View location
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <?php if ($logs["logs"]) {
+                                $totalDuration = 0;
+                            ?>
+                                <tbody>
+                                    <?php foreach ($logs["logs"] as $v0) {
+                                        $totalDuration += $v0["duration"];
+                                    ?>
+                                        <tr data-id="<?= $v0["sid"]; ?>">
+                                            <td class="csVerticalAlignMiddle">
+                                                <p class="csF16"><?= $v0["text"]; ?></p>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle text-right">
+                                                <p class="csF16"><?=
+                                                                    reset_datetime([
+                                                                        "datetime" => $v0["startTime"],
+                                                                        "from_format" => DB_DATE_WITH_TIME,
+                                                                        "format" => "h:i a",
+                                                                        "_this" => $this,
+                                                                        "from_timezone" => "UTC"
+                                                                    ]);
+                                                                    ?> - <?= $v0["endTime"] ?
+                                                                                reset_datetime([
+                                                                                    "datetime" => $v0["endTime"],
+                                                                                    "from_format" => DB_DATE_WITH_TIME,
+                                                                                    "format" => "h:i a",
+                                                                                    "_this" => $this,
+                                                                                    "from_timezone" => "UTC"
+                                                                                ]) : "N/A";
+                                                                            ?></p>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle text-right">
+                                                <p class="csF16"><?= $v0["durationText"]; ?></p>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    } ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th scope="col" colspan="3" class="csVerticalAlignMiddle text-right">
+                                            Total:
+                                            <?= convertSecondsToTime($totalDuration);?>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            <?php }
+                            ?>
                         </table>
                     </div>
                 </div>
@@ -150,3 +154,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    const footprintLocations = <?= json_encode($logs["locations"]); ?>;
+</script>
