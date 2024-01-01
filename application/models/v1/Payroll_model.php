@@ -1982,7 +1982,7 @@ class Payroll_model extends CI_Model
                     'flsa_status' => $compensation['flsa_status'],
                     'effective_date' => $compensation['effective_date'],
                     'adjust_for_minimum_wage' => $compensation['adjust_for_minimum_wage'],
-                    'minimum_wages' => json_encode($compensation['minimum_wages']),
+                    'minimum_wages' => serialize($compensation['minimum_wages']),
                     'created_at' => getSystemDate(),
                     'updated_at' => getSystemDate()
                 ]);

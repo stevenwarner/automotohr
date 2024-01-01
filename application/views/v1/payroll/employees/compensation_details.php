@@ -47,11 +47,11 @@
             <div class="form-group">
                 <label class="csF16">Per <strong class="text-danger">*</strong></label>
                 <select class="form-control input-lg jsEmployeeFlowPer">
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Hour' ? 'selected' : ''; ?> value="Hour">Per hour</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Week' ? 'selected' : ''; ?> value="Week">Per week</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Month' ? 'selected' : ''; ?> value="Month">Per month</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Year' ? 'selected' : ''; ?> value="Year">Per year</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Paycheck' ? 'selected' : ''; ?> value="Paycheck">Per paycheck</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Hour' ? 'selected' : ''; ?> value="Hour">Per hour</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Week' ? 'selected' : ''; ?> value="Week">Per week</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Month' ? 'selected' : ''; ?> value="Month">Per month</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Year' ? 'selected' : ''; ?> value="Year">Per year</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Paycheck' ? 'selected' : ''; ?> value="Paycheck">Per paycheck</option>
                 </select>
             </div>
 
@@ -59,8 +59,8 @@
             <div class="form-group">
                 <label class="csF16">Minimum Wage <strong class="text-danger">*</strong></label>
                 <select class="form-control input-lg jsEmployeeFlowMinimumWage">
-                    <option <?= $primaryJou['compensation']['minimum_wage'] === 1 ? 'selected' : ''; ?> value="1">True</option>
-                    <option <?= $primaryJou['compensation']['minimum_wage'] === 0 ? 'selected' : ''; ?> value="0">False</option>
+                    <option <?= $primaryJob['compensation']['adjust_for_minimum_wage'] == 1 ? 'selected' : ''; ?> value="1">True</option>
+                    <option <?= $primaryJob['compensation']['adjust_for_minimum_wage'] == 0 ? 'selected' : ''; ?> value="0">False</option>
                 </select>
             </div>
 
@@ -69,7 +69,19 @@
                     <?php foreach ($minimumWages as $key => $wage) { ?>
                         <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
                             <label class="package_label" for="wage_<?php echo $wage['sid']; ?>">
-                                <div class="img-thumbnail text-center package-info-box" data-id="<?php echo $wage['sid']; ?>">
+                                <?php 
+                                    $selectedWage = '';
+                                    //
+                                    if ($primaryJob['compensation']['adjust_for_minimum_wage'] == 1 && !empty($selectedWages)) {
+                                        //
+                                        if (in_array($wage['gusto_uuid'], $selectedWages)) {
+                                            //
+                                            $selectedWage = 'selected-package';
+                                        }
+                                    }
+
+                                ?>
+                                <div class="img-thumbnail text-center package-info-box <?php echo $selectedWage; ?>" data-id="<?php echo $wage['sid']; ?>">
                                     <figure>
                                         <i class="fa fa-money"></i>
                                     </figure>
@@ -78,6 +90,8 @@
                                             Wage:
                                             <br>
                                             <strong><?php echo '$'.$wage['wage']; ?></strong>
+                                            <br>
+                                            <strong><?php echo '$'.$selectedWage; ?></strong>
                                         </h3>
                                         <hr>
                                         <h3>

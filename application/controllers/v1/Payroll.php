@@ -1229,7 +1229,7 @@ class Payroll extends CI_Controller
             $data['minimumWages'] = $this->payroll_model
             ->getCompanyMinimumWages(
                 $employeeId
-            );    
+            );   
         } elseif ($step === 'home_address') {
             //
             $data['record'] = $this->payroll_model
