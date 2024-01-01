@@ -886,891 +886,891 @@ if (!function_exists('getEmployeeAccrual')) {
         }
         // today's date
         $currentDate = getSystemDate('Y-m-d');
-//
-// get employee manual balance for current cycle
-// against policy id
-$balanceInMinutes = getEmployeeManualBalance(
-    $employeeId,
-    $policyId,
-    $employeeAnniversaryDate['lastAnniversaryDate'],
-    $employeeAnniversaryDate['upcomingAnniversaryDate'],
-    $balanceInMinutes
-);
-// get consumed time in current cycle
-//
-if (
-    $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate'] ||
-    $currentDate <= $todayDate
-) {
-    //
-    $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
-	$policyId,
-	$employeeId,
-	$employeeAnniversaryDate['lastAnniversaryDate'],
-	$employeeAnniversaryDate['upcomingAnniversaryDate']
-    );
-    // $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
-    //     $policyId,
-    //     $employeeId,
-    //     $employeeAnniversaryDate['lastAnniversaryDate'],
-    //     $employeeAnniversaryDate['upcomingAnniversaryDate']
-    // );
-} else {
-    $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
-	$policyId,
-	$employeeId,
-	$accruals['method'],
-	$accruals['frequency'],
-	$todayDate
-    );
-}
-//
-$monthsWorked = 1;
-$hasCarryOver = 0;
-//
-$compareDateOBJ = DateTime::createfromformat('d-m-Y', $compareDate);
-//
-$difference = $compareDateOBJ->diff($todayDateOBJ);
-//
-$monthsWorked = $difference->y * 12;
-$monthsWorked += $difference->m;
-// Only get pending time if carryover
-// is enabled
-if ($accruals['carryOverCheck'] == 'yes' && $accruals['carryOverCheck'] != 'on') {
-    // Difference in minutes
-    $carryOverInMinutes = $accruals['carryOverVal'] * 60;
-    //
-    if ($carryOverInMinutes == 0) $carryOverInMinutes = $accrualRateInMinutes;
-    //
-    $hasCarryOver = 1;
-    // Get Pending time
-    $carryOverTimeInMinutes = $_this->timeoff_model->getEmployeeCarryOverTime(
-	$policyId,
-	$employeeId,
-	$accruals['method'],
-	$accruals['frequency'],
-	$accruals['rateType'],
-	$accrualRateInMinutes + $balanceInMinutes,
-	$carryOverInMinutes,
-	$todayDate,
-	$monthsWorked,
-	$accrualRateInMinutesWithoutAward
-    );
-    //
-    $yearlyRates[0] = $accruals['rate'];
-    foreach ($accruals['plans'] as $key => $planInfo) {
-	//
-	$time = $planInfo['accrualType'];
-	//
-	if ($planInfo['accrualTypeM'] == 'months') {
-	    $time = $time / 12;
-	}
-	//
-	$yearlyRates[$time] = $planInfo['accrualRate'] + $accruals['rate'];
-    }
-    //
-    $totalAllowed = 0;
-    $totalConsumed = 0;
-    $totalManualBalanceTime = 0;
-    //
-    if (!isset($accruals['carryOverCycle'])) {
-	$accruals['carryOverCycle'] = 0;
-    }
-    //
-    if ($accruals['carryOverCycle'] == 0) {
-	$totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate']) - 1;
-	$joiningYear = date('Y', strtotime($employeeAnniversaryDate['ad']));
-	//
-	for ($i = 0; $i < $totalService; $i++) {
-	    //
-	    if ($i == 0) {
-		$yearStart = $employeeAnniversaryDate['ad'];
-		$yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
-	    } else {
-		$yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
-		$yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
-	    }
-	    //
-	    $todayDate =  date('Y-m-d', strtotime($yearEnd));
-	    //
-	    $employeeStatus = getEmployementStatus(
-		$yearStart,
-		$accruals['newHireTime'],
-		$accruals['newHireTimeType'],
-		$durationInMinutes,
-		$todayDate
-	    );
-	    //
-	    // See if policy implements
-	    // When the policy starts from employee joining date
-	    if (empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00') {
-		//
-		$effectedDate = $employeeJoiningDate;
-		//
-		$compareDate = getFormatedDate($employeeJoiningDate, 'd-m-Y');
-		//
-		if ($employeeJoiningDate > $todayDate) {
-		    continue;
-		}
-	    } else {
-		//
-		$effectedDate = $accruals['applicableDate'];
-		//
-		$compareDate = getFormatedDate($accruals['applicableDate'], 'd-m-Y');
-		// When the policy starts on a specific date
-		if (getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')) {
-		    continue;
-		}
-	    }
-	    //
-	    // Check if employee has worked for certain time
-	    // Employee doesn't meet the minimum allowed time
-	    if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
-		//
-		continue;
-	    }
-	    // Check if employee is on probation
-	    if ($employeeStatus == 'probation') {
-		// Probation
-		$totalAllowed = $totalAllowed + $accruals['newHireRate'];
-	    } else {
-		$previousRate = 0;
-		$serviceYears = getCycleTimeDifference($employeeAnniversaryDate['ad'], $yearStart);
-		//
-		foreach ($yearlyRates as $rkey => $rate) {
-		    if ($serviceYears < $rkey) {
-			$timeOffCycle[$i]['allowedTime'] = $previousRate;
-			$totalAllowed = $totalAllowed + $previousRate;
-			break;
-		    }
-		    $previousRate = $rate;
-		}
-	    }
-	    //
-	    $consumedPolicyTime = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
-		$policyId,
-		$employeeId,
-		$yearStart,
-		$yearEnd
-	    );
-	    //
-	    $timeOffCycle[$i]['yearStart'] = $yearStart;
-	    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
-	    $timeOffCycle[$i]['consumedTime'] = $consumedPolicyTime;
-	    $totalConsumed = $totalConsumed + $consumedPolicyTime;
-	    // check if date is for production
-	    if ($todayDate > '2023-05-24') {
-		$cycleBalance = getEmployeeManualBalance(
-		    $employeeId,
-		    $policyId,
-		    $yearStart,
-		    $yearEnd
-		);
-		//
-		$totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
-	    }
-	    //
-	}
-	//
-	$totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalManualBalanceTime;
-    } else {
-	//
-	$joiningYear = date('Y', strtotime($employeeAnniversaryDate['upcomingAnniversaryDate']));
-	//
-	for ($i = 0; $i < $accruals['carryOverCycle']; $i++) {
-	    //
-	    $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 1), $employeeAnniversaryDate['ad']);
-	    $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 2), $employeeAnniversaryDate['ad']);
-	    //
-	    $todayDate =  date('Y-m-d', strtotime($yearEnd));
-	    //
-	    $employeeStatus = getEmployementStatus(
-		$yearStart,
-		$accruals['newHireTime'],
-		$accruals['newHireTimeType'],
-		$durationInMinutes,
-		$todayDate
-	    );
-	    //
-	    // See if policy implements
-	    // When the policy starts from employee joining date
-	    if (empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00') {
-		//
-		$effectedDate = $employeeJoiningDate;
-		//
-		$compareDate = getFormatedDate($employeeJoiningDate, 'd-m-Y');
-		//
-		if ($employeeJoiningDate > $todayDate) {
-		    continue;
-		}
-	    } else {
-		//
-		$effectedDate = $accruals['applicableDate'];
-		//
-		$compareDate = getFormatedDate($accruals['applicableDate'], 'd-m-Y');
-		// When the policy starts on a specific date
-		if (getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')) {
-		    continue;
-		}
-	    }
-	    //
-	    // Check if employee has worked for certain time
-	    // Employee doesn't meet the minimum allowed time
-	    if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
-		//
-		continue;
-	    }
-	    // Check if employee is on probation
-	    if ($employeeStatus == 'probation') {
-		// Probation
-		$totalAllowed = $totalAllowed + $accruals['newHireRate'];
-	    } else {
-		$previousRate = 0;
-		$serviceYears = getCycleTimeDifference($employeeAnniversaryDate['ad'], $yearStart);
-		//
-		foreach ($yearlyRates as $rkey => $rate) {
-		    if ($serviceYears < $rkey) {
-			$timeOffCycle[$i]['allowedTime'] = $previousRate;
-			$totalAllowed = $totalAllowed + $previousRate;
-			break;
-		    }
-		    $previousRate = $rate;
-		}
-		//
-	    }
-	    //
-	    $consumedPolicyTime = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
-		$policyId,
-		$employeeId,
-		$yearStart,
-		$yearEnd
-	    );
-	    //
-	    // check if date is for production
-	    if ($todayDate > '2023-05-24') {
-		$cycleBalance = getEmployeeManualBalance(
-		    $employeeId,
-		    $policyId,
-		    $yearStart,
-		    $yearEnd
-		);
-		//
-		$totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
-		$timeOffCycle[$i]['balance'] = $cycleBalance;
-	    }
-	    //
-	    $timeOffCycle[$i]['yearStart'] = $yearStart;
-	    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
-	    $timeOffCycle[$i]['consumedTime'] = $consumedPolicyTime;
-	    $totalConsumed = $totalConsumed + $consumedPolicyTime;
-	    //
+        //
+        // get employee manual balance for current cycle
+        // against policy id
+        $balanceInMinutes = getEmployeeManualBalance(
+            $employeeId,
+            $policyId,
+            $employeeAnniversaryDate['lastAnniversaryDate'],
+            $employeeAnniversaryDate['upcomingAnniversaryDate'],
+            $balanceInMinutes
+        );
+        // get consumed time in current cycle
+        //
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate'] ||
+            $currentDate <= $todayDate
+        ) {
+            //
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+                $policyId,
+                $employeeId,
+                $employeeAnniversaryDate['lastAnniversaryDate'],
+                $employeeAnniversaryDate['upcomingAnniversaryDate']
+            );
+            // $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+            //     $policyId,
+            //     $employeeId,
+            //     $employeeAnniversaryDate['lastAnniversaryDate'],
+            //     $employeeAnniversaryDate['upcomingAnniversaryDate']
+            // );
+        } else {
+            $consumedTimeInMinutes = $_this->timeoff_model->getEmployeeConsumedTime(
+                $policyId,
+                $employeeId,
+                $accruals['method'],
+                $accruals['frequency'],
+                $todayDate
+            );
+        }
+        //
+        $monthsWorked = 1;
+        $hasCarryOver = 0;
+        //
+        $compareDateOBJ = DateTime::createfromformat('d-m-Y', $compareDate);
+        //
+        $difference = $compareDateOBJ->diff($todayDateOBJ);
+        //
+        $monthsWorked = $difference->y * 12;
+        $monthsWorked += $difference->m;
+        // Only get pending time if carryover
+        // is enabled
+        if ($accruals['carryOverCheck'] == 'yes' && $accruals['carryOverCheck'] != 'on') {
+            // Difference in minutes
+            $carryOverInMinutes = $accruals['carryOverVal'] * 60;
+            //
+            if ($carryOverInMinutes == 0) $carryOverInMinutes = $accrualRateInMinutes;
+            //
+            $hasCarryOver = 1;
+            // Get Pending time
+            $carryOverTimeInMinutes = $_this->timeoff_model->getEmployeeCarryOverTime(
+                $policyId,
+                $employeeId,
+                $accruals['method'],
+                $accruals['frequency'],
+                $accruals['rateType'],
+                $accrualRateInMinutes + $balanceInMinutes,
+                $carryOverInMinutes,
+                $todayDate,
+                $monthsWorked,
+                $accrualRateInMinutesWithoutAward
+            );
+            //
+            $yearlyRates[0] = $accruals['rate'];
+            foreach ($accruals['plans'] as $key => $planInfo) {
+                //
+                $time = $planInfo['accrualType'];
+                //
+                if ($planInfo['accrualTypeM'] == 'months') {
+                    $time = $time / 12;
+                }
+                //
+                $yearlyRates[$time] = $planInfo['accrualRate'] + $accruals['rate'];
+            }
+            //
+            $totalAllowed = 0;
+            $totalConsumed = 0;
+            $totalManualBalanceTime = 0;
+            //
+            if (!isset($accruals['carryOverCycle'])) {
+                $accruals['carryOverCycle'] = 0;
+            }
+            //
+            if ($accruals['carryOverCycle'] == 0) {
+                $totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate']) - 1;
+                $joiningYear = date('Y', strtotime($employeeAnniversaryDate['ad']));
+                //
+                for ($i = 0; $i < $totalService; $i++) {
+                    //
+                    if ($i == 0) {
+                        $yearStart = $employeeAnniversaryDate['ad'];
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
+                    } else {
+                        $yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
+                    }
+                    //
+                    $todayDate =  date('Y-m-d', strtotime($yearEnd));
+                    //
+                    $employeeStatus = getEmployementStatus(
+                        $yearStart,
+                        $accruals['newHireTime'],
+                        $accruals['newHireTimeType'],
+                        $durationInMinutes,
+                        $todayDate
+                    );
+                    //
+                    // See if policy implements
+                    // When the policy starts from employee joining date
+                    if (empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00') {
+                        //
+                        $effectedDate = $employeeJoiningDate;
+                        //
+                        $compareDate = getFormatedDate($employeeJoiningDate, 'd-m-Y');
+                        //
+                        if ($employeeJoiningDate > $todayDate) {
+                            continue;
+                        }
+                    } else {
+                        //
+                        $effectedDate = $accruals['applicableDate'];
+                        //
+                        $compareDate = getFormatedDate($accruals['applicableDate'], 'd-m-Y');
+                        // When the policy starts on a specific date
+                        if (getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')) {
+                            continue;
+                        }
+                    }
+                    //
+                    // Check if employee has worked for certain time
+                    // Employee doesn't meet the minimum allowed time
+                    if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
+                        //
+                        continue;
+                    }
+                    // Check if employee is on probation
+                    if ($employeeStatus == 'probation') {
+                        // Probation
+                        $totalAllowed = $totalAllowed + $accruals['newHireRate'];
+                    } else {
+                        $previousRate = 0;
+                        $serviceYears = getCycleTimeDifference($employeeAnniversaryDate['ad'], $yearStart);
+                        //
+                        foreach ($yearlyRates as $rkey => $rate) {
+                            if ($serviceYears < $rkey) {
+                                $timeOffCycle[$i]['allowedTime'] = $previousRate;
+                                $totalAllowed = $totalAllowed + $previousRate;
+                                break;
+                            }
+                            $previousRate = $rate;
+                        }
+                    }
+                    //
+                    $consumedPolicyTime = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
+                        $policyId,
+                        $employeeId,
+                        $yearStart,
+                        $yearEnd
+                    );
+                    //
+                    $timeOffCycle[$i]['yearStart'] = $yearStart;
+                    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
+                    $timeOffCycle[$i]['consumedTime'] = $consumedPolicyTime;
+                    $totalConsumed = $totalConsumed + $consumedPolicyTime;
+                    // check if date is for production
+                    if ($todayDate > '2023-05-24') {
+                        $cycleBalance = getEmployeeManualBalance(
+                            $employeeId,
+                            $policyId,
+                            $yearStart,
+                            $yearEnd
+                        );
+                        //
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
+                    }
+                    //
+                }
+                //
+                $totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalManualBalanceTime;
+            } else {
+                //
+                $joiningYear = date('Y', strtotime($employeeAnniversaryDate['upcomingAnniversaryDate']));
+                //
+                for ($i = 0; $i < $accruals['carryOverCycle']; $i++) {
+                    //
+                    $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 1), $employeeAnniversaryDate['ad']);
+                    $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 2), $employeeAnniversaryDate['ad']);
+                    //
+                    $todayDate =  date('Y-m-d', strtotime($yearEnd));
+                    //
+                    $employeeStatus = getEmployementStatus(
+                        $yearStart,
+                        $accruals['newHireTime'],
+                        $accruals['newHireTimeType'],
+                        $durationInMinutes,
+                        $todayDate
+                    );
+                    //
+                    // See if policy implements
+                    // When the policy starts from employee joining date
+                    if (empty($accruals['applicableDate']) || $accruals['applicableDate'] == '0000-00-00') {
+                        //
+                        $effectedDate = $employeeJoiningDate;
+                        //
+                        $compareDate = getFormatedDate($employeeJoiningDate, 'd-m-Y');
+                        //
+                        if ($employeeJoiningDate > $todayDate) {
+                            continue;
+                        }
+                    } else {
+                        //
+                        $effectedDate = $accruals['applicableDate'];
+                        //
+                        $compareDate = getFormatedDate($accruals['applicableDate'], 'd-m-Y');
+                        // When the policy starts on a specific date
+                        if (getFormatedDate($todayDate, '') < getFormatedDate($accruals['applicableDate'], '')) {
+                            continue;
+                        }
+                    }
+                    //
+                    // Check if employee has worked for certain time
+                    // Employee doesn't meet the minimum allowed time
+                    if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
+                        //
+                        continue;
+                    }
+                    // Check if employee is on probation
+                    if ($employeeStatus == 'probation') {
+                        // Probation
+                        $totalAllowed = $totalAllowed + $accruals['newHireRate'];
+                    } else {
+                        $previousRate = 0;
+                        $serviceYears = getCycleTimeDifference($employeeAnniversaryDate['ad'], $yearStart);
+                        //
+                        foreach ($yearlyRates as $rkey => $rate) {
+                            if ($serviceYears < $rkey) {
+                                $timeOffCycle[$i]['allowedTime'] = $previousRate;
+                                $totalAllowed = $totalAllowed + $previousRate;
+                                break;
+                            }
+                            $previousRate = $rate;
+                        }
+                        //
+                    }
+                    //
+                    $consumedPolicyTime = $_this->timeoff_model->getEmployeeConsumedTimeByResetDate(
+                        $policyId,
+                        $employeeId,
+                        $yearStart,
+                        $yearEnd
+                    );
+                    //
+                    // check if date is for production
+                    if ($todayDate > '2023-05-24') {
+                        $cycleBalance = getEmployeeManualBalance(
+                            $employeeId,
+                            $policyId,
+                            $yearStart,
+                            $yearEnd
+                        );
+                        //
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
+                        $timeOffCycle[$i]['balance'] = $cycleBalance;
+                    }
+                    //
+                    $timeOffCycle[$i]['yearStart'] = $yearStart;
+                    $timeOffCycle[$i]['yearEnd'] = $yearEnd;
+                    $timeOffCycle[$i]['consumedTime'] = $consumedPolicyTime;
+                    $totalConsumed = $totalConsumed + $consumedPolicyTime;
+                    //
 
-	}
-	$totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalConsumed + $totalManualBalanceTime;
-    }
-    //
-    if ($accruals['carryOverVal'] > 0) {
-	if ($accruals['carryOverVal'] < ($totalAllowed / 60)) {
-	    $carryOverTime = $accruals['carryOverVal'] * 60;
-	} else if ($accruals['carryOverVal'] > $totalAllowed) {
-	    $carryOverTime = $totalAllowed;
-	}
-    } else {
-	$carryOverTime = $totalAllowed;
-    }
-}
-// _e($carryOverTime,true);
-// Set negative time
-if ($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off') {
-    //
-    if ($accruals['negativeBalanceType'] == 'days') {
-	$negativeTimeInMinutes = $accruals['negativeBalanceVal'] * $durationInMinutes;
-    } else {
-	$negativeTimeInMinutes = $accruals['negativeBalanceVal'] * 60;
-    }
-}
-// Total allowed time
-if ($accrualRateInMinutes == 0) {
-    $actualTime = 0;
-    $allowedTime = 0;
-} else {
-    $actualTime = $accrualRateInMinutes;
-    // $allowedTime = $carryOverTimeInMinutes + $accrualRateInMinutes;
-    $allowedTime = $carryOverTime + $accrualRateInMinutes;
-}
-// _e($timeOffCycle,true,true);
-// _e($allowedTime,true);
-// _e($consumedTimeInMinutes,true);
-// _e($accrualRateInMinutes,true,true);
-// Set the frequency
-//
-if ($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
-else if ($accruals['frequency'] == 'yearly') {
-    //
-    $currentYearMonthsWorked = $difference->m + 1;
-    $currentYearMonthsWorked = $currentYearMonthsWorked > 12 ? 12 : $currentYearMonthsWorked;
-    //
-    if ($accruals['rateType'] == 'total_hours') {
-	$allowedTime = ($allowedTime / 12) * $currentYearMonthsWorked;
-    } else {
-	$allowedTime = ($allowedTime * 12)  * $currentYearMonthsWorked;
-    }
-} else if ($accruals['frequency'] == 'custom') {
-    // Get slots
-    $slots = 12 / $accruals['frequencyVal'];
-    //
-    $workedSlots = ceil(($difference->m) / $slots);
-    //
-    $workedSlots = $workedSlots == 0 ? 1 : $workedSlots;
-    $newAllowedTime = ($allowedTime / $slots) * $workedSlots;
-    //https://www.youtube.com/watch?v=sZt108pefpI
-    $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
-}
-//
-$r['AllowedTime'] = $allowedTime + $balanceInMinutes;
-$r['ConsumedTime'] = $consumedTimeInMinutes;
-$r['CarryOverTime'] = $carryOverTimeInMinutes;
-$r['RemainingTime'] = $allowedTime - $consumedTimeInMinutes + $balanceInMinutes;
-$r['MaxNegativeTime'] = $negativeTimeInMinutes;
-$r['Balance'] = $balanceInMinutes;
-$r['EmployementStatus'] = $employementStatus;
+                }
+                $totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalConsumed + $totalManualBalanceTime;
+            }
+            //
+            if ($accruals['carryOverVal'] > 0) {
+                if ($accruals['carryOverVal'] < ($totalAllowed / 60)) {
+                    $carryOverTime = $accruals['carryOverVal'] * 60;
+                } else if ($accruals['carryOverVal'] > $totalAllowed) {
+                    $carryOverTime = $totalAllowed;
+                }
+            } else {
+                $carryOverTime = $totalAllowed;
+            }
+        }
+        // _e($carryOverTime,true);
+        // Set negative time
+        if ($accruals['negativeBalanceCheck'] == 'yes' && $accruals['negativeBalanceCheck'] != 'off') {
+            //
+            if ($accruals['negativeBalanceType'] == 'days') {
+                $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * $durationInMinutes;
+            } else {
+                $negativeTimeInMinutes = $accruals['negativeBalanceVal'] * 60;
+            }
+        }
+        // Total allowed time
+        if ($accrualRateInMinutes == 0) {
+            $actualTime = 0;
+            $allowedTime = 0;
+        } else {
+            $actualTime = $accrualRateInMinutes;
+            // $allowedTime = $carryOverTimeInMinutes + $accrualRateInMinutes;
+            $allowedTime = $carryOverTime + $accrualRateInMinutes;
+        }
+        // _e($timeOffCycle,true,true);
+        // _e($allowedTime,true);
+        // _e($consumedTimeInMinutes,true);
+        // _e($accrualRateInMinutes,true,true);
+        // Set the frequency
+        //
+        if ($accruals['frequency'] == 'none') $allowedTime = $allowedTime;
+        else if ($accruals['frequency'] == 'yearly') {
+            //
+            $currentYearMonthsWorked = $difference->m + 1;
+            $currentYearMonthsWorked = $currentYearMonthsWorked > 12 ? 12 : $currentYearMonthsWorked;
+            //
+            if ($accruals['rateType'] == 'total_hours') {
+                $allowedTime = ($allowedTime / 12) * $currentYearMonthsWorked;
+            } else {
+                $allowedTime = ($allowedTime * 12)  * $currentYearMonthsWorked;
+            }
+        } else if ($accruals['frequency'] == 'custom') {
+            // Get slots
+            $slots = 12 / $accruals['frequencyVal'];
+            //
+            $workedSlots = ceil(($difference->m) / $slots);
+            //
+            $workedSlots = $workedSlots == 0 ? 1 : $workedSlots;
+            $newAllowedTime = ($allowedTime / $slots) * $workedSlots;
+            //https://www.youtube.com/watch?v=sZt108pefpI
+            $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
+        }
+        //
+        $r['AllowedTime'] = $allowedTime + $balanceInMinutes;
+        $r['ConsumedTime'] = $consumedTimeInMinutes;
+        $r['CarryOverTime'] = $carryOverTimeInMinutes;
+        $r['RemainingTime'] = $allowedTime - $consumedTimeInMinutes + $balanceInMinutes;
+        $r['MaxNegativeTime'] = $negativeTimeInMinutes;
+        $r['Balance'] = $balanceInMinutes;
+        $r['EmployementStatus'] = $employementStatus;
 
-$r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
-$r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
 
-//
-if ($accruals['frequency'] == 'none') {
-    $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-} else if ($accruals['frequency'] == 'monthly') {
-    $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-} else if ($accruals['frequency'] == 'yearly') {
-    $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-} else if ($accruals['frequency'] == 'custom') {
-    $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
-}
-//
-$r['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
+        //
+        if ($accruals['frequency'] == 'none') {
+            $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
+        } else if ($accruals['frequency'] == 'monthly') {
+            $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
+        } else if ($accruals['frequency'] == 'yearly') {
+            $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
+        } else if ($accruals['frequency'] == 'custom') {
+            $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + $negativeTimeInMinutes;
+        }
+        //
+        $r['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
 
-// for unpaid
-if ($categoryType == '0') {
-    $tmp = $r['UnpaidConsumedTime'];
-    $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
-    $r['ConsumedTime'] = $tmp;
-}
+        // for unpaid
+        if ($categoryType == '0') {
+            $tmp = $r['UnpaidConsumedTime'];
+            $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+            $r['ConsumedTime'] = $tmp;
+        }
 
-// for adding time off balance
-if (
-    $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
-) {
-    //
-    if ($allowedTime != 0) {
-	//
-	$is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
-	    $employeeId,
-	    $policyId,
-	    1,
-	    $employeeAnniversaryDate['lastAnniversaryDate'],
-	    $allowedTime
-	);
-	//
-	if ($is_added == 0) {
-	    // This section add allowed balance of current year
-	    $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
-	    $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
-	    //
-	    $added_by = getCompanyAdminSid($company_sid);
-	    //
-	    $balanceToAdd = array();
-	    $balanceToAdd['user_sid'] = $employeeId;
-	    $balanceToAdd['policy_sid'] = $policyId;
-	    $balanceToAdd['added_by'] = $added_by;
-	    $balanceToAdd['is_added'] = 1;
-	    $balanceToAdd['added_time'] = $allowedTime;
-	    $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
-	    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
-	    //
-	}
+        // for adding time off balance
+        if (
+            $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
+        ) {
+            //
+            if ($allowedTime != 0) {
+                //
+                $is_added = $_this->timeoff_model->checkAllowedBalanceAdded(
+                    $employeeId,
+                    $policyId,
+                    1,
+                    $employeeAnniversaryDate['lastAnniversaryDate'],
+                    $allowedTime
+                );
+                //
+                if ($is_added == 0) {
+                    // This section add allowed balance of current year
+                    $company_sid = $_this->timeoff_model->getEmployeeCompanySid($employeeId);
+                    $policyName = $_this->timeoff_model->getPolicyNameById($policyId);
+                    //
+                    $added_by = getCompanyAdminSid($company_sid);
+                    //
+                    $balanceToAdd = array();
+                    $balanceToAdd['user_sid'] = $employeeId;
+                    $balanceToAdd['policy_sid'] = $policyId;
+                    $balanceToAdd['added_by'] = $added_by;
+                    $balanceToAdd['is_added'] = 1;
+                    $balanceToAdd['added_time'] = $allowedTime;
+                    $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
+                    $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
+                    //
+                }
+            }
+        }
+        //
+        return $r;
     }
-}
-//
-return $r;
-}
 }
 
 function getTimeDifference(
-$employeeJoiningDate,
-$applicableTime,
-$applicableType,
-$todayDate
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType,
+    $todayDate
 
 ) {
-//
-if ($applicableTime == 0) return true;
-//
-$d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
-$d2 = DateTime::createfromformat('Y-m-d', $todayDate);
-//
-$diff = $d2->diff($d1);
-//
-$minutes = $diff->days * 24 * 60;
-$minutes += $diff->h * 60;
-$minutes += $diff->i;
-//
-switch ($applicableType) {
-case "years":
-    $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
-    break;
-case "months":
-    $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
-    break;
-case "days":
-    $applicableTimeToMinutes = $applicableTime * 24 * 60;
-    break;
-case "hours":
-    $applicableTimeToMinutes = $applicableTime * 24;
-    break;
-case "minutes":
-    $applicableTimeToMinutes = $applicableTime;
-    break;
-}
-//
-if ($minutes >= $applicableTimeToMinutes) return true;
-//
-return false;
+    //
+    if ($applicableTime == 0) return true;
+    //
+    $d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
+    $d2 = DateTime::createfromformat('Y-m-d', $todayDate);
+    //
+    $diff = $d2->diff($d1);
+    //
+    $minutes = $diff->days * 24 * 60;
+    $minutes += $diff->h * 60;
+    $minutes += $diff->i;
+    //
+    switch ($applicableType) {
+        case "years":
+            $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
+            break;
+        case "months":
+            $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
+            break;
+        case "days":
+            $applicableTimeToMinutes = $applicableTime * 24 * 60;
+            break;
+        case "hours":
+            $applicableTimeToMinutes = $applicableTime * 24;
+            break;
+        case "minutes":
+            $applicableTimeToMinutes = $applicableTime;
+            break;
+    }
+    //
+    if ($minutes >= $applicableTimeToMinutes) return true;
+    //
+    return false;
 }
 
 function getEmployementStatus(
-$employeeJoiningDate,
-$applicableTime,
-$applicableType,
-$durationInMinutes,
-$todayDate
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType,
+    $durationInMinutes,
+    $todayDate
 
 ) {
-//
-if ($applicableTime == 0) return 'permanent';
-//
-$d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
-$d2 = DateTime::createfromformat('Y-m-d', $todayDate);
-//
-$diff = $d2->diff($d1);
-//
-$minutes = $diff->y * 365;
-$minutes += $diff->m * 12;
-$minutes += $diff->days * 24 * 60;
-$minutes += $diff->h * 60;
-$minutes += $diff->i;
-//
-switch ($applicableType) {
-case "years":
-    $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
-    break;
-case "months":
-    $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
-    break;
-case "days":
-    $applicableTimeToMinutes = $applicableTime * 24 * 60;
-    break;
-case "hours":
-    $applicableTimeToMinutes = $applicableTime * 24;
-    break;
-case "minutes":
-    $applicableTimeToMinutes = $applicableTime;
-    break;
-case "per_week":
-case "per_month":
     //
-    $durationInHours = $durationInMinutes / 60;
-    $workedTime = $durationInHours * ($applicableType == 'per_week' ? 7 : 30);
+    if ($applicableTime == 0) return 'permanent';
     //
-    if ($workedTime >= $applicableTime) return 'permanent';
+    $d1 = DateTime::createfromformat('Y-m-d', $employeeJoiningDate);
+    $d2 = DateTime::createfromformat('Y-m-d', $todayDate);
+    //
+    $diff = $d2->diff($d1);
+    //
+    $minutes = $diff->y * 365;
+    $minutes += $diff->m * 12;
+    $minutes += $diff->days * 24 * 60;
+    $minutes += $diff->h * 60;
+    $minutes += $diff->i;
+    //
+    switch ($applicableType) {
+        case "years":
+            $applicableTimeToMinutes = $applicableTime * 365 * 24 * 60;
+            break;
+        case "months":
+            $applicableTimeToMinutes = $applicableTime * 30 * 24 * 60;
+            break;
+        case "days":
+            $applicableTimeToMinutes = $applicableTime * 24 * 60;
+            break;
+        case "hours":
+            $applicableTimeToMinutes = $applicableTime * 24;
+            break;
+        case "minutes":
+            $applicableTimeToMinutes = $applicableTime;
+            break;
+        case "per_week":
+        case "per_month":
+            //
+            $durationInHours = $durationInMinutes / 60;
+            $workedTime = $durationInHours * ($applicableType == 'per_week' ? 7 : 30);
+            //
+            if ($workedTime >= $applicableTime) return 'permanent';
+            return 'probation';
+            break;
+    }
+    //
+    if ($minutes >= $applicableTimeToMinutes) return 'permanent';
+    //
     return 'probation';
-    break;
-}
-//
-if ($minutes >= $applicableTimeToMinutes) return 'permanent';
-//
-return 'probation';
 }
 
 
 //
 function getFormatedDate(
-$d1,
-$toFormat = 'Y-m-d'
+    $d1,
+    $toFormat = 'Y-m-d'
 ) {
-//
-$fromFormat = 'Y-m-d';
-//
-if (preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $d1)) $fromFormat = 'Y/m/d';
-else if (preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/', $d1)) $fromFormat = 'd/m/Y';
-else if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $d1)) $fromFormat = 'm-d-Y';
-//
-//
-$d2 = DateTime::createfromformat(
-$fromFormat,
-$d1
-);
-//
-if (empty($toFormat)) return $d2->format('U');
-return $d2->format($toFormat);
+    //
+    $fromFormat = 'Y-m-d';
+    //
+    if (preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $d1)) $fromFormat = 'Y/m/d';
+    else if (preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/', $d1)) $fromFormat = 'd/m/Y';
+    else if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $d1)) $fromFormat = 'm-d-Y';
+    //
+    //
+    $d2 = DateTime::createfromformat(
+        $fromFormat,
+        $d1
+    );
+    //
+    if (empty($toFormat)) return $d2->format('U');
+    return $d2->format($toFormat);
 }
 
 
 /**
-* Make an encrypted link
-* 
-* @employee Mubashir Ahmed
-* @date     02/07/2021
-* 
-* @param Array @args
-* 
-* @return String
-*/
+ * Make an encrypted link
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array @args
+ * 
+ * @return String
+ */
 if (!function_exists('timeoffGetEncryptedLink')) {
-function timeoffGetEncryptedLink($args)
-{
-// Get CI instance
-$_this = &get_instance();
-// Load encryption library
-$_this->load->library('encryption');
-//
-$params = '';
-//
-foreach ($args as $k => $v) $params .= "{$k}={$v}/";
-//
-return base_url('timeoff/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
-}
+    function timeoffGetEncryptedLink($args)
+    {
+        // Get CI instance
+        $_this = &get_instance();
+        // Load encryption library
+        $_this->load->library('encryption');
+        //
+        $params = '';
+        //
+        foreach ($args as $k => $v) $params .= "{$k}={$v}/";
+        //
+        return base_url('timeoff/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
+    }
 }
 
 /**
-* Make an encrypted link
-* 
-* @employee Aleem Shaukat
-* @date     14/06/2021
-* 
-* @param Array @args
-* 
-* @return String
-*/
+ * Make an encrypted link
+ * 
+ * @employee Aleem Shaukat
+ * @date     14/06/2021
+ * 
+ * @param Array @args
+ * 
+ * @return String
+ */
 if (!function_exists('timeoffGetApproverEncryptedLink')) {
-function timeoffGetApproverEncryptedLink($args)
-{
-// Get CI instance
-$_this = &get_instance();
-// Load encryption library
-$_this->load->library('encryption');
-//
-$params = '';
-//
-foreach ($args as $k => $v) $params .= "{$k}={$v}/";
-//
-return base_url('timeoff/approver/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
-}
+    function timeoffGetApproverEncryptedLink($args)
+    {
+        // Get CI instance
+        $_this = &get_instance();
+        // Load encryption library
+        $_this->load->library('encryption');
+        //
+        $params = '';
+        //
+        foreach ($args as $k => $v) $params .= "{$k}={$v}/";
+        //
+        return base_url('timeoff/approver/public/' . (str_replace(['-', '/', '='], ['$2B', '$3B', '$4B'], $_this->encryption->encrypt(rtrim($params, '/')))) . '');
+    }
 }
 
 /**
-* Decrypt a link
-* 
-* @employee Mubashir Ahmed
-* @date     02/07/2021
-* 
-* @param String @url
-* 
-* @return Array
-*/
+ * Decrypt a link
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param String @url
+ * 
+ * @return Array
+ */
 if (!function_exists('timeoffDecryptLink')) {
-function timeoffDecryptLink($url)
-{
-// Get CI instance
-$_this = &get_instance();
-// Load encryption library
-$_this->load->library('encryption');
-//
-$url = explode('/', $_this->encryption->decrypt(str_replace(['$2B', '$3B', '$4B'], ['-', '/', '='], $url)));
-//
-$params = [];
-//
-foreach ($url as $urla) {
-    $t = explode('=', $urla);
-    $params[$t[0]] = $t[1];
-}
-//
-return $params;
-}
+    function timeoffDecryptLink($url)
+    {
+        // Get CI instance
+        $_this = &get_instance();
+        // Load encryption library
+        $_this->load->library('encryption');
+        //
+        $url = explode('/', $_this->encryption->decrypt(str_replace(['$2B', '$3B', '$4B'], ['-', '/', '='], $url)));
+        //
+        $params = [];
+        //
+        foreach ($url as $urla) {
+            $t = explode('=', $urla);
+            $params[$t[0]] = $t[1];
+        }
+        //
+        return $params;
+    }
 }
 
 
 /**
-* Replace magic Quotes
-* 
-* @employee Mubashir Ahmed
-* @date     02/07/2021
-* 
-* @param Array $body
-* @param Array $replaceArray
-* 
-* @return Array
-*/
+ * Replace magic Quotes
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array $body
+ * @param Array $replaceArray
+ * 
+ * @return Array
+ */
 if (!function_exists('timeoffMagicQuotesReplace')) {
-function timeoffMagicQuotesReplace($body, $replaceArray)
-{
-// Get indexes
-$indexes = array_keys($replaceArray);
-// Replace Subject
-$body['Subject'] = str_replace($indexes, $replaceArray, $body['Subject']);
-$body['Subject'] = preg_replace('/{{(.*)}}/', '', $body['Subject']);
+    function timeoffMagicQuotesReplace($body, $replaceArray)
+    {
+        // Get indexes
+        $indexes = array_keys($replaceArray);
+        // Replace Subject
+        $body['Subject'] = str_replace($indexes, $replaceArray, $body['Subject']);
+        $body['Subject'] = preg_replace('/{{(.*)}}/', '', $body['Subject']);
 
-// Replace Body
-$body['Body'] = str_replace($indexes, $replaceArray, $body['Body']);
-$body['Body'] = preg_replace('/{{(.*)}}/', '', $body['Body']);
+        // Replace Body
+        $body['Body'] = str_replace($indexes, $replaceArray, $body['Body']);
+        $body['Body'] = preg_replace('/{{(.*)}}/', '', $body['Body']);
 
-// Replace FromName
-$body['FromName'] = str_replace($indexes, $replaceArray, $body['FromName']);
-$body['FromName'] = preg_replace('/{{(.*)}}/', '', $body['FromName']);
+        // Replace FromName
+        $body['FromName'] = str_replace($indexes, $replaceArray, $body['FromName']);
+        $body['FromName'] = preg_replace('/{{(.*)}}/', '', $body['FromName']);
 
-//
-return $body;
-}
+        //
+        return $body;
+    }
 }
 
 
 /**
-* Get time off button
-* 
-* @employee Mubashir Ahmed
-* @date     02/07/2021
-* 
-* @param Array  $replaceArray
-* 
-* @return String
-*/
+ * Get time off button
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array  $replaceArray
+ * 
+ * @return String
+ */
 if (!function_exists('getButton')) {
-function getButton($replaceArray)
-{
-return
-    str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
+    function getButton($replaceArray)
+    {
+        return
+            str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
 {{text}}             
 </a>');
-}
+    }
 }
 
 
 /**
-* Get time off request status
-* 
-* @employee Aleem Shaukat
-* @date     11/05/2023
-* 
-* @param Array  $requestDate
-* 
-* @return String
-*/
+ * Get time off request status
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $requestDate
+ * 
+ * @return String
+ */
 if (!function_exists('getTimeoffRequestStatus')) {
-function getTimeoffRequestStatus($requestDate)
-{
-$date_now = date("Y-m-d");
-$requestDate = date('Y-m-d', strtotime($requestDate));
-//
-if ($date_now < $requestDate) {
-    return '<strong class="text-warning">PENDING</strong>';
-} else {
-    return '<strong class="text-success">CONSUMED</strong>';
-}
-}
+    function getTimeoffRequestStatus($requestDate)
+    {
+        $date_now = date("Y-m-d");
+        $requestDate = date('Y-m-d', strtotime($requestDate));
+        //
+        if ($date_now < $requestDate) {
+            return '<strong class="text-warning">PENDING</strong>';
+        } else {
+            return '<strong class="text-success">CONSUMED</strong>';
+        }
+    }
 }
 
 /**
-* Split time off request
-* 
-* @employee Aleem Shaukat
-* @date     11/05/2023
-* 
-* @param Array  $request
-* 
-* @return Array
-*/
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * 
+ * @return Array
+ */
 if (!function_exists('splitTimeoffRequest')) {
-function splitTimeoffRequest($request)
-{
-//
-$response = [
-    'type' => "single",
-    'requestData' => $request
-];
-//
-$fromDate = date_create($request['request_from_date']);
-$toDate = date_create($request['request_to_date']);
-//
-$requestInterval = $fromDate->diff($toDate);
-$requestDays = $requestInterval->format('%d') + 1;
-//
-if ($requestDays > 1) {
-    $requestData = [];
-    $response['type'] = 'multiple';
-    $requestedTimePerDay = $request['requested_time'] / $requestDays;
-    //
-    for ($i = 0; $i < $requestDays; $i++) {
-	$requestDate = date("Y-m-d", strtotime($i . 'days', strtotime($request['request_from_date'])));
-	//
-	$split = $request;
-	$split['requested_time'] = $requestedTimePerDay;
-	$split['request_from_date'] = $requestDate;
-	$split['request_to_date'] = $requestDate;
-	$split['request_status'] = getTimeoffRequestStatus($requestDate);
-	//
-	$requestData[] = $split;
-    }
+    function splitTimeoffRequest($request)
+    {
+        //
+        $response = [
+            'type' => "single",
+            'requestData' => $request
+        ];
+        //
+        $fromDate = date_create($request['request_from_date']);
+        $toDate = date_create($request['request_to_date']);
+        //
+        $requestInterval = $fromDate->diff($toDate);
+        $requestDays = $requestInterval->format('%d') + 1;
+        //
+        if ($requestDays > 1) {
+            $requestData = [];
+            $response['type'] = 'multiple';
+            $requestedTimePerDay = $request['requested_time'] / $requestDays;
+            //
+            for ($i = 0; $i < $requestDays; $i++) {
+                $requestDate = date("Y-m-d", strtotime($i . 'days', strtotime($request['request_from_date'])));
+                //
+                $split = $request;
+                $split['requested_time'] = $requestedTimePerDay;
+                $split['request_from_date'] = $requestDate;
+                $split['request_to_date'] = $requestDate;
+                $split['request_status'] = getTimeoffRequestStatus($requestDate);
+                //
+                $requestData[] = $split;
+            }
 
-    $response['requestData'] = $requestData;
-} else {
-    $response['requestData']['request_status'] = getTimeoffRequestStatus($request['request_from_date']);
-}
-//
-return $response;
-}
+            $response['requestData'] = $requestData;
+        } else {
+            $response['requestData']['request_status'] = getTimeoffRequestStatus($request['request_from_date']);
+        }
+        //
+        return $response;
+    }
 }
 
 /**
-* Split time off request
-* 
-* @employee Aleem Shaukat
-* @date     11/05/2023
-* 
-* @param Array  $request
-* @param Array  $string
-* 
-* @return string
-*/
+ * Split time off request
+ * 
+ * @employee Aleem Shaukat
+ * @date     11/05/2023
+ * 
+ * @param Array  $request
+ * @param Array  $string
+ * 
+ * @return string
+ */
 if (!function_exists('generateTimeoffRequestSlot')) {
-function generateTimeoffRequestSlot($request, $type)
-{
-$consumed_time = $request['consumed_time'];
-//
-if ($type == 'multiple') {
-    $hours = floor($request['requested_time'] / 60);
+    function generateTimeoffRequestSlot($request, $type)
+    {
+        $consumed_time = $request['consumed_time'];
+        //
+        if ($type == 'multiple') {
+            $hours = floor($request['requested_time'] / 60);
 
-    if ($hours > 1) {
-	$consumed_time = $hours . ' Hours';
-    } else {
-	$consumed_time = $hours . ' Hour';
+            if ($hours > 1) {
+                $consumed_time = $hours . ' Hours';
+            } else {
+                $consumed_time = $hours . ' Hour';
+            }
+        }
+        //
+        $rowColor =  str_replace('CONSUMED', '', $request['request_status']) != $request['request_status'] ? 'background-color:  #f2dede !important;' : '';
+        //
+        $html =  '';
+        $html .= '<tr style="' . $rowColor . '">';
+        $html .= '  <td>' . (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' <br /> ' . (remakeEmployeeName($request, false)) . ' <br /> ' . (!empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId']) . '</td>';
+        $html .= '  <td>' . ($request['title']) . '</td>';
+        $html .= '  <td>' . ($consumed_time) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
+        $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y')) . '</td>';
+        //
+        $status = $request['status'];
+        //
+        if ($status == 'approved') {
+            $html .= '<td><strong class="text-success">APPROVED</strong> (' . $request['request_status'] . ')</td>';
+        } else if ($status == 'rejected') {
+            $html .= '<td><strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        } else if ($status == 'pending') {
+            $html .= '<td><strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)</td>';
+        }
+        $html .= '</tr>';
+        //
+        return $html;
     }
-}
-//
-$rowColor =  str_replace('CONSUMED', '', $request['request_status']) != $request['request_status'] ? 'background-color:  #f2dede !important;' : '';
-//
-$html =  '';
-$html .= '<tr style="' . $rowColor . '">';
-$html .= '  <td>' . (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' <br /> ' . (remakeEmployeeName($request, false)) . ' <br /> ' . (!empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId']) . '</td>';
-$html .= '  <td>' . ($request['title']) . '</td>';
-$html .= '  <td>' . ($consumed_time) . '</td>';
-$html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
-$html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('m/d/Y')) . '</td>';
-//
-$status = $request['status'];
-//
-if ($status == 'approved') {
-    $html .= '<td><strong class="text-success">APPROVED</strong> (' . $request['request_status'] . ')</td>';
-} else if ($status == 'rejected') {
-    $html .= '<td><strong class="text-danger">REJECTED</strong> (<strong class="text-warning">PENDING</strong>)</td>';
-} else if ($status == 'pending') {
-    $html .= '<td><strong class="text-warning">PENDING</strong> (<strong class="text-warning">PENDING</strong>)</td>';
-}
-$html .= '</tr>';
-//
-return $html;
-}
 }
 
 if (!function_exists('getEmployeeManualBalance')) {
-/**
-* Get employee balance
-* 
-* Get employee manual balance for current cycle
-* 
-* @param int    $employeeId
-* @param int    $policyId
-* @param string $policyImplementDate
-* @param string $policyNextResetDate
-* @param int    $balance Optional
-* 
-* @return int
-*/
-function getEmployeeManualBalance(
-int $employeeId,
-int $policyId,
-string $policyImplementDate,
-string $policyNextResetDate,
-int $balance = 0
-) {
-// set default balance to incoming balance
-$balanceToReturn = $balance;
-// get current date
-$currentDate = getSystemDate('Y-m-d');
-// check if date is for production
-if ($currentDate < '2023-05-24') {
-    return $balanceToReturn;
-}
-// reset the value to 0
-$balanceToReturn = 0;
-// get CI instance
-$CI = &get_instance();
-// Get Company id
-$companyId = getUserColumnByWhere(['sid' => $employeeId], ['parent_sid'])['parent_sid'];
-//
-$CI->db
-    ->select('
+    /**
+     * Get employee balance
+     * 
+     * Get employee manual balance for current cycle
+     * 
+     * @param int    $employeeId
+     * @param int    $policyId
+     * @param string $policyImplementDate
+     * @param string $policyNextResetDate
+     * @param int    $balance Optional
+     * 
+     * @return int
+     */
+    function getEmployeeManualBalance(
+        int $employeeId,
+        int $policyId,
+        string $policyImplementDate,
+        string $policyNextResetDate,
+        int $balance = 0
+    ) {
+        // set default balance to incoming balance
+        $balanceToReturn = $balance;
+        // get current date
+        $currentDate = getSystemDate('Y-m-d');
+        // check if date is for production
+        if ($currentDate < '2023-05-24') {
+            return $balanceToReturn;
+        }
+        // reset the value to 0
+        $balanceToReturn = 0;
+        // get CI instance
+        $CI = &get_instance();
+        // Get Company id
+        $companyId = getUserColumnByWhere(['sid' => $employeeId], ['parent_sid'])['parent_sid'];
+        //
+        $CI->db
+            ->select('
     timeoff_balances.is_added,
     effective_at,
     timeoff_balances.added_time
 ');
-$CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
-$CI->db->where('timeoff_policies.company_sid', $companyId);
-$CI->db->where('timeoff_balances.user_sid', $employeeId);
-$CI->db->where('timeoff_policies.sid', $policyId);
-$CI->db->where('timeoff_policies.is_archived', 0);
-$CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
-$CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
-$CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
-$balances =  $CI->db->get('timeoff_balances')->result_array();
+        $CI->db->join('timeoff_policies', 'timeoff_policies.sid = timeoff_balances.policy_sid', 'inner');
+        $CI->db->where('timeoff_policies.company_sid', $companyId);
+        $CI->db->where('timeoff_balances.user_sid', $employeeId);
+        $CI->db->where('timeoff_policies.sid', $policyId);
+        $CI->db->where('timeoff_policies.is_archived', 0);
+        $CI->db->where('timeoff_balances.effective_at >=', $policyImplementDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
+        $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
+        $balances =  $CI->db->get('timeoff_balances')->result_array();
 
-// return 0 when no balance is found
-if (empty($balances)) {
-    return $balanceToReturn;
-}
-// loop through the balances
-foreach ($balances as $rowBalance) {
-    if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time']; // on add
-    else $balanceToReturn -= $rowBalance['added_time']; // on subtract
-}
-// return the # of minutes
-return $balanceToReturn;
-}
+        // return 0 when no balance is found
+        if (empty($balances)) {
+            return $balanceToReturn;
+        }
+        // loop through the balances
+        foreach ($balances as $rowBalance) {
+            if ($rowBalance['is_added'] == '1') $balanceToReturn += $rowBalance['added_time']; // on add
+            else $balanceToReturn -= $rowBalance['added_time']; // on subtract
+        }
+        // return the # of minutes
+        return $balanceToReturn;
+    }
 }
 
 if (!function_exists('getCycleTimeDifference')) {
-/**
-* Get time difference
-* 
-* Get employee manual balance for current cycle
-* 
-* @param string $startDate
-* @param string $endDate
-* @param string $type
-* 
-* @return int
-*/
-function getCycleTimeDifference(
-string $startDate,
-string $endDate,
-string $type = 'y'
-) {
-$start = new DateTime($startDate);
-$end = new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($endDate))));
-$difference = $start->diff($end);
+    /**
+     * Get time difference
+     * 
+     * Get employee manual balance for current cycle
+     * 
+     * @param string $startDate
+     * @param string $endDate
+     * @param string $type
+     * 
+     * @return int
+     */
+    function getCycleTimeDifference(
+        string $startDate,
+        string $endDate,
+        string $type = 'y'
+    ) {
+        $start = new DateTime($startDate);
+        $end = new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($endDate))));
+        $difference = $start->diff($end);
 
-return $difference->$type;
-}
+        return $difference->$type;
+    }
 }
 
 if (!function_exists('checkPolicyESST')) {
@@ -1858,15 +1858,15 @@ if (!function_exists('processESSTPolicy')) {
         }
         //
         if ($totalShiftMinutes < 4800) {
-            $r['Reason'] = 'Employee do not meet this policy';
+            $r['Reason'] = 'Employee do not meet accrual of 80 hours for this policy';
             return $r;
         }
         //
         $allowedTime  = (($totalShiftMinutes / 60) / 30) * 60;
 
-        if ($allowedTime > 48) {
-            $allowedTime = 48;
-        }
+        // if ($allowedTime > 48) {
+        //     $allowedTime = 48;
+        // }
         $r['AllowedTime'] = $allowedTime;
         $r['RemainingTime'] = $allowedTime;
         $r['EmployementStatus'] = $employementStatus;
