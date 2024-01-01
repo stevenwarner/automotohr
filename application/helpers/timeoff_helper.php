@@ -300,7 +300,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 ];
             }
         }
-        
+
 
         // get consumed time
         $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
@@ -309,7 +309,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
             $policyPlansDates['lastAnniversaryDate'],
             $policyPlansDates['upcomingAnniversaryDate']
         );
-      
+
         //
         $compareDateOBJ = DateTime::createfromformat(DB_DATE, $policyPlansDates['upcomingAnniversaryDate']);
         //
@@ -367,7 +367,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
         if (!isset($accruals['carryOverCycle'])) {
             $accruals['carryOverCycle'] = 0;
         }
-      
+
         if ($accruals['carryOverCheck'] == 'yes') {
             //
             if ($accruals['carryOverCycle'] == 0 || count($policyPlansDates['breakdown']) == 1) {
@@ -384,10 +384,10 @@ if (!function_exists('getEmployeeAccrualNew')) {
                     //
                     if ($i == 0) {
                         $yearStart = $employeeAnniversaryDate['ad'];
-                        $yearEnd= preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
                     } else {
                         $yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
-                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
                     }
                     //
                     $todayDate =  date('Y-m-d', strtotime($yearEnd));
@@ -419,7 +419,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                     if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
                         //
                         continue;
-                    } 
+                    }
                     // Check if employee is on probation
                     if ($employeeStatus == 'probation') {
                         // Probation
@@ -433,7 +433,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                             $lastAnniversaryDate = date('Y-m-d', strtotime($cycle['lastAnniversaryDate']));
                             $upcomingAnniversaryDate = date('Y-m-d', strtotime($cycle['upcomingAnniversaryDate']));
                             //
-                            if (($cycleYear >= $lastAnniversaryDate) && ($cycleYear <= $upcomingAnniversaryDate)){
+                            if (($cycleYear >= $lastAnniversaryDate) && ($cycleYear <= $upcomingAnniversaryDate)) {
                                 $allowedPolicyTime = 0;
                                 if (isset($plans[$cycle['lastAnniversaryDate']])) {
                                     $allowedPolicyTime = $plans[$cycle['lastAnniversaryDate']]['minutes'];
@@ -455,23 +455,23 @@ if (!function_exists('getEmployeeAccrualNew')) {
                         $yearEnd
                     );
                     //
-                    $testArray[$i]['yearStart'] = $yearStart; 
-                    $testArray[$i]['yearEnd'] = $yearEnd; 
-                    $testArray[$i]['consumedTime'] = $consumedPolicyTime; 
+                    $testArray[$i]['yearStart'] = $yearStart;
+                    $testArray[$i]['yearEnd'] = $yearEnd;
+                    $testArray[$i]['consumedTime'] = $consumedPolicyTime;
                     //
                     $totalConsumedTime = $totalConsumedTime + $consumedPolicyTime;
                     //
                     // check if date is for production
                     if ($todayDate > '2023-05-24') {
                         $cycleBalance = getEmployeeManualBalance(
-                                $employeeId,
-                                $policyId,
-                                $yearStart,
-                                $yearEnd
-                            );
+                            $employeeId,
+                            $policyId,
+                            $yearStart,
+                            $yearEnd
+                        );
                         //
-                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;  
-                    } 
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
+                    }
                 }
                 //
                 $totalConsumedTime = $totalConsumedTime - $consumedTimeInMinutes;
@@ -494,13 +494,13 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 if (!empty($asOfToday)) {
                     $currentDate = date('Y-m-d', strtotime($asOfToday));
                 }
-                
+
                 //
                 foreach ($policyPlansDates['breakdown'] as $key => $cycle) {
                     $lastAnniversaryDate = date('Y-m-d', strtotime($cycle['lastAnniversaryDate']));
                     $upcomingAnniversaryDate = date('Y-m-d', strtotime($cycle['upcomingAnniversaryDate']));
                     //
-                    if (($currentDate >= $lastAnniversaryDate) && ($currentDate <= $upcomingAnniversaryDate)){
+                    if (($currentDate >= $lastAnniversaryDate) && ($currentDate <= $upcomingAnniversaryDate)) {
                         $currentCycleKey = $key;
                     } else if ($currentDate >= $lastAnniversaryDate) {
                         $currentCycleKey = $key;
@@ -543,7 +543,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                     if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
                         //
                         continue;
-                    } 
+                    }
                     //
                     $allowedPlanTime = 0;
                     //
@@ -567,7 +567,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                         $totalAllowedTime = $totalAllowedTime + $accruals['newHireRate'];
                     } else {
                         //
-                        $totalAllowedTime = $totalAllowedTime + $allowedPlanTime;  
+                        $totalAllowedTime = $totalAllowedTime + $allowedPlanTime;
                     }
                     //
                     $totalConsumedTime = $totalConsumedTime + $consumedPlanTime;
@@ -576,13 +576,13 @@ if (!function_exists('getEmployeeAccrualNew')) {
                     // check if date is for production
                     if ($todayDate > '2023-05-24') {
                         $cycleBalance = getEmployeeManualBalance(
-                                $employeeId,
-                                $policyId,
-                                $policyPlansDates['breakdown'][$index]['lastAnniversaryDate'],
-                                $policyPlansDates['breakdown'][$index]['upcomingAnniversaryDate']
-                            );
+                            $employeeId,
+                            $policyId,
+                            $policyPlansDates['breakdown'][$index]['lastAnniversaryDate'],
+                            $policyPlansDates['breakdown'][$index]['upcomingAnniversaryDate']
+                        );
                         //
-                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;  
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
                     }
                 }
                 //
@@ -804,7 +804,7 @@ if (!function_exists('getEmployeeAccrual')) {
             $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType.";
             return $r;
         }
-        
+
         // Check the period
         if ($accruals['frequency'] == 'none') {
             if ($accruals['time'] == 'start_of_period') {
@@ -966,7 +966,7 @@ if (!function_exists('getEmployeeAccrual')) {
                     $time = $time / 12;
                 }
                 //
-                $yearlyRates[$time] = $planInfo['accrualRate']+$accruals['rate'];
+                $yearlyRates[$time] = $planInfo['accrualRate'] + $accruals['rate'];
             }
             //
             $totalAllowed = 0;
@@ -978,17 +978,17 @@ if (!function_exists('getEmployeeAccrual')) {
             }
             //
             if ($accruals['carryOverCycle'] == 0) {
-                $totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate'])-1;
+                $totalService = getCycleTimeDifference($employeeAnniversaryDate['ad'], $employeeAnniversaryDate['upcomingAnniversaryDate']) - 1;
                 $joiningYear = date('Y', strtotime($employeeAnniversaryDate['ad']));
                 //
                 for ($i = 0; $i < $totalService; $i++) {
                     //
                     if ($i == 0) {
                         $yearStart = $employeeAnniversaryDate['ad'];
-                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
                     } else {
                         $yearStart = preg_replace('/[0-9]{4}/', $joiningYear + $i, $employeeAnniversaryDate['ad']);
-                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i+1), $employeeAnniversaryDate['ad']);
+                        $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear + ($i + 1), $employeeAnniversaryDate['ad']);
                     }
                     //
                     $todayDate =  date('Y-m-d', strtotime($yearEnd));
@@ -1028,7 +1028,7 @@ if (!function_exists('getEmployeeAccrual')) {
                     if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
                         //
                         continue;
-                    }    
+                    }
                     // Check if employee is on probation
                     if ($employeeStatus == 'probation') {
                         // Probation
@@ -1061,27 +1061,26 @@ if (!function_exists('getEmployeeAccrual')) {
                     // check if date is for production
                     if ($todayDate > '2023-05-24') {
                         $cycleBalance = getEmployeeManualBalance(
-                                $employeeId,
-                                $policyId,
-                                $yearStart,
-                                $yearEnd
-                            );
+                            $employeeId,
+                            $policyId,
+                            $yearStart,
+                            $yearEnd
+                        );
                         //
-                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;  
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
                     }
                     //
                 }
                 //
-                $totalAllowed = ($totalAllowed*60) - $totalConsumed + $totalManualBalanceTime;
-                    
+                $totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalManualBalanceTime;
             } else {
                 //
                 $joiningYear = date('Y', strtotime($employeeAnniversaryDate['upcomingAnniversaryDate']));
                 //
                 for ($i = 0; $i < $accruals['carryOverCycle']; $i++) {
                     //
-                    $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear - ($i+1), $employeeAnniversaryDate['ad']);
-                    $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i+2), $employeeAnniversaryDate['ad']);
+                    $yearEnd = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 1), $employeeAnniversaryDate['ad']);
+                    $yearStart = preg_replace('/[0-9]{4}/', $joiningYear - ($i + 2), $employeeAnniversaryDate['ad']);
                     //
                     $todayDate =  date('Y-m-d', strtotime($yearEnd));
                     //
@@ -1120,7 +1119,7 @@ if (!function_exists('getEmployeeAccrual')) {
                     if ($employeeStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
                         //
                         continue;
-                    } 
+                    }
                     // Check if employee is on probation
                     if ($employeeStatus == 'probation') {
                         // Probation
@@ -1150,14 +1149,14 @@ if (!function_exists('getEmployeeAccrual')) {
                     // check if date is for production
                     if ($todayDate > '2023-05-24') {
                         $cycleBalance = getEmployeeManualBalance(
-                                $employeeId,
-                                $policyId,
-                                $yearStart,
-                                $yearEnd
-                            );
+                            $employeeId,
+                            $policyId,
+                            $yearStart,
+                            $yearEnd
+                        );
                         //
-                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance; 
-                        $timeOffCycle[$i]['balance'] = $cycleBalance; 
+                        $totalManualBalanceTime = $totalManualBalanceTime + $cycleBalance;
+                        $timeOffCycle[$i]['balance'] = $cycleBalance;
                     }
                     //
                     $timeOffCycle[$i]['yearStart'] = $yearStart;
@@ -1165,9 +1164,9 @@ if (!function_exists('getEmployeeAccrual')) {
                     $timeOffCycle[$i]['consumedTime'] = $consumedPolicyTime;
                     $totalConsumed = $totalConsumed + $consumedPolicyTime;
                     //
-                    
+
                 }
-                $totalAllowed = ($totalAllowed*60) - $totalConsumed + $totalConsumed + $totalManualBalanceTime;
+                $totalAllowed = ($totalAllowed * 60) - $totalConsumed + $totalConsumed + $totalManualBalanceTime;
             }
             //
             if ($accruals['carryOverVal'] > 0) {
@@ -1179,7 +1178,6 @@ if (!function_exists('getEmployeeAccrual')) {
             } else {
                 $carryOverTime = $totalAllowed;
             }
-            
         }
         // _e($carryOverTime,true);
         // Set negative time
@@ -1259,7 +1257,7 @@ if (!function_exists('getEmployeeAccrual')) {
             $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
             $r['ConsumedTime'] = $tmp;
         }
-        
+
         // for adding time off balance
         if (
             $currentDate >= $employeeAnniversaryDate['lastAnniversaryDate']
@@ -1735,7 +1733,7 @@ if (!function_exists('getEmployeeManualBalance')) {
         $CI->db->where('timeoff_balances.effective_at <=', $policyNextResetDate);
         $CI->db->where('timeoff_balances.effective_at <=', $currentDate); // current date
         $balances =  $CI->db->get('timeoff_balances')->result_array();
-   
+
         // return 0 when no balance is found
         if (empty($balances)) {
             return $balanceToReturn;
@@ -1770,7 +1768,7 @@ if (!function_exists('getCycleTimeDifference')) {
         $start = new DateTime($startDate);
         $end = new DateTime(date('Y-m-d', strtotime('+1 day', strtotime($endDate))));
         $difference = $start->diff($end);
-        
+
         return $difference->$type;
     }
 }
@@ -1795,7 +1793,7 @@ if (!function_exists('checkPolicyESST')) {
         //
         return $result['is_esst'];
     }
-}    
+}
 
 if (!function_exists('processESSTPolicy')) {
     /**
@@ -1836,7 +1834,7 @@ if (!function_exists('processESSTPolicy')) {
         $totalShiftMinutes = 0;
         //
         if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
-           // todo
+            // todo
         } else {
             $CI->db->select('start_time,end_time');
             $CI->db->where('shift_date >=', $employeeAnniversaryDate['lastAnniversaryDate']);
@@ -1845,7 +1843,7 @@ if (!function_exists('processESSTPolicy')) {
             $result = $CI->db->get('cl_shifts')->result_array();
             //
             if (!$result) {
-                $r['Reason'] = 'Employee do not have a shift between '.$employeeAnniversaryDate['lastAnniversaryDate']. ' and '. $todayDate;
+                $r['Reason'] = 'Employee do not have a shift between ' . $employeeAnniversaryDate['lastAnniversaryDate'] . ' and ' . $todayDate;
                 return $r;
             }
             //
@@ -1865,6 +1863,10 @@ if (!function_exists('processESSTPolicy')) {
         }
         //
         $allowedTime  = (($totalShiftMinutes / 60) / 30) * 60;
+
+        if ($allowedTime > 48) {
+            $allowedTime = 48;
+        }
         $r['AllowedTime'] = $allowedTime;
         $r['RemainingTime'] = $allowedTime;
         $r['EmployementStatus'] = $employementStatus;
@@ -1874,4 +1876,4 @@ if (!function_exists('processESSTPolicy')) {
         // _e($r,true,true);
         return $r;
     }
-}    
+}
