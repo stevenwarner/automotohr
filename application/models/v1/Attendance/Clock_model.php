@@ -1472,7 +1472,8 @@ class Clock_model extends Base_model
             ->select(getUserFields())
             ->where("active", 1)
             ->where("is_executive_admin", 0)
-            ->where("terminated_status", 0);
+            ->where("terminated_status", 0)
+        ->where("parent_sid", $companyId);
 
         if ($ids) {
             $this->db->where_not_in("sid", $ids);
@@ -1492,6 +1493,7 @@ class Clock_model extends Base_model
             ->where("active", 1)
             ->where("is_executive_admin", 0)
             ->where("terminated_status", 0)
+            ->where("parent_sid", $companyId)
             ->get("users")
             ->result_array();
     }
