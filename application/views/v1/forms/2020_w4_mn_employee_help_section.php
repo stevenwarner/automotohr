@@ -394,12 +394,8 @@
                 </h1>
                 <p class="s12" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Complete this form for your employer to
                     calculate the amount of Minnesota income tax to be withheld from your pay.</p>
-                <h4 style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What’s New?</h4>
-                <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Beginning in 2020, federal Form W-4 does not use
-                    withholding allowances. If you complete a 2020 Form W-4, you must complete Minnesota Form W-4MN to determine
-                    your allowances for Minnesota income tax withholding.</p>
-                <h4 style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">When should I
-                    complete Form W-4MN?</h4>
+
+                <h4 style="padding-top: 1pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">When must I complete Form W-4MN?</h4>
                 <p style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Complete Form W-4MN if any of the
                     following apply:</p>
                 <ul id="l8">
@@ -423,28 +419,24 @@
                             Minnesota withholding (see Section 2 instructions for qualifications)</p>
                     </li>
                     <li data-list-text="•">
-                        <p style="padding-top: 3pt;padding-left: 15pt;text-indent: -10pt;text-align: left;">You request an
-                            additional amount of tax deducted each pay period</p>
+
                         <p style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">If you have not had
                             sufficient Minnesota income tax withheld from your wages, we may assess penalty and interest when you
                             file your state</p>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">income tax return.</p>
-                        <p class="s13"
-                            style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 128%;text-align: left;">Your
-                            employer may be required to submit copies of your Form W-4MN to the Minnesota Department of Revenue.
-                            Note: <span class="p">You may be subject to a $500 penalty if you submit a false Form W-4MN.</span></p>
+                        <p class="s13" style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 128%;text-align: left;"><b>Note:</b> Your employer may be required to submit a copy of your Form W-4MN to the Minnesota Department of Revenue. You may be subject to
+                            a $500 penalty if you provide a false Form W-4MN.</p>
+
+
+                        <p class="s13" style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 128%;text-align: left;"><b>You must enter your Social Security Number for this Form W-4MN to be valid.</b></p>
                         <h4 style="padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if I have completed
                             federal Form W-4?</h4>
-                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you completed a Form W-4 from 2019 or in
-                            prior years, you may complete Form W-4MN to determine your allowances for Minnesota withholding
-                            purposes. Your allowances on Form W-4MN must not exceed your allowances on a Form W-4 (from 2019 or
-                            earlier) that your employer used to determine your federal withholding. If you completed a 2020 Form
-                            W-4, you <b>must </b>complete Form W-4MN to determine your allowances for Minnesota withhholding.</p>
+                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you completed a 2024 Form W-4, you must complete Form W-4MN to determine your Minnesota withholding allowances.</p>
                         <h4 style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
                             I am exempt from Minnesota withholding?</h4>
-                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you claim exempt from Minnesota
-                            withholding, complete only Section 2 of Form W-4MN and sign the form to validate it. You must provide
-                            your employer with a new Form W-4MN by February 15 of each year if you claim exempt.</p>
+                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you claim exempt from Minnesota withholding, complete only Section 2 of Form W-4MN and sign and date the form to validate it. If you
+                            complete Section 2, you must complete a new Form W-4MN by February 15 in each following year in which you claim an exemption from
+                            Minnesota withholding.</p>
                         <p style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">You cannot claim exempt
                             from withholding if all of the following apply:</p>
                     </li>
@@ -461,13 +453,11 @@
                             includes more than $350 of unearned income</p>
                         <h4 style="padding-top: 2pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">What if
                             I am a nonresident alien for U.S. income taxes?</h4>
-                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you are a nonresident alien, you are not
-                            allowed to claim exempt from withholding. You will check the single box for marital status regardless of
-                            your actual marital status and may enter one personal allowance on Step A. Enter zero on steps B, C, and
-                            E.</p>
-                        <p style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">If you are resident of
-                            Canada, Mexico, South Korea or India and allowed to claim dependents, you may enter the number of
-                            dependents on Step D.</p>
+                        <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If you are a nonresident alien, you are not allowed to claim exempt from withholding. You will check the single box for marital status
+                            regardless of your actual marital status and may enter one personal allowance on Step A of Section 1. Enter zero on steps B, C, and E of
+                            Section 1.</p>
+                        <p style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">If you are resident of Canada, Mexico, South Korea, or India, and are allowed to claim dependents, enter the number of dependents on Step
+                            D.</p>
                         <h4 style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Section
                             1 — Minnesota Allowances Worksheet</h4>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Complete Section 1 to find your allowances
@@ -477,29 +467,25 @@
                             income tax for the year than will be withheld, you can claim fewer allowances or request additional
                             Minnesota withholding from your wages. Enter the amount of additional Minnesota income tax you want
                             withheld on line 2 of Section 1.</p>
-                        <p class="s14"
-                            style="padding-top: 4pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Nonwage
+                        <p class="s14" style="padding-top: 4pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Nonwage
                             Income</p>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">Consider making estimated payments if you
                             have a large amount of “nonwage income.” Nonwage income (other than tax-exempt income) includes
                             interest, dividends, net rental income, unemployment compensation, gambling winnings, prizes and awards,
                             hobby income, capital gains, royalties, and partnership income.</p>
-                        <p class="s14"
-                            style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Two
+                        <p class="s14" style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Two
                             Earners or Multiple Jobs</p>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">If your spouse works or you have more than
                             one job, figure the total number of allowances you are entitled to claim on all jobs using worksheets
                             from only one Form W-4MN. Usually, your withholding will be more accurate when all allowances are
                             claimed on the Form W-4MN for the highest paying job and zero allowances are claimed on the others.</p>
-                        <p class="s14"
-                            style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Head of
+                        <p class="s14" style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Head of
                             Household</p>
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: justify;">You may claim Head of Household as your
                             filing status if you are unmarried and pay more than 50 percent of the costs of keeping up a home for
                             yourself, your dependents, and other qualifying individuals. Enter “1” on Step E if you may claim Head
                             of Household as your filing status on your tax return.</p>
-                        <p class="s14"
-                            style="padding-top: 4pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">What if
+                        <p class="s14" style="padding-top: 4pt;padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">What if
                             I itemize deductions on my Minnesota return or have other nonwage income?</p>
                         <p style="padding-left: 5pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Use the Itemized
                             Deductions and Additional Income Worksheet to find your Minnesota withholding allowances. Complete
@@ -507,33 +493,28 @@
                         <p style="padding-left: 5pt;text-indent: 0pt;text-align: left;">then follow the steps in the worksheet on
                             the next page to find additional allowances.</p>
                         <p class="s15" style="padding-top: 3pt;padding-left: 5pt;text-indent: 0pt;text-align: left;">Continued</p>
-                        <p style="padding-left: 3pt;text-indent: 0pt;line-height: 12pt;text-align: left;"><span
-                                style=" color: black; font-family:Calibri, sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;">Itemized
+                        <p style="padding-left: 3pt;text-indent: 0pt;line-height: 12pt;text-align: left;"><span style=" color: black; font-family:Calibri, sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 10pt;">Itemized
                                 Deductions and Additional Income Worksheet</span></p>
                         <ol id="l9">
                             <li data-list-text="1">
                                 <p class="s16" style="padding-left: 16pt;text-indent: -9pt;line-height: 10pt;text-align: left;">
-                                    Enter an estimate of your 2020 Minnesota itemized deductions. For 2020, you may have to reduce
+                                    Enter an estimate of your 2024 Minnesota itemized deductions. For 2024, you may have to reduce
                                     your itemized deductions</p>
-                                <p class="s16" style="text-indent: 0pt;text-align: right;">if your income is over $197,850 ($98,925)
-                                    if you are married filing separately). ..................................... </p>
+                                <p class="s16" style="text-indent: 0pt;text-align: left;">&nbsp;&nbsp;&nbsp;f your income is over $232,500 ($116,250 for Married Filing Separately)........................................................... </p>
                             </li>
                             <li data-list-text="2">
-                                <p class="s16" style="padding-top: 1pt;padding-left: 9pt;text-indent: -9pt;text-align: right;">Enter
+                                <p class="s16" style="padding-top: 1pt;padding-left: 9pt;text-indent: -9pt;text-align: left;">Enter
                                     one of the following based on your filing status:
                                     ........................................................... </p>
                                 <ol id="l10">
                                     <li data-list-text="a.">
-                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$24,800 if
-                                            Married Filing Jointly</p>
+                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$29,150 if Married Filing Jointly</p>
                                     </li>
                                     <li data-list-text="b.">
-                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$18,650 if
-                                            Head of Household</p>
+                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$21,900 if Head of Household</p>
                                     </li>
                                     <li data-list-text="c.">
-                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$12,400 if
-                                            Single or Married Filing Separately</p>
+                                        <p class="s16" style="padding-left: 24pt;text-indent: -9pt;text-align: left;">$14,575 if Single or Married Filing Separately</p>
                                     </li>
                                 </ol>
                             </li>
@@ -544,8 +525,7 @@
                             </li>
                             <li data-list-text="4">
                                 <p class="s16" style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">
-                                    Enter an estimate of your 2020 additional standard deduction (from page 11 of the Form M1
-                                    instructions) ................ </p>
+                                    Enter an estimate of your 2024 additional standard deduction (from page 11 of the Form M1 instructions) ................ </p>
                             </li>
                             <li data-list-text="5">
                                 <p class="s16" style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">Add
@@ -554,7 +534,7 @@
                             </li>
                             <li data-list-text="6">
                                 <p class="s16" style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">
-                                    Enter an estimate of your 2020 taxable nonwage income
+                                    Enter an estimate of your 2024 taxable nonwage income
                                     ........................................................ </p>
                             </li>
                             <li data-list-text="7">
@@ -564,8 +544,7 @@
                             </li>
                             <li data-list-text="8">
                                 <p class="s16" style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">
-                                    Divide the amount on step 7 by $4,300. If a negative amount, enter in parentheses. Do not
-                                    include fractions .............. </p>
+                                    Divide the amount on step 7 by $5,050. If a negative amount, enter in parentheses. Do not include fractions .............. </p>
                             </li>
                             <li data-list-text="9">
                                 <p class="s16" style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">
@@ -596,8 +575,7 @@
                     <li data-list-text="•">
                         <p style="padding-top: 2pt;padding-left: 14pt;text-indent: -9pt;text-align: left;">Your annual income
                             includes more than $350 of unearned income</p>
-                        <p class="s14"
-                            style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box A
+                        <p class="s14" style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box A
                         </p>
                         <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Check box A of Section 2
                             to claim exempt if all of the following apply:</p>
@@ -613,14 +591,12 @@
                     <li data-list-text="•">
                         <p style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">You expect to have no
                             Minnesota income tax liability for the current year</p>
-                        <p class="s14"
-                            style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box B
+                        <p class="s14" style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box B
                         </p>
                         <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Check box B of Section 2
                             if you are not claiming exempt from federal withholding, but meet the second and third requirements for
                             box A.</p>
-                        <p class="s14"
-                            style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box C
+                        <p class="s14" style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Box C
                         </p>
                         <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Check box C in Section 2
                             to claim exempt if all of the following apply:</p>
@@ -636,8 +612,7 @@
                     <li data-list-text="•">
                         <p style="padding-top: 2pt;padding-left: 14pt;text-indent: -9pt;text-align: left;">You are in Minnesota
                             solely to be with your active duty military spouse member</p>
-                        <p class="s14"
-                            style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Boxes
+                        <p class="s14" style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">Boxes
                             D-F</p>
                         <p style="padding-left: 6pt;text-indent: 0pt;text-align: justify;">If you receive income from the following
                             sources, it is exempt from Minnesota withholding. Your employer will not withhold Minnesota tax from
@@ -645,63 +620,87 @@
                     </li>
                     <li data-list-text="•">
                         <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">Box D:
-                            <span class="p">You receive wages as a member of an American Indian tribe living and working on the
-                                reservation of which you are an enrolled member.</span></p>
+                            <span class="p">You receive wages as a member of an American Indian tribe living and working on the reservation of which you are an enrolled
+                                member. Enter the name of your reservation and your Certificate of Degree of Indian or Alaskan Blood (CDIB) number/enrollment number.
+                                <br><b>Members of the Minnesota Chippewa Tribe</b> can exclude income regardless of which Minnesota Chippewa Tribe reservation you live and
+                                work on. This affects members of these tribes
+
+
+                            </span>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            Mille Lacs
+                        </p>
                     </li>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            Nett Lake (Bois Forte)
+                        </p>
+                    </li>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            Fond du Lac
+                        </p>
+                    </li>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            Leech Lake
+                        </p>
+                    </li>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            White Earth
+                        </p>
+                    </li>
+                    <li data-list-text="•" style="margin-left: 10px;">
+                        <p class="s13" style="padding-top: 1pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">
+                            Grand Portage
+                        </p>
+                    </li>
+
+                    </p>
+                    </li>
+
                     <li data-list-text="•">
                         <p class="s13" style="padding-top: 2pt;padding-left: 15pt;text-indent: -9pt;text-align: justify;">Box E:
-                            <span class="p">You receive wages for Minnesota National Guard (MNG) pay or for active duty U.S.
-                                military pay. MNG and active duty U.S. military members can claim exempt from Minnesota withholding
-                                on these wages, even if taxable federally. For more information, see Income Tax Fact Sheet 5,
-                                Military Personnel.</span></p>
+                            <span class="p">You receive wages for Minnesota National Guard (MNG) pay or for active duty U.S. military pay. MNG and active duty U.S.
+military members can claim exempt from Minnesota withholding on these wages, even if they are taxable federally. For more information,
+see Income Tax Fact Sheet 5, Military Personnel.</span>
+                        </p>
                     </li>
                     <li data-list-text="•">
-                        <p class="s13" style="padding-top: 2pt;padding-left: 15pt;text-indent: -9pt;text-align: left;">Box F: <span
-                                class="p">You receive a military pension or other military retirement pay calculated under U.S. Code
-                                title 10, sections 1401 through 1414, 1447 through 1455, and 12733. You may claim exempt from
-                                Minnesota withholding on this income even if it is taxable federally.</span></p>
-                        <p class="s13" style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Note: <span
-                                class="p">You may not want to claim exempt if you (or your spouse if filing a joint return) expect
-                                to have other forms of income subject to</span></p>
-                        <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Minnesota tax and you want to avoid owing
-                            tax at the end of the year.</p>
-                        <p style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">If you claim exempt from
-                            Minnesota withholding, you must provide your employer with a new Form W-4MN by February 15 of each year.
-                        </p>
-                        <p class="s14"
-                            style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">
+                        <p class="s13" style="padding-top: 2pt;padding-left: 15pt;text-indent: -9pt;text-align: left;">Box F: <span class="p">You receive a military pension or other military retirement pay calculated under U.S. Code
+                        You receive a military pension or other military retirement pay calculated under U.S. Code title 10, sections 1401 through 1414, 1447
+through 1455, and 12733. You may claim exempt from Minnesota withholding on this income even if it is taxable federally.</span></p>
+                        <p class="s13" style="padding-top: 4pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">Note: <span class="p">You may not want to claim exempt if you (or your spouse if filing a joint return) expect to have other forms of income subject to
+Minnesota tax and you want to avoid owing tax at the end of the year.
+If you complete Section 2, you must complete a new Form W-4MN by February 15 in each following year</span></p>
+                        
+                        <p class="s14" style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">
                             Nonresident Alien</p>
-                        <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">If you are a nonresident
-                            alien for federal tax purposes, do not complete Section 2.</p>
+                        <p style="padding-left: 6pt;text-indent: 0pt;line-height: 11pt;text-align: left;">If you are a nonresident alien for federal tax purposes, do not complete Section 2. See IRS Publication 519, U.S. Tax Guide for Aliens.</p>
                         <h4 style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
-                            Additional Minnesota Withholding</h4>
-                        <p style="padding-left: 6pt;text-indent: 0pt;text-align: justify;">If you would like an additional amount of
-                            tax to be deducted per payment period, enter the amount on line 2. Do not enter a percentage of the
-                            payment you want to be deducted.</p>
+                        Line 2 — Additional Minnesota Withholding</h4>
+                        <p style="padding-left: 6pt;text-indent: 0pt;text-align: justify;">If you would like an additional amount of tax to be deducted per payment period, enter the amount on line 2. Do not enter a percentage of the
+payment you want to be deducted.</p>
                         <h4 style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">Use of
                             Information</h4>
-                        <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">All information on Form W-4MN is private by
-                            state law. It cannot be given to others without your consent, except to the Internal Revenue Service, to
-                            other states that guarantee the same privacy, and by court order. Your name, address, and Social
-                            Security number are required for identification. Information about your allowances is required to
-                            determine your correct tax. We ask for your phone number so we can call if we have a question.</p>
+                        <p style="padding-left: 6pt;text-indent: 0pt;text-align: left;">All information on Form W-4MN is private by state law. It cannot be given to others without your consent, except to the IRS, other states that
+guarantee the same privacy, or by court order. Your name, address, and Social Security Number are required for identification. Information about
+your allowances is required to determine your correct tax. We ask for your phone number so we can call if we have a question.</p>
                         <h4 style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;line-height: 13pt;text-align: left;">
                             Questions?</h4>
                     </li>
                     <li data-list-text="•">
-                        <p style="padding-left: 16pt;text-indent: -10pt;line-height: 10pt;text-align: left;"><a
-                                href="http://www.revenue.state.mn.us/" class="a" target="_blank">Website: </a><a
-                                href="http://www.revenue.state.mn.us/" target="_blank">www.revenue.state.mn.us</a></p>
+                        <p style="padding-left: 16pt;text-indent: -10pt;line-height: 10pt;text-align: left;"><a href="http://www.revenue.state.mn.us/" class="a" target="_blank">Website: </a><a href="http://www.revenue.state.mn.us/" target="_blank">www.revenue.state.mn.us</a></p>
                     </li>
                     <li data-list-text="•">
-                        <p style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;"><a
-                                href="mailto:withholding.tax@state.mn.us" class="a" target="_blank">Email: </a><a
-                                href="mailto:withholding.tax@state.mn.us" target="_blank">withholding.tax@state.mn.us</a></p>
+                        <p style="padding-top: 2pt;padding-left: 16pt;text-indent: -10pt;text-align: left;"><a href="mailto:withholding.tax@state.mn.us" class="a" target="_blank">Email: </a><a href="mailto:withholding.tax@state.mn.us" target="_blank">withholding.tax@state.mn.us</a></p>
                         <p class="s16" style="padding-top: 3pt;padding-left: 16pt;text-indent: -10pt;text-align: left;">Phone:
-                            651-282-9999 or 1-800-657-3594 (toll-free)</p>        
+                            651-282-9999 or 1-800-657-3594 (toll-free)</p>
                     </li>
                 </ul>
             </div>
         </div>
-    </div>    
-</div> 
+    </div>
+</div>

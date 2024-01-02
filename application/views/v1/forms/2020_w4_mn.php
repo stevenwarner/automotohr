@@ -291,8 +291,8 @@
                         <strong>
                             F
                         </strong>
-                        Add steps A through E. If you plan to itemize deductions on your 2023 Minnesota income tax return, you may also complete the Itemized Deductions and Additional Income Worksheet.
-                    </p>
+                        Add steps A through E. If you plan to itemize deductions on your 2024 Minnesota income tax
+return, you may also complete the Itemized Deductions and Additional Income Worksheet.                    </p>
                     <input type="text" class="form-control" name="section_1_f" value="<?php echo $formData['section_1_f']; ?>" <?php echo $input; ?> />
                 </div>
             </div>
@@ -470,7 +470,6 @@
             <input type="hidden" id="is_signature" value="false">
 
             <hr>
-
             <?php $this->load->view($helpSection); ?>
 
             <!--  -->
