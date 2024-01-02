@@ -4782,7 +4782,7 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         //
 
-        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
 
         // load break model
         $this->load->model("v1/Shift_break_model", "shift_break_model");
