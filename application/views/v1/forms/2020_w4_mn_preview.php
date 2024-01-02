@@ -401,7 +401,7 @@
 <body class="A4">
     <div class="sheet padding-10mm" id="jsStateFormPDF" style="width: 900px; margin: 0 auto; padding: 0px 16px!important;">
         <img style="margin-top:10px !important; margin-left: 16px !important; width: 150px !important; height:150px !important;" src="<?php echo base_url('public/v1/images/forms/w4_mn.svg'); ?>" alt="">
-        <h2 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">2020 W-4MN, Minnesota Employee
+        <h2 style="padding-top: 6pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">2024 W-4MN, Minnesota Employee
             Withholding Allowance/Exemption Certificate</h2>
         <h3 style="padding-top: 2pt;padding-left: 6pt;text-indent: 0pt;line-height: 15pt;text-align: left;">Employees</h3>
         <p class="s1" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Complete Form W-4MN so that your employer

@@ -498,7 +498,7 @@
                         <ol id="l9">
                             <li data-list-text="1">
                                 <p class="s16" style="padding-left: 16pt;text-indent: -9pt;line-height: 10pt;text-align: left;">
-                                    Enter an estimate of your 2020 Minnesota itemized deductions. For 2020, you may have to reduce
+                                    Enter an estimate of your 2024 Minnesota itemized deductions. For 2024, you may have to reduce
                                     your itemized deductions</p>
                                 <p class="s16" style="text-indent: 0pt;text-align: left;">&nbsp;&nbsp;&nbsp;f your income is over $232,500 ($116,250 for Married Filing Separately)........................................................... </p>
                             </li>
