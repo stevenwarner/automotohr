@@ -135,13 +135,7 @@ class Attendance extends Public_Controller
         onlyPlusAndPayPlanCanAccess();
         //
         $data["employee"] = $this->loggedInEmployee;
-
-        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
-        // get access token
-        $data['apiAccessToken'] = getApiAccessToken(
-            $this->loggedInEmployee["sid"],
-            $this->loggedInCompany["sid"]
-        );
+        $data["session"] = checkAndGetSession("all");
         //
         $this->setCommon("v1/app/plugins/select2/select2.min", "css");
         $this->setCommon("v1/app/plugins/select2/select2.min", "js");
@@ -150,18 +144,88 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/attendance/js/dashboard", "js");
         //
         $data["load_view"] = false;
+        $data["title"] = "Overview";
         $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
-        //
-        $this->getCommon($data, "dashboard");
-        //
-        // $data["pageJs"] = ["https://code.highcharts.com/highcharts.js"];
         //
         $data["sidebarPath"] = $this->sidebarPath;
         $data["mainContentPath"] = "v1/attendance/dashboard";
-
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        // get the people
+        $data["records"] = $this->clock_model
+            ->getPeopleClocks(
+                $this->loggedInCompany["sid"],
+                getSystemDate(DB_DATE)
+            );
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
-        $this->load->view("main/footer",);
+        $this->load->view("main/footer");
+    }
+
+    /**
+     * logged in person time sheet
+     */
+    public function timesheet()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+        ];
+        // set js
+        $this->setCommon("v1/plugins/ms_modal/main", "css");
+        $this->setCommon("v1/plugins/ms_modal/main", "js");
+
+        $this->setCommon("v1/attendance/js/timesheet", "js");
+        $this->getCommon($data, "timesheet");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/timesheet";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+
+        // get todays date
+        $data["filter"] = [
+            "employeeId" => $this->input->get("employees", true) ?? "",
+            "year" => $this->input->get("year", true) ?? getSystemDate("Y"),
+            "month" => $this->input->get("month", true) ?? getSystemDate("m"),
+        ];
+        $data["filter"]["startDate"] = $data["filter"]["year"] . "-" . $data["filter"]["month"] . "-01";
+        $data["filter"]["endDate"] = getSystemDate($data["filter"]["year"] . "-" . $data["filter"]["month"] . "-t");
+        $data["records"] = [];
+
+        if ($data["filter"]["employeeId"]) {
+            //
+            $data["records"] = $this->clock_model
+                ->getAttendanceWithinRange(
+                    $this->loggedInCompany["sid"],
+                    $data["filter"]["employeeId"],
+                    $data["filter"]["startDate"],
+                    $data["filter"]["endDate"]
+                );
+        }
+
+
+        $data["employees"] = $this->clock_model
+            ->getEmployees(
+                $this->loggedInCompany["sid"]
+            );
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
     }
 
 

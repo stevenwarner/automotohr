@@ -1,4 +1,19 @@
 <?php $activeClass = 'class="active"'; ?>
+<style>
+    .navbar-nav li {
+        display: block;
+        width: 100%;
+    }
+
+    .navbar-nav li a {
+        display: inline-block;
+    }
+
+    .navbar-nav li figure {
+        display: inline-block;
+        margin-right: 5px;
+    }
+</style>
 <div class="sidebar-nav csAdminSideBar">
     <div class="navbar navbar-default" role="navigation">
         <div class="navbar-header">
@@ -24,15 +39,11 @@
                     </a>
                 </li>
                 <li>
-                    <a href="<?php echo base_url('attendance/settings'); ?>" <?= preg_match('/attendance\/settings/im', uri_string()) ? $activeClass : ''; ?>>
-                        <figure><i class="fa fa-cogs"></i></figure>Settings
+                    <a href="<?php echo base_url('attendance/timesheet'); ?>" <?= preg_match('/attendance\/timesheet/im', uri_string()) ? $activeClass : ''; ?>>
+                        <figure><i class="fa fa-file"></i></figure>TimeSheet
                     </a>
                 </li>
-                <li>
-                    <a href="<?php echo base_url('attendance/report'); ?>" <?= preg_match('/attendance\/report/im', uri_string()) ? $activeClass : ''; ?>>
-                        <figure><i class="fa fa-files-o"></i></figure>Report
-                    </a>
-                </li>
+
             </ul>
         </div>
     </div>

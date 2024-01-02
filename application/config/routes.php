@@ -2082,6 +2082,7 @@ $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getW
 $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
 $route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/status"]["post"] = "v1/Attendance/api/Main/processTimeSheetStatus";
 
 
 /**
@@ -2093,4 +2094,5 @@ $route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
 $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
+$route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";

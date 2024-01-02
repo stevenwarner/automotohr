@@ -1427,4 +1427,77 @@ class Clock_model extends Base_model
             }
         }
     }
+
+
+    public function getPeopleClocks(int $companyId, string $date)
+    {
+        //
+        $returnArray = [
+            "breaks" => [],
+            "clocked_in" => [],
+            "absent" => []
+        ];
+        //
+        $records = $this->db
+            ->select(getUserFields())
+            ->select("cl_attendance.last_event, cl_attendance.employee_sid")
+            ->join(
+                "users",
+                "users.sid = cl_attendance.employee_sid",
+                "inner"
+            )
+            ->where("cl_attendance.clocked_date", $date)
+            ->where("cl_attendance.company_sid", $companyId)
+            ->get("cl_attendance")
+            ->result_array();
+        //
+        if ($records) {
+            foreach ($records as $v0) {
+                if ($v0["last_event"] == "clocked_in") {
+                    $returnArray["clocked_in"][] = $v0;
+                } elseif ($v0["last_event"] == "break_started") {
+                    $returnArray["breaks"][] = $v0;
+                }
+            }
+        }
+
+        $ids = array_column($records, "employee_sid");
+
+        //
+        $this->db
+            ->select(getUserFields())
+            ->where("active", 1)
+            ->where("is_executive_admin", 0)
+            ->where("terminated_status", 0);
+
+        if ($ids) {
+            $this->db->where_not_in("sid", $ids);
+        }
+        $returnArray["absent"] = $this->db->get("users")
+            ->result_array();
+
+
+        return $returnArray;
+    }
+
+    public function getEmployees($companyId)
+    {
+        return //
+            $this->db
+            ->select(getUserFields())
+            ->where("active", 1)
+            ->where("is_executive_admin", 0)
+            ->where("terminated_status", 0)
+            ->get("users")
+            ->result_array();
+    }
+
+    public function processTimeSheetStatus($post)
+    {
+        $this->db
+            ->where_in("sid", $post["ids"])
+            ->update("cl_attendance", [
+                "is_approved" => $post["status"]
+            ]);
+    }
 }

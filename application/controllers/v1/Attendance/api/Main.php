@@ -176,4 +176,21 @@ class Main extends Public_Controller
             ]
         );
     }
+
+    /**
+     * mark attendance
+     */
+    public function processTimeSheetStatus()
+    {
+        $post = $this->input->post(null, true);
+
+        $this->clock_model->processTimeSheetStatus($post);
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully " . $post["status"] ? "Approved" : "UnApproved" . " the selected time slots."
+            ]
+        );
+    }
 }
