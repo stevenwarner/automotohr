@@ -6,7 +6,7 @@
                 <i class="fa fa-arrow-left csF16" aria-hidden="true"></i>
                 &nbsp;Dashboard
             </a>
-            <a href="<?= base_url("attendance/my"); ?>" class="btn btn-orange">
+            <a href="<?= base_url("attendance/my/timesheet"); ?>" class="btn btn-orange">
                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
                 &nbsp;Time sheet
             </a>

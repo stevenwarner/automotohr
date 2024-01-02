@@ -59,4 +59,45 @@ class Employee extends Base
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_dashboard");
     }
+
+
+    /**
+     * Employees timesheet
+     */
+    public function timesheet()
+    {
+        // add plugins
+        $this->data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+        ];
+        $this->data["pageJs"] = [
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+        ];
+        // set js
+        $this->setCommon("v1/plugins/ms_modal/main", "css");
+        $this->setCommon("v1/plugins/ms_modal/main", "js");
+        $this->setCommon("v1/attendance/js/my/timesheet", "js");
+        $this->getCommon($this->data, "my_timesheet");
+        // get todays date
+        $this->data["filter"] = [
+            "year" => $this->input->get("year", true) ?? getSystemDate("Y"),
+            "month" => $this->input->get("month", true) ?? getSystemDate("m"),
+        ];
+        $this->data["filter"]["startDate"] = $this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-01";
+        $this->data["filter"]["endDate"] = getSystemDate($this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-t");
+        
+        //
+        $this->data["records"] = $this->clock_model
+            ->getAttendanceWithinRange(
+                $this->loggedInCompany["sid"],
+                $this->loggedInEmployee["sid"],
+                $this->data["filter"]["startDate"],
+                $this->data["filter"]["endDate"]
+            );
+
+        // make the blue portal popup
+        $this->data["loadView"] = true;
+        $this->renderView("v1/attendance/my_timesheet");
+    }
 }

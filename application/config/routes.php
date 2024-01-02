@@ -1486,15 +1486,6 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
 // $route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
 // $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
-/**
- * Attendance
- * @version 1.0
- */
-// employee
-$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
-// employer
-$route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
-$route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 
 /**
  * 
@@ -2088,3 +2079,18 @@ $route["payrolls/page/update"]["post"] =
 $route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
 $route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
 $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
+$route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
+$route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
+
+
+/**
+ * Attendance
+ * @version 1.0
+ */
+// employee
+$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+$route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
+// employer
+$route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
+$route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";

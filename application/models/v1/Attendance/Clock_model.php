@@ -384,6 +384,99 @@ class Clock_model extends Base_model
         return $returnArray;
     }
 
+
+    public function getAttendanceWithinRange(
+        int $companyId,
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        //
+        $records = $this->getAttendanceByDates(
+            $companyId,
+            $employeeId,
+            $startDate,
+            $endDate
+        );
+        // when no record are found
+        if (!$records) {
+            return [];
+        }
+        // get the employee shift
+        // set new record array
+        $returnArray = [];
+        //
+        foreach ($records as $v0) {
+            // set defaults
+            $arr = $v0;
+            $arr["worked_time"] = 0;
+            $arr["overtime"] = 0;
+            $arr["breaks"] = 0;
+            $arr["logs"] = [];
+            // get the attendance log
+            $arr["logs"] = $this->db
+                ->select("
+                    sid,
+                    job_site_sid,
+                    clocked_in,
+                    clocked_out,
+                    break_id,
+                    break_start,
+                    break_end,
+                    duration,
+                    lat,
+                    lng,
+                    lat_2,
+                    lng_2
+            ")
+                ->where("cl_attendance_sid", $v0["sid"])
+                ->get("cl_attendance_log")
+                ->result_array();
+            //
+            foreach ($arr["logs"] as $v1) {
+                if ($v1["clocked_in"]) {
+                    $arr["worked_time"] += $v1["duration"];
+                } else {
+                    $arr["breaks"] += $v1["duration"];
+                }
+            }
+            //
+            if ($arr["worked_time"] > 2400) {
+                $arr["overtime"] = $arr["worked_time"] - 2400;
+            }
+
+            // set it
+            $returnArray[$v0["clocked_date"]] = $arr;
+        }
+
+        return $returnArray;
+    }
+
+    /**
+     * get the attendance logs
+     *
+     * @param int $attendanceId
+     * @return array
+     */
+    public function getAttendanceLogsForSheet(int $attendanceId): array
+    {
+        return $this->db
+            ->select("
+                sid,
+                clocked_in,
+                clocked_out,
+                break_id,
+                break_start,
+                break_end,
+                duration,
+                job_site_sid,
+            ")
+            ->where("cl_attendance_sid", $attendanceId)
+            ->order_by("sid", "ASC")
+            ->get("cl_attendance_log")
+            ->result_array();
+    }
+
     /**
      * get a single job site
      */
@@ -1074,5 +1167,264 @@ class Clock_model extends Base_model
             ->where_in("sid", $jobSiteIds)
             ->get("company_job_sites")
             ->result_array();
+    }
+
+    /**
+     * get the record
+     *
+     * @return array
+     */
+    private function getAttendanceByDates(
+        int $companyId,
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        return $this->db
+            ->select("
+                sid,
+                clocked_in,
+                clocked_out,
+                is_approved,
+                clocked_date
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "company_sid" => $companyId,
+                "clocked_date >= " => $startDate,
+                "clocked_date <= " => $endDate,
+            ])
+            ->order_by("clocked_date", "ASC")
+            ->get("cl_attendance")
+            ->result_array();
+    }
+
+    public function deleteAttendanceLogById($logId)
+    {
+        $this->db
+            ->where("sid", $logId)
+            ->delete("cl_attendance_log");
+    }
+
+
+    public function processTimeSheetDetails($post)
+    {
+        if ($post["sid"] == 0) {
+            // prepare insert array
+            $ins = [];
+            $ins["company_sid"] = $post["companyId"];
+            $ins["employee_sid"] = $post["employeeId"];
+            $ins["clocked_date"] = $post["clockDate"];
+            $ins["is_approved"] = 0;
+            $ins["last_event"] = "clocked_in";
+            $ins["created_at"] = getSystemDate(DB_DATE_WITH_TIME);
+            $ins["updated_at"] = $ins["created_at"];
+            // insert
+            $this->db->insert(
+                "cl_attendance",
+                $ins
+            );
+            // get the last insert id
+            $post["sid"] = $this->db->insert_id();
+            // when insert id found
+            if ($post["sid"]) {
+                //
+                $initialClockIn = '';
+                $initialClockOut = '';
+                foreach ($post["logs"] as $v0) {
+                    $v0["startTime"] = reset_datetime([
+                        "datetime" => $post["clockDate"] . " " . $v0["startTime"],
+                        "from_format" => "Y-m-d h:i a",
+                        "format" => "Y-m-d H:i:s",
+                        "_this" => $this,
+                        "timezone" => "UTC",
+                        "revert" => true
+                    ]);
+                    $v0["endTime"] =
+                        reset_datetime([
+                            "datetime" => $post["clockDate"] . " " . $v0["endTime"],
+                            "from_format" => "Y-m-d h:i a",
+                            "format" => "Y-m-d H:i:s",
+                            "_this" => $this,
+                            "timezone" => "UTC",
+                            "revert" => true
+                        ]);
+                    //
+                    $indexOne = $v0["eventType"] == "clocked_in_out" ? "clocked_in" : "break_start";
+                    $indexTwo = $v0["eventType"] == "clocked_in_out" ? "clocked_out" : "break_end";
+
+                    if ($indexOne == "clocked_in" && !$initialClockIn) {
+                        $initialClockIn = $v0["startTime"];
+                    }
+                    if ($indexTwo == "clocked_out") {
+                        $initialClockOut = $v0["endTime"];
+                    }
+                    // check
+
+                    // insert
+                    // add the entry to log table
+                    $insLog = [];
+                    $insLog["cl_attendance_sid"] = $post["sid"];
+                    $insLog[$indexOne] = $v0["startTime"];
+                    $insLog[$indexTwo] = $v0["endTime"];
+                    $insLog["lat"] = 0;
+                    $insLog["lng"] = 0;
+                    $insLog["created_at"] = getSystemDate();
+                    $insLog["updated_at"] = $insLog["created_at"];
+                    $insLog["duration"] =
+                        $this->attendance_lib
+                        ->getDurationInMinutes(
+                            $insLog[$indexOne],
+                            $insLog[$indexTwo]
+                        );
+                    // insert log
+                    $this->db->insert(
+                        "cl_attendance_log",
+                        $insLog
+                    );
+                }
+
+                if ($initialClockIn) {
+                    // insert log
+                    $this->db
+                        ->where([
+                            "sid" => $post["sid"]
+                        ])->update(
+                            "cl_attendance",
+                            [
+
+                                "clocked_in" => $initialClockIn,
+                                "last_record_time" => $initialClockIn
+                            ]
+                        );
+                }
+                if ($initialClockOut) {
+                    // insert log
+                    $this->db
+                        ->where([
+                            "sid" => $post["sid"]
+                        ])->update(
+                            "cl_attendance",
+                            [
+                                "clocked_out" => $initialClockOut
+                            ]
+                        );
+                }
+            }
+        } else {
+            //
+            $initialClockIn = '';
+            $initialClockOut = '';
+            foreach ($post["logs"] as $v0) {
+                $v0["startTime"] =
+                    reset_datetime([
+                        "datetime" => $post["clockDate"] . " " . $v0["startTime"],
+                        "from_format" => "Y-m-d h:i a",
+                        "format" => "Y-m-d H:i:s",
+                        "_this" => $this,
+                        "new_zone" => "UTC",
+                        "revert" => true
+                    ]);
+                $v0["endTime"] =
+                    reset_datetime([
+                        "datetime" => $post["clockDate"] . " " . $v0["endTime"],
+                        "from_format" => "Y-m-d h:i a",
+                        "format" => "Y-m-d H:i:s",
+                        "_this" => $this,
+                        "new_zone" => "UTC",
+                        "revert" => true
+                    ]);
+                //
+                $indexOne = $v0["eventType"] == "clocked_in_out" ? "clocked_in" : "break_start";
+                $indexTwo = $v0["eventType"] == "clocked_in_out" ? "clocked_out" : "break_end";
+
+                if ($indexOne == "clocked_in" && !$initialClockIn) {
+                    $initialClockIn = $v0["startTime"];
+                }
+                if ($indexTwo == "clocked_out") {
+                    $initialClockOut = $v0["endTime"];
+                }
+                // check
+                if (!$this->db->where([
+                    "sid" => $v0["id"],
+                    "cl_attendance_sid" => $post["sid"]
+                ])->count_all_results("cl_attendance_log")) {
+                    // insert
+                    // add the entry to log table
+                    $insLog = [];
+                    $insLog["cl_attendance_sid"] = $post["sid"];
+                    $insLog[$indexOne] = $v0["startTime"];
+                    $insLog[$indexTwo] = $v0["endTime"];
+                    $insLog["duration"] =
+                        $this->attendance_lib
+                        ->getDurationInMinutes(
+                            $insLog[$indexOne],
+                            $insLog[$indexTwo]
+                        );
+                    $insLog["lat"] = 0;
+                    $insLog["lng"] = 0;
+                    $insLog["created_at"] = getSystemDate();
+                    $insLog["updated_at"] = $insLog["created_at"];
+                    // insert log
+                    $this->db->insert(
+                        "cl_attendance_log",
+                        $insLog
+                    );
+                } else {
+                    // update
+                    $insLog = [];
+                    $insLog[$indexOne] = $v0["startTime"];
+                    $insLog[$indexTwo] = $v0["endTime"];
+
+                    if ($indexOne  === "clocked_in") {
+                        $insLog["break_start"] = null;
+                        $insLog["break_end"] = null;
+                    } else {
+                        $insLog["clocked_out"] = null;
+                        $insLog["clocked_in"] = null;
+                    }
+                    $insLog["duration"] =
+                        $this->attendance_lib
+                        ->getDurationInMinutes(
+                            $insLog[$indexOne],
+                            $insLog[$indexTwo]
+                        );
+                    $insLog["updated_at"] = getSystemDate();
+                    // insert log
+                    $this->db
+                        ->where([
+                            "sid" => $v0["id"]
+                        ])->update(
+                            "cl_attendance_log",
+                            $insLog
+                        );
+                }
+            }
+
+            if ($initialClockIn) {
+                // insert log
+                $this->db
+                    ->where([
+                        "sid" => $post["sid"]
+                    ])->update(
+                        "cl_attendance",
+                        [
+                            "clocked_in" => $initialClockIn
+                        ]
+                    );
+            }
+            if ($initialClockOut) {
+                // insert log
+                $this->db
+                    ->where([
+                        "sid" => $post["sid"]
+                    ])->update(
+                        "cl_attendance",
+                        [
+                            "clocked_out" => $initialClockOut
+                        ]
+                    );
+            }
+        }
     }
 }

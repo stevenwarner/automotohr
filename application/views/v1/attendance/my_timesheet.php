@@ -2,25 +2,25 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 text-right">
-            <a href="<?= base_url("dashboard"); ?>" class="btn csW csBG4 csF16 csRadius5">
+            <a href="<?= base_url("dashboard"); ?>" class="btn btn-black">
                 <i class="fa fa-arrow-left csF16" aria-hidden="true"></i>
                 &nbsp;Dashboard
             </a>
-            <a href="<?= base_url("attendance/overview"); ?>" class="btn csW csBG3 csF16 csRadius5">
+            <a href="<?= base_url("attendance/my/timesheet"); ?>" class="btn btn-orange">
                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
-                &nbsp;Overview
+                &nbsp;Time sheet
             </a>
         </div>
     </div>
-    <br />
-
+    <hr />
     <div class="row">
+        <!-- Sidebar -->
         <div class="col-sm-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="csF16 p0 csF3">
+                    <h2 class="text-large">
                         <strong>
-                            <i class="fa fa-clock-o csF16" aria-hidden="true"></i>
+                            <i class="fa fa-clock-o text-orange" aria-hidden="true"></i>
                             &nbsp;My Time
                         </strong>
                     </h2>
@@ -28,193 +28,227 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12 text-center">
-                            <div class="jsAttendanceCurrentClockDateTime csF20"></div>
+                            <div class="jsAttendanceCurrentClockDateTime text-medium"></div>
                         </div>
 
                         <div class="col-sm-12 text-center">
-                            <p class="csF26 text-center">
-                                <span class="jsAttendanceClockHour">00</span>
-                                <span>:</span>
-                                <span class="jsAttendanceClockMinute">00</span>
-                                <span>:</span>
-                                <span class="jsAttendanceClockSeconds">00</span>
+                            <p class="csF26 text-center text-xxxl">
+                                <span class="jsAttendanceClockHour"></span>
+                                <span class="jsAttendanceClockSeparator"></span>
+                                <span class="jsAttendanceClockMinute"></span>
+                                <span class="jsAttendanceClockSeparator"></span>
+                                <span class="jsAttendanceClockSeconds"></span>
                             </p>
-                            <p>Clocked Out: Today at 04:47 AM</p>
                             <div class="jsAttendanceBTNs text-center"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--  -->
+        </div>
+        <!-- Right side -->
+        <div class="col-sm-9">
+            <!-- Filter -->
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h2 class="csF16 p0 csF3">
+                    <h2 class="text-large">
                         <strong>
-                            <i class="fa fa-clock-o csF16" aria-hidden="true"></i>
-                            &nbsp;This Week
+                            <i class="fa fa-filter text-orange" aria-hidden="true"></i>
+                            &nbsp;Filter
                         </strong>
                     </h2>
                 </div>
                 <div class="panel-body">
-                    <div id="container" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <!--  -->
-        <div class="col-sm-9">
-            <!--  -->
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <button class="btn csRangePicker" id="jsReportRange">
-                        <i class="fa fa-calendar" aria-hidden="true"></i>
-                        &nbsp;<span></span>
-                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </div>
-            <br />
-            <!--  -->
-            <div class="csTimeSheetBox">
-                <!-- row -->
-                <div class="csTimeSheetRow">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Mon</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        <p>
-                            <strong>10h 00m</strong>
-                        </p>
-                        <div class="table-responsive">
-                            <table class="table table-striped">
-                                <caption></caption>
-                                <tbody>
-                                    <tr>
-                                        <td class="vam">
-                                            09:00 AM - 06:00 PM
-                                        </td>
-                                        <td class="vam">
-                                            9h 0m
-                                        </td>
-                                        <td class="vam">
-                                            <button class="csBtn csBtnOrange">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="vam">
-                                            06:00 PM - 07:00 PM
-                                        </td>
-                                        <td class="vam">
-                                            91 0m
-                                        </td>
-                                        <td class="vam">
-                                            <button class="csBtn csBtnOrange">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <form action="<?= current_url(); ?>" method="get">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Select Year
+                                        <strong class="text-danger">*</strong>
+                                    </label>
+                                    <select name="year" class="form-control">
+                                        <option <?= $filter["year"] === "2023" ? "selected" : ""; ?> value="2023">2023</option>
+                                        <option <?= $filter["year"] === "2024" ? "selected" : ""; ?> value="2024">2024</option>
+                                        <option <?= $filter["year"] === "2025" ? "selected" : ""; ?> value="2025">2025</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label>
+                                        Select Month
+                                        <strong class="text-danger">*</strong>
+                                    </label>
+                                    <select name="month" class="form-control">
+                                        <option <?= $filter["month"] === "01" ? "selected" : ""; ?> value="01">January</option>
+                                        <option <?= $filter["month"] === "02" ? "selected" : ""; ?> value="02">February</option>
+                                        <option <?= $filter["month"] === "03" ? "selected" : ""; ?> value="03">March</option>
+                                        <option <?= $filter["month"] === "04" ? "selected" : ""; ?> value="04">April</option>
+                                        <option <?= $filter["month"] === "05" ? "selected" : ""; ?> value="05">May</option>
+                                        <option <?= $filter["month"] === "06" ? "selected" : ""; ?> value="06">June</option>
+                                        <option <?= $filter["month"] === "07" ? "selected" : ""; ?> value="07">July</option>
+                                        <option <?= $filter["month"] === "08" ? "selected" : ""; ?> value="08">August</option>
+                                        <option <?= $filter["month"] === "09" ? "selected" : ""; ?> value="09">September</option>
+                                        <option <?= $filter["month"] === "10" ? "selected" : ""; ?> value="10">October</option>
+                                        <option <?= $filter["month"] === "11" ? "selected" : ""; ?> value="11">November</option>
+                                        <option <?= $filter["month"] === "12" ? "selected" : ""; ?> value="12">December</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn btn-link csF14">
-                            <i class="fa fa-plus-circle csF14" aria-hidden="true"></i>
-                            &nbsp;Add time entry
-                        </button>
-                    </div>
+                        <!--  -->
+                        <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <button class="btn btn-orange">
+                                    <i class="fa fa-search"></i>
+                                    Apply filter
+                                </button>
+                                <a class="btn btn-black" href="<?= current_url(); ?>">
+                                    <i class="fa fa-times-circle"></i>
+                                    Clear filter
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+            </div>
+            <!-- data -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="text-large">
+                        <strong>
+                            <i class="fa fa-clock-o text-orange" aria-hidden="true"></i>
+                            &nbsp;My Time Sheet
+                        </strong>
+                        <p class="mt-5">
+                            <?= formatDateToDB(
+                                $filter["startDate"],
+                                DB_DATE,
+                                DATE
+                            ); ?>
+                            -
+                            <?= formatDateToDB(
+                                $filter["endDate"],
+                                DB_DATE,
+                                DATE
+                            ); ?>
+                        </p>
+                    </h2>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <caption></caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="bg-black">
+                                        Date
+                                    </th>
 
-                <!-- row -->
-                <div class="csTimeSheetRow">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Tue</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        0h 00m
-                    </div>
-                </div>
-                <!-- row -->
-                <div class="csTimeSheetRow active">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Wed</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        16h 00m
-                    </div>
-                </div>
+                                    <th scope="col" class="bg-black">
+                                        Period
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        Worked Time
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        Breaks
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        Overtime
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $datesPool = getDatesBetweenDates($filter["startDate"], $filter["endDate"]);
+                                $totalWorkedTime =
+                                    $totalBreakTime =
+                                    $totalOvertime = 0;
+                                //
+                                foreach ($datesPool as $v0) {
+                                    $attendance = $records[$v0["date"]] ?? [];
 
-                <!-- row -->
-                <div class="csTimeSheetRow">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Tue</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        0h 00m
-                    </div>
-                </div>
-
-                <!-- row -->
-                <div class="csTimeSheetRow">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Tue</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        0h 00m
-                    </div>
-                </div>
-
-                <!-- row -->
-                <div class="csTimeSheetRow">
-                    <div class="csTimeSheetRowDate">
-                        <strong>Tue</strong>
-                        <p>Oct 29</p>
-                    </div>
-                    <div class="csTimeSheetRowDetails">
-                        0h 00m
+                                    if ($attendance) {
+                                        $totalWorkedTime += $attendance["worked_time"];
+                                        $totalBreakTime += $attendance["breaks"];
+                                        $totalOvertime += $attendance["overtime"];
+                                    }
+                                ?>
+                                    <tr data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
+                                        </td>
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?= $attendance && $attendance["clocked_in"] ?
+                                                reset_datetime([
+                                                    "datetime" => $attendance["clocked_in"],
+                                                    "from_format" => DB_DATE_WITH_TIME,
+                                                    "format" => "h:i a",
+                                                    "_this" => $this,
+                                                    "from_timezone" => "UTC"
+                                                ]) : "Missing"; ?>
+                                            -
+                                            <?= $attendance && $attendance["clocked_out"] ? reset_datetime([
+                                                "datetime" => $attendance["clocked_out"],
+                                                "from_format" => DB_DATE_WITH_TIME,
+                                                "format" => "h:i a",
+                                                "_this" => $this,
+                                                "from_timezone" => "UTC"
+                                            ]) : "Missing"; ?>
+                                        </td>
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
+                                        </td>
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?= $attendance ? convertSecondsToTime($attendance["breaks"]) : "0h"; ?>
+                                        </td>
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?= $attendance ? convertSecondsToTime($attendance["overtime"]) : "0h"; ?>
+                                        </td>
+                                        <td class="csVerticalAlignMiddle mh-100">
+                                            <?php if ($attendance) { ?>
+                                                <button class="btn btn-orange jsEditTimeSheet">
+                                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                                    &nbsp;
+                                                    Edit
+                                                </button>
+                                            <?php } else { ?>
+                                                <button class="btn btn-orange jsAddTimeSheet">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    &nbsp;
+                                                    Add
+                                                </button>
+                                            <?php } ?>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                                ?>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th scope="col" class="bg-black"></th>
+                                    <th scope="col" class="bg-black"></th>
+                                    <th scope="col" class="bg-black">
+                                        <?= convertSecondsToTime($totalWorkedTime); ?>
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        <?= convertSecondsToTime($totalBreakTime); ?>
+                                    </th>
+                                    <th scope="col" class="bg-black">
+                                        <?= convertSecondsToTime($totalOvertime); ?>
+                                    </th>
+                                    <th scope="col" class="bg-black"></th>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
-<script src="https://code.highcharts.com/highcharts.js"></script>
-
-<script>
-    Highcharts.chart('container', {
-        chart: {
-            type: 'column'
-        },
-        title: {
-            text: "22h 50m",
-            align: 'left'
-        },
-        xAxis: {
-            categories: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-            crosshair: true,
-            accessibility: {
-                description: 'Week days'
-            }
-        },
-        tooltip: {
-            valueSuffix: ''
-        },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
-        series: [{
-            name: 'Worked time',
-            data: [4, 5, 10, 0, 0, 0, 0]
-        }, ]
-    });
-</script>

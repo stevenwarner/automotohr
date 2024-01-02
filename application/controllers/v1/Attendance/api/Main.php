@@ -110,4 +110,70 @@ class Main extends Public_Controller
                 $endDate
             );
     }
+
+    /**
+     * mark attendance
+     */
+    public function getTimeSheetDetails(int $attendanceId, string $clockDate)
+    {
+        $data = [];
+
+        if ($attendanceId != 0) {
+
+            $data["logs"] = $this->clock_model
+                ->getAttendanceLogsForSheet(
+                    $attendanceId
+                );
+        }
+
+        return SendResponse(
+            200,
+            [
+                "view" =>
+                $this->load->view(
+                    "v1/attendance/partials/single_timesheet",
+                    $data,
+                    true
+                )
+            ]
+        );
+    }
+
+    /**
+     * mark attendance
+     */
+    public function deleteTimeSheetLogById(int $logId)
+    {
+        $this->clock_model->deleteAttendanceLogById($logId);
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "Deleted."
+            ]
+        );
+    }
+
+    /**
+     * mark attendance
+     */
+    public function processTimeSheetDetails(int $attendanceId, string $clockDate)
+    {
+        $post = $this->input->post(null, true);
+        $post["sid"] = $attendanceId;
+        $post["clockDate"] = $clockDate;
+
+        if ($attendanceId == 0) {
+            $post["companyId"] = $this->loggedInCompany["sid"];
+            $post["employeeId"] = $this->loggedInEmployee["sid"];
+        }
+        $this->clock_model->processTimeSheetDetails($post);
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully updated the clock."
+            ]
+        );
+    }
 }
