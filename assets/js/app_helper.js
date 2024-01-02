@@ -258,8 +258,15 @@ if (typeof handleErrorResponse === "undefined") {
 		//
 		const parsedJSON =
 			response.responseJSON || JSON.parse(response.responseText);
+		//
+		alertify.closeAll();
 		// when error object came in
-		return alertify.alert("Errors!", parsedJSON.errors.join("<br />"), CB);
+		return alertify
+			.alert("Errors!", parsedJSON.errors.join("<br />"), CB)
+			.setting({
+				autoReset: true,
+				frameless: false,
+			});
 	}
 }
 
@@ -330,10 +337,17 @@ if (typeof _error === "undefined") {
 	 * @param {string} msg
 	 */
 	function _error(msg) {
-		alertify.alert("Error!", msg, CB).setHeader("Error!").set("labels", {
-			ok: "Ok",
-			cancel: "cancel",
-		});
+		alertify
+			.alert("Error!", msg, CB)
+			.setHeader("Error!")
+			.set("labels", {
+				ok: "Ok",
+				cancel: "cancel",
+			})
+			.setting({
+				autoReset: true,
+				frameless: false,
+			});
 	}
 }
 
@@ -350,6 +364,10 @@ if (typeof _success === "undefined") {
 			.set("labels", {
 				ok: "Ok",
 				cancel: "cancel",
+			})
+			.setting({
+				autoReset: true,
+				frameless: false,
 			});
 	}
 }
@@ -361,10 +379,43 @@ if (typeof _confirm === "undefined") {
 	 * @param {string} msg
 	 */
 	function _confirm(msg, callback) {
-		alertify.confirm(msg, callback, CB).setHeader("Confirm").set("labels", {
-			ok: "Yes",
-			cancel: "No",
-		});
+		alertify
+			.confirm(msg, callback, CB)
+			.setHeader("Confirm")
+			.set("labels", {
+				ok: "Yes",
+				cancel: "No",
+			})
+			.setting({
+				autoReset: true,
+				frameless: false,
+			});
+	}
+}
+
+if (typeof _showNotification === "undefined") {
+	/**
+	 * show message
+	 *
+	 * @param {string} msg
+	 * @returns
+	 */
+	function _showNotification(msg) {
+		return alertify
+			.alert(
+				'<div class="row"> \
+					<div class="col-sm-12">\
+						<p class="csF16 text-center" style="margin-top: 25px;">' +
+					msg +
+					"</p> \
+					<div> \
+				</div>"
+			)
+			.setting({
+				closable: false,
+				frameless: true,
+				autoReset: true,
+			});
 	}
 }
 

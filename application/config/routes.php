@@ -1468,20 +1468,23 @@ $route['get_job_detail/(:num)']['get'] = 'company/Company/GetJobDetailPage/$1';
  * @author  Mubashir Ahmed <mubashar.ahmed@egenienext.com>
  * @version 1.0
  */
-$route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
-$route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
-$route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
-$route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1";
-$route['attendance/settings']['get'] = "sheet/Attendance/Settings";
-$route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
-$route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
-$route['attendance/report']['get'] = "sheet/Attendance/Report";
-// AJAX Calls
-$route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
-$route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
-$route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
-$route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
-$route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
+// $route['attendance/my']['get'] = "sheet/Attendance/MyAttendance";
+// $route['attendance/my/time-sheet']['get'] = "sheet/Attendance/MyTimeSheet";
+// $route['attendance/time-sheet']['get'] = "sheet/Attendance/TimeSheet";
+// $route['attendance/manage/(:num)']['get'] = "sheet/Attendance/ManageTimeSheet/$1";
+// $route['attendance/settings']['get'] = "sheet/Attendance/Settings";
+// $route['attendance/today_overview']['get'] = "sheet/Attendance/TodayOverview";
+// $route['attendance/overtime']['get'] = "sheet/Attendance/Overtime";
+// $route['attendance/report']['get'] = "sheet/Attendance/Report";
+// // AJAX Calls
+// $route['attendance/get/clock']['get'] = "sheet/Attendance_ajax/LoadClock";
+// $route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/$1";
+// $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
+// $route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
+// $route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
+// $route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
+// $route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
+// $route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 
 /**
@@ -1634,10 +1637,7 @@ $route['manage_admin/job_title_groups/edit/(:any)'] = 'manage_admin/job_title_te
  * Cron job URLS
  */
 $route['cron_fix_duplicate_eeo']['cli'] = "Cron_common/fixDuplicateEEOForms";
-$route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
-$route['attendance/getCurrentState']['get'] = "sheet/Attendance_ajax/getAttendanceState";
 
-$route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
 
 
 // Download document zip file
@@ -2009,6 +2009,7 @@ $route["state/forms/(:num)/employer/(:num)/(:any)"]["post"] = "Hr_documents_mana
 $route["hr_documents_management/get_state_employer_section/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getEmployerSection/$3/$1/$2";
 $route["hr_documents_management/get_assigned_state_form/(:num)/(:any)/(:num)"]["get"] = "Hr_documents_management/getStateFormPreview/$1/$2/$3";
 $route["hr_documents_management/state_form_action/(:num)/(:any)/(:num)/(:any)/(:any)"]["get"] = "Hr_documents_management/stateFormPrintAndDownload/$1/$2/$3/$4/$5";
+
 // Schedule routes
 $route["schedules"]["get"] = "settings/schedules";
 $route["schedules/active"]["get"] = "settings/schedules/active";
@@ -2053,5 +2054,48 @@ $route["settings/shifts/multyshift/copy"]["post"] = "Settings/processCopyMulitPr
 $route["settings/shifts/singleshift/delete"]["post"] = "Settings/processDeleteSingleProcess";
 
 
+/**
+ * employee payroll dashboard
+ */
+$route["attendance/page/(:any)/(:num)/(:any)"]["get"] = "v1/Attendance/Payroll/getPageBySlug/$2/$3/$1";
+
+/**
+ * user routes
+ */
+// user payroll dashboard
+$route["payrolls/dashboard/(:any)/(:num)"]["get"] =
+  "v1/Users/Main/dashboard/$2/$1";
+// user payroll dashboard page
+$route["payrolls/page/(:any)/(:num)/(:any)"]["get"] =
+  "v1/Users/Main/getPageBySlug/$2/$3/$1";
+// user payroll dashboard page process
+$route["payrolls/page/update"]["post"] =
+  "v1/Users/Main/updatePage";
 
 
+/**
+ * Attendance routes
+ * @version 1.0
+ */
+$route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
+$route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
+$route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
+$route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
+$route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/status"]["post"] = "v1/Attendance/api/Main/processTimeSheetStatus";
+$route["v1/clock/timesheet/history/(:num)"]["get"] = "v1/Attendance/api/Main/getTimeSheetHistory/$1";
+
+
+/**
+ * Attendance
+ * @version 1.0
+ */
+// employee
+$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+$route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
+// employer
+$route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
+$route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
+// $route["attendance/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
+$route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";

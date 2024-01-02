@@ -3700,6 +3700,7 @@ class Settings extends Public_Controller
         ]);
     }
 
+
     /**
      * process edit schedule
      */
@@ -3827,7 +3828,6 @@ class Settings extends Public_Controller
         $this->load->view('v1/settings/overtime_rules/listing');
         $this->load->view('main/footer');
     }
-
     /**
      * list company minimum wages
      */

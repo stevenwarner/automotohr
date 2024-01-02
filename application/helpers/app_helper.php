@@ -501,14 +501,24 @@ if (!function_exists('getApiAccessToken')) {
     function getApiAccessToken(int $companyId, int $employeeId)
     {
         // return the data
-        return get_instance()->db
+        $CI = &get_instance();
+        // load the library
+        $CI->load->library('Api_auth');
+        // call the event
+        $CI->api_auth->checkAndLogin(
+            $companyId,
+            $employeeId
+        );
+        //
+        $token = $CI->db
             ->select('access_token')
             ->where([
                 'company_sid' => $companyId,
                 'user_sid' => $employeeId
             ])
             ->get('api_credentials')
-            ->row_array()['access_token'];
+            ->row_array();
+        return $token['access_token'];
     }
 }
 
@@ -1865,6 +1875,42 @@ if (!function_exists('acceptGustoAgreement')) {
     }
 }
 
+
+if (!function_exists("getCommonFiles")) {
+    /**
+     * get the CSS and Js defaults
+     *
+     * @param string $type
+     * @return array
+     */
+    function getCommonFiles(string $type = "css"): array
+    {
+        // set css defaults
+        $arr["css"] = [
+            "v1/plugins/daterangepicker/css/daterangepicker.min",
+            "v1/plugins/alertifyjs/css/alertify.min",
+        ];
+        // set js defaults
+        $arr["js"] = [
+            "v1/plugins/daterangepicker/daterangepicker.min",
+            "v1/plugins/alertifyjs/alertify.min",
+        ];
+        //
+        return $arr[$type];
+    }
+}
+
+if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
+    function onlyPlusAndPayPlanCanAccess()
+    {
+        if (!isPayrollOrPlus()) {
+            get_instance()->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+    }
+}
+
+
 if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
 
     function updateEmployeeDepartmentToComplyNet(int $employeeId, int $companyId)
@@ -2013,7 +2059,7 @@ if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
 if (!function_exists('image_url')) {
     function image_url($path)
     {
-        $imagePath = base_url('assets/images/'.$path);
+        $imagePath = base_url('assets/images/' . $path);
 
         return $imagePath;
     }
@@ -2254,4 +2300,36 @@ if (!function_exists("getSundaysAndSaturdays")) {
 
         return $sundaysSaturdays;
     }
+}
+
+
+function haversine($lat1, $lon1, $lat2, $lon2)
+{
+    // Convert latitude and longitude from degrees to radians
+    $lat1 = deg2rad($lat1);
+    $lon1 = deg2rad($lon1);
+    $lat2 = deg2rad($lat2);
+    $lon2 = deg2rad($lon2);
+
+    // Haversine formula
+    $dlat = $lat2 - $lat1;
+    $dlon = $lon2 - $lon1;
+    $a = sin($dlat / 2) ** 2 + cos($lat1) * cos($lat2) * sin($dlon / 2) ** 2;
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+    // Radius of the Earth in kilometers (you can change this value as needed)
+    $earth_radius = 6371;
+
+    // Calculate the distance
+    $distance = $earth_radius * $c;
+
+    return $distance;
+}
+
+function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radius)
+{
+    $distance = haversine($lat1, $lon1, $lat2, $lon2);
+
+    // Check if the distance is within the specified radius
+    return $distance <= $radius;
 }

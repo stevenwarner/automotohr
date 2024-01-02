@@ -1333,7 +1333,7 @@
                                                     </li>
                                                     <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
                                                         <li>
-                                                            <a href="<?= base_url('attendance/today_overview'); ?>">
+                                                            <a href="<?= base_url('attendance/dashboard'); ?>">
                                                                 <figure><i class="fa fa-pie-chart" aria-hidden="true"></i></figure>
                                                                 Attendance Management
                                                             </a>

@@ -16104,6 +16104,26 @@ if (!function_exists('getSystemDate')) {
     }
 }
 
+if (!function_exists('getSystemDateInUTC')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @param string $customDate Optional
+     * @return string
+     */
+    function getSystemDateInUTC(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now', string $customDate = "")
+    {
+        // get the date in current timezone
+        $pstDateObject = new DateTime($customDate ?? getSystemDate($format, $timestamp));
+        // set the timezone to utc
+        $pstDateObject->setTimezone(new DateTimeZone("UTC"));
+        // return the date
+        return $pstDateObject->format($format);
+    }
+}
+
 
 if (!function_exists('getTimeZoneFromAbbr')) {
     /**
