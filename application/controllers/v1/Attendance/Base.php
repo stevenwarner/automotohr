@@ -75,7 +75,7 @@ class Base extends Public_Controller
         $this->loggedInEmployee = $this->appSession["employer_detail"];
         $this->loggedInCompany = $this->appSession["company_detail"];
         //
-        $this->disableCreationOfMinifyFiles = false;
+        $this->disableCreationOfMinifyFiles = true;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
