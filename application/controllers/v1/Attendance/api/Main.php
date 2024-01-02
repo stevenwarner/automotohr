@@ -193,4 +193,54 @@ class Main extends Public_Controller
             ]
         );
     }
+
+    /**
+     * mark attendance
+     */
+    public function getTimeSheetHistory(int $id)
+    {
+
+        $data = [];
+
+        $data["history"] = $this->clock_model->getTimeSheetHistory($id);
+
+
+        if ($data["history"]) {
+            $tmp = [];
+            foreach ($data["history"] as $v0) {
+                if ($v0['jobSite']) {
+                    if (!$tmp[$v0["jobSite"]["site_name"]]) {
+                        $tmp[$v0["jobSite"]["site_name"]] = [];
+                    }
+
+                    //
+                    $tmp[$v0["jobSite"]["site_name"]][] = $v0;
+                } else {
+                    $tmp["other"][] = $v0;
+                }
+            }
+
+            $data["history"] = $tmp;
+        }
+
+        // _e($data["history"], true);
+
+        // $this->load->view(
+        //     "v1/attendance/partials/timesheet_history",
+        //     $data
+        // );
+        // die;
+
+        return SendResponse(
+            200,
+            [
+                "view" =>
+                $this->load->view(
+                    "v1/attendance/partials/timesheet_history",
+                    $data,
+                    true
+                )
+            ]
+        );
+    }
 }

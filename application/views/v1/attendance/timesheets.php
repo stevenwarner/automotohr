@@ -18,11 +18,10 @@ $timeSheetName = "";
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label>
-                            Select Employee
+                            Select Employees
                             <strong class="text-danger">*</strong>
                         </label>
-                        <select name="employees" class="form-control">
-                            <option value="0"></option>
+                        <select name="employees[]" class="form-control multipleSelect" multiple>
                             <?php if ($employees) {
                                 foreach ($employees as $v0) {
 
@@ -91,7 +90,7 @@ $timeSheetName = "";
     </div>
 </div>
 
-<?php if ($filter["employeeId"]) { ?>
+ <?php if ($employees) { ?>
 
     <!-- data -->
     <div class="panel panel-default">
@@ -99,7 +98,7 @@ $timeSheetName = "";
             <h2 class="text-large">
                 <strong>
                     <i class="fa fa-clock-o text-orange" aria-hidden="true"></i>
-                    &nbsp;Time Sheet <?= $records ? " of " . $timeSheetName : ""; ?>
+                    &nbsp;Time Sheet
                 </strong>
                 <p class="mt-5">
                     <?= formatDateToDB(
@@ -119,21 +118,6 @@ $timeSheetName = "";
 
 
         <div class="panel-body">
-            <!--  -->
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <?php if ($records) { ?>
-                        <button class="btn btn-green jsApproveTimeSheet">
-                            Approve
-                        </button>
-
-                        <button class="btn btn-red jsUnApproveTimeSheet">
-                            UnApproved
-                        </button>
-                    <?php } ?>
-                </div>
-            </div>
-            <br>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <caption></caption>
@@ -231,11 +215,6 @@ $timeSheetName = "";
                                 </td>
                                 <td class="csVerticalAlignMiddle mh-100">
                                     <?php if ($attendance) { ?>
-                                        <button class="btn btn-blue jsViewTimeSheet">
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
-                                            &nbsp;
-                                            History
-                                        </button>
                                         <button class="btn btn-orange jsEditTimeSheet">
                                             <i class="fa fa-edit" aria-hidden="true"></i>
                                             &nbsp;

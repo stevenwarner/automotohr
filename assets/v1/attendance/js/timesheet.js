@@ -25,6 +25,13 @@ $(function timeSheet() {
 		showTimeSheetModal();
 	});
 
+	$(".jsViewTimeSheet").click(function (event) {
+		//
+		event.preventDefault();
+
+		showHistoryModal($(this).closest("tr").data());
+	});
+
 	function generateRow() {
 		const rowId = getRandomCode();
 		let html = `
@@ -76,7 +83,6 @@ $(function timeSheet() {
 	}
 
 	function showTimeSheetModal() {
-		console.log(obj);
 		Modal(
 			{
 				Id: "jsTimeSheetModal",
@@ -90,6 +96,19 @@ $(function timeSheet() {
 				Body: '<div id="jsTimeSheetModalBody"></div>',
 			},
 			getBody
+		);
+	}
+	function showHistoryModal(obj) {
+		Modal(
+			{
+				Id: "jsTimeSheetHistoryModal",
+				Loader: "jsTimeSheetHistoryModalLoader",
+				Title: "History for " + moment(obj.date).format("MM/DD/Y"),
+				Body: '<div id="jsTimeSheetHistoryModalBody"></div>',
+			},
+			function () {
+				getTimeSheetHistory(obj);
+			}
 		);
 	}
 
@@ -181,6 +200,26 @@ $(function timeSheet() {
 				});
 
 				applyTimePicker();
+			});
+	}
+
+	function getTimeSheetHistory(obj) {
+		if (XHR !== null) {
+			XHR.abort();
+		}
+
+		XHR = $.ajax({
+			url: baseUrl("v1/clock/timesheet/history/" + obj.id),
+			method: "get",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsTimeSheetHistoryModalBody").html(resp.view);
+
+				ml(false, "jsTimeSheetHistoryModalLoader");
 			});
 	}
 
@@ -276,7 +315,7 @@ $(function timeSheet() {
 			method: "post",
 			data: {
 				ids: ids,
-                status: type
+				status: type,
 			},
 		})
 			.always(function () {

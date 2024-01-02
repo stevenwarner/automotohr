@@ -2083,6 +2083,7 @@ $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getT
 $route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
 $route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/status"]["post"] = "v1/Attendance/api/Main/processTimeSheetStatus";
+$route["v1/clock/timesheet/history/(:num)"]["get"] = "v1/Attendance/api/Main/getTimeSheetHistory/$1";
 
 
 /**
@@ -2095,4 +2096,5 @@ $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
 $route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
+// $route["attendance/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";

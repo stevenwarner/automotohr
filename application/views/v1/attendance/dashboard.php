@@ -26,7 +26,6 @@
                             <a href="javascript:void(0)">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
-                                <p class=""><?= remakeEmployeeName($v0, true, false); ?></p>
                             </a>
                         </div>
                     </div>
@@ -56,7 +55,6 @@
                             <a href="javascript:void(0)">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
-                                <p class=""><?= remakeEmployeeName($v0, true, false); ?></p>
                             </a>
                         </div>
                     </div>
@@ -86,7 +84,6 @@
                             <a href="javascript:void(0)">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
-                                <p class=""><?= remakeEmployeeName($v0, true, false); ?></p>
                             </a>
                         </div>
                     </div>

@@ -299,6 +299,10 @@ class Clock_model extends Base_model
                 "text" => "Clock in/out",
                 "startTime" => "",
                 "endTime" => "",
+                "lat" => $v0["lat"],
+                "lng" => $v0["lng"],
+                "lat_2" => $v0["lat_2"],
+                "lng_2" => $v0["lng_2"],
                 "durationText" => convertSecondsToTime($v0["duration"]),
                 "duration" => $v0["duration"],
                 "jobSite" => [],
@@ -1499,5 +1503,71 @@ class Clock_model extends Base_model
             ->update("cl_attendance", [
                 "is_approved" => $post["status"]
             ]);
+    }
+
+
+    public function getTimeSheetHistory($attendanceId)
+    {
+        //
+        $record = $this->db
+            ->select("employee_sid, company_sid, clocked_date")
+            ->where("sid", $attendanceId)
+            ->get("cl_attendance")
+            ->row_array();
+
+        $breaks = $this->getAllowedBreaksForEmployee(
+            $record["employee_sid"],
+            $record["clocked_date"],
+        );
+
+        return $this->getAttendanceFootprints($attendanceId, $breaks)["logs"];
+    }
+
+    /**
+     * get employee shift for a specific date
+     *
+     * @return array
+     */
+    private function getAllowedBreaksForEmployee($employeeId, $date): array
+    {
+        // get the employee shifts
+        $shift = $this->db
+            ->select("
+                breaks_json
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "shift_date" => $date,
+            ])
+            ->get("cl_shifts")
+            ->row_array();
+        //
+        if (!$shift) {
+            return [];
+        }
+        //
+        if (!$shift["breaks_json"]) {
+            return [];
+        }
+        //
+        $breaks = json_decode($shift["breaks_json"], true);
+        //
+        foreach ($breaks as $index => $v0) {
+            //
+            if ($v0["start_time"]) {
+                $breaks[$index]["start_time"] = formatDateToDB(
+                    $v0["start_time"],
+                    "H:i",
+                    "h:i a"
+                );
+                $breaks[$index]["end_time"] = formatDateToDB(
+                    $v0["end_time"],
+                    "H:i",
+                    "h:i a"
+                );
+            }
+        }
+        //
+        return $breaks;
     }
 }
