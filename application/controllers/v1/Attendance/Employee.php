@@ -40,6 +40,8 @@ class Employee extends Base
         $this->getCommon($this->data, "my_dashboard");
         $this->data["startDate"] = getSystemDate(DB_DATE, "-7 days");
         $this->data["endDate"] = getSystemDate(DB_DATE);
+
+        $this->data["title"]  = "Overview";
         // get todays footprints
         $this->data["record"] = $this->clock_model
             ->getClockWithState(
@@ -48,13 +50,14 @@ class Employee extends Base
                 getSystemDate(DB_DATE),
                 true
             );
-
-        // get the logs array
-        $this->data["logs"] = $this->clock_model
-            ->getAttendanceFootprints(
-                $this->data["record"]["reference"],
-                $this->data["record"]["allowed_breaks"]
-            );
+        if ($this->data["record"]["state"]) {
+            // get the logs array
+            $this->data["logs"] = $this->clock_model
+                ->getAttendanceFootprints(
+                    $this->data["record"]["reference"],
+                    $this->data["record"]["allowed_breaks"]
+                );
+        }
         // make the blue portal popup
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_dashboard");
@@ -86,7 +89,7 @@ class Employee extends Base
         ];
         $this->data["filter"]["startDate"] = $this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-01";
         $this->data["filter"]["endDate"] = getSystemDate($this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-t");
-        
+
         //
         $this->data["records"] = $this->clock_model
             ->getAttendanceWithinRange(

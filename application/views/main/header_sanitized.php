@@ -17,9 +17,10 @@
         <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/style.css?v=3.0.0') ?>">
     <?php } ?>
     <?php if ($loadJsFiles) { ?>
-        <script src="<?=main_url("public/v1/plugins/jquery/jquery-3.7.1.min.js?v=3.0");?>"></script>
-        <script src="<?=getPlugin("validator", "js");?>"></script>
+        <script src="<?= main_url("public/v1/plugins/jquery/jquery-3.7.1.min.js?v=3.0"); ?>"></script>
+        <script src="<?= getPlugin("validator", "js"); ?>"></script>
     <?php } ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('public/v1/plugins/ms_modal/main.css?v=3.0') ?>">
     <?= bundleCSS([
         "v1/app/css/global",
     ], "public/v1/app/", "global", false); ?>

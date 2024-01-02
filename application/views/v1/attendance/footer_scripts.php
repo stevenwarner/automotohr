@@ -3,6 +3,7 @@
     //
     $attendanceAdditionalScripts = ["js/app_helper"];
     $attendanceScripts = [];
+    $attendanceScripts[] = "v1/plugins/ms_modal/main";
     $attendanceScripts[] = "v1/attendance/js/timer";
     ?>
     <?= $this->uri->segment(1) !== "attendance" ?  bundleJs($attendanceAdditionalScripts, "public/v1/js/attendance/", "attendance_page_common",  true) : ""; ?>
