@@ -50,9 +50,23 @@
                         </label>
                         <input type="text" class="form-control" name="shift_date_to" id="shift_date_to" />
                     </div>
+
                 </div>
+
+                <div class="row form-group">
+                    <div class="form-group">
+                        <div class="col-sm-4">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" name="job_dayoff" value="1" />
+                                Mark Day Off as Working Day
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
             </div>
-            
+
         </div>
 
         <!-- -->
