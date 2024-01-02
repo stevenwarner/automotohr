@@ -2,11 +2,20 @@
     <div class="container">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h2 class="text-medium panel-heading-text weight-6">
-                    <i class="fa fa-save text-orange" aria-hidden="true"></i>
-                    Edit Employee Shift <?php //_e($shift, true); 
-                                        ?>
-                </h2>
+                <div class="row">
+                    <div class="col-sm-6">
+                    <h2 class="text-medium panel-heading-text weight-6">
+                        <i class="fa fa-save text-orange" aria-hidden="true"></i>
+                        Edit Employee Shift
+                    </h2>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <a href="javascript:;" class="btn btn-orange jsMarkAsDayOff" data-id ="<?php echo $shift['sid']; ?>">
+                            <i class="fa fa-ban" aria-hidden="true"></i>
+                            &nbsp;Mark as Day Off
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="panel-body">
                 <!--  -->

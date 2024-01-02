@@ -365,6 +365,42 @@ $(function manageShifts() {
 		applyTimePicker();
 	});
 
+
+	/**
+	 * mark as day off
+	 */
+	$(document).on("click", ".jsMarkAsDayOff", function (event) {
+		event.preventDefault();
+		//
+		const shiftId = $(this).data("id");
+		// generate html
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to delete shifts?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				formObj.append("id", shiftId);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/singleshift/delete",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
 	/**
 	 * remove the break
 	 */
@@ -488,7 +524,10 @@ $(function manageShifts() {
 			return;
 		}
 		//
-		const btnRef = callButtonHook(buttonRef, true);
+		if (buttonRef) {
+			const btnRef = callButtonHook(buttonRef, true);
+		}
+		
 		// make a new call
 		XHR = $.ajax({
 			url: baseUrl(url),
@@ -499,7 +538,9 @@ $(function manageShifts() {
 		})
 			.always(function () {
 				//
-				callButtonHook(btnRef, false);
+				if (buttonRef) {
+					callButtonHook(btnRef, false);
+				}
 				//
 				XHR = null;
 			})

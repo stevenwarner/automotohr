@@ -3903,7 +3903,6 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         // get all active employees
 
-
         $employees = $this->input->get("employees");
         $toggleFilter = false;
 
@@ -3923,12 +3922,12 @@ class Settings extends Public_Controller
 
         // _e($team,true,true);
 
-        $data["employees"] = $this->shift_model->getCompanyEmployees(
+        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly(
             $loggedInCompany["sid"],
             $employeeFilter
         );
 
-        $data["allemployees"] = $this->shift_model->getCompanyEmployees(
+        $data["allemployees"] = $this->shift_model->getCompanyEmployeesOnly(
             $loggedInCompany["sid"]
         );
 
@@ -4005,7 +4004,6 @@ class Settings extends Public_Controller
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
         ], "public/v1/shifts/", "main", true);
-
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -4612,7 +4610,7 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         //
         $data["templates"] = $this->shift_template_model->get($session["company_detail"]["sid"]);
-        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
 
         //
         return SendResponse(200, [
@@ -4722,7 +4720,7 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         //
 
-        $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
+        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
 
         // load break model
         $this->load->model("v1/Shift_break_model", "shift_break_model");
@@ -4920,6 +4918,24 @@ class Settings extends Public_Controller
         // call the function
         $this->shift_model
             ->deleteMultiShifts(
+                $session["company_detail"]["sid"],
+                $post
+            );
+    }
+
+    //
+    public function processDeleteSingleProcess()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->deleteSingleShift(
                 $session["company_detail"]["sid"],
                 $post
             );

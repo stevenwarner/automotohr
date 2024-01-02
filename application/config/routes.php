@@ -2050,6 +2050,7 @@ $route["settings/job_sites/(:num)"]["delete"] = "Settings/processDeleteJobSite/$
 $route["settings/shifts/multyshift/apply"]["post"] = "Settings/processApplyMulitProcess";
 $route["settings/shifts/multyshift/delete"]["post"] = "Settings/processDeleteMulitProcess";
 $route["settings/shifts/multyshift/copy"]["post"] = "Settings/processCopyMulitProcess";
+$route["settings/shifts/singleshift/delete"]["post"] = "Settings/processDeleteSingleProcess";
 
 
 

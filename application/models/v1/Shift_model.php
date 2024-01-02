@@ -202,6 +202,37 @@ class Shift_model extends CI_Model
         return $this->db->get("users")->result_array();
     }
 
+     /**
+     * get the company employees only 
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyEmployeesOnly(int $companyId): array
+    {
+
+
+        $this->db
+            ->select(getUserFields())
+            ->where([
+                "users.parent_sid" => $companyId,
+                "users.is_executive_admin" => 0,
+                "users.active" => 1,
+                "users.terminated_status" => 0
+            ]);
+        //
+        if ($employeeFilter['employees'][0] != 'all' && !empty($employeeFilter['employees'][0])) {
+            $this->db->where_in("users.sid", $employeeFilter['employees']);
+        }
+
+        if ($employeeFilter['team'] != 0) {
+            $this->db->where("users.team_sid", $employeeFilter['team']);
+        }
+
+        $this->db->order_by("users.first_name", "ASC");
+        return $this->db->get("users")->result_array();
+    }
+
     /**
      * get the company single employee
      *
@@ -950,6 +981,24 @@ class Shift_model extends CI_Model
             200,
             [
                 "msg" => "You have successfully Deleted the shifts to the selected employees."
+            ]
+        );
+    }
+
+    //
+    public function deleteSingleShift(int $companyId, array $post)
+    {
+
+        $shiftId = $post['id'];
+
+        $this->db->where('company_sid',  $companyId);
+        $this->db->where('sid',  $shiftId);
+        $this->db->delete('cl_shifts');
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully Deleted the shift to the selected employee."
             ]
         );
     }
