@@ -105,6 +105,7 @@ class Main extends Public_Controller
      */
     public function dashboard(int $userId, string $userType)
     {
+        return redirect("dashboard");
         //
         $this->data["title"] = "Payroll dashboard";
         //
