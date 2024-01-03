@@ -1863,17 +1863,17 @@ if (!function_exists('processESSTPolicy')) {
         }
         //
         $allowedTime  = (($totalShiftMinutes / 60) / 30) * 60;
-
-        // if ($allowedTime > 48) {
-        //     $allowedTime = 48;
-        // }
+        //
+        if ($allowedTime > 2880) {
+            $allowedTime = 2880;
+        }
+        //
         $r['AllowedTime'] = $allowedTime;
         $r['RemainingTime'] = $allowedTime;
         $r['EmployementStatus'] = $employementStatus;
         $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
         $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
         //
-        // _e($r,true,true);
         return $r;
     }
 }
