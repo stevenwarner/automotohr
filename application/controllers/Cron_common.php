@@ -946,4 +946,10 @@ class Cron_common extends CI_Controller
         //
         exit('All done!');
     }
+
+    public function shiftHolidaysToCurrentYear()
+    {
+        $this->load->model('timeoff_model');
+        $this->timeoff_model->getPublicHolidays();
+    }
 }
