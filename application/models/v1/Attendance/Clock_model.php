@@ -326,7 +326,8 @@ class Clock_model extends Base_model
                     ];
                 }
                 $log["text"] = "Clocked in/out";
-                $log["startTime"] = $v0["clocked_in"];
+                $log["startTime"] =
+                    $v0["clocked_in"];
                 $log["is_ended"] = $v0["clocked_in"] ? true : false;
                 $log["endTime"] = $v0["clocked_out"] ?? "";
             } else {
@@ -348,6 +349,22 @@ class Clock_model extends Base_model
                 $log["is_ended"] = $v0["break_end"] ? true : false;
                 $log["endTime"] = $v0["break_end"] ?? "";
             }
+
+            $log["startTime"] = reset_datetime([
+                "datetime" => $log["startTime"],
+                "from_format" => DB_DATE_WITH_TIME,
+                "format" => DB_DATE_WITH_TIME,
+                "_this" => $this,
+                "from_timezone" => "UTC"
+            ]);
+
+            $log["endTime"] = reset_datetime([
+                "datetime" => $log["endTime"],
+                "from_format" => DB_DATE_WITH_TIME,
+                "format" => DB_DATE_WITH_TIME,
+                "_this" => $this,
+                "from_timezone" => "UTC"
+            ]);
             //
             if ($v0["job_site_sid"] && $v0["job_site_sid"] != 0) {
                 $log["jobSite"] = $this->getJobSiteDetails($v0["job_site_sid"]);
@@ -413,6 +430,24 @@ class Clock_model extends Base_model
         foreach ($records as $v0) {
             // set defaults
             $arr = $v0;
+            //
+            $arr["clocked_in"] = reset_datetime([
+                "datetime" => $v0["clocked_in"],
+                "from_format" => DB_DATE_WITH_TIME,
+                "format" => DB_DATE_WITH_TIME,
+                "_this" => $this,
+                "from_timezone" => "UTC"
+            ]);
+
+            if ($v0["clocked_out"]) {
+                $arr["clocked_out"] = reset_datetime([
+                    "datetime" => $v0["clocked_out"],
+                    "from_format" => DB_DATE_WITH_TIME,
+                    "format" => DB_DATE_WITH_TIME,
+                    "_this" => $this,
+                    "from_timezone" => "UTC"
+                ]);
+            }
             $arr["worked_time"] = 0;
             $arr["overtime"] = 0;
             $arr["breaks"] = 0;
@@ -437,7 +472,49 @@ class Clock_model extends Base_model
                 ->get("cl_attendance_log")
                 ->result_array();
             //
-            foreach ($arr["logs"] as $v1) {
+            foreach ($arr["logs"] as $k1 => $v1) {
+
+                if ($v0["clocked_in"]) {
+                    //
+                    $arr["logs"][$k1]["clocked_in"] = reset_datetime([
+                        "datetime" => $v1["clocked_in"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => "UTC"
+                    ]);
+
+                    if ($v1["clocked_out"]) {
+                        $arr["logs"][$k1]["clocked_out"] = reset_datetime([
+                            "datetime" => $v1["clocked_out"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => "UTC"
+                        ]);
+                    }
+                }
+
+                if ($v1["break_start"]) {
+                    $arr["logs"][$k1]["break_start"] = reset_datetime([
+                        "datetime" => $v1["break_start"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => "UTC"
+                    ]);
+                    if ($v1["break_end"]) {
+                        $arr["logs"][$k1]["break_end"] = reset_datetime([
+                            "datetime" => $v1["break_end"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => "UTC"
+                        ]);
+                    }
+                }
+
+
                 if ($v1["clocked_in"]) {
                     $arr["worked_time"] += $v1["duration"];
                 } else {
@@ -684,6 +761,8 @@ class Clock_model extends Base_model
         //
         if ($post["type"] === "clocked_out" || $post["type"] === "break_started") {
             $upd["clocked_out"] = getSystemDateInUTC();
+        } else {
+            $upd["clocked_out"] = null;
         }
         $upd["last_event"] = $post["type"] === "break_ended" ? "clocked_in" : $post["type"];
         $upd["updated_at"] = getSystemDate();
@@ -1060,7 +1139,7 @@ class Clock_model extends Base_model
 
             // add the worked time
             $datesPool[$tmp] = $this->attendance_lib
-                ->convertSecondsToHours($timeInMinutes)["hours"];
+                ->convertSecondsToHours($timeInMinutes);
         }
         //
         return $datesPool;
@@ -1473,7 +1552,7 @@ class Clock_model extends Base_model
             ->where("active", 1)
             ->where("is_executive_admin", 0)
             ->where("terminated_status", 0)
-        ->where("parent_sid", $companyId);
+            ->where("parent_sid", $companyId);
 
         if ($ids) {
             $this->db->where_not_in("sid", $ids);

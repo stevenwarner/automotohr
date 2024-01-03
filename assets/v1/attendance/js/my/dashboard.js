@@ -1,37 +1,60 @@
 $(function myAttendanceDashboard() {
 	let googleCbInterval;
+	let map,
+		markers = [],
+		coords = [];
+
+	let graphXHR = null;
+	let footprintXHR = null;
+	let locations = [];
+	let logs = [];
 	/**
 	 * get the week worked graph
 	 */
 	function getGraphs() {
+		if (graphXHR !== null) {
+			graphXHR.abort();
+		}
 		// starts the loader
 		ml(true, "jsWeekGraph", "");
 		//
-		$.ajax({
+		graphXHR = $.ajax({
 			url: baseUrl("v1/clock/graphs/week_worked_time"),
 			method: "GET",
 			cache: false,
 		})
 			.always(function () {
+				graphXHR = null;
 				ml(false, "jsWeekGraph");
 			})
 			.fail(handleErrorResponse)
 			.done(function (response) {
 				//
 				const values = Object.values(response);
+
+				let passValues = [];
 				//
 				let total = 0;
 				//
-				values?.map(function (value) {
-					total += parseFloat(value);
+				values?.map(function (value, index) {
+					let loggedTime = 0;
+					if (value.minutes) {
+						loggedTime =
+							parseFloat(value.minutes) +
+							parseFloat(value.hours * 60);
+						total += parseInt(loggedTime);
+					}
+
+					passValues.push(parseInt(loggedTime));
 				});
+				total = total.toFixed(0);
 				//
 				Highcharts.chart("container", {
 					chart: {
 						type: "column",
 					},
 					title: {
-						text: `You have worked for ${total}h.`,
+						text: `You have worked for ${total}m.`,
 						align: "left",
 						style: {
 							fontSize: "16px",
@@ -56,7 +79,7 @@ $(function myAttendanceDashboard() {
 					yAxis: {
 						min: 0,
 						title: {
-							text: "# of worked hours",
+							text: "# of worked minutes",
 							style: {
 								fontSize: "14px",
 							},
@@ -68,7 +91,7 @@ $(function myAttendanceDashboard() {
 						},
 					},
 					tooltip: {
-						valueSuffix: "h",
+						valueSuffix: "m",
 					},
 					plotOptions: {
 						column: {
@@ -83,8 +106,8 @@ $(function myAttendanceDashboard() {
 					},
 					series: [
 						{
-							name: "Worked hours",
-							data: values,
+							name: "Worked minutes",
+							data: passValues,
 							column: {
 								labels: {
 									style: {
@@ -97,6 +120,37 @@ $(function myAttendanceDashboard() {
 
 					colors: ["#fd7a2a"],
 				});
+			});
+	}
+
+	/**
+	 * get the locations
+	 */
+	function getFootprints() {
+		if (footprintXHR !== null) {
+			footprintXHR.abort();
+		}
+		//
+		footprintXHR = $.ajax({
+			url: baseUrl("v1/clock/my/footprints/today"),
+			method: "GET",
+			cache: false,
+		})
+			.always(function () {
+				footprintXHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (response) {
+				if (
+					locations.toString() !== response.logs.locations.toString()
+				) {
+					locations = response.logs.locations;
+					callGoogleCB(initMap);
+				}
+				logs = response.logs.logs;
+
+
+				remakeEntries();
 			});
 	}
 
@@ -115,32 +169,25 @@ $(function myAttendanceDashboard() {
 		}
 	}
 
-	let map,
-		markers = [],
-		coords = [];
-
 	/**
 	 * draw map
 	 */
 	function initMap() {
-		if (!footprintLocations) {
-			return;
-		}
 
-		console.log(footprintLocations);
+		delete(map)
 		//
 		map = new google.maps.Map(document.getElementById("map"), {
 			center: {
-				lat: parseFloat(footprintLocations[0].lat),
-				lng: parseFloat(footprintLocations[0].lng),
+				lat: parseFloat(locations[0].lat),
+				lng: parseFloat(locations[0].lng),
 			},
-			// mapTypeId: "roadmap",
+			mapTypeId: "roadmap",
 		});
 
 		const latlng = [];
 
 		// // Call function to add markers
-		footprintLocations.map(function (v0, i) {
+		locations.map(function (v0, i) {
 			const options = {
 				map: map,
 				position: {
@@ -174,7 +221,6 @@ $(function myAttendanceDashboard() {
 				// var infoWindow = new google.maps.InfoWindow({
 				// 	content: v0.constraint.title,
 				// });
-
 				// // Open info window when the circle is clicked
 				// google.maps.event.addListener(
 				// 	circle,
@@ -257,8 +303,66 @@ $(function myAttendanceDashboard() {
 		return meters * feetPerMeter;
 	}
 
+	function remakeEntries() {
+		// set the html holder
+		let html = "";
+		// when no entries are found
+		if (!logs.length) {
+			return $(".jsTimeEntriesBox").html(
+				'<p class="alert alert-info text-center">No time entries yet!</p>'
+			);
+		}
+		let totalDuration = 0;
+		//
+		logs.forEach(function (v0) {
+			//
+			totalDuration += parseFloat(v0["duration"]);
+			//
+			html += '<tr data-id="' + v0["sid"] + '">';
+			html += '	<td class="csVerticalAlignMiddle">';
+			html += "		<p>";
+			html += v0["text"];
+			html += "		</p>";
+			html += "	</td>";
+
+			html += '	<td class="csVerticalAlignMiddle text-right">';
+			html += "		<p>";
+			html += moment(v0["startTime"], "YYYY-MM-DD HH:mm:ss").format(
+				"hh:mm a"
+			);
+			html += "		 - ";
+			if (v0["endTime"]) {
+				html += moment(v0["endTime"], "YYYY-MM-DD HH:mm:ss").format(
+					"hh:mm a"
+				);
+			} else {
+				html += "		Missing";
+			}
+			html += "		</p>";
+			html += "	</td>";
+			html += '	<td class="csVerticalAlignMiddle text-right">';
+			html += "		<p>";
+			html += v0["durationText"];
+			html += "		</p>";
+			html += "	</td>";
+			html += "</tr>";
+		});
+		//
+		$(".jsTimeEntriesBox tbody").html(html);
+		//
+		html = "<tr>";
+		html +=
+			'	<th scope="col" colspan="3" class="csVerticalAlignMiddle text-right">';
+		html += "	Total: ";
+		html += convertSecondsToTime(totalDuration);
+		html += "	</th>";
+		html += "</tr>";
+		$(".jsTimeEntriesBox tfoot").html(html);
+	}
+
+	setInterval(getGraphs, 10000 * 5);
+	setInterval(getFootprints, 10000 * 2);
 	//
 	getGraphs();
-
-	callGoogleCB(initMap);
+	getFootprints();
 });

@@ -50,14 +50,6 @@ class Employee extends Base
                 getSystemDate(DB_DATE),
                 true
             );
-        if ($this->data["record"]["state"]) {
-            // get the logs array
-            $this->data["logs"] = $this->clock_model
-                ->getAttendanceFootprints(
-                    $this->data["record"]["reference"],
-                    $this->data["record"]["allowed_breaks"]
-                );
-        }
         // make the blue portal popup
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_dashboard");
@@ -89,7 +81,15 @@ class Employee extends Base
         ];
         $this->data["filter"]["startDate"] = $this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-01";
         $this->data["filter"]["endDate"] = getSystemDate($this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-t");
-
+        // load schedule model
+        $this->load->model("Timeoff_model", "timeoff_model");
+        // get employee shifts
+        $this->data["leaves"] = $this->timeoff_model
+            ->getEmployeeTimeOffsInRange(
+                $this->loggedInCompany["sid"],
+                $this->data["filter"]["startDate"],
+                $this->data["filter"]["endDate"]
+            );
         //
         $this->data["records"] = $this->clock_model
             ->getAttendanceWithinRange(

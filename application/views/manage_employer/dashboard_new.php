@@ -127,7 +127,7 @@
                                             <?php } ?>
                                         <?php } ?>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
-                                            
+
                                             <?php if ($task_management_module_status == 1) { ?>
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
@@ -142,6 +142,7 @@
                                                     </div>
                                                 </div>
                                             <?php } ?>
+                                            <?php $this->load->view("v1/attendance/partials/clocks/green/welcome_block");?>
                                         </div>
                                     </div>
                                     <div class="example-link-green">Because of recent Google Security updates, we suggest that you only use Google Chrome to access your AutomotoHR account. Internet Explorer is not supported and may cause certain feature glitches and security issues.</div>
@@ -552,8 +553,7 @@
                                             </div>
                                         </div>
                                     <?php } ?>
-                                    <?php //if(check_access_permissions_for_view($security_details, 'attendance_management')) { 
-                                    ?>
+
                                     <?php $data['session'] = $this->session->userdata('logged_in'); ?>
                                     <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
 
@@ -789,10 +789,10 @@
                                                         <i class="fa fa-calendar" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?=base_url("settings/shifts/manage");?>">Shifts</a>
+                                                        <a href="<?= base_url("settings/shifts/manage"); ?>">Shifts</a>
                                                     </h2>
                                                     <div class="button-panel">
-                                                        <a href="<?=base_url("settings/shifts/manage");?>" class="site-btn">Manage</a>
+                                                        <a href="<?= base_url("settings/shifts/manage"); ?>" class="site-btn">Manage</a>
                                                     </div>
                                                 </div>
                                             </div>

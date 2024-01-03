@@ -907,7 +907,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
-                        <?php $this->load->view('attendance/2022/clock_blue'); ?>
+                        <?php $this->load->view('v1/attendance/partials/clocks/blue/getting_started_block'); ?>
 
                         <?php if (isset($employeePayStubsCount)) { ?>
                             <!-- Payroll -->

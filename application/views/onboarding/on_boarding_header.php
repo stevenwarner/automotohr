@@ -53,6 +53,9 @@
 
     <?= $pageCSS ? GetCss($pageCSS) : ""; ?>
     <?= $appCSS ?? ""; ?>
+    <?= bundleCSS([
+        "v1/app/css/global",
+    ], "public/v1/app/", "global", false); ?>
 
 <body>
     <div class="wrapper-outer">
@@ -339,15 +342,16 @@
             </header>
             <!-- Header End -->
 
+
             <div class="emp-info-strip <?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?> <?= isset($hide_employer_section) ? 'hidden' : ''; ?>">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-12">
+                        <div class="col-lg-8 col-sm-8">
                             <div class="emp-info-box">
                                 <div class="figure">
                                     <?php if (isset($employee['profile_picture']) && !empty($employee['profile_picture'])) { ?>
                                         <div class="container-fig">
-                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>">
+                                            <img class="img-responsive" src="<?= getImageUrl($employee['profile_picture']); ?>" alt="<?= remakeEmployeeName($employee); ?>">
                                         </div>
                                     <?php } else { ?>
                                         <span><?php echo substr($employee['first_name'], 0, 1) . substr($employee['last_name'], 0, 1); ?></span>
@@ -366,7 +370,6 @@
                                         );
                                         ?>
                                     </span>
-                                    <!--<p>Administrator at ABC</p>-->
                                     <ul class="contact-info">
                                         <?php if (!empty($employee['PhoneNumber'])) { ?>
                                             <li><i class="fa fa-phone"></i> <?php echo $employee['PhoneNumber']; ?></li>
@@ -377,29 +380,33 @@
                                         <li><?php echo $session['company_detail']['CompanyName']; ?></li>
                                     </ul>
                                 </div>
-                                <?php $this->load->view('attendance/2022/clock_header_blue'); ?>
-                                <?php if ($employee['is_executive_admin'] == 0) { ?>
-                                    <br>
-                                    <br><br>
-
-                                    <div class="btn-link-wrp">
-                                        <?php if ((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')) { ?>
-                                            <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
-                                        <?php } ?>
-                                        <?php if ($this->uri->segment(1) == 'employee_management_system' || $this->uri->segment(1) == 'dashboard') { ?>
-                                            <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"><i class="fa fa-pencil"></i> my profile</a>
-                                        <?php } else { ?>
-                                            <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;">EMS Dashboard</a>
-                                        <?php } ?>
-                                    </div>
-
-                                <?php } ?>
                             </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-4">
+                            <?php $this->load->view('v1/attendance/partials/clocks/blue/welcome_block'); ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <br>
+                        <div class="col-lg-12 text-right">
+
+                            <?php if ($employee['is_executive_admin'] == 0) { ?>
+                                <div>
+                                    <?php if ((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')) { ?>
+                                        <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-orange"><i class="fa fa-cogs"></i> Management Dashboard </a>
+                                    <?php } ?>
+                                    <?php if ($this->uri->segment(1) == 'employee_management_system' || $this->uri->segment(1) == 'dashboard') { ?>
+                                        <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-orange"><i class="fa fa-pencil"></i> my profile</a>
+                                    <?php } else { ?>
+                                        <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-orange">EMS Dashboard</a>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
             </div>
-        <?php } //echo '<pre>'; print_r($security_details); echo '</pre>';
+        <?php }
         ?>
         <style>
             @media only screen and (max-width: 576px) {

@@ -87,7 +87,7 @@
                         </strong>
                     </h2>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body jsTimeEntriesBox">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <caption></caption>
@@ -98,63 +98,14 @@
                                     <th class="csW csBG4 text-right" scope="col">Duration</th>
                                 </tr>
                             </thead>
-                            <?php if ($logs["logs"]) {
-                                $totalDuration = 0;
-                            ?>
-                                <tbody>
-                                    <?php foreach ($logs["logs"] as $v0) {
-                                        $totalDuration += $v0["duration"];
-                                    ?>
-                                        <tr data-id="<?= $v0["sid"]; ?>">
-                                            <td class="csVerticalAlignMiddle">
-                                                <p class="csF16"><?= $v0["text"]; ?></p>
-                                            </td>
-                                            <td class="csVerticalAlignMiddle text-right">
-                                                <p class="csF16"><?=
-                                                                    reset_datetime([
-                                                                        "datetime" => $v0["startTime"],
-                                                                        "from_format" => DB_DATE_WITH_TIME,
-                                                                        "format" => "h:i a",
-                                                                        "_this" => $this,
-                                                                        "from_timezone" => "UTC"
-                                                                    ]);
-                                                                    ?> - <?= $v0["endTime"] ?
-                                                                                reset_datetime([
-                                                                                    "datetime" => $v0["endTime"],
-                                                                                    "from_format" => DB_DATE_WITH_TIME,
-                                                                                    "format" => "h:i a",
-                                                                                    "_this" => $this,
-                                                                                    "from_timezone" => "UTC"
-                                                                                ]) : "N/A";
-                                                                            ?></p>
-                                            </td>
-                                            <td class="csVerticalAlignMiddle text-right">
-                                                <p class="csF16"><?= $v0["durationText"]; ?></p>
-                                            </td>
-                                        </tr>
-                                    <?php
-                                    } ?>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th scope="col" colspan="3" class="csVerticalAlignMiddle text-right">
-                                            Total:
-                                            <?= convertSecondsToTime($totalDuration);?>
-                                        </th>
-                                    </tr>
-                                </tfoot>
-                            <?php }
-                            ?>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
-
-<script>
-    const footprintLocations = <?= json_encode($logs["locations"]); ?>;
-</script>

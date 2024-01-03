@@ -52,7 +52,7 @@ class Attendance extends Public_Controller
         $this->loggedInEmployee = checkAndGetSession("employer_detail");
         $this->loggedInCompany = checkAndGetSession("company_detail");
         //
-        $this->disableCreationOfMinifyFiles = false;
+        $this->disableCreationOfMinifyFiles = true;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
@@ -146,7 +146,8 @@ class Attendance extends Public_Controller
         $data["load_view"] = false;
         $data["sanitizedView"] = true;
         $data["title"] = "Overview";
-        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        $data['security_details'] =
+            $data['securityDetails'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
         //
         $data["sidebarPath"] = $this->sidebarPath;
         $data["mainContentPath"] = "v1/attendance/dashboard";
@@ -192,7 +193,7 @@ class Attendance extends Public_Controller
         $data["load_view"] = false;
         $data["sanitizedView"] = true;
         $data["title"] = "Overview";
-        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        $data['security_details'] = $data['securityDetails'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
         //
         $data["sidebarPath"] = $this->sidebarPath;
         $data["mainContentPath"] = "v1/attendance/timesheet";
@@ -213,6 +214,15 @@ class Attendance extends Public_Controller
             $data["records"] = $this->clock_model
                 ->getAttendanceWithinRange(
                     $this->loggedInCompany["sid"],
+                    $data["filter"]["employeeId"],
+                    $data["filter"]["startDate"],
+                    $data["filter"]["endDate"]
+                );
+            // load schedule model
+            $this->load->model("Timeoff_model", "timeoff_model");
+            // get employee shifts
+            $data["leaves"] = $this->timeoff_model
+                ->getEmployeeTimeOffsInRange(
                     $data["filter"]["employeeId"],
                     $data["filter"]["startDate"],
                     $data["filter"]["endDate"]

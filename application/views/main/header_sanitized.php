@@ -26,7 +26,7 @@
     <?= $appCSS ?? ""; ?>
     <?= bundleCSS([
         "v1/app/css/global",
-    ], "public/v1/app/", "global", true); ?>
+    ], "public/v1/app/", "global", false); ?>
 </head>
 
 <body>
@@ -148,6 +148,7 @@
                                         <li>
                                             <img src="<?= base_url() ?>assets/images/canada.png" alt="Canada">
                                         </li>
+                                        <?php $this->load->view("v1/attendance/partials/clocks/green/header"); ?>
                                     </ul>
                                 </div>
                                 <?php if (!$this->session->userdata('logged_in')) { ?>
@@ -806,22 +807,8 @@
                                                         <?php } ?>
 
 
-                                                        <?php if (check_access_permissions_for_view($securityDetails, 'attendance_management')) { ?>
-                                                            <?php $data['session'] = $this->session->userdata('logged_in'); ?>
-                                                            <?php $company_sid = $data["session"]["company_detail"]["sid"]; ?>
-                                                            <?php //if(in_array($company_sid, explode(',', TEST_COMPANIES))) { 
-                                                            ?>
-                                                            <?php if (in_array($company_sid, array())) { ?>
-                                                                <li>
-                                                                    <a <?php if (base_url(uri_string()) == site_url('attendance')) {
-                                                                            echo 'class="active_header_nav"';
-                                                                        } ?> href="<?php echo base_url(); ?>attendance">
-                                                                        <figure><i class="fa fa-calendar"></i></figure>
-                                                                        Time & Attendance <span class="beta-label">beta</span>
-                                                                    </a>
-                                                                </li>
-                                                            <?php } ?>
-                                                        <?php } ?>
+                                                        <?php $this->load->view("v1/attendance/partials/clocks/green/quick_links"); ?>
+
 
 
                                                         <?php if (check_access_permissions_for_view($securityDetails, 'support_tickets')) { ?>

@@ -29,6 +29,7 @@ $(function markAttendance() {
 	 */
 	$(document).on("click", ".jsAttendanceBtn", function (event) {
 		event.preventDefault();
+		event.stopPropagation();
 		//
 		const eventType = $(this).data("type");
 		return _confirm(
@@ -291,6 +292,10 @@ $(function markAttendance() {
 		if (XHR !== null) {
 			return;
 		}
+		const buttonRef = callButtonHook(
+			$(`.jsAttendanceBtn[data-type="${eventType}"]`),
+			true
+		);
 		let ref = _showNotification(
 			"Please wait, while we are processing your request."
 		);
@@ -307,6 +312,7 @@ $(function markAttendance() {
 			headers: { "content-type": "application/json" },
 		})
 			.always(function () {
+				callButtonHook(buttonRef, false);
 				closeAlert(ref);
 				XHR = null;
 			})

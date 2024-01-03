@@ -82,8 +82,8 @@ class Main extends Public_Controller
         $post = $this->input->post(null, true);
         $latLon = $this->attendance_lib->getRandomLatLon();
         // set lat long for demo purposes
-        // $post["latitude"] = $latLon["lat"];
-        // $post["longitude"] = $latLon["lng"];
+        $post["latitude"] = $latLon["lat"];
+        $post["longitude"] = $latLon["lng"];
         //
         $this->clock_model->markAttendance(
             $this->loggedInCompany["sid"],
@@ -109,6 +109,33 @@ class Main extends Public_Controller
                 $startDate,
                 $endDate
             );
+    }
+
+    /**
+     * mark attendance
+     */
+    public function getMyTodaysFootprints()
+    {
+        // get todays footprints
+        $data["record"] = $this->clock_model
+            ->getClockWithState(
+                $this->loggedInCompany["sid"],
+                $this->loggedInEmployee["sid"],
+                getSystemDate(DB_DATE),
+                true
+            );
+        if ($data["record"]["state"]) {
+            // get the logs array
+            $data["logs"] = $this->clock_model
+                ->getAttendanceFootprints(
+                    $data["record"]["reference"],
+                    $data["record"]["allowed_breaks"]
+                );
+        }
+
+        return SendResponse(200, [
+            "logs" => $data["logs"]
+        ]);
     }
 
     /**
@@ -189,7 +216,7 @@ class Main extends Public_Controller
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully " . $post["status"] ? "Approved" : "UnApproved" . " the selected time slots."
+                "msg" => "You have successfully " . ($post["status"] == 1 ? "Approved" : "UnApproved") . " the selected time slots."
             ]
         );
     }

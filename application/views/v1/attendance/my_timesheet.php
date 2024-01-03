@@ -6,9 +6,9 @@
                 <i class="fa fa-arrow-left csF16" aria-hidden="true"></i>
                 &nbsp;Dashboard
             </a>
-            <a href="<?= base_url("attendance/my/timesheet"); ?>" class="btn btn-orange">
+            <a href="<?= base_url("attendance/my/overview"); ?>" class="btn btn-orange">
                 <i class="fa fa-eye csF16" aria-hidden="true"></i>
-                &nbsp;Time sheet
+                &nbsp;Overview
             </a>
         </div>
     </div>
@@ -158,6 +158,9 @@
                                         Overtime
                                     </th>
                                     <th scope="col" class="bg-black">
+                                        Status
+                                    </th>
+                                    <th scope="col" class="bg-black">
                                         Actions
                                     </th>
                                 </tr>
@@ -171,6 +174,7 @@
                                 //
                                 foreach ($datesPool as $v0) {
                                     $attendance = $records[$v0["date"]] ?? [];
+                                    $leave = $leaves[$v0["date"]] ?? [];
 
                                     if ($attendance) {
                                         $totalWorkedTime += $attendance["worked_time"];
@@ -182,48 +186,62 @@
                                         <td class="csVerticalAlignMiddle mh-100">
                                             <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
                                         </td>
-                                        <td class="csVerticalAlignMiddle mh-100">
-                                            <?= $attendance && $attendance["clocked_in"] ?
-                                                reset_datetime([
-                                                    "datetime" => $attendance["clocked_in"],
-                                                    "from_format" => DB_DATE_WITH_TIME,
-                                                    "format" => "h:i a",
-                                                    "_this" => $this,
-                                                    "from_timezone" => "UTC"
-                                                ]) : "Missing"; ?>
-                                            -
-                                            <?= $attendance && $attendance["clocked_out"] ? reset_datetime([
-                                                "datetime" => $attendance["clocked_out"],
-                                                "from_format" => DB_DATE_WITH_TIME,
-                                                "format" => "h:i a",
-                                                "_this" => $this,
-                                                "from_timezone" => "UTC"
-                                            ]) : "Missing"; ?>
-                                        </td>
-                                        <td class="csVerticalAlignMiddle mh-100">
-                                            <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
-                                        </td>
-                                        <td class="csVerticalAlignMiddle mh-100">
-                                            <?= $attendance ? convertSecondsToTime($attendance["breaks"]) : "0h"; ?>
-                                        </td>
-                                        <td class="csVerticalAlignMiddle mh-100">
-                                            <?= $attendance ? convertSecondsToTime($attendance["overtime"]) : "0h"; ?>
-                                        </td>
-                                        <td class="csVerticalAlignMiddle mh-100">
-                                            <?php if ($attendance) { ?>
-                                                <button class="btn btn-orange jsEditTimeSheet">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                                    &nbsp;
-                                                    Edit
-                                                </button>
-                                            <?php } else { ?>
-                                                <button class="btn btn-orange jsAddTimeSheet">
-                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                    &nbsp;
-                                                    Add
-                                                </button>
-                                            <?php } ?>
-                                        </td>
+                                        <?php if (!$leave) { ?>
+                                            <td class="csVerticalAlignMiddle mh-100">
+                                                <?= $attendance && $attendance["clocked_in"] ?
+                                                    formatDateToDB(
+                                                        $attendance["clocked_in"],
+                                                        DB_DATE_WITH_TIME,
+                                                        "h:i a"
+                                                    ) : "Missing"; ?>
+                                                -
+                                                <?= $attendance && $attendance["clocked_out"] ? formatDateToDB(
+                                                    $attendance["clocked_out"],
+                                                    DB_DATE_WITH_TIME,
+                                                    "h:i a"
+                                                ) : "Missing"; ?>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle mh-100">
+                                                <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle mh-100">
+                                                <?= $attendance ? convertSecondsToTime($attendance["breaks"]) : "0h"; ?>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle mh-100">
+                                                <?= $attendance ? convertSecondsToTime($attendance["overtime"]) : "0h"; ?>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle mh-100 text-<?= $attendance && $attendance["is_approved"] ? "green" : "red"; ?>">
+                                                <strong>
+                                                    <?= $attendance && $attendance["is_approved"] ? "APPROVED" : "PENDING"; ?>
+                                                </strong>
+                                            </td>
+                                            <td class="csVerticalAlignMiddle mh-100">
+                                                <?php if ($attendance) { ?>
+                                                    <?php if ($attendance["is_approved"] == 0) { ?>
+                                                        <button class="btn btn-orange jsEditTimeSheet">
+                                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                            &nbsp;
+                                                            Edit
+                                                        </button>
+                                                    <?php } ?>
+                                                <?php } else { ?>
+                                                    <button class="btn btn-orange jsAddTimeSheet">
+                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                        &nbsp;
+                                                        Add
+                                                    </button>
+                                                <?php } ?>
+                                            </td>
+                                        <?php } else { ?>
+                                            <td class="csVerticalAlignMiddle text-center mh-100" colspan="6">
+                                                <strong class="text-primary">
+                                                    Time off - <?= $leave["title"]; ?>
+                                                </strong>
+                                                <?php if ($leave["reason"]) { ?>
+                                                    <p><?= $leave["reason"] ?></p>
+                                                <?php } ?>
+                                            </td>
+                                        <?php } ?>
                                     </tr>
                                 <?php
                                 }
@@ -231,7 +249,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th scope="col" class="bg-black"></th>
+                                    <th scope=" col" class="bg-black"></th>
                                     <th scope="col" class="bg-black"></th>
                                     <th scope="col" class="bg-black">
                                         <?= convertSecondsToTime($totalWorkedTime); ?>
@@ -242,6 +260,7 @@
                                     <th scope="col" class="bg-black">
                                         <?= convertSecondsToTime($totalOvertime); ?>
                                     </th>
+                                    <th scope="col" class="bg-black"></th>
                                     <th scope="col" class="bg-black"></th>
                                 </tr>
                             </tfoot>

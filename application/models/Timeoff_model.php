@@ -2511,10 +2511,10 @@ class Timeoff_model extends CI_Model
         $consumedTime = 0;
         //
         foreach ($records as $record) {
-            $timeoffDays = json_decode($record['timeoff_days'],true)['days'];
-//
+            $timeoffDays = json_decode($record['timeoff_days'], true)['days'];
+            //
             foreach ($timeoffDays as $dayInfo) {
- if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dayInfo['date'])){
+                if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dayInfo['date'])) {
                     $dayInfo["date"] = formatDateToDB(
                         $dayInfo["date"],
                         DB_DATE,
@@ -2526,13 +2526,12 @@ class Timeoff_model extends CI_Model
                 //    
                 if (($timeoffDate >= $lastAnniversaryDate) && ($timeoffDate <= $upcomingAnniversaryDate)) {
                     $consumedTime = $consumedTime + $dayInfo['time'];
-                } 
+                }
             }
-            
         }
         //
         return $consumedTime;
-    }    
+    }
 
     /** 
      * Get employee carryover time
@@ -7112,5 +7111,73 @@ class Timeoff_model extends CI_Model
         $this->db->where('sid', $ploicyID);
         $this->db->where('company_sid', $companyId);
         $this->db->update('timeoff_policies', $data);
+    }
+
+    /**
+     * Get the employees time off within dates
+     * 
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function getEmployeeTimeOffsInRange(
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        // get the timeoffs ids within range
+        $records = $this->db
+            ->select("
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_requests.reason,
+            timeoff_policies.title
+        ")
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+            ->group_start()
+            ->group_start()
+            ->where('timeoff_requests.request_from_date <=', $startDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date >=', $startDate)
+            ->where('timeoff_requests.request_to_date <=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->group_end()
+            ->group_end()
+            ->where('timeoff_requests.status', 'approved')
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return [];
+        }
+
+        $returnArray = [];
+
+        foreach ($records as $v0) {
+            // get the dates in range
+            $datesPool = getDatesBetweenDates(
+                $v0["request_from_date"],
+                $v0["request_to_date"]
+            );
+            //
+            foreach ($datesPool as $v1) {
+                //
+                if ($v1["date"] >= $startDate && $v1["date"] <= $endDate) {
+                    $returnArray[$v1["date"]] = [
+                        "reason" => $v0["reason"],
+                        "title" => $v0["title"],
+                    ];
+                }
+            }
+        }
+        return $returnArray;
     }
 }

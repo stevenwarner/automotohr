@@ -290,7 +290,7 @@ $(function timeSheet() {
 		event.preventDefault();
 		//
 
-		processSheetStatus(1);
+		processSheetStatus(0);
 	});
 
 	function processSheetStatus(type) {

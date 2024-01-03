@@ -161,11 +161,11 @@
 	font-weight: 600;
 }
 .text-xxl {
-	font-size: 24px;
+	font-size: 24px !important;
 	font-weight: 600;
 }
 .text-xxxl {
-	font-size: 30px;
+	font-size: 30px !important;
 	font-weight: 600;
 }
 

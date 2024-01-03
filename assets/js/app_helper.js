@@ -558,3 +558,17 @@ if (typeof getSearchParam === "undefined") {
 		return param.get(index) || false;
 	}
 }
+
+if (typeof convertSecondsToTime === "undefined") {
+	/**
+	 * converts seconds to hours and minutes
+	 * @param {int} durationInSeconds
+	 */
+	function convertSecondsToTime(durationInSeconds) {
+		// Convert seconds to hours and minutes
+		const hours = Math.floor(durationInSeconds / 3600);
+		const minutes = Math.floor((durationInSeconds % 3600) / 60);
+		//
+		return hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
+	}
+}

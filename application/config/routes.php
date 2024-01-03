@@ -2080,6 +2080,7 @@ $route["payrolls/page/update"]["post"] =
 $route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
 $route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
 $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
+$route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/Main/getMyTodaysFootprints";
 $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
 $route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
