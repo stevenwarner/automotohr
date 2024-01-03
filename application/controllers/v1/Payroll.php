@@ -1218,8 +1218,7 @@ class Payroll extends CI_Controller
                 ->getEmployeePrimaryJob(
                     $employeeId
                 );
-            //    
-
+            //
             if ($data['primaryJob']['compensation']['adjust_for_minimum_wage'] == 1 && !empty($data['primaryJob']['compensation']['minimum_wages'])) {
                 $minimumWages = unserialize($data['primaryJob']['compensation']['minimum_wages']);
                 $selectedWages = array_column($minimumWages, 'uuid');
@@ -1230,6 +1229,7 @@ class Payroll extends CI_Controller
             ->getCompanyMinimumWages(
                 $employeeId
             );   
+            //
         } elseif ($step === 'home_address') {
             //
             $data['record'] = $this->payroll_model
