@@ -1982,7 +1982,7 @@ class Payroll_model extends CI_Model
                     'flsa_status' => $compensation['flsa_status'],
                     'effective_date' => $compensation['effective_date'],
                     'adjust_for_minimum_wage' => $compensation['adjust_for_minimum_wage'],
-                    'minimum_wages' => json_encode($compensation['minimum_wages']),
+                    'minimum_wages' => serialize($compensation['minimum_wages']),
                     'created_at' => getSystemDate(),
                     'updated_at' => getSystemDate()
                 ]);
@@ -2099,6 +2099,30 @@ class Payroll_model extends CI_Model
                 ->row_array();
         }
         return $job;
+    }
+
+    /**
+     * get company minimum wages
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getCompanyMinimumWages ($employeeId) {
+        $companyId = getEmployeeUserParent_sid($employeeId);
+        // get the company location
+        return $this->db
+            ->select('
+                gusto_uuid,
+                wage,
+                wage_type,
+                effective_date,
+                authority,
+                sid,
+            ')
+            ->where('company_sid', $companyId)
+            ->get('company_minimum_wages')
+            ->result_array();
+
     }
 
     /**
@@ -2529,7 +2553,7 @@ class Payroll_model extends CI_Model
     ): array {
         //
         $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
-        //
+        //./
         if ($response['errors']) {
             return $response;
         }
@@ -2572,15 +2596,20 @@ class Payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
         //
         $companyDetails['other_uuid'] = $gustoJob['gusto_uuid'];
+        //
+        $wagesInfo = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
         // let's make request
         $request = [];
         $request['version'] = $gustoJob['gusto_version'];
         $request['rate'] = $data['amount'];
         $request['flsa_status'] = $data['classification'];
         $request['payment_unit'] = $data['per'];
+        $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? true : false;
+        $request['minimum_wages'] = $wagesInfo['minimum_wages'];
         // $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
         // $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
         // response
+        //
         $gustoResponse = gustoCall(
             'updateEmployeeJobCompensation',
             $companyDetails,
@@ -2590,7 +2619,7 @@ class Payroll_model extends CI_Model
         //
         $errors = hasGustoErrors($gustoResponse);
         //
-        if ($errors) {
+        if ($errors) { 
             return $errors;
         }
         //
@@ -2601,6 +2630,7 @@ class Payroll_model extends CI_Model
         $ins['flsa_status'] = $gustoResponse['flsa_status'];
         $ins['effective_date'] = $gustoResponse['effective_date'];
         $ins['adjust_for_minimum_wage'] = $gustoResponse['adjust_for_minimum_wage'];
+        $ins['minimum_wages'] = serialize($gustoResponse['minimum_wages']);
         $ins['updated_at'] = getSystemDate();
         //
         $this->db
@@ -2635,6 +2665,33 @@ class Payroll_model extends CI_Model
 
         //
         return ['success' => true];
+    }
+
+    public function getMinimumWagesData ($minimumWage, $wagesId) {
+        //
+        $response = [
+            'minimumWage' => 0,
+            'minimum_wages' => []
+        ];
+        //
+        if ($minimumWage == 1 && !empty($wagesId)) {
+            //
+            $response['minimumWage'] = 1;
+            //
+            foreach ($wagesId as $id) {
+                //
+                $uuid = $this->db
+                ->select('gusto_uuid')
+                ->where('sid', $id)
+                ->get('company_minimum_wages')
+                ->row_array()['gusto_uuid'];
+                //
+                $wageInfo = array('uuid' => $uuid);
+                //
+                $response['minimum_wages'][] = $wageInfo;
+            }
+        }
+        return $response;
     }
 
     /**

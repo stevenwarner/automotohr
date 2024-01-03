@@ -47,13 +47,77 @@
             <div class="form-group">
                 <label class="csF16">Per <strong class="text-danger">*</strong></label>
                 <select class="form-control input-lg jsEmployeeFlowPer">
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Hour' ? 'selected' : ''; ?> value="Hour">Per hour</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Week' ? 'selected' : ''; ?> value="Week">Per week</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Month' ? 'selected' : ''; ?> value="Month">Per month</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Year' ? 'selected' : ''; ?> value="Year">Per year</option>
-                    <option <?= $primaryJou['compensation']['payment_unit'] === 'Paycheck' ? 'selected' : ''; ?> value="Paycheck">Per paycheck</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Hour' ? 'selected' : ''; ?> value="Hour">Per hour</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Week' ? 'selected' : ''; ?> value="Week">Per week</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Month' ? 'selected' : ''; ?> value="Month">Per month</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Year' ? 'selected' : ''; ?> value="Year">Per year</option>
+                    <option <?= $primaryJob['compensation']['payment_unit'] === 'Paycheck' ? 'selected' : ''; ?> value="Paycheck">Per paycheck</option>
                 </select>
             </div>
+
+            <!--  -->
+            <div class="form-group">
+                <label class="csF16">Minimum Wage <strong class="text-danger">*</strong></label>
+                <select class="form-control input-lg jsEmployeeFlowMinimumWage">
+                    <option <?= $primaryJob['compensation']['adjust_for_minimum_wage'] == 1 ? 'selected' : ''; ?> value="1">True</option>
+                    <option <?= $primaryJob['compensation']['adjust_for_minimum_wage'] == 0 ? 'selected' : ''; ?> value="0">False</option>
+                </select>
+            </div>
+
+            <div class="row grid-columns">
+                <?php if (!empty($minimumWages)) { ?>
+                    <?php foreach ($minimumWages as $key => $wage) { ?>
+                        <div class="col-xs-12 col-md-4 col-sm-6 col-lg-4">
+                            <label class="package_label" for="wage_<?php echo $wage['sid']; ?>">
+                                <?php 
+                                    $selectedWage = '';
+                                    //
+                                    if ($primaryJob['compensation']['adjust_for_minimum_wage'] == 1 && !empty($selectedWages)) {
+                                        //
+                                        if (in_array($wage['gusto_uuid'], $selectedWages)) {
+                                            //
+                                            $selectedWage = 'selected-package';
+                                        }
+                                    }
+
+                                ?>
+                                <div class="img-thumbnail text-center package-info-box <?php echo $selectedWage; ?>" data-id="<?php echo $wage['sid']; ?>">
+                                    <figure>
+                                        <i class="fa fa-money"></i>
+                                    </figure>
+                                    <div class="caption">
+                                        <h3>
+                                            Wage:
+                                            <br>
+                                            <strong><?php echo '$'.$wage['wage']; ?></strong>
+                                            <br>
+                                            <strong><?php echo '$'.$selectedWage; ?></strong>
+                                        </h3>
+                                        <hr>
+                                        <h3>
+                                            Wage type:
+                                            <br>
+                                            <strong><?php echo $wage['wage_type']; ?></strong>
+                                        </h3>
+                                        <hr><h3>
+                                            Authority:
+                                            <br>
+                                            <strong><?php echo $wage['authority']; ?></strong>
+                                        </h3>
+                                        <hr>
+                                        <h3>
+                                            Effective date:
+                                            <br>
+                                            <strong><?php echo $wage['effective_date']; ?></strong>
+                                        </h3>
+                                    </div>
+                                    <input <?php echo set_checkbox('wage[]', $wage['sid'], in_array($wage['sid'], $minimumWages)); ?> class="select-package" data-type="wage" id="wage_<?php echo $wage['sid']; ?>" name="wage[]" type="checkbox" value="<?php echo $wage['sid']; ?>" />
+                                </div>
+                            </label>
+                        </div>
+                    <?php } ?>
+                <?php } ?>
+            </div>        
 
         </form>
     </div>
