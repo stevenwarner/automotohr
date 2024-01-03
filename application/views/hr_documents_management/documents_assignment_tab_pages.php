@@ -1483,107 +1483,108 @@ $noActionRequiredDocumentsList = [];
                     <!-- Category Completed Document End -->
 
                     <?php $this->load->view("hr_documents_management/partials/tabs/completed_state_forms"); ?>
-
-                    <?php if (!empty($completed_w4) || !empty($completed_w9) || !empty($completed_i9)) { ?>
-                        <?php $cvd = count($completed_w4) + count($completed_w9) + count($completed_i9); ?>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="panel panel-default hr-documents-tab-content">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1">
-                                                <span class="glyphicon glyphicon-plus"></span>
-                                                Employment Eligibility Verification Document
-                                                <div class="pull-right total-records">
-                                                    <b>&nbsp;Total: <span class="js-cdi"><?php echo $cvd; ?></span> </b>
-                                                </div>
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapse_completed-1" class="panel-collapse collapse">
-                                        <div class="table-responsive full-width">
-                                            <table class="table table-plane">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="column" class="col-lg-8">
-                                                            Document Name
-                                                        </th>
-                                                        <th scope="column" class="col-lg-2">
-                                                            Status
-                                                        </th>
-                                                        <th scope="column" class="col-lg-2">
-                                                            Actions
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php if (!empty($completed_w4)) { ?>
-                                                        <?php foreach ($completed_w4 as $w4_form) { ?>
-                                                            <?php $cd++; ?>
-                                                            <tr>
-                                                                <td class="col-lg-8">
-                                                                    W4 Fillable
-                                                                    <br />
-                                                                    <strong>Assigned on: </strong>
-                                                                    <?php echo date('M d Y, D', strtotime($w4_form['sent_date'])); ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <?php echo $w4_form['form_status']; ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <a href="javascript:;" data-type="W4_Form" data-section="complete_pdf" data-status="<?php echo $w4_form['form_status']; ?>" data-doc_sid="<?php echo $w4_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W4 form">View W4</a>
-                                                                </td>
-                                                            </tr>
+                    <?php if (isPayrollOrPlus()) { ?>
+                        <?php if (!empty($completed_w4) || !empty($completed_w9) || !empty($completed_i9)) { ?>
+                            <?php $cvd = count($completed_w4) + count($completed_w9) + count($completed_i9); ?>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default hr-documents-tab-content">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1">
+                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                    Employment Eligibility Verification Document
+                                                    <div class="pull-right total-records">
+                                                        <b>&nbsp;Total: <span class="js-cdi"><?php echo $cvd; ?></span> </b>
+                                                    </div>
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse_completed-1" class="panel-collapse collapse">
+                                            <div class="table-responsive full-width">
+                                                <table class="table table-plane">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="column" class="col-lg-8">
+                                                                Document Name
+                                                            </th>
+                                                            <th scope="column" class="col-lg-2">
+                                                                Status
+                                                            </th>
+                                                            <th scope="column" class="col-lg-2">
+                                                                Actions
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php if (!empty($completed_w4)) { ?>
+                                                            <?php foreach ($completed_w4 as $w4_form) { ?>
+                                                                <?php $cd++; ?>
+                                                                <tr>
+                                                                    <td class="col-lg-8">
+                                                                        W4 Fillable
+                                                                        <br />
+                                                                        <strong>Assigned on: </strong>
+                                                                        <?php echo date('M d Y, D', strtotime($w4_form['sent_date'])); ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <?php echo $w4_form['form_status']; ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <a href="javascript:;" data-type="W4_Form" data-section="complete_pdf" data-status="<?php echo $w4_form['form_status']; ?>" data-doc_sid="<?php echo $w4_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W4 form">View W4</a>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
                                                         <?php } ?>
-                                                    <?php } ?>
 
-                                                    <?php if (!empty($completed_w9)) { ?>
-                                                        <?php foreach ($completed_w9 as $w9_form) { ?>
-                                                            <?php $cd++; ?>
-                                                            <tr>
-                                                                <td class="col-lg-8">
-                                                                    W9 Fillable
-                                                                    <br />
-                                                                    <strong>Assigned on: </strong>
-                                                                    <?php echo date('M d Y, D', strtotime($w9_form['sent_date'])); ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <?php echo $w9_form['form_status']; ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <a href="javascript:;" data-type="W9_Form" data-section="complete_pdf" data-status="<?php echo $w9_form['form_status']; ?>" data-doc_sid="<?php echo $w9_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W9 form">View W9</a>
-                                                                </td>
-                                                            </tr>
+                                                        <?php if (!empty($completed_w9)) { ?>
+                                                            <?php foreach ($completed_w9 as $w9_form) { ?>
+                                                                <?php $cd++; ?>
+                                                                <tr>
+                                                                    <td class="col-lg-8">
+                                                                        W9 Fillable
+                                                                        <br />
+                                                                        <strong>Assigned on: </strong>
+                                                                        <?php echo date('M d Y, D', strtotime($w9_form['sent_date'])); ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <?php echo $w9_form['form_status']; ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <a href="javascript:;" data-type="W9_Form" data-section="complete_pdf" data-status="<?php echo $w9_form['form_status']; ?>" data-doc_sid="<?php echo $w9_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W9 form">View W9</a>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php } ?>
                                                         <?php } ?>
-                                                    <?php } ?>
 
-                                                    <?php if (!empty($completed_i9)) { ?>
-                                                        <?php foreach ($completed_i9 as $i9_form) { ?>
-                                                            <?php $cd++; ?>
-                                                            <tr>
-                                                                <td class="col-lg-8">
-                                                                    I9 Fillable
-                                                                    <br />
-                                                                    <strong>Assigned on: </strong>
-                                                                    <?php echo date('M d Y, D', strtotime($i9_form['sent_date'])); ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <?php echo $i9_form['form_status']; ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <a href="javascript:;" data-type="I9_Form" data-section="complete_pdf" data-status="<?php echo $i9_form['form_status']; ?>" data-doc_sid="<?php echo $i9_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View I9 form">View I9</a>
-                                                                </td>
+                                                        <?php if (!empty($completed_i9)) { ?>
+                                                            <?php foreach ($completed_i9 as $i9_form) { ?>
+                                                                <?php $cd++; ?>
+                                                                <tr>
+                                                                    <td class="col-lg-8">
+                                                                        I9 Fillable
+                                                                        <br />
+                                                                        <strong>Assigned on: </strong>
+                                                                        <?php echo date('M d Y, D', strtotime($i9_form['sent_date'])); ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <?php echo $i9_form['form_status']; ?>
+                                                                    </td>
+                                                                    <td class="col-lg-2">
+                                                                        <a href="javascript:;" data-type="I9_Form" data-section="complete_pdf" data-status="<?php echo $i9_form['form_status']; ?>" data-doc_sid="<?php echo $i9_form['sid']; ?>" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View I9 form">View I9</a>
+                                                                    </td>
 
-                                                            </tr>
+                                                                </tr>
+                                                            <?php } ?>
                                                         <?php } ?>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <?php } ?>
                     <?php } ?>
                 </div>
             </div>

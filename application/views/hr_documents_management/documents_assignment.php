@@ -64,7 +64,7 @@ $assignIdObj = $confidential_sids;
                             <?php $this->load->view('hr_documents_management/documents_assignment_tab_pages'); ?>
 
 
-                            <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
+                            <?php if (isPayrollOrPlus()) { ?>
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="hr-box">
