@@ -361,7 +361,7 @@
         <?php  } ?>
 
         <?php if (isPayrollOrPlus(true)) { ?>
-            <li class="hidden">
+            <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('minimum_wages')) !== false) {
                         echo 'class="active"';
                     } ?> href="<?php echo base_url("minimum_wages"); ?>">

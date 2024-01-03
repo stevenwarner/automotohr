@@ -255,7 +255,7 @@
                                                     Company Overtime Rules
                                                 </a>
                                             </li>
-                                            <li class="hidden">
+                                            <li>
                                                 <a href="<?= base_url("minimum_wages"); ?>">
                                                     Company Minimum Wages
                                                 </a>
