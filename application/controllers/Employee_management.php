@@ -1773,7 +1773,7 @@ class Employee_management extends Public_Controller
                     $department = $this->input->post('department');
                     $teams = $this->input->post('teams');
                     //
-                    if (isset($teams) && !empty($teams) && $department != 0) {    
+                    if (isset($teams) && !empty($teams) && $department != 0) {
                         $old_assign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
                         $add_team_sids = array();
                         $delete_team_sids = array();
@@ -1894,6 +1894,15 @@ class Employee_management extends Public_Controller
                             $this->input->post('policies')
                         );
                     }
+                    //
+                    if (checkIfAppIsEnabled(PAYROLL)) {
+                        //
+                        $this->load->model("v1/Payroll_model", "payroll_model");
+                        //
+                        $this->payroll_model->handleRateUpdate(
+                            $sid
+                        );
+                    }
                     // Profile save intercept
                     $this->handleProfileChange(
                         $this->input->post(null, true),
@@ -1927,7 +1936,6 @@ class Employee_management extends Public_Controller
                         if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);
                         }
-                        
                     }
 
                     //

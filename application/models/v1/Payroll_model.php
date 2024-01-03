@@ -25,7 +25,7 @@ class Payroll_model extends CI_Model
                 ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
             }
         }
-        
+
         // set the admin
         $this->adminArray = [
             'first_name' => 'Steven',
@@ -36,7 +36,8 @@ class Payroll_model extends CI_Model
     }
 
 
-    public function loadPayrollHelper(int $companyId) {
+    public function loadPayrollHelper(int $companyId)
+    {
         // load the payroll helper
         $this->load->helper('v1/payroll' . ($this->db->where([
             "company_sid" => $companyId,
@@ -2107,7 +2108,8 @@ class Payroll_model extends CI_Model
      * @param int $employeeId
      * @return array
      */
-    public function getCompanyMinimumWages ($employeeId) {
+    public function getCompanyMinimumWages($employeeId)
+    {
         $companyId = getEmployeeUserParent_sid($employeeId);
         // get the company location
         return $this->db
@@ -2122,7 +2124,6 @@ class Payroll_model extends CI_Model
             ->where('company_sid', $companyId)
             ->get('company_minimum_wages')
             ->result_array();
-
     }
 
     /**
@@ -2619,7 +2620,7 @@ class Payroll_model extends CI_Model
         //
         $errors = hasGustoErrors($gustoResponse);
         //
-        if ($errors) { 
+        if ($errors) {
             return $errors;
         }
         //
@@ -2667,7 +2668,8 @@ class Payroll_model extends CI_Model
         return ['success' => true];
     }
 
-    public function getMinimumWagesData ($minimumWage, $wagesId) {
+    public function getMinimumWagesData($minimumWage, $wagesId)
+    {
         //
         $response = [
             'minimumWage' => 0,
@@ -2681,10 +2683,10 @@ class Payroll_model extends CI_Model
             foreach ($wagesId as $id) {
                 //
                 $uuid = $this->db
-                ->select('gusto_uuid')
-                ->where('sid', $id)
-                ->get('company_minimum_wages')
-                ->row_array()['gusto_uuid'];
+                    ->select('gusto_uuid')
+                    ->where('sid', $id)
+                    ->get('company_minimum_wages')
+                    ->row_array()['gusto_uuid'];
                 //
                 $wageInfo = array('uuid' => $uuid);
                 //
@@ -5637,7 +5639,8 @@ class Payroll_model extends CI_Model
             ->count_all_results();
     }
 
-    public function syncEmployeeStatus ($employeeId, $employeeData) {
+    public function syncEmployeeStatus($employeeId, $employeeData)
+    {
         //
         $companyId = getEmployeeUserParent_sid($employeeId);
         //
@@ -5682,12 +5685,13 @@ class Payroll_model extends CI_Model
                     //
                 }
             }
-        }    
+        }
         //
         return $response;
     }
-    
-    public function updateEmployeeStatusOnGusto ($employeeId, $companyId, $employeeData) {
+
+    public function updateEmployeeStatusOnGusto($employeeId, $companyId, $employeeData)
+    {
         //
         $companyPayrollStatus = $this->GetCompanyPayrollStatus($companyId);
         $employeePayrollStatus = $this->checkEmployeePayrollStatus($employeeId, $companyId);
@@ -5732,10 +5736,11 @@ class Payroll_model extends CI_Model
             }
         }
         //
-        return $response;    
+        return $response;
     }
-    
-    public function updateEmployeeStatus($rowId, $data) {
+
+    public function updateEmployeeStatus($rowId, $data)
+    {
         $updateArray = [];
         $updateArray['payroll_version'] = $data['version'];
         $updateArray['payroll_object'] = serialize($data);
@@ -5745,15 +5750,16 @@ class Payroll_model extends CI_Model
             ->update('terminated_employees', $updateArray);
     }
 
-    function GetCompanyPayrollStatus($companyId) {
+    function GetCompanyPayrollStatus($companyId)
+    {
         $this->db->select('is_active');
         $this->db->where('company_sid', $companyId);
         $this->db->where('module_sid', 7);
-        
+
         $record_obj = $this->db->get('company_modules');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             if ($record_arr['is_active'] == 1) {
                 return true;
@@ -5765,12 +5771,13 @@ class Payroll_model extends CI_Model
         }
     }
 
-    function checkEmployeePayrollStatus ($employeeId, $companyId) {
+    function checkEmployeePayrollStatus($employeeId, $companyId)
+    {
         $this->db->where('employee_sid', $employeeId);
         $this->db->where('company_sid', $companyId);
         $this->db->from('gusto_companies_employees');
         $record_count = $this->db->count_all_results();
-    
+
         if ($record_count > 0) {
             return true;
         } else {
@@ -5778,7 +5785,8 @@ class Payroll_model extends CI_Model
         }
     }
 
-    public function getGustoCompanyDetail ($companyId) {
+    public function getGustoCompanyDetail($companyId)
+    {
         //
         $this->db->select('refresh_token, access_token, gusto_uuid');
         $this->db->where('company_sid', $companyId);
@@ -5790,10 +5798,11 @@ class Payroll_model extends CI_Model
             return $record_arr;
         } else {
             return array();
-        }    
+        }
     }
 
-    public function getEmployeeGustoId ($employeeId, $companyId) {
+    public function getEmployeeGustoId($employeeId, $companyId)
+    {
         //
         $this->db->select('gusto_uuid');
         $this->db->where('employee_sid', $employeeId);
@@ -5806,12 +5815,13 @@ class Payroll_model extends CI_Model
             return $record_arr['gusto_uuid'];
         } else {
             return '';
-        }    
+        }
     }
 
-    public function getEmployeeGustoWorkId (int $employeeId) {
+    public function getEmployeeGustoWorkId(int $employeeId)
+    {
         //
-        $this->db->select('gusto_location_uuid');     
+        $this->db->select('gusto_location_uuid');
         $this->db->where('employee_sid', $employeeId);
         //
         $record_obj = $this->db->get('gusto_companies_employees_work_addresses');
@@ -5822,7 +5832,7 @@ class Payroll_model extends CI_Model
             return $record_arr['gusto_location_uuid'];
         } else {
             return '';
-        }    
+        }
     }
 
     /**
@@ -5831,7 +5841,7 @@ class Payroll_model extends CI_Model
      * @param int $companyId
      * @return string
      */
-    public function getCompanyOnboardingStatus (int $companyId): string
+    public function getCompanyOnboardingStatus(int $companyId): string
     {
         $status = 'Not Connected';
         //
@@ -5845,7 +5855,7 @@ class Payroll_model extends CI_Model
         //
         if (!empty($record)) {
             $status = $record['status'];
-        } 
+        }
         //
         return $status;
     }
@@ -5856,7 +5866,7 @@ class Payroll_model extends CI_Model
      * @param int   $companyId
      * @return array
      */
-    public function getCompanySignatoriesInfo (int $companyId): array
+    public function getCompanySignatoriesInfo(int $companyId): array
     {
         //
         return $this->db
@@ -5872,7 +5882,7 @@ class Payroll_model extends CI_Model
      * @param int   $companyId
      * @return array
      */
-    public function getCompanyBankInfo (int $companyId): array
+    public function getCompanyBankInfo(int $companyId): array
     {
         //
         return $this->db
@@ -5888,7 +5898,7 @@ class Payroll_model extends CI_Model
      * @param int   $companyId
      * @return array
      */
-    public function getCompanyFederalTaxInfo (int $companyId): array
+    public function getCompanyFederalTaxInfo(int $companyId): array
     {
         //
         return $this->db
@@ -5904,7 +5914,7 @@ class Payroll_model extends CI_Model
      * @param int   $companyId
      * @return array
      */
-    public function getCompanyEarningTypesForDashboard (int $companyId): array
+    public function getCompanyEarningTypesForDashboard(int $companyId): array
     {
         //
         return $this->db
@@ -5949,7 +5959,7 @@ class Payroll_model extends CI_Model
             foreach ($employees as $eKey => $employee) {
                 $employees[$eKey]['name'] = getUserNameBySID($employee['employee_sid']);
             }
-        }    
+        }
         //
         return $employees;
     }
@@ -5984,5 +5994,65 @@ class Payroll_model extends CI_Model
             ->where('company_sid', $companyId)
             ->get('companies_pay_schedules')
             ->result_array();
+    }
+
+
+    public function handleRateUpdate($employeeId)
+    {
+        // let's check the employee
+        $gustoEmployee = $this->db
+            ->select('gusto_uuid, gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+        // check and create
+        if (!$gustoEmployee) {
+            return [];
+        }
+        // get employee compensation
+        $employee = $this->db
+            ->select("
+                parent_sid,
+                payment_method,
+                hourly_rate,
+                hourly_technician,
+                flat_rate_technician,
+                semi_monthly_salary,
+                semi_monthly_draw,
+            ")
+            ->where('sid', $employeeId)
+            ->get("users")
+            ->row_array();
+        //
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($employee["parent_sid"]);
+        // add employee gusto uuid
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        $companyDetails['company_sid'] = $employee["parent_sid"];
+        //
+        $data = [];
+        //
+        if ((int) $employee['hourly_rate'] != 0) {
+            $data['amount'] = $employee['hourly_rate'];
+            $data['classification'] = "Nonexempt";
+            $data['per'] = "Hour";
+        } elseif ((int) $employee['hourly_technician'] != 0) {
+            $data['amount'] = $employee['hourly_technician'];
+            $data['classification'] = "Nonexempt";
+            $data['per'] = "Hour";
+        } elseif ((int) $employee['flat_rate_technician'] != 0) {
+            $data['amount'] = $employee['flat_rate_technician'];
+            $data['classification'] = "Nonexempt";
+            $data['per'] = "Hour";
+        } elseif ((int) $employee['semi_monthly_salary'] != 0) {
+            $data['amount'] = $employee['semi_monthly_salary'];
+            $data['classification'] = "Exempt";
+            $data['per'] = "Month";
+        } elseif ((int) $employee['semi_monthly_draw'] != 0) {
+            $data['amount'] = $employee['semi_monthly_draw'];
+            $data['classification'] = "Exempt";
+            $data['per'] = "Month";
+        }
+        $this->updateEmployeeCompensation($employeeId, $data);
     }
 }
