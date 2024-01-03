@@ -225,4 +225,11 @@ class Testing extends CI_Controller
     public function scormFix () {
         $this->load->view('Testing');
     }
+
+    public function holiday () {
+        $this->load->model('timeoff_model');
+        // $this->timeoff_model->holidayShifter("15708");
+        $this->timeoff_model->getPublicHolidays();
+        _e("end script",true,true);
+    }
 }
