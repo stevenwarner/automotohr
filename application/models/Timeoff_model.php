@@ -7113,4 +7113,90 @@ class Timeoff_model extends CI_Model
         $this->db->where('company_sid', $companyId);
         $this->db->update('timeoff_policies', $data);
     }
+
+    /**
+     * Get and set Google holidays
+     */
+    public function holidayShifter($companyId, $publicHolidays)
+    {
+        //
+        $ins = [];
+        $year = date('Y', strtotime('now'));
+        //
+        if ($publicHolidays) {
+            foreach ($publicHolidays as $holiday) {
+                $holidaySlug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($holiday['holiday_title'])));
+                //
+                $this->db->select('*');
+                $this->db->where('holiday_title', $holiday['holiday_title']);
+                $this->db->where('company_sid', $companyId);
+                $this->db->order_by('holiday_year', 'DESC');
+                $record_obj = $this->db->get('timeoff_holidays');
+                $previousHoliday = $record_obj->row_array();
+                $record_obj->free_result();
+                //
+                if (empty($previousHoliday)) {
+                 
+                    $ins['company_sid'] = $companyId;
+                    $ins['creator_sid'] = $companyId;
+                    $ins['holiday_year'] = $holiday['holiday_year'];
+                    $ins['holiday_title'] = $holiday['holiday_title'];
+                    $ins['frequency'] = 'yearly';
+                    $ins['icon'] = !empty($holiday['icon']) ? $holiday['icon'] : "";
+                    $ins['from_date'] = $holiday['from_date'];
+                    $ins['to_date'] = $holiday['to_date'];
+                    $ins['event_link'] = $holiday['event_link'];
+                    $ins['status'] = $holiday['status'];
+                    $ins['is_public'] = 1;
+                    $ins['is_archived'] = 0;
+                    $ins['sort_order'] = 1;
+                    $ins['work_on_holiday'] = 1;
+                    $ins['created_at'] = $ins['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    //
+                    $this->db->insert('timeoff_holidays', $ins);
+                    //
+                } else if ($previousHoliday['holiday_year'] != $year) {
+                    $ins = $previousHoliday;
+                    //
+                    unset($ins['sid'], $ins['created_at'], $ins['updated_at']);
+                    //
+                    $ins['holiday_year'] = $year;
+                    $ins['created_at'] = $ins['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    //
+                    if (isset($holiday['holiday_title'])) {
+                        $ins['from_date'] = $holiday['from_date'];
+                        $ins['to_date'] = $holiday['to_date'];
+                    } else {
+                        $ins['from_date'] = preg_replace("/$lastYear/", $year, $ins['from_date']);
+                        $ins['to_date'] = preg_replace("/$lastYear/", $year, $ins['to_date']);
+                    }
+                    //
+                    $this->db->insert('timeoff_holidays', $ins);
+                    //
+                }
+            }
+        }
+        //
+    }
+
+    function getPublicHolidays () {
+        
+        //company_modules
+        $this->db->select('company_sid');
+        $this->db->where('module_sid', 1);
+        $this->db->where('is_active', 1);
+        $record_obj = $this->db->get('company_modules');
+        $timeoffCompanies = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if ($timeoffCompanies) {
+            // Get public holidays
+            $publicHolidays = getCurrentYearHolidaysFromGoogle();
+            //
+            foreach ($timeoffCompanies as $value) {
+                $this->holidayShifter($value['company_sid'], $publicHolidays);
+            }
+        }
+        //
+    }
 }
