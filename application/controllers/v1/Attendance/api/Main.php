@@ -82,8 +82,8 @@ class Main extends Public_Controller
         $post = $this->input->post(null, true);
         $latLon = $this->attendance_lib->getRandomLatLon();
         // set lat long for demo purposes
-        $post["latitude"] = $latLon["lat"];
-        $post["longitude"] = $latLon["lng"];
+        // $post["latitude"] = $latLon["lat"];
+        // $post["longitude"] = $latLon["lng"];
         //
         $this->clock_model->markAttendance(
             $this->loggedInCompany["sid"],
