@@ -565,15 +565,16 @@ class Shift_model extends CI_Model
         if ($post["breaks"]) {
             foreach ($post["breaks"] as $index => $break) {
                 if ($break["start_time"]) {
-                    $time = new DateTime();
-                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
-                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
                     $post["breaks"][$index]["start_time"] = formatDateToDB(
                         $break["start_time"],
                         "h:i a",
                         "H:i"
                     );
+                    $time = new DateTime(getSystemDate(DB_DATE) . " " . $post["breaks"][$index]["start_time"]);
+                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
+                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
                 }
+                $post["breaks"][$index]["id"] = uniqid(time());
             }
         } else {
             $post["breaks"] = [];
@@ -699,15 +700,16 @@ class Shift_model extends CI_Model
         if ($post["breaks"]) {
             foreach ($post["breaks"] as $index => $break) {
                 if ($break["start_time"]) {
-                    $time = new DateTime();
-                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
-                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
                     $post["breaks"][$index]["start_time"] = formatDateToDB(
                         $break["start_time"],
                         "h:i a",
                         "H:i"
                     );
+                    $time = new DateTime(getSystemDate(DB_DATE) . " " . $post["breaks"][$index]["start_time"]);
+                    $time->add(new DateInterval('PT' . $break["duration"] . 'M'));
+                    $post["breaks"][$index]["end_time"] = $time->format('H:i');
                 }
+                $post["breaks"][$index]["id"] = uniqid(time());
             }
         } else {
             $post["breaks"] = [];

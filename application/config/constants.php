@@ -688,3 +688,5 @@ define('W4_EXEMPTION_FROM_WITHHOLDING_23', 'You may claim exemption from withhol
 
 
 define("SCHEDULE_MODULE", "schedule");
+// modules
+define('MODULE_ATTENDANCE', 'attendance');

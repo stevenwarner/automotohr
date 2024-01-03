@@ -216,39 +216,24 @@
                 </a>
             </li>
         <?php } ?>
-        <?php if (checkIfAppIsEnabled("payroll")) { ?>
+
+        <?php if (isPayrollOrPlus(true)) { ?>
             <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('company/taxes')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('company/taxes'); ?>">
-                    <figure><i class="fa fa-money" aria-hidden="true"></i></figure>Company Tax Information
+                <a <?= uri_string() === "schedules" ? 'class="active"' : ""; ?> href="<?php echo base_url('schedules'); ?>">
+                    <figure>
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                    </figure>
+                    Company Pay Schedules
                 </a>
             </li>
         <?php } ?>
-        <?php if (checkIfAppIsEnabled("payroll")) { ?>
+        <?php if (isPayrollOrPlus(true)) { ?>
             <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('company/bank_account')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('company/bank_account'); ?>">
-                    <figure><i class="fa fa-bank" aria-hidden="true"></i></figure>Company Bank Account
-                </a>
-            </li>
-        <?php } ?>
-        <?php if (checkIfAppIsEnabled("payroll")) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('company/locations')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('company/locations'); ?>">
-                    <figure><i class="fa fa-map" aria-hidden="true"></i></figure>Company Locations
-                </a>
-            </li>
-        <?php } ?>
-        <?php if (checkIfAppIsEnabled("payroll")) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('company/pay_periods')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url('company/pay_periods'); ?>">
-                    <figure><i class="fa fa-calendar-check-o" aria-hidden="true"></i></figure>Company Pay Periods
+                <a <?= uri_string() === "overtimerules" ? 'class="active"' : ""; ?> href="<?php echo base_url('overtimerules'); ?>">
+                    <figure>
+                        <i class="fa fa-cogs" aria-hidden="true"></i>
+                    </figure>
+                    Company Overtime Rules
                 </a>
             </li>
         <?php } ?>

@@ -523,9 +523,10 @@ $(function manageShifts() {
 			// abort the call
 			return;
 		}
+		let btnRef;
 		//
 		if (buttonRef) {
-			const btnRef = callButtonHook(buttonRef, true);
+			btnRef = callButtonHook(buttonRef, true);
 		}
 		
 		// make a new call
