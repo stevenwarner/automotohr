@@ -105,7 +105,6 @@ class Main extends Public_Controller
      */
     public function dashboard(int $userId, string $userType)
     {
-        return redirect("dashboard");
         //
         $this->data["title"] = "Payroll dashboard";
         //
@@ -188,18 +187,11 @@ class Main extends Public_Controller
     public function updatePage()
     {
         // check and generate error for session
-        checkAndGetSession();
-        // set up the rules
-        $this->form_validation->set_rules("page", "Page name", "trim|xss_clean|required");
-        $this->form_validation->set_rules("rule_name", "Name", "trim|xss_clean|required");
-        $this->form_validation->set_rules("overtime_multiplier", "Overtime rate", "trim|xss_clean|required");
-        $this->form_validation->set_rules("double_overtime_multiplier", "Double time rate", "trim|xss_clean|required");
-        // run the validation
-        if (!$this->form_validation->run()) {
-            return SendResponse(400, getFormErrors());
-        }
+        $session = checkAndGetSession();
         // set the sanitized post
         $post = $this->input->post(null, true);
+        //
+        $post["companyId"] = $session["company_detail"]["sid"];
         // convert the slug to function
         $func = "process" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $post["page"])));
         // call the function

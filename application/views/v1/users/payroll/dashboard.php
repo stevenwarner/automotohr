@@ -113,31 +113,7 @@
                                     </div>
                                 </div>
 
-                                <!-- rules -->
-                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h3 class="text-medium panel-heading-text">
-                                                <i class="fa fa-money text-orange" aria-hidden="true"></i>
-                                                Overtime rules
-                                            </h3>
-                                        </div>
-                                        <div class="panel-body">
-                                            <p class="text-medium">
-                                                <strong>40 hours week</strong>
-                                            </p>
-                                            <p class="text-medium">
-                                                <strong>8 hours day, 40 hours week</strong>
-                                            </p>
-                                        </div>
-                                        <div class="panel-footer text-center">
-                                            <button class="btn btn-yellow">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                Edit Overtime rules
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                              
                             </div>
                             <!-- time & attendance -->
                             <div class="row">

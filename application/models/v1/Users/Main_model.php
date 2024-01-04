@@ -69,10 +69,9 @@ class Main_model extends CI_Model
         $record = $this->db
             ->select("pay_schedule_sid")
             ->where([
-                "user_sid" => $userId,
-                "user_type" => $userType
+                "employee_sid" => $userId,
             ])
-            ->get("users_pay_schedule")
+            ->get("employees_pay_schedule")
             ->row_array();
         //
         if (!$record || !$fullInfo) {
@@ -102,9 +101,15 @@ class Main_model extends CI_Model
         string $userType,
         array $post
     ): array {
+        // set up the rules
+        $this->form_validation->set_rules("pay_schedule", "pay schedule", "trim|xss_clean|required");
+        // run the validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(400, getFormErrors());
+        }
         //
         $status = 400;
-        $response = ["msg" => "Something went wrong while updating users pay schedule."];
+        $response = ["msg" => "Something went wrong while updating employee's pay schedule."];
         // validation
         // set up the rules
         $this->form_validation->set_rules("pay_schedule", "Pay schedule name", "trim|xss_clean|required");
@@ -114,16 +119,15 @@ class Main_model extends CI_Model
         }
         // set where array
         $whereArray = [
-            "user_sid" => $userId,
-            "user_type" => $userType,
+            "employee_sid" => $userId,
         ];
         // check if entry already exists
-        if (!$this->db->where($whereArray)->count_all_results("users_pay_schedule")) {
+        if (!$this->db->where($whereArray)->count_all_results("employees_pay_schedule")) {
             // insert
             $this->db
-                ->insert("users_pay_schedule", [
-                    "user_sid" => $userId,
-                    "user_type" => $userType,
+                ->insert("employees_pay_schedule", [
+                    "company_sid" => $post["companyId"],
+                    "employee_sid" => $userId,
                     "pay_schedule_sid" => $post["pay_schedule"],
                     "created_at" => getSystemDate(),
                     "updated_at" => getSystemDate(),
@@ -132,21 +136,26 @@ class Main_model extends CI_Model
             if ($this->db->insert_id()) {
                 //
                 $status = 200;
-                $response = ["msg" => "You have successfully updated the user pay schedule."];
+                $response = ["msg" => "You have successfully updated the employee's pay schedule."];
             }
         } else {
             // update
             $this->db
                 ->where($whereArray)
-                ->update("users_pay_schedule", [
+                ->update("employees_pay_schedule", [
                     "pay_schedule_sid" => $post["pay_schedule"],
                     "updated_at" => getSystemDate(),
                 ]);
             //
             $status = 200;
-            $response = ["msg" => "You have successfully updated the user pay schedule."];
+            $response = ["msg" => "You have successfully updated the employee's pay schedule."];
         }
-        // update
+        // update to Gusto
+        // load gusto model
+        // TODO
+        // enable it once API starts working
+        // $this->load->model("v1/Payroll_model", "payroll_model");
+        // $this->payroll_model->updateEmployeePaySchedule($post, $userId);
         //
         return SendResponse($status, $status === 400 ? ["errors" => [$response["msg"]]] : $response);
     }

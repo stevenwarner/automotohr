@@ -6072,6 +6072,7 @@ class Payroll_model extends CI_Model
         if (!$gustoCompanyDetails) {
             // add employees to AutomotoHR
             $this->schedule_model->linkEmployeesToPaySchedule($post);
+            return [];
         }
         //
         $errors = [];
@@ -6087,6 +6088,7 @@ class Payroll_model extends CI_Model
             if (!$gustoPaySchedule) {
                 // add employees to AutomotoHR
                 $this->schedule_model->linkEmployeesToPayScheduleById($payScheduleId, $employeeIds, $post["companyId"]);
+                continue;
             }
             // prepare pass array
             $request = [];
@@ -6111,14 +6113,17 @@ class Payroll_model extends CI_Model
                         $post["companyId"]
                     );
                 }
+                // todo
+                // when api start working fix the code below
+                // remove it
+                $this->schedule_model->linkEmployeeToPayScheduleById(
+                    $payScheduleId,
+                    $employeeId,
+                    $post["companyId"]
+                );
             }
             // todo
             // when api start working fix the code below
-            $this->schedule_model->linkEmployeeToPayScheduleById(
-                $payScheduleId,
-                $employeeId,
-                $post["companyId"]
-            );
             // when employee list is not empty
             // if ($request["employees"]) {
             //     //
@@ -6139,5 +6144,99 @@ class Payroll_model extends CI_Model
 
 
         return $errors ? ["errors" => $errors] : [];
+    }
+
+    /**
+     * add employee to pay schedule
+     *
+     * @param array $post
+     * @param int   $employeeId
+     * @return array
+     */
+    public function updateEmployeePaySchedule(array $post, int $employeeId): array
+    {
+        // get Gusto company details
+        $gustoCompanyDetails = $this->getGustoCompanyDetail($post["companyId"]);
+        //
+        if (!$gustoCompanyDetails) {
+            return ["Company is not on Gusto."];
+        }
+        // get the pay schedule UUID
+        $gustoPaySchedule = $this->db
+            ->select("gusto_uuid")
+            ->where("sid", $post["pay_schedule"])
+            ->get("companies_pay_schedules")
+            ->row_array();
+        // when pay schedule not found
+        if (!$gustoPaySchedule) {
+            return ["Pay schedule is not on Gusto."];
+        }
+        // get Gusto employee details
+        $gustoEmployee = $this->getEmployeeDetailsForGusto(
+            $employeeId
+        );
+        if (!$gustoEmployee) {
+            return ["Employee is not on Gusto."];
+        }
+        // prepare pass array
+        $request = [];
+        $request["type"] = "by_employee";
+        $request["employees"] = $this->getGustoEmployeesOnPaySchedule($post["pay_schedule"], $gustoPaySchedule["gusto_uuid"]);
+        $request["employees"][] =
+            [
+                "employee_uuid" => $gustoEmployee["gusto_uuid"],
+                "pay_schedule_uuid" => $gustoPaySchedule["gusto_uuid"]
+            ];
+        // when employee list is not empty
+        $response = gustoCall(
+            "assignEmployeesToPaySchedules",
+            $gustoCompanyDetails,
+            $request,
+            "POST"
+        );
+
+        $hasErrors = hasGustoErrors($response);
+        //
+        if ($hasErrors) {
+            return $hasErrors;
+        }
+
+        return ["Employee is synced with Gusto."];
+    }
+
+    /**
+     * get Gusto pay schedule employees
+     *
+     * @param int $payScheduleId
+     * @param string $gustoUUID
+     * @return array
+     */
+    public function getGustoEmployeesOnPaySchedule(int $payScheduleId, string $gustoUUID): array
+    {
+        // get the pay schedule UUID
+        $records = $this->db
+            ->select("gusto_companies_employees.gusto_uuid")
+            ->join(
+                "gusto_companies_employees",
+                "gusto_companies_employees.employee_sid = employees_pay_schedule.employee_sid",
+                "inner"
+            )
+            ->where("employees_pay_schedule.pay_schedule_sid", $payScheduleId)
+            ->get("employees_pay_schedule")
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $returnArray = [];
+        //
+        foreach ($records as $v0) {
+            $returnArray[] = [
+                "employee_uuid" => $v0["gusto_uuid"],
+                "pay_schedule_uuid" => $gustoUUID
+            ];
+        }
+        return $returnArray;
     }
 }
