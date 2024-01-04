@@ -281,6 +281,7 @@ if (!function_exists('getUrl')) {
         $urls['getFederalTax'] = "v1/companies/$key/federal_tax_details";
         $urls['getIndustry'] = "v1/companies/$key/industry_selection";
         $urls['getPaySchedules'] = "v1/companies/$key/pay_schedules";
+        $urls['updatePaySchedules'] = "v1/companies/$key/pay_schedules/$key1";
         $urls['getPaymentConfig'] = "v1/companies/$key/payment_configs";
         $urls['getBankAccounts'] = "v1/companies/$key/bank_accounts";
         $urls['sendDeposits'] = "v1/companies/$key/bank_accounts/$key1/send_test_deposits";
