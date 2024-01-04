@@ -346,7 +346,7 @@ class Settings extends Public_Controller
             $data['complynet_link'] = $data['session']['company_detail']['complynet_dashboard_link'];
             $data['portal'] = $this->dashboard_model->get_portal_detail($company_id);
             //
-            $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($company_id);
+            $payroll_status = $this->payroll_model->GetCompanyPayrollStatus($company_id);
             $data['payroll_status'] = $payroll_status;
             //
             if ($data['company']['CompanyName'] != $this->input->post('CompanyName')) {
@@ -634,18 +634,19 @@ class Settings extends Public_Controller
                 }
                 // Check and update data on gusto
                 if ($onPayroll == 1) {
-                    //
-                    $this->load->model('Payroll_model', 'pm');
-                    $this->load->helper('payroll');
-                    //
-                    $updateArray = [
-                        'ein_number' => $this->input->post('ssn', true),
-                        'legal_name' => $this->input->post('CompanyName', true)
-                    ];
-                    //
-                    $this->pm->UpdateCompanyTax($updateArray, [
-                        'company_sid' => $company_id
-                    ]);
+                    // TO BE checked
+                    // //
+                    // $this->load->model('Payroll_model', 'pm');
+                    // $this->load->helper('payroll');
+                    // //
+                    // $updateArray = [
+                    //     'ein_number' => $this->input->post('ssn', true),
+                    //     'legal_name' => $this->input->post('CompanyName', true)
+                    // ];
+                    // //
+                    // $this->pm->UpdateCompanyTax($updateArray, [
+                    //     'company_sid' => $company_id
+                    // ]);
                     // Update data to Gusto
                     // GustoUpdateCompanyTax($updateArray, $company_id);
                 }
@@ -3688,7 +3689,7 @@ class Settings extends Public_Controller
         // get the logged in company
         $loggedInCompany = checkAndGetSession("company_detail");
         //
-        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
+        $payroll_status = $this->payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
         //
         // prepare array
         $ins = [];
@@ -3801,7 +3802,7 @@ class Settings extends Public_Controller
         // get the logged in company
         $loggedInCompany = checkAndGetSession("company_detail");
         //
-        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
+        $payroll_status = $this->payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
         //
         // prepare array
         $upd = [];
