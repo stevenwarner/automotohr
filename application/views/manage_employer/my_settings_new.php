@@ -244,12 +244,19 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
-                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(PAYROLL)) { ?>
                                             <li>
                                                 <a href="<?= base_url("schedules"); ?>">
                                                     Company Pay Schedules
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="<?= base_url("schedules/employees"); ?>">
+                                                    Employees Pay Schedules
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
                                             <li>
                                                 <a href="<?= base_url("overtimerules"); ?>">
                                                     Company Overtime Rules
@@ -272,7 +279,7 @@
                                             </li>
                                         <?php } ?>
 
-                                        <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                        <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
                                             <?php
                                             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
                                             $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);

@@ -287,6 +287,7 @@ if (!function_exists('getUrl')) {
         $urls['verifyBankAccount'] = "v1/companies/$key/bank_accounts/$key1/verify";
         $urls['verifyCompany'] = "v1/companies/$key/approve";
         $urls['updatePaymentConfig'] = "v1/companies/$key/payment_configs";
+        $urls['assignEmployeesToPaySchedules'] = "v1/companies/$key/pay_schedules/assign";
         // payroll blocker
         $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
         //company flow

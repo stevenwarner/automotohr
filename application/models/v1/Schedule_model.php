@@ -69,6 +69,8 @@ class Schedule_model extends CI_Model
             ->select("
                 sid,
                 frequency,
+                day_1,
+                day_2,
                 anchor_pay_date,
                 deadline_to_run_payroll,
                 custom_name,
@@ -104,5 +106,118 @@ class Schedule_model extends CI_Model
             ->where("gusto_uuid =", "")
             ->get("companies_pay_schedules")
             ->row_array();
+    }
+
+    /**
+     * get company employees schedule ids
+     *
+     * @param int $companyId
+     * @param bool $revert Optional
+     * @return array
+     */
+    public function getCompanyEmployeeSchedulesIds(int $companyId, bool $revert = false): array
+    {
+        $records = $this->db
+            ->select("
+                employee_sid,
+                pay_schedule_sid
+            ")
+            ->where("company_sid", $companyId)
+            ->get("employees_pay_schedule")
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $v0) {
+            if ($revert) {
+                if (!$tmp[$v0["pay_schedule_sid"]]) {
+                    $tmp[$v0["pay_schedule_sid"]] = [];
+                }
+                $tmp[$v0["pay_schedule_sid"]][] = $v0["employee_sid"];
+                continue;
+            }
+            $tmp[$v0["employee_sid"]] = $v0["pay_schedule_sid"];
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * link employees to pay schedule
+     *
+     * @param array $post
+     */
+    public function linkEmployeesToPaySchedule(array $post)
+    {
+        //
+        foreach ($post["data"] as $payScheduleId => $employeeIds) {
+            $this->linkEmployeesToPayScheduleById(
+                $payScheduleId,
+                $employeeIds,
+                $post["companyId"]
+            );
+        }
+    }
+
+    /**
+     * link employees to pay schedule
+     *
+     * @param int $payScheduleId
+     * @param array $employeeIds
+     * @param int $companyId
+     */
+    public function linkEmployeesToPayScheduleById(int $payScheduleId, array $employeeIds, int $companyId)
+    {
+        //
+        foreach ($employeeIds as $employeeId) {
+            $this->linkEmployeeToPayScheduleById(
+                $payScheduleId,
+                $employeeId,
+                $companyId
+            );
+        }
+    }
+
+    /**
+     * link employee to pay schedule
+     *
+     * @param int $payScheduleId
+     * @param int $employeeId
+     * @param int $companyId
+     */
+    public function linkEmployeeToPayScheduleById(int $payScheduleId, int $employeeId, int $companyId)
+    {
+        // set where array
+        $where = [
+            "company_sid" => $companyId,
+            "employee_sid" => $employeeId
+        ];
+        // prepare array
+        $ins = [];
+        $ins["updated_at"] =  getSystemDate();
+        $ins["pay_schedule_sid"] = $payScheduleId;
+        //
+        if (!$this->db->where($where)->count_all_results("employees_pay_schedule")) {
+            $ins["company_sid"] = $companyId;
+            $ins["employee_sid"] = $employeeId;
+            $ins["created_at"] = $ins["updated_at"];
+            //
+            $this->db->insert(
+                "employees_pay_schedule",
+                $ins
+            );
+        } else {
+            //
+            $this->db
+                ->where($where)
+                ->update(
+                    "employees_pay_schedule",
+                    $ins
+                );
+        }
     }
 }

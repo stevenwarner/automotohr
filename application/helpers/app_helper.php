@@ -481,7 +481,7 @@ if (!function_exists('getEmployeeAnniversary')) {
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear + 1, $effectiveDate);
         }
-$newDateObj = new DateTime($returnArray["upcomingAnniversaryDate"]);
+        $newDateObj = new DateTime($returnArray["upcomingAnniversaryDate"]);
         $newDateObj->modify("-1 day");
         $returnArray['upcomingAnniversaryDate'] = $newDateObj->format("Y-m-d");
         //
@@ -2302,34 +2302,69 @@ if (!function_exists("getSundaysAndSaturdays")) {
     }
 }
 
+if (!function_exists("haversine")) {
+    function haversine($lat1, $lon1, $lat2, $lon2)
+    {
+        // Convert latitude and longitude from degrees to radians
+        $lat1 = deg2rad($lat1);
+        $lon1 = deg2rad($lon1);
+        $lat2 = deg2rad($lat2);
+        $lon2 = deg2rad($lon2);
 
-function haversine($lat1, $lon1, $lat2, $lon2)
-{
-    // Convert latitude and longitude from degrees to radians
-    $lat1 = deg2rad($lat1);
-    $lon1 = deg2rad($lon1);
-    $lat2 = deg2rad($lat2);
-    $lon2 = deg2rad($lon2);
+        // Haversine formula
+        $dlat = $lat2 - $lat1;
+        $dlon = $lon2 - $lon1;
+        $a = sin($dlat / 2) ** 2 + cos($lat1) * cos($lat2) * sin($dlon / 2) ** 2;
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-    // Haversine formula
-    $dlat = $lat2 - $lat1;
-    $dlon = $lon2 - $lon1;
-    $a = sin($dlat / 2) ** 2 + cos($lat1) * cos($lat2) * sin($dlon / 2) ** 2;
-    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        // Radius of the Earth in kilometers (you can change this value as needed)
+        $earth_radius = 6371;
 
-    // Radius of the Earth in kilometers (you can change this value as needed)
-    $earth_radius = 6371;
+        // Calculate the distance
+        $distance = $earth_radius * $c;
 
-    // Calculate the distance
-    $distance = $earth_radius * $c;
-
-    return $distance;
+        return $distance;
+    }
 }
 
-function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radius)
-{
-    $distance = haversine($lat1, $lon1, $lat2, $lon2);
+if (!function_exists("haversine")) {
 
-    // Check if the distance is within the specified radius
-    return $distance <= $radius;
+    function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radius)
+    {
+        $distance = haversine($lat1, $lon1, $lat2, $lon2);
+
+        // Check if the distance is within the specified radius
+        return $distance <= $radius;
+    }
+}
+
+
+if (!function_exists("convertPayScheduleToText")) {
+    /**
+     * convert pay schedule to text
+     *
+     * @param array $schedule
+     * @return string
+     */
+    function convertPayScheduleToText(array $schedule): string
+    {
+        $str = "";
+
+        // add the name if any
+        if ($schedule["custom_name"]) {
+            $str .= $schedule["custom_name"] . " - ";
+        }
+        // add frequency
+        $str .= $schedule["frequency"] . " - ";
+        //
+        if ($schedule["day_1"] && $schedule["day_2"]) {
+            $str .= "On every " . ($schedule["day_1"]) . " and " . ($schedule["day_2"]) . " of the month.";
+        } elseif ($schedule["day_1"]) {
+            $str .= "On every " . ($schedule["day_1"]) . " of the month.";
+        }
+
+        $str = rtrim($str, "- ");
+
+        return $str;
+    }
 }

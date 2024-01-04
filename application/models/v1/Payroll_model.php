@@ -6055,4 +6055,89 @@ class Payroll_model extends CI_Model
         }
         $this->updateEmployeeCompensation($employeeId, $data);
     }
+
+    /**
+     * add employees to pay schedules
+     *
+     * @param array $post
+     * @return array
+     */
+    public function updateEmployeePaySchedules(array $post): array
+    {
+        // get Gusto company details
+        $gustoCompanyDetails = $this->getGustoCompanyDetail($post["companyId"]);
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        //
+        if (!$gustoCompanyDetails) {
+            // add employees to AutomotoHR
+            $this->schedule_model->linkEmployeesToPaySchedule($post);
+        }
+        //
+        $errors = [];
+        //
+        foreach ($post["data"] as $payScheduleId => $employeeIds) {
+            // get the pay schedule UUID
+            $gustoPaySchedule = $this->db
+                ->select("gusto_uuid")
+                ->where("sid", $payScheduleId)
+                ->get("companies_pay_schedules")
+                ->row_array();
+            // when pay schedule not found
+            if (!$gustoPaySchedule) {
+                // add employees to AutomotoHR
+                $this->schedule_model->linkEmployeesToPayScheduleById($payScheduleId, $employeeIds, $post["companyId"]);
+            }
+            // prepare pass array
+            $request = [];
+            $request["type"] = "by_employee";
+            $request["employees"] = [];
+            // loop through the employees
+            foreach ($employeeIds as $employeeId) {
+                // get Gusto employee details
+                $gustoEmployee = $this->getEmployeeDetailsForGusto(
+                    $employeeId
+                );
+                // check if employee is on gusto
+                if ($gustoEmployee) {
+                    $request["employees"][] = [
+                        "employee_uuid" => $gustoEmployee["gusto_uuid"],
+                        "pay_schedule_uuid" => $employeeId
+                    ];
+                } else {
+                    $this->schedule_model->linkEmployeeToPayScheduleById(
+                        $payScheduleId,
+                        $employeeId,
+                        $post["companyId"]
+                    );
+                }
+            }
+            // todo
+            // when api start working fix the code below
+            $this->schedule_model->linkEmployeeToPayScheduleById(
+                $payScheduleId,
+                $employeeId,
+                $post["companyId"]
+            );
+            // when employee list is not empty
+            // if ($request["employees"]) {
+            //     //
+            //     $response = gustoCall(
+            //         "assignEmployeesToPaySchedules",
+            //         $gustoCompanyDetails,
+            //         $request,
+            //         "POST"
+            //     );
+
+            //     $hasErrors = hasGustoErrors($response);
+            //     //
+            //     if ($hasErrors) {
+            //         $errors = array_merge($errors, $hasErrors["errors"]);
+            //     }
+            // }
+        }
+
+
+        return $errors ? ["errors" => $errors] : [];
+    }
 }

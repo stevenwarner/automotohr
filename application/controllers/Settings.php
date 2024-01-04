@@ -8,7 +8,7 @@ class Settings extends Public_Controller
         $this->load->model('dashboard_model');
         $this->load->model('settings_model');
         $this->load->model('application_tracking_model');
-        $this->load->model("Payroll_model");
+        // $this->load->model("Payroll_model");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
@@ -4939,5 +4939,174 @@ class Settings extends Public_Controller
                 $session["company_detail"]["sid"],
                 $post
             );
+    }
+
+
+    /**
+     * list employee page schedules
+     */
+    public function employeesSchedule()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Employees Pay Schedule | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedules
+        $data["schedules"] = $this->schedule_model
+            ->getCompanySchedules(
+                $loggedInCompany["sid"],
+                1
+            );
+        // get the schedules
+        $data["employee_schedule_ids"] = $this->schedule_model
+            ->getCompanyEmployeeSchedulesIds(
+                $loggedInCompany["sid"], true
+            );
+        // get all employees
+        $data["employees"] = $this->db
+            ->select(getUserFields())
+            ->where([
+                "parent_sid" => $loggedInCompany["sid"],
+                "active" => 1,
+                "terminated_status" => 0,
+                "is_executive_admin" => 0
+            ])
+            ->get("users")
+            ->result_array();
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/employee_schedules/index');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * list employee page schedules
+     */
+    public function employeesScheduleEdit()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Employees Pay Schedule Edit | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Schedule_model", "schedule_model");
+        // get the schedules
+        $data["schedules"] = $this->schedule_model
+            ->getCompanySchedules(
+                $loggedInCompany["sid"],
+                1
+            );
+        // get the schedules
+        $data["employee_schedule_ids"] = $this->schedule_model
+            ->getCompanyEmployeeSchedulesIds(
+                $loggedInCompany["sid"]
+            );
+        // get all employees
+        $data["employees"] = $this->db
+            ->select(getUserFields())
+            ->where([
+                "parent_sid" => $loggedInCompany["sid"],
+                "active" => 1,
+                "terminated_status" => 0,
+                "is_executive_admin" => 0
+            ])
+            ->get("users")
+            ->result_array();
+        //
+        if ($data["employees"]) {
+            // set common files bundle
+            $data["pageCSS"] = [
+                getPlugin("alertify", "css"),
+            ];
+            $data["pageJs"] = [
+                getPlugin("alertify", "js"),
+            ];
+            // set bundle
+            $data["appJs"] = bundleJs([
+                "v1/schedules/employee/edit"
+            ], "public/v1/schedules/employee/edit/", "edit_employees_schedule", true);
+        }
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/employee_schedules/edit');
+        $this->load->view('main/footer');
+    }
+
+    /**
+     * process employee schedule
+     */
+    public function processCmployeesScheduleEdit()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true)) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Access denied!"
+                    ]
+                ]
+            );
+        }
+        // get the sanitized post
+        $post = $this->input->post(null, true);
+        // add validation rules
+        $this->form_validation->set_rules("data[]", "Data", "required|xss_clean|trim");
+        // run validation
+        if (!$this->form_validation->run()) {
+            return SendResponse(
+                400,
+                getFormErrors()
+            );
+        }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        $post["companyId"] = $loggedInCompany["sid"];
+        //
+        if (checkIfAppIsEnabled(PAYROLL)) {
+            $this->load->model("v1/Payroll_model", "payroll_model");
+            $response = $this->payroll_model->updateEmployeePaySchedules(
+                $post
+            );
+
+            if ($response["errors"]) {
+                return SendResponse(
+                    400,
+                    $response
+                );
+            }
+        } else {
+            // load schedule model
+            $this->load->model("v1/Schedule_model", "schedule_model");
+            // add employees to AutomotoHR
+            $this->schedule_model->linkEmployeesToPaySchedule($post);
+        }
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully updated the emloyees pay schedule."
+        ]);
     }
 }

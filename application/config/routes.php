@@ -2016,6 +2016,10 @@ $route["schedules/active"]["get"] = "settings/schedules/active";
 $route["schedules/inactive"]["get"] = "settings/schedules/inactive";
 // get deadline date
 $route["schedules/deadline/(:any)"]["get"] = "settings/getScheduleDeadlineDate/$1";
+// Employee schedule routes
+$route["schedules/employees"]["get"] = "settings/employeesSchedule";
+$route["schedules/employees/edit"]["get"] = "settings/employeesScheduleEdit";
+$route["schedules/employees/edit"]["post"] = "settings/processCmployeesScheduleEdit";
 // add
 $route["schedules/add"]["get"] = "settings/addSchedule";
 $route["schedules"]["post"] = "settings/processSchedule";
