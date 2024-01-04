@@ -52,7 +52,11 @@ class Minimum_wages_model extends CI_Model
             ]];
         }
         // load payroll helper
-        $this->load->helper("v1/payroll_helper");
+        // load the payroll helper
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
         // get the data
         $response = gustoCall(
             "locationMinimumWages",
