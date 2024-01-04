@@ -22,7 +22,7 @@ $(function manageEmployees() {
 	 * holds the modal id
 	 */
 
-	let employeeName = '';
+	let employeeName = "";
 
 	let modalId = "jsEmployeeFlowModal";
 	/**
@@ -370,22 +370,22 @@ $(function manageEmployees() {
 				if ($(this).val().trim() < 0) {
 					errorArray.push(
 						'"' +
-						$(this).prop("name").replace(/_/gi, " ") +
-						'" can not be less than 0.'
+							$(this).prop("name").replace(/_/gi, " ") +
+							'" can not be less than 0.'
 					);
 				}
 			} else if ($(this).prop("tagName") === "SELECT") {
 				obj[$(this).prop("name")] = $(
 					'select[name="' +
-					$(this).prop("name") +
-					'"] option:selected'
+						$(this).prop("name") +
+						'"] option:selected'
 				).val();
 				//
 				if (!$(this).val()) {
 					errorArray.push(
 						'"' +
-						$(this).prop("name").replace(/_/gi, " ") +
-						'" is missing.'
+							$(this).prop("name").replace(/_/gi, " ") +
+							'" is missing.'
 					);
 				}
 			}
@@ -901,7 +901,7 @@ $(function manageEmployees() {
 		// generate modal
 		Modal(
 			{
-				Title: "Employee Onboard Flow <span style='font-size:18px;'>&nbsp;&nbsp;[ " + employeeName+" ]</span>",
+				Title: "Onboard Flow for " + employeeName,
 				Id: modalId,
 				Loader: `${modalId}Loader`,
 				Body: `<div id="${modalId}Body"></div>`,
@@ -949,9 +949,9 @@ $(function manageEmployees() {
 		XHR = $.ajax({
 			url: baseUrl(
 				"payrolls/flow/employee/" +
-				employeeId +
-				"/bank_account/" +
-				bankAccountId
+					employeeId +
+					"/bank_account/" +
+					bankAccountId
 			),
 			method: "DELETE",
 			caches: false,
@@ -977,9 +977,9 @@ $(function manageEmployees() {
 		XHR = $.ajax({
 			url: baseUrl(
 				"payrolls/flow/employee/" +
-				employeeId +
-				"/bank_account/" +
-				bankAccountId
+					employeeId +
+					"/bank_account/" +
+					bankAccountId
 			),
 			method: "PUT",
 			caches: false,
