@@ -87,7 +87,7 @@
                     </p>
                     <div class="input-group">
                         <input type="number" class="form-control" name="site_radius" value="500" />
-                        <div class="input-group-addon">Feets</div>
+                        <div class="input-group-addon">Feet</div>
                     </div>
                 </div>
 

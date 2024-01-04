@@ -40,7 +40,7 @@
                                         </h2>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <a href="javascript:void(0)" class="btn btn-orange jsAddOvertimeRuleBtn">
+                                        <a href="javascript:void(0)" class="btn btn-orange jsAddOvertimeRuleBtn hidden">
                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                             &nbsp;Add Minimum Wage
                                         </a>
@@ -48,7 +48,18 @@
                                 </div>
                             </div>
                             <div class="panel-body">
+                                <!--  -->
                                 <div class="row">
+                                    <div class="col-sm-12">
+                                        <p class="text-danger text-medium">
+                                            <strong>
+                                                Minimum wages are updated automatically and therefore do not necessitate manual addition.
+                                            </strong>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <br>
                                     <?php if ($wages) {
                                         foreach ($wages as $v0) {
                                     ?>
