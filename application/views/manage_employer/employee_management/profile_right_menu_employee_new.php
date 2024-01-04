@@ -66,7 +66,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     <div class="hr-widget">
                         <div class="browse-attachments">
                             <ul>
-                                <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || isPayrollOrPlus(true)) {  ?>
+                                <?php if (isPayrollOrPlus()) {  ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -117,10 +117,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <!--<li>
-                                        <h4>Background Check</h4>
-                                        <a href="<?php echo base_url('background_check') . '/employee/' . $employer["sid"]; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>-->
                                     <?php if (check_access_permissions_for_view($security_details, 'drug_test')) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -139,10 +135,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <!-- <li>
-                                        <h4>Behavioral Assessment</h4>
-                                        <a href="javascript:;">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>-->
                                     <?php if (check_access_permissions_for_view($security_details, 'reference_checks')) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -194,30 +186,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)) { ?>
-                                        <!-- <li>
-                                            <span class="left-addon">
-                                                <i aria-hidden="true" class="fa fa-star"></i>
-                                            </span>
-                                            <h4>Merge With An Employee</h4>
-                                            <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-
-                                        </li> -->
-                                    <?php } ?>
-                                    <!-- <li>
-                                        <h4>Skills Test</h4>
-                                        <a href="javascript:;">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>-->
-                                    <!-- <li>
-                                        <h4>Video Interview</h4>
-                                        <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>
-                                    <li>
-                                        <h4>Add Schedule</h4>
-                                        <a href="javascript:;">Browse<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>-->
-                                    <!-- --><?php //if(check_blue_panel_status_for_view()) { 
-                                            ?>
                                     <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -277,40 +245,18 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <a href="<?php echo base_url('performance-management/employee/goals/' . ($employer["sid"]) . ''); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>
                                 <?php } ?>
-
-                                <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll'] && isPayrollOrPlus()) { ?>
-                                    <li class="jsPayrollOnEmployeeRow" data-id="<?= $employer["sid"]; ?>">
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-cogs"></i>
-                                        </span>
-                                        <h4>Edit Payroll</h4>
-                                        <a href="javascript:void(0);" class="jsPayrollEmployeeEdit">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                    </li>
-                                <?php } ?>
-
-                                <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
-                                    <!-- <li>
-                                        <span class="left-addon">
-                                            <i aria-hidden="true" class="fa fa-clock-o"></i>
-                                        </span>
-                                        <h4>Manage Time Sheet</h4>
-                                        <a href="<?php echo base_url('attendance/manage/' . ($employer["sid"]) . ''); ?>">
-                                            Manage
-                                            <i aria-hidden="true" class="fa fa-chevron-circle-right"></i>
-                                        </a>
-                                    </li> -->
-                                <?php } ?>
                             </ul>
                         </div>
                     </div>
                 <?php } ?>
 
-                <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || isPayrollOrPlus(true)) {  ?>
-                    <?php $function_names = array('full_employment_application', 'employee_emergency_contacts', 'employee_occupational_license_info', 'employee_drivers_license_info', 'employee_equipment_info', 'employee_dependants', 'employee_hr_documents'); ?>
-                    <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
-                        <div class="hr-widget">
-                            <div class="browse-attachments">
-                                <ul>
+
+                <?php $function_names = array('full_employment_application', 'employee_emergency_contacts', 'employee_occupational_license_info', 'employee_drivers_license_info', 'employee_equipment_info', 'employee_dependants', 'employee_hr_documents'); ?>
+                <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
+                    <div class="hr-widget">
+                        <div class="browse-attachments">
+                            <ul>
+                                <?php if (isPayrollOrPlus()) {  ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'send_employee_full_employment_application')) { ?>
                                         <li>
                                             <span class="left-addon">
@@ -617,13 +563,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <?php } ?>
                                         </li>
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'emp_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
-                                        <li>
-                                            <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
-                                            <h4>Documents</h4>
-                                            <a href="<?php echo base_url('hr_documents_management/documents_assignment/employee/' . $employer['sid']); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                        </li>
-                                    <?php } ?>
+                                <?php } ?>
+                                <?php if (check_access_permissions_for_view($security_details, 'emp_documents') && $this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
+                                    <li>
+                                        <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>
+                                        <h4>Documents</h4>
+                                        <a href="<?php echo base_url('hr_documents_management/documents_assignment/employee/' . $employer['sid']); ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    </li>
+                                <?php } ?>
+                                <?php if (isPayrollOrPlus()) {  ?>
                                     <!-- Reminded Emails Send -->
                                     <li style="cursor: pointer;">
                                         <span class="left-addon"><i aria-hidden="true" class="fa fa-envelope"></i></span>
@@ -631,10 +579,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <a href="javascript:void(0)" title="Send An Email Reminder" id="JsSendReminderEmail">Send <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a><br>
                                         <a href="javascript:void(0)" title="View Email Reminder History" id="JsSendReminderEmailHistory">View <i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>
-                                </ul>
-                            </div>
+                                <?php } ?>
+                            </ul>
                         </div>
-                    <?php } ?>
+                    </div>
+                <?php } ?>
+
+                <?php if (isPayrollOrPlus()) {  ?>
 
                     <div class="hr-widget" id="attachment_view">
                         <div class="attachment-header">
