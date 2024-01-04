@@ -2452,6 +2452,10 @@ if ($user_type == 'employee') {
 
 <!-- W4 Employer Section Modal -->
 <div id="update_eemployer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <?php
+    $companySid = $this->session->userdata('logged_in')['company_detail']['sid'];
+    $employerPrefill = getDataForEmployerPrefill($companySid,$EmployeeSid);
+    ?>
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
@@ -2465,28 +2469,28 @@ if ($user_type == 'employee') {
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Employer’s name <span class="cs-required">*</span></label>
-                                    <input type="text" id="emp-name" name="emp_name" value="<?php echo $popup_emp_name; ?>" class="form-control" />
+                                    <input type="text" id="emp-name" name="emp_name" value="<?php echo $popup_emp_name != '' ? $popup_emp_name : $employerPrefill['CompanyName']; ?>" class="form-control" />
                                     <label id="emp-name-error" class="error"></label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Employer’s address <span class="cs-required">*</span></label>
-                                    <input type="text" id="emp-address" name="emp_address" value="<?php echo $popup_emp_address; ?>" class="form-control" />
+                                    <input type="text" id="emp-address" name="emp_address" value="<?php echo $popup_emp_address != '' ? $popup_emp_address : $employerPrefill['Location_Address']; ?>" class="form-control" />
                                     <label id="emp-address-error" class="error"></label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                 <div class="form-group">
                                     <label>First date of employment <span class="cs-required">*</span></label>
-                                    <input type="text" name="first_date_of_employment" id="emp-fdoe" value="<?php echo $popup_first_date_of_employment; ?>" class="form-control first_date_of_employment" readonly />
+                                    <input type="text" name="first_date_of_employment" id="emp-fdoe" value="<?php echo $popup_first_date_of_employment != '' ? $popup_first_date_of_employment : $employerPrefill['first_day_of_employment']; ?>" class="form-control first_date_of_employment" readonly />
                                     <label id="emp-fdoe-error" class="error"></label>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Employer identification number (EIN) <span class="cs-required">*</span></label>
-                                    <input type="text" id="emp-ein" name="EIN" value="<?php echo $popup_emp_identification_number; ?>" class="form-control" />
+                                    <input type="text" id="emp-ein" name="EIN" value="<?php echo $popup_emp_identification_number != '' ? $popup_emp_identification_number : $employerPrefill['ssn']; ?>" class="form-control" />
                                     <label id="emp-ein-error" class="error"></label>
                                 </div>
                             </div>
