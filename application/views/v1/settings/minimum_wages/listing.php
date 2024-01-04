@@ -92,7 +92,7 @@
                                                             <strong><?= $v0["notes"] ?></strong>
                                                         </p>
                                                     </div>
-                                                    <div class="panel-footer text-center">
+                                                    <div class="panel-footer text-center hidden">
                                                         <?php if ($v0["is_custom"]) { ?>
                                                             <button class="btn btn-yellow jsEditOvertimeRuleBtn">
                                                                 <i class="fa fa-edit" aria-hidden="true"></i>
