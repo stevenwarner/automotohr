@@ -3564,7 +3564,7 @@ class Settings extends Public_Controller
             ->getScheduleById(
                 $scheduleId
             );
-        if (!$data["schedule"]) {
+        if (!$data["schedule"]) {echo $scheduleId; die("here");
             $this->session->set_flashdata("message", "<strong>Error!</strong> Schedule not found.");
             return redirect("schedules");
         }
@@ -3666,7 +3666,17 @@ class Settings extends Public_Controller
         if ($post["pay_frequency"] === "Twice a month: Custom") {
             $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
             $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        } else {
+            $post["day_1"] = null;
+            $post["day_2"] = null;
         }
+        // for pay day
+        if ($post["pay_frequency"] === "Monthly") {
+            $this->form_validation->set_rules("pay_day", "Pay day", "required|xss_clean|trim");
+        } else {
+            $post["pay_day"] = null;
+        }
+
         $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
         // run validation
         if (!$this->form_validation->run()) {
@@ -3677,17 +3687,56 @@ class Settings extends Public_Controller
         }
         // get the logged in company
         $loggedInCompany = checkAndGetSession("company_detail");
+        //
+        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
+        //
         // prepare array
         $ins = [];
-        $ins["company_sid"] = $loggedInCompany["sid"];
-        $ins["frequency"] = $post["pay_frequency"];
-        $ins["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
-        $ins["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
         $ins["custom_name"] = $post["name"];
-        $ins["day_1"] = $post["day_1"];
-        $ins["day_2"] = $post["day_2"];
+        $ins['frequency'] = $post["pay_frequency"];
+        $ins['anchor_pay_date'] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $ins['anchor_end_of_pay_period'] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        //
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $ins['frequency'] = 'Twice per month';
+            $ins['day_1'] = $post["day_1"];
+            $ins['day_2'] = $post["day_2"];
+        } else if ($post["pay_frequency"] === "Monthly") {
+            $ins['day_1'] = $post["pay_day"];
+        } else {
+            $ins['day_1'] = null;
+            $ins['day_2'] = null;
+        }
+        //
+        if ($payroll_status == 1 && isCompanyOnBoard($loggedInCompany["sid"])) {
+            // get the company details
+            $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
+            //
+            $this->load->helper('v1/payroll' . ($this->db->where([
+                "company_sid" => $loggedInCompany["sid"],
+                "stage" => "production"
+            ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+            //
+            $gustoResponse = gustoCall(
+                'getPaySchedules',
+                $companyGustoDetails,
+                $ins,
+                "POST"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                return SendResponse(400, ["msg" => $errors['errors'][0]]);
+            }
+            //
+            $ins["gusto_uuid"] = $gustoResponse["uuid"];
+            $ins["gusto_version"] = $gustoResponse["version"];
+        }
+        
+        $ins["company_sid"] = $loggedInCompany["sid"];
         $ins["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
-        $ins["active"] = $post["status"];
+        $ins["active"] = 1;
         $ins["updated_at"] = $ins["created_at"] = getSystemDate();
         //
         $this->db->insert(
@@ -3726,11 +3775,21 @@ class Settings extends Public_Controller
         if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
             $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
         }
-        // for days 1 and 2
-        if ($post["pay_frequency"] === "Twice a month: Custom") {
+         // for days 1 and 2
+         if ($post["pay_frequency"] === "Twice a month: Custom") {
             $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
             $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
+        } else {
+            $post["day_1"] = null;
+            $post["day_2"] = null;
         }
+        // for pay day
+        if ($post["pay_frequency"] === "Monthly") {
+            $this->form_validation->set_rules("pay_day", "Pay day", "required|xss_clean|trim");
+        } else {
+            $post["pay_day"] = null;
+        }
+        //
         $this->form_validation->set_rules("first_pay_period_end_date", "First pay period end date", "required|xss_clean|trim|callback_validDate");
         // run validation
         if (!$this->form_validation->run()) {
@@ -3739,16 +3798,65 @@ class Settings extends Public_Controller
                 getFormErrors()
             );
         }
+        // get the logged in company
+        $loggedInCompany = checkAndGetSession("company_detail");
+        //
+        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
+        //
         // prepare array
         $upd = [];
-        $upd["frequency"] = $post["pay_frequency"];
-        $upd["anchor_pay_date"] = formatDateToDB($post["first_pay_date"], SITE_DATE);
-        $upd["anchor_end_of_pay_period"] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
         $upd["custom_name"] = $post["name"];
-        $upd["day_1"] = $post["day_1"];
-        $upd["day_2"] = $post["day_2"];
+        $upd['frequency'] = $post["pay_frequency"];
+        $upd['anchor_pay_date'] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+        $upd['anchor_end_of_pay_period'] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+        //
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
+            $upd['frequency'] = 'Twice per month';
+            $upd['day_1'] = $post["day_1"];
+            $upd['day_2'] = $post["day_2"];
+        } else if ($post["pay_frequency"] === "Monthly") {
+            $upd['day_1'] = $post["pay_day"];
+        } else {
+            $upd['day_1'] = null;
+            $upd['day_2'] = null;
+        }
+        //
+        if ($payroll_status == 1 && isCompanyOnBoard($loggedInCompany["sid"])) {
+            // get the company details
+            $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
+            $gustoInfo =
+                    $this->db
+                    ->select('gusto_uuid, gusto_version')
+                    ->where('sid', $scheduleId)
+                    ->get('companies_pay_schedules')
+                    ->row_array();
+            //
+            $upd['version'] = $gustoInfo['gusto_version'];   
+            $companyGustoDetails['other_uuid'] = $gustoInfo['gusto_uuid']; 
+            //
+            $this->load->helper('v1/payroll' . ($this->db->where([
+                "company_sid" => $loggedInCompany["sid"],
+                "stage" => "production"
+            ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+            //
+            $gustoResponse = gustoCall(
+                'updatePaySchedules',
+                $companyGustoDetails,
+                $upd,
+                "PUT"
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                return SendResponse(400, ["msg" => $errors['errors'][0]]);
+            }
+            //
+            unset($upd["version"]);
+            $upd["gusto_version"] = $gustoResponse["version"];
+        }
+        //
         $upd["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
-        $upd["active"] = $post["status"];
         $upd["updated_at"] = getSystemDate();
         //
         $this->db

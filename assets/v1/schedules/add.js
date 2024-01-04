@@ -118,6 +118,11 @@ $(function addSchedule() {
 			$('[name="day_2"]').rules("add", { required: true });
 		}
 		//
+		if ($(this).val() === "Monthly") {
+			$(".jsMonthlyFrequency").removeClass("hidden");
+			$('[name="day_1"]').rules("add", { required: true });
+		}
+		//
 		if (
 			$(this).val() !== "Every week" &&
 			$(this).val() !== "Every other week"
@@ -167,7 +172,9 @@ $(function addSchedule() {
 				XHR = null;
 				callButtonHook(buttonHook, false);
 			})
-			.fail(handleErrorResponse)
+			.fail(function (resp) {
+				return _error(resp.responseJSON.msg);
+			})
 			.done(function (resp) {
 				//
 				return _success(resp.msg, function () {
