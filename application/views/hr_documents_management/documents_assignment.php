@@ -431,6 +431,9 @@ $assignIdObj = $confidential_sids;
                                 <!-- State forms -->
                                 <?php $this->load->view('hr_documents_management/state_forms'); ?>
                             <?php } ?>
+
+                            <?php $this->load->view('hr_documents_management/employee_performance_form'); ?>
+
                             <!--  -->
                             <?php $this->load->view('hr_documents_management/general_document_assignment'); ?>
 
