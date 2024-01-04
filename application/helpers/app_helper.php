@@ -481,7 +481,7 @@ if (!function_exists('getEmployeeAnniversary')) {
             $returnArray['lastAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear, $effectiveDate);
             $returnArray['upcomingAnniversaryDate'] = preg_replace('/[0-9]{4}/', $currentYear + 1, $effectiveDate);
         }
-$newDateObj = new DateTime($returnArray["upcomingAnniversaryDate"]);
+        $newDateObj = new DateTime($returnArray["upcomingAnniversaryDate"]);
         $newDateObj->modify("-1 day");
         $returnArray['upcomingAnniversaryDate'] = $newDateObj->format("Y-m-d");
         //
@@ -2332,4 +2332,35 @@ function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radius)
 
     // Check if the distance is within the specified radius
     return $distance <= $radius;
+}
+
+
+//
+if (!function_exists("getDataForEmployerPrefill")) {
+    function getDataForEmployerPrefill($companySid, $employeeSid = 0)
+    {
+        $CI = &get_instance();
+        $companyData = $CI->db->select('CompanyName,Location_Address,Location_City,Location_ZipCode,Location_State,ssn,Location_Address_2')
+            ->where('sid', $companySid)
+            ->where('parent_sid', '0')
+            ->get('users')
+            ->row_array();
+        //
+        if ($employeeSid != 0) {
+            $employeeData = $CI->db->select('registration_date,joined_at')
+                ->where('sid', $employeeSid)
+                ->where('parent_sid', $companySid)
+                ->get('users')
+                ->row_array();
+            //
+            $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], "", false);
+            if (!empty($joiningDate)) {
+                $companyData['first_day_of_employment'] = date("m-d-Y", strtotime($joiningDate));
+            }
+        } else {
+            $companyData['first_day_of_employment'] = '';
+        }
+
+        return $companyData;
+    }
 }
