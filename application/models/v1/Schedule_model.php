@@ -101,7 +101,6 @@ class Schedule_model extends CI_Model
                 active
             ")
             ->where("sid", $scheduleId)
-            ->where("gusto_uuid =", "")
             ->get("companies_pay_schedules")
             ->row_array();
     }

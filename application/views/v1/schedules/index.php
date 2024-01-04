@@ -27,7 +27,7 @@
 
                     <div role="tabpanel">
                         <!-- Nav tabs -->
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul class="nav nav-tabs hidden" role="tablist">
                             <li role="presentation" class="text-medium <?= $status === "active" ? "active" : "bg-default"; ?>">
                                 <a href="<?= base_url("schedules/active"); ?>">
                                     Active Schedules
@@ -109,17 +109,10 @@
                                                         </p>
                                                     </div>
                                                     <div class="panel-footer text-center">
-                                                        <?php if ($v0["gusto_uuid"]) { ?>
-                                                            <a href="#" class="btn btn-yellow disabled">
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit a Pay Schedule
-                                                            </a>
-                                                        <?php } else { ?>
-                                                            <a href="<?= base_url("schedules/edit/" . $v0['sid']); ?>" class="btn btn-yellow">
-                                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                                &nbsp;Edit a Pay Schedule
-                                                            </a>
-                                                        <?php } ?>
+                                                        <a href="<?= base_url("schedules/edit/" . $v0['sid']); ?>" class="btn btn-yellow">
+                                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                                            &nbsp;Edit a Pay Schedule
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>

@@ -84,8 +84,8 @@
                                         <option selected="selected" value="Every week">Every week</option>
                                         <option value="Every other week">Every other week</option>
                                         <option value="Twice per month">Twice a month: 15th and last day of the month</option>
-                                        <option value="Twice per month">Twice a month: Custom</option>
-                                        <option value="Monthly">Monthly: last day of the month</option>
+                                        <option value="Twice a month: Custom">Twice a month: Custom</option>
+                                        <option value="Monthly">Monthly</option>
                                     </select>
                                 </div>
 
@@ -114,6 +114,22 @@
                                     </label>
                                     <select name="day_2" class="form-control">
                                         <?php for ($i = 14; $i <= 30; $i++) { ?>
+                                            <option value="<?= $i; ?>"><?= $i; ?></option>
+                                        <?php } ?>
+                                        <option value="31">Last day of month</option>
+                                    </select>
+                                </div>
+
+                                <!--  -->
+                                <div class="form-group jsMonthlyFrequency hidden">
+                                    <label class="text-medium">
+                                        Pay day of month
+                                        <strong class="text-red">
+                                            *
+                                        </strong>
+                                    </label>
+                                    <select name="pay_day" class="form-control">
+                                        <?php for ($i = 1; $i <= 30; $i++) { ?>
                                             <option value="<?= $i; ?>"><?= $i; ?></option>
                                         <?php } ?>
                                         <option value="31">Last day of month</option>
@@ -158,7 +174,7 @@
                                 </div>
 
                                 <!--  -->
-                                <div class="form-group">
+                                <div class="form-group hidden">
                                     <label class="text-medium">
                                         Status
                                         <strong class="text-red">

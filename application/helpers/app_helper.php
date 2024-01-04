@@ -2333,3 +2333,32 @@ function isWithinRadius($lat1, $lon1, $lat2, $lon2, $radius)
     // Check if the distance is within the specified radius
     return $distance <= $radius;
 }
+
+if (!function_exists("getCompanyDetailsForGusto")) {
+    /**
+     * Get gusto company details for gusto
+     *
+     * @param int   $companyId
+     * @param array $extra Optional
+     * @param bool  $include Optional
+     * @return array
+     */
+
+    function getCompanyDetailsForGusto(int $companyId, array $extra = [], bool $include = true): array
+    {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $columns = $include ? array_merge([
+            'gusto_uuid',
+            'refresh_token',
+            'access_token'
+        ], $extra) : $extra;
+        //
+        return $CI->db
+            ->select($columns)
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies')
+            ->row_array();
+    }
+}    

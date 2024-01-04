@@ -162,7 +162,6 @@ class Payroll extends CI_Controller
                     select_industry,
                     add_bank_info,
                     verify_bank_info,
-                    payroll_schedule,
                     federal_tax_setup,
                     state_setup,
                     sign_all_forms,
