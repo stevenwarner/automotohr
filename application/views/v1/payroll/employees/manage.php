@@ -60,7 +60,7 @@
                                                 $cl = $payrollEmployee['is_onboard'] ? 'success' : 'warning';
                                                 $text = $payrollEmployee['is_onboard'] ? 'COMPLETED' : 'INPROGRESS';
                                                 ?>
-                                                <tr data-id="<?= $payrollEmployee['id']; ?>">
+                                                <tr data-id="<?= $payrollEmployee['id']; ?>" data-employee="<?= $payrollEmployee['name']; ?>">
                                                     <td class="vam">
                                                         <p>
                                                             <strong>

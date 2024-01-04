@@ -21,6 +21,9 @@ $(function manageEmployees() {
 	/**
 	 * holds the modal id
 	 */
+
+	let employeeName = '';
+
 	let modalId = "jsEmployeeFlowModal";
 	/**
 	 * capture the view admin event
@@ -31,6 +34,9 @@ $(function manageEmployees() {
 		//
 		employeeId = $(this).closest("tr").data("id");
 		//
+		employeeName = $(this).closest("tr").data("employee");
+		//
+
 		employeeOnboardFlow();
 	});
 
@@ -144,14 +150,6 @@ $(function manageEmployees() {
 	/**
 	 * Compensation triggers
 	 */
-	$(document).on("click", ".package-info-box", function (e) {
-		$('.select-package:not(:checked)').parent().removeClass("selected-package");
-        $('.select-package:checked').parent().addClass("selected-package");
-	})
-
-	/**
-	 * Compensation triggers
-	 */
 	$(document).on("click", ".jsEmployeeFlowSaveCompensationBtn", function (e) {
 		//
 		e.preventDefault();
@@ -160,10 +158,6 @@ $(function manageEmployees() {
 			return false;
 		}
 		//
-		var checkedWages = $('.select-package:checkbox:checked').map(function() {
-			return this.value;
-		}).get();
-		//
 		let obj = {
 			title: $(".jsEmployeeFlowJobTitle").val().trim(),
 			amount: $(".jsEmployeeFlowAmount").val().trim(),
@@ -171,8 +165,6 @@ $(function manageEmployees() {
 				".jsEmployeeFlowEmployeeClassification option:selected"
 			).val(),
 			per: $(".jsEmployeeFlowPer option:selected").val(),
-			minimumWage: $(".jsEmployeeFlowMinimumWage option:selected").val(),
-			wagesId: checkedWages
 		};
 		//
 		let errorArray = [];
@@ -378,22 +370,22 @@ $(function manageEmployees() {
 				if ($(this).val().trim() < 0) {
 					errorArray.push(
 						'"' +
-							$(this).prop("name").replace(/_/gi, " ") +
-							'" can not be less than 0.'
+						$(this).prop("name").replace(/_/gi, " ") +
+						'" can not be less than 0.'
 					);
 				}
 			} else if ($(this).prop("tagName") === "SELECT") {
 				obj[$(this).prop("name")] = $(
 					'select[name="' +
-						$(this).prop("name") +
-						'"] option:selected'
+					$(this).prop("name") +
+					'"] option:selected'
 				).val();
 				//
 				if (!$(this).val()) {
 					errorArray.push(
 						'"' +
-							$(this).prop("name").replace(/_/gi, " ") +
-							'" is missing.'
+						$(this).prop("name").replace(/_/gi, " ") +
+						'" is missing.'
 					);
 				}
 			}
@@ -909,7 +901,7 @@ $(function manageEmployees() {
 		// generate modal
 		Modal(
 			{
-				Title: "Employee Onboard Flow",
+				Title: "Employee Onboard Flow <span style='font-size:18px;'>&nbsp;&nbsp;[ " + employeeName+" ]</span>",
 				Id: modalId,
 				Loader: `${modalId}Loader`,
 				Body: `<div id="${modalId}Body"></div>`,
@@ -957,9 +949,9 @@ $(function manageEmployees() {
 		XHR = $.ajax({
 			url: baseUrl(
 				"payrolls/flow/employee/" +
-					employeeId +
-					"/bank_account/" +
-					bankAccountId
+				employeeId +
+				"/bank_account/" +
+				bankAccountId
 			),
 			method: "DELETE",
 			caches: false,
@@ -985,9 +977,9 @@ $(function manageEmployees() {
 		XHR = $.ajax({
 			url: baseUrl(
 				"payrolls/flow/employee/" +
-					employeeId +
-					"/bank_account/" +
-					bankAccountId
+				employeeId +
+				"/bank_account/" +
+				bankAccountId
 			),
 			method: "PUT",
 			caches: false,
