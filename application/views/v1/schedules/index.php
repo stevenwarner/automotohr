@@ -47,11 +47,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <h2 class="text-medium panel-heading-text">
-<<<<<<< HEAD
                                             <i class="fa fa-calendar text-orange" aria-hidden="true"></i>
-=======
-                                            <i class="fa fa-cogs text-orange" aria-hidden="true"></i>
->>>>>>> feature/attendance_v3
                                             &nbsp;
                                             <strong>
                                                 Company Pay Schedules
