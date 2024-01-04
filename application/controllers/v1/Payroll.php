@@ -33,7 +33,7 @@ class Payroll extends CI_Controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
         //
-        $this->createMinifyFiles = false;
+        $this->createMinifyFiles = true;
     }
 
     public function dashboard()

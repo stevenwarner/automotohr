@@ -21,6 +21,9 @@ $(function manageEmployees() {
 	/**
 	 * holds the modal id
 	 */
+
+	let employeeName = "";
+
 	let modalId = "jsEmployeeFlowModal";
 	/**
 	 * capture the view admin event
@@ -31,6 +34,9 @@ $(function manageEmployees() {
 		//
 		employeeId = $(this).closest("tr").data("id");
 		//
+		employeeName = $(this).closest("tr").data("employee");
+		//
+
 		employeeOnboardFlow();
 	});
 
@@ -144,14 +150,6 @@ $(function manageEmployees() {
 	/**
 	 * Compensation triggers
 	 */
-	$(document).on("click", ".package-info-box", function (e) {
-		$('.select-package:not(:checked)').parent().removeClass("selected-package");
-        $('.select-package:checked').parent().addClass("selected-package");
-	})
-
-	/**
-	 * Compensation triggers
-	 */
 	$(document).on("click", ".jsEmployeeFlowSaveCompensationBtn", function (e) {
 		//
 		e.preventDefault();
@@ -160,10 +158,6 @@ $(function manageEmployees() {
 			return false;
 		}
 		//
-		var checkedWages = $('.select-package:checkbox:checked').map(function() {
-			return this.value;
-		}).get();
-		//
 		let obj = {
 			title: $(".jsEmployeeFlowJobTitle").val().trim(),
 			amount: $(".jsEmployeeFlowAmount").val().trim(),
@@ -171,8 +165,6 @@ $(function manageEmployees() {
 				".jsEmployeeFlowEmployeeClassification option:selected"
 			).val(),
 			per: $(".jsEmployeeFlowPer option:selected").val(),
-			minimumWage: $(".jsEmployeeFlowMinimumWage option:selected").val(),
-			wagesId: checkedWages
 		};
 		//
 		let errorArray = [];
@@ -909,7 +901,7 @@ $(function manageEmployees() {
 		// generate modal
 		Modal(
 			{
-				Title: "Employee Onboard Flow",
+				Title: "Onboard Flow for " + employeeName,
 				Id: modalId,
 				Loader: `${modalId}Loader`,
 				Body: `<div id="${modalId}Body"></div>`,
