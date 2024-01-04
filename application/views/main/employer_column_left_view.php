@@ -389,6 +389,36 @@
                 </a>
             </li>
         <?php  } ?>
+        <?php if (checkIfAppIsEnabled('payroll')) { ?>
+            <?php
+            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+            $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+            ?>
+            <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">
+                        <figure><i class="fa fa-cogs"></i></figure>Set-up Payroll
+                    </a></li>
+            <?php } ?>
+            <?php if ($isCompanyOnPayroll && !$isTermsAgreed) { ?>
+                <li><a href="javascript:void(0)" class="jsServiceAgreement" data-cid="<?= $session['company_detail']['sid']; ?>">
+                        <figure><i class="fa fa-sign"></i></figure>Payroll Service Agreement
+                    </a></li>
+            <?php } ?>
+            <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                <li><a href="<?= base_url('payrolls/dashboard'); ?>">
+                        <figure><i class="fa fa-cogs"></i></figure>Payroll Dashboard
+                    </a></li>
+            <?php } ?>
+        <?php } ?>
+        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+            <!-- Attendance module settings -->
+            <li>
+                <a href="<?= base_url("attendance/settings"); ?>">
+                    <figure><i class="fa fa-calendar"></i></figure>
+                    Attendance Management
+                </a>
+            </li>
+        <?php } ?>
 
     </ul>
 </div>
