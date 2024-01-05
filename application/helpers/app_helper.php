@@ -2368,3 +2368,44 @@ if (!function_exists("convertPayScheduleToText")) {
         return $str;
     }
 }
+
+
+//
+if (!function_exists('get_jobTitle_dropdown_for_search')) {
+
+    function get_jobTitle_dropdown_for_search(int $companyId, string $id = '')
+    {
+        //
+
+        $jobTitles = [];
+        $options = '';
+
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="js-filter-jobtitle" style="width: 100%;" multiple="multiple">';
+        $select .= '<option value="all">All</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+
+        $templateTitles = get_templet_jobtitles($companyId);
+        $templateTitles = array_column($templateTitles, 'title');
+
+        //Get Company Jobtitle
+        $CI = &get_instance();
+        $userJobtitle = $CI->db->select('job_title')
+            ->where('parent_sid', $companyId)
+            ->distinct('job_title')
+            ->get('users')
+            ->result_array();
+
+        $userTitles = array_column($userJobtitle, 'job_title');
+        $jobTitles = array_unique(array_merge($userTitles, $templateTitles));
+
+        //
+        foreach ($jobTitles as $row) {
+            $options .= '<option value="' . $row . '">' . $row . '</option>';
+        }
+
+        $select = str_replace('{{options}}', $options, $select);
+        return $select;
+    }
+}

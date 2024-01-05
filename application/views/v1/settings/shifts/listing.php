@@ -88,7 +88,9 @@ if ($filter["mode"] === "month") {
                                         $filterFields = '';
                                         if ($filter_team != '') {
                                             $filterEmployeesSid = implode(',', $filter_employees);
-                                            $filterFields = '&employees=' . $filterEmployeesSid . '&team=' . $filter_team;
+                                            $filterJobtitle = implode(',', $filter_jobtitle);
+                                            
+                                            $filterFields = '&employees=' . $filterEmployeesSid . '&team=' . $filter_team.'&jobtitle='.$filterJobtitle;
                                         }
 
                                         ?>
@@ -121,7 +123,7 @@ if ($filter["mode"] === "month") {
                                 <div class="row" id="TableData" style="display: none;">
                                     <br>
 
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-3">
                                         <label>Employees</label>
                                         <select id="js-filter-employee_ooo" class="js-filter-employee" multiple="multiple">
                                             <option value="all">All</option>
@@ -133,10 +135,15 @@ if ($filter["mode"] === "month") {
 
                                         </select>
                                     </div>
-                                    <div class="col-sm-5">
+                                    <div class="col-sm-3">
                                         <label>Departments / Teams</label>
                                         <br>
                                         <?= get_company_departments_teams_dropdown($company_sid, 'teamId', $filter_team ?? 0); ?>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label>Job Title</label>
+                                        <br>
+                                        <?= get_jobTitle_dropdown_for_search($company_sid, 'jobtitleId') ?>
                                     </div>
                                     <div class="col-sm-2 text-right">
                                         <span class="pull-right">
@@ -294,8 +301,6 @@ if ($filter["mode"] === "month") {
                                         </div>
                                     </div>
                                 <?php } ?>
-
-
                             </div>
                         </div>
                     </div>
@@ -309,4 +314,5 @@ if ($filter["mode"] === "month") {
     let filterEmployees = '<?php echo $filter_employees; ?>'
     let filterToggle = '<?php echo $filter_toggle; ?>'
     let filterEmployeesSid = '<?php echo implode(',', $filter_employees); ?>'
+    let filterJobtitle = '<?php echo implode(',', $filter_jobtitle); ?>'
 </script>

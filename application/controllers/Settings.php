@@ -3911,6 +3911,10 @@ class Settings extends Public_Controller
         $employeeFilter['employees'] = $employeesArray;
         $employeeFilter['team'] = $team;
 
+        $jobTitle = $this->input->get("jobtitle");
+        $employeeFilter['jobtitle'] = explode(',', $jobTitle);
+
+
         if ($employees != '' || $team != '') {
             $toggleFilter = true;
         }
@@ -3919,10 +3923,7 @@ class Settings extends Public_Controller
         }
 
 
-
-        // _e($team,true,true);
-
-        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly(
+        $data["employees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"],
             $employeeFilter
         );
@@ -3975,6 +3976,9 @@ class Settings extends Public_Controller
             explode(",", $employees);
         $data["filter_toggle"] = $toggleFilter;
 
+        $data["filter_jobtitle"] =
+            explode(",", $jobTitle);
+
 
 
         // get off and holidays
@@ -4003,7 +4007,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", true);
+        ], "public/v1/shifts/", "main", false);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -4973,7 +4977,8 @@ class Settings extends Public_Controller
         // get the schedules
         $data["employee_schedule_ids"] = $this->schedule_model
             ->getCompanyEmployeeSchedulesIds(
-                $loggedInCompany["sid"], true
+                $loggedInCompany["sid"],
+                true
             );
         // get all employees
         $data["employees"] = $this->db

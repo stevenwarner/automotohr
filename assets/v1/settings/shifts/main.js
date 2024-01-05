@@ -54,7 +54,7 @@ $(function manageShifts() {
 				: picker.startDate.clone().format("MM/DD/YYYY");
 		//
 		let incrementDays = 0;
-		
+
 		//
 		if (mode === "week") {
 			incrementDays = 6;
@@ -70,7 +70,7 @@ $(function manageShifts() {
 			.add(incrementDays, "days")
 			.format("MM/DD/YYYY");
 
-			
+
 		if (mode == "month") {
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
@@ -98,7 +98,7 @@ $(function manageShifts() {
 
 		let filterFields = '';
 		if (filterTeam != '') {
-			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam
+			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam + '&jobtitle=' + filterJobtitle
 		}
 
 		const startDate =
@@ -135,10 +135,10 @@ $(function manageShifts() {
 	$(".jsNavigateRight").click(function (event) {
 		event.preventDefault();
 		//
-		
+
 		let filterFields = '';
 		if (filterTeam != '') {
-			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam
+			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam + '&jobtitle=' + filterJobtitle
 		}
 
 		const startDate =
@@ -528,7 +528,7 @@ $(function manageShifts() {
 		if (buttonRef) {
 			btnRef = callButtonHook(buttonRef, true);
 		}
-		
+
 		// make a new call
 		XHR = $.ajax({
 			url: baseUrl(url),
@@ -1062,6 +1062,9 @@ $(function manageShifts() {
 
 	$(".js-filter-employee").select2();
 
+	$(".js-filter-jobtitle").select2();
+
+
 	$(".jsSelect2").select2();
 
 	//Apply Filters
@@ -1078,6 +1081,7 @@ $(function manageShifts() {
 		let startMonth = startDate.clone().format("MM");
 		let employees = $(".js-filter-employee").val();
 		let team = $(".jsSelect2").val();
+		let jobtitle = $(".js-filter-jobtitle").val();
 
 		if (getSearchParam("year")) {
 			newSearchurl =
@@ -1090,7 +1094,8 @@ $(function manageShifts() {
 				"&employees=" +
 				employees +
 				"&team=" +
-				team;
+				team +
+				"&jobtitle=" + jobtitle;
 		} else if (getSearchParam("start_date")) {
 			newSearchurl =
 				"settings/shifts/manage?mode=" +
@@ -1102,7 +1107,8 @@ $(function manageShifts() {
 				"&employees=" +
 				employees +
 				"&team=" +
-				team;
+				team +
+				"&jobtitle=" + jobtitle;
 		} else {
 			newSearchurl =
 				"settings/shifts/manage?mode=" +
@@ -1110,7 +1116,8 @@ $(function manageShifts() {
 				"&employees=" +
 				employees +
 				"&team=" +
-				team;
+				team +
+				"&jobtitle=" + jobtitle;
 		}
 
 		//
@@ -1154,6 +1161,13 @@ $(function manageShifts() {
 		//
 		return (window.location.href = baseUrl(newSearchurl));
 	});
+
+
+	//
+	let jobTitles = filterJobtitle.split(",");
+	$('#jobtitleId').val(jobTitles);
+	$('#jobtitleId').trigger('change');
+
 
 	/**
 	 * generates break h*ml
