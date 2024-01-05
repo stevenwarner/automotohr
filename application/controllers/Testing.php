@@ -229,8 +229,9 @@ class Testing extends CI_Controller
         $forms = $this->db
             ->where([
                 "user_type" => "employee",
-                "emp_name" => ""
+                "status" => 1
             ])
+            ->where("emp_name is null")
             ->where_in("company_sid", [56883, 56885, 56887])
             ->get("form_w4_original")
             ->result_array();
