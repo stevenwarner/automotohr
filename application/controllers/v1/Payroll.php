@@ -1222,12 +1222,12 @@ class Payroll extends CI_Controller
                 $minimumWages = unserialize($data['primaryJob']['compensation']['minimum_wages']);
                 $selectedWages = array_column($minimumWages, 'uuid');
                 $data['selectedWages'] = $selectedWages;
-            }        
+            }
             //
             $data['minimumWages'] = $this->payroll_model
-            ->getCompanyMinimumWages(
-                $employeeId
-            );   
+                ->getCompanyMinimumWages(
+                    $employeeId
+                );
             //
         } elseif ($step === 'home_address') {
             //
@@ -2572,6 +2572,15 @@ class Payroll extends CI_Controller
                 $earningId,
                 $session['company_detail']['sid']
             );
+        $data["earning"] = array_merge(
+            $data["earning"],
+            $data["earning"]["fields_json"] ?
+                json_decode(
+                    $data["earning"]["fields_json"],
+                    true
+                ) :
+                []
+        );
         //
         return SendResponse(
             200,

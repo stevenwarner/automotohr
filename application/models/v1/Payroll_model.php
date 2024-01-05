@@ -4426,10 +4426,9 @@ class Payroll_model extends CI_Model
     ): array {
         // get earning
         return $this->db
-            ->select('sid, name')
+            ->select('sid, name, fields_json, is_default')
             ->where('sid', $earningId)
             ->where('company_sid', $companyId)
-            ->where('is_default', 0)
             ->get('gusto_companies_earning_types')
             ->row_array();
     }
@@ -4508,6 +4507,7 @@ class Payroll_model extends CI_Model
         $ins = [];
         $ins['name'] = $gustoResponse['name'];
         $ins['gusto_uuid'] = $gustoResponse['uuid'];
+        $ins['fields_json'] = json_encode($data);
         $ins['is_default'] = 0;
         $ins['updated_at'] = $ins['created_at'] = getSystemDate();
         $ins['company_sid'] = $companyId;
@@ -4529,32 +4529,41 @@ class Payroll_model extends CI_Model
     ): array {
         //
         $earning = $this->db
-            ->select('gusto_uuid, company_sid')
+            ->select('gusto_uuid, company_sid, is_default')
             ->where('sid', $earningId)
             ->get('gusto_companies_earning_types')
             ->row_array();
-        // get company details
-        $companyDetails = $this->getCompanyDetailsForGusto($earning['company_sid']);
-        $companyDetails['other_uuid'] = $earning['gusto_uuid'];
-        // response
-        $gustoResponse = gustoCall(
-            'editCompanyEarningTypes',
-            $companyDetails,
-            [
-                'name' => $data['name']
-            ],
-            'PUT'
-        );
-        //
-        $errors = hasGustoErrors($gustoResponse);
-        //
-        if ($errors) {
-            return $errors;
+        if ($earning["is_default"] == 0) {
+
+            // get company details
+            $companyDetails = $this->getCompanyDetailsForGusto($earning['company_sid']);
+            $companyDetails['other_uuid'] = $earning['gusto_uuid'];
+            // response
+            $gustoResponse = gustoCall(
+                'editCompanyEarningTypes',
+                $companyDetails,
+                [
+                    'name' => $data['name']
+                ],
+                'PUT'
+            );
+            //
+            $errors = hasGustoErrors($gustoResponse);
+            //
+            if ($errors) {
+                return $errors;
+            }
+            //
+            $upd = [];
+            $upd['name'] = $gustoResponse['name'];
+            $upd['fields_json'] = json_encode($data);
+            $upd['updated_at'] = getSystemDate();
+        } else {
+            //
+            $upd = [];
+            $upd['fields_json'] = json_encode($data);
+            $upd['updated_at'] = getSystemDate();
         }
-        //
-        $upd = [];
-        $upd['name'] = $gustoResponse['name'];
-        $upd['updated_at'] = getSystemDate();
         //
         $this->db
             ->where('sid', $earningId)

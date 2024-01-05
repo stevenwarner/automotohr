@@ -8,6 +8,20 @@
         <h4 style="margin-top: 0">
             <strong>Enter federal tax withholdings</strong>
         </h4>
+        <?php if (!$record) { ?>
+            <p class="text-medium text-danger">
+                <strong>
+                    You haven't completed the Federal tax yet.
+                </strong>
+            </p>
+
+        <?php } else { ?>
+            <p class="text-medium text-success">
+                <strong>
+                    You have completed the Federal tax.
+                </strong>
+            </p>
+        <?php } ?>
         <h4 style="margin-top: 0">
             <strong>Step 1: Go to the IRS calculator</strong>
         </h4>

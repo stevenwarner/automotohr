@@ -102,9 +102,7 @@ $(function manageEarningTypes() {
 		//
 		event.preventDefault();
 		//
-		const obj = {
-			name: $("#jsEarningName").val().trim(),
-		};
+		const obj = formArrayToObj($(this).serializeArray(), true);
 		//
 		let errorArray = [];
 		// validation
@@ -119,6 +117,8 @@ $(function manageEarningTypes() {
 				CB
 			);
 		}
+		const btn = callButtonHook($(".jsAddBtn"), true);
+
 		//
 		ml(
 			true,
@@ -143,6 +143,7 @@ $(function manageEarningTypes() {
 			.always(function () {
 				//
 				XHR = null;
+				callButtonHook(btn);
 				//
 				ml(false, `jsAddEarningTypeLoader`);
 			});
@@ -155,9 +156,7 @@ $(function manageEarningTypes() {
 		//
 		event.preventDefault();
 		//
-		const obj = {
-			name: $("#jsEarningName").val().trim(),
-		};
+		const obj = formArrayToObj($(this).serializeArray(), true);
 		//
 		let errorArray = [];
 		// validation
@@ -172,6 +171,7 @@ $(function manageEarningTypes() {
 				CB
 			);
 		}
+		const btn = callButtonHook($(".jsEditBtn"), true);
 		//
 		ml(
 			true,
@@ -196,6 +196,7 @@ $(function manageEarningTypes() {
 			.always(function () {
 				//
 				XHR = null;
+				callButtonHook(btn);
 				//
 				ml(false, `jsEditEarningTypeLoader`);
 			});
