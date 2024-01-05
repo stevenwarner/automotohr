@@ -32,7 +32,7 @@
                              *
                          </strong>
                      </label>
-                     <select name="employment_type" class="form-control">
+                     <select name="employment_type" class="form-control jsEmploymentType">
                          <option value=""></option>
                          <option <?= $jobWageData["employmentType"] == "fulltime" ? "selected" : ""; ?> value="fulltime">Full time</option>
                          <option <?= $jobWageData["employmentType"] == "parttime" ? "selected" : ""; ?> value="parttime">Part time</option>
@@ -55,8 +55,9 @@
                              Owners ('Owner') are employees that own at least twenty percent of the company.
                          </p>
                      </label>
-                     <select name="flsa_status" class="form-control">
+                     <select name="flsa_status" class="form-control jsFLSAStatus">
                          <option <?= $jobWageData["flsa_status"] == "Exempt" ? "selected" : ""; ?> value="Exempt">Salary/No overtime</option>
+                         <option <?= $jobWageData["flsa_status"] == "Salaried Commission" ? "selected" : ""; ?> value="Salaried Commission">Salary/Commission</option>
                          <option <?= $jobWageData["flsa_status"] == "Salaried Nonexempt" ? "selected" : ""; ?> value="Salaried Nonexempt">Salary/Eligible for overtime</option>
                          <option <?= $jobWageData["flsa_status"] == "Nonexempt" ? "selected" : ""; ?> value="Nonexempt">Paid by the hour</option>
                          <option <?= $jobWageData["flsa_status"] == "Owner" ? "selected" : ""; ?> value="Owner">Owner's draw</option>
@@ -73,7 +74,7 @@
                              The unit accompanying the compensation rate. If the employee is an owner, rate should be 'Paycheck'.
                          </p>
                      </label>
-                     <select name="per" class="form-control">
+                     <select name="per" class="form-control jsPayType">
                          <option <?= $jobWageData["per"] == "Hour" ? "selected" : ""; ?> value="Hour">Per hour</option>
                          <option <?= $jobWageData["per"] == "Week" ? "selected" : ""; ?> value="Week">Per week</option>
                          <option <?= $jobWageData["per"] == "Month" ? "selected" : ""; ?> value="Month">Per month</option>
@@ -89,11 +90,7 @@
                              *
                          </strong>
                      </label>
-                     <input type="text" class="form-control readonly jsHireDate" name="hire_date" value="<?= $jobWageData["hireDate"] ? $jobWageData["hireDate"] : formatDateToDB(
-                                                                                                                $jobWageData["hireDate"],
-                                                                                                                DB_DATE,
-                                                                                                                SITE_DATE
-                                                                                                            ); ?>" readonly placeholder="MM/DD/YYYY" />
+                     <input type="text" class="form-control readonly jsHireDate" name="hire_date" value="<?= $jobWageData["hireDate"] ? formatDateToDB($jobWageData["hireDate"],DB_DATE,SITE_DATE): ''; ?>" readonly placeholder="MM/DD/YYYY" />
                  </div>
 
                  <div class="form-group">
@@ -103,7 +100,7 @@
                              *
                          </strong>
                      </label>
-                     <input type="number" class="form-control readonly" name="rate" placeholder="0.00" value="<?= $jobWageData["rate"]; ?>" />
+                     <input type="number" class="form-control readonly jsEmployeeRate" name="rate" placeholder="0.00" value="<?= $jobWageData["rate"]; ?>" />
                  </div>
                  <div class="form-group">
                      <label class="text-medium">
@@ -112,7 +109,7 @@
                              *
                          </strong>
                      </label>
-                     <select name="overtime_rule" class="form-control">
+                     <select name="overtime_rule" class="form-control jsOvertimeRule">
                          <option value="0"></option>
                          <?php
                             if ($overtimeRules) {

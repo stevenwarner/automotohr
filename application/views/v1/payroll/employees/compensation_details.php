@@ -90,8 +90,6 @@
                                             Wage:
                                             <br>
                                             <strong><?php echo '$'.$wage['wage']; ?></strong>
-                                            <br>
-                                            <strong><?php echo '$'.$selectedWage; ?></strong>
                                         </h3>
                                         <hr>
                                         <h3>

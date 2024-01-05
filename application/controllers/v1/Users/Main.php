@@ -178,6 +178,7 @@ class Main extends Public_Controller
                 $userType,
                 $this->loggedInCompany["sid"]
             );
+        // _e($data,true,true);        
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -206,6 +207,44 @@ class Main extends Public_Controller
             $post["userType"],
             $post
         );
+    }
+
+    public function updateEmployeejobCompensation ($userId, $userType) {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        _e($post,true);
+        //
+        $companyId = $session["company_detail"]["sid"];
+        //
+        // get the company details
+        $companyGustoDetails =  getCompanyDetailsForGusto($companyId);
+        //
+        if ($companyGustoDetails) {
+            //
+            $gustoEmployeeInfo = $this->main_model->getEmployeeGustoInfo($userId);
+            //
+            if ($gustoEmployeeInfo) {
+                $jobInfo = $this->main_model->getEmployeeJobInfo($userId);
+                //
+                $newHireDate = formatDateToDB($post['hireDate']);
+                //
+                if ($jobInfo && $jobInfo['hire_date'] != $newHireDate) {
+                    $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
+                    //
+                    $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
+                } else {
+                    $this->main_model->createEmployeeJobOnGusto($companyId, $userId, $companyGustoDetails);
+                }
+            } else {
+                $this->main_model->processEmployeeJobData($userId, $post);
+            }
+        } else {
+            $this->main_model->processEmployeeJobData($userId, $post);
+        }
+        _e($userType,true);
+        _e($_POST,true,true);
     }
 
 
@@ -253,7 +292,7 @@ class Main extends Public_Controller
             getCommonFiles("js"),
             $this->js,
             "common_js",
-            true
+            false
         );
         // css bundle
         $data['appCSS'] .= bundleCSS(

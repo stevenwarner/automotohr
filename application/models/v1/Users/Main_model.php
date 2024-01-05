@@ -343,4 +343,334 @@ class Main_model extends CI_Model
 
         return $returnArray;
     }
+
+    /**
+     * get the user job info
+     *
+     * @param int    $userId
+     * @return array
+     */
+    public function getEmployeeJobInfo(
+        int $employeeId
+    ): array {
+        // get job data
+        return $this->db
+            ->select("
+                sid,
+                gusto_uuid,
+                gusto_version,
+                gusto_location_uuid,
+                title,
+                hire_date
+            ")
+            ->where("employee_sid", $employeeId)
+            ->get("gusto_employees_jobs")
+            ->row_array();
+    }
+
+    /**
+     * get the user gusto detail
+     *
+     * @param int    $userId
+     * @return array
+     */
+    public function getEmployeeGustoInfo(
+        int $employeeId
+    ): array {
+        // get gusto data
+        return $this->db
+        ->select('
+            gusto_uuid
+        ')
+        ->where('employee_sid', $employeeId)
+        ->get('gusto_companies_employees')
+        ->row_array();
+    }
+
+    public function updateEmployeeJob ($companyId, $jobInfo, $newHireDate, $companyGustoDetails) {
+        //
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+        //
+        $request = [];
+        $request['version'] = $jobInfo['gusto_version'];
+        $request['title'] = $jobInfo['title'];
+        $request['location_uuid'] = $jobInfo['gusto_location_uuid'];
+        $request['hire_date'] = $newHireDate;
+        //
+        $gustoResponse = gustoCall(
+            'updateEmployeeJob',
+            $companyGustoDetails,
+            $request,
+            "PUT"
+        );
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $updateArray = [];
+        $updateArray['gusto_version'] = $gustoResponse['version'];
+        $updateArray['gusto_location_uuid'] = $gustoResponse['location_uuid'];
+        $updateArray['hire_date'] = $gustoResponse['hire_date'];
+        $updateArray['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $jobInfo['sid'])
+            ->update('gusto_employees_jobs', $updateArray);
+    }
+
+    /**
+     * create and sync employee job on Gusto
+     *
+     * @param int   $companyId
+     * @param int   $employeeId
+     * @param array $companyDetails
+     * @return array
+     */
+    public function createEmployeeJobOnGusto(int $companyId, int $employeeId, array $companyDetails): array
+    {
+        //
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+        //
+        // check the company location
+        $location = $this->db
+            ->select('gusto_uuid')
+            ->where('company_sid', $companyDetails['company_sid'])
+            ->where('is_active', 1)
+            ->get('gusto_companies_locations')
+            ->row_array();
+        //
+        if (!$location) {
+            return ['errors' => ['"Location" is missing.']];
+        }
+        // get employee profile data
+        $employeeDetails = $this->db
+            ->select('
+                job_title,
+                complynet_job_title,
+                registration_date,
+                joined_at,
+            ')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        // get job title
+        $jobTitle = 'Automotive';
+        $joiningDate = get_employee_latest_joined_date(
+            $employeeDetails['registration_date'],
+            $employeeDetails['joined_at'],
+            ''
+        );
+        //
+        if ($employeeDetails['job_title']) {
+            $jobTitle = $employeeDetails['job_title'];
+        } elseif ($employeeDetails['complynet_job_title']) {
+            $jobTitle = $employeeDetails['complynet_job_title'];
+        }
+        //
+        $errorArray = [];
+        // validation
+        if (!$jobTitle) {
+            $errorArray[] = '"Job Title" is required.';
+        }
+        if (!$joiningDate) {
+            $errorArray[] = '"Joining Date" is required.';
+        }
+        //
+        if ($errorArray) {
+            return ['errors' => $errorArray];
+        }
+        // create request
+        $request = [];
+        $request['title'] = $jobTitle;
+        $request['location_uuid'] = $location['gusto_uuid'];
+        $request['hire_date'] = $joiningDate;
+        // make call
+        $gustoResponse = gustoCall(
+            "createEmployeeJobOnGusto",
+            $companyDetails,
+            $request,
+            "POST"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // insert
+        $this->db
+            ->insert('gusto_employees_jobs', [
+                'employee_sid' => $employeeId,
+                'gusto_uuid' => $gustoResponse['uuid'],
+                'gusto_version' => $gustoResponse['version'],
+                'gusto_location_uuid' => $gustoResponse['location_uuid'],
+                'is_primary' => $gustoResponse['primary'],
+                'hire_date' => $gustoResponse['hire_date'],
+                'title' => $gustoResponse['title'],
+                'rate' => $gustoResponse['rate'],
+                'current_compensation_uuid' => $gustoResponse['current_compensation_uuid'],
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate()
+            ]);
+        //
+        $gustoEmployeeJobId = $this->db->insert_id();
+        // add compensations
+        foreach ($gustoResponse['compensations'] as $compensation) {
+            $this->db
+                ->insert('gusto_employees_jobs_compensations', [
+                    'gusto_employees_jobs_sid' => $gustoEmployeeJobId,
+                    'gusto_uuid' => $compensation['uuid'],
+                    'gusto_version' => $compensation['version'],
+                    'rate' => $compensation['rate'],
+                    'payment_unit' => $compensation['payment_unit'],
+                    'flsa_status' => $compensation['flsa_status'],
+                    'effective_date' => $compensation['effective_date'],
+                    'adjust_for_minimum_wage' => $compensation['adjust_for_minimum_wage'],
+                    'minimum_wages' => serialize($compensation['minimum_wages']),
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate()
+                ]);
+        }
+        //
+        $this->db
+            ->where(['employee_sid' => $employeeId])
+            ->update('gusto_companies_employees', [
+                'work_address' => 1,
+                'compensation_details' => 1
+            ]);
+        //
+        return [
+            'gusto_uuid' => $gustoResponse['uuid'],
+            'gusto_version' => $gustoResponse['version']
+        ];
+    }
+
+    public function processEmployeeJobData (int $employeeId, array $post) {
+        //
+        if($this->db
+            ->where("employee_sid", $employeeId)
+            ->count_all_results('gusto_employees_jobs')
+        ) {
+            $updateArray = [];
+            $updateArray['rate'] = $post['employeeRate'];
+            $updateArray['hire_date'] = formatDateToDB($post['hireDate']);
+            $updateArray['updated_at'] = getSystemDate();
+            //
+            $this->db
+                ->where('employee_sid', $$employeeId)
+                ->update('gusto_employees_jobs', $updateArray);
+            //
+            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']); 
+            //
+            $updateCompensation = [];
+            $updateCompensation['rate'] = $post['employeeRate'];
+            $updateCompensation['payment_unit'] = $post['payType'];
+            $updateCompensation['flsa_status'] = $post['flsaStatus'];
+            $updateCompensation['effective_date'] = $post['hireDate'];
+            $updateCompensation['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'];
+            $updateCompensation['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
+            $updateCompensation['updated_at'] = getSystemDate();   
+            //
+            $jobId = $this->db
+                ->select("
+                    sid
+                ")
+                ->where("employee_sid", $employeeId)
+                ->get("gusto_employees_jobs")
+                ->row_array()['sid'];
+            //
+            $this->db
+                ->where('gusto_employees_jobs_sid', $jobId)
+                ->update('gusto_employees_jobs_compensations', $updateCompensation);
+        } else {
+            $employeeDetails = $this->db
+                ->select('
+                    job_title,
+                    complynet_job_title,
+                    registration_date,
+                    joined_at,
+                ')
+                ->where('sid', $employeeId)
+                ->get('users')
+                ->row_array();
+            // get job title
+            $jobTitle = 'Automotive';
+            //
+            if ($employeeDetails['job_title']) {
+                $jobTitle = $employeeDetails['job_title'];
+            } elseif ($employeeDetails['complynet_job_title']) {
+                $jobTitle = $employeeDetails['complynet_job_title'];
+            }
+            // insert
+            $this->db
+                ->insert('gusto_employees_jobs', [
+                    'employee_sid' => $employeeId,
+                    'gusto_uuid' => '',
+                    'gusto_version' => '',
+                    'gusto_location_uuid' => '',
+                    'is_primary' => 1,
+                    'hire_date' => formatDateToDB($post['hireDate']),
+                    'title' => $jobTitle['title'],
+                    'rate' => $post['employeeRate'],
+                    'current_compensation_uuid' => '',
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate()
+                ]);
+            //    
+            $jobId = $this->db->insert_id();    
+            // 
+            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);    
+            //
+            $ins = [];
+            $ins['gusto_version'] = '';
+            $ins['gusto_employees_jobs_sid'] = $jobId;
+            $ins['rate'] = $post['employeeRate'];
+            $ins['payment_unit'] = $post['payType'];
+            $ins['flsa_status'] = $post['flsaStatus'];
+            $ins['effective_date'] = $post['hireDate'];
+            $ins['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'];
+            $ins['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
+            $ins['created_at'] = getSystemDate();
+            //
+            $this->db->insert('gusto_employees_jobs_compensations', $ins);
+        }    
+    }
+
+    public function getMinimumWagesData($minimumWage, $wagesId)
+    {
+        //
+        $response = [
+            'minimumWage' => 0,
+            'minimum_wages' => []
+        ];
+        //
+        if ($minimumWage == 1 && !empty($wagesId)) {
+            //
+            $response['minimumWage'] = 1;
+            //
+            foreach ($wagesId as $id) {
+                //
+                $uuid = $this->db
+                    ->select('gusto_uuid')
+                    ->where('sid', $id)
+                    ->get('company_minimum_wages')
+                    ->row_array()['gusto_uuid'];
+                //
+                $wageInfo = array('uuid' => $uuid);
+                //
+                $response['minimum_wages'][] = $wageInfo;
+            }
+        }
+        return $response;
+    }
+    
+
 }

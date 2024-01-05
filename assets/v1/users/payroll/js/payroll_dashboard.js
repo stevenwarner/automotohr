@@ -19,6 +19,19 @@ $(function payrollDashboard() {
 	const modalBody = modalId + "Body";
 
 	/**
+	 * minimum wages show and hide
+	 */
+	$(document).on('click', '.jsAdjustForMinimumWage', function(e) {	
+		//
+		if($(this).is(':checked')) {
+			$(".jsMinimumWagesBox").removeClass('hidden');
+		} else {
+			$(".jsMinimumWagesBox").addClass('hidden');
+			$('.jsMinimumWages').select2("val", "")
+		}
+	});
+
+	/**
 	 * edit a pay schedule
 	 */
 	$(".jsEditPaySchedule").click(function (event) {
@@ -48,6 +61,76 @@ $(function payrollDashboard() {
 				},
 			});
 		});
+	});
+
+	$(document).on('click', '.jsPagePayScheduleBtn', function(event) {	
+		// stop the event
+		event.preventDefault();
+		//
+		// reset the array
+		let jobObj = {
+			employeeType: $(".jsEmploymentType option:selected").val(),
+			flsaStatus: $(".jsFLSAStatus option:selected").val().trim(),
+			payType: $(".jsPayType option:selected").val().trim(),
+			hireDate: $(".jsHireDate").val().trim(),
+			overTimeRule: $(".jsOvertimeRule option:selected").val().trim(),
+			employeeRate: $(".jsEmployeeRate").val().trim(),
+			adjustMinimumWage: $('input[name="adjust_for_minimum_wage"]:checked').val() == 'on' ? 1 : 0,
+			wagesID: $(".jsMinimumWages").select2("val")
+		};
+		//
+		console.log(jobObj)
+		// set default error array
+		let errors = [];
+		// validate
+		if (!jobObj.employeeType) {
+			errors.push('"Employment type" is missing.');
+		}
+		if (!jobObj.flsaStatus) {
+			errors.push('"FLSA status" is missing.');
+		}
+		if (!jobObj.payType) {
+			errors.push('"Pay type" is missing.');
+		}
+		if (!jobObj.hireDate) {
+			errors.push('"Hire date" is missing.');
+		}
+		if (!jobObj.employeeRate) {
+			errors.push('"Rate" is missing.');
+		}
+		if (!jobObj.overTimeRule) {
+			errors.push('"Overtime rule" is missing.');
+		}
+		// check and show errors
+		if (errors.length) {
+			return alertify.alert(
+				"ERROR",
+				getErrorsStringFromArray(errors),
+				CB
+			);
+		}
+		// show the loader
+		ml(true, modalLoader)
+		// //
+		XHR = $.ajax({
+			url: window.location.origin + "/payrolls/employee_job_compensation/"+ profileUserInfo.userId + "/" + profileUserInfo.userType,
+			method: "POST",
+			data: jobObj,
+		})
+			.success(function () {
+				//
+				XHR = null;
+				_ml(false, modalId + "Loader");
+				//
+				return alertify.alert(
+					"SUCCESS",
+					"Congratulations! You have successfully added a payroll admin for the company.",
+					function () {
+						processQueue.adminStep();
+					}
+				);
+			})
+			.fail(saveErrorsList);
 	});
 
 	/**

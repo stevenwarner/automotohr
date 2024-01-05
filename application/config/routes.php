@@ -2075,6 +2075,7 @@ $route["payrolls/page/(:any)/(:num)/(:any)"]["get"] =
 // user payroll dashboard page process
 $route["payrolls/page/update"]["post"] =
   "v1/Users/Main/updatePage";
+$route["payrolls/employee_job_compensation/(:num)/(:any)"]["post"] = "v1/Users/Main/updateEmployeejobCompensation/$1/$2/";
 
 
 /**
