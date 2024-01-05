@@ -24,7 +24,7 @@
 
                     <?php $this->load->view('loader_new', ['id' => 'jsDashboard']); ?>
                     <!-- Content area -->
-                    <div class="row">
+                    <div class="row hidden">
                         <div class="col-sm-12 col-md-12 text-right">
                             <?php if ($payrollBlockers) { ?>
                                 <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">

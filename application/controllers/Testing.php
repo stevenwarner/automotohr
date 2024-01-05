@@ -221,4 +221,34 @@ class Testing extends CI_Controller
         //
         $this->db->insert("portal_state_form", $insertArray);
     }
+
+
+    public function autoCompleteW4EmployerSection()
+    {
+        //
+        $forms = $this->db
+            ->where([
+                "user_type" => "employee",
+                "emp_name" => ""
+            ])
+            ->where_in("company_sid", [56883, 56885, 56887])
+            ->get("form_w4_original")
+            ->result_array();
+
+        if (!$forms) {
+            exit("No data found.");
+        }
+        $this->load->model("hr_documents_management_model");
+        //
+        foreach ($forms as $v0) {
+            $this->hr_documents_management_model
+                ->checkAndSetEmployerSection(
+                    $v0,
+                    "employee",
+                    $v0["company_sid"]
+                );
+        }
+
+        exit("All done");
+    }
 }

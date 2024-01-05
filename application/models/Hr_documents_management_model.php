@@ -11061,4 +11061,37 @@ class Hr_documents_management_model extends CI_Model
             }
         }
     }
+
+    public function checkAndSetEmployerSection(
+        array &$w4Form,
+        string $userType,
+        int $userId,
+        int $companyId
+    ) {
+        //
+        $data = getDataForEmployerPrefill(
+            $companyId,
+            $userId,
+            $userType
+        );
+        //
+        $updateArray = [];
+        $updateArray["emp_name"] = $data["CompanyName"];
+        $updateArray["emp_address"] = $data["companyAddress"];
+        $updateArray["first_date_of_employment"] = data["first_date_of_employment"] ? formatDateToDB(
+            $data["first_date_of_employment"],
+            "m-d-Y",
+            DB_DATE
+        ) : "";
+        $updateArray["emp_identification_number"] = $data["ssn"];
+
+        $w4Form = array_merge(
+            $w4Form,
+            $updateArray
+        );
+        //
+        $this->db
+            ->where("sid", $w4Form["sid"])
+            ->update("form_w4_original", $updateArray);
+    }
 }
