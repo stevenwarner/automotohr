@@ -231,6 +231,7 @@ class Testing extends CI_Controller
                 "user_type" => "employee",
                 "status" => 1
             ])
+            ->limit(1)
             ->where("emp_name is null")
             ->where_in("company_sid", [56883, 56885, 56887])
             ->get("form_w4_original")
@@ -246,6 +247,7 @@ class Testing extends CI_Controller
                 ->checkAndSetEmployerSection(
                     $v0,
                     "employee",
+                    $v0["employer_sid"],
                     $v0["company_sid"]
                 );
         }
