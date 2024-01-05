@@ -68,6 +68,9 @@
                                 <div class="form-group">
                                     <label class="text-medium">
                                         Name
+                                        <strong class="text-red">
+                                            *
+                                        </strong>
                                     </label>
                                     <input type="text" class="form-control" name="name" placeholder="Weekly" value="<?= $schedule["custom_name"]; ?>" />
                                 </div>

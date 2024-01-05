@@ -3656,6 +3656,7 @@ class Settings extends Public_Controller
         // get the sanitized post
         $post = $this->input->post(null, true);
         // add validation rules
+        $this->form_validation->set_rules("name", "Name", "required|xss_clean|trim");
         $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
         $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
         // for dealine
@@ -3769,6 +3770,7 @@ class Settings extends Public_Controller
         // get the sanitized post
         $post = $this->input->post(null, true);
         // add validation rules
+        $this->form_validation->set_rules("name", "Name", "required|xss_clean|trim");
         $this->form_validation->set_rules("pay_frequency", "Pay frequency", "required|xss_clean|trim");
         $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
         // for dealine

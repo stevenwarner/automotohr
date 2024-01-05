@@ -80,13 +80,6 @@
                                             <div class="col-md-3">
                                                 <div class="panel panel-default csRelative">
                                                     <div class="panel-body">
-                                                        <?php if ($v0["gusto_uuid"]) { ?>
-                                                            <div class="csAbsoluteBox">
-                                                                <label class="label bg-orange" title="This pay schedule is used for Payroll." placement="top">
-                                                                    Payroll
-                                                                </label>
-                                                            </div>
-                                                        <?php } ?>
                                                         <p class="text-medium">
                                                             <strong><?= $v0["custom_name"] ?? "Default"; ?></strong>
                                                             <br />
@@ -111,7 +104,7 @@
                                                     <div class="panel-footer text-center">
                                                         <a href="<?= base_url("schedules/edit/" . $v0['sid']); ?>" class="btn btn-yellow">
                                                             <i class="fa fa-edit" aria-hidden="true"></i>
-                                                            &nbsp;Edit a Pay Schedule
+                                                            &nbsp;Edit
                                                         </a>
                                                     </div>
                                                 </div>

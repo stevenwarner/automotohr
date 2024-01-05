@@ -29,6 +29,7 @@ $(function addSchedule() {
 	// apply validator
 	const validator = $("#jsAddScheduleForm").validate({
 		rules: {
+			name: { required: true },
 			pay_frequency: { required: true },
 			first_pay_date: { required: true, date: true },
 			deadline_to_run_payroll: { required: true, date: true },
@@ -131,6 +132,15 @@ $(function addSchedule() {
 			// $('[name="deadline_to_run_payroll"]').rules("remove");
 		} else {
 			$('[name="first_pay_date"]').trigger("change");
+		}
+
+		if (
+			$(this).val() === "Every week" ||
+			$(this).val() === "Every other week" ||
+			$(this).val() === "Twice per month"
+		) {
+			$(".jsFrequency").addClass("hidden");
+			$(".jsMonthlyFrequency").addClass("hidden");
 		}
 	});
 
