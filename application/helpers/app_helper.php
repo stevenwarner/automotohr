@@ -2408,6 +2408,12 @@ if (!function_exists("getDataForEmployerPrefill")) {
             ->where('parent_sid', 0)
             ->get('users')
             ->row_array();
+        if ($companyData['Location_State'] != '') {
+            $companyData['state_name'] = getStateColumnById($companyData['Location_State'], 'state_name');
+        } else {
+            $companyData['state_name'] = '';
+        }
+
         //
         if ($employeeSid != 0) {
             $employeeData = $CI->db->select('registration_date,joined_at')

@@ -10,21 +10,13 @@
                <div class="col-sm-3">
                    <div class="form-group">
                        <label>
-                           First Name
+                       Name of Employer
                            <strong class="text-danger">*</strong>
                        </label>
                        <input type="text" name="first_name" value="<?php echo $formInfo["employer_json"]['first_name'] != '' ? $formInfo["employer_json"]['first_name'] : $employerPrefill['CompanyName']; ?>" class="form-control" <?php echo $input; ?> />
                    </div>
                </div>
-               <div class="col-sm-3">
-                   <div class="form-group">
-                       <label>
-                           Last Name
-                           <strong class="text-danger">*</strong>
-                       </label>
-                       <input type="text" name="last_name" value="<?php echo $formInfo["employer_json"]['last_name']; ?>" class="form-control" <?php echo $input; ?> />
-                   </div>
-               </div>
+       
                <div class="col-sm-3">
                    <div class="form-group">
                        <label>
@@ -34,7 +26,7 @@
                        <input type="number" name="mn_tax_number" value="<?php echo $formInfo["employer_json"]['mn_tax_number']; ?>" class="form-control" <?php echo $input; ?> />
                    </div>
                </div>
-               <div class="col-sm-3">
+               <div class="col-sm-4">
                    <div class="form-group">
                        <label>
                            Federal Employer ID Number (FEIN)

@@ -10558,6 +10558,45 @@ class Hr_documents_management_model extends CI_Model
             $insertArray["user_consent_at"] = null;
             $insertArray["created_at"] = $insertArray["updated_at"]
                 = getSystemDate();
+
+            //Employer data
+            $employeerPrefillData = getDataForEmployerPrefill($session["company_detail"]["sid"], $userId);
+            if (!empty($employeerPrefillData)) {
+                if (
+                    !empty($employeerPrefillData['CompanyName'])
+                    && !empty($employeerPrefillData['ssn'])
+                    && !empty($employeerPrefillData['Location_Address'])
+                    && !empty($employeerPrefillData['Location_City'])
+                    && !empty($employeerPrefillData['Location_ZipCode'])
+                ) {
+
+                    $this->db->select('employer_json');
+                    $this->db->where('company_sid', $session["company_detail"]["sid"]);
+                    $this->db->where('employer_consent', 1);
+                    $this->db->from('portal_state_form');
+                    $records_obj = $this->db->get();
+                    $records_arr = $records_obj->row_array();
+                    if (!empty($records_arr)) {
+
+                        $employerJson = json_decode($records_arr['employer_json'],true);
+                        if ($employerJson['mn_tax_number'] != '' && $employerJson['mn_tax_number'] != null) {
+                            $employerarray['first_name'] = $employeerPrefillData['CompanyName'];
+                            $employerarray['mn_tax_number'] = $employerJson['mn_tax_number'];
+                            $employerarray['ssn'] = $employeerPrefillData['ssn'];
+                            $employerarray['street_1'] = $employeerPrefillData['Location_Address'];
+                            $employerarray['street_2'] = $employeerPrefillData['Location_Address_2'];
+                            $employerarray['city'] = $employeerPrefillData['Location_City'];
+                            $employerarray['state'] = $employeerPrefillData['Location_State'];
+                            $employerarray['zip_code'] = $employeerPrefillData['Location_ZipCode'];
+                            $insertArray["employer_json"] = json_encode($employerarray);
+                            $insertArray["employer_consent"] = 1;
+                            $insertArray["employer_concent_at"] = getSystemDate();
+                        }
+                    }
+                }
+            }
+
+
             //
             $this->db->insert("portal_state_form", $insertArray);
         }

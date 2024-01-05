@@ -2287,6 +2287,17 @@ class Hr_documents_management extends Public_Controller
                                 $w4_data_to_insert['sent_status'] = 1;
                                 $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
                                 $w4_data_to_insert['status'] = 1;
+
+                                $employerPrefill = getDataForEmployerPrefill($company_sid, $user_sid);
+
+                                if (!empty($employerPrefill['CompanyName']) && !empty($employerPrefill['Location_Address']) && !empty($employerPrefill['ssn']) && !empty($employerPrefill['first_day_of_employment'])) {
+
+                                    $w4_data_to_insert['emp_name'] = $employerPrefill['CompanyName'];
+                                    $w4_data_to_insert['emp_address'] = $employerPrefill['Location_Address'] . ', ' . $employerPrefill['Location_City'] . ', ' . $employerPrefill['state_name'] . ', ' . $employerPrefill['Location_ZipCode'];
+                                    $w4_data_to_insert['first_date_of_employment'] = DateTime::createFromFormat('m-d-Y', $employerPrefill['first_day_of_employment'])->format('Y-m-d');
+                                    $w4_data_to_insert['emp_identification_number'] = $employerPrefill['ssn'];
+                                }
+
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                             } else {
                                 $w4_data_to_update                                          = array();
@@ -2301,6 +2312,17 @@ class Hr_documents_management extends Public_Controller
                                 $w4_data_to_update['uploaded_file']                         = NULL;
                                 $w4_data_to_update['uploaded_by_sid']                       = 0;
                                 $w4_data_to_update['user_consent']                          = 0;
+
+
+                                $employerPrefill = getDataForEmployerPrefill($company_sid, $user_sid);
+
+                                if (!empty($employerPrefill['CompanyName']) && !empty($employerPrefill['Location_Address']) && !empty($employerPrefill['ssn']) && !empty($employerPrefill['first_day_of_employment'])) {
+
+                                    $w4_data_to_update['emp_name'] = $employerPrefill['CompanyName'];
+                                    $w4_data_to_update['emp_address'] = $employerPrefill['Location_Address'] . ', ' . $employerPrefill['Location_City'] . ', ' . $employerPrefill['state_name'] . ', ' . $employerPrefill['Location_ZipCode'];
+                                    $w4_data_to_update['first_date_of_employment'] = DateTime::createFromFormat('m-d-Y', $employerPrefill['first_day_of_employment'])->format('Y-m-d');
+                                    $w4_data_to_update['emp_identification_number'] = $employerPrefill['ssn'];
+                                }
 
                                 $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                             }
@@ -3592,11 +3614,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $user_sid,
-                $user_type,
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $user_sid,
+                    $user_type,
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
@@ -5492,11 +5514,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $employer_sid,
-                "employee",
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $employer_sid,
+                    "employee",
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1) {
                 //
@@ -8346,7 +8368,7 @@ class Hr_documents_management extends Public_Controller
                         "state_forms_json" => json_encode($stateForms)
                     ]);
                 } else {
-                     $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
+                    $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
                         "state_forms_json" => json_encode([])
                     ]);
                 }
@@ -14429,10 +14451,19 @@ class Hr_documents_management extends Public_Controller
         $data = array();
         $name = '';
         //
+
+
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+
+
+
         $data['section_access'] = $document_section;
         //
         if ($document_type == 'W4_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original");
+
+            $data['EmployeeSid'] = $data['session']['employer_detail']['sid'];
             // $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
             $html = $this->load->view('form_w4/preview_w4_2023', $data, true);
 

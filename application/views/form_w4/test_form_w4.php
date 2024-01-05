@@ -401,6 +401,10 @@
                     </tbody>
                 </table>
                 <table class="table table-border-collapse">
+                <?php
+                        $companySid = $this->session->userdata('logged_in')['company_detail']['sid'];
+                        $employerPrefill = getDataForEmployerPrefill($companySid, $EmployeeSid);
+                        ?>
                     <tbody>
                         <tr>
                             <td class="border-bottom"><span class="heading-text">Employee’s signature <br></span>(This form is not valid unless you sign it.)
@@ -417,15 +421,15 @@
                         <tr>
                             <td class="border-right-bottom">
                                 <span>8. Employer’s name and address (Employer: Complete boxes 8 and 10 if sending to IRS and complete boxes 8, 9, and 10 if sending to State Directory of New Hires.)</span>
-                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['emp_name']) ? $pre_form['emp_name'].',': ''?> <?php echo !empty($pre_form['emp_address']) ? $pre_form['emp_address']: ''?>" readonly style="display: block; width: 100%; border: none; font-weight: bold; display: block;" />
+                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['emp_name']) ? $pre_form['emp_name'].',': $employerPrefill['CompanyName'];?> <?php echo !empty($pre_form['emp_address']) ? $pre_form['emp_address']: $employerPrefill['Location_Address'] .', '.$employerPrefill['Location_City'].', '.$employerPrefill['state_name'].', '.$employerPrefill['Location_ZipCode'] ?>" readonly style="display: block; width: 100%; border: none; font-weight: bold; display: block;" />
                             </td>
                             <td class="border-right-bottom">
                                 <span>9. First date of employment</span>
-                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['first_date_of_employment']) && $pre_form['first_date_of_employment'] != '0000-00-00' ? reset_datetime(array('datetime' => $pre_form['first_date_of_employment'], '_this' => $this)) : ''; ?>" readonly />
+                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['first_date_of_employment']) && $pre_form['first_date_of_employment'] != '0000-00-00' ? reset_datetime(array('datetime' => $pre_form['first_date_of_employment'], '_this' => $this)) : $employerPrefill['first_day_of_employment']; ?>" readonly />
                             </td>
                             <td class="border-bottom">
                                 <span>10. Employer identification number (EIN)</span>
-                                <input class="plane-input" type="text" value="<?php echo isset($pre_form['emp_identification_number']) ? $pre_form['emp_identification_number']: ''?>" readonly  style="border: none; font-weight: bold; display: block;"/>
+                                <input class="plane-input" type="text" value="<?php echo isset($pre_form['emp_identification_number']) ? $pre_form['emp_identification_number']: $employerPrefill['ssn'] ?>" readonly  style="border: none; font-weight: bold; display: block;"/>
                             </td>
                         </tr>
                     </tbody>

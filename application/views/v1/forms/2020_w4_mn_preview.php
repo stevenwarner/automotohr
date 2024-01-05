@@ -643,21 +643,25 @@
             <tr style="height:30pt">
                 <td style="width:300pt;border-top-style:solid;border-top-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="text-indent: 0pt;text-align: left;">Name of Employer</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name'] : '' ?> <?php echo !empty($employerData['last_name']) ? $employerData['last_name'] : '' ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;" />
+                    <?php 
+                         $companySid = $this->session->userdata('logged_in')['company_detail']['sid'];
+                         $employerPrefill = getDataForEmployerPrefill($companySid);
+                        ?>
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['first_name']) ? $employerData['first_name'] : $employerPrefill['CompanyName'] ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;" />
                 </td>
                 <td style="width:190pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                     <p class="s2" style="padding-left: 3pt;text-indent: 0pt;text-align: left;">Federal Employer ID Number (FEIN)</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn'] : '' ?>" readonly style="border: none; width: 90%; font-weight: bold; display: block; margin-left: 5px;" />
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['ssn']) ? $employerData['ssn'] : $employerPrefill['ssn']; ?>" readonly style="border: none; width: 90%; font-weight: bold; display: block; margin-left: 5px;" />
                 </td>
                 <td style="width:165pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
                     <p class="s2" style="padding-left: 2pt;text-indent: 0pt;text-align: left;">Minnesota Tax ID Number</p>
-                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number'] : '111' ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;" />
+                    <input class="plane-input" type="text" value="<?php echo !empty($employerData['mn_tax_number']) ? $employerData['mn_tax_number'] : '' ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block; margin-left: 5px;" />
                 </td>
             </tr>
         </table>
         <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">Address City State ZIP Code</p>
         <p class="s11" style="padding-left: 6pt;text-indent: 0pt;text-align: left;">
-            <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1'] : '' ?>, <?php echo !empty($employerData['city']) ? $employerData['city'] : '' ?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code'] : '' ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block;" />
+            <input class="plane-input" type="text" value="<?php echo !empty($employerData['street_1']) ? $employerData['street_1'] : $employerPrefill['Location_Address'] ?>, <?php echo !empty($employerData['street_2']) ? $employerData['street_2'] : $employerPrefill['Location_Address_2'] ?>, <?php echo !empty($employerData['city']) ? $employerData['city'] : $employerPrefill['Location_City'] ?>, <?php echo !empty($employerData['state']) ? $employerData['state'] : $employerPrefill['Location_State']; ?>, <?php echo !empty($employerData['zip_code']) ? $employerData['zip_code'] : $employerPrefill['Location_ZipCode'] ?>" readonly style="border: none; font-weight: bold; width: 90%; display: block;" />
         </p>
 
         </ul>

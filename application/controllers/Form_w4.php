@@ -26,6 +26,8 @@ class Form_w4 extends Public_Controller
 
             $company_sid = $data['session']['company_detail']['sid'];
 
+            $data['EmployeeSid'] = $data['session']['employer_detail']['sid'];
+
             $employer_access_level = $data['session']['employer_detail']['access_level'];
             $employer_details = $data['session']['employer_detail'];
 
@@ -228,6 +230,7 @@ class Form_w4 extends Public_Controller
                 $this->load->view('main/footer');
             } else {
 
+
                 $first_name = $this->input->post('w4_first_name');
                 $middle_name = $this->input->post('w4_middle_name');
                 $last_name = $this->input->post('w4_last_name');
@@ -327,10 +330,22 @@ class Form_w4 extends Public_Controller
                 $data_to_update['init_signature_bas64_image'] = $initial_base64;
                 $data_to_update['ip_address'] = $signature_ip_address;
                 $data_to_update['user_agent'] = $signature_user_agent;
-                $data_to_update['emp_name'] = $emp_name;
-                $data_to_update['emp_address'] = $emp_address;
-                $data_to_update['first_date_of_employment'] = $first_date_of_employment;
-                $data_to_update['emp_identification_number'] = $emp_identification_number;
+
+                if (!empty($emp_name)) {
+                    $data_to_update['emp_name'] = $emp_name;
+                }
+                if (!empty($emp_address)) {
+                    $data_to_update['emp_address'] = $emp_address;
+                }
+                if (!empty($first_date_of_employment)) {
+
+                    $data_to_update['first_date_of_employment'] = $first_date_of_employment;
+                }
+                if (!empty($emp_identification_number)) {
+
+                    $data_to_update['emp_identification_number'] = $emp_identification_number;
+                }
+
                 $data_to_update['user_consent'] = $user_consent;
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['employer_sid'] = $employer_sid;
@@ -388,6 +403,7 @@ class Form_w4 extends Public_Controller
                     $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
                 }
                 //
+
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);
                 //
                 $w4_sid = getVerificationDocumentSid($employer_sid, $type, 'w4');
@@ -799,7 +815,7 @@ class Form_w4 extends Public_Controller
     {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
-
+            $data['EmployeeSid'] = $sid;
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
             $this->load->view('form_w4/print_w4_2023', $data);
@@ -812,7 +828,7 @@ class Form_w4 extends Public_Controller
     {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
-
+            $data['EmployeeSid'] = $sid;
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
 
