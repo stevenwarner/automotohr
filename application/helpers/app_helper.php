@@ -2396,4 +2396,34 @@ if (!function_exists("getCompanyDetailsForGusto")) {
             ->get('gusto_companies')
             ->row_array();
     }
-}    
+}
+
+//
+if (!function_exists("getDataForEmployerPrefill")) {
+    function getDataForEmployerPrefill($companySid, $employeeSid = 0)
+    {
+        $CI = &get_instance();
+        $companyData = $CI->db->select('CompanyName,Location_Address,Location_City,Location_ZipCode,Location_State,ssn,Location_Address_2')
+            ->where('sid', $companySid)
+            ->where('parent_sid', 0)
+            ->get('users')
+            ->row_array();
+        //
+        if ($employeeSid != 0) {
+            $employeeData = $CI->db->select('registration_date,joined_at')
+                ->where('sid', $employeeSid)
+                ->where('parent_sid', $companySid)
+                ->get('users')
+                ->row_array();
+            //
+            $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], "", false);
+            if (!empty($joiningDate)) {
+                $companyData['first_day_of_employment'] = date("m-d-Y", strtotime($joiningDate));
+            }
+        } else {
+            $companyData['first_day_of_employment'] = '';
+        }
+
+        return $companyData;
+    }
+}

@@ -8,7 +8,6 @@ class Settings extends Public_Controller
         $this->load->model('dashboard_model');
         $this->load->model('settings_model');
         $this->load->model('application_tracking_model');
-        // $this->load->model("Payroll_model");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
@@ -346,7 +345,7 @@ class Settings extends Public_Controller
             $data['complynet_link'] = $data['session']['company_detail']['complynet_dashboard_link'];
             $data['portal'] = $this->dashboard_model->get_portal_detail($company_id);
             //
-            $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($company_id);
+            $payroll_status = $this->payroll_model->GetCompanyPayrollStatus($company_id);
             $data['payroll_status'] = $payroll_status;
             //
             if ($data['company']['CompanyName'] != $this->input->post('CompanyName')) {
@@ -634,18 +633,19 @@ class Settings extends Public_Controller
                 }
                 // Check and update data on gusto
                 if ($onPayroll == 1) {
-                    //
-                    $this->load->model('Payroll_model', 'pm');
-                    $this->load->helper('payroll');
-                    //
-                    $updateArray = [
-                        'ein_number' => $this->input->post('ssn', true),
-                        'legal_name' => $this->input->post('CompanyName', true)
-                    ];
-                    //
-                    $this->pm->UpdateCompanyTax($updateArray, [
-                        'company_sid' => $company_id
-                    ]);
+                    // TO BE checked
+                    // //
+                    // $this->load->model('Payroll_model', 'pm');
+                    // $this->load->helper('payroll');
+                    // //
+                    // $updateArray = [
+                    //     'ein_number' => $this->input->post('ssn', true),
+                    //     'legal_name' => $this->input->post('CompanyName', true)
+                    // ];
+                    // //
+                    // $this->pm->UpdateCompanyTax($updateArray, [
+                    //     'company_sid' => $company_id
+                    // ]);
                     // Update data to Gusto
                     // GustoUpdateCompanyTax($updateArray, $company_id);
                 }
@@ -3564,7 +3564,9 @@ class Settings extends Public_Controller
             ->getScheduleById(
                 $scheduleId
             );
-        if (!$data["schedule"]) {echo $scheduleId; die("here");
+        if (!$data["schedule"]) {
+            echo $scheduleId;
+            die("here");
             $this->session->set_flashdata("message", "<strong>Error!</strong> Schedule not found.");
             return redirect("schedules");
         }
@@ -3689,8 +3691,6 @@ class Settings extends Public_Controller
         // get the logged in company
         $loggedInCompany = checkAndGetSession("company_detail");
         //
-        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
-        //
         // prepare array
         $ins = [];
         $ins["custom_name"] = $post["name"];
@@ -3708,10 +3708,10 @@ class Settings extends Public_Controller
             $ins['day_1'] = null;
             $ins['day_2'] = null;
         }
+        // get the company details
+        $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
         //
-        if ($payroll_status == 1 && isCompanyOnBoard($loggedInCompany["sid"])) {
-            // get the company details
-            $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
+        if ($companyGustoDetails) {
             //
             $this->load->helper('v1/payroll' . ($this->db->where([
                 "company_sid" => $loggedInCompany["sid"],
@@ -3734,7 +3734,7 @@ class Settings extends Public_Controller
             $ins["gusto_uuid"] = $gustoResponse["uuid"];
             $ins["gusto_version"] = $gustoResponse["version"];
         }
-        
+
         $ins["company_sid"] = $loggedInCompany["sid"];
         $ins["deadline_to_run_payroll"] = formatDateToDB($post["deadline_to_run_payroll"], SITE_DATE);
         $ins["active"] = 1;
@@ -3777,8 +3777,8 @@ class Settings extends Public_Controller
         if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
             $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
         }
-         // for days 1 and 2
-         if ($post["pay_frequency"] === "Twice a month: Custom") {
+        // for days 1 and 2
+        if ($post["pay_frequency"] === "Twice a month: Custom") {
             $this->form_validation->set_rules("day_1", "Day 1", "required|xss_clean|trim");
             $this->form_validation->set_rules("day_2", "Day 2", "required|xss_clean|trim");
         } else {
@@ -3803,8 +3803,6 @@ class Settings extends Public_Controller
         // get the logged in company
         $loggedInCompany = checkAndGetSession("company_detail");
         //
-        $payroll_status = $this->Payroll_model->GetCompanyPayrollStatus($loggedInCompany["sid"]);
-        //
         // prepare array
         $upd = [];
         $upd["custom_name"] = $post["name"];
@@ -3822,19 +3820,19 @@ class Settings extends Public_Controller
             $upd['day_1'] = null;
             $upd['day_2'] = null;
         }
+        // get the company details
+        $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
         //
-        if ($payroll_status == 1 && isCompanyOnBoard($loggedInCompany["sid"])) {
-            // get the company details
-            $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
+        if ($companyGustoDetails) {
             $gustoInfo =
-                    $this->db
-                    ->select('gusto_uuid, gusto_version')
-                    ->where('sid', $scheduleId)
-                    ->get('companies_pay_schedules')
-                    ->row_array();
+                $this->db
+                ->select('gusto_uuid, gusto_version')
+                ->where('sid', $scheduleId)
+                ->get('companies_pay_schedules')
+                ->row_array();
             //
-            $upd['version'] = $gustoInfo['gusto_version'];   
-            $companyGustoDetails['other_uuid'] = $gustoInfo['gusto_uuid']; 
+            $upd['version'] = $gustoInfo['gusto_version'];
+            $companyGustoDetails['other_uuid'] = $gustoInfo['gusto_uuid'];
             //
             $this->load->helper('v1/payroll' . ($this->db->where([
                 "company_sid" => $loggedInCompany["sid"],
@@ -5083,7 +5081,8 @@ class Settings extends Public_Controller
         // get the schedules
         $data["employee_schedule_ids"] = $this->schedule_model
             ->getCompanyEmployeeSchedulesIds(
-                $loggedInCompany["sid"], true
+                $loggedInCompany["sid"],
+                true
             );
         // get all employees
         $data["employees"] = $this->db

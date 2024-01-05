@@ -51,6 +51,16 @@ $(function manageEmployees() {
 	});
 
 	/**
+	 * Compensation triggers
+	 */
+	$(document).on("click", ".package-info-box", function (e) {
+		$(".select-package:not(:checked)")
+			.parent()
+			.removeClass("selected-package");
+		$(".select-package:checked").parent().addClass("selected-package");
+	});
+
+	/**
 	 * Personal details triggers
 	 */
 	$(document).on(
@@ -158,6 +168,12 @@ $(function manageEmployees() {
 			return false;
 		}
 		//
+		let checkedWages = $(".select-package:checkbox:checked")
+			.map(function () {
+				return this.value;
+			})
+			.get();
+		//
 		let obj = {
 			title: $(".jsEmployeeFlowJobTitle").val().trim(),
 			amount: $(".jsEmployeeFlowAmount").val().trim(),
@@ -165,6 +181,8 @@ $(function manageEmployees() {
 				".jsEmployeeFlowEmployeeClassification option:selected"
 			).val(),
 			per: $(".jsEmployeeFlowPer option:selected").val(),
+			minimumWage: $(".jsEmployeeFlowMinimumWage option:selected").val(),
+			wagesId: checkedWages,
 		};
 		//
 		let errorArray = [];
