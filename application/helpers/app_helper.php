@@ -2400,26 +2400,59 @@ if (!function_exists("getCompanyDetailsForGusto")) {
 
 //
 if (!function_exists("getDataForEmployerPrefill")) {
-    function getDataForEmployerPrefill($companySid, $employeeSid = 0)
+    function getDataForEmployerPrefill($companySid, $userId = 0, $userType = "employee")
     {
         $CI = &get_instance();
-        $companyData = $CI->db->select('CompanyName,Location_Address,Location_City,Location_ZipCode,Location_State,ssn,Location_Address_2')
-            ->where('sid', $companySid)
-            ->where('parent_sid', 0)
+        $companyData = $CI->db
+            ->select('
+                users.CompanyName,
+                users.Location_Address,
+                users.Location_City,
+                users.Location_ZipCode,
+                users.Location_State,
+                users.ssn,
+                states.state_code,
+                users.Location_Address_2
+            ')
+            ->join(
+                "states",
+                "states.sid = users.Location_State",
+                "left"
+            )
+            ->where('users.sid', $companySid)
+            ->where('users.parent_sid', 0)
             ->get('users')
             ->row_array();
+
+        $address = "";
+        // add street 1
+        $address .= $companyData["Location_Address"] ? $companyData["Location_Address"] . ', ' : '';
+        $address .= $companyData["Location_Address_2"] ? $companyData["Location_Address_2"] . ', ' : '';
+        $address .= $companyData["Location_City"] ? $companyData["Location_City"] . ', ' : '';
+        $address .= $companyData["state_code"] ? $companyData["state_code"] . ', ' : '';
+        $address .= $companyData["Location_ZipCode"] ? $companyData["Location_ZipCode"] . ', ' : '';
+
+        $companyData["companyAddress"] = rtrim(
+            $address,
+            ", "
+        );
         //
-        if ($employeeSid != 0) {
-            $employeeData = $CI->db->select('registration_date,joined_at')
-                ->where('sid', $employeeSid)
-                ->where('parent_sid', $companySid)
-                ->get('users')
-                ->row_array();
+        if ($userId != 0) {
             //
-            $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], "", false);
-            if (!empty($joiningDate)) {
-                $companyData['first_day_of_employment'] = date("m-d-Y", strtotime($joiningDate));
+            if ($userType == "employee") {
+                $employeeData = $CI->db->select('registration_date,joined_at')
+                    ->where('sid', $userId)
+                    ->where('parent_sid', $companySid)
+                    ->get('users')
+                    ->row_array();
+                $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], "", false);
+                if (!empty($joiningDate)) {
+                    $companyData['first_day_of_employment'] = date("m-d-Y", strtotime($joiningDate));
+                }
+            } else {
+                $companyData['first_day_of_employment'] = '';
             }
+            //
         } else {
             $companyData['first_day_of_employment'] = '';
         }

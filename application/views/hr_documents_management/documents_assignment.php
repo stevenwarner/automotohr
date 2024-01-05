@@ -125,7 +125,7 @@ $assignIdObj = $confidential_sids;
                                                                                         View hand signed W4
                                                                                     </a>
                                                                                 <?php } else { ?>
-                                                                                    <?php if ($w4_form['user_consent']) { ?>
+                                                                                    <?php if (!$w4_form['user_consent']) { ?>
                                                                                         <?php if ($w4_employer_section == 1) { ?>
                                                                                             <a class="btn <?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
                                                                                         <?php } ?>

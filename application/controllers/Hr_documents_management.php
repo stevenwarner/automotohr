@@ -3366,22 +3366,26 @@ class Hr_documents_management extends Public_Controller
             if (!empty($w4_form)) {
                 $assign_on = date("Y-m-d", strtotime($w4_form['sent_date']));
                 $compare_date = date("Y-m-d", strtotime('2020-01-06'));
-                $data['w4_employer_section'] = 0;
+                //
+                $this->checkAndSetEmployerSection(
+                    $w4_form,
+                    $user_type,
+                    $user_sid
+                );
+                $data['popup_emp_name'] = $w4_form['emp_name'];
+                $data['popup_emp_address'] = $w4_form['emp_address'];
+
+                if (isset($w4_form) && !empty($w4_form['first_date_of_employment']) && $w4_form['first_date_of_employment'] != '0000-00-00 00:00:00') {
+                    $sign_date = date("m-d-Y", strtotime($w4_form['first_date_of_employment']));
+                }
+
+                $data['popup_first_date_of_employment']     = $sign_date;
+                $data['popup_emp_identification_number']    = $w4_form['emp_identification_number'];
+                $data['w4_employer_section']                    = 1;
 
                 //  if ($assign_on >= $compare_date && $w4_form['user_consent'] == 1) {
                 if ($w4_form['user_consent'] == 1 && $w4_form['uploaded_by_sid'] <= 0) {
-                    $data['w4_employer_section']                    = 1;
                     $sign_date                                      = '';
-
-                    $data['popup_emp_name']                     = $w4_form['emp_name'];
-                    $data['popup_emp_address']                  = $w4_form['emp_address'];
-
-                    if (isset($w4_form) && !empty($w4_form['first_date_of_employment']) && $w4_form['first_date_of_employment'] != '0000-00-00 00:00:00') {
-                        $sign_date = date("m-d-Y", strtotime($w4_form['first_date_of_employment']));
-                    }
-
-                    $data['popup_first_date_of_employment']     = $sign_date;
-                    $data['popup_emp_identification_number']    = $w4_form['emp_identification_number'];
                 }
             }
 
@@ -3592,11 +3596,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $user_sid,
-                $user_type,
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $user_sid,
+                    $user_type,
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
@@ -5492,11 +5496,11 @@ class Hr_documents_management extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $employer_sid,
-                "employee",
-                $sendGroupEmail
-            );
+                ->assignGroupDocumentsToUser(
+                    $employer_sid,
+                    "employee",
+                    $sendGroupEmail
+                );
 
             if ($sendGroupEmail == 1) {
                 //
@@ -8346,7 +8350,7 @@ class Hr_documents_management extends Public_Controller
                         "state_forms_json" => json_encode($stateForms)
                     ]);
                 } else {
-                     $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
+                    $this->hr_documents_management_model->assign_system_document_2_group($group_sid, [
                         "state_forms_json" => json_encode([])
                     ]);
                 }
@@ -16902,5 +16906,40 @@ class Hr_documents_management extends Public_Controller
             $userType,
             $formData
         );
+    }
+
+
+    private function checkAndSetEmployerSection(
+        array &$w4Form,
+        string $userType,
+        int $userId
+    ) {
+        //
+        $companyDetail = checkAndGetSession("company");
+        //
+        $data = getDataForEmployerPrefill(
+            $companyDetail["sid"],
+            $userId,
+            $userType
+        );
+        //
+        $updateArray = [];
+        $updateArray["emp_name"] = $data["CompanyName"];
+        $updateArray["emp_address"] = $data["companyAddress"];
+        $updateArray["first_date_of_employment"] = data["first_date_of_employment"] ? formatDateToDB(
+            $data["first_date_of_employment"],
+            "m-d-Y",
+            DB_DATE
+        ) : "";
+        $updateArray["emp_identification_number"] = $data["ssn"];
+
+        $w4Form = array_merge(
+            $w4Form,
+            $updateArray
+        );
+        //
+        $this->db
+            ->where("sid", $w4Form["sid"])
+            ->update("form_w4_original", $updateArray);
     }
 }
