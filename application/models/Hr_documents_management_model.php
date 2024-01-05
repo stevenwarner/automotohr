@@ -10420,7 +10420,6 @@ class Hr_documents_management_model extends CI_Model
         ];
         // loop through the forms
         foreach ($forms as $index => $value) {
-
             // get teh form status
             $value = array_merge($value, $this->checkStateFormAssignStatus($value["sid"], $userId, $userType));
             // push to all
@@ -10477,7 +10476,9 @@ class Hr_documents_management_model extends CI_Model
         // get the record
         $result = $this->db
             ->select("
+                sid,
                 status, 
+                company_sid, 
                 user_consent,
                 created_at,
                 user_consent_at,
@@ -10494,6 +10495,41 @@ class Hr_documents_management_model extends CI_Model
         // not assigned
         if (!$result) {
             return $returnArray;
+        }
+        // get the
+        $companyData = getDataForEmployerPrefill($result["company_sid"]);
+        // when not being consent
+        if (!$this->db->where([
+            "user_sid" => $userId,
+            "user_type" => $userType,
+            "state_form_sid" => $formId,
+            "employer_consent" => 1
+        ])->count_all_results("portal_state_form")) {
+            // when no data is set
+            if (!$result["employer_json"]) {
+                // set update array
+                $updateArray = [];
+                $updateArray["first_name"] = $companyData["CompanyName"];
+                $updateArray["mn_tax_number"] = $companyData["mtin"];
+                $updateArray["ssn"] = $companyData["ssn"];
+                $updateArray["street_1"] = $companyData["Location_Address"];
+                $updateArray["street_2"] = $companyData["Location_Address_2"];
+                $updateArray["city"] = $companyData["Location_City"];
+                $updateArray["state"] = $companyData["Location_State"];
+                $updateArray["zip_code"] = $companyData["Location_ZipCode"];
+                //
+                $this->db
+                    ->where("sid", $result["sid"])
+                    ->update("portal_state_form", [
+                        "employer_json" => json_encode($updateArray),
+                        "employer_consent" => 1,
+                        "employer_concent_at" => getSystemDate(),
+                    ]);
+                //
+                $result["employer_json"] = json_encode($updateArray);
+                $result["employer_consent"] = 1;
+                $result["employer_concent_at"] = getSystemDate();
+            }
         }
         //
         if ($result['employer_consent'] == 1) {
@@ -11013,7 +11049,7 @@ class Hr_documents_management_model extends CI_Model
                 $userId,
                 $userType
             );
-            // only it was not asigned
+            // only it was not assigned
             if ($statusArray["status"] === "not_assigned") {
                 $this->handleStateForm(
                     $userId,

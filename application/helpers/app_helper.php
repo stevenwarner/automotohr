@@ -2412,7 +2412,8 @@ if (!function_exists("getDataForEmployerPrefill")) {
                 users.Location_State,
                 users.ssn,
                 states.state_code,
-                users.Location_Address_2
+                users.Location_Address_2,
+                users.extra_info
             ')
             ->join(
                 "states",
@@ -2436,6 +2437,10 @@ if (!function_exists("getDataForEmployerPrefill")) {
             $address,
             ", "
         );
+        $extraInfo = unserialize(
+            $companyData["extra_info"]
+        );
+        $companyData["mtin"] = $extraInfo["mtin"] ?? "";
         //
         if ($userId != 0) {
             //

@@ -326,6 +326,7 @@ class Settings extends Public_Controller
                 $data['affiliate'] = 0;
                 $data['d_license'] = 0;
                 $data['l_employment'] = 0;
+                $company['mtin'] = "";
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
@@ -334,6 +335,7 @@ class Settings extends Public_Controller
                 $data['affiliate'] = isset($serializedata['affiliate']) ? $serializedata['affiliate'] : 0;
                 $data['d_license'] = isset($serializedata['d_license']) ? $serializedata['d_license'] : 0;
                 $data['l_employment'] = isset($serializedata['l_employment']) ? $serializedata['l_employment'] : 0;
+                $company['mtin'] = isset($serializedata['mtin']) ? $serializedata['mtin'] : 0;
             }
 
             $serializedata = unserialize($company['extra_info']);
@@ -344,6 +346,7 @@ class Settings extends Public_Controller
             $data['complynet_status'] = $complynet_status;
             $data['complynet_link'] = $data['session']['company_detail']['complynet_dashboard_link'];
             $data['portal'] = $this->dashboard_model->get_portal_detail($company_id);
+            $this->load->model("v1/Payroll_model", "payroll_model");
             //
             $payroll_status = $this->payroll_model->GetCompanyPayrollStatus($company_id);
             $data['payroll_status'] = $payroll_status;
@@ -402,6 +405,10 @@ class Settings extends Public_Controller
                         'EEO' => 0,
                         'safety_sheet' => 0
                     );
+                }
+
+                if ($post["mtin"]) {
+                    $company_extra_info["mtin"] = $post["mtin"];
                 }
 
                 // Full employment form required
