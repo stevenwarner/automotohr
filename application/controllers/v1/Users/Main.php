@@ -214,7 +214,6 @@ class Main extends Public_Controller
         $session = checkAndGetSession();
         // set the sanitized post
         $post = $this->input->post(null, true);
-        _e($post,true);
         //
         $companyId = $session["company_detail"]["sid"];
         //
