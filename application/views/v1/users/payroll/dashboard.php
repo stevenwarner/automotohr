@@ -103,6 +103,11 @@
                                                 <br />
                                                 <strong>$20.00 /hour</strong>
                                             </p>
+                                            <p class="text-medium">
+                                                <span class="text-small">Overtime Rule</span>
+                                                <br />
+                                                <strong>40 hours a week</strong>
+                                            </p>
                                         </div>
                                         <div class="panel-footer text-center">
                                             <button class="btn btn-yellow jsEditJobWage">
@@ -113,7 +118,7 @@
                                     </div>
                                 </div>
 
-                              
+
                             </div>
                             <!-- time & attendance -->
                             <div class="row">

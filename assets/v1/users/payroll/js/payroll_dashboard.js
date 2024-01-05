@@ -61,12 +61,26 @@ $(function payrollDashboard() {
 			// hides the loader
 			ml(false, modalLoader);
 			//
+			$(".jsMinimumWages").select2({
+				closeOnSelect: false,
+			});
+			$(".jsHireDate").daterangepicker({
+				singleDatePicker: true,
+				showDropdowns: true,
+				autoApply: true,
+				locale: {
+					format: "MM/DD/YYYY",
+				},
+			});
+			//
 			$("#jsPageJobWageForm").validate({
 				rules: {
-					pay_schedule: { required: true },
-				},
-				messages: {
-					pay_schedule: { required: "Please select a pay schedule." },
+					employment_type: { required: true },
+					flsa_status: { required: true },
+					per: { required: true },
+					hire_date: { required: true },
+					rate: { required: true },
+					overtime_rule: { required: true },
 				},
 				submitHandler: function (form) {
 					// convert form to form object

@@ -130,10 +130,14 @@ class Main extends Public_Controller
         $this->data["pageJs"] = [
             // high charts
             main_url("public/v1/plugins/ms_modal/main.min.js?v=3.0"),
+            main_url("public/v1/plugins/select2/select2.min.js?v=3.0"),
+            main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0"),
         ];
         $this->data["pageCSS"] = [
             // high charts
             main_url("public/v1/plugins/ms_modal/main.min.css?v=3.0"),
+            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
         ];
         // set js
         $this->setCommon("v1/users/payroll/js/payroll_dashboard", "js");
@@ -168,10 +172,12 @@ class Main extends Public_Controller
         // convert the slug to function
         $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
         // get the data
-        $data = $this->$func(
-            $userId,
-            $userType
-        );
+        $data = $this->main_model
+            ->$func(
+                $userId,
+                $userType,
+                $this->loggedInCompany["sid"]
+            );
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -202,49 +208,6 @@ class Main extends Public_Controller
         );
     }
 
-    /**
-     * get the pay schedule
-     *
-     * @param int    $userId
-     * @param string $userType
-     * @return array
-     */
-    private function pagePaySchedule(
-        int $userId,
-        string $userType
-    ): array {
-        // get company pay scheduled
-        $companyPaySchedules = $this->main_model
-            ->getCompanyPaySchedules(
-                $this->loggedInCompany["sid"]
-            );
-        // get the pay schedule
-        $userPaySchedule = $this->main_model
-            ->getUserPayScheduleById(
-                $userId,
-                $userType
-            );
-        //
-        return [
-            "return" => $companyPaySchedules,
-            "companyPaySchedules" => $companyPaySchedules,
-            "userPaySchedule" => $userPaySchedule
-        ];
-    }
-
-    /**
-     * get the pay schedule
-     *
-     * @param int    $userId
-     * @param string $userType
-     * @return array
-     */
-    private function pageJobAndWage(
-        int $userId,
-        string $userType
-    ): array {
-        return [];
-    }
 
     /**
      * Render the view in template
