@@ -3565,8 +3565,6 @@ class Settings extends Public_Controller
                 $scheduleId
             );
         if (!$data["schedule"]) {
-            echo $scheduleId;
-            die("here");
             $this->session->set_flashdata("message", "<strong>Error!</strong> Schedule not found.");
             return redirect("schedules");
         }
