@@ -440,6 +440,7 @@ class Shift_model extends CI_Model
             ->select("from_date, to_date")
             ->where("from_date >= ", $startDate)
             ->where("to_date <= ", $endDate)
+            ->where("is_archived", 0)
             ->where("company_sid", $companyId)
             ->get("timeoff_holidays")
             ->result_array();
@@ -489,6 +490,7 @@ class Shift_model extends CI_Model
             ->select("from_date, to_date, holiday_title")
             ->where("from_date >= ", $startDate)
             ->where("to_date <= ", $endDate)
+            ->where("is_archived", 0)
             ->where("company_sid", $companyId)
             ->get("timeoff_holidays")
             ->result_array();
