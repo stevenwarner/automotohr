@@ -2454,7 +2454,7 @@ if ($user_type == 'employee') {
 <div id="update_eemployer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <?php
     $companySid = $this->session->userdata('logged_in')['company_detail']['sid'];
-    $employerPrefill = getDataForEmployerPrefill($companySid,$EmployeeSid);
+    $employerPrefill = getDataForEmployerPrefill($companySid, $EmployeeSid);
     ?>
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -2525,6 +2525,12 @@ if ($user_type == 'employee') {
     $email = $employer_email;
     $states = db_get_active_states(227);
     $signed_flag = isset($pre_form['user_consent']) && $pre_form['user_consent'] == 1 ? true : false;
+
+
+
+    $logedInSid = $session['employer_detail']['sid'];
+    $employeePrefillSignature = getEmployerSignature($company_sid, $logedInSid);
+    $employerPrefill = getDataForEmployerPrefill($company_sid, $EmployeeSid);
     ?>
 
     <?php if (sizeof($pre_form)) { ?>
@@ -2533,9 +2539,14 @@ if ($user_type == 'employee') {
                 <div class="modal-header modal-header-bg">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="uploaded_document_modal_title">Form I9 Employer Section</h4>
+                    
                 </div>
                 <div id="uploaded_document_modal_body" class="modal-body form-wrp">
-                    <?php $this->load->view('form_i9/form_i9_employer_section'); ?>
+                    
+                    <?php $this->load->view('form_i9/form_i9_employer_section', [
+                        'employeePrefillSignature' => $employeePrefillSignature,
+                        'employerPrefill'=>$employerPrefill
+                    ]); ?>
                 </div>
                 <div id="uploaded_document_modal_footer" class="modal-footer">
 

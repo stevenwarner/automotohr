@@ -1,13 +1,13 @@
-<form action="<?php echo base_url("forms/i9/authorized/section/").$pre_form['sid'];?>" id="i9-form" method="post" autocomplete="nope">
+<form action="<?php echo base_url("forms/i9/authorized/section/") . $pre_form['sid']; ?>" id="i9-form" method="post" autocomplete="nope">
     <div class="row">
         <div class="col-xs-12">
             <div class="section-2">
                 <div class="hr-box">
                     <div class="hr-box-header">
                         <strong>Section 2. </strong> Employer Review and Verification: Employers or their authorized representative must complete and sign Section 2 within three
-                            business days after the employee's first day of employment, and must physically examine, or examine consistent with an alternative procedure 
-                            authorized by the Secretary of DHS, documentation from List A OR a combination of documentation from List B and List C. Enter any additional 
-                            documentation in the Additional Information box; see Instructions.
+                        business days after the employee's first day of employment, and must physically examine, or examine consistent with an alternative procedure
+                        authorized by the Secretary of DHS, documentation from List A OR a combination of documentation from List B and List C. Enter any additional
+                        documentation in the Additional Information box; see Instructions.
                     </div>
                     <div class="hr-innerpadding">
                         <div class="row">
@@ -254,7 +254,7 @@
                             </div>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <label for="page_status">
-                                    <input type="checkbox" name="section2_authorized_alternative_procedure" value="yes" <?php echo ($pre_form['section2_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?>  />
+                                    <input type="checkbox" name="section2_authorized_alternative_procedure" value="yes" <?php echo ($pre_form['section2_alternative_procedure'] == 1 ? 'checked="checked"' : ''); ?> />
                                     Check here if you used an alternative procedure authorized by DHS to examine documents.
                                 </label>
                             </div>
@@ -350,10 +350,10 @@
                     </div>
                 </div>
                 <p><strong>Certification: I attest, under penalty of perjury, that (1) I have
-                    examined the document(s) presented by the above-named employee,
-                    (2) the above-listed document(s) appear to be genuine and to relate to the
-                    employee named, and (3) to the best of my knowledge the
-                    employee is authorized to work in the United States.</strong></p>
+                        examined the document(s) presented by the above-named employee,
+                        (2) the above-listed document(s) appear to be genuine and to relate to the
+                        employee named, and (3) to the best of my knowledge the
+                        employee is authorized to work in the United States.</strong></p>
 
                 <div class="form-group autoheight">
                     <div class="row">
@@ -362,7 +362,7 @@
                                     instructions for exemptions) <span class="staric">*</span> </strong></p>
                         </div>
                         <div class="col-lg-3">
-                            <input type="text" readonly name="section2_firstday_of_emp_date" id="section2_firstday_of_emp_date" class="form-control date_picker2" autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y', strtotime($pre_form['section2_firstday_of_emp_date'])) : ""; ?>" />
+                            <input type="text" readonly name="section2_firstday_of_emp_date" id="section2_firstday_of_emp_date" class="form-control date_picker2" autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y', strtotime($pre_form['section2_firstday_of_emp_date'])) : $employerPrefill['first_day_of_employment']; ?>" />
                         </div>
                     </div>
                 </div>
@@ -374,6 +374,9 @@
                                     <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
                                     <?php if (isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
                                         <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
+                                    <?php } else if (!empty($employeePrefillSignature)) { ?>
+                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $employeePrefillSignature; ?>" class="esignaturesize" />
+
                                     <?php } else { ?>
                                         <!-- the below loaded view add e-signature -->
                                         <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
@@ -489,7 +492,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <p>
-                                        <strong>Instructions:</strong> This supplement replaces Section 3 on the previous version of Form I-9. Only use this page if your employee requires                                                     of Form I-9. The preparer and/or translator must enter the employee's name in the spaces provided above. Each preparer or translator
+                                        <strong>Instructions:</strong> This supplement replaces Section 3 on the previous version of Form I-9. Only use this page if your employee requires of Form I-9. The preparer and/or translator must enter the employee's name in the spaces provided above. Each preparer or translator
                                         reverification, is rehired within three years of the date of the original Form I-9 was completed, or provides proof of a legal name change. Enter
                                         the employee's name in the fields above. Use a new section for each reverification or rehire. Review the Form I-9 instruction before
                                         completing this page. Keep this page as part of the employee's Form I-9 record. Additional guidance can be found in the_ <br>
@@ -508,7 +511,7 @@
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <input type="hidden" id="current-url" name="current-url" value="<?php echo current_url(); ?>" />
             <!--                            Section 2 Ends    -->

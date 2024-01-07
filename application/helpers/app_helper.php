@@ -2433,3 +2433,22 @@ if (!function_exists("getDataForEmployerPrefill")) {
         return $companyData;
     }
 }
+
+//
+if (!function_exists("getEmployerSignature")) {
+    function getEmployerSignature($companySid, $employeeSid)
+    {
+        $CI = &get_instance();
+        $employeeData = $CI->db->select('signature_bas64_image')
+            ->where('company_sid', $companySid)
+            ->where('user_sid', $employeeSid)
+            ->where('user_type', 'employee')
+            ->get('e_signatures_data')
+            ->row_array();
+        if (!empty($employeeData)) {
+            return $employeeData['signature_bas64_image'];
+        } else {
+            return '';
+        }
+    }
+}
