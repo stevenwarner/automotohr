@@ -588,7 +588,7 @@
             $e_signature_data = get_e_signature($company_sid, $user_sid, 'employee');
             $employerData = json_decode($documents['W4MN']['employer_json'], true);
 
-            $this->load->view('v1/forms/2020_w4_mn_print_download', ['formData' => $formData, 'action' => 'downloads', 'doUpload' => '1', 'signature' => $e_signature_data['signature_bas64_image'], 'location' => 'green', 'employerData' => $employerData]);
+            $this->load->view('v1/forms/2020_w4_mn_print_download', ['formData' => $formData, 'action' => 'download', 'doUpload' => '1', 'signature' => $e_signature_data['signature_bas64_image'], 'location' => 'green', 'employerData' => $employerData]);
             //
         }
         ?>

@@ -703,8 +703,7 @@
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
     <script type="text/javascript">
         let action = '<?php echo $action; ?>';
-
-        if (action == 'downloads') {
+        if (action == 'download') {
             $(window).on("load", function() {
                 var draw = kendo.drawing;
                 draw.drawDOM($("#jsStateFormPDF"), {
