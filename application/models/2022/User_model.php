@@ -712,7 +712,7 @@ class User_model extends CI_Model
             $whereArray['profile_history.created_at <='] = getSystemDate(DB_DATE) . ' 23:59:59';
         }
         //
-        return $this->db
+        $changedData = $this->db
             ->select('
                 profile_history.sid, 
                 profile_history.created_at,  
@@ -724,7 +724,8 @@ class User_model extends CI_Model
                 users.access_level_plus,
                 users.is_executive_admin,
                 users.job_title,
-                users.CompanyName
+                users.CompanyName,
+                users.parent_sid
             ')
             ->group_start()
             ->where("profile_history.profile_data REGEXP '\"job_title\"'")
@@ -735,5 +736,20 @@ class User_model extends CI_Model
             ->order_by('profile_history.sid', 'DESC')
             ->get('profile_history')
             ->result_array();
+
+        if (!empty($changedData)) {
+            foreach ($changedData as $key => $val) {
+                if ($val['CompanyName'] == '' || $val['CompanyName'] == null) {
+                    $companyName = $this->db
+                        ->select('CompanyName')
+                        ->where('sid', $val['parent_sid'])
+                        ->get('users')
+                        ->row_array();
+                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'] ;
+                }
+            }
+        }
+
+        return  $changedData;
     }
 }
