@@ -237,9 +237,9 @@ class Main extends Public_Controller
                     //
                     $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
                 } else {
-                    $this->main_model->createEmployeeJobOnGusto($companyId, $userId, $companyGustoDetails);
+                    //
                     $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
-                    $this->payroll_model->createEmployeeJobOnGusto($userId, $companyGustoDetails);
+                    $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
                 }
             } else {
                 $this->main_model->processEmployeeJobData($userId, $post);
