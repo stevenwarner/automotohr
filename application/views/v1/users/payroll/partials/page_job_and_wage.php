@@ -110,7 +110,7 @@
                          </strong>
                      </label>
                      <select name="overtime_rule" class="form-control jsOvertimeRule">
-                         <option value="0"></option>
+                         <option value="">Please select over time rule</option>
                          <?php
                             if ($overtimeRules) {
                                 foreach ($overtimeRules as $v0) {
