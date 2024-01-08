@@ -229,12 +229,17 @@ class Main extends Public_Controller
                 //
                 $newHireDate = formatDateToDB($post['hireDate']);
                 //
+                //
+                $this->load->model("v1/Payroll_model", "payroll_model");
+                //
                 if ($jobInfo && $jobInfo['hire_date'] != $newHireDate) {
                     $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
                     //
                     $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
                 } else {
                     $this->main_model->createEmployeeJobOnGusto($companyId, $userId, $companyGustoDetails);
+                    $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
+                    $this->payroll_model->createEmployeeJobOnGusto($userId, $companyGustoDetails);
                 }
             } else {
                 $this->main_model->processEmployeeJobData($userId, $post);
