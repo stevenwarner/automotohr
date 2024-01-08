@@ -63,7 +63,7 @@
             'I9': "<?= isset($documents['I9']['sid']) ? "false" : "null"; ?>",
             'W9': "<?= isset($documents['W9']['sid']) ? "false" : "null"; ?>",
             'W4': "<?= isset($documents['W4']['sid']) ? "false" : "null"; ?>",
-            'W4MN': "<?= isset($documents['W4MN']['sid']) ? "false" : "null"; ?>",
+            'W4MN': "<?= isset($documents['W4MN']['sid']) ? "true" : "null"; ?>",
 
             'direct_deposit': "<?= !empty($documents['direct_deposit']) ? "false" : "null"; ?>",
             'dependents': "<?= !empty($documents['dependents']) ? "false" : "null"; ?>",
@@ -72,7 +72,7 @@
             'occupational_license': "<?= !empty($documents['occupational_license']) ? "false" : "null"; ?>",
         };
 
-
+     
         // ucwords
         String.prototype.ucwords = function() {
             str = this.toLowerCase();
@@ -185,13 +185,16 @@
             //
             function checkW4(s) {
                 if (has['W4'] == "null" || has['W4'] == "false") {
-                    exportGDocument('direct_deposit');
+                   // exportGDocument('direct_deposit');
+                    checkW4MN('Adding W4 State form to export');
                     return;
                 }
                 if (has['W4'] === true) {
                     dc++;
                     m(s);
-                    exportGDocument('direct_deposit');
+                  //  exportGDocument('direct_deposit');
+                  checkW4MN('Adding W4 State form to export');
+
                     return;
                 }
                 //
@@ -203,7 +206,7 @@
 
             //
             function checkW4MN(s) {
-                return;
+
                 if (has['W4MN'] == "null" || has['W4MN'] == "false") {
                     exportGDocument('direct_deposit');
                     return;
