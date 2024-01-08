@@ -168,12 +168,24 @@ class Main extends Public_Controller
         string $slug
     ): array {
         // check and generate error for session
-        checkAndGetSession();
+        $session = checkAndGetSession();
         // convert the slug to function
         $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
         //
         if ($func == 'pageJobAndWage') {
-
+            $companyId = $session["company_detail"]["sid"];
+            $companyGustoDetails =  getCompanyDetailsForGusto($companyId);
+            //
+            if ($companyGustoDetails) {
+                $gustoEmployeeInfo = $this->main_model->getEmployeeGustoInfo($userId);
+                //
+                if ($gustoEmployeeInfo) {
+                    $this->load->model("v1/Payroll_model", "payroll_model");
+                    //
+                    $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
+                    $this->payroll_model->syncEmployeeJobBeforeUpdate($userId, $companyGustoDetails);
+                }
+            }
         }
         // get the data
         $data = $this->main_model
@@ -182,7 +194,7 @@ class Main extends Public_Controller
                 $userType,
                 $this->loggedInCompany["sid"]
             );
-        // _e($data,true,true);        
+        _e($data,true,true);        
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),

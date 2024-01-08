@@ -6246,4 +6246,9 @@ class Payroll_model extends CI_Model
         }
         return $returnArray;
     }
+
+    public function syncEmployeeJobBeforeUpdate ($employeeId, $companyDetails) {
+        // sync employee jobs
+        $this->syncEmployeeJobs($employeeId, $companyDetails);
+    }
 }
