@@ -171,6 +171,10 @@ class Main extends Public_Controller
         checkAndGetSession();
         // convert the slug to function
         $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
+        //
+        if ($func == 'pageJobAndWage') {
+
+        }
         // get the data
         $data = $this->main_model
             ->$func(
@@ -235,11 +239,15 @@ class Main extends Public_Controller
                 if ($jobInfo && $jobInfo['hire_date'] != $newHireDate) {
                     $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
                     //
-                    $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
+                    // $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
+                    $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
                 } else {
                     //
                     $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
-                    $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
+                    // $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
+                    //
+                    // jsEmployeeFlowJobTitle
+                    $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
                 }
             } else {
                 $this->main_model->processEmployeeJobData($userId, $post);

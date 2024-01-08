@@ -70,13 +70,13 @@ $(function payrollDashboard() {
 		// reset the array
 		let jobObj = {
 			employeeType: $(".jsEmploymentType option:selected").val(),
-			flsaStatus: $(".jsFLSAStatus option:selected").val().trim(),
-			payType: $(".jsPayType option:selected").val().trim(),
+			classification: $(".jsFLSAStatus option:selected").val().trim(),
+			per: $(".jsPayType option:selected").val().trim(),
 			hireDate: $(".jsHireDate").val().trim(),
 			overTimeRule: $(".jsOvertimeRule option:selected").val().trim(),
-			employeeRate: $(".jsEmployeeRate").val().trim(),
-			adjustMinimumWage: $('input[name="adjust_for_minimum_wage"]:checked').val() == 'on' ? 1 : 0,
-			wagesID: $(".jsMinimumWages").select2("val")
+			amount: $(".jsEmployeeRate").val().trim(),
+			minimumWage: $('input[name="adjust_for_minimum_wage"]:checked').val() == 'on' ? 1 : 0,
+			wagesId: $(".jsMinimumWages").select2("val")
 		};
 		//
 		console.log(jobObj)
@@ -86,16 +86,16 @@ $(function payrollDashboard() {
 		if (!jobObj.employeeType) {
 			errors.push('"Employment type" is missing.');
 		}
-		if (!jobObj.flsaStatus) {
+		if (!jobObj.classification) {
 			errors.push('"FLSA status" is missing.');
 		}
-		if (!jobObj.payType) {
+		if (!jobObj.per) {
 			errors.push('"Pay type" is missing.');
 		}
 		if (!jobObj.hireDate) {
 			errors.push('"Hire date" is missing.');
 		}
-		if (!jobObj.employeeRate) {
+		if (!jobObj.amount) {
 			errors.push('"Rate" is missing.');
 		}
 		if (!jobObj.overTimeRule) {

@@ -2550,14 +2550,19 @@ class Payroll_model extends CI_Model
      */
     public function updateEmployeeCompensation(
         int $employeeId,
-        array $data
+        array $data,
+        bool $updateJob = true
     ): array {
         //
-        $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
-        //./
-        if ($response['errors']) {
-            return $response;
+        
+        if ($updateJob) {
+            $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
+            //
+            if ($response['errors']) {
+                return $response;
+            }
         }
+        
         // get gusto employee details
         $gustoEmployee = $this
             ->getEmployeeDetailsForGusto(
@@ -2585,6 +2590,7 @@ class Payroll_model extends CI_Model
             )
             ->get('gusto_employees_jobs')
             ->row_array();
+        _e("where are you",true,true);    
         //
         if (!$gustoJob) {
             return [
@@ -2610,6 +2616,7 @@ class Payroll_model extends CI_Model
         // $request['adjust_for_minimum_wage'] = $gustoJob['adjust_for_minimum_wage'];
         // $request['minimum_wages'] = json_decode($gustoJob['minimum_wages'], true);
         // response
+        _e($request,true,true);
         //
         $gustoResponse = gustoCall(
             'updateEmployeeJobCompensation',
