@@ -456,7 +456,7 @@
         <ol id="l1">
             <li data-list-text="A">
                 <p class="s1" style="padding-top: 2pt;padding-left: 40pt;text-indent: -10pt;text-align: left;">
-                Enter “1” if no one else can claim you as a dependent... ...... ..... ....... ..... ...... ...
+                    Enter “1” if no one else can claim you as a dependent... ...... ..... ....... ..... ...... ...
                     <b>A</b>
                     <u><b>&nbsp;</b></u>
                     <input type="text" value="<?php echo isset($formData['section_1_a']) ? $formData['section_1_a'] : '' ?>" readonly style="border: none; font-weight: bold; width: 50px;" />
@@ -489,8 +489,8 @@
             </li>
             <li data-list-text="C">
                 <p class="s1" style="padding-top: 2pt;padding-left: 40pt;text-indent: -10pt;text-align: left;">
-                Enter “1” if you are married. Or choose to enter “0” if you are married and have either a working
-spouse or more than one job. <i>(Entering “0” may help you avoid having too little tax withheld.)</i>
+                    Enter “1” if you are married. Or choose to enter “0” if you are married and have either a working
+                    spouse or more than one job. <i>(Entering “0” may help you avoid having too little tax withheld.)</i>
                     ... . .
                     <b>C</b>
                     <u><b>&nbsp;</b></u>
@@ -515,18 +515,18 @@ spouse or more than one job. <i>(Entering “0” may help you avoid having too 
             </li>
             <li data-list-text="F">
                 <p class="s1" style="padding-top: 2pt;padding-left: 40pt;text-indent: -10pt;text-align: left;">
-                Add steps A through E. If you plan to itemize deductions on your 2024 Minnesota income tax
-return, you may also complete the Itemized Deductions and Additional Income Worksheet. . . . . F
-                  
+                    Add steps A through E. If you plan to itemize deductions on your 2024 Minnesota income tax
+                    return, you may also complete the Itemized Deductions and Additional Income Worksheet. . . . . F
+
                     <input type="text" value="<?php echo isset($formData['section_1_f']) ? $formData['section_1_f'] : '' ?>" readonly style="border: none; font-weight: bold; width: 50px;" />
                 </p>
                 <p class="s1" style="padding-left: 30pt;text-indent: 0pt;line-height: 11pt;text-align: left;">
-                <b>Minnesota Allowances.</b> Enter Step F from Section 1 above or Step 10 of the Itemized Deductions Worksheet . . . . . . . . . . . 1   
-                <u><b>&nbsp;</b></u>
+                    <b>Minnesota Allowances.</b> Enter Step F from Section 1 above or Step 10 of the Itemized Deductions Worksheet . . . . . . . . . . . 1
+                    <u><b>&nbsp;</b></u>
                     <input type="text" value="<?php echo isset($formData['section_1_allowances']) ? $formData['section_1_allowances'] : '' ?>" readonly style="border: none; font-weight: bold; width: 50px;" />
                 </p>
                 <p class="s1" style="padding-left: 30pt;text-indent: 0pt;line-height: 11pt;text-align: left;">
-                Additional Minnesota withholding you want deducted for each pay period (see instructions) . . . . . . . . . . . . . . . . . . . . . . . . . 2 .
+                    Additional Minnesota withholding you want deducted for each pay period (see instructions) . . . . . . . . . . . . . . . . . . . . . . . . . 2 .
                     <b>$</b>
                     <u><b>&nbsp;</b></u>
                     <input type="text" value="<?php echo isset($formData['section_1_additional_withholding']) ? $formData['section_1_additional_withholding'] : '' ?>" readonly style="border: none; font-weight: bold; width: 50px;" />
@@ -624,7 +624,7 @@ return, you may also complete the Itemized Deductions and Additional Income Work
             </p>
         </ol>
 
-    
+
 
         <ol id="l4">
             <p class="s9" style="padding-top: 3pt;padding-left: 6pt;text-indent: 0pt;text-align: left;">
@@ -720,16 +720,40 @@ return, you may also complete the Itemized Deductions and Additional Income Work
                         return draw.exportPDF(root);
                     })
                     .done(function(data) {
-                        $('#myiframe').attr("src", data);
-                        kendo.saveAs({
-                            dataURI: data,
-                            fileName: '<?php echo $formName . ".pdf"; ?>',
-                        });
+                        <?php if (!isset($doUpload)) { ?>
+                            $('#myiframe').attr("src", data);
+                            kendo.saveAs({
+                                dataURI: data,
+                                fileName: '<?php echo $formName . ".pdf"; ?>',
+                            });
+                        <?php } else { ?>
+                            uploadPDF(data, 'w4MN');
+                        <?php } ?>
+
                     });
                 setTimeout(function() {
                     window.close();
                 }, 2000);
             });
+
+            <?php if (!isset($doUpload)) { ?>
+                setTimeout(function() {
+                    window.close();
+                }, 2000);
+            <?php } else { ?>
+
+                function uploadPDF(data, typo) {
+                    $.post("<?= base_url('hr_documents_management/upload'); ?>", {
+                        data: data,
+                        token: "<?= $token; ?>",
+                        employeeSid: "<?= $employeeSid; ?>",
+                        userFullNameSlug: "<?= $userFullNameSlug; ?>",
+                        type: typo,
+                    }, () => {
+                        has['W4MN'] = true;
+                    });
+                }
+            <?php } ?>
         } else if (action == 'print') {
             $(window).on("load", function() {
                 setTimeout(function() {

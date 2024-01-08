@@ -5889,7 +5889,8 @@ class Hr_documents_management_model extends CI_Model
             'dependents' => '',
             'emergency_contacts' => '',
             'drivers_license' => '',
-            'occupational_license' => ''
+            'occupational_license' => '',
+            'W4MN' => [],
         ];
         //
         $t = [];
@@ -5921,6 +5922,7 @@ class Hr_documents_management_model extends CI_Model
             $this->getEmployeeI9Form($cId, $id, $r);
             $this->getEmployeeW9Form($cId, $id, $r);
             $this->getEmployeeW4Form($cId, $id, $r);
+            $this->getEmployeeW4MNForm($cId, $id, $r);
             $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
         }
         //
@@ -11094,4 +11096,25 @@ class Hr_documents_management_model extends CI_Model
             ->where("sid", $w4Form["sid"])
             ->update("form_w4_original", $updateArray);
     }
+
+
+        //
+        function getEmployeeW4MNForm($cId, $id, &$data)
+        {
+            //
+            $a = $this->db
+                ->select('*')
+                ->where('user_type', 'employee')
+                ->where('user_sid', $id)
+                ->where('company_sid', $cId)
+                ->where('user_consent', 1)
+                ->where('employer_consent', 1)
+                ->where('status', 1)
+                ->get('portal_state_form');
+            //
+            $b = $a->row_array();
+            $a = $a->free_result();
+            //
+            if (count($b)) $data['W4MN'] = $b;
+        }
 }

@@ -44,7 +44,6 @@
 </head>
 
 <body style="overflow: hidden;">
-
     <div class="cs-main">
         <div class="col-sm-4 cs-box">
             <i class="fa fa-download"></i>
@@ -54,6 +53,7 @@
                 </div>
             </div>
             <p>Please wait while we are loading documents.</p>
+
         </div>
     </div>
 
@@ -63,12 +63,15 @@
             'I9': "<?= isset($documents['I9']['sid']) ? "false" : "null"; ?>",
             'W9': "<?= isset($documents['W9']['sid']) ? "false" : "null"; ?>",
             'W4': "<?= isset($documents['W4']['sid']) ? "false" : "null"; ?>",
+            'W4MN': "<?= isset($documents['W4MN']['sid']) ? "false" : "null"; ?>",
+
             'direct_deposit': "<?= !empty($documents['direct_deposit']) ? "false" : "null"; ?>",
             'dependents': "<?= !empty($documents['dependents']) ? "false" : "null"; ?>",
             'emergency_contacts': "<?= !empty($documents['emergency_contacts']) ? "false" : "null"; ?>",
             'drivers_license': "<?= !empty($documents['drivers_license']) ? "false" : "null"; ?>",
             'occupational_license': "<?= !empty($documents['occupational_license']) ? "false" : "null"; ?>",
         };
+
 
         // ucwords
         String.prototype.ucwords = function() {
@@ -104,6 +107,8 @@
             if (has['I9'] != "null") assignedLength++;
             if (has['W9'] != "null") assignedLength++;
             if (has['W4'] != "null") assignedLength++;
+            if (has['W4MN'] != "null") assignedLength++;
+
             //
             $('#js-dt').text(assignedLength);
 
@@ -117,6 +122,9 @@
             } else if (has['W4'] != "null") {
                 // Check for if
                 checkW4('Adding W4 form to export');
+            } else if (has['W4MN'] != "null") {
+                // Check for if
+                checkW4MN('Adding W4MN form to export');
             } else if (has['direct_deposit'] != "null") {
                 //
                 exportGDocument('direct_deposit');
@@ -189,6 +197,26 @@
                 //
                 setTimeout(() => {
                     checkW4(s);
+                }, 1000);
+            }
+
+
+            //
+            function checkW4MN(s) {
+                return;
+                if (has['W4MN'] == "null" || has['W4MN'] == "false") {
+                    exportGDocument('direct_deposit');
+                    return;
+                }
+                if (has['W4MN'] === true) {
+                    dc++;
+                    m(s);
+                    exportGDocument('direct_deposit');
+                    return;
+                }
+                //
+                setTimeout(() => {
+                    checkW4MN(s);
                 }, 1000);
             }
 
@@ -278,7 +306,9 @@
                 if (
                     (has['I9'] != "null" && has['I9'] !== true) ||
                     (has['W9'] != "null" && has['W9'] !== true) ||
-                    (has['W4'] != "null" && has['W4'] !== true)
+                    (has['W4'] != "null" && has['W4'] !== true) ||
+                    (has['W4MN'] != "null" && has['W4MN'] !== true)
+
                 ) {
                     setTimeout(startGeneratingPDFs, 2000);
                     return;
@@ -549,6 +579,17 @@
                 'employeeSid' => $user_sid,
                 'userFullNameSlug' => $slug
             ]);
+        }
+
+        //
+        if (count($documents['W4MN'])) {
+            //
+            $formData = json_decode($documents['W4MN']['fields_json'], true);
+            $e_signature_data = get_e_signature($company_sid, $user_sid, 'employee');
+            $employerData = json_decode($documents['W4MN']['employer_json'], true);
+
+            $this->load->view('v1/forms/2020_w4_mn_print_download', ['formData' => $formData, 'action' => 'downloads', 'doUpload' => '1', 'signature' => $e_signature_data['signature_bas64_image'], 'location' => 'green', 'employerData' => $employerData]);
+            //
         }
         ?>
     </div>

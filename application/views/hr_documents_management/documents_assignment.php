@@ -63,7 +63,6 @@ $assignIdObj = $confidential_sids;
 
                             <?php $this->load->view('hr_documents_management/documents_assignment_tab_pages'); ?>
 
-
                             <?php if (isPayrollOrPlus()) { ?>
                                 <div class="row">
                                     <div class="col-xs-12">

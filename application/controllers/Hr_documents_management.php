@@ -12895,6 +12895,7 @@ class Hr_documents_management extends Public_Controller
             );
         } else if ($type == 'employee') { // For Employees
             // Get employee documents
+            
             if ($documentType == 'completed' || $documentType == 'AllCompletedDocument') {
                 $documents = $this->hr_documents_management_model->getEmployeeCompletedDocuments(
                     $company_sid,
@@ -13051,6 +13052,7 @@ class Hr_documents_management extends Public_Controller
         //
         if ($id == '0') {
             //
+
             $dir = ROOTPATH . 'temp_files/employee_export/' . $token . '/';
             //
             if (!is_dir($dir)) exit(0);
@@ -13092,6 +13094,7 @@ class Hr_documents_management extends Public_Controller
             exit;
             // $this->zip->read_dir($dir, false);
         } else {
+
             //
             $dir = ROOTPATH . 'temp_files/employee_export/' . $token . '/';
             //

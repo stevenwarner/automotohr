@@ -44,11 +44,11 @@
                                         <td class="vam text-right">
                                             <?php if ($v0["status"] === "assigned") { ?>
                                                 <?php if ($v0["is_employer_completed"]) { ?>
-                                                    <button class="btn blue-button jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
+                                                    <button class="btn btn-success jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
                                                         Employer Section - Completed
                                                     </button>
                                                 <?php } else { ?>
-                                                    <button class="btn btn-success jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
+                                                    <button class="btn blue-button jsEmployerStateSectionPrefill" form_sid="<?php echo $v0['sid']; ?>">
                                                         Employer Section - Not Completed
                                                     </button>
                                                 <?php } ?>
