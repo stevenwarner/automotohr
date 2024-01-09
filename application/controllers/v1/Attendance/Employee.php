@@ -86,7 +86,7 @@ class Employee extends Base
         // get employee shifts
         $this->data["leaves"] = $this->timeoff_model
             ->getEmployeeTimeOffsInRange(
-                $this->loggedInCompany["sid"],
+                $this->loggedInEmployee["sid"],
                 $this->data["filter"]["startDate"],
                 $this->data["filter"]["endDate"]
             );
