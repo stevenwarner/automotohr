@@ -191,9 +191,7 @@ if (!function_exists('bundleJs')) {
         //
         fclose($handler);
         // delete the old file first
-        if (file_exists($absolutePathMin)) {
-            @unlink($absolutePathMin);
-        }
+        unlink($absolutePathMin);
         //
         shell_exec(
             "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
@@ -261,9 +259,7 @@ if (!function_exists('bundleCSS')) {
         //
         fclose($handler);
         // delete the old file first
-        if (file_exists($absolutePathMin)) {
-            @unlink($absolutePathMin);
-        }
+        @unlink($absolutePathMin);
         //
         shell_exec(
             "uglifycss {$absolutePath} > {$absolutePathMin}"
