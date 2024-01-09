@@ -3963,8 +3963,6 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // get the shifts
-
-
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
             array_column($data["employees"], "userId")
