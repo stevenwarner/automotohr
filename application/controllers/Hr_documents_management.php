@@ -16929,11 +16929,13 @@ class Hr_documents_management extends Public_Controller
         $updateArray = [];
         $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["CompanyName"];
         $updateArray["emp_address"] = $w4Form["emp_address"] ?? $data["companyAddress"];
-        $updateArray["first_date_of_employment"] = $w4Form["first_date_of_employment"] && $w4Form["first_date_of_employment"] != "0000-00-00" ? ($data["first_date_of_employment"] ? formatDateToDB(
-            $data["first_date_of_employment"],
-            "m-d-Y",
-            DB_DATE
-        ) : "") : null;
+        if (!$w4Form["first_date_of_employment"]) {
+            $updateArray["first_date_of_employment"] = $data["first_date_of_employment"] ? formatDateToDB(
+                $data["first_date_of_employment"],
+                "m-d-Y",
+                DB_DATE
+            ) : null;
+        }
         $updateArray["emp_identification_number"] = $w4Form["emp_identification_number"] ?? $data["ssn"];
 
         $w4Form = array_merge(
