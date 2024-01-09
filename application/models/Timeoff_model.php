@@ -7134,6 +7134,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.title
         ")
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+            ->where("timeoff_requests.employee_sid", $employeeId)
             ->group_start()
             ->group_start()
             ->where('timeoff_requests.request_from_date <=', $startDate)
