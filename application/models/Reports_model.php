@@ -2606,6 +2606,7 @@ class Reports_model extends CI_Model
         documents_assigned.user_sid,
         documents_assigned.document_title,
         documents_assigned.sid,
+        documents_assigned.user_consent,
         documents_assigned.confidential_employees
     ');
 
@@ -2629,6 +2630,7 @@ class Reports_model extends CI_Model
         documents_assigned_general.user_sid,
         documents_assigned_general.document_type,
         documents_assigned_general.sid,
+        documents_assigned_general.is_completed,
     ');
 
         $this->db
@@ -2645,10 +2647,15 @@ class Reports_model extends CI_Model
     //
     function getAssignedi9DocumentForReport($employeeId, $companyId)
     {
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('user_sid', $employeeId);
-        $this->db->where('status', 1);
-        $status = $this->db->count_all_results('applicant_i9form');
+        $where = [
+            "company_sid" => $companyId,
+            "user_sid" => $employee_sid,
+            "user_type" => "employee",
+            "status" => 1,
+        ];
+        $status = $this->db
+        ->where($where)
+        ->count_all_results('applicant_i9form');
 
         if ($status > 0) {
             return 1;
@@ -2660,10 +2667,15 @@ class Reports_model extends CI_Model
     //
     function getAssignedw9DocumentForReport($employeeId, $companyId)
     {
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('user_sid', $employeeId);
-        $this->db->where('status', 1);
-        $status = $this->db->count_all_results('applicant_w9form');
+        $where = [
+            "company_sid" => $companyId,
+            "user_sid" => $employee_sid,
+            "user_type" => "employee",
+            "status" => 1,
+        ];
+        $status = $this->db
+        ->where($where)
+        ->count_all_results('applicant_w9form');
 
         if ($status > 0) {
             return 1;
@@ -2675,10 +2687,15 @@ class Reports_model extends CI_Model
     //
     function getAssignedw4DocumentForReport($employeeId, $companyId)
     {
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('employer_sid', $employeeId);
-        $this->db->where('status', 1);
-        $status = $this->db->count_all_results('form_w4_original');
+        $where = [
+            "company_sid" => $companyId,
+            "employer_sid" => $employee_sid,
+            "user_type" => "employee",
+            "status" => 1,
+        ];
+        $status = $this->db
+        ->where($where)
+        ->count_all_results('form_w4_original');
 
         if ($status > 0) {
             return 1;
@@ -2691,11 +2708,16 @@ class Reports_model extends CI_Model
     //
     function getAssignedeeocDocumentForReport($employeeId)
     {
-        $this->db->where('users_type', 'employee');
-        $this->db->where('application_sid', $employeeId);
-        $this->db->where('is_latest', 1);
-        $this->db->where('status', 1);
-        $status = $this->db->count_all_results('portal_eeo_form');
+        $where = [
+            "company_sid" => $companyId,
+            "application_sid" => $employee_sid,
+            "user_type" => "employee",
+            "is_latest" => 1,
+            "status" => 1,
+        ];
+        $status = $this->db
+        ->where($where)
+        ->count_all_results('portal_eeo_form');
 
         if ($status > 0) {
             return 1;
