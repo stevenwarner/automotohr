@@ -2844,9 +2844,9 @@ if (!function_exists("isW4EmployerSectionCompleted")) {
     function isW4EmployerSectionCompleted(array $w4): bool
     {
         return $w4["emp_name"] &&
-        $w4["emp_address"] &&
-        $w4["first_date_of_employment"] &&
-        $w4["emp_identification_number"];
+            $w4["emp_address"] &&
+            $w4["first_date_of_employment"] &&
+            $w4["emp_identification_number"];
     }
 }
 
@@ -2886,5 +2886,18 @@ if (!function_exists('get_jobTitle_dropdown_for_search')) {
 
         $select = str_replace('{{options}}', $options, $select);
         return $select;
+    }
+}
+
+
+if (!function_exists("getDateFromYearAndMonth")) {
+    /**
+     * 
+     */
+    function getDateFromYearAndMonth(string $year, string $month, string $format): string
+    {
+        // set the object
+        $dateObj = new DateTime("{$year}-{$month}-01");
+        return $dateObj->format($format);
     }
 }

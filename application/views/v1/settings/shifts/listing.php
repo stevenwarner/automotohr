@@ -89,8 +89,8 @@ if ($filter["mode"] === "month") {
                                         if ($filter_team != '') {
                                             $filterEmployeesSid = implode(',', $filter_employees);
                                             $filterJobtitle = implode(',', $filter_jobtitle);
-                                            
-                                            $filterFields = '&employees=' . $filterEmployeesSid . '&team=' . $filter_team.'&jobtitle='.$filterJobtitle;
+
+                                            $filterFields = '&employees=' . $filterEmployeesSid . '&team=' . $filter_team . '&jobtitle=' . $filterJobtitle;
                                         }
 
                                         ?>
@@ -188,7 +188,6 @@ if ($filter["mode"] === "month") {
                                                     <!-- employee boxes -->
                                                     <?php if ($employees) {
                                                         foreach ($employees as $employee) {
-
                                                             $employeeShiftRow = $shifts[$employee["userId"]];
                                                     ?>
                                                             <div class="schedule-employee-row" data-id="<?= $employee["userId"]; ?>">
@@ -227,6 +226,9 @@ if ($filter["mode"] === "month") {
                                                 <div class="schedule-row-container">
                                                     <?php foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
+                                                        <?php
+                                                        $employeeLeave = $leaves[$employee["userId"]][$monthDate];
+                                                        ?>
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
                                                             <div class="schedule-column-header">
@@ -239,8 +241,14 @@ if ($filter["mode"] === "month") {
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                             ?>
-                                                                    <div class="schedule-column schedule-column-clickable schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>">
-                                                                        <?php if ($employeeShift) {
+                                                                    <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>">
+                                                                        <?php if ($employeeLeave) { ?>
+                                                                            <div class="schedule-dayoff text-primary text-small">
+                                                                                <strong>
+                                                                                    <?= $employeeLeave["title"]; ?>
+                                                                                </strong>
+                                                                            </div>
+                                                                        <?php } elseif ($employeeShift) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
                                                                             <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>">

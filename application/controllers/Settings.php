@@ -4072,15 +4072,30 @@ class Settings extends Public_Controller
         } else {
             $data["filter"]["month"] = $this->input->get("month", true) ?? getSystemDate("m");
             $data["filter"]["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
+            //
+            $data["filter"]["start_date"] = getDateFromYearAndMonth($data["filter"]["year"], $data["filter"]["month"], "01/m/Y");
+            //
+            $data["filter"]["end_date"] = getDateFromYearAndMonth($data["filter"]["year"], $data["filter"]["month"], "t/m/Y");
         }
 
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $employeeIds = array_column($data["employees"], "userId");
         // get the shifts
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
-            array_column($data["employees"], "userId")
+            $employeeIds
         );
+        // load time off model
+        $this->load->model("timeoff_model", "timeoff_model");
+        // get the leaves
+        $data["leaves"] = $employeeIds ? $this->timeoff_model
+            ->getEmployeesTimeOffsInRange(
+                $employeeIds,
+                formatDateToDB($data["filter"]["start_date"], SITE_DATE, DB_DATE),
+                formatDateToDB($data["filter"]["end_date"], SITE_DATE, DB_DATE)
+            ) : [];
 
         $data["company_sid"] =  $loggedInCompany["sid"];
         $data["filter_team"] = $team;
@@ -4090,7 +4105,6 @@ class Settings extends Public_Controller
 
         $data["filter_jobtitle"] =
             explode(",", $jobTitle);
-
 
 
         // get off and holidays
