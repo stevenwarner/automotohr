@@ -898,7 +898,7 @@
                                                             </li>
                                                         <?php  } ?>
 
-                                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                                        <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
 
                                                             <li>
                                                                 <a href="<?= base_url('settings/shifts/manage'); ?>">
