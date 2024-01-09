@@ -2833,3 +2833,20 @@ if (!function_exists("getMimeByType")) {
         return $mime_types[$type] ?? [];
     }
 }
+
+
+if (!function_exists("isW4EmployerSectionCompleted")) {
+    /**
+     * check wether the W4 employer section is completed or not
+     *
+     * @param array $w4
+     * @return bool
+     */
+    function isW4EmployerSectionCompleted(array $w4): bool
+    {
+        return $w4["emp_name"] &&
+        $w4["emp_address"] &&
+        $w4["first_date_of_employment"] &&
+        $w4["emp_identification_number"];
+    }
+}

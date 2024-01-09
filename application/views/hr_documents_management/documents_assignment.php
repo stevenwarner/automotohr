@@ -125,7 +125,7 @@ $assignIdObj = $confidential_sids;
                                                                                     </a>
                                                                                 <?php } else { ?>
                                                                                         <?php if ($w4_employer_section == 1) { ?>
-                                                                                            <a class="btn <?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo !empty($popup_emp_name) && $popup_emp_name != NULL ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
+                                                                                            <a class="btn <?php echo isW4EmployerSectionCompleted($w4_form) ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo isW4EmployerSectionCompleted($w4_form) ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
                                                                                         <?php } ?>
                                                                                     <a class="btn btn-success" data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View W4</a>
                                                                                 <?php } ?>

@@ -35,11 +35,18 @@ class Varification_document_model extends CI_Model
             }
         }
 
+        $this->db->group_start();
         $this->db->where('emp_identification_number', NULL);
-        $this->db->where('emp_name', NULL);
-        $this->db->where('emp_address', NULL);
-        $this->db->where('first_date_of_employment', NULL);
-        $this->db->where('user_consent', 1);
+        $this->db->or_where('emp_identification_number', "");
+        $this->db->or_where('emp_name', NULL);
+        $this->db->or_where('emp_name', "");
+        $this->db->or_where('emp_address', NULL);
+        $this->db->or_where('emp_address', "");
+        $this->db->or_where('first_date_of_employment', NULL);
+        $this->db->or_where('first_date_of_employment', "0000-00-00");
+        $this->db->group_end();
+
+        // $this->db->where('user_consent', 1);
         $this->db->where('status', 1);
         $this->db->where('uploaded_file', NULL);
         //
