@@ -72,7 +72,7 @@
                         </div>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group">
-                                <label>Company EIN Number <?php echo $payroll_status == 1 ? '<span class="hr-required staric">*</span>' : ''; ?></label>
+                                <label>Company Fed EIN Number<?php echo $payroll_status == 1 ? '<span class="hr-required staric">*</span>' : ''; ?></label>
                                 <?php //echo form_label('Company EIN Number  <span class="hr-required staric">*</span>', 'ssn'); 
                                 ?>
                                 <?php echo form_input('ssn', set_value('ssn', $company['ssn']), 'class="form-control"'); ?>
@@ -89,7 +89,7 @@
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" <?php echo $stateID!='28'? "style='display: none'":'' ?>>
                             <div class="form-group">
-                                <label>Minnesota Tax ID Number</label>
+                                <label>State Tax Id Number</label>
                                 <?php echo form_input('mtin', set_value('mtin', $company['mtin']), 'class="form-control"'); ?>
                                 <?php echo form_error('mtin'); ?>
                             </div>
