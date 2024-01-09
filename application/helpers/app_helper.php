@@ -2850,6 +2850,7 @@ if (!function_exists("isW4EmployerSectionCompleted")) {
         return $w4["emp_name"] &&
             $w4["emp_address"] &&
             $w4["first_date_of_employment"] &&
+            $w4["first_date_of_employment"] != "0000-00-00" &&
             $w4["emp_identification_number"];
     }
 }
