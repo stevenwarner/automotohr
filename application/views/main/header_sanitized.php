@@ -898,12 +898,15 @@
                                                             </li>
                                                         <?php  } ?>
 
-                                                        <li>
-                                                            <a href="<?= base_url('settings/shifts/manage'); ?>">
-                                                                <figure><i class="fa fa-calendar"></i></figure>Manage Shifts
-                                                            </a>
-                                                        </li>
+                                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
 
+                                                            <li>
+                                                                <a href="<?= base_url('settings/shifts/manage'); ?>">
+                                                                    <figure><i class="fa fa-calendar"></i></figure>Manage Shifts
+                                                                </a>
+                                                            </li>
+                                                        <?php } ?>
+                                                        
                                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                                             <?php
                                                             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
