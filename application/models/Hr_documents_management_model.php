@@ -11078,19 +11078,24 @@ class Hr_documents_management_model extends CI_Model
         );
         //
         $updateArray = [];
-        $updateArray["emp_name"] = $data["CompanyName"];
-        $updateArray["emp_address"] = $data["companyAddress"];
-        $updateArray["first_date_of_employment"] = data["first_date_of_employment"] ? formatDateToDB(
-            $data["first_date_of_employment"],
-            "m-d-Y",
-            DB_DATE
-        ) : "";
-        $updateArray["emp_identification_number"] = $data["ssn"];
+        $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["CompanyName"];
+        $updateArray["emp_address"] = $w4Form["emp_address"] ?? $data["companyAddress"];
+        if (!$w4Form["first_date_of_employment"] && $data["first_day_of_employment"]) {
+            $updateArray["first_date_of_employment"] = formatDateToDB($data["first_day_of_employment"], "m-d-Y", DB_DATE);
+        }
+        $updateArray["emp_identification_number"] = $w4Form["emp_identification_number"] ?? $data["ssn"];
 
         $w4Form = array_merge(
             $w4Form,
             $updateArray
         );
+        if ($updateArray["first_date_of_employment"]) {
+            $w4Form["first_date_of_employment"] = formatDateToDB(
+                $updateArray["first_date_of_employment"],
+                DB_DATE,
+                "m-d-Y"
+            );
+        }
         //
         $this->db
             ->where("sid", $w4Form["sid"])
@@ -11098,23 +11103,23 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
+    //
+    function getEmployeeW4MNForm($cId, $id, &$data)
+    {
         //
-        function getEmployeeW4MNForm($cId, $id, &$data)
-        {
-            //
-            $a = $this->db
-                ->select('*')
-                ->where('user_type', 'employee')
-                ->where('user_sid', $id)
-                ->where('company_sid', $cId)
-                ->where('user_consent', 1)
-                ->where('employer_consent', 1)
-                ->where('status', 1)
-                ->get('portal_state_form');
-            //
-            $b = $a->row_array();
-            $a = $a->free_result();
-            //
-            if (count($b)) $data['W4MN'] = $b;
-        }
+        $a = $this->db
+            ->select('*')
+            ->where('user_type', 'employee')
+            ->where('user_sid', $id)
+            ->where('company_sid', $cId)
+            ->where('user_consent', 1)
+            ->where('employer_consent', 1)
+            ->where('status', 1)
+            ->get('portal_state_form');
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (count($b)) $data['W4MN'] = $b;
+    }
 }
