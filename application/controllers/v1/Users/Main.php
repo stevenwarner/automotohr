@@ -193,8 +193,7 @@ class Main extends Public_Controller
                 $userId,
                 $userType,
                 $this->loggedInCompany["sid"]
-            );
-        _e($data,true,true);        
+            );     
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -255,7 +254,7 @@ class Main extends Public_Controller
                         $updateJobData = []; 
                         $updateJobData['start_date'] = $newHireDate;
                         //
-                        $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
+                        // $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
                     }
                     
                     //
