@@ -30,7 +30,7 @@
                             </p>
                             <ul class="Sitemap_content light-li list_item_center">
                                 <li><a href="<?php echo base_url('forgot-password') ?>"> Forgot Password</a></li>
-                                <li><a href="<?php echo base_url('affiliate-program/signup'); ?>"> Not an AutomotoHR Affiliate Yet?</a></li>
+                                <li><a href="<?php echo base_url('affiliate-program'); ?>"> Not an AutomotoHR Affiliate Yet?</a></li>
                             </ul>
                         </div>
                     </div>
