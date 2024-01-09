@@ -2626,14 +2626,18 @@ if (!function_exists("getDataForEmployerPrefill")) {
         if ($userId != 0) {
             //
             if ($userType == "employee") {
-                $employeeData = $CI->db->select('registration_date,joined_at')
+                $employeeData = $CI->db->select('registration_date,joined_at,rehire_date')
                     ->where('sid', $userId)
                     ->where('parent_sid', $companySid)
                     ->get('users')
                     ->row_array();
-                $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], "", false);
-                if (!empty($joiningDate)) {
-                    $companyData['first_day_of_employment'] = date("m-d-Y", strtotime($joiningDate));
+                $joiningDate = get_employee_latest_joined_date($employeeData["registration_date"], $employeeData["joined_at"], $employeeData["rehire_date"], false);
+                if ($joiningDate) {
+                    $companyData['first_day_of_employment'] = formatDateToDB(
+                        $joiningDate,
+                        DB_DATE,
+                        "m-d-Y"
+                    );
                 }
             } else {
                 $companyData['first_day_of_employment'] = '';
