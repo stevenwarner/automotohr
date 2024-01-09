@@ -83,7 +83,7 @@
                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label>State Tax Id Number</label>
-                                <?php echo form_input('mtin', set_value('mtin', $company['mtin']), 'class="form-control"'); ?>
+                                <?php echo form_input('mtin', set_value('mtin', $company['mtin'] && $company['mtin'] != 0 ? $company['mtin'] : ""), 'class="form-control"'); ?>
                                 <?php echo form_error('mtin'); ?>
                             </div>
                         </div>
