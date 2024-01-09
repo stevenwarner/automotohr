@@ -681,6 +681,47 @@ if (!function_exists('getStaticFileVersion')) {
         $files['public/v1/css/payroll/add-signatory'] = ['css' => '1.0.1'];
         // regular
         $files['public/v1/js/payroll/regular/hours_and_earnings'] = ['js' => '1.0.1'];
+
+        // new theme
+        // home
+        $files['public/v1/css/app/home'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/home'] = ["js" => "2.0.1"];
+        // solution
+        $files['public/v1/css/app/pages/products'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/products'] = ["js" => "2.0.1"];
+        // why us
+        $files['public/v1/css/app/pages/why-us'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/why-us'] = ["js" => "2.0.1"];
+        // about us
+        $files['public/v1/css/app/pages/about-us'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/about-us'] = ["js" => "2.0.1"];
+        // contact us
+        $files['public/v1/css/app/pages/contact-us'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/contact-us'] = ["js" => "2.0.1"];
+        // get your free account
+        $files['public/v1/css/app/pages/get-your-account'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/get-your-account'] = ["js" => "2.0.1"];
+        // login
+        $files['public/v1/css/app/login'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/login'] = ["js" => "2.0.1"];
+        // forgot password
+        $files['public/v1/css/app/forgot'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/forgot'] = ["js" => "2.0.1"];
+        // Affiliate program
+        $files['public/v1/css/app/pages/affiliate-program'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/affiliate-program'] = ["js" => "2.0.1"];
+        // Privacy policy
+        $files['public/v1/css/app/pages/privacy-policy'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/privacy-policy'] = ["js" => "2.0.1"];
+        // Resources 
+        $files['public/v1/css/app/resources'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/resources'] = ["js" => "2.0.1"];
+        // Terms of service
+        $files['public/v1/css/app/pages/terms-of-service'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/terms-of-service'] = ["js" => "2.0.1"];
+        // Site map
+        $files['public/v1/css/app/pages/sitemap'] = ["css" => "2.0.0"];
+        $files['public/v1/js/app/pages/sitemap'] = ["js" => "2.0.1"];
         // check and return data
         return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
     }
@@ -1875,10 +1916,43 @@ if (!function_exists('acceptGustoAgreement')) {
     }
 }
 
+if (!function_exists('getPageContent')) {
+
+    function getPageContent($page, $slug = false)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('content');
+        if ($slug == true) {
+            $CI->db->where('slug', $page);
+        } else {
+            $CI->db->where('page', $page);
+        }
+        $CI->db->where('status', 1);
+        $pageContent =   $CI->db->get('cms_pages_new')->row_array();
+        return json_decode($pageContent['content'], true);
+    }
+}
+
+if (!function_exists('getPageNameBySlug')) {
+
+    function getPageNameBySlug($slug)
+    {
+        //
+        $CI = &get_instance();
+        $page =  $CI->db->select('page')
+            ->where('slug', $slug)
+            ->get('cms_pages_new')
+            ->row_array();
+        return $page['page'];
+    }
+}
+
 
 if (!function_exists("getCommonFiles")) {
     /**
-     * get the CSS and Js defaults
+     * check wether image has an error or not
      *
      * @param string $type
      * @return array
@@ -1899,6 +1973,101 @@ if (!function_exists("getCommonFiles")) {
         return $arr[$type];
     }
 }
+
+if (!function_exists("validateCaptcha")) {
+    /**
+     * validate google captcha
+     */
+    function validateCaptcha(string $str)
+    {
+        $google_url = "https://www.google.com/recaptcha/api/siteverify";
+        $secret = getCreds("AHR")->GOOGLE_CAPTCHA_API_SECRET_V2;
+        $url = $google_url . "?secret=" . $secret . "&response=" . $str;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.16) Gecko/20110319 Firefox/3.6.16");
+        $res = curl_exec($curl);
+        curl_close($curl);
+        $res = json_decode($res, true);
+        return $res['success'];
+    }
+}
+
+
+if (!function_exists("convertToStrip")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToStrip(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
+    }
+}
+
+
+
+if (!function_exists("convertToHilited")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToHilited(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<span class="highlighted-light-blue-div">$1</span>', $str);
+    }
+}
+
+if (!function_exists("makeResourceView")) {
+    function makeResourceView($file)
+    {
+        // get the file extension
+        $extension =
+            pathinfo($file, PATHINFO_EXTENSION);
+        // for video
+        if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
+            return ' <video style="width: 100%"  src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
+        } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+        } else {
+            return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
+        }
+    }
+}
+
+
+if (!function_exists("load404")) {
+    function load404()
+    {
+        get_instance()->load
+            ->view("v1/app/header", [
+                "meta_title" => "404 | AutomotoHr.com"
+            ])
+            ->view("v1/app/footer");
+    }
+}
+
+
+if (!function_exists("convertEnterToSpan")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertEnterToSpan(string $str): string
+    {
+
+        return preg_replace("/[\n\r]/", '<span class="d-md-block">$1</span>', $str);
+    }
+}
+
 
 if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
     function onlyPlusAndPayPlanCanAccess()
@@ -2064,6 +2233,7 @@ if (!function_exists('image_url')) {
         return $imagePath;
     }
 }
+
 if (!function_exists("getFile")) {
     /**
      * get the plugin
@@ -2338,7 +2508,6 @@ if (!function_exists("haversine")) {
     }
 }
 
-
 if (!function_exists("convertPayScheduleToText")) {
     /**
      * convert pay schedule to text
@@ -2463,5 +2632,192 @@ if (!function_exists("getDataForEmployerPrefill")) {
         }
 
         return $companyData;
+    }
+}
+
+if (!function_exists("hasFileErrors")) {
+    /**
+     * check wether image has an error or not
+     *
+     * @param array $file
+     * @param string $fileName
+     * @param string $type
+     * @param int $size  Optional
+     * @return array
+     */
+    function hasFileErrors(array $file, string $fileName, string $type, int $size = 2): array
+    {
+        //
+        $types = explode("|", $type);
+        //
+        $typeArray = [];
+        //
+        foreach ($types as $value) {
+            $typeArray = array_merge($typeArray, getMimeByType($value));
+        }
+        //
+        $errors = [];
+        //
+        if (!$file[$fileName]) {
+            $errors[] = "File is empty";
+        } elseif ($file[$fileName]['error']) {
+            $errors[] = "File is corrupted.";
+        } elseif ($file[$fileName]['size'] > ($size * 1000000)) {
+            $errors[] = "File size exceeded.";
+        } elseif (!in_array($file[$fileName]['type'], $typeArray)) {
+            $errors[] = "File format is invalid.";
+        }
+        //
+        return $errors;
+    }
+}
+
+
+if (!file_exists("getSourceByType")) {
+    function getSourceByType(string $type, string $path, string $props = '', $fullWidth = true): string
+    {
+        if ($type === "upload") {
+            if (isImage($path)) {
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="' . (splitPathAndFileName($path)["name"]) . '" />';
+            } else {
+                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
+            }
+        } else {
+            return '<iframe src="' . $path . '" title="AutomotoHR video" style="' . ($fullWidth ? "width: 100%;" : "") . ' min-height: 450px" ' . ($props) . '></iframe>';
+        }
+    }
+}
+
+
+if (!file_exists("generateLink")) {
+    function generateLink(string $link): string
+    {
+        return strpos($link, "http") === false ? base_url($link) : $link;
+    }
+}
+
+if (!function_exists("validateCaptcha")) {
+    /**
+     * validate google captcha
+     */
+    function validateCaptcha(string $str)
+    {
+        $google_url = "https://www.google.com/recaptcha/api/siteverify";
+        $secret = getCreds("AHR")->GOOGLE_CAPTCHA_API_SECRET_V2;
+        $url = $google_url . "?secret=" . $secret . "&response=" . $str;
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.16) Gecko/20110319 Firefox/3.6.16");
+        $res = curl_exec($curl);
+        curl_close($curl);
+        $res = json_decode($res, true);
+        return $res['success'];
+    }
+}
+
+
+if (!function_exists("convertToStrip")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToStrip(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
+    }
+}
+
+
+
+if (!function_exists("convertToHilited")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToHilited(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<span class="highlighted-light-blue-div">$1</span>', $str);
+    }
+}
+
+if (!function_exists("makeResourceView")) {
+    function makeResourceView($file)
+    {
+        // get the file extension
+        $extension =
+            pathinfo($file, PATHINFO_EXTENSION);
+        // for video
+        if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
+            return ' <video style="width: 100%" src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
+        } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+        } else {
+            return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
+        }
+    }
+}
+
+
+if (!function_exists("load404")) {
+    function load404()
+    {
+        get_instance()->load
+            ->view("v1/app/header", [
+                "meta_title" => "404 | AutomotoHr.com"
+            ])
+            ->view("v1/app/footer");
+    }
+}
+
+
+if (!function_exists("convertEnterToSpan")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertEnterToSpan(string $str): string
+    {
+
+        return preg_replace("/[\n\r]/", '<span class="d-md-block">$1</span>', $str);
+    }
+}
+
+if (!function_exists("getMimeByType")) {
+    /**
+     * check wether image has an error or not
+     *
+     * @param string $type
+     * @return array
+     */
+    function getMimeByType(string $type): array
+    {
+        $mime_types = [
+            "image" => [
+                'image/png',
+                'image/jpeg',
+                'image/webp',
+                'image/gif',
+                'image/bmp',
+                'image/vnd.microsoft.icon',
+                'image/tiff',
+                'image/tiff',
+                'image/svg+xml',
+                'image/svg+xml',
+            ],
+            "video" => [
+                'video/mp4',
+                'video/mov',
+            ]
+        ];
+        //
+        return $mime_types[$type] ?? [];
     }
 }

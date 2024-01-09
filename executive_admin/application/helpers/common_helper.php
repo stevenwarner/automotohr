@@ -1,19 +1,20 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('getUserIP')) {
-    function getUserIP() {
+    function getUserIP()
+    {
         $ipaddress = '';
         if (getenv('HTTP_CLIENT_IP'))
             $ipaddress = getenv('HTTP_CLIENT_IP');
-        else if(getenv('HTTP_X_FORWARDED_FOR'))
+        else if (getenv('HTTP_X_FORWARDED_FOR'))
             $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-        else if(getenv('HTTP_X_FORWARDED'))
+        else if (getenv('HTTP_X_FORWARDED'))
             $ipaddress = getenv('HTTP_X_FORWARDED');
-        else if(getenv('HTTP_FORWARDED_FOR'))
+        else if (getenv('HTTP_FORWARDED_FOR'))
             $ipaddress = getenv('HTTP_FORWARDED_FOR');
-        else if(getenv('HTTP_FORWARDED'))
-           $ipaddress = getenv('HTTP_FORWARDED');
-        else if(getenv('REMOTE_ADDR'))
+        else if (getenv('HTTP_FORWARDED'))
+            $ipaddress = getenv('HTTP_FORWARDED');
+        else if (getenv('REMOTE_ADDR'))
             $ipaddress = getenv('REMOTE_ADDR');
         else
             $ipaddress = 'UNKNOWN';
@@ -22,7 +23,8 @@ if (!function_exists('getUserIP')) {
 }
 
 if (!function_exists('clean')) {
-    function clean($string) {
+    function clean($string)
+    {
         $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
         $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
         return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
@@ -30,7 +32,8 @@ if (!function_exists('clean')) {
 }
 
 if (!function_exists('message_header_footer')) {
-    function message_header_footer($compnay_id, $company_Name) {
+    function message_header_footer($compnay_id, $company_Name)
+    {
         $CI = &get_instance();
         $CI->db->select('sub_domain');
         $CI->db->where('user_sid', $compnay_id);
@@ -44,7 +47,8 @@ if (!function_exists('message_header_footer')) {
 }
 
 if (!function_exists('generateRandomString')) {
-    function generateRandomString($length) {
+    function generateRandomString($length)
+    {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
@@ -56,7 +60,8 @@ if (!function_exists('generateRandomString')) {
 }
 
 if (!function_exists('random_key')) {
-    function random_key($str_length = 24) {
+    function random_key($str_length = 24)
+    {
         $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $bytes = openssl_random_pseudo_bytes(3 * $str_length / 4 + 1);
         $repl = unpack('C2', $bytes);
@@ -67,18 +72,19 @@ if (!function_exists('random_key')) {
 }
 
 if (!function_exists('sendMail')) {
-    function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL) {
+    function sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
         $mail->FromName = $fromName;
-        
+
         if ($replyTo == NULL) {
             $mail->addReplyTo($from);
         } else {
             $mail->addReplyTo($replyTo);
         }
-        
+
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         $mail->isHTML(true);
@@ -89,7 +95,8 @@ if (!function_exists('sendMail')) {
 }
 
 if (!function_exists('sendMailMultipleRecipients')) {
-    function sendMailMultipleRecipients($from, $to = array(), $subject, $body, $fromName = NULL, $replyTo = NULL) {
+    function sendMailMultipleRecipients($from, $to = array(), $subject, $body, $fromName = NULL, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -111,11 +118,11 @@ if (!function_exists('sendMailMultipleRecipients')) {
         $mail->Body = $body;
         $mail->send();
     }
-
 }
 
 if (!function_exists('sendMailWithCC')) {
-    function sendMailWithCC($from, $to, $cc, $subject, $body, $fromName = NULL, $replyTo = NULL) {
+    function sendMailWithCC($from, $to, $cc, $subject, $body, $fromName = NULL, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -136,7 +143,8 @@ if (!function_exists('sendMailWithCC')) {
 }
 
 if (!function_exists('sendMailWithAttachment')) {
-    function sendMailWithAttachment($from, $to, $subject, $body, $fromName = NULL, $file, $replyTo = NULL, $multiple = false) {
+    function sendMailWithAttachment($from, $to, $subject, $body, $fromName = NULL, $file, $replyTo = NULL, $multiple = false)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -149,14 +157,14 @@ if (!function_exists('sendMailWithAttachment')) {
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         $mail->isHTML(true);
-        if($multiple){
-            foreach($file['tmp_name'] as $key => $fileName){
+        if ($multiple) {
+            foreach ($file['tmp_name'] as $key => $fileName) {
                 if (empty($_FILES['message_attachment']['name'][$key]) || $_FILES['message_attachment']['size'][$key] == 0) {
                     continue;
                 }
                 $mail->AddAttachment($file['tmp_name'][$key], $file['name'][$key]);
             }
-        }else{
+        } else {
             $mail->AddAttachment($file['tmp_name'], $file['name']);
         }
         $mail->Subject = $subject;
@@ -166,18 +174,19 @@ if (!function_exists('sendMailWithAttachment')) {
 }
 
 if (!function_exists('sendMailWithAttachmentRealPath')) {
-    function sendMailWithAttachmentRealPath($from, $to, $subject, $body, $fromName = NULL, $filePath = NULL, $replyTo = NULL) {
+    function sendMailWithAttachmentRealPath($from, $to, $subject, $body, $fromName = NULL, $filePath = NULL, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
         $mail->FromName = $fromName;
-        
+
         if ($replyTo == NULL) {
             $mail->addReplyTo($from);
         } else {
             $mail->addReplyTo($replyTo);
         }
-        
+
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         $mail->isHTML(true);
@@ -193,7 +202,8 @@ if (!function_exists('sendMailWithAttachmentRealPath')) {
 }
 
 if (!function_exists('sendMailWithStringAttachment')) {
-    function sendMailWithStringAttachment($from, $to, $subject, $body, $fromName = NULL, $files, $replyTo = NULL) {
+    function sendMailWithStringAttachment($from, $to, $subject, $body, $fromName = NULL, $files, $replyTo = NULL)
+    {
         require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
         $mail = new PHPMailer;
         $mail->From = $from;
@@ -221,7 +231,8 @@ if (!function_exists('sendMailWithStringAttachment')) {
 }
 
 if (!function_exists('db_get_active_countries')) {
-    function db_get_active_countries() {
+    function db_get_active_countries()
+    {
         $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('active', '1');
@@ -232,7 +243,8 @@ if (!function_exists('db_get_active_countries')) {
 }
 
 if (!function_exists('db_get_active_states')) {
-    function db_get_active_states($sid = NULL) {
+    function db_get_active_states($sid = NULL)
+    {
         $CI = &get_instance();
         $CI->db->select('sid, state_code, state_name');
         $CI->db->where('country_sid', $sid);
@@ -244,7 +256,8 @@ if (!function_exists('db_get_active_states')) {
 }
 
 if (!function_exists('db_get_state_name_only')) {
-    function db_get_state_name_only($state_sid) {
+    function db_get_state_name_only($state_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('state_name');
         $CI->db->where('sid', $state_sid);
@@ -261,7 +274,8 @@ if (!function_exists('db_get_state_name_only')) {
 }
 
 if (!function_exists('db_get_country_name')) {
-    function db_get_country_name($sid) {
+    function db_get_country_name($sid)
+    {
         $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('sid', $sid);
@@ -272,14 +286,15 @@ if (!function_exists('db_get_country_name')) {
 }
 
 if (!function_exists('db_get_state_name')) {
-    function db_get_state_name($sid) {
+    function db_get_state_name($sid)
+    {
         $CI = &get_instance();
         $CI->db->select('country_sid, state_code, state_name, country_code, country_name');
         $CI->db->join('countries', 'countries.sid = states.country_sid');
         $CI->db->where('states.sid', $sid);
         $CI->db->from('states');
         $result = $CI->db->get()->result_array();
-        if(isset($result[0])){
+        if (isset($result[0])) {
             return $result[0];
         } else {
             return array();
@@ -288,18 +303,20 @@ if (!function_exists('db_get_state_name')) {
 }
 
 if (!function_exists('my_date_format')) {
-    function my_date_format($data) {
+    function my_date_format($data)
+    {
         $with_time = date('M d Y, D H:i:s', strtotime($data));
-        if(strpos($with_time,'00:00:00')){
-            $with_time = date('M d Y, D',strtotime($data));
+        if (strpos($with_time, '00:00:00')) {
+            $with_time = date('M d Y, D', strtotime($data));
         }
         return $with_time;
-//        return date('m/d/Y', strtotime($data));
+        //        return date('m/d/Y', strtotime($data));
     }
 }
 
 if (!function_exists('db_get_cleanstring')) {
-    function db_get_cleanstring($string) {
+    function db_get_cleanstring($string)
+    {
         $string = strtolower($string); //Lower case everything        
         $string = preg_replace("/[^a-z0-9_\s-]/", "", $string); //Make alphanumeric (removes all other characters)        
         $string = preg_replace("/[\s-]+/", " ", $string); //Clean up multiple dashes or whitespaces       
@@ -309,7 +326,8 @@ if (!function_exists('db_get_cleanstring')) {
 }
 
 if (!function_exists('encode_string')) {
-    function encode_string($password) {
+    function encode_string($password)
+    {
         $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d';
         $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $password, MCRYPT_MODE_CBC, md5(md5($key))));
         return $encoded;
@@ -317,7 +335,8 @@ if (!function_exists('encode_string')) {
 }
 
 if (!function_exists('decode_string')) {
-    function decode_string($encoded) {
+    function decode_string($encoded)
+    {
         $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d';
         $decoded = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encoded), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
         return $decoded;
@@ -325,7 +344,8 @@ if (!function_exists('decode_string')) {
 }
 
 if (!function_exists('formatDateForDb')) {
-    function formatDateForDb($date) {
+    function formatDateForDb($date)
+    {
         $date_parts = explode('-', $date);
         $month = $date_parts[0];
         $day = $date_parts[1];
@@ -335,27 +355,30 @@ if (!function_exists('formatDateForDb')) {
 }
 
 if (!function_exists('convert_date_to_db_format')) {
-    function convert_date_to_db_format($string_date) {
+    function convert_date_to_db_format($string_date)
+    {
         return date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $string_date)));
     }
 }
 
 if (!function_exists('convert_date_to_frontend_format')) {
-    function convert_date_to_frontend_format($string_date) {
+    function convert_date_to_frontend_format($string_date)
+    {
         $with_time = date('M d Y, D H:i:s', strtotime($string_date));
-        if(strpos($with_time,'00:00:00')){
-            $with_time = date('M d Y, D',strtotime($string_date));
+        if (strpos($with_time, '00:00:00')) {
+            $with_time = date('M d Y, D', strtotime($string_date));
         }
         return $with_time;
-//        if ($string_date == '0000-00-00 00:00:00') {
-//            $string_date = date('Y-m-d H:i:s');
-//        }
-//        return date('m/d/Y', strtotime(str_replace('-', '/', $string_date)));
+        //        if ($string_date == '0000-00-00 00:00:00') {
+        //            $string_date = date('Y-m-d H:i:s');
+        //        }
+        //        return date('m/d/Y', strtotime(str_replace('-', '/', $string_date)));
     }
 }
 
 if (!function_exists('db_get_enum_values')) {
-    function db_get_enum_values($table, $field) {
+    function db_get_enum_values($table, $field)
+    {
         $CI = &get_instance();
         $type = $CI->db->query("SHOW COLUMNS FROM `" . $table . "` WHERE Field = '" . $field . "'")->row(0)->Type;
         preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
@@ -366,49 +389,50 @@ if (!function_exists('db_get_enum_values')) {
 
 //Stackoverflow function to convert amount to words
 if (!function_exists('convert_number_to_words')) {
-    function convert_number_to_words($number) {
+    function convert_number_to_words($number)
+    {
         $hyphen = '-';
         $conjunction = ' and ';
         $separator = ', ';
         $negative = 'negative ';
         $decimal = ' point ';
         $dictionary = array(
-                            0 => 'zero',
-                            1 => 'one',
-                            2 => 'two',
-                            3 => 'three',
-                            4 => 'four',
-                            5 => 'five',
-                            6 => 'six',
-                            7 => 'seven',
-                            8 => 'eight',
-                            9 => 'nine',
-                            10 => 'ten',
-                            11 => 'eleven',
-                            12 => 'twelve',
-                            13 => 'thirteen',
-                            14 => 'fourteen',
-                            15 => 'fifteen',
-                            16 => 'sixteen',
-                            17 => 'seventeen',
-                            18 => 'eighteen',
-                            19 => 'nineteen',
-                            20 => 'twenty',
-                            30 => 'thirty',
-                            40 => 'fourty',
-                            50 => 'fifty',
-                            60 => 'sixty',
-                            70 => 'seventy',
-                            80 => 'eighty',
-                            90 => 'ninety',
-                            100 => 'hundred',
-                            1000 => 'thousand',
-                            1000000 => 'million',
-                            1000000000 => 'billion',
-                            1000000000000 => 'trillion',
-                            1000000000000000 => 'quadrillion',
-                            1000000000000000000 => 'quintillion'
-                        );
+            0 => 'zero',
+            1 => 'one',
+            2 => 'two',
+            3 => 'three',
+            4 => 'four',
+            5 => 'five',
+            6 => 'six',
+            7 => 'seven',
+            8 => 'eight',
+            9 => 'nine',
+            10 => 'ten',
+            11 => 'eleven',
+            12 => 'twelve',
+            13 => 'thirteen',
+            14 => 'fourteen',
+            15 => 'fifteen',
+            16 => 'sixteen',
+            17 => 'seventeen',
+            18 => 'eighteen',
+            19 => 'nineteen',
+            20 => 'twenty',
+            30 => 'thirty',
+            40 => 'fourty',
+            50 => 'fifty',
+            60 => 'sixty',
+            70 => 'seventy',
+            80 => 'eighty',
+            90 => 'ninety',
+            100 => 'hundred',
+            1000 => 'thousand',
+            1000000 => 'million',
+            1000000000 => 'billion',
+            1000000000000 => 'trillion',
+            1000000000000000 => 'quadrillion',
+            1000000000000000000 => 'quintillion'
+        );
 
         if (!is_numeric($number)) {
             return false;
@@ -417,7 +441,8 @@ if (!function_exists('convert_number_to_words')) {
         if (($number >= 0 && (int)$number < 0) || (int)$number < 0 - PHP_INT_MAX) {
             // overflow
             trigger_error(
-                'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX, E_USER_WARNING
+                'convert_number_to_words only accepts numbers between -' . PHP_INT_MAX . ' and ' . PHP_INT_MAX,
+                E_USER_WARNING
             );
             return false;
         }
@@ -478,7 +503,8 @@ if (!function_exists('convert_number_to_words')) {
 }
 
 if (!function_exists('db_get_cart_content')) {
-    function db_get_cart_content($sid) {
+    function db_get_cart_content($sid)
+    {
         $CI = &get_instance();
         $CI->db->select('shopping_cart.sid, shopping_cart.product_sid, shopping_cart.qty, shopping_cart.date, shopping_cart.company_sid, shopping_cart.no_of_days, products.name, products.serialized_extra_info, products.price, products.product_image');
         $CI->db->where('company_sid', $sid);
@@ -487,11 +513,11 @@ if (!function_exists('db_get_cart_content')) {
         $result = $CI->db->get()->result_array();
         return $result;
     }
-
 }
 
 if (!function_exists('get_email_template')) {
-    function get_email_template($template_id) {
+    function get_email_template($template_id)
+    {
         $CI = &get_instance();
         $CI->db->where('sid', $template_id);
         $result = $CI->db->get('email_templates')->row_array();
@@ -504,13 +530,15 @@ if (!function_exists('get_email_template')) {
 }
 
 if (!function_exists('month_date_year')) {
-    function month_date_year($date) {
+    function month_date_year($date)
+    {
         return date('M d Y', strtotime($date));
     }
 }
 
 if (!function_exists('get_job_title')) {
-    function get_job_title($job_id) {
+    function get_job_title($job_id)
+    {
         $CI = &get_instance();
         $CI->db->select('Title');
         $CI->db->where('sid', $job_id);
@@ -526,7 +554,8 @@ if (!function_exists('get_job_title')) {
 }
 
 if (!function_exists('db_get_products_details')) {
-    function db_get_products_details($product_id) {
+    function db_get_products_details($product_id)
+    {
         $CI = &get_instance();
         $CI->db->select('sid, name, active, price, number_of_postings, expiry_days, daily');
         $CI->db->where('sid', $product_id);
@@ -539,18 +568,20 @@ if (!function_exists('db_get_products_details')) {
 }
 
 if (!function_exists('date_with_time')) {
-    function date_with_time($date) {
+    function date_with_time($date)
+    {
         $with_time = date('M d Y, D H:i:s', strtotime($date));
-        if(strpos($with_time,'00:00:00')){
-            $with_time = date('M d Y, D',strtotime($date));
+        if (strpos($with_time, '00:00:00')) {
+            $with_time = date('M d Y, D', strtotime($date));
         }
         return $with_time;
-//        return date('D, d M Y h:i:s', strtotime($date));
+        //        return date('D, d M Y h:i:s', strtotime($date));
     }
 }
 
 if (!function_exists('convert_email_template')) {
-    function convert_email_template($emailTemplateBody, $employer_sid = NULL) {
+    function convert_email_template($emailTemplateBody, $employer_sid = NULL)
+    {
         $CI = &get_instance();
         $CI->db->where('sid', $employer_sid);
         $userData = $CI->db->get('executive_users')->row_array();
@@ -571,7 +602,8 @@ if (!function_exists('convert_email_template')) {
 }
 
 if (!function_exists('get_no_of_applicants')) {
-    function get_no_of_applicants($job_id, $company_sid) {
+    function get_no_of_applicants($job_id, $company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('job_sid', $job_id);
@@ -582,15 +614,16 @@ if (!function_exists('get_no_of_applicants')) {
 }
 
 
-if(!function_exists('get_company_details')){
-    function get_company_details($company_sid){
-        $CI = & get_instance();
+if (!function_exists('get_company_details')) {
+    function get_company_details($company_sid)
+    {
+        $CI = &get_instance();
         $CI->db->select('*');
         $CI->db->where('parent_sid', 0);
         $CI->db->where('sid', $company_sid);
         $record_row = $CI->db->get('users')->result_array();
 
-        if(!empty($record_row)){
+        if (!empty($record_row)) {
             return $record_row[0];
         } else {
             return array();
@@ -599,7 +632,8 @@ if(!function_exists('get_company_details')){
 }
 
 if (!function_exists('is_leap_year')) {
-    function is_leap_year($year = NULL) {
+    function is_leap_year($year = NULL)
+    {
         if (is_numeric($year)) {
             return checkdate(2, 29, (int)$year);
         } else {
@@ -609,7 +643,8 @@ if (!function_exists('is_leap_year')) {
 }
 
 if (!function_exists('db_get_sub_domain')) {
-    function db_get_sub_domain($company_id) {
+    function db_get_sub_domain($company_id)
+    {
         $CI = &get_instance();
         $CI->db->select('sub_domain');
         $CI->db->where('user_sid', $company_id);
@@ -620,11 +655,12 @@ if (!function_exists('db_get_sub_domain')) {
     }
 }
 
-if(!function_exists('my_print_r')){
-    function my_print_r($obj, $ip_address){
+if (!function_exists('my_print_r')) {
+    function my_print_r($obj, $ip_address)
+    {
         $ip = getUserIP();
 
-        if($ip == $ip_address){
+        if ($ip == $ip_address) {
             echo  '<pre>';
             print_r($obj);
             echo '</pre>';
@@ -632,10 +668,11 @@ if(!function_exists('my_print_r')){
     }
 }
 
-if(!function_exists('my_echo')){
-    function my_echo($str, $ip_address){
+if (!function_exists('my_echo')) {
+    function my_echo($str, $ip_address)
+    {
         $ip = getUserIP();
-        if($ip == $ip_address){
+        if ($ip == $ip_address) {
             echo  '<pre>';
             echo $str;
             echo '</pre>';
@@ -644,7 +681,8 @@ if(!function_exists('my_echo')){
 }
 
 if (!function_exists('get_interview_status')) {
-    function get_interview_status($status_sid) {
+    function get_interview_status($status_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('name, css_class, bar_bgcolor');
         $CI->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.status_sid = application_status.sid');
@@ -652,17 +690,18 @@ if (!function_exists('get_interview_status')) {
         $CI->db->from('application_status');
         $result = $CI->db->get()->result_array();
         $return_data = array();
-        
-        if(!empty($result)) {
+
+        if (!empty($result)) {
             $return_data = $result[0];
         }
-        
+
         return $return_data;
     }
 }
 
 if (!function_exists('get_interview_status_by_parent_id')) {
-    function get_interview_status_by_parent_id($status_sid) {
+    function get_interview_status_by_parent_id($status_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('name, css_class, bar_bgcolor');
         $CI->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.status_sid = application_status.sid');
@@ -671,17 +710,18 @@ if (!function_exists('get_interview_status_by_parent_id')) {
         $CI->db->from('application_status');
         $result = $CI->db->get()->result_array();
         $return_data = array();
-        
-        if(!empty($result)) {
+
+        if (!empty($result)) {
             $return_data = $result[0];
         }
-        
+
         return $return_data;
     }
 }
 
 if (!function_exists('get_default_interview_status')) {
-    function get_default_interview_status($status_sid, $field_id) {
+    function get_default_interview_status($status_sid, $field_id)
+    {
         $CI = &get_instance();
         $CI->db->select('status');
         $CI->db->where($field_id, $status_sid);
@@ -689,11 +729,11 @@ if (!function_exists('get_default_interview_status')) {
         $CI->db->limit(1);
         $result = $CI->db->get()->result_array();
         $return_data = 'Not Contacted Yet';
-        
-        if(!empty($result)) {
+
+        if (!empty($result)) {
             $return_data = $result[0]['status'];
         }
-        
+
         return $return_data;
     }
 }
@@ -708,17 +748,18 @@ if (!function_exists('get_default_interview_status')) {
  *
  * @return String
  */
-if(!function_exists('timezone_dropdown')){
-    function timezone_dropdown($selected = '', $attrs = array()){
+if (!function_exists('timezone_dropdown')) {
+    function timezone_dropdown($selected = '', $attrs = array())
+    {
         // Fetch timezones
         $timezones = get_timezones('all');
         $timezone_rows = '';
         $timezone_rows .= '<select';
         // Set Attrs
-        if(sizeof($attrs)) foreach ($attrs as $k0 => $v0) $timezone_rows .= ' '.$k0.' = "'.$v0.'"';
+        if (sizeof($attrs)) foreach ($attrs as $k0 => $v0) $timezone_rows .= ' ' . $k0 . ' = "' . $v0 . '"';
         $timezone_rows .= '>';
-        if($selected == '') $timezone_rows .= '<option value="">Please Select</option>';
-        if(sizeof($timezones)) foreach ($timezones as $k0 => $v0) $timezone_rows .= '<option '.( $selected == $v0['key'] ? 'selected="true"' : '' ).' value="'.($v0['key']).'">'.($v0['name']).' ('.($v0['key']).')</option>';
+        if ($selected == '') $timezone_rows .= '<option value="">Please Select</option>';
+        if (sizeof($timezones)) foreach ($timezones as $k0 => $v0) $timezone_rows .= '<option ' . ($selected == $v0['key'] ? 'selected="true"' : '') . ' value="' . ($v0['key']) . '">' . ($v0['name']) . ' (' . ($v0['key']) . ')</option>';
         $timezone_rows .= '</select>';
         return $timezone_rows;
     }
@@ -738,18 +779,19 @@ if(!function_exists('timezone_dropdown')){
  * @return Array
  */
 if (!function_exists('get_timezones')) {
-    function get_timezones($type = 'all', $index = ''){
+    function get_timezones($type = 'all', $index = '')
+    {
         // Timezones without daylight time
         // America
         $timezones = [];
         $timezones[] = ['value' => '-11:00|US|01|SST', 'name' => 'Samoa Time',    'key' => 'SST'];
-        $timezones[] = ['value' => '-08:00|US|05|AKST','name' => 'Alaska Time',   'key' => 'AKST'];
+        $timezones[] = ['value' => '-08:00|US|05|AKST', 'name' => 'Alaska Time',   'key' => 'AKST'];
         $timezones[] = ['value' => '-07:00|US|07|PST', 'name' => 'Pacific Time',  'key' => 'PST'];
         $timezones[] = ['value' => '-06:00|US|09|MST', 'name' => 'Mountain Time', 'key' => 'MST'];
         $timezones[] = ['value' => '-05:00|US|11|CST', 'name' => 'Central Time',  'key' => 'CST'];
         $timezones[] = ['value' => '-04:00|US|13|EST', 'name' => 'Eastern Time',  'key' => 'EST'];
         $timezones[] = ['value' => '-04:00|US|14|AST', 'name' => 'Atlantic Time', 'key' => 'AST'];
-        $timezones[] = ['value' => '+10:00|US|15|CHST','name' => 'Chamorro Time', 'key' => 'CHST'];
+        $timezones[] = ['value' => '+10:00|US|15|CHST', 'name' => 'Chamorro Time', 'key' => 'CHST'];
         $timezones[] = ['value' => '-09:00|US|03|HST', 'name' => 'Hawaii-Aleutian Time', 'key' => 'HST'];
         $timezones[] = ['value' => '-03:00|US|15|NST', 'name' => 'Newfoundland Standard Time', 'key' => 'NST'];
         // Europe
@@ -758,17 +800,17 @@ if (!function_exists('get_timezones')) {
         $timezones[] = ['value' => '+03:00|EU|06|FET', 'name' => 'Further European Time', 'key' => 'FET'];
         $timezones[] = ['value' => '+00:00|EU|07|GMT', 'name' => 'Greenwich Mean Time',   'key' => 'GMT'];
         $timezones[] = ['value' => '+01:00|EU|01|BST', 'name' => 'British Time',          'key' => 'BST'];
-        $timezones[] = ['value' => '+04:00|EU|08|KUYT','name' => 'Kuybyshev Time',        'key' => 'KUYT'];
+        $timezones[] = ['value' => '+04:00|EU|08|KUYT', 'name' => 'Kuybyshev Time',        'key' => 'KUYT'];
         $timezones[] = ['value' => '+01:00|EU|09|IST', 'name' => 'Irish Time',            'key' => 'IST'];
         $timezones[] = ['value' => '+04:00|EU|10|MSK', 'name' => 'Moscow Time',           'key' => 'MSK'];
-        $timezones[] = ['value' => '+04:00|EU|12|SAMT','name' => 'Samara Time',           'key' => 'SAMT'];
+        $timezones[] = ['value' => '+04:00|EU|12|SAMT', 'name' => 'Samara Time',           'key' => 'SAMT'];
         $timezones[] = ['value' => '+03:00|EU|13|TRT', 'name' => 'Turkey Time',           'key' => 'TRT'];
         $timezones[] = ['value' => '+01:00|EU|14|WET', 'name' => 'Western European Time', 'key' => 'WET'];
         // Merge arrays
         $zones = $timezones;
         // Check and return
-        if($type == 'all') return $zones; // return all zones
-        else foreach ($zones as $k0 => $v0) if($type == $v0['key']) return $index == '' ? $v0 : ( $index == 'name' ? $v0['name'].' ('.($v0['key']).')': $v0[$index] ); // return specific zone
+        if ($type == 'all') return $zones; // return all zones
+        else foreach ($zones as $k0 => $v0) if ($type == $v0['key']) return $index == '' ? $v0 : ($index == 'name' ? $v0['name'] . ' (' . ($v0['key']) . ')' : $v0[$index]); // return specific zone
     }
 }
 
@@ -786,8 +828,9 @@ if (!function_exists('get_timezones')) {
  *
  * @return String
  */
-if(!function_exists('reset_datetime')){
-    function reset_datetime($data){
+if (!function_exists('reset_datetime')) {
+    function reset_datetime($data)
+    {
         // Defaults
         $from_format = 'Y-m-d H:i:s';
         $format      = 'M d Y, D H:i:s';
@@ -795,16 +838,16 @@ if(!function_exists('reset_datetime')){
         $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         $with_timezone = 0;
         // Check array size
-        if(!is_array($data) || !sizeof($data) || !isset($data['datetime']) || !isset($data['_this'])) return false;
+        if (!is_array($data) || !sizeof($data) || !isset($data['datetime']) || !isset($data['_this'])) return false;
         // Check if only date is sent
         // then reset formats to date
-        if(!preg_match('/\s[0-9]{2}:[0-9]{2}:[0-9]{2}/', $data['datetime'])){
+        if (!preg_match('/\s[0-9]{2}:[0-9]{2}:[0-9]{2}/', $data['datetime'])) {
             $from_format = 'Y-m-d';
             $format = 'M d Y, D';
         }
         // Check if only time is sent
         // then reset formats to time
-        if(!preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $data['datetime']) && !preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $data['datetime'])){
+        if (!preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $data['datetime']) && !preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $data['datetime'])) {
             $from_format = 'H:i:s';
             $format = 'H:i:s';
         }
@@ -813,20 +856,20 @@ if(!function_exists('reset_datetime')){
         // Reset type
         $type = strtolower(trim($type));
         $with_timezone = (int)$with_timezone;
-        if($with_timezone === 1 ) $format .= ', T \(P\)';
+        if ($with_timezone === 1) $format .= ', T \(P\)';
         // Check for login session
-        if($_this->session->userdata('logged_in')) {
+        if ($_this->session->userdata('logged_in')) {
             // If the type is user
-            if($type == 'user'){
-                if(clean_string($_this->session->userdata('logged_in')['employer_detail'], 'timezone') == ''){
+            if ($type == 'user') {
+                if (clean_string($_this->session->userdata('logged_in')['employer_detail'], 'timezone') == '') {
                     // Check for companys timezone
-                    if(clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                    if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
                     else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-                }else $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
-            }else if($type == 'company'){ // For company
-                if(clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+                } else $timezone = $_this->session->userdata('logged_in')['employer_detail']['timezone'];
+            } else if ($type == 'company') { // For company
+                if (clean_string($_this->session->userdata('logged_in')['company_detail'], 'timezone') == '') $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
                 else $timezone = $_this->session->userdata('logged_in')['company_detail']['timezone'];
-            }else $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+            } else $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         }
 
         // Set user given timezone
@@ -835,8 +878,8 @@ if(!function_exists('reset_datetime')){
 
         // $timezone = 'CHST';
         // Reset timezone
-        if(!preg_match('/^[A-Z]/', $timezone)) $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-        if(!preg_match('/^[A-Z]/', $from_timezone)) $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+        if (!preg_match('/^[A-Z]/', $timezone)) $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
+        if (!preg_match('/^[A-Z]/', $from_timezone)) $from_timezone = STORE_DEFAULT_TIMEZONE_ABBR;
         // _e($timezone);
         //
         reset_format($from_format);
@@ -849,7 +892,7 @@ if(!function_exists('reset_datetime')){
             'from_zone' => $from_timezone
         );
         //
-        if(isset($debug) && $debug) $a['debug'] = $debug;
+        if (isset($debug) && $debug) $a['debug'] = $debug;
         //
         $n = reset_timezone($a);
         return isset($n['date_time_string']) ? $n['date_time_string'] : $datetime;
@@ -866,13 +909,20 @@ if(!function_exists('reset_datetime')){
  *
  * @return String
  */
-if(!function_exists('reset_format')){
-    function reset_format( &$format, $syn = 'Y-m-d H:i:s' ){
-        if($format != $syn) {
+if (!function_exists('reset_format')) {
+    function reset_format(&$format, $syn = 'Y-m-d H:i:s')
+    {
+        if ($format != $syn) {
             switch ($format) {
-                case 'b d Y H:i a': $format = 'M d Y H:i D'; break;
-                case 'default': $format = 'M d Y, D H:i:s'; break;
-                case 'with timezone': $format = 'M d Y, D H:i:s, T \(P\)'; break;
+                case 'b d Y H:i a':
+                    $format = 'M d Y H:i D';
+                    break;
+                case 'default':
+                    $format = 'M d Y, D H:i:s';
+                    break;
+                case 'with timezone':
+                    $format = 'M d Y, D H:i:s, T \(P\)';
+                    break;
             }
         }
     }
@@ -891,42 +941,43 @@ if(!function_exists('reset_format')){
  *
  * @return Array|Bool
  */
-if(!function_exists('reset_timezone')){
-    function reset_timezone($data){
+if (!function_exists('reset_timezone')) {
+    function reset_timezone($data)
+    {
         // Check for array set and size
-        if(!is_array($data) || !sizeof($data)) return false;
+        if (!is_array($data) || !sizeof($data)) return false;
         // Reset formats
-        if(!isset($data['from_format'])) $from_format = 'Y-m-d';
-        if(!isset($data['format'])) $format = 'Y-m-d\TH:i:s\ZO';
+        if (!isset($data['from_format'])) $from_format = 'Y-m-d';
+        if (!isset($data['format'])) $format = 'Y-m-d\TH:i:s\ZO';
         $to_format = 'Y-m-d H:i:s O P e I';
         $from_zone = STORE_DEFAULT_TIMEZONE_ABBR;
         // Convert array indexes to variables
         extract($data);
         // Check for date string
-        if(!isset($datetime)) return false;
+        if (!isset($datetime)) return false;
         // Check for new zone
-        if(!isset($new_zone)) return false;
+        if (!isset($new_zone)) return false;
         // For debugging
-        if(isset($debug) && $debug) _e($from_zone.' - '.$new_zone, true);
+        if (isset($debug) && $debug) _e($from_zone . ' - ' . $new_zone, true);
         // Set return array
         $return_array = array();
         // _e($from_zone, true);
         // _e(timezone_name_from_abbr($from_zone), true);
         // Let's create date
         $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(timezone_name_from_abbr($from_zone)));
-        if($from_zone != 'UTC'){
+        if ($from_zone != 'UTC') {
             // Convert it to utc
             $utc = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr('UTC')));
             // Get utc date
             $return_array['UTC'] = parse_datetime($utc->format($to_format));
         }
         //
-        if(isset($from_zone)){
+        if (isset($from_zone)) {
             $fromzone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($from_zone)));
             $return_array[$from_zone] = parse_datetime($fromzone->format($to_format));
         }
         //
-        if($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
+        if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
         else $tozone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
         $return_array[$new_zone] = parse_datetime($tozone->format($to_format));
         $return_array['date_time_string'] = $tozone->format($format);
@@ -945,8 +996,9 @@ if(!function_exists('reset_timezone')){
  *
  * @return String
  */
-if(!function_exists('parse_datetime')){
-    function parse_datetime($date_time_string){
+if (!function_exists('parse_datetime')) {
+    function parse_datetime($date_time_string)
+    {
         $tmp = explode(' ', $date_time_string);
         $return_array['date'] = trim($tmp[0]);
         $return_array['time'] = trim($tmp[1]);
@@ -972,20 +1024,21 @@ if(!function_exists('parse_datetime')){
  *
  * @return String
  */
-if(!function_exists('phonenumber_format')){
-    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1'){
+if (!function_exists('phonenumber_format')) {
+    function phonenumber_format($phone_number, $strip_country_code = FALSE, $country_code = '+1')
+    {
         // Removes country code if exists
         $phone_number = str_replace($country_code, '', $phone_number);
         // Clean phone number
         $phone_number = str_replace('/[^0-9]/', '', $phone_number);
         // Check for us format
         switch ($country_code) {
-            // For US & Canada
+                // For US & Canada
             case '+1':
                 // Match format & convert
-                if(preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
-                    return trim(''.($strip_country_code ? '': $country_code.' ').'('.($match[1]).') '.($match[2]).'-'.($match[3]).' ');
-            break;
+                if (preg_match('/^(\d{3})(\d{3})(\d{4})(\d+)?$/', $phone_number, $match))
+                    return trim('' . ($strip_country_code ? '' : $country_code . ' ') . '(' . ($match[1]) . ') ' . ($match[2]) . '-' . ($match[3]) . ' ');
+                break;
         }
         // When no format is found
         return $phone_number;
@@ -1001,17 +1054,18 @@ if(!function_exists('phonenumber_format')){
  *
  * @return String
  */
-if(!function_exists('clean_string')){
-    function clean_string($data, $index = false){
-        if(is_array($data)){
+if (!function_exists('clean_string')) {
+    function clean_string($data, $index = false)
+    {
+        if (is_array($data)) {
             $cur_data = '';
-            if(!isset($data[$index])) return '';
+            if (!isset($data[$index])) return '';
             $cur_data = trim($data[$index]);
-            if($index == 'timezone') if(!preg_match('/^[A-Z]/', $cur_data)) return '';
+            if ($index == 'timezone') if (!preg_match('/^[A-Z]/', $cur_data)) return '';
             return clean_string($cur_data);
         }
         // For string
-        if($data == '' || $data == NULL) return '';
+        if ($data == '' || $data == NULL) return '';
         return $data;
     }
 }
@@ -1041,14 +1095,14 @@ if (!function_exists('remakeAccessLevel')) {
         if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
             $access = $obj['access_level'];
             $obj['access_level'] = ' ( Executive ' . $obj['access_level'] . ' )';
-        }else{
+        } else {
             $obj['access_level'] = ' ( ' . $obj['access_level'] . ' )';
         }
 
-        
-        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Plus / Payroll )';
+
+        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( ' . $access . ' Plus / Payroll )';
         if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' ( ' . $access . ' Plus )';
-        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( '.$access.' Payroll )';
+        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' ( ' . $access . ' Payroll )';
 
         if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
             return $obj['access_level'];
@@ -1261,6 +1315,63 @@ if (!function_exists('replace_magic_quotes')) {
     }
 }
 
+//
+if (!function_exists('getPageContent')) {
+
+    function getPageContent($page, $slug = false)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db
+            ->select('content');
+        if ($slug == true) {
+            $CI->db->where('slug', $page);
+        } else {
+            $CI->db->where('page', $page);
+        }
+        $pageContent =   $CI->db->get('cms_pages_new')->row_array();
+        return json_decode($pageContent['content'], true);
+    }
+}
+
+//
+if (!function_exists('getPageNameBySlug')) {
+
+    function getPageNameBySlug($slug)
+    {
+        //
+        $CI = &get_instance();
+        $page =  $CI->db->select('page')
+            ->where('slug', $slug)
+            ->get('cms_pages_new')
+            ->row_array();
+        return $page['page'];
+    }
+}
+
+
+//
+
+if (!function_exists('get_slug_data')) {
+
+    function get_slug_data($slug_name = NULL, $table_name = NULL)
+    {
+        if ($slug_name != NULL && $table_name != NULL) {
+            $CI = &get_instance();
+            $CI->db->select($slug_name);
+            $result = $CI->db->get($table_name)->row_array();
+
+            if (!empty($result)) {
+                return $result[$slug_name];
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
+}
+
 if (!function_exists('findCompanyUser')) {
     function findCompanyUser($email, $company_sid)
     {
@@ -1270,16 +1381,16 @@ if (!function_exists('findCompanyUser')) {
             'userName' => ''
         ];
         //
-        $CI = & get_instance();
+        $CI = &get_instance();
         $CI->db->select('sid, first_name, last_name');
         $CI->db->where('parent_sid', $company_sid);
         $CI->db->where('email', $email);
         $record_row = $CI->db->get('users')->row_array();
 
-        if(!empty($record_row)){
+        if (!empty($record_row)) {
             $result['profilePath'] = base_url('employee_profile') . '/' . $record_row['sid'];
             $result['userType'] = "employee";
-            $result['userName'] = $record_row['first_name'].' '.$record_row['last_name'];
+            $result['userName'] = $record_row['first_name'] . ' ' . $record_row['last_name'];
         } else {
             $CI->db->select('sid, first_name, last_name, email');
             $CI->db->where('email', $email);
@@ -1288,10 +1399,10 @@ if (!function_exists('findCompanyUser')) {
             $record_arr = $record_obj->row_array();
             $record_obj->free_result();
 
-            if(!empty($record_arr)) {
-                $result['userName'] = $record_arr['first_name'].' '.$record_arr['last_name'];
+            if (!empty($record_arr)) {
+                $result['userName'] = $record_arr['first_name'] . ' ' . $record_arr['last_name'];
                 $portal_job_applications_sid = $record_arr['sid'];
-                
+
                 $CI->db->select('sid');
                 $CI->db->order_by('sid', 'desc');
                 $CI->db->limit(1);
@@ -1299,14 +1410,500 @@ if (!function_exists('findCompanyUser')) {
                 $obj = $CI->db->get('portal_applicant_jobs_list');
                 $result_arr = $obj->row_array();
                 $obj->free_result();
-                
-                if(!empty($result_arr)) {
-                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr['sid'];
+
+                if (!empty($result_arr)) {
+                    $result['profilePath'] = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/' . $result_arr['sid'];
                     $result['userType'] = 'applicant';
                 }
-            } 
+            }
         }
 
         return $result;
+    }
+}
+//
+
+if (!function_exists('getStaticFileVersion')) {
+    /**
+     * set and get the version of the minified file
+     *
+     * @param string $file The URI of the asset
+     * @param string   $newFlow
+     * @returns string
+     */
+    function getStaticFileVersion(
+        string $file,
+        string $newFlow = ''
+    ) {
+        // set files
+        $files = [];
+        // plugins
+        $files['v1/plugins/ms_uploader/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        $files['v1/plugins/ms_modal/main'] = ['css' => '2.0.0', 'js' => '2.0.0'];
+        //
+        $files['js/app_helper'] = ['js' => '1.0.0'];
+        // Gusto
+        $files['v1/payroll/js/company_onboard'] = ['js' => '1.0.0'];
+        // set the main CSS file
+        $files['2022/css/main'] = ['css' => '2.1.1'];
+        // set the course files
+        $files['js/app_helper'] = ['js' => '3.0.0'];
+        $files['v1/common'] = ['js' => '3.0.0'];
+        $files['v1/lms/add_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_question'] = ['js' => '3.0.0'];
+        $files['v1/lms/create_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/edit_course'] = ['js' => '3.0.0'];
+        $files['v1/lms/main'] = ['js' => '3.0.0'];
+        $files['v1/lms/assign_company_courses'] = ['js' => '3.0.0'];
+        $files['v1/lms/preview_assign'] = ['js' => '3.0.0'];
+
+        // payroll files
+        // dashboard
+        $files['v1/payroll/js/dashboard'] = ['js' => '1.0.0'];
+        // admins
+        $files['v1/payroll/js/admin/add'] = ['js' => '1.0.0'];
+        // signatory
+        $files['v1/payroll/js/signatories/create'] = ['js' => '1.0.0'];
+        // employee onboard
+        $files['v1/payroll/js/employees/manage'] = ['js' => '1.0.0'];
+        // contractor onboard
+        $files['v1/payroll/js/contractors'] = ['js' => '1.0.0'];
+        // Earning types
+        $files['v1/payroll/js/earnings/manage'] = ['js' => '1.0.0'];
+        // new theme
+        // login
+        $files['public/v1/css/app/executive_admin'] = ["css" => "2.0"];
+        $files['public/v1/js/app/executive_admin'] = ["js" => "2.0"];
+        // forgot
+        $files['public/v1/css/app/executive_admin_forgot'] = ["css" => "2.0"];
+        $files['public/v1/js/app/executive_admin_forgot'] = ["js" => "2.0"];
+        // check and return data
+        return $newFlow ? ($files[$file][$newFlow] ?? '1.0.0') : ($files[$file] ?? []);
+    }
+}
+
+
+//
+
+if (!function_exists('_m')) {
+    /**
+     * Add environment check to the assets
+     * and add tags for version
+     * 
+     * @param string $string
+     * assets/js/script
+     * assets/css/style
+     * @param string $type
+     * js|css
+     * @param string $version
+     * 1.0.0
+     * @return
+     */
+    function _m($string, $type = 'js', $version = '1.0.0')
+    {
+        // get extension
+        $d = getStaticFileVersion($string);
+        //
+        if ($d) {
+            return
+                $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $d[$type] : time());
+        }
+        //
+        return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
+    }
+}
+
+
+//
+if (!function_exists('GetCss')) {
+    /**
+     * Generates the style tags
+     * @param array  $tabs
+     * [
+     *  'assets/js/script'
+     * ]
+     *
+     * @return
+     */
+    function GetCss($scripts)
+    {
+        //
+        $html = '';
+        //
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script[1], 'css', $script[0]))) . '">' . "\n\t";
+            } else {
+                //
+                if (strpos($script, 'http') !== false) {
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . ($script) . '" />' . "\n\t";
+                } else {
+                    $html .= '<link  rel="stylesheet" type="text/css"  href="' . (base_url('assets/' . _m($script, 'css'))) . '">' . "\n\t";
+                }
+            }
+        }
+        //
+        return $html;
+    }
+}
+
+
+if (!function_exists('bundleJs')) {
+    /**
+     * Make a bundle of JS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @param string $file Optional
+     * @param bool   $lockFile Optional
+     * @return string
+     */
+    function bundleJs(
+        array $inputs,
+        string $destination = 'assets/v1/app/js/',
+        string $file = 'main',
+        $lockFile = false
+    ) {
+        // reset the destination path
+        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
+        // check if served over production
+        if (MINIFIED === '.min' || $lockFile) {
+            //
+            $fileName = $destination . $file;
+            //
+            return
+                '<script src="' . (main_url(
+                    $destination . $file . '.min.js?v=' . (getStaticFileVersion($fileName, 'js'))
+                )) . '"></script>';
+        }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true, 0777) || exit('Failed to create path "' . ($absolutePath) . '"');
+        }
+        // add file to destination
+        $absolutePathMin = $absolutePath;
+        // add file to destination
+        $absolutePath .= $file . '.js';
+        $absolutePathMin .= $file . '.min.js';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = main_url('assets/' . $input . '.js');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        // delete the old file first
+        if (file_exists($absolutePathMin)) {
+            @unlink($absolutePathMin);
+        }
+        //
+        shell_exec(
+            "uglifyjs {$absolutePath} -c -m > {$absolutePathMin}"
+        );
+        //
+        @unlink($absolutePath);
+        //
+        return '<script src="' . (main_url(
+            $destination . $file . '.min.js?v=' . time()
+        )) . '"></script>';
+    }
+}
+
+if (!function_exists('bundleCSS')) {
+    /**
+     * Make a bundle of CSS files
+     *
+     * @param array  $files
+     * @param string $destination Optional
+     * @param string $file Optional
+     * @param bool   $lockFile Optional
+     * @return string
+     */
+    function bundleCSS(
+        array $inputs,
+        string $destination = 'assets/v1/app/css/',
+        string $file = 'main',
+        $lockFile = false
+    ) {
+        // reset the destination path
+        $absolutePath = str_replace("executive_admin/", "", ROOTPATH . $destination);
+        // check if served over production
+        if (MINIFIED === '.min' || $lockFile) {
+            //
+            $fileName = $destination . $file;
+            //
+            return '<link rel="stylesheet" href="' . (main_url(
+                $destination .
+                    $file . '.min.css?v=' . (getStaticFileVersion($fileName, 'css'))
+            )) . '" />';
+        }
+        //
+        if (!is_dir($absolutePath)) {
+            mkdir($absolutePath, true) || exit('Failed to create path "' . ($absolutePath) . '"');
+        }
+        // add file to destination
+        $absolutePathMin = $absolutePath;
+        $absolutePath .= $file . '.css';
+        $absolutePathMin .= $file . '.min.css';
+        // creates a new file
+        $handler = fopen($absolutePath, 'w');
+        // if failed throw an error
+        if (!$handler) {
+            exit('Failed to set resources');
+        }
+        //
+        foreach ($inputs as $input) {
+            //
+            $input = main_url('assets/' . $input . '.css');
+            //
+            fwrite($handler, file_get_contents($input) . "\n\n");
+        }
+        //
+        fclose($handler);
+        // delete the old file first
+        if (file_exists($absolutePathMin)) {
+            @unlink($absolutePathMin);
+        }
+        //
+        shell_exec(
+            "uglifycss {$absolutePath} > {$absolutePathMin}"
+        );
+        //
+        @unlink($absolutePath);
+        //
+        return '<link rel="stylesheet" href="' . (main_url(
+            $destination . $file . '.min.css?v=' . time()
+        )) . '" />';
+    }
+}
+
+if (!file_exists("getSourceByType")) {
+    function getSourceByType(string $type, string $path, string $props = '', $fullWidth = true): string
+    {
+        if ($type === "upload") {
+            if (isImage($path)) {
+                return '<img src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" ' . ($props) . ' alt="' . (splitPathAndFileName($path)["name"]) . '" />';
+            } else {
+                return '<video src="' . AWS_S3_BUCKET_URL . $path . '" style="' . ($fullWidth ? "width: 100%;" : "") . '" controls ' . ($props) . '></video>';
+            }
+        } else {
+            return '<iframe src="' . $path . '" title="AutomotoHR video" style="' . ($fullWidth ? "width: 100%;" : "") . ' min-height: 450px" ' . ($props) . '></iframe>';
+        }
+    }
+}
+
+if (!function_exists('isImage')) {
+    /**
+     * Check if the file is an image
+     * 
+     * @param string $str
+     * @return
+     */
+    function isImage($str)
+    {
+        return in_array(
+            strtolower(pathinfo($str, PATHINFO_EXTENSION)),
+            [
+                'png', 'jpg', 'jpeg', 'gif', 'webp'
+            ]
+        );
+    }
+}
+
+if (!function_exists('splitPathAndFileName')) {
+    /**
+     * splits file name and path
+     *
+     * @param string $file
+     * @return array
+     */
+    function splitPathAndFileName(string $file): array
+    {
+        //
+        $returnArray = [
+            'path' => '',
+            'name' => '',
+            'orig_name' => $file,
+            'ext' => '',
+            'mime' => ''
+        ];
+        //
+        $splits = explode('/', $file);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['name'] = $splits[$index];
+        //
+        unset($splits[$index]);
+        // for extension
+        $returnArray['path'] = implode('/', $splits);
+        //
+        $splits = explode('.', $returnArray['name']);
+        //
+        $index = count($splits) - 1;
+        //
+        $returnArray['ext'] = $splits[$index];
+        $returnArray['mime'] = getMimeType($returnArray['ext']);
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('getMimeType')) {
+    function getMimeType($input)
+    {
+        $mime_types = array(
+            'txt' => 'text/plain',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'php' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'swf' => 'application/x-shockwave-flash',
+            'flv' => 'video/x-flv',
+
+            // images
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip' => 'application/zip',
+            'rar' => 'application/x-rar-compressed',
+            'exe' => 'application/x-msdownload',
+            'msi' => 'application/x-msdownload',
+            'cab' => 'application/vnd.ms-cab-compressed',
+
+            // audio/video
+            'mp3' => 'audio/mpeg',
+            'qt' => 'video/quicktime',
+            'mov' => 'video/quicktime',
+
+            // adobe
+            'pdf' => 'application/pdf',
+            'psd' => 'image/vnd.adobe.photoshop',
+            'ai' => 'application/postscript',
+            'eps' => 'application/postscript',
+            'ps' => 'application/postscript',
+
+            // ms office
+            'doc' => 'application/msword',
+            'rtf' => 'application/rtf',
+            'xls' => 'application/vnd.ms-excel',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'docx' => 'application/msword',
+            'xlsx' => 'application/vnd.ms-excel',
+            'pptx' => 'application/vnd.ms-powerpoint',
+
+
+            // open office
+            'odt' => 'application/vnd.oasis.opendocument.text',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+        );
+        //
+        $tmp = explode('.', $input);
+        $ext = strtolower($tmp[sizeof($tmp) - 1]);
+        //
+        $mimetype = '';
+        if (function_exists('mime_content_type')) {
+            $mimetype = @mime_content_type($input);
+        }
+        if (empty($mimetype) && function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimetype = @finfo_file($finfo, $input);
+            finfo_close($finfo);
+        }
+        if (empty($mimetype) && array_key_exists($ext, $mime_types)) {
+            $mimetype = $mime_types[$ext];
+        }
+        if (empty($mimetype)) {
+            $mimetype = 'application/octet-stream';
+        }
+        return $mimetype;
+    }
+}
+
+if (!function_exists("convertToStrip")) {
+    /**
+     * converts
+     *
+     * @param string $str
+     * @return string
+     */
+    function convertToStrip(string $str): string
+    {
+        return preg_replace("/##(.*?)##/i", '<strong class="text-yellow">$1</strong>', $str);
+    }
+}
+
+/**
+ * 
+ */
+if (!function_exists('getImageURL')) {
+    function getImageURL($img)
+    {
+        //
+        $img = str_replace(AWS_S3_BUCKET_URL, "", $img);
+        $img = str_replace(AWS_S3_BUCKET_URL . 'test.png', "", $img);
+        //
+        if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
+            return AWS_S3_BUCKET_URL . $img;
+        } else {
+            return base_url('assets/images/img-applicant.jpg');
+        }
+    }
+}
+
+
+if (!function_exists('GetScripts')) {
+    /**
+     * Generates the scripts tags
+     * @param array  $tabs
+     * [
+     *  'assets/js/script'
+     * ]
+     *
+     * @return
+     */
+    function GetScripts($scripts)
+    {
+        //
+        $html = '';
+        //
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script[1], 'js', $script[0]))) . '"></script>' . "\n\t";
+            } else {
+                //
+                if (strpos($script, 'http') !== false) {
+                    $html .= '<script type="text/javascript" src="' . ($script) . '"></script>' . "\n\t";
+                } else {
+                    $html .= '<script type="text/javascript" src="' . (base_url('assets/' . _m($script))) . '"></script>' . "\n\t";
+                }
+            }
+        }
+        //
+        return $html;
     }
 }

@@ -15321,7 +15321,7 @@ if (!function_exists('isImage')) {
         return in_array(
             strtolower(pathinfo($str, PATHINFO_EXTENSION)),
             [
-                'png', 'jpg', 'jpeg', 'gif'
+                'png', 'jpg', 'jpeg', 'gif', 'webp'
             ]
         );
     }

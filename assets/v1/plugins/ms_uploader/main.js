@@ -54,7 +54,7 @@
 		options["placeholderImage"] =
 			(opt !== undefined && opt.placeholderImage) || "";
 		options["fileLimit"] =
-			opt === undefined || $.inArray("mp4", opt.allowedTypes) === -1
+			opt === undefined
 				? -1
 				: opt.fileLimit;
 		options["allowedTypes"] = (opt !== undefined && opt.allowedTypes) || [
@@ -91,6 +91,9 @@
 		options["jsMFUClearFile"] = `jsMFUClearFile${randKey}`;
 		options["jsMFUModal"] = `jsMFUModal${randKey}`;
 		options["jsMFUD"] = `jsMFUD${randKey}`;
+		// turn on youtube and video
+		options["allowLinks"] = opt.allowLinks || false;
+		options["activeLink"] = opt.activeLink || "upload";
 
 		//
 		let errorCodes = {
@@ -120,6 +123,29 @@
 		// Setters
 		const setMainView = () => {
 			$(_this).before(getWrapper());
+			//
+			$(
+				`[name="jsSourceType${randKey}"][value="${options.activeLink}"]`
+			).prop("checked", true);
+			//
+			if (options.activeLink === "upload") {
+				$(`#${options.mainDivName}`).removeClass("hidden");
+			} else if (options.activeLink === "youtube") {
+				$(`#jsYoutubeLink${randKey}`)
+					.closest(".row")
+					.removeClass("hidden");
+			} else if (options.activeLink === "vimeo") {
+				$(`#jsVimeoLink${randKey}`)
+					.closest(".row")
+					.removeClass("hidden");
+			}
+
+			//
+			if (options["placeholderImage"] != "") {
+				instances[_this.selector]["type"] = options["activeLink"];
+				instances[_this.selector]["link"] = options["placeholderImage"];
+				instances[_this.selector]["hasError"] = false;
+			}
 		};
 
 		//
@@ -145,11 +171,76 @@
             `;
 		};
 
+		const getLinksHtml = () => {
+			let rows = "";
+			//
+			rows += '<div class="row">';
+			rows += '	<div class="col-sm-2 col-xs-12">';
+			rows +=
+				'<label class="control control--radio"> \
+    					<input type="radio" name="jsSourceType' +
+				randKey +
+				'" value="upload" /> Upload \
+    					<div class="control__indicator"></div> \
+					</label>';
+			rows += "	</div>";
+			rows += '	<div class="col-sm-2 col-xs-12">';
+			rows +=
+				'<label class="control control--radio"> \
+    					<input type="radio" name="jsSourceType' +
+				randKey +
+				'" value="youtube" /> YouTube \
+    					<div class="control__indicator"></div> \
+					</label>';
+			rows += "	</div>";
+			rows += '	<div class="col-sm-2 col-xs-12">';
+			rows +=
+				'<label class="control control--radio"> \
+    					<input type="radio" name="jsSourceType' +
+				randKey +
+				'" value="vimeo" /> Vimeo \
+    					<div class="control__indicator"></div> \
+					</label>';
+			rows += "	</div>";
+			rows += "</div><br />";
+			// youtube box
+			rows += '<div class="row hidden">';
+			rows += '	<div class="col-sm-12">';
+			rows +=
+				'<div class="input-group"> \
+    					<div class="input-group-addon">YouTube</div> \
+    					<input type="text" class="form-control" id="jsYoutubeLink' +
+				randKey +
+				'" placeholder="https://www.youtube.com/watch?v=g4BsAB3PliY" value="' +
+				options.placeholderImage +
+				'" /> \
+					</div>';
+			rows += "	</div>";
+			rows += "<br /></div>";
+			// vimeo box
+			rows += '<div class="row hidden">';
+			rows += '	<div class="col-sm-12">';
+			rows +=
+				'<div class="input-group"> \
+    					<div class="input-group-addon">Vimeo</div> \
+    					<input type="text" class="form-control" id="jsVimeoLink' +
+				randKey +
+				'" placeholder="https://vimeo.com/XXXXXXXXX"  value="' +
+				options.placeholderImage +
+				'"/> \
+					</div>';
+			rows += "	</div>";
+			rows += "<br /></div>";
+			//
+			return rows;
+		};
+
 		// Getters
 		const getWrapper = () => {
 			return `
             <div class="jsMainUploadAreaWrapper">
-                <div class="csUploadArea" id="${options.mainDivName}">
+				${options.allowLinks ? getLinksHtml() : ""}
+                <div class="csUploadArea hidden" id="${options.mainDivName}">
                     <div class="csUploadInnerArea">
                         <p>${options.text}</p>
                         ${
@@ -162,7 +253,10 @@
 							options.errorMSG
 						}"></span>
                         <div style="${
-							options.placeholderImage ? "" : "display: none;"
+							options.activeLink === "upload" &&
+							options.placeholderImage
+								? ""
+								: "display: none;"
 						}">
                             <button class="btn btn-success" id="${
 								options["jsMFUPreviewFile"]
@@ -177,23 +271,6 @@
                     <!-- Image -->
                 </div>
                 <div class="clearfix"></div>
-                <!-- <div style="${
-					options.placeholderImage ? "" : "display: none;"
-				}">
-                <br /> 
-                    <label><strong>FileName:</strong> <span>${
-						options.placeholderImage
-							? options.placeholderImage[0]
-							: ""
-					}</span></label>
-                    <img src="${
-						options.placeholderImage
-							? options.placeholderImage[1]
-							: ""
-					}" class="csUploadAreaImage" id="${
-				options.mainImageViewer
-			}" />
-                </div> -->
             </div>
             `;
 		};
@@ -364,7 +441,7 @@
 			oFile = {};
 			instances[_this.selector] = oFile;
 			//
-			if (options.placeholderImage != "") {
+			if (options.placeholderImage != "" && options.activeLink === "upload") {
 				$(`#${options["jsMFUPreviewFile"]}`).data(
 					"key",
 					options["placeholderImage"]
@@ -416,6 +493,7 @@
 							"jpg",
 							"jpeg",
 							"gif",
+							"webp",
 							"svg",
 						]) !== -1
 					)
@@ -460,11 +538,121 @@
 			}
 		);
 
+		/**
+		 * handle source change
+		 */
+		$(document).on("click", `[name="jsSourceType${randKey}"]`, function () {
+			//
+			$(`#${options.mainDivName}`).addClass("hidden");
+			$(`#jsYoutubeLink${randKey}`).closest(".row").addClass("hidden");
+			$(`#jsVimeoLink${randKey}`).closest(".row").addClass("hidden");
+			//
+			$(`#${options["jsMFUClearFile"]}`).trigger("click");
+			$(`#jsYoutubeLink${randKey}`).val("");
+			$(`#jsVimeoLink${randKey}`).val("");
+			//
+			if ($(this).val() === "upload") {
+				$(`#${options.mainDivName}`).removeClass("hidden");
+				instances[_this.selector] = {};
+			} else if ($(this).val() === "youtube") {
+				//
+				$(`#jsYoutubeLink${randKey}`)
+					.closest(".row")
+					.removeClass("hidden");
+				instances[_this.selector] = {
+					type: "youtube",
+					link: "",
+					hasError: true,
+				};
+			} else if ($(this).val() === "vimeo") {
+				//
+				$(`#jsVimeoLink${randKey}`)
+					.closest(".row")
+					.removeClass("hidden");
+				instances[_this.selector] = {
+					type: "vimeo",
+					link: "",
+					hasError: true,
+				};
+			}
+		});
+
+		/**
+		 * handle source change
+		 */
+		$(document).on("keyup", `#jsYoutubeLink${randKey}`, function () {
+			//
+			$(`.jsErrorRow${randKey}`).remove();
+			//
+			const inputVal = $(this).val().trim();
+			//
+			if (!validateYouTubeUrl(inputVal)) {
+				instances[_this.selector].hasError = true;
+				instances[_this.selector].link = "";
+				$(this)
+					.closest(".input-group")
+					.after(
+						'<p class="jsErrorRow' +
+							randKey +
+							' text-danger"><strong>YouTube url is not valid.</strong></p>'
+					);
+			} else {
+				instances[_this.selector].hasError = false;
+				instances[_this.selector].link = inputVal;
+			}
+		});
+
+		/**
+		 * handle source change
+		 */
+		$(document).on("keyup", `#jsVimeoLink${randKey}`, function () {
+			//
+			$(`.jsErrorRow${randKey}`).remove();
+			//
+			const inputVal = $(this).val().trim();
+			//
+			if (!validateVimeoUrl(inputVal)) {
+				instances[_this.selector].hasError = true;
+				instances[_this.selector].link = "";
+				$(this)
+					.closest(".input-group")
+					.after(
+						'<p class="jsErrorRow' +
+							randKey +
+							' text-danger"><strong>Vimeo url is not valid.</strong></p>'
+					);
+			} else {
+				instances[_this.selector].hasError = false;
+				instances[_this.selector].link = inputVal;
+			}
+		});
+
 		// Callers
 		setMainView();
 
 		return this;
 	};
+
+	function validateYouTubeUrl(url) {
+		if (url != undefined || url != "") {
+			var regExp =
+				/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+			var match = url.match(regExp);
+			if (match && match[2].length == 11) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	function validateVimeoUrl(url) {
+		if (url != undefined || url != "") {
+			var regExp =
+				/^(http|https)?:\/\/(www\.|player\.)?vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|video\/|)(\d+)(?:|\/\?)$/gim;
+			return url.match(regExp);
+		}
+	}
 
 	//
 	$.fn.msFileUploader.__proto__.instances = instances;

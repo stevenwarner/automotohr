@@ -318,11 +318,75 @@ $company_sid = $session['employer_detail']['parent_sid'];*/
                             </a>
                         <?php } ?>
                     </div>
+
+
+
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                         <div class="social-links">
                            
+                            <ul>
+
+                                <?php if (!$this->session->userdata('logged_in')) { ?>
+
+                                    <li><a class="google-plus" href="<?php
+                                                                        $g_url = get_slug_data('google_plus_url', 'settings');
+                                                                        if (!empty($g_url)) {
+                                                                            echo $g_url;
+                                                                        } else {
+                                                                            echo "https://plus.google.com/u/0/b/102383789585278120218/+Automotosocialjobs/posts";
+                                                                        }
+                                                                        ?>" target="_blank"><i class="fa fa-google-plus"></i></a></li>
+                                    <li><a class="twitter" href="<?php
+                                                                    $t_url = get_slug_data('twitter_url', 'settings');
+                                                                    if (!empty($t_url)) {
+                                                                        echo $t_url;
+                                                                    } else {
+                                                                        echo "https://twitter.com/AutomotoSocial";
+                                                                    }
+                                                                    ?>" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a class="facebook" href="<?php
+                                                                    $f_url = get_slug_data('facebook_url', 'settings');
+                                                                    if (!empty($f_url)) {
+                                                                        echo $f_url;
+                                                                    } else {
+                                                                        echo "https://www.facebook.com/automotosocialjobs";
+                                                                    }
+                                                                    ?>" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a class="linkedin" href="<?php
+                                                                    $l_url = get_slug_data('linkedin_url', 'settings');
+                                                                    if (!empty($l_url)) {
+                                                                        echo $l_url;
+                                                                    } else {
+                                                                        echo "https://www.linkedin.com/grp/home?gid=6735083&goback=%2Egna_6735083";
+                                                                    }
+                                                                    ?>" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+
+
+
+                                    <?php
+                                    $y_url = get_slug_data('youtube_url', 'settings');
+                                    if (!empty($y_url)) {
+                                    ?>
+                                        <li><a class="youtube" href="<?php echo $y_url; ?>" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                                    <?php } ?>
+
+
+                                    <?php
+                                    $i_url = get_slug_data('instagram_url', 'settings');
+                                    if (!empty($i_url)) {
+                                    ?>
+                                        <li><a class="instagram" href="<?php echo $i_url; ?>" target="_blank"><i class="fa fa-instagram"></i></a></li>
+                                    <?php } ?>
+                                    <?php $gl_url = get_slug_data('glassdoor_url', 'settings');
+                                    if (!empty($gl_url)) { ?>
+                                        <li><a class="glassdoor" href="<?php echo $gl_url; ?>" target="_blank"><img src="<?= base_url() ?>assets/images/glassdoor.png"></a></li>
+                                    <?php } ?>
+                                <?php } ?>
+                            </ul>
                         </div>
                     </div>
+
+
                 </div>
             </div>
             <div class="modal fade text-center" id="photo_gallery_modal">

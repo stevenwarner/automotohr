@@ -1,0 +1,125 @@
+<?php
+$ariaExpanded = $this->input->get("page") == 'section_6' ? "true" : "false";
+$collapseIn =  $this->input->get("page") == 'section_6' ? "in" : "";
+//
+$contentToShow = $pageContent["page"]["sections"]["section_6"];
+?>
+<!-- Meta  -->
+<div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#jsSection6" aria-expanded="<?= $ariaExpanded; ?>" aria-controls="collapseOne">
+        <h4>
+            <strong>
+                Employee Self-Service
+            </strong>
+        </h4>
+    </div>
+    <div id="jsSection6" class="panel-collapse collapse <?= $collapseIn; ?>" role="tabpanel" aria-labelledby="headingOne">
+        <form action="javascript:void(0)" id="jsSection6Form">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>
+                        Main heading&nbsp;
+                        <strong class="text-danger">*</strong>
+                    </label>
+                    <input type="text" class="form-control" name="mainHeading" value="<?= $contentToShow["mainHeading"]; ?>" />
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Source&nbsp;
+                        <strong class="text-danger">*</strong>
+                    </label>
+                    <input type="file" name="file" id="jsSection6File" class="hidden" accept="<?= ALLOWED_EXTENSIONS; ?>" />
+                </div>
+
+                <div class="form-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                <strong>
+                                    Point 1
+                                </strong>
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <label>
+                                Heading&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="text" class="form-control" name="headingPoint1" value="<?= $contentToShow["headingPoint1"]; ?>" />
+                            <br />
+                            <label>
+                                Details&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="text" class="form-control" name="detailsPoint1" value="<?= $contentToShow["detailsPoint1"]; ?>" />
+                            <br />
+                            <label>
+                                Source&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="file" name="point1File" id="jsSection6Point1File" class="hidden" accept="<?= ALLOWED_EXTENSIONS; ?>" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4>
+                                <strong>
+                                    Point 2
+                                </strong>
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <label>
+                                Heading&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="text" class="form-control" name="headingPoint2" value="<?= $contentToShow["headingPoint2"]; ?>" />
+                            <br />
+                            <label>
+                                Details&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="text" class="form-control" name="detailsPoint2" value="<?= $contentToShow["detailsPoint2"]; ?>" />
+                            <br />
+                            <label>
+                                Source&nbsp;
+                                <strong class="text-danger">*</strong>
+                            </label>
+                            <input type="file" name="point2File" id="jsSection6Point2File" class="hidden" accept="<?= ALLOWED_EXTENSIONS; ?>" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer text-center">
+                <button class="btn btn-success" id="jsSection6Btn">
+                    <i class="fa fa-save" aria-hidden="true"></i>
+                    &nbsp;Update
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    const section6 = {
+        sourceType: "<?= $contentToShow["sourceType"] ?? "upload"; ?>",
+        sourceFile: "<?= $contentToShow["sourceFile"] ?? "" ?>"
+    };
+
+    const section6Points = {
+        jsSection6Point1File: {
+            sourceType: "<?= $contentToShow["headingPoint1Type"] ?? "upload"; ?>",
+            sourceFile: "<?= $contentToShow["headingPoint1File"] ?? "" ?>"
+        },
+        jsSection6Point2File: {
+            sourceType: "<?= $contentToShow["headingPoint2Type"] ?? "upload"; ?>",
+            sourceFile: "<?= $contentToShow["headingPoint2File"] ?? "" ?>"
+        },
+
+    };
+</script>

@@ -1,32 +1,35 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Demo extends CI_Controller {
-    public function __construct(){
+class Demo extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('Demo_model');
     }
 
-    public function schedule_your_free_demo() {
+    public function schedule_your_free_demo()
+    {
         $client_source = $this->uri->segment(1);
         $data['title']                                                          = 'Schedule Your free demo';
         $data_countries                                                         = db_get_active_countries();
-        
-        if($this->session->userdata('logged_in')){
+
+        if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details; 
+            $data['security_details']                                           = $security_details;
         }
-        
+
         foreach ($data_countries as $value) {
             $data_states[$value['sid']]                                         = db_get_active_states($value['sid']);
         }
-        
+
         $data['active_countries']                                               = $data_countries;
         $data['active_states']                                                  = $data_states;
         $data_states_encode                                                     = htmlentities(json_encode($data_states));
         $data['states']                                                         = $data_states_encode;
-        
+
         $this->form_validation->set_rules('name', 'Please provide name', 'trim|required|xss_clean');
         $this->form_validation->set_rules('email', 'Please provide valid email address ', 'trim|required|valid_email|xss_clean');
         $this->form_validation->set_rules('phone_number', 'Please provide valid number', 'trim|required|xss_clean');
@@ -35,14 +38,14 @@ class Demo extends CI_Controller {
         $this->form_validation->set_rules('company_size', 'Please provide your Company Size', 'trim|xss_clean');
         $this->form_validation->set_rules('newsletter_subscribe', 'Please select your choice', 'trim|xss_clean');
         $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'required|callback_recaptcha[' . $this->input->post('g-recaptcha-response') . ']');
-        
+
         /*if ($this->uri->segment(1) == 'demo') {
            $this->form_validation->set_rules('schedule_date', 'Please select schedule date', 'trim|required|xss_clean');
            $this->form_validation->set_rules('schedule_time', 'Please select schedule time', 'trim|required|xss_clean');                     
         } */
-        
+
         $validate_video_status = $this->Demo_model->validate_affiliate_video_status(1);
-      
+
         if (!empty($validate_video_status[0]['video_source']) && $validate_video_status[0]['status'] == 1 && $client_source == 'schedule_your_free_demo') {
             $selected_source = $validate_video_status[0]['video_source'];
             if (!empty($validate_video_status[0][$selected_source])) {
@@ -58,7 +61,6 @@ class Demo extends CI_Controller {
             } else {
                 $data['validate_flag'] = false;
             }
-            
         } else {
             $data['validate_flag'] = false;
         }
@@ -80,20 +82,18 @@ class Demo extends CI_Controller {
                 $data['body_column_type'] = $validate_body_video_status[0]['column_type'];
                 $data['body_title'] = $validate_body_video_status[0]['title'];
                 $data['body_content'] = $validate_body_video_status[0]['content'];
-
             } else {
                 $data['validate_body_flag'] = false;
             }
-            
         } else {
             $data['validate_body_flag'] = false;
         }
-        
+
         if ($this->form_validation->run() === FALSE) {
-                $data['current_url'] = $this->uri->segment(1);
-                $this->load->view('main/header',$data);
-                $this->load->view('static-pages/schedule-your-free-demo-new',$data);
-                $this->load->view('main/footer');
+            $data['current_url'] = $this->uri->segment(1);
+            $this->load->view('main/header', $data);
+            $this->load->view('static-pages/schedule-your-free-demo-new', $data);
+            $this->load->view('main/footer');
         } else {
             $first_name = $this->input->post('name');
             $email = $this->input->post('email');
@@ -103,21 +103,21 @@ class Demo extends CI_Controller {
             $company_size = $this->input->post('company_size');
             $newsletter_subscribe = $this->input->post('newsletter_subscribe');
             $date_requested = date('Y-m-d H:i:s');
-            
-            
-            if($client_source == 'demo'){
+
+
+            if ($client_source == 'demo') {
                 $ppc = 1;
-//                $date = $this->input->post('schedule_date');
-//                $time = $this->input->post('schedule_time');
-//                $schedule_demo = $date.' '.$time;
+                //                $date = $this->input->post('schedule_date');
+                //                $time = $this->input->post('schedule_time');
+                //                $schedule_demo = $date.' '.$time;
                 $schedule_demo = NULL;
                 $message = '';
             } elseif ($client_source == 'schedule_your_free_demo') {
-               $ppc = 0;
-               $schedule_demo = NULL;
-               $message = $this->input->post('client_message');
+                $ppc = 0;
+                $schedule_demo = NULL;
+                $message = $this->input->post('client_message');
             }
-            
+
             $this->Demo_model->free_demo_new($first_name, $email, $phone_number, $company_name, $date_requested, $schedule_demo, $client_source, $ppc, $message, $company_size, $newsletter_subscribe, $job_role);
             $replacement_array['name'] = $first_name;
             $replacement_array['firstname'] = $first_name;
@@ -135,7 +135,8 @@ class Demo extends CI_Controller {
         }
     }
 
-    public function recaptcha($str) {
+    public function recaptcha($str)
+    {
         $google_url = "https://www.google.com/recaptcha/api/siteverify";
         $secret = '6Les2Q0TAAAAAPpmnngcC7RdzvAq1CuAVLqic_ei';
         $url = $google_url . "?secret=" . $secret . "&response=" . $str;
@@ -147,7 +148,7 @@ class Demo extends CI_Controller {
         $res = curl_exec($curl);
         curl_close($curl);
         $res = json_decode($res, true);
-        
+
         if ($res['success']) {
             return TRUE;
         } else {
@@ -155,12 +156,13 @@ class Demo extends CI_Controller {
             return $str;
         }
     }
-    
-    function check_already_applied() {
+
+    function check_already_applied()
+    {
         if ($this->input->post('email')) {
             $email = $this->input->post('email');
             $result = $this->Demo_model->check_reffer_affiliater($email);
-            
+
             if ($result > 0) {
                 $this->form_validation->set_message('email', 'You already applied for demo, we will get back to you');
                 $this->session->set_flashdata('message', '<strong>Warning: </strong> You already applied for demo, we will get back to you');
@@ -171,15 +173,16 @@ class Demo extends CI_Controller {
         }
     }
 
-    function thank_you() {
+    function thank_you()
+    {
         $data['title']                                                          = 'Schedule Your free demo';
         $data_countries                                                         = db_get_active_countries();
-        
-        if($this->session->userdata('logged_in')) {
+
+        if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
-            $data['security_details']                                           = $security_details; 
+            $data['security_details']                                           = $security_details;
         } else {
             $home_page['header_video_flag'] = 0;
             $home_page['header_banner'] = 'aaaa';
@@ -188,9 +191,8 @@ class Demo extends CI_Controller {
             $data['home_page'] = $home_page;
         }
 
-            $this->load->view('main/header',$data);
-            $this->load->view('static-pages/thank_you');
-            $this->load->view('main/footer');
+        $this->load->view('main/header', $data);
+        $this->load->view('static-pages/thank_you');
+        $this->load->view('main/footer');
     }
-
 }

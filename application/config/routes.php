@@ -51,6 +51,36 @@ defined('BASEPATH') or exit('No direct script access allowed');
   |		my-controller/my-method	-> my_controller/my_method
  */
 
+/**
+ * routes 2023 of main website
+ */
+$route['schedule_free_demo']['post'] = 'v1/App/scheduleDemoProcess';
+$route['forgot-password']['get'] = 'users/forgot_password';
+$route['forgot-password']['post'] = 'users/forgot_password';
+$route['why-us']['get'] = 'v1/App/whyUs';
+$route['about-us']['get'] = 'v1/App/aboutUs';
+$route['contact-us']['get'] = 'v1/App/contactUs';
+$route['contact-us']['post'] = 'v1/App/contactUsProcess';
+$route['privacy-policy']['get'] = 'v1/App/privacyPolicy';
+$route['terms-of-service']['get'] = 'v1/App/termsOfService';
+$route['sitemap']['get'] = 'v1/App/siteMap';
+$route['products/(:any)']['get'] = 'v1/App/products/$1';
+$route['get-your-free-account']['get'] = 'v1/App/getYourAccount';
+$route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
+$route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
+$route['legal']['get'] = 'v1/App/legalHub';
+
+//
+$route['resources']['get'] = 'v1/Resources/index';
+$route['subscribeCommunity']['post'] = 'v1/Resources/subscribeCommunity';
+$route['searchResources']['get'] = 'v1/Resources/searchResources';
+$route['watch_resource/(:any)']['get'] = 'v1/Resources/watchResource/$1';
+$route['resources/(:any)'] = 'v1/Resources/readMore/$1';
+$route['resources/blog/load']['get'] = 'v1/Resources/loadMoreBlogs';
+$route['resources/resource/load']['get'] = 'v1/Resources/loadMoreResources';
+
+$route["popup/(:any)"]["get"] = "v1/App/getPopup/$1";
+
 //  Goals
 $route['remarket_portal'] = 'Remarket_portal/index';
 $route['goal'] = 'goals/Goals/index';
@@ -315,7 +345,7 @@ $route['cron_google_hire'] = "Cron_google_hire/index";
 
 $route['services/(:any)'] = "home/services/$1";
 $route['default_controller'] = 'home';
-$route['404_override'] = '';
+$route['404_override'] = 'Home/checkPage';
 $route['translate_uri_dashes'] = FALSE;
 //Employer Side
 $route['schedule_your_free_demo'] = 'demo/schedule_your_free_demo';
@@ -1098,7 +1128,6 @@ $route['my_learning_center'] = 'learning_center/my_learning_center';
 $route['learning_center/my_learning_center'] = 'learning_center/my_learning_center';
 //Affiliation Program
 $route['can-we-send-you-a-check-every-month'] = 'affiliates/affiliationform';
-$route['affiliate-program'] = 'affiliates/index';
 // $route['manage_admin/referred'] = 'manage_admin/affiliates/referred';
 // $route['manage_admin/referred/view_details/(:num)'] = 'manage_admin/affiliates/view_details/$1';
 // $route['manage_admin/referred/accept_reject'] = 'manage_admin/affiliates/accept_reject';
@@ -2104,3 +2133,72 @@ $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
 $route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
 // $route["attendance/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
+$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
+//
+$route['manage_admin/cms'] = 'manage_admin/Cms/index';
+$route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
+
+//
+$route['manage_admin/resources'] = 'manage_admin/Resources/index';
+$route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
+
+$route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
+$route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
+$route['manage_admin/subscribers_list'] = 'manage_admin/Resources/subscribers_list/$1';
+
+// CMS routes
+$route["cms/(:num)/meta"]["post"] = "manage_admin/Cms/updateMeta/$1";
+$route["cms/page/banner"]["get"] = "manage_admin/Cms/getBannerAddPage";
+$route["cms/page/(:num)/banner/(:num)"]["get"] = "manage_admin/Cms/getBannerEditPage/$1/$2";
+$route["cms/(:num)/slider"]["post"] = "manage_admin/Cms/updateSlider/$1";
+$route["cms/(:num)/slider/(:num)"]["delete"] = "manage_admin/Cms/deleteSlider/$1/$2";
+$route["cms/(:num)/slider/(:num)"]["post"] = "manage_admin/Cms/updateSliderIndex/$1/$2";
+$route["cms/(:num)/slider/"]["post"] = "manage_admin/Cms/addSliderIndex/$1";
+// Home section 1
+$route["cms/(:num)/home/section1"]["post"] = "manage_admin/Cms/updateHomePageSection1/$1";
+$route["cms/(:num)/home/section2"]["post"] = "manage_admin/Cms/updateHomePageSection2/$1";
+// home page Product
+$route["cms/page/home/product"]["get"] = "manage_admin/Cms/getHomeProductAddPage";
+$route["cms/page/(:num)/home/product/(:num)"]["get"] = "manage_admin/Cms/getHomeProductEditPage/$1/$2";
+$route["cms/(:num)/home/product"]["post"] = "manage_admin/Cms/addProductToHomePage/$1";
+$route["cms/(:num)/home/product/(:num)"]["delete"] = "manage_admin/Cms/deleteProductToHomePage/$1/$2";
+$route["cms/(:num)/home/product/(:num)"]["post"] = "manage_admin/Cms/updateProductToHomePage/$1/$2";
+// home process
+$route["cms/(:num)/section"]["post"] = "manage_admin/Cms/updatePageSection/$1";
+$route["cms/page/product"]["get"] = "manage_admin/Cms/getProductAddPage";
+$route["cms/(:num)/product"]["post"] = "manage_admin/Cms/addProductSection/$1";
+$route["cms/page/(:num)/product/(:num)"]["get"] = "manage_admin/Cms/geProductEditPage/$1/$2";
+$route["cms/(:num)/product/(:num)"]["post"] = "manage_admin/Cms/updateProduct/$1/$2";
+$route["cms/(:num)/product/(:num)"]["delete"] = "manage_admin/Cms/deleteProduct/$1/$2";
+// about us
+$route["cms/page/(:any)"]["get"] = "manage_admin/Cms/getAddPage/$1";
+$route["cms/page/(:num)/add"]["post"] = "manage_admin/Cms/processAddPage/$1";
+$route["cms/page/(:num)/teams/(:num)"]["get"] = "manage_admin/Cms/getEditPage/$1/teams/$2";
+$route["cms/page/(:num)/edit/(:num)"]["post"] = "manage_admin/Cms/processEditPage/$1/$2";
+$route["cms/page/(:num)/(:any)/(:num)"]["delete"] = "manage_admin/Cms/processDeletePage/$1/$2/$3";
+
+// get states by country
+$route["states/(:any)"]["get"] = "v1/App/getStatesByCountry/$1";
+
+// get the add page
+$route["cms/ui/(:any)"]["get"] = "manage_admin/Cms/getPageUI/$1";
+$route["cms/ui/(:any)"]["post"] = "manage_admin/Cms/getPageUI/$1";
+$route["cms/(:num)/page/section"]["post"] = "manage_admin/Cms/updatePageSections/$1";
+$route["cms/(:num)/tag/(:num)"]["delete"] =
+  "manage_admin/Cms/deletePageTag/$1/$2";
+$route["cms/(:num)/tag/card"]["post"] =
+  "manage_admin/Cms/addPageTag/$1";
+$route["cms/(:num)/tag/(:num)/(:num)"]["delete"] =
+  "manage_admin/Cms/deleteTagCard/$1/$2/$3";
+
+$route["manage_admin/cms/page/add"]["get"] =
+  "manage_admin/Cms/addDynamicPage";
+
+$route["manage_admin/cms/page/add"]["post"] =
+  "manage_admin/Cms/addDynamicPageProcess";
+
+
+$route["manage_admin/cms/page/edit/(:num)"]["get"] =
+"manage_admin/Cms/editDynamicPage/$1";
+$route["manage_admin/cms/page/edit/(:num)"]["post"] =
+"manage_admin/Cms/editDynamicPageProcess/$1";

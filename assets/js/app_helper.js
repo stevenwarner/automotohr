@@ -28,6 +28,17 @@ String.prototype.isValidInteger = function () {
 	return this.match(/^[1-9]\d*$/g) === null ? false : true;
 };
 
+/**
+ * converts a string to a slug
+ * @returns string
+ */
+String.prototype.toSlug = function () {
+	return this.replace(/[^a-z0-9]/gi, "-")
+		.replace(/-+/g, "-")
+		.replace(/-$/, "")
+		.toLowerCase();
+};
+
 if (typeof ml === "undefined") {
 	/**
 	 * Loader
@@ -298,6 +309,7 @@ if (typeof baseUrl === "undefined") {
 	 * @returns
 	 */
 	function baseUrl(appendUrl = "") {
+		appendUrl = appendUrl.replace(/^\//g, "");
 		// return the url
 		return window.location.origin + "/" + appendUrl;
 	}
@@ -307,11 +319,12 @@ if (typeof callButtonHook === "undefined") {
 	/**
 	 * button hook
 	 *
-	 * @param {object} appendUrl
+	 * @param {object} reference
 	 * @param {bool}   doShow
+	 * @param {bool}   true
 	 * @return
 	 */
-	function callButtonHook(reference, doShow = true) {
+	function callButtonHook(reference, doShow = true, type = false) {
 		//
 		if (doShow) {
 			const obj = {
@@ -319,7 +332,9 @@ if (typeof callButtonHook === "undefined") {
 				html: reference.html(),
 			};
 			reference.html(
-				'<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
+				type
+					? '<i class="fa-solid fa-circle-notch fa-spin csW csF16" aria-hidden="true"></i>'
+					: '<i class="fa fa-circle-o-notch fa-spin csW csF16" aria-hidden="true"></i>'
 			);
 			//
 			reference.off("click");
@@ -477,14 +492,6 @@ if (typeof formArrayToObj === "undefined") {
 			});
 			return formObj;
 		}
-		//
-		let formData = new FormData();
-		//
-		formArray.map(function (value) {
-			formData.append(value.name, nl2br(value.value));
-		});
-		//
-		return formData;
 	}
 }
 
