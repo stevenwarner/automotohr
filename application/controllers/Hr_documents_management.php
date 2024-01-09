@@ -14285,6 +14285,7 @@ class Hr_documents_management extends Public_Controller
             $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($company_sid);
             //
             $employee_pending_w4 = $this->varification_document_model->get_all_users_pending_w4($company_sid, 'employee', false, $companyEmployeesForVerification);
+          
             $employee_pending_i9 = $this->varification_document_model->get_all_users_pending_i9($company_sid, 'employee', false, $companyEmployeesForVerification);
             $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, [], $companyEmployeesForVerification);
             $pendingStateForms = $this->varification_document_model->getPendingStateForms(
@@ -16929,11 +16930,13 @@ class Hr_documents_management extends Public_Controller
         $updateArray = [];
         $updateArray["emp_name"] = $data["CompanyName"];
         $updateArray["emp_address"] = $data["companyAddress"];
-        $updateArray["first_date_of_employment"] = data["first_date_of_employment"] ? formatDateToDB(
-            $data["first_date_of_employment"],
+
+        $updateArray["first_date_of_employment"] = $data["first_day_of_employment"] ? formatDateToDB(
+            $data["first_day_of_employment"],
             "m-d-Y",
             DB_DATE
         ) : "";
+        
         $updateArray["emp_identification_number"] = $data["ssn"];
 
         $w4Form = array_merge(

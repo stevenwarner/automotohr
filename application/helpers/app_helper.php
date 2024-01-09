@@ -2821,3 +2821,30 @@ if (!function_exists("getMimeByType")) {
         return $mime_types[$type] ?? [];
     }
 }
+
+//
+if (!function_exists("isW4employerSectionCompleted")) {
+
+    function isW4employerSectionCompleted($employerSid, $employerType, $companySid)
+    {
+        //
+        $CI = &get_instance();
+        $resultdata = $CI->db->select('emp_name,emp_address,first_date_of_employment,emp_identification_number')
+            ->where('company_sid', $companySid)
+            ->where('employer_sid', $employerSid)
+            ->where('user_type', $employerType)
+            ->get('form_w4_original')
+            ->row_array();
+        if (
+            $resultdata['emp_name'] != '' && $resultdata['emp_name'] != null
+            && $resultdata['emp_address'] != '' && $resultdata['emp_address'] != null
+            && $resultdata['first_date_of_employment'] != '' && $resultdata['first_date_of_employment'] != null && $resultdata['first_date_of_employment'] != '0000-00-00'
+            && $resultdata['emp_identification_number'] != '' && $resultdata['emp_identification_number'] != null
+            
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

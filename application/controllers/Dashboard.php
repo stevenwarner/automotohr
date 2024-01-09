@@ -530,6 +530,7 @@ class Dashboard extends Public_Controller
                 $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
                 // $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
                 //
+
                 $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
                 $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
                 // $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);

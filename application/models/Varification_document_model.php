@@ -39,12 +39,13 @@ class Varification_document_model extends CI_Model
         $this->db->where('emp_name', NULL);
         $this->db->where('emp_address', NULL);
         $this->db->where('first_date_of_employment', NULL);
-        $this->db->where('user_consent', 1);
+        //   $this->db->where('user_consent', 1);
         $this->db->where('status', 1);
         $this->db->where('uploaded_file', NULL);
         //
         if ($count) {
             return $this->db->count_all_results('form_w4_original');
+
         }
         $records_obj = $this->db->get('form_w4_original');
         $records_arr = $records_obj->result_array();
