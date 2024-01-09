@@ -248,10 +248,20 @@ class Main extends Public_Controller
                 //
                 $this->load->model("v1/Payroll_model", "payroll_model");
                 //
-                if ($jobInfo && $jobInfo['hire_date'] != $newHireDate) {
-                    $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
+                if ($jobInfo) {
+                    if ($jobInfo['hire_date'] != $newHireDate) {
+                        $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
+                        //
+                        $updateJobData = []; 
+                        $updateJobData['start_date'] = $newHireDate;
+                        //
+                        $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
+                    }
+                    
                     //
                     // $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
+                    
+                    
                     $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
                 } else {
                     //
