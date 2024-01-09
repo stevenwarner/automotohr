@@ -80,13 +80,22 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+
+                        <?php
+                        
+                        $stateID = $session['company_detail']['Location_State'];
+
+                        ?>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" <?php echo $stateID!='28'? "style='display: none'":'' ?>>
                             <div class="form-group">
                                 <label>Minnesota Tax ID Number</label>
                                 <?php echo form_input('mtin', set_value('mtin', $company['mtin']), 'class="form-control"'); ?>
                                 <?php echo form_error('mtin'); ?>
                             </div>
                         </div>
+
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <?php echo form_label('Company Description', 'CompanyDescription'); ?>
