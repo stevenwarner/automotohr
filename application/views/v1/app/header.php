@@ -15,9 +15,11 @@
     <meta name="keywords" content="<?= $meta['keywords']; ?>">
     <?= $pageCSS ? GetCss($pageCSS) : ""; ?>
     <?= $appCSS ?? ""; ?>
+    <?= getGoogleScripts(); ?>
 </head>
 
 <body>
+    <?= getGoogleBody(); ?>
     <!-- header -->
     <header class="<?= $headerFixed ? 'csAbsolute' : ''; ?>">
 
