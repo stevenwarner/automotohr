@@ -79,15 +79,8 @@
                                 <?php echo form_error('ssn'); ?>
                             </div>
                         </div>
-
-
-                        <?php
-                        
-                        $stateID = $session['company_detail']['Location_State'];
-
-                        ?>
-
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" <?php echo $stateID!='28'? "style='display: none'":'' ?>>
+                   
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label>State Tax Id Number</label>
                                 <?php echo form_input('mtin', set_value('mtin', $company['mtin']), 'class="form-control"'); ?>
@@ -95,6 +88,23 @@
                             </div>
                         </div>
 
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                            <div class="form-group">
+                                <label>State</label>
+                                <select class="form-control" id="state" name="Location_State">
+                                    <option value="">Select State</option>
+                                    <?php
+                                    $states = db_get_active_states('227');
+                                    foreach ($states as $stateRow) {
+                                    ?>
+                                        <option value="<?php echo $stateRow['sid']; ?>" <?php echo $stateRow['sid'] == $company['Location_State'] ? " selected" : '' ?>><?php echo $stateRow['state_name']; ?></option>
+
+                                    <?php  }
+                                    ?>
+                                </select>
+
+                            </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
