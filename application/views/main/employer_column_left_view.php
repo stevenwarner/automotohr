@@ -340,42 +340,9 @@
             </li>
         <?php  } ?>
 
-        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(PAYROLL)) { ?>
-            <li>
-                <a <?= uri_string() === "schedules" ? 'class="active"' : ""; ?> href="<?php echo base_url("schedules"); ?>">
-                    <figure><i class="fa fa-calendar"></i></figure>Company Pay Schedules
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url("schedules/employees"); ?>" <?= uri_string() === "schedules/employees" || uri_string() === "schedules/employees/edit" ? 'class="active"' : ""; ?>>
-                    <figure><i class="fa fa-users"></i></figure>
-                    Employees Pay Schedules
-                </a>
-            </li>
-        <?php  } ?>
 
         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('overtimerules')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("overtimerules"); ?>">
-                    <figure><i class="fa fa-cogs"></i></figure>Company Overtime Rules
-                </a>
-            </li>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('minimum_wages')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("minimum_wages"); ?>">
-                    <figure><i class="fa fa-money"></i></figure>Company Minimum Wages
-                </a>
-            </li>
-            <li>
-                <a <?php if (strpos(base_url(uri_string()), site_url('settings/job_sites')) !== false) {
-                        echo 'class="active"';
-                    } ?> href="<?php echo base_url("settings/job_sites"); ?>">
-                    <figure><i class="fa fa-map"></i></figure>Company Job Sites
-                </a>
-            </li>
+
             <li>
                 <a <?php if (strpos(base_url(uri_string()), site_url('settings/shifts/manage')) !== false) {
                         echo 'class="active"';
@@ -384,6 +351,10 @@
                 </a>
             </li>
         <?php  } ?>
+
+
+
+
         <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
             <?php
             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);

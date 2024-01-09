@@ -897,6 +897,13 @@
                                                                 </a>
                                                             </li>
                                                         <?php  } ?>
+
+                                                        <li>
+                                                            <a href="<?= base_url('settings/shifts/manage'); ?>">
+                                                                <figure><i class="fa fa-calendar"></i></figure>Manage Shifts
+                                                            </a>
+                                                        </li>
+
                                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                                             <?php
                                                             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
