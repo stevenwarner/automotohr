@@ -38,6 +38,7 @@ class App extends CI_Controller
      */
     public function whyUs()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $whyUsContent = getPageContent('why_us');
         // meta titles
@@ -58,6 +59,7 @@ class App extends CI_Controller
      */
     public function aboutUs()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('about-us', true);
         // meta titles
@@ -79,6 +81,7 @@ class App extends CI_Controller
      */
     public function contactUs()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('contact-us', true)["page"];
         // meta titles
@@ -101,6 +104,7 @@ class App extends CI_Controller
      */
     public function privacyPolicy()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('privacy-policy', true);
         // meta titles
@@ -122,6 +126,7 @@ class App extends CI_Controller
      */
     public function termsOfService()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('terms-of-service', true);
         // meta titles
@@ -143,6 +148,7 @@ class App extends CI_Controller
      */
     public function siteMap()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('site_map', false);
         // meta titles
@@ -162,6 +168,7 @@ class App extends CI_Controller
      */
     public function legalHub()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('legal', true);
         // meta titles
@@ -186,6 +193,7 @@ class App extends CI_Controller
      */
     public function products(string $productSlug)
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent($productSlug, true)["page"];
 
@@ -209,6 +217,7 @@ class App extends CI_Controller
      */
     public function getYourAccount()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('get_your_free_account', false)["page"];
         // meta titles
@@ -231,6 +240,7 @@ class App extends CI_Controller
      */
     public function affiliateProgram()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         //
         $pageContent = getPageContent('affiliate-program', true);
         // meta titles

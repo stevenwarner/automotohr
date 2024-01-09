@@ -30,6 +30,7 @@ class Resources extends Public_Controller
      */
     public function index()
     {
+        $this->output->cache(WEB_PAGE_CACHE_TIME_IN_MINUTES);
         $pageData = getPageContent("resources", true);
         // meta titles
         $data = [];
