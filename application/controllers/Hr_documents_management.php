@@ -16929,12 +16929,8 @@ class Hr_documents_management extends Public_Controller
         $updateArray = [];
         $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["CompanyName"];
         $updateArray["emp_address"] = $w4Form["emp_address"] ?? $data["companyAddress"];
-        if (!$w4Form["first_date_of_employment"]) {
-            $updateArray["first_date_of_employment"] = $data["first_date_of_employment"] ? formatDateToDB(
-                $data["first_date_of_employment"],
-                "m-d-Y",
-                DB_DATE
-            ) : null;
+        if (!$w4Form["first_date_of_employment"] && $data["first_date_of_employment"]) {
+            $updateArray["first_date_of_employment"] = $data["first_date_of_employment"] ?? null;
         }
         $updateArray["emp_identification_number"] = $w4Form["emp_identification_number"] ?? $data["ssn"];
 
@@ -16942,6 +16938,13 @@ class Hr_documents_management extends Public_Controller
             $w4Form,
             $updateArray
         );
+        if ($updateArray["first_date_of_employment"]) {
+            $w4Form["first_date_of_employment"] = formatDateToDB(
+                $updateArray["first_date_of_employment"],
+                "m-d-Y",
+                DB_DATE
+            );
+        }
         //
         $this->db
             ->where("sid", $w4Form["sid"])
