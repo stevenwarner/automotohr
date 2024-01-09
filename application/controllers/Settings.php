@@ -3911,7 +3911,7 @@ class Settings extends Public_Controller
         $employeeFilter['employees'] = $employeesArray;
         $employeeFilter['team'] = $team;
 
-        $jobTitle = $this->input->get("jobtitle");
+        $jobTitle = $this->input->get("jobtitle", true);
         $employeeFilter['jobtitle'] = explode(',', $jobTitle);
 
 
@@ -4007,7 +4007,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", false);
+        ], "public/v1/shifts/", "main", true);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
