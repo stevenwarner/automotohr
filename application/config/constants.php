@@ -691,7 +691,7 @@ define("SCHEDULE_MODULE", "schedule");
 // modules
 define('MODULE_ATTENDANCE', 'attendance');
 // web page cache time
-define("WEB_PAGE_CACHE_TIME_IN_MINUTES", 8 * 60);
+define("WEB_PAGE_CACHE_TIME_IN_MINUTES", 0);
 
 
 define("META_TITLE", "AutomotoHR Helps you differentiate your business and Brand from everyone else.");

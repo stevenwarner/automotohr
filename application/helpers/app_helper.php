@@ -630,6 +630,18 @@ if (!function_exists('getStaticFileVersion')) {
         string $file,
         string $newFlow = ''
     ) {
+        // set main file path
+        $filePath = ROOTPATH . "../protected_files/versions.json";
+        // get the file data
+        $handler = fopen($filePath, "r");
+        $fileData = fread($handler, filesize($filePath));
+        fclose($handler);
+        $fileDataArray = json_decode($fileData, true);
+        $checkFile = $file . ".min." . $newFlow;
+        //
+        if ($fileDataArray[$newFlow][$checkFile]) {
+            return $fileDataArray[$newFlow][$checkFile];
+        }
         // set files
         $files = [];
         // plugins

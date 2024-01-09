@@ -154,6 +154,8 @@ if (!function_exists('bundleJs')) {
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
+        //
+        checkAndCreateFileForVersion($destination . $file . ".min.js", "js");
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
@@ -223,6 +225,8 @@ if (!function_exists('bundleCSS')) {
     ) {
         // reset the destination path
         $absolutePath = ROOTPATH . $destination;
+        //
+        checkAndCreateFileForVersion($destination . $file . ".min.css", "css");
         // check if served over production
         if (MINIFIED === '.min' || $lockFile) {
             //
@@ -290,5 +294,29 @@ if (!function_exists("combineBundles")) {
         }
         // return bundle string
         return $bundlesString;
+    }
+}
+
+if (!function_exists("checkAndCreateFileForVersion")) {
+    /**
+     * Create file path wih version
+     *
+     * @param string $fileWithPath
+     * @param string $type js|css
+     */
+    function checkAndCreateFileForVersion(string $fileWithPath, string $type)
+    {
+        // set main file path
+        $filePath = ROOTPATH . "../protected_files/versions.json";
+        // get the file data
+        $fileDataArray = json_decode(file_get_contents($filePath), true);
+        //
+        if (!$fileDataArray[$type][$fileWithPath]) {
+            $fileDataArray[$type][$fileWithPath] = "4.0.0";
+        }
+        // get the file data
+        $handler = fopen($filePath, "w");
+        fwrite($handler, json_encode($fileDataArray));
+        fclose($handler);
     }
 }
