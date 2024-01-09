@@ -191,24 +191,26 @@ if ($filter["mode"] === "month") {
                                                             $employeeShiftRow = $shifts[$employee["userId"]];
                                                     ?>
                                                             <div class="schedule-employee-row" data-id="<?= $employee["userId"]; ?>">
-                                                                <div class="row">
-                                                                    <div class="col-sm-2">
-                                                                        <img src="<?= getImageURL($employee["profile_picture"]); ?>" alt="" />
+                                                                <a href="<?= base_url("employee_profile/" . $employee["userId"]); ?>">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-2">
+                                                                            <img src="<?= getImageURL($employee["profile_picture"]); ?>" alt="" />
+                                                                        </div>
+                                                                        <div class="col-sm-8">
+                                                                            <p class="text-small weight-6 myb-0">
+                                                                                <?= remakeEmployeeName($employee, true, true); ?>
+                                                                            </p>
+                                                                            <p class="text-small">
+                                                                                <?= remakeEmployeeName($employee, false); ?>
+                                                                            </p>
+                                                                        </div>
+                                                                        <div class="col-sm-2 text-right">
+                                                                            <span class="text-small">
+                                                                                <?= $employeeShiftRow["totalTimeText"]; ?>
+                                                                            </span>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="col-sm-8">
-                                                                        <p class="text-small weight-6 myb-0">
-                                                                            <?= remakeEmployeeName($employee, true, true); ?>
-                                                                        </p>
-                                                                        <p class="text-small">
-                                                                            <?= remakeEmployeeName($employee, false); ?>
-                                                                        </p>
-                                                                    </div>
-                                                                    <div class="col-sm-2 text-right">
-                                                                        <span class="text-small">
-                                                                            <?= $employeeShiftRow["totalTimeText"]; ?>
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
+                                                                </a>
                                                             </div>
                                                     <?php
                                                         }
