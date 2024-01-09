@@ -2847,4 +2847,5 @@ if (!function_exists("isW4employerSectionCompleted")) {
             return false;
         }
     }
+    
 }
