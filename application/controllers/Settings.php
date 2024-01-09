@@ -520,6 +520,7 @@ class Settings extends Public_Controller
 
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
+                $data['Location_State'] = $this->input->post('Location_State', true);
 
                 $this->dashboard_model->update_user($sid, $data);
                 $company_details = $data;
