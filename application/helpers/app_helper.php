@@ -2744,7 +2744,6 @@ if (!function_exists("convertToStrip")) {
 }
 
 
-
 if (!function_exists("convertToHilited")) {
     /**
      * converts
@@ -2848,5 +2847,44 @@ if (!function_exists("isW4EmployerSectionCompleted")) {
         $w4["emp_address"] &&
         $w4["first_date_of_employment"] &&
         $w4["emp_identification_number"];
+    }
+}
+
+if (!function_exists('get_jobTitle_dropdown_for_search')) {
+    /**
+     * get the employees job titles in use
+     */
+    function get_jobTitle_dropdown_for_search(int $companyId, string $id = '')
+    {
+        //
+        $jobTitles = [];
+        $options = '';
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="js-filter-jobtitle" style="width: 100%;" multiple="multiple">';
+        $select .= '<option value="all">All</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+        $CI = &get_instance();
+        // Get Company Job titles 
+        $userJobTitle = $CI->db->select('job_title')
+            ->where('parent_sid', $companyId)
+            ->distinct('job_title')
+            ->get('users')
+            ->result_array();
+
+        $jobTitles =
+            array_unique(
+                array_column($userJobTitle, 'job_title')
+            );
+
+        //
+        if ($jobTitles) {
+            foreach ($jobTitles as $row) {
+                $options .= '<option value="' . $row . '">' . $row . '</option>';
+            }
+        }
+
+        $select = str_replace('{{options}}', $options, $select);
+        return $select;
     }
 }

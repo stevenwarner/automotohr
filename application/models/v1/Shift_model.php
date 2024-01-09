@@ -198,6 +198,17 @@ class Shift_model extends CI_Model
             $this->db->where("users.team_sid", $employeeFilter['team']);
         }
 
+
+        if ($employeeFilter['jobtitle'][0] != 'all' && !empty($employeeFilter['jobtitle'][0])) {
+
+            $this->db->group_start();
+            for ($i = 0; $i < count($employeeFilter['jobtitle']); $i++) {
+                $this->db->or_where("LOWER(job_title) = ", strtolower($employeeFilter['jobtitle'][$i]));
+            }
+            $this->db->group_end();
+        }
+
+
         $this->db->order_by("users.first_name", "ASC");
         return $this->db->get("users")->result_array();
     }
@@ -221,13 +232,6 @@ class Shift_model extends CI_Model
                 "users.terminated_status" => 0
             ]);
         //
-        if ($employeeFilter['employees'][0] != 'all' && !empty($employeeFilter['employees'][0])) {
-            $this->db->where_in("users.sid", $employeeFilter['employees']);
-        }
-
-        if ($employeeFilter['team'] != 0) {
-            $this->db->where("users.team_sid", $employeeFilter['team']);
-        }
 
         $this->db->order_by("users.first_name", "ASC");
         return $this->db->get("users")->result_array();

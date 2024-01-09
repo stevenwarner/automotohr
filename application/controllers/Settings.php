@@ -4025,6 +4025,10 @@ class Settings extends Public_Controller
         $employeeFilter['employees'] = $employeesArray;
         $employeeFilter['team'] = $team;
 
+        $jobTitle = $this->input->get("jobtitle", true);
+        $employeeFilter['jobtitle'] = explode(',', $jobTitle);
+
+
         if ($employees != '' || $team != '') {
             $toggleFilter = true;
         }
@@ -4033,10 +4037,7 @@ class Settings extends Public_Controller
         }
 
 
-
-        // _e($team,true,true);
-
-        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly(
+        $data["employees"] = $this->shift_model->getCompanyEmployees(
             $loggedInCompany["sid"],
             $employeeFilter
         );
@@ -4076,8 +4077,6 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // get the shifts
-
-
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
             array_column($data["employees"], "userId")
@@ -4088,6 +4087,9 @@ class Settings extends Public_Controller
         $data["filter_employees"] =
             explode(",", $employees);
         $data["filter_toggle"] = $toggleFilter;
+
+        $data["filter_jobtitle"] =
+            explode(",", $jobTitle);
 
 
 
