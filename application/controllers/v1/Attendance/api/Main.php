@@ -249,14 +249,22 @@ class Main extends Public_Controller
 
             $data["history"] = $tmp;
         }
+        $locations = [];
 
-        // _e($data["history"], true);
-
-        // $this->load->view(
-        //     "v1/attendance/partials/timesheet_history",
-        //     $data
-        // );
-        // die;
+        if ($data["history"]) {
+            foreach ($data["history"] as $v0) {
+                foreach ($v0 as $v1) {
+                    $locations[] = [
+                        "target" => "map_" . $v1["sid"],
+                        "title" => $v1["text"],
+                        "lat" => $v1["lat"],
+                        "lng" => $v1["lng"],
+                        "lat_2" => $v1["lat_2"] ?? null,
+                        "lng_2" => $v1["lng_2"] ?? null,
+                    ];
+                }
+            }
+        }
 
         return SendResponse(
             200,
@@ -266,7 +274,8 @@ class Main extends Public_Controller
                     "v1/attendance/partials/timesheet_history",
                     $data,
                     true
-                )
+                ),
+                "locations" => $locations
             ]
         );
     }

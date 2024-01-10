@@ -180,9 +180,13 @@ class Attendance extends Public_Controller
             getPlugin("timepicker", "css"),
         ];
         $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
             getPlugin("validator", "js"),
             getPlugin("timepicker", "js"),
         ];
+
         // set js
         $this->setCommon("v1/plugins/ms_modal/main", "css");
         $this->setCommon("v1/plugins/ms_modal/main", "js");

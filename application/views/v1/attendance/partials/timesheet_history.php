@@ -29,6 +29,7 @@
                                             <th scope="col">Duration</th>
                                             <!-- <th scope="col">Breaks</th> -->
                                             <!-- <th scope="col">On Location</th> -->
+                                            <td scope="col">Location</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -36,9 +37,7 @@
                                             <?php
 
                                             // Example usage
-                                            $point1 = ["lat" => $v0["lat"] ?? 0, "lon" => $v0["lng"] ?? 0];
-                                            $point2 = ["lat" => 34.0522, "lon" => -118.2437];
-                                            $radius = 1000; // 1,000 kilometers
+
                                             ?>
                                             <tr>
                                                 <td>
@@ -59,6 +58,16 @@
                                                 </td>
                                                 <td>
                                                     <?= $v1["durationText"]; ?>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-link jsToggleMapView" data-id="<?= $v1["sid"]; ?>">
+                                                        View Map
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr class="hidden mapRow<?= $v1["sid"]; ?>">
+                                                <td colspan="4">
+                                                    <div id="map_<?= $v1["sid"]; ?>" style="height: 400px"></div>
                                                 </td>
                                             </tr>
                                         <?php } ?>

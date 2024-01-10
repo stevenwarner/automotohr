@@ -219,6 +219,12 @@ $(function timeSheet() {
 			.done(function (resp) {
 				$("#jsTimeSheetHistoryModalBody").html(resp.view);
 
+				if (resp.locations.length) {
+					resp.locations.forEach((element) => {
+						makeLocationMap(element.target, element);
+					});
+				}
+
 				ml(false, "jsTimeSheetHistoryModalLoader");
 			});
 	}
@@ -329,4 +335,115 @@ $(function timeSheet() {
 				});
 			});
 	}
+
+	/**
+	 * draw map
+	 */
+	function makeLocationMap(containerId, location) {
+		let map,
+			markers = [],
+			coords = [],
+			latlng = [];
+
+		location.lat = parseFloat(location.lat);
+		location.lng = parseFloat(location.lng);
+
+		if (location.lat_2 && !isNaN(location.lat_2)) {
+			location.lat_2 = parseFloat(location.lat_2);
+			location.lng_2 = parseFloat(location.lng_2);
+		}
+
+		//
+		map = new google.maps.Map(document.getElementById(containerId), {
+			center: {
+				lat: location.lat,
+				lng: location.lng,
+			},
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+		});
+
+		addMarker({
+			markers,
+			coords,
+			map: map,
+			position: {
+				lat: location["lat"],
+				lng: location["lng"],
+			},
+			title: location.title,
+		});
+		//
+		latlng.push(new google.maps.LatLng(location.lat, location.lng));
+
+		if (location.lat_2 && !isNaN(location.lat_2)) {
+			addMarker({
+				markers,
+				coords,
+				map: map,
+				position: {
+					lat: location["lat_2"],
+					lng: location["lng_2"],
+				},
+				title: location.title,
+			});
+			//
+			latlng.push(new google.maps.LatLng(location.lat_2, location.lng_2));
+			let line = new google.maps.Polyline({
+				path: coords,
+				geodesic: true,
+				strokeColor: "#FF0000",
+				strokeOpacity: 1.0,
+				strokeWeight: 2,
+			});
+
+			line.setMap(map);
+		}
+
+		let LatLngBounds = new google.maps.LatLngBounds();
+		for (let i = 0; i < latlng.length; i++) {
+			LatLngBounds.extend(latlng[i]);
+		}
+		map.fitBounds(LatLngBounds);
+
+		google.maps.event.trigger(map, "resize");
+	}
+
+	function addMarker(options) {
+		let marker = new google.maps.Marker(options);
+
+		options.markers.push(marker);
+		options.coords.push({
+			lat: options.position.lat,
+			lng: options.position.lng,
+		});
+	}
+	// Function to calculate distance between two sets of coordinates using Haversine formula
+	function calculateDistance(lat1, lng1, lat2, lng2) {
+		const earthRadius = 6371; // Radius of the Earth in kilometers
+
+		const toRadians = (angle) => (angle * Math.PI) / 180;
+
+		const deltaLat = toRadians(lat2 - lat1);
+		const deltaLng = toRadians(lng2 - lng1);
+
+		const a =
+			Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+			Math.cos(toRadians(lat1)) *
+				Math.cos(toRadians(lat2)) *
+				Math.sin(deltaLng / 2) *
+				Math.sin(deltaLng / 2);
+
+		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		const distance = earthRadius * c; // Distance in kilometers
+
+		return distance;
+	}
+
+	$(document).on("click", ".jsToggleMapView",function (event) {
+		//
+		event.preventDefault();
+		const sid = $(this).data("id");
+		$(".mapRow" + sid).toggleClass("hidden");
+	});
 });
