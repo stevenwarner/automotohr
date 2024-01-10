@@ -200,21 +200,17 @@ $timeSheetName = "";
                                 <?php if (!$leave) { ?>
                                     <td class="csVerticalAlignMiddle mh-100">
                                         <?= $attendance && $attendance["clocked_in"] ?
-                                            reset_datetime([
-                                                "datetime" => $attendance["clocked_in"],
-                                                "from_format" => DB_DATE_WITH_TIME,
-                                                "format" => "h:i a",
-                                                "_this" => $this,
-                                                "from_timezone" => "UTC"
-                                            ]) : "Missing"; ?>
+                                            formatDateToDB(
+                                                $attendance["clocked_in"],
+                                                DB_DATE_WITH_TIME,
+                                                "h:i a"
+                                            ) : "Missing"; ?>
                                         -
-                                        <?= $attendance && $attendance["clocked_out"] ? reset_datetime([
-                                            "datetime" => $attendance["clocked_out"],
-                                            "from_format" => DB_DATE_WITH_TIME,
-                                            "format" => "h:i a",
-                                            "_this" => $this,
-                                            "from_timezone" => "UTC"
-                                        ]) : "Missing"; ?>
+                                        <?= $attendance && $attendance["clocked_out"] ? formatDateToDB(
+                                            $attendance["clocked_out"],
+                                            DB_DATE_WITH_TIME,
+                                            "h:i a"
+                                        )  : "Missing"; ?>
                                     </td>
                                     <td class="csVerticalAlignMiddle mh-100">
                                         <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
