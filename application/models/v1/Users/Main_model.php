@@ -511,7 +511,7 @@ class Main_model extends CI_Model
             ->count_all_results('gusto_employees_jobs')
         ) {
             $updateArray = [];
-            $updateArray['rate'] = $post['employeeRate'];
+            $updateArray['rate'] = $post['amount'];
             $updateArray['hire_date'] = formatDateToDB($post['hireDate']);
             $updateArray['updated_at'] = getSystemDate();
             //
@@ -522,9 +522,9 @@ class Main_model extends CI_Model
             $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']); 
             //
             $updateCompensation = [];
-            $updateCompensation['rate'] = $post['employeeRate'];
-            $updateCompensation['payment_unit'] = $post['payType'];
-            $updateCompensation['flsa_status'] = $post['flsaStatus'];
+            $updateCompensation['rate'] = $post['amount'];
+            $updateCompensation['payment_unit'] = $post['per'];
+            $updateCompensation['flsa_status'] = $post['classification'];
             $updateCompensation['effective_date'] = $post['hireDate'];
             $updateCompensation['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'];
             $updateCompensation['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
@@ -574,7 +574,7 @@ class Main_model extends CI_Model
                     'is_primary' => 1,
                     'hire_date' => formatDateToDB($post['hireDate']),
                     'title' => $jobTitle['title'],
-                    'rate' => $post['employeeRate'],
+                    'rate' => $post['amount'],
                     'current_compensation_uuid' => '',
                     'created_at' => getSystemDate(),
                     'updated_at' => getSystemDate()
@@ -587,9 +587,9 @@ class Main_model extends CI_Model
             $ins = [];
             $ins['gusto_version'] = '';
             $ins['gusto_employees_jobs_sid'] = $jobId;
-            $ins['rate'] = $post['employeeRate'];
-            $ins['payment_unit'] = $post['payType'];
-            $ins['flsa_status'] = $post['flsaStatus'];
+            $ins['rate'] = $post['amount'];
+            $ins['payment_unit'] = $post['per'];
+            $ins['flsa_status'] = $post['classification'];
             $ins['effective_date'] = $post['hireDate'];
             $ins['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'];
             $ins['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
