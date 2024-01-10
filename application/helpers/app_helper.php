@@ -2906,3 +2906,21 @@ if (!function_exists("getDateFromYearAndMonth")) {
         return $dateObj->format($format);
     }
 }
+
+
+if (!function_exists("getLoggedInPersonTimeZone")) {
+    function getLoggedInPersonTimeZone(): string
+    {
+        // get CI instance
+        $ci = get_instance();
+        // 
+        $tz = $ci->session->userdata("logged_in")["employer_detail"]["timezone"];
+        if (!$tz) {
+            $tz = $ci->session->userdata("logged_in")["company_detail"]["timezone"];
+        }
+        if (!$tz) {
+            $tz = STORE_DEFAULT_TIMEZONE_ABBR;
+        }
+        return $tz;
+    }
+}

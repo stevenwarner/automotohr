@@ -1,5 +1,6 @@
 <?php $session = $this->session->userdata('logged_in'); ?>
 <script type="text/javascript" src="<?= base_url('assets/js/moment.min.js'); ?>"></script>
+<script type="text/javascript" src="<?= base_url('public/v1/plugins/moment/moment-timezone.min.js'); ?>"></script>
 <script type="text/javascript" src="<?= base_url(_m('assets/js/uri', 'js', '1.0.1')); ?>"></script>
 <script type="text/javascript" src="<?= base_url(_m('assets/js/common', 'js', '1.0.2')); ?>"></script>
 <?php if (isset($add_app) && $this->session->userdata('logged_in')) : ?>

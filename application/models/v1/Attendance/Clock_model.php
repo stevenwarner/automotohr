@@ -77,10 +77,12 @@ class Clock_model extends Base_model
         $clockArray["timerDateTime"] = reset_datetime([
             "datetime" => getSystemDateInUTC(),
             "from_format" => DB_DATE_WITH_TIME,
-            "format" => DB_DATE_WITH_TIME,
+            "format" => "Y-m-d\TH:i:sO",
             "_this" => $this,
             "from_timezone" => "UTC"
         ]);
+        // set the time as well
+        $clockArray["timezone"] = getTimeZoneFromAbbr(getLoggedInPersonTimeZone());
         // set job sites
         $clockArray["job_sites"] = $this->getEmployeeJobSites();
         // set breaks

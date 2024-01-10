@@ -385,19 +385,21 @@ $(function markAttendance() {
 	 * start the system clock timer
 	 */
 	function startClock() {
+		// get the current time in user tz
+		let newTime = moment.tz(attendanceObj.timezone);
+		let atteTime = moment.tz(
+			attendanceObj.timerDateTime,
+			attendanceObj.timezone
+		);
 		// Calculate the time elapsed since the start date
-		const elapsedTime = moment().diff(attendanceObj.timerDateTime);
+		const elapsedTime = newTime.diff(attendanceObj.timerDateTime);
 
-		// Format the elapsed time as hours, minutes, and seconds
-		const duration = moment.duration(elapsedTime);
-		const hours = Math.floor(duration.asHours());
-		const minutes = moment.utc(elapsedTime).format("mm");
-		const seconds = moment.utc(elapsedTime).format("ss");
+
+		atteTime.add(elapsedTime, "milliseconds");
+
 		//
 		$(".jsAttendanceCurrentClockDateTime").text(
-			moment(attendanceObj.timerDateTime).format(
-				`MMM D YYYY, ddd ${hours}:${minutes}:${seconds}`
-			)
+			atteTime.format(`MMM D YYYY, ddd HH:mm:ss`)
 		);
 		$(".jsAttendanceLoader").hide();
 	}
