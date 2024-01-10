@@ -27,7 +27,7 @@
                                             <th scope="col">Event</th>
                                             <th scope="col">Period</th>
                                             <th scope="col">Duration</th>
-                                            <th scope="col">Breaks</th>
+                                            <!-- <th scope="col">Breaks</th> -->
                                             <!-- <th scope="col">On Location</th> -->
                                         </tr>
                                     </thead>
@@ -45,27 +45,20 @@
                                                     <?= $v1["text"]; ?>
                                                 </td>
                                                 <td>
-                                                    <?= reset_datetime([
-                                                        "datetime" => $v1["startTime"],
-                                                        "from_format" => DB_DATE_WITH_TIME,
-                                                        "format" => "h:i a",
-                                                        "_this" => $this,
-                                                        "from_timezone" => "UTC"
-                                                    ]); ?>
+                                                    <?= formatDateToDB(
+                                                        $v1["startTime"],
+                                                        DB_DATE_WITH_TIME,
+                                                        "h:i a"
+                                                    ); ?>
                                                     -
-                                                    <?= $v1["endTime"] ? reset_datetime([
-                                                        "datetime" => $v1['endTime'],
-                                                        "from_format" => DB_DATE_WITH_TIME,
-                                                        "format" => "h:i a",
-                                                        "_this" => $this,
-                                                        "from_timezone" => "UTC"
-                                                    ]) : "Missing"; ?>
+                                                    <?= $v1["endTime"] ? formatDateToDB(
+                                                        $v1["endTime"],
+                                                        DB_DATE_WITH_TIME,
+                                                        "h:i a"
+                                                    ) : "Missing"; ?>
                                                 </td>
                                                 <td>
                                                     <?= $v1["durationText"]; ?>
-                                                </td>
-                                                <td>
-                                                    <?= count($v1["break"]); ?>
                                                 </td>
                                             </tr>
                                         <?php } ?>
