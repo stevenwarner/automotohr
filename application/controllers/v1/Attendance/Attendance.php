@@ -142,6 +142,7 @@ class Attendance extends Public_Controller
         //
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/dashboard", "js");
+        $this->getCommon($data, "overview");
         //
         $data["load_view"] = false;
         $data["sanitizedView"] = true;
