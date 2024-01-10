@@ -86,22 +86,45 @@
                                             <p class="text-medium">
                                                 <span class="text-small">Position</span>
                                                 <br />
-                                                <strong>Software Engineer II</strong>
+                                                <strong>
+                                                    <?php echo $jobWageData['title']; ?>
+                                                </strong>
                                             </p>
                                             <p class="text-medium">
                                                 <span class="text-small">Employment type</span>
                                                 <br />
-                                                <strong>Full time</strong>
+                                                <strong>
+                                                    <?php 
+                                                        if ($jobWageData['employmentType'] == 'fulltime') {
+                                                            echo "Full Time";
+                                                        } else if ($jobWageData['employmentType'] == 'parttime') {
+                                                            echo "Part Time";
+                                                        } else if ($jobWageData['employmentType'] == 'contractual') {
+                                                            echo "Contractual";
+                                                        } else {
+                                                            echo "N/A";
+                                                        }
+                                                    ?>
+                                                </strong>
                                             </p>
                                             <p class="text-medium">
                                                 <span class="text-small">Hire date</span>
                                                 <br />
-                                                <strong>2023-04-55 time</strong>
+                                                <strong>
+                                                    <?php echo $jobWageData['hireDate']; ?>
+                                                </strong>
                                             </p>
                                             <p class="text-medium">
                                                 <span class="text-small">Wage</span>
                                                 <br />
-                                                <strong>$20.00 /hour</strong>
+                                                <strong>$<?php echo $jobWageData['rate']; ?> /<?php echo $jobWageData['paymentUnit']; ?></strong>
+                                            </p>
+                                            <p class="text-medium">
+                                                <span class="text-small">Overtime Rule</span>
+                                                <br />
+                                                <strong>
+                                                    <?php echo $jobWageData['overtimeRule']; ?>
+                                                </strong>
                                             </p>
                                         </div>
                                         <div class="panel-footer text-center">
@@ -113,7 +136,7 @@
                                     </div>
                                 </div>
 
-                              
+
                             </div>
                             <!-- time & attendance -->
                             <div class="row">

@@ -105,6 +105,9 @@ class Main extends Public_Controller
      */
     public function dashboard(int $userId, string $userType)
     {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        $companyId = $session["company_detail"]["sid"];
         //
         $this->data["title"] = "Payroll dashboard";
         //
@@ -130,10 +133,14 @@ class Main extends Public_Controller
         $this->data["pageJs"] = [
             // high charts
             main_url("public/v1/plugins/ms_modal/main.min.js?v=3.0"),
+            main_url("public/v1/plugins/select2/select2.min.js?v=3.0"),
+            main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0"),
         ];
         $this->data["pageCSS"] = [
             // high charts
             main_url("public/v1/plugins/ms_modal/main.min.css?v=3.0"),
+            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
         ];
         // set js
         $this->setCommon("v1/users/payroll/js/payroll_dashboard", "js");
@@ -145,6 +152,12 @@ class Main extends Public_Controller
                 $userType,
                 true
             );
+        $this->data["jobWageData"] = $this->main_model    
+            ->getUserJobWageData(
+                $userId,
+                $userType,
+                $companyId
+            );  
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
     }
@@ -164,14 +177,32 @@ class Main extends Public_Controller
         string $slug
     ): array {
         // check and generate error for session
-        checkAndGetSession();
+        $session = checkAndGetSession();
         // convert the slug to function
         $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
+        //
+        if ($func == 'pageJobAndWage') {
+            $companyId = $session["company_detail"]["sid"];
+            $companyGustoDetails =  getCompanyDetailsForGusto($companyId);
+            //
+            if ($companyGustoDetails) {
+                $gustoEmployeeInfo = $this->main_model->getEmployeeGustoInfo($userId);
+                //
+                if ($gustoEmployeeInfo) {
+                    $this->load->model("v1/Payroll_model", "payroll_model");
+                    //
+                    $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
+                    $this->payroll_model->syncEmployeeJobBeforeUpdate($userId, $companyGustoDetails);
+                }
+            }
+        }
         // get the data
-        $data = $this->$func(
-            $userId,
-            $userType
-        );
+        $data = $this->main_model
+            ->$func(
+                $userId,
+                $userType,
+                $this->loggedInCompany["sid"]
+            );
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -202,49 +233,130 @@ class Main extends Public_Controller
         );
     }
 
-    /**
-     * get the pay schedule
-     *
-     * @param int    $userId
-     * @param string $userType
-     * @return array
-     */
-    private function pagePaySchedule(
-        int $userId,
-        string $userType
-    ): array {
-        // get company pay scheduled
-        $companyPaySchedules = $this->main_model
-            ->getCompanyPaySchedules(
-                $this->loggedInCompany["sid"]
-            );
-        // get the pay schedule
-        $userPaySchedule = $this->main_model
-            ->getUserPayScheduleById(
-                $userId,
-                $userType
-            );
+    public function updateEmployeeJobCompensation ($userId, $userType) {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
         //
-        return [
-            "return" => $companyPaySchedules,
-            "companyPaySchedules" => $companyPaySchedules,
-            "userPaySchedule" => $userPaySchedule
-        ];
+        $companyId = $session["company_detail"]["sid"];
+        //
+        // get the company details
+        $companyGustoDetails =  getCompanyDetailsForGusto($companyId);
+        //
+        if ($companyGustoDetails) {
+            //
+            $gustoEmployeeInfo = $this->main_model->getEmployeeGustoInfo($userId);
+            //
+            if ($gustoEmployeeInfo) {
+                $jobInfo = $this->main_model->getEmployeeJobInfo($userId);
+                //
+                $newHireDate = formatDateToDB($post['hireDate']);
+                //
+                //
+                $this->load->model("v1/Payroll_model", "payroll_model");
+                //
+                // Update Employee overtime rule and employee title;
+                $this->main_model->updateEmployeeBasicInfo($userId, $post['overTimeRule'], $post['employeeType']);
+                //
+                if ($jobInfo) {
+                    //
+                    if ($jobInfo['hire_date'] != $newHireDate) {
+                        $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
+                        //
+                        $updateJobData = []; 
+                        $updateJobData['start_date'] = $newHireDate;
+                        //
+                        $jobResponse = $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
+                        //
+                        if ($jobResponse['errors']) {
+                            return SendResponse(
+                                400,
+                                [
+                                    'errors' => $jobResponse['errors']
+                                ]
+                            );
+                        }
+                    }
+                    //
+                    $compensationResponse = $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    //
+                    if ($compensationResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $compensationResponse['errors']
+                            ]
+                            
+                        );
+                    }
+                    // Update Employee Guarantee;
+                    $this->main_model->updateEmployeeGuaranteeInfo($userId, $post);
+                    //
+                    return SendResponse(
+                        200,
+                        [
+                            'msg' => 'You have successfully updated employee Job & wage.'
+                        ]
+                    );
+                } else {
+                    //
+                    $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
+                    //
+                    $jobResponse = $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
+                    //
+                    if ($jobResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $jobResponse['errors']
+                            ]
+                        );
+                    }
+                    // jsEmployeeFlowJobTitle
+                    $compensationResponse = $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    //
+                    if ($compensationResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $compensationResponse['errors']
+                            ]
+                        );
+                    }
+                    //
+                    // Update Employee Guarantee;
+                    $this->main_model->updateEmployeeGuaranteeInfo($userId, $post);
+                    //
+                    return SendResponse(
+                        200,
+                        [
+                            'msg' => 'You have successfully created employee Job & wage.'
+                        ]
+                    );
+                }
+            } else {
+                $response = $this->main_model->processEmployeeJobData($userId, $post);
+                //
+                return SendResponse(
+                    200,
+                    [
+                        'msg' => $response['msg']
+                    ]
+                );
+            }
+        } else {
+            $response = $this->main_model->processEmployeeJobData($userId, $post);
+            //
+            return SendResponse(
+                200,
+                [
+                    'msg' => $response['msg']
+                ]
+            );
+        }
     }
 
-    /**
-     * get the pay schedule
-     *
-     * @param int    $userId
-     * @param string $userType
-     * @return array
-     */
-    private function pageJobAndWage(
-        int $userId,
-        string $userType
-    ): array {
-        return [];
-    }
 
     /**
      * Render the view in template
@@ -290,7 +402,7 @@ class Main extends Public_Controller
             getCommonFiles("js"),
             $this->js,
             "common_js",
-            true
+            false
         );
         // css bundle
         $data['appCSS'] .= bundleCSS(

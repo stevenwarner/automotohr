@@ -233,9 +233,14 @@ if ($filter["mode"] === "month") {
                                                         ?>
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
-                                                            <div class="schedule-column-header">
-                                                                <p class="text-center text-small">
-                                                                    <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
+
+                                                            <?php
+                                                            $curentDate = date('Y-m-d');
+                                                            $todatDate = strtotime($curentDate);
+                                                            $cDate = strtotime($monthDate);
+                                                            ?>
+                                                            <div class="schedule-column-header text-center" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;color:#c10;font-weight:900;font-size:20px;' : '' ?>>
+                                                                <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                                 </p>
                                                             </div>
                                                             <?php if ($employees) {
@@ -243,7 +248,7 @@ if ($filter["mode"] === "month") {
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                             ?>
-                                                                    <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>">
+                                                                    <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                         <?php if ($employeeLeave) { ?>
                                                                             <div class="schedule-dayoff text-primary text-small">
                                                                                 <strong>
@@ -286,7 +291,7 @@ if ($filter["mode"] === "month") {
                                                                 }
                                                             }
                                                             ?>
-                                                            <div class="schedule-footer schedule-border">
+                                                            <div class="schedule-footer schedule-border" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                 <p class="text-small text-center">
                                                                     <?= convertSecondsToTime($totalHoursInSeconds); ?>
                                                                 </p>

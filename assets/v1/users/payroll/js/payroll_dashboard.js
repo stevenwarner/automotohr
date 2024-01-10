@@ -19,6 +19,19 @@ $(function payrollDashboard() {
 	const modalBody = modalId + "Body";
 
 	/**
+	 * minimum wages show and hide
+	 */
+	$(document).on('click', '.jsAdjustForMinimumWage', function(e) {	
+		//
+		if($(this).is(':checked')) {
+			$(".jsMinimumWagesBox").removeClass('hidden');
+		} else {
+			$(".jsMinimumWagesBox").addClass('hidden');
+			$('.jsMinimumWages').select2("val", "")
+		}
+	});
+
+	/**
 	 * edit a pay schedule
 	 */
 	$(".jsEditPaySchedule").click(function (event) {
@@ -50,6 +63,88 @@ $(function payrollDashboard() {
 		});
 	});
 
+	$(document).on('click', '.jsPagePayScheduleBtn', function(event) {	
+		// stop the event
+		event.preventDefault();
+		//
+		// reset the array
+		let jobObj = {
+			employeeType: $(".jsEmploymentType option:selected").val(),
+			classification: $(".jsFLSAStatus option:selected").val().trim(),
+			per: $(".jsPayType option:selected").val().trim(),
+			hireDate: $(".jsHireDate").val().trim(),
+			overTimeRule: $(".jsOvertimeRule option:selected").val().trim(),
+			amount: $(".jsEmployeeRate").val().trim(),
+			minimumWage: $('input[name="adjust_for_minimum_wage"]:checked').val() == 'on' ? 1 : 0,
+			wagesId: $(".jsMinimumWages").select2("val"),
+			guaranteeRate: $(".jsEmployeeGuaranteeRate").val().trim(),
+			guaranteePer: $(".jsEmployeeGuaranteePayType option:selected").val().trim(),
+			guaranteeTime: $(".jsEmployeeGuaranteeTimes").val().trim(),
+		};
+		//
+		// set default error array
+		let errors = [];
+		// validate
+		if (!jobObj.employeeType) {
+			errors.push('"Employment type" is missing.');
+		}
+		if (!jobObj.classification) {
+			errors.push('"FLSA status" is missing.');
+		}
+		if (!jobObj.per) {
+			errors.push('"Pay type" is missing.');
+		}
+		if (!jobObj.hireDate) {
+			errors.push('"Hire date" is missing.');
+		}
+		if (!jobObj.amount) {
+			errors.push('"Rate" is missing.');
+		}
+		if (!jobObj.overTimeRule) {
+			errors.push('"Overtime rule" is missing.');
+		}
+		if (jobObj.guaranteeRate) {
+			if (!jobObj.guaranteeTime) {
+				errors.push('"Guarantee time" is missing.');
+			}
+		}
+		// check and show errors
+		if (errors.length) {
+			return alertify.alert(
+				"ERROR",
+				getErrorsStringFromArray(errors),
+				CB
+			);
+		}
+		// show the loader
+		ml(true, modalLoader)
+		// //
+		XHR = $.ajax({
+			url: window.location.origin + "/payrolls/employee_job_compensation/"+ profileUserInfo.userId + "/" + profileUserInfo.userType,
+			method: "POST",
+			data: jobObj,
+		})
+			.always(function () {
+				//
+				ml(false, modalLoader);
+				//
+				XHR = null;
+			})
+			.fail(function (resp) {
+				console.log()
+				return alertify.alert(
+					"ERROR",
+					getErrorsStringFromArray(resp.responseJSON.errors)
+				);
+			})
+			.done(function (resp) {
+				return alertify.alert(
+					"SUCCESS",
+					resp.msg
+				);
+			});
+	});
+
 	/**
 	 * edit job & wage
 	 */
@@ -61,24 +156,18 @@ $(function payrollDashboard() {
 			// hides the loader
 			ml(false, modalLoader);
 			//
-			$("#jsPageJobWageForm").validate({
-				rules: {
-					pay_schedule: { required: true },
-				},
-				messages: {
-					pay_schedule: { required: "Please select a pay schedule." },
-				},
-				submitHandler: function (form) {
-					// convert form to form object
-					const formObj = formArrayToObj($(form).serializeArray());
-					//
-					formObj.append("page", "pay_schedule");
-					formObj.append("userId", profileUserInfo.userId);
-					formObj.append("userType", profileUserInfo.userType);
-					//
-					return processCall(formObj, $(".jsPageJobWageBtn"));
+			$(".jsMinimumWages").select2({
+				closeOnSelect: false,
+			});
+			$(".jsHireDate").daterangepicker({
+				singleDatePicker: true,
+				showDropdowns: true,
+				autoApply: true,
+				locale: {
+					format: "MM/DD/YYYY",
 				},
 			});
+			//
 		});
 	});
 

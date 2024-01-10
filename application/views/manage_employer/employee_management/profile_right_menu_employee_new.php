@@ -217,7 +217,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
 
                                 <?php if (isPayrollOrPlus()) { ?>
-                                    <li class="hidden">
+                                    <li>
                                         <span class="left-addon">
                                             <i aria-hidden="true" class="fa fa-dashboard"></i>
                                         </span>
