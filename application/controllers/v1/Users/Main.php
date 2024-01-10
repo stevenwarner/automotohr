@@ -105,6 +105,9 @@ class Main extends Public_Controller
      */
     public function dashboard(int $userId, string $userType)
     {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        $companyId = $session["company_detail"]["sid"];
         //
         $this->data["title"] = "Payroll dashboard";
         //
@@ -149,6 +152,12 @@ class Main extends Public_Controller
                 $userType,
                 true
             );
+        $this->data["jobWageData"] = $this->main_model    
+            ->getUserJobWageData(
+                $userId,
+                $userType,
+                $companyId
+            );  
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
     }
@@ -193,7 +202,7 @@ class Main extends Public_Controller
                 $userId,
                 $userType,
                 $this->loggedInCompany["sid"]
-            );     
+            );
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -224,7 +233,7 @@ class Main extends Public_Controller
         );
     }
 
-    public function updateEmployeejobCompensation ($userId, $userType) {
+    public function updateEmployeeJobCompensation ($userId, $userType) {
         // check and generate error for session
         $session = checkAndGetSession();
         // set the sanitized post
@@ -247,37 +256,105 @@ class Main extends Public_Controller
                 //
                 $this->load->model("v1/Payroll_model", "payroll_model");
                 //
+                // Update Employee overtime rule and employee title;
+                $this->main_model->updateEmployeeBasicInfo($userId, $post['overTimeRule'], $post['employeeType']);
+                //
                 if ($jobInfo) {
+                    //
                     if ($jobInfo['hire_date'] != $newHireDate) {
                         $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
                         //
                         $updateJobData = []; 
                         $updateJobData['start_date'] = $newHireDate;
                         //
-                        // $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
+                        $jobResponse = $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
+                        //
+                        if ($jobResponse['errors']) {
+                            return SendResponse(
+                                400,
+                                [
+                                    'errors' => $jobResponse['errors']
+                                ]
+                            );
+                        }
                     }
-                    
                     //
-                    // $this->main_model->updateEmployeeJobOnGusto($companyId, $jobInfo, $newHireDate, $companyGustoDetails);
-                    
-                    
-                    $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    $compensationResponse = $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    //
+                    if ($compensationResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $compensationResponse['errors']
+                            ]
+                            
+                        );
+                    }
+                    // Update Employee Guarantee;
+                    $this->main_model->updateEmployeeGuaranteeInfo($userId, $post);
+                    //
+                    return SendResponse(
+                        200,
+                        [
+                            'msg' => 'You have successfully updated employee Job & wage.'
+                        ]
+                    );
                 } else {
                     //
                     $companyGustoDetails['other_uuid'] = $gustoEmployeeInfo['gusto_uuid'];
-                    // $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
                     //
+                    $jobResponse = $this->payroll_model->createEmployeeJob($userId, $gustoEmployeeInfo['gusto_uuid'], $companyId);
+                    //
+                    if ($jobResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $jobResponse['errors']
+                            ]
+                        );
+                    }
                     // jsEmployeeFlowJobTitle
-                    $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    $compensationResponse = $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
+                    //
+                    if ($compensationResponse['errors']) {
+                        return SendResponse(
+                            400,
+                            [
+                                'errors' => $compensationResponse['errors']
+                            ]
+                        );
+                    }
+                    //
+                    // Update Employee Guarantee;
+                    $this->main_model->updateEmployeeGuaranteeInfo($userId, $post);
+                    //
+                    return SendResponse(
+                        200,
+                        [
+                            'msg' => 'You have successfully created employee Job & wage.'
+                        ]
+                    );
                 }
             } else {
-                $this->main_model->processEmployeeJobData($userId, $post);
+                $response = $this->main_model->processEmployeeJobData($userId, $post);
+                //
+                return SendResponse(
+                    200,
+                    [
+                        'msg' => $response['msg']
+                    ]
+                );
             }
         } else {
-            $this->main_model->processEmployeeJobData($userId, $post);
+            $response = $this->main_model->processEmployeeJobData($userId, $post);
+            //
+            return SendResponse(
+                200,
+                [
+                    'msg' => $response['msg']
+                ]
+            );
         }
-        _e($userType,true);
-        _e($_POST,true,true);
     }
 
 

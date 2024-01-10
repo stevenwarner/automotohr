@@ -2602,16 +2602,20 @@ class Payroll_model extends CI_Model
         $companyDetails = $this->getCompanyDetailsForGusto($gustoEmployee['company_sid']);
         //
         $companyDetails['other_uuid'] = $gustoJob['gusto_uuid'];
-        //
-        $wagesInfo = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
         // let's make request
         $request = [];
         $request['version'] = $gustoJob['gusto_version'];
         $request['rate'] = $data['amount'];
-        $request['flsa_status'] = $data['classification'];
+        $request['flsa_status'] = $data['classification'] == 'Salaried Commission' ? 'Salaried Nonexempt' : $data['classification'];
         $request['payment_unit'] = $data['per'];
-        $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? 'true' : 'false';
-        $request['minimum_wages'] = $wagesInfo['minimum_wages'];
+        //
+        $wagesInfo = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
+        if ($wagesInfo['minimumWage'] == 1) {
+            $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? 'true' : 'false';
+            $request['minimum_wages'] = $wagesInfo['minimum_wages'];
+        }
+        
+        //
         // response
         //
         $gustoResponse = gustoCall(
@@ -2621,24 +2625,21 @@ class Payroll_model extends CI_Model
             'PUT'
         );
         //
-        _e($wagesInfo,true);
-        _e($request,true);
-        _e($gustoResponse,true,true);
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
             return $errors;
         }
-        
         //
         $ins = [];
         $ins['gusto_version'] = $gustoResponse['version'];
         $ins['rate'] = $gustoResponse['rate'];
         $ins['payment_unit'] = $gustoResponse['payment_unit'];
-        $ins['flsa_status'] = $gustoResponse['flsa_status'];
+        $ins['flsa_status'] = $data['classification'];
         $ins['effective_date'] = $gustoResponse['effective_date'];
         $ins['adjust_for_minimum_wage'] = $gustoResponse['adjust_for_minimum_wage'];
         $ins['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
+        //
         $ins['updated_at'] = getSystemDate();
         //
         $this->db

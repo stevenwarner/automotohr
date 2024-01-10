@@ -76,10 +76,12 @@ $(function payrollDashboard() {
 			overTimeRule: $(".jsOvertimeRule option:selected").val().trim(),
 			amount: $(".jsEmployeeRate").val().trim(),
 			minimumWage: $('input[name="adjust_for_minimum_wage"]:checked').val() == 'on' ? 1 : 0,
-			wagesId: $(".jsMinimumWages").select2("val")
+			wagesId: $(".jsMinimumWages").select2("val"),
+			guaranteeRate: $(".jsEmployeeGuaranteeRate").val().trim(),
+			guaranteePer: $(".jsEmployeeGuaranteePayType option:selected").val().trim(),
+			guaranteeTime: $(".jsEmployeeGuaranteeTimes").val().trim(),
 		};
 		//
-		console.log(jobObj)
 		// set default error array
 		let errors = [];
 		// validate
@@ -101,6 +103,11 @@ $(function payrollDashboard() {
 		if (!jobObj.overTimeRule) {
 			errors.push('"Overtime rule" is missing.');
 		}
+		if (jobObj.guaranteeRate) {
+			if (!jobObj.guaranteeTime) {
+				errors.push('"Guarantee time" is missing.');
+			}
+		}
 		// check and show errors
 		if (errors.length) {
 			return alertify.alert(
@@ -117,20 +124,25 @@ $(function payrollDashboard() {
 			method: "POST",
 			data: jobObj,
 		})
-			.success(function () {
+			.always(function () {
+				//
+				ml(false, modalLoader);
 				//
 				XHR = null;
-				_ml(false, modalId + "Loader");
-				//
+			})
+			.fail(function (resp) {
+				console.log()
 				return alertify.alert(
-					"SUCCESS",
-					"Congratulations! You have successfully added a payroll admin for the company.",
-					function () {
-						processQueue.adminStep();
-					}
+					"ERROR",
+					getErrorsStringFromArray(resp.responseJSON.errors)
 				);
 			})
-			.fail(saveErrorsList);
+			.done(function (resp) {
+				return alertify.alert(
+					"SUCCESS",
+					resp.msg
+				);
+			});
 	});
 
 	/**
@@ -156,26 +168,6 @@ $(function payrollDashboard() {
 				},
 			});
 			//
-			$("#jsPageJobWageForm").validate({
-				rules: {
-					employment_type: { required: true },
-					flsa_status: { required: true },
-					per: { required: true },
-					hire_date: { required: true },
-					rate: { required: true },
-					overtime_rule: { required: true },
-				},
-				submitHandler: function (form) {
-					// convert form to form object
-					const formObj = formArrayToObj($(form).serializeArray());
-					//
-					formObj.append("page", "pay_schedule");
-					formObj.append("userId", profileUserInfo.userId);
-					formObj.append("userType", profileUserInfo.userType);
-					//
-					return processCall(formObj, $(".jsPageJobWageBtn"));
-				},
-			});
 		});
 	});
 
