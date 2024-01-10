@@ -16115,10 +16115,20 @@ if (!function_exists('getSystemDateInUTC')) {
      */
     function getSystemDateInUTC(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now', string $customDate = "")
     {
+        $CI = &get_instance();
+        $data['session'] = $CI->session->userdata('logged_in');
+        $employerTimezone = $data["session"]["employer_detail"]['timezone'];
+
         // get the date in current timezone
         $pstDateObject = new DateTime($customDate ?? getSystemDate($format, $timestamp));
-        // set the timezone to utc
-        $pstDateObject->setTimezone(new DateTimeZone("UTC"));
+
+        if ($employerTimezone != '' && $employerTimezone != null) {
+            $pstDateObject->setTimezone(new DateTimeZone($employerTimezone));
+        } else {
+            // set the timezone to utc
+            $pstDateObject->setTimezone(new DateTimeZone("UTC"));
+        }
+
         // return the date
         return $pstDateObject->format($format);
     }
