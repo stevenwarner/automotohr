@@ -188,6 +188,7 @@ class Shift_model extends CI_Model
             ->select(getUserFields())
             ->where([
                 "users.parent_sid" => $companyId,
+                "users.is_executive_admin" => 0,
             ]);
         //
         if ($employeeFilter['employees'][0] != 'all' && !empty($employeeFilter['employees'][0])) {
