@@ -73,6 +73,14 @@ class Clock_model extends Base_model
             "allowed_breaks" => [],
             "current_job_id" => 0,
         ];
+        // set the time as well
+        $clockArray["timerDateTime"] = reset_datetime([
+            "datetime" => getSystemDateInUTC(),
+            "from_format" => DB_DATE_WITH_TIME,
+            "format" => DB_DATE_WITH_TIME,
+            "_this" => $this,
+            "from_timezone" => "UTC"
+        ]);
         // set job sites
         $clockArray["job_sites"] = $this->getEmployeeJobSites();
         // set breaks
