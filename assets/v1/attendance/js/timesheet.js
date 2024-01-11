@@ -150,6 +150,7 @@ $(function timeSheet() {
 								obj.endTime = $(this)
 									.find(`[name="end_time_${obj.id}"]`)
 									.val();
+								obj.employeeId = profileUserInfo.userId;	
 								formData.push(obj);
 							});
 						}

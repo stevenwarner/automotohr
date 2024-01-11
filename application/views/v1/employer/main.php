@@ -27,3 +27,10 @@
         </div>
     </div>
 </div>
+<?php if (isset($user_sid)) { ?>
+    <script>
+        const profileUserInfo = {
+            userId: <?= $user_sid; ?>
+        };
+    </script>
+<?php } ?>

@@ -214,7 +214,9 @@ class Attendance extends Public_Controller
         $data["filter"]["endDate"] = getSystemDate($data["filter"]["year"] . "-" . $data["filter"]["month"] . "-t");
         $data["records"] = [];
 
+        $data['user_sid'] = 0;
         if ($data["filter"]["employeeId"]) {
+            $data['user_sid'] = $data["filter"]["employeeId"];
             //
             $data["records"] = $this->clock_model
                 ->getAttendanceWithinRange(

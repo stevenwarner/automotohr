@@ -144,6 +144,7 @@ class Main extends Public_Controller
         ];
         // set js
         $this->setCommon("v1/users/payroll/js/payroll_dashboard", "js");
+        $this->setCommon("v1/attendance/js/timesheet", "js");
         $this->getCommon($this->data, "payroll_dashboard");
         // get the dashboard details
         $this->data["paySchedule"] = $this->main_model
@@ -166,6 +167,9 @@ class Main extends Public_Controller
         $startDate = $year . "-" . $month . "-01";
         $endDate = getSystemDate($year . "-" . $month . "-t");
         //
+        $this->data["startDate"] = $startDate; 
+        $this->data["endDate"] =  $endDate; 
+        //
         // load clock_model model
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
         $this->data["records"] = $this->clock_model
@@ -183,7 +187,7 @@ class Main extends Public_Controller
                 $userId,
                 $startDate,
                 $endDate
-            ); 
+            );   
         // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
