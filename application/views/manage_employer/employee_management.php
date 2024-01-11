@@ -246,7 +246,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                             <?php } else {
                                 $employeeIds = array_column($employee_array, 'sid');
                                 $doNotHireRecords = checkDontHireText($employeeIds);
-
                             ?>
                                 <table class="table table-bordered">
                                     <thead>
@@ -282,7 +281,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 }
 
                                                 $doNotHireWarning = doNotHireWarning($employee['sid'], $doNotHireRecords, 14);
-
                                             ?>
                                                 <tr id="manual_row<?php echo $employee['sid']; ?>">
                                                     <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
@@ -457,6 +455,8 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                         echo 'Performance';
                                                                     } else if ($reason == 17) {
                                                                         echo 'Workforce Reduction';
+                                                                    } else if ($reason == 19) {
+                                                                        echo 'Did Not Hire';
                                                                     } else {
                                                                         echo 'N/A';
                                                                     }
@@ -467,7 +467,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             ?>
                                                         </td>
                                                     <?php } ?>
-                                                    <td>
+                                                    <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         if (!empty($employee['transfer_date'])) {
                                                             echo formatDateToDB($employee['transfer_date'], DB_DATE, DATE);
