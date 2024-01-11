@@ -152,12 +152,39 @@ class Main extends Public_Controller
                 $userType,
                 true
             );
+        //    
         $this->data["jobWageData"] = $this->main_model    
             ->getUserJobWageData(
                 $userId,
                 $userType,
                 $companyId
             );  
+        //
+        $year = getSystemDate("Y");
+        $month = getSystemDate("m");
+        //
+        $startDate = $year . "-" . $month . "-01";
+        $endDate = getSystemDate($year . "-" . $month . "-t");
+        //
+        // load clock_model model
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        $this->data["records"] = $this->clock_model
+            ->getAttendanceWithinRange(
+                $companyId,
+                $userId,
+                $startDate,
+                $endDate
+            );
+        // load timeoff model
+        $this->load->model("Timeoff_model", "timeoff_model");
+        // get employee shifts
+        $this->data["leaves"] = $this->timeoff_model
+            ->getEmployeeTimeOffsInRange(
+                $userId,
+                $startDate,
+                $endDate
+            ); 
+        // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
     }
@@ -195,7 +222,9 @@ class Main extends Public_Controller
                     $this->payroll_model->syncEmployeeJobBeforeUpdate($userId, $companyGustoDetails);
                 }
             }
+            //
         }
+        //
         // get the data
         $data = $this->main_model
             ->$func(
