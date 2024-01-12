@@ -2835,4 +2835,44 @@ class Payroll extends CI_Controller
             $this->payroll_model->getEmployeeById($employeeId)
         );
     }
+
+    public function refreshGustoOAuthToken(): array
+    {
+        //
+        $URL = $this->payroll_model->regenerateAuthToken();
+        //
+        return SendResponse(
+            200,
+            [
+                'msg' => 'Successfully send call to refresh token.',
+                'url' => $URL,
+            ]
+        );
+    }
+
+    public function updateGustoOAuthToken () {
+        //
+        // Disable All previous demo code
+        $this->db
+        ->where('is_production', 0)
+        ->update(
+            'gusto_authorization',
+            [
+                'status' => 0
+            ]
+        );
+        //
+        // Update current Authorization request
+        $this->db
+        ->where('state', $_GET['state'])
+        ->update(
+            'gusto_authorization',
+            [
+                'status' => 1,
+                'code' => $_GET['code'],
+                'updated_at' => getSystemDate()
+            ]
+        );
+    }    
+
 }

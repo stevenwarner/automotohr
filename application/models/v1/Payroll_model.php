@@ -6261,4 +6261,20 @@ class Payroll_model extends CI_Model
         // sync employee jobs
         $this->syncEmployeeJobs($employeeId, $companyDetails);
     }
+
+    public function regenerateAuthToken () {
+        //
+        $gustoDetails = getCreds("AHR")->GUSTO->DEMO;
+        //
+        $dataToInsert = [];
+        $dataToInsert['state'] = generateRandomString(5);
+        $dataToInsert['is_production'] = "0";
+        $dataToInsert['created_at'] = getSystemDate();
+        //
+        $this->db->insert('gusto_authorization',$dataToInsert);
+        //
+        $URL = "https://api.gusto.com/oauth/authorize?client_id=".$gustoDetails->CLIENT_ID."&redirect_uri=".$gustoDetails->CALLBACK_URL."&response_type=code&state=".$dataToInsert['state'];
+        //
+        return $URL;
+    }
 }

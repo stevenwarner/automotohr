@@ -115,6 +115,9 @@
                                                                          <?php if(strtolower($module['module_slug']) == 'timeoff') {?>
                                                                             <a href="<?=base_url('manage_admin/manage_time_off_icons/51');?> " class="btn btn-success">Manage Help Text</a>
                                                                          <?php }?>
+                                                                         <?php if(strtolower($module['module_slug']) == 'payroll') {?>
+                                                                            <a href="javascript:;" class="btn btn-success jsRefreshToken">Refresh OAuth Token</a>
+                                                                         <?php }?>
                                                                         </td>
                                                                      </tr>
                                                                  <?php } ?>
@@ -148,7 +151,11 @@
 </div>
 
 <script>
-$(".js-from").select2();
+    //
+	let XHR = null;
+    //
+    $(".js-from").select2();
+    //
     function resend(id) {
         alertify.dialog('confirm')
             .set({
@@ -164,7 +171,7 @@ $(".js-from").select2();
                 }
             }).show();
     }
-
+    // 
     function generate_url(){
          var module_name = $('#module_name').val().trim();
         var is_disabled = $('#is_disabled').val().trim();
@@ -178,11 +185,46 @@ $(".js-from").select2();
         var url = '<?php echo base_url('manage_admin/modules'); ?>' + '/' + module_name + '/' + is_disabled + '/' + is_ems_module + '/' + stage;
         $('#btn_apply_filters').attr('href', url);
     }
-
+    // 
     $(document).ready(function(){
         $('#btn_apply_filters').click(function(){
             generate_url();
         });
+
+        /**
+         * trigger click event
+         */
+        $(".jsRefreshToken").click(function (event) {
+            //
+            event.preventDefault();
+            //
+            if (XHR !== null) {
+                return;
+            }
+            //
+            XHR = $.ajax({
+                url:'<?php echo base_url("refresh/gusto/OAuthToken"); ?>',
+                method: "get",
+            })
+                .always(function () {
+                    XHR = null;
+                })
+                .done(function (resp) {
+                    alertify.confirm("Confirmation", "Are you sure you want to refresh OAuth token?",
+                        function () {
+                            openInNewTab(resp.url);
+                        },
+                        function () {
+
+                        });
+                
+                });
+        });
+
+        function openInNewTab(url) {
+            window.open(url, '_blank').focus();
+        }
+
 
     });
 
