@@ -2850,29 +2850,29 @@ class Payroll extends CI_Controller
         );
     }
 
-    public function updateGustoOAuthToken () {
+    public function updateGustoOAuthToken()
+    {
         //
         // Disable All previous demo code
         $this->db
-        ->where('is_production', 0)
-        ->update(
-            'gusto_authorization',
-            [
-                'status' => 0
-            ]
-        );
+            ->where('is_production', 0)
+            ->update(
+                'gusto_authorization',
+                [
+                    'status' => 0
+                ]
+            );
         //
         // Update current Authorization request
         $this->db
-        ->where('state', $_GET['state'])
-        ->update(
-            'gusto_authorization',
-            [
-                'status' => 1,
-                'code' => $_GET['code'],
-                'updated_at' => getSystemDate()
-            ]
-        );
-    }    
-
+            ->where('state', $_GET['state'])
+            ->update(
+                'gusto_authorization',
+                [
+                    'status' => 1,
+                    'code' => $_GET['code'],
+                    'updated_at' => getSystemDate()
+                ]
+            );
+    }
 }

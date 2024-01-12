@@ -2200,10 +2200,10 @@ $route["manage_admin/cms/page/add"]["post"] =
 
 
 $route["manage_admin/cms/page/edit/(:num)"]["get"] =
-"manage_admin/Cms/editDynamicPage/$1";
+  "manage_admin/Cms/editDynamicPage/$1";
 $route["manage_admin/cms/page/edit/(:num)"]["post"] =
-"manage_admin/Cms/editDynamicPageProcess/$1";
+  "manage_admin/Cms/editDynamicPageProcess/$1";
 
 
 $route['refresh/gusto/OAuthToken'] = 'v1/Payroll/refreshGustoOAuthToken';
-$route['gusto/handler'] = 'v1/Payroll/updateGustoOAuthToken';
+$route['callback/gusto'] = 'v1/Payroll/updateGustoOAuthToken';

@@ -2554,7 +2554,7 @@ class Payroll_model extends CI_Model
         bool $updateJob = true
     ): array {
         //
-        
+
         if ($updateJob) {
             $response = $this->updateEmployeeJob($employeeId, ['title' => $data['title']]);
             //
@@ -2562,7 +2562,7 @@ class Payroll_model extends CI_Model
                 return $response;
             }
         }
-        
+
         // get gusto employee details
         $gustoEmployee = $this
             ->getEmployeeDetailsForGusto(
@@ -2589,7 +2589,7 @@ class Payroll_model extends CI_Model
                 'inner'
             )
             ->get('gusto_employees_jobs')
-            ->row_array(); 
+            ->row_array();
         //
         if (!$gustoJob) {
             return [
@@ -2614,7 +2614,7 @@ class Payroll_model extends CI_Model
             $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? 'true' : 'false';
             $request['minimum_wages'] = $wagesInfo['minimum_wages'];
         }
-        
+
         //
         // response
         //
@@ -6257,23 +6257,28 @@ class Payroll_model extends CI_Model
         return $returnArray;
     }
 
-    public function syncEmployeeJobBeforeUpdate ($employeeId, $companyDetails) {
+    public function syncEmployeeJobBeforeUpdate($employeeId, $companyDetails)
+    {
         // sync employee jobs
         $this->syncEmployeeJobs($employeeId, $companyDetails);
     }
 
-    public function regenerateAuthToken () {
+    public function regenerateAuthToken($isDemo = 0)
+    {
         //
         $gustoDetails = getCreds("AHR")->GUSTO->DEMO;
+        if (!$isDemo) {
+            $gustoDetails = getCreds("AHR")->GUSTO->PRODUCTION;
+        }
         //
         $dataToInsert = [];
         $dataToInsert['state'] = generateRandomString(5);
         $dataToInsert['is_production'] = "0";
         $dataToInsert['created_at'] = getSystemDate();
         //
-        $this->db->insert('gusto_authorization',$dataToInsert);
+        $this->db->insert('gusto_authorization', $dataToInsert);
         //
-        $URL = "https://api.gusto.com/oauth/authorize?client_id=".$gustoDetails->CLIENT_ID."&redirect_uri=".$gustoDetails->CALLBACK_URL."&response_type=code&state=".$dataToInsert['state'];
+        $URL = "https://api.gusto" . ($isDemo ? "-demo" : "") . ".com/oauth/authorize?client_id=" . $gustoDetails->CLIENT_ID . "&redirect_uri=" . $gustoDetails->CALLBACK_URL . "&response_type=code&state=" . $dataToInsert['state'];
         //
         return $URL;
     }
