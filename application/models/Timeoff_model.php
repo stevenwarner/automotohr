@@ -7339,4 +7339,34 @@ class Timeoff_model extends CI_Model
         }
         return $returnArray;
     }
+
+
+
+
+    //
+    function getEmployeeTimeoffRequest($company_sid, $employeeSid, $start_date, $end_date, $filter_policy)
+    {
+        //
+        $this->db->select('timeoff_requests.sid');
+        //
+        $this->db->where('company_sid', $company_sid);
+
+        if ($start_date != '' && $end_date != '') {
+            $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('request_from_date <=', date('Y-m-d', strtotime($end_date)));
+        }
+
+        if (is_array($employeeSid)) {
+            $this->db->where_in('employee_sid', $employeeSid);
+        } else {
+            $this->db->where('employee_sid', $employeeSid);
+        }
+
+        $this->db->where('archive', 0);
+        $this->db->where('is_draft', 0);
+        $records_obj = $this->db->get('timeoff_requests');
+        $records_arr = $records_obj->result_array();
+
+        return $records_arr;
+    }
 }

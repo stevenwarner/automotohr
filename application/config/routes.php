@@ -2203,3 +2203,8 @@ $route["manage_admin/cms/page/edit/(:num)"]["get"] =
 "manage_admin/Cms/editDynamicPage/$1";
 $route["manage_admin/cms/page/edit/(:num)"]["post"] =
 "manage_admin/Cms/editDynamicPageProcess/$1";
+
+//
+$route['timeoff/exporttocsv/(:num)'] = 'Time_off/exportTimeoffToCSV/$1';
+$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/';
+

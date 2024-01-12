@@ -1143,7 +1143,6 @@ class Time_off extends Public_Controller
             $filter_teams = $filter_session['teams'] != 'null' ? explode(',', $filter_session['teams']) : 'all';
 
             $filter_policy = $filter_session['policy'] != 'null' ? explode(',', $filter_session['policy']) : 'all';
-
             $start_date = $_GET['startDate'];
             $end_date  = $_GET['endDate'];
         } else {
@@ -1174,7 +1173,6 @@ class Time_off extends Public_Controller
         $empTimeoff = $this->timeoff_model->getEmployeesWithTimeoffRequestNew($data['company_sid'], 'employees_only', $start_date, $end_date, $filter_policy);
         $timeoffRequests = $this->timeoff_model->getEmployeesWithTimeoffRequestNew($data['company_sid'], 'records_only', $start_date, $end_date, $filter_policy);
         $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid'], $filter_employees, $filter_departments, $filter_teams);
-
         //
         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
         $employee_sid = $data['session']['employer_detail']['sid'];
@@ -6195,7 +6193,7 @@ class Time_off extends Public_Controller
                 //
                 $data = $this->timeoff_model->getDataForExport($post);
 
-                //  print_r($data);
+                // print_r($data);
                 //  die();
 
                 //$data = $this->timeoff_model->getDataForExport($formpost);
@@ -6212,6 +6210,9 @@ class Time_off extends Public_Controller
                 //
             case 'export_by_sids':
                 set_time_limit(120);
+
+                // _e($post['ids'],true,true);
+
 
                 $data = $this->timeoff_model->getTimeOffByIds(
                     $post['companySid'],
@@ -7498,5 +7499,149 @@ class Time_off extends Public_Controller
         $view = $this->load->view('timeoff/policy_history', ['records' => $records], true);
         //  
         return SendResponse(200, ['view' => $view]);
+    }
+
+
+    //
+
+    public function exportTimeoffToCSV($sid = 0)
+    {
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data['session']['company_detail']['sid'];
+
+        $this->check_login($data);
+        //
+        if ($_GET) {
+            $filter_session = $this->session->userdata($_GET['token']);
+            $filter_policy = $filter_session['policy'] != '' ? explode(',', $filter_session['policy']) : 'all';
+            $start_date = $_GET['start'];
+            $end_date  = $_GET['end'];
+        } else {
+            $start_date = date('m/01/Y');
+            $end_date  = date('m/t/Y');
+            $filter_policy = "all";
+        }
+
+        //
+        if (isset($_GET['startDate']) && !isset($_GET['includeStartandEndDate'])) {
+            $start_date = '';
+            $end_date  = '';
+        }
+
+
+        //
+        if ($sid == 0) {
+            $empids = $this->timeoff_model->getEmployeesWithTimeoffRequestNew($company_sid, 'employees_only', $start_date, $end_date, $filter_policy);
+        } else {
+            $empids = $sid;
+        }
+
+        if (!empty($filter_session['employees'])) {
+            $empids = $filter_session['employees'] != 'null' ? explode(',', $filter_session['employees']) : 'all';
+        }
+
+
+        $employeeIds = $this->timeoff_model->getEmployeeTimeoffRequest($company_sid, $empids, $start_date, $end_date, $filter_policy);
+
+        //
+        $requestIds = array_column($employeeIds, 'sid');
+
+        $data = $this->timeoff_model->getTimeOffByIds(
+            $company_sid,
+            $requestIds
+        );
+        //
+
+        $header_row = 'Request Reference,Employee Name,Policy Title,Start Date,End Date,Status,Level,Reason,Partial Leave,Partial Note,Comments,Total Days,Total Minutes,Breakdown,Attachments';
+
+        $file_content = '';
+        $file_content .= $header_row . PHP_EOL;
+        $file_content .= $rows;
+        $file_size = 0;
+
+        if (function_exists('mb_strlen')) {
+            $file_size = mb_strlen($file_content, '8bit');
+        } else {
+            $file_size = strlen($file_content);
+        }
+
+        $rows = '';
+        foreach ($data as $key => $value) {
+            $row = '';
+            $level_at = $value['level_at'] == 1 ? 'Team Lead' : ($timeoff['level_at'] == 2 ? "Supervisor" : "Approver");
+            $is_partial_leave = $value['is_partial_leave'] == 1 ? 'Yes' : 'No';
+
+            //
+            $comments = '';
+            if (count($value['History'])) {
+                foreach ($value['History'] as $b) {
+                    $comments .= "Employee: " . remakeEmployeeName($b) . "\n";
+                    $comments .= "Status: " . $b["status"] . "\n";
+                    $comments .= "Comment: " . $b["comment"] . "\n\n";
+                }
+            }
+
+            //
+            $reason = strip_tags(trim($value['reason']));
+            //
+            $totlaDays = str_replace(',', ' - ', $value['timeoff_breakdown']['text']);
+            $totlaMinutes = $value['timeoff_breakdown']['M']['minutes'];
+
+            $breakdown = json_decode($value['timeoff_days'], true);
+            //
+            $timeoffBrakdown = '';
+            if (count($breakdown)) {
+                foreach ($breakdown as $b) {
+                    $timeoffBrakdown .= "\"" . "Day Type: " . (!isset($b["partial"]) ? 'fullday' : $b['partial']) . " | Date: " . trim($b['date']) . " | Minutes: " . trim($b['time']) . "\n\n" . "\"";
+                }
+            }
+
+            // Attachments
+            $attachments = '';
+            if (count($value['Attachments'])) {
+                $attachments = implode("\n", array_column($value['Attachments'], 's3_filename'));
+                // Check and set attachment path
+                $aPath = $path . 'attachments/' . $value['requestId'];
+                //
+                if (!is_dir($aPath)) mkdir($aPath, 0777, true);
+                //
+                foreach ($value['Attachments'] as $b) {
+                    if (empty($b['s3_filename'])) continue;
+                    $fp = fopen($aPath . '/' . $b['s3_filename'], 'w+');
+                    //Here is the file we are downloading, replace spaces with %20
+                    $ch = curl_init(str_replace(" ", "%20", AWS_S3_BUCKET_URL . $b['s3_filename']));
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 50);
+                    // write curl response to file
+                    curl_setopt($ch, CURLOPT_FILE, $fp);
+                    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                    // get curl response
+                    curl_exec($ch);
+                    curl_close($ch);
+                    fclose($fp);
+                    //
+                    usleep(250);
+                }
+            }
+
+            $row .= $value['requestId'] . ',' . remakeEmployeeName($value, true) . ',' . $value['policy_title'] . ',' . $value['requested_date'] . ',' . $value['request_to_date'] . ',' . $value['status'] . ',' . $level_at . ',' . $reason . ','
+                . $is_partial_leave . ',' . $value['partial_leave_note'] . ',' . $comments . ','
+                . $totlaDays . ',' . $totlaMinutes . ','
+                . $timeoffBrakdown . ',' . $attachments . ',';
+            substr($row, 0, -1);
+            $rows .= $row . PHP_EOL;
+        }
+
+        header('Pragma: public');     // required
+        header('Expires: 0');         // no cache
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+        header('Content-Disposition: attachment; filename="employees_time_off' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . $file_size); // provide file size
+        header('Connection: close');
+        echo $companyHeader . PHP_EOL . PHP_EOL;
+        echo $header_row . PHP_EOL;
+        echo $rows;
     }
 }
