@@ -218,12 +218,15 @@ $(function timeSheet() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
+				
 				$("#jsTimeSheetHistoryModalBody").html(resp.view);
 
-				if (resp.locations.length) {
-					resp.locations.forEach((element) => {
-						makeLocationMap(element.target, element);
-					});
+				if (resp.locations != undefined)  {
+					if (resp.locations.length > 0)  {
+						resp.locations.forEach((element) => {
+							makeLocationMap(element.target, element);
+						});
+					}	
 				}
 
 				ml(false, "jsTimeSheetHistoryModalLoader");
