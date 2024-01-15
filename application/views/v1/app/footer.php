@@ -75,6 +75,9 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 section-space-adj">
                 <p class="footer-text-three">
+                    <a href="<?php echo base_url(); ?>"> Home</a>
+                </p>
+                <p class="footer-text-three">
                     <a href="#"> Solutions</a>
                 </p>
 
