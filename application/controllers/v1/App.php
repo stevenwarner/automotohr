@@ -186,11 +186,12 @@ class App extends CI_Controller
                 $title = array_column($tag['cards'], 'title');
                 //
                 array_multisort($title, SORT_ASC, $tag['cards']);
-                $pageContent["page"]["sections"]["section0"]["tags"][$index] =  $tag['cards'];
+                $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards'] =  $tag['cards'];
             }
         }
         // 
         $data['pageContent'] = $pageContent;  
+        _e($pageContent,true,true);
         //
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/legal');
