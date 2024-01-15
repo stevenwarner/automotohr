@@ -190,8 +190,7 @@ class App extends CI_Controller
             }
         }
         // 
-        $data['pageContent'] = $pageContent;  
-        _e($pageContent,true,true);
+        $data['pageContent'] = $pageContent; 
         //
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/legal');
