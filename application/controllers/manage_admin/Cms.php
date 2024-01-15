@@ -1486,14 +1486,18 @@ class Cms extends Admin_Controller
             // update the page
             $this->cms_model->updatePageStatus($post["status"], $pageId);
         } else {
+            $pageContent = [];
             // get the page record
-            $pageContent = json_decode(
-                $this->cms_model
+            $content = $this->cms_model
                     ->get_page_data(
                         $pageId
-                    )["content"],
-                true
-            );
+                    )["content"];
+            //        
+            if ($content != 0) {
+                //
+                $pageContent = json_decode($content,true);
+            }        
+            
 
             if ($post["source_type"]) {
                 //
