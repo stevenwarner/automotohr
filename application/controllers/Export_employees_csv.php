@@ -149,7 +149,12 @@ class Export_employees_csv extends Public_Controller
                                 if ($employee['active'] == 1) {
                                     $export_data[$i]['status'] = 'Active Employee';
                                 } else {
-                                    $export_data[$i]['status'] = 'Archived Employee';
+                                    if ($employee['terminated_status'] == 1) {
+                                        $export_data[$i]['status'] = 'Terminated';
+                                    } else {
+                                        $export_data[$i]['status'] = 'Archived Employee';
+                                    }
+                                    
                                 }
 
                                 //
@@ -171,9 +176,43 @@ class Export_employees_csv extends Public_Controller
                                                         if ($reason == 1) {
                                                             $terminated_reason = 'Resignation';
                                                         } else if ($reason == 2) {
-                                                            $terminated_reason = 'Tenure Completed';
-                                                        } else if ($reason == 3) {
                                                             $terminated_reason = 'Fired';
+                                                        } else if ($reason == 3) {
+                                                            $terminated_reason = 'Tenure Completed';
+                                                        } else if ($reason == 4) {
+                                                            $terminated_reason = 'Personal';
+                                                        } else if ($reason == 5) {
+                                                            $terminated_reason = 'Another Job';
+                                                        } else if ($reason == 6) {
+                                                            $terminated_reason = 'Problem with Supervisor';
+                                                        } else if ($reason == 7) {
+                                                            $terminated_reason = 'Relocation';
+                                                        } else if ($reason == 8) {
+                                                            $terminated_reason = 'Work Schedule';
+                                                        } else if ($reason == 9) {
+                                                            $terminated_reason = 'Retirement';
+                                                        } else if ($reason == 10) {
+                                                            $terminated_reason = 'Return to School';
+                                                        } else if ($reason == 11) {
+                                                            $terminated_reason = 'Pay';
+                                                        } else if ($reason == 12) {
+                                                            $terminated_reason = 'Without Notice/Reason';
+                                                        } else if ($reason == 13) {
+                                                            $terminated_reason = 'Involuntary';
+                                                        } else if ($reason == 14) {
+                                                            $terminated_reason = 'Violating Company Policy';
+                                                        } else if ($reason == 15) {
+                                                            $terminated_reason = 'Attendance Issues';
+                                                        } else if ($reason == 16) {
+                                                            $terminated_reason = 'Performance';
+                                                        } else if ($reason == 17) {
+                                                            $terminated_reason = 'Workforce Reduction';
+                                                        } else if ($reason == 18) {
+                                                            $terminated_reason = 'Store Closure';
+                                                        } else if ($reason == 19) {
+                                                            $terminated_reason = 'Did Not Hire';
+                                                        } else if ($reason == 20) {
+                                                            $terminated_reason = 'Separation';
                                                         }
                                                         //
                                                         $export_data[$i][$value] = $terminated_reason;
