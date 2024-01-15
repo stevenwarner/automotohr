@@ -24,7 +24,7 @@
 
                         <div class="col-xxl-6 col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <p class="subtitle_text text-lg-start text-center">
-                                <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('get-your-free-account'); ?>">Get Your Account </a><br />
+                                <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('schedule-your-no-obligation-consultation'); ?>">Get Your Account </a><br />
                                 <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('affiliate-program'); ?>">Join Our Affiliate Program </a><br />
                                 <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('affiliate_portal/login'); ?>"> Affiliate Log In </a>
                             </p>
@@ -53,7 +53,7 @@
                                 <li><a href="<?php echo base_url('login') ?>"> Login </a></li>
                                 <li><a href="<?php echo base_url('forgot-password') ?>"> Forgot Password </a></li>
                                 <li><a href="<?php echo base_url('executive_admin'); ?>"> Executive Admin Login</a></li>
-                                <li><a href="<?php echo base_url('get-your-free-account'); ?>"> Get Your Account</a></li>
+                                <li><a href="<?php echo base_url('schedule-your-no-obligation-consultation'); ?>"> Get Your Account</a></li>
                             </ul>
                             <h3 class="subtitle_text text-lg-start text-center">
                                 <a class="subtitle_text dark-li PL-zero text-lg-start text-center" href="<?php echo base_url('privacy-policy'); ?>"> Privacy Policy
