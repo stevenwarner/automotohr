@@ -25,7 +25,7 @@
 
         <nav class="navbar navbar-expand-xl navbar-light nav-bar-margin">
             <div class="container-fluid">
-                <a class="navbar-brand" href="<?= main_url("/"); ?>">
+                <a class="navbar-brand" href="<?= main_url(""); ?>">
                     <?= getSourceByType(
                         $pageHeader["section_0"]["sourceType"],
                         $pageHeader["section_0"]["sourceFile"],
@@ -40,7 +40,7 @@
                 <div class="collapse navbar-collapse" id="navbarScroll">
                     <ul class="navbar-nav mx-auto<?= $limited_menu ? '-right' : ''; ?> my-2 my-lg-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="<?= main_url($pageHeader["section_1"]["menu1Link"]); ?>"><?= $pageHeader["section_1"]["menu1Text"] ?></a>
+                            <a class="nav-link" aria-current="page" href="<?= main_url(""); ?>"><?= $pageHeader["section_1"]["menu1Text"] ?></a>
                         </li>
                         <?php if (!$limited_menu) { ?>
                             <li class="nav-item dropdown">
