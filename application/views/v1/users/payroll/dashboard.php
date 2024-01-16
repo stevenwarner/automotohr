@@ -113,7 +113,7 @@
                                                 <span class="text-small">Hire date</span>
                                                 <br />
                                                 <strong>
-                                                    <?php echo $jobWageData['hireDate']; ?>
+                                                    <?php echo formatDateToDB($jobWageData['hireDate'], DB_DATE, DATE); ?>
                                                 </strong>
                                             </p>
                                             <p class="text-medium">
