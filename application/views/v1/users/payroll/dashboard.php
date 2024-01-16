@@ -46,6 +46,7 @@
                                                 <br />
                                                 <strong><?= GetVal($paySchedule["frequency"]); ?></strong>
                                             </p>
+                                            <?php if(in_array($paySchedule["frequency"], ["monthly"])) {?>
                                             <?php if ($paySchedule["day_1"] && $paySchedule["day_2"]) { ?>
                                                 <p class="text-medium">
                                                     <span class="text-small">First day of payment</span>
@@ -58,6 +59,7 @@
                                                     <strong>"<?= GetVal($paySchedule["day_2"]); ?>" of the month</strong>
                                                 </p>
                                             <?php } ?>
+                                            <?php }?>
                                             <p class="text-medium">
                                                 <span class="text-small">Pay period start date</span>
                                                 <br />
