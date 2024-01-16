@@ -1489,15 +1489,15 @@ class Cms extends Admin_Controller
             $pageContent = [];
             // get the page record
             $content = $this->cms_model
-                    ->get_page_data(
-                        $pageId
-                    )["content"];
-            //        
+                ->get_page_data(
+                    $pageId
+                )["content"];
+            //
             if ($content != 0) {
                 //
-                $pageContent = json_decode($content,true);
-            }        
-            
+                $pageContent = json_decode($content, true);
+            }
+
 
             if ($post["source_type"]) {
                 //
@@ -1533,6 +1533,8 @@ class Cms extends Admin_Controller
                 $post["sourceType"] = $post["source_type"];
             }
 
+            //
+            $post["details"] = $this->input->post("details", false);
             // update the section
             $pageContent[$post["section"]] = $post;
             //
