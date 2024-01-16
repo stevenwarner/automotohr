@@ -35,8 +35,8 @@
                 &nbsp;<strong class="text-danger">*</strong>
             </label>
             <select name="rate_type" class="form-control">
-                <option value="Flat Rate">Flat Rate</option>
-                <option value="Hourly Rate">Hourly Rate</option>
+                <option  <?= $earning["rate_type"] && $earning["rate_type"] == "Flat Rate" ? "selected" : ""; ?> value="Flat Rate">Flat Rate</option>
+                <option  <?= $earning["rate_type"] && $earning["rate_type"] == "Hourly Rate" ? "selected" : ""; ?> value="Hourly Rate">Hourly Rate</option>
             </select>
         </div>
         <!--  -->
