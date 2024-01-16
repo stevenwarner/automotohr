@@ -43,7 +43,7 @@ $(function timeSheet() {
                     <option value="clocked_in_out">
                         Clock in/out
                     </option>
-                    <option value="clocked_in_out">
+                    <option value="break_in_out">
                         Break start/end
                     </option>
                 </select>

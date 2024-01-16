@@ -61,11 +61,6 @@ class Attendance extends Public_Controller
         $this->commonFiles = ["css" => [], "js" => []];
         //
         $this->sidebarPath = "v1/attendance/sidebar";
-        //
-        // $this->api_auth->checkAndLogin(
-        //     $this->loggedInEmployee["sid"],
-        //     $this->loggedInCompany["sid"]
-        // );
     }
 
     /**
