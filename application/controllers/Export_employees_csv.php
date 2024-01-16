@@ -152,7 +152,8 @@ class Export_employees_csv extends Public_Controller
                                     if ($employee['terminated_status'] == 1) {
                                         $export_data[$i]['status'] = 'Terminated';
                                     } else {
-                                        $export_data[$i]['status'] = 'Archived Employee';
+                                        $employeeStatus = $this->export_csv_model->get_employee_last_status_info($employee['sid']);
+                                        $export_data[$i]['status'] = $employeeStatus;
                                     }
                                     
                                 }
@@ -281,7 +282,13 @@ class Export_employees_csv extends Public_Controller
                                 //$export_data[$i]['access_level'] =  $employee['access_level'];
                                 // good to go
                                 $row = '';
+                                
                                 foreach ($export_data[$i] as $key => $value) {
+                                    //
+                                    if (DateTime::createFromFormat('Y-m-d', $value) !== false) {
+                                        $value = formatDateToDB($value, DB_DATE, SITE_DATE);
+                                    }
+                                    //
                                     $row .= $value . ',';
                                     substr($row, 0, -1);
                                 }
@@ -297,12 +304,28 @@ class Export_employees_csv extends Public_Controller
                             <?php if (!empty($session['company_detail']['CompanyName'])) { ?>
                                 <?php echo $session['company_detail']['CompanyName']; ?><br>
                             <?php } ?>
-*/
+                                */
                             $companyHeader = '';
                             if (!empty($data['session']['company_detail']['CompanyName'])) {
                                 $companyHeader = ',,,,' . $data['session']['company_detail']['CompanyName'];
                             }
 
+                            //
+                            if (count($header) > 0) {
+                                foreach ($header as $key => $item) {
+                                    if ($item == "dob") {
+                                        $header[$key] = "Date of Birth";
+                                    } else if ($item == "ssn") {
+                                        $header[$key] = "SSN";
+                                    } else if ($item == "eeoc_code") {  
+                                        $header[$key] = "EEOC Code";
+                                    } else {
+                                        $header[$key] = ucwords(str_replace("_"," ",$item));
+                                    }
+                                    
+                                }
+                            }
+                            //
                             $header_row = 'First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Access Level,Job Title,Status' . (count($header) ? ',' . implode(',', $header) : '');
 
                             $file_content = '';
