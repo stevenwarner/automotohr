@@ -14,7 +14,7 @@ class Payroll_model extends CI_Model
         parent::__construct();
         //
         $REQUEST_URI = $_SERVER['REQUEST_URI'];
-        //
+        // for super admin as the library would already be loaded
         if (str_replace('sa/payrolls', '', $_SERVER['REQUEST_URI']) == $_SERVER['REQUEST_URI']) {
             $companyId = checkAndGetSession("company", true)["sid"];
             if ($companyId) {
@@ -4291,6 +4291,7 @@ class Payroll_model extends CI_Model
                 sid,
                 name,
                 is_default,
+                fields_json,
                 created_at
             ')
             ->where('company_sid', $companyId)
