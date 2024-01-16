@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="panel-footer text-center">
-                <button class="btn btn-orange jsPagePayScheduleBtn">
+                <button class="btn btn-orange jsPagePayScheduleBtn2">
                     <i class="fa fa-edit" aria-hidden="true"></i>
                     Update
                 </button>
