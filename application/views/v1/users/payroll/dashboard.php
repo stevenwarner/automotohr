@@ -94,16 +94,16 @@
                                                 <span class="text-small">Employment type</span>
                                                 <br />
                                                 <strong>
-                                                    <?php 
-                                                        if ($jobWageData['employmentType'] == 'fulltime') {
-                                                            echo "Full Time";
-                                                        } else if ($jobWageData['employmentType'] == 'parttime') {
-                                                            echo "Part Time";
-                                                        } else if ($jobWageData['employmentType'] == 'contractual') {
-                                                            echo "Contractual";
-                                                        } else {
-                                                            echo "N/A";
-                                                        }
+                                                    <?php
+                                                    if ($jobWageData['employmentType'] == 'fulltime') {
+                                                        echo "Full Time";
+                                                    } else if ($jobWageData['employmentType'] == 'parttime') {
+                                                        echo "Part Time";
+                                                    } else if ($jobWageData['employmentType'] == 'contractual') {
+                                                        echo "Contractual";
+                                                    } else {
+                                                        echo "N/A";
+                                                    }
                                                     ?>
                                                 </strong>
                                             </p>
@@ -328,7 +328,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    </div>        
+                                    </div>
                                 </div>
                             </div>
                         </div>
