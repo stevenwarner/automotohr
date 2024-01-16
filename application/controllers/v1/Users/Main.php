@@ -74,7 +74,7 @@ class Main extends Public_Controller
         $this->loggedInEmployee = $this->appSession["employer_detail"];
         $this->loggedInCompany = $this->appSession["company_detail"];
         //
-        $this->disableCreationOfMinifyFiles = false;
+        $this->disableCreationOfMinifyFiles = true;
         //
         $this->css = "public/v1/css/users/";
         $this->js = "public/v1/js/users/";
@@ -135,13 +135,17 @@ class Main extends Public_Controller
             main_url("public/v1/plugins/ms_modal/main.min.js?v=3.0"),
             main_url("public/v1/plugins/select2/select2.min.js?v=3.0"),
             main_url("public/v1/plugins/daterangepicker/daterangepicker.min.js?v=3.0"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
         ];
         $this->data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
             // high charts
             main_url("public/v1/plugins/ms_modal/main.min.css?v=3.0"),
             main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
             main_url("public/v1/plugins/daterangepicker/css/daterangepicker.min.css?v=3.0"),
         ];
+
         // set js
         $this->setCommon("v1/users/payroll/js/payroll_dashboard", "js");
         $this->setCommon("v1/attendance/js/timesheet", "js");
@@ -154,12 +158,12 @@ class Main extends Public_Controller
                 true
             );
         //    
-        $this->data["jobWageData"] = $this->main_model    
+        $this->data["jobWageData"] = $this->main_model
             ->getUserJobWageData(
                 $userId,
                 $userType,
                 $companyId
-            );  
+            );
         //
         $year = getSystemDate("Y");
         $month = getSystemDate("m");
@@ -167,8 +171,8 @@ class Main extends Public_Controller
         $startDate = $year . "-" . $month . "-01";
         $endDate = getSystemDate($year . "-" . $month . "-t");
         //
-        $this->data["startDate"] = $startDate; 
-        $this->data["endDate"] =  $endDate; 
+        $this->data["startDate"] = $startDate;
+        $this->data["endDate"] =  $endDate;
         //
         // load clock_model model
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
@@ -187,7 +191,7 @@ class Main extends Public_Controller
                 $userId,
                 $startDate,
                 $endDate
-            );   
+            );
         // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
@@ -266,7 +270,8 @@ class Main extends Public_Controller
         );
     }
 
-    public function updateEmployeeJobCompensation ($userId, $userType) {
+    public function updateEmployeeJobCompensation($userId, $userType)
+    {
         // check and generate error for session
         $session = checkAndGetSession();
         // set the sanitized post
@@ -297,7 +302,7 @@ class Main extends Public_Controller
                     if ($jobInfo['hire_date'] != $newHireDate) {
                         $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
                         //
-                        $updateJobData = []; 
+                        $updateJobData = [];
                         $updateJobData['start_date'] = $newHireDate;
                         //
                         $jobResponse = $this->payroll_model->updateEmployeeJob($userId, $updateJobData);
@@ -320,7 +325,7 @@ class Main extends Public_Controller
                             [
                                 'errors' => $compensationResponse['errors']
                             ]
-                            
+
                         );
                     }
                     // Update Employee Guarantee;
