@@ -182,7 +182,7 @@
                                         $totalOvertime += $attendance["overtime"];
                                     }
                                 ?>
-                                    <tr data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
+                                    <tr class="<?= $v0["date"] === getSystemDate("Y-m-d") ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
                                         <td class="csVerticalAlignMiddle mh-100">
                                             <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
                                         </td>

@@ -90,7 +90,7 @@ $timeSheetName = "";
     </div>
 </div>
 
- <?php if ($employees) { ?>
+<?php if ($employees) { ?>
 
     <!-- data -->
     <div class="panel panel-default">
@@ -170,7 +170,7 @@ $timeSheetName = "";
                                 $totalOvertime += $attendance["overtime"];
                             }
                         ?>
-                            <tr data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
+                            <tr class="<?= $v0["date"] === getSystemDate("Y-m-d") ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
                                 <td class="csVerticalAlignMiddle mh-100">
                                     <label class="control control--checkbox">
                                         <input type="checkbox" name="individualSelect" class="<?= $attendance ? "jsSingleSelect" : ""; ?> " <?= $attendance ? 'value="' . $attendance["sid"] . '"' : "disabled"; ?> />
