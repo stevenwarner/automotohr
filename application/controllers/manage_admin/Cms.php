@@ -1493,50 +1493,56 @@ class Cms extends Admin_Controller
                     $pageId
                 )["content"];
             //
-            if ($content != 0) {
-                //
-                $pageContent = json_decode($content, true);
-            }
+            $pageContent = $content != "0" ? json_decode($content, true) : [];
 
+            if ($post["section"] === "meta") {
+                // update the page
+                $pageContent["meta"]["title"] = $post["title"];
+                $pageContent["meta"]["description"] = $post["description"];
+                $pageContent["meta"]["keywords"] = $post["keywords"];
 
-            if ($post["source_type"]) {
-                //
-                $fileLink = $post["source_link"];
-                //
-                if (
-                    $post["source_type"] === "upload"
-                ) {
+            } else {
+                if ($post["source_type"]) {
+                    //
+                    $fileLink = $post["source_link"];
                     //
                     if (
-                        !$_FILES['file'] && $post['source_link']
+                        $post["source_type"] === "upload"
                     ) {
-                        $fileLink = $post["source_link"];
-                    } else {
-                        // check and run for image
-                        $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
                         //
-                        if ($errors) {
-                            return SendResponse(
-                                400,
-                                ["errors" => $errors]
+                        if (
+                            !$_FILES['file'] && $post['source_link']
+                        ) {
+                            $fileLink = $post["source_link"];
+                        } else {
+                            // check and run for image
+                            $errors = hasFileErrors($_FILES, "file", 'image|video', 20);
+                            //
+                            if ($errors) {
+                                return SendResponse(
+                                    400,
+                                    ["errors" => $errors]
+                                );
+                            }
+                            $fileLink = upload_file_to_aws(
+                                "file",
+                                0,
+                                "product_page_",
                             );
                         }
-                        $fileLink = upload_file_to_aws(
-                            "file",
-                            0,
-                            "product_page_",
-                        );
                     }
+                    //
+                    $post["sourceFile"] = $fileLink;
+                    $post["sourceType"] = $post["source_type"];
                 }
+    
                 //
-                $post["sourceFile"] = $fileLink;
-                $post["sourceType"] = $post["source_type"];
+                $post["details"] = $this->input->post("details", false);
+                // update the section
+                $pageContent[$post["section"]] = $post;
             }
 
-            //
-            $post["details"] = $this->input->post("details", false);
-            // update the section
-            $pageContent[$post["section"]] = $post;
+
             //
             $this->cms_model->updatePage(
                 $pageId,
