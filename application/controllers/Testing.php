@@ -43,4 +43,15 @@ class Testing extends CI_Controller
         //
         $this->copy_model->copyCompanyEarningTypes(56885, 21);
     }
+
+    /**
+     * 
+     */
+    public function calculateWages()
+    {
+        // load payroll model
+        $this->load->model("v1/Payroll/Wage_model", "wage_model");
+        //
+        $this->wage_model->calculateEmployeeWage(48, "2024-01-01", "2024-01-31");
+    }
 }
