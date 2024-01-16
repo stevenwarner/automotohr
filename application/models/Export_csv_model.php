@@ -598,6 +598,44 @@ class Export_csv_model extends CI_Model
         }
     }
 
+    function get_employee_last_status_info($employee_sid)
+    {
+        $this->db->select('employee_status');
+        $this->db->where('employee_sid ', $employee_sid);
+        $this->db->order_by('sid', 'DESC');
+        $record_obj = $this->db->get('terminated_employees');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $employee_status = "Archived Employee";
+            //
+            if ($record_arr['employee_status'] == 1) {
+                $employee_status = 'Terminated';
+            } else if ($record_arr['employee_status'] == 2) {
+                $employee_status = 'Retired';
+            } else if ($record_arr['employee_status'] == 3) {
+                $employee_status = 'Deceased';
+            } else if ($record_arr['employee_status'] == 4) {
+                $employee_status = 'Suspended';
+            } else if ($record_arr['employee_status'] == 5) {
+                $employee_status = 'Active';
+            } else if ($record_arr['employee_status'] == 6) {
+                $employee_status = 'Inactive';
+            } else if ($record_arr['employee_status'] == 7) {
+                $employee_status = 'Leave';
+            } else if ($record_arr['employee_status'] == 8) {
+                $employee_status = 'Rehired';
+            } else if ($record_arr['employee_status'] == 9) {
+                $employee_status = 'Transferred';
+            } 
+            //
+            return $employee_status;
+        } else {
+            return 'Archived Employee';
+        }
+    }
+
 
     function save_employee_csv_report_settings($data_to_insert)
     {
