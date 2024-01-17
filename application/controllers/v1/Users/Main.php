@@ -191,7 +191,7 @@ class Main extends Public_Controller
                 $userId,
                 $startDate,
                 $endDate
-            );
+            );  
         // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");

@@ -391,6 +391,7 @@ class Main_model extends CI_Model
                 rate,
                 title,
                 current_compensation_uuid,
+                earning_types,
             ")
             ->where("employee_sid", $userId)
             ->where("is_primary", 1)
@@ -424,7 +425,8 @@ class Main_model extends CI_Model
             "overtimeRule" => "N/A",
             "hireDate" => "",
             "rate" => "",
-            "paymentUnit" => ""
+            "paymentUnit" => "",
+            "earnings" => [],
         ];
         //
         if ($record["overtime_rule"] > 0) {
@@ -455,7 +457,9 @@ class Main_model extends CI_Model
         $returnArray["paymentUnit"] = $gustoProfileData["payment_unit"] ?? "Hours";
         // set rate
         $returnArray["rate"] = $gustoProfileData["rate"] ?? 0;
-
+        // set earning types
+        $returnArray["earnings"] = $gustoProfileData["earning_types"] ? unserialize($gustoProfileData["earning_types"]) : [];
+        //
         return $returnArray;
     }
 
@@ -656,6 +660,4 @@ class Main_model extends CI_Model
         ->where('employee_sid', $employeeId)
         ->update('gusto_employees_jobs', $dataToUpdate);
     }
-    
-
 }
