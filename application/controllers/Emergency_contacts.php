@@ -1,15 +1,17 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Emergency_contacts extends Public_Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('emergency_contacts_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->library('pagination');
     }
 
-    public function index($type = NULL, $sid = NULL, $jobs_listing = NULL) {
+    public function index($type = NULL, $sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -23,13 +25,13 @@ class Emergency_contacts extends Public_Controller
             if ($sid == NULL && $type == NULL) {
                 $employer_id                                                    = $employer_details['sid'];
                 $parent_sid                                                     = $company_id;
-                
+
                 if ($company_id != $parent_sid) {
                     $this->session->set_flashdata('message', '<b>Error:</b> Employee Not Found!'); // Employee Exists In Db But Not In Same Company
                     $url = base_url('employee_management');
                     redirect($url, 'refresh');
                 }
-                
+
                 $left_navigation                                                = 'manage_employer/employee_management/profile_right_menu_personal';
                 $data['title']                                                  = 'Emergency Contacts';
                 $reload_location                                                = 'emergency_contacts';
@@ -45,17 +47,17 @@ class Emergency_contacts extends Public_Controller
                 $data                                                           = employee_right_nav($sid, $data);
                 $employer_id                                                    = $sid;
                 $parent_sid                                                     = $company_id;
-                
+
                 if ($company_id != $parent_sid) {
                     $this->session->set_flashdata('message', '<b>Error:</b> Employee Not Found!'); // Employee Exists In Db But Not In Same Company
                     $url = base_url('employee_management');
                     redirect($url, 'refresh');
                 }
-                
+
                 $left_navigation                                                = 'manage_employer/employee_management/profile_right_menu_employee_new';
                 $data['title']                                                  = 'Employee / Team Members Emergency Contacts';
                 $reload_location                                                = 'emergency_contacts/employee/' . $sid;
-//                $data['employer']                                               = $employer_details;
+                //                $data['employer']                                               = $employer_details;
                 $data['employer']                                               = $this->emergency_contacts_model->get_company_detail($employer_id);;
                 $data['emp_app_sid']                                            = $sid;
                 $data['return_title_heading']                                   = 'Employee Profile';
@@ -70,12 +72,12 @@ class Emergency_contacts extends Public_Controller
                 $reload_location                                                = 'emergency_contacts/applicant/' . $sid . '/' . $jobs_listing;
                 $data['return_title_heading']                                   = 'Applicant Profile';
                 $data['return_title_heading_link']                              = base_url() . 'applicant_profile/' . $sid . '/' . $jobs_listing;
-//                $data['company_background_check']                               = checkCompanyAccurateCheck($company_id);
-//                $data['kpa_onboarding_check']                                   = checkCompanyKpaOnboardingCheck($company_id); //Outsourced HR Compliance and Onboarding check
+                //                $data['company_background_check']                               = checkCompanyAccurateCheck($company_id);
+                //                $data['kpa_onboarding_check']                                   = checkCompanyKpaOnboardingCheck($company_id); //Outsourced HR Compliance and Onboarding check
                 $applicant_info                                                 = $this->emergency_contacts_model->get_applicants_details($sid);
                 $parent_sid                                                     = $applicant_info['company_sid'];
                 $data['emp_app_sid']                                            = $sid;
-                
+
                 if ($parent_sid > 0) {
                     if ($company_id != $parent_sid) {
                         $this->session->set_flashdata('message', '<b>Error:</b> Applicant Not Found!'); // Applicant Exist In Db But Not in Same Company.
@@ -87,19 +89,21 @@ class Emergency_contacts extends Public_Controller
                     $url = base_url('application_tracking_system/active/all/all/all/all');
                     redirect($url, 'refresh');
                 }
-                
-                $data_employer = array( 'sid'                                   => $applicant_info['sid'],
-                                        'first_name'                            => $applicant_info['first_name'],
-                                        'last_name'                             => $applicant_info['last_name'],
-                                        'email'                                 => $applicant_info['email'],
-                                        'Location_Address'                      => $applicant_info['address'],
-                                        'Location_City'                         => $applicant_info['city'],
-                                        'Location_Country'                      => $applicant_info['country'],
-                                        'Location_State'                        => $applicant_info['state'],
-                                        'Location_ZipCode'                      => $applicant_info['zipcode'],
-                                        'PhoneNumber'                           => $applicant_info['phone_number'],
-                                        'profile_picture'                       => $applicant_info['pictures'],
-                                        'user_type'                             => ucwords($type));
+
+                $data_employer = array(
+                    'sid'                                   => $applicant_info['sid'],
+                    'first_name'                            => $applicant_info['first_name'],
+                    'last_name'                             => $applicant_info['last_name'],
+                    'email'                                 => $applicant_info['email'],
+                    'Location_Address'                      => $applicant_info['address'],
+                    'Location_City'                         => $applicant_info['city'],
+                    'Location_Country'                      => $applicant_info['country'],
+                    'Location_State'                        => $applicant_info['state'],
+                    'Location_ZipCode'                      => $applicant_info['zipcode'],
+                    'PhoneNumber'                           => $applicant_info['phone_number'],
+                    'profile_picture'                       => $applicant_info['pictures'],
+                    'user_type'                             => ucwords($type)
+                );
 
                 $data['applicant_notes']                                        = $this->emergency_contacts_model->getApplicantNotes($sid); //Getting Notes
                 $data['applicant_average_rating']                               = $this->emergency_contacts_model->getApplicantAverageRating($sid, 'applicant'); //getting average rating of applicant
@@ -132,7 +136,7 @@ class Emergency_contacts extends Public_Controller
             foreach ($data_countries as $value) {
                 $data_states[$value['sid']]                                     = db_get_active_states($value['sid']);
             }
-            
+
             $url = '';
             $data_states_encode                                                 = htmlentities(json_encode($data_states));
             $data['active_countries']                                           = $data_countries;
@@ -144,13 +148,13 @@ class Emergency_contacts extends Public_Controller
             $data['company_sid']                                                = $company_id;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
             $data['job_list_sid']                                               = $jobs_listing;
-            
+
             if ($this->form_validation->run() === FALSE) {
 
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
@@ -163,13 +167,14 @@ class Emergency_contacts extends Public_Controller
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/emergency_contacts');
                 $this->load->view('main/footer');
-            } 
+            }
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function edit_emergency_contacts($sid = NULL, $type = NULL, $user_sid = NULL, $jobs_listing = NULL) {
+    public function edit_emergency_contacts($sid = NULL, $type = NULL, $user_sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $company_id                                                         = $data['session']['company_detail']['sid'];
@@ -179,10 +184,10 @@ class Emergency_contacts extends Public_Controller
             $employer_details                                                   = $data['session']['employer_detail'];
             $data['type']                                                       = $type;
             $data['user_sid']                                                   = $user_sid;
-            
+
             if ($sid == NULL) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Emergency contact not found!');
-                
+
                 if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 } else {
@@ -190,7 +195,7 @@ class Emergency_contacts extends Public_Controller
                 }
             }
             $emergency_contacts                                                 = $this->emergency_contacts_model->emergency_contacts_details($sid);
-            
+
             if (!empty($emergency_contacts)) {
                 $emergency_contacts_details = $emergency_contacts[0];
             } else { // emergency contact does not exists.
@@ -200,11 +205,11 @@ class Emergency_contacts extends Public_Controller
                     redirect(base_url('dashboard'), 'refresh');
                 }
             }
-            
+
             $users_sid                                                          = $emergency_contacts_details['users_sid']; // this is the SID of employee or applicant who has added the emergency contact./
             $type                                                               = $emergency_contacts_details['users_type'];
-            
-            if($users_sid == $employer_id) {// employee is editing his own emergency contact. it is allowed. 
+
+            if ($users_sid == $employer_id) { // employee is editing his own emergency contact. it is allowed. 
                 $full_access                                                    = true;
                 $data                                                           = employee_right_nav($sid, $data);
                 $security_sid                                                   = $employer_id;
@@ -220,19 +225,19 @@ class Emergency_contacts extends Public_Controller
                 $load_view                                                      = check_blue_panel_status(false, 'self');
                 $data['employee']                                               = $employer_details;
             } else {
-                if($type == 'employee') {
+                if ($type == 'employee') {
                     $parent_sid = getEmployeeUserParent_sid($employer_id);
-                    
+
                     if ($company_id != $parent_sid) {
                         $this->session->set_flashdata('message', '<b>Error:</b> Emergency contact not found!');
-                
+
                         if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
                             header('Location: ' . $_SERVER['HTTP_REFERER']);
                         } else {
                             redirect(base_url('employee_management'), 'refresh');
                         }
                     }
-                    
+
                     $data                                                       = employee_right_nav($user_sid, $data);
                     $security_sid                                               = $employer_id;
                     $security_details                                           = db_get_access_level_details($security_sid);
@@ -247,8 +252,8 @@ class Emergency_contacts extends Public_Controller
                     $load_view                                                  = check_blue_panel_status(false, $type);
                     $data['employer']                                           = $this->emergency_contacts_model->get_company_detail($user_sid);
                 }
-                
-                if($type == 'applicant') {
+
+                if ($type == 'applicant') {
                     $data                                                       = applicant_right_nav($user_sid, $jobs_listing);
                     $security_sid                                               = $employer_id;
                     $security_details                                           = db_get_access_level_details($security_sid);
@@ -259,21 +264,22 @@ class Emergency_contacts extends Public_Controller
                     $reload_location                                            = 'emergency_contacts/applicant/' . $user_sid . '/' . $jobs_listing;
                     $cancel_url                                                 = 'emergency_contacts/applicant/' . $user_sid . '/' . $jobs_listing;
                     $applicant_info                                             = $this->emergency_contacts_model->get_applicants_details($user_sid);
-//                    $applicant_info                                             = $this->emergency_contacts_model->get_applicants_details($employer_id);
+                    //                    $applicant_info                                             = $this->emergency_contacts_model->get_applicants_details($employer_id);
 
-                    $data_employer = array( 'sid'                               => $applicant_info['sid'],
-                                        'first_name'                            => $applicant_info['first_name'],
-                                        'last_name'                             => $applicant_info['last_name'],
-                                        'email'                                 => $applicant_info['email'],
-                                        'Location_Address'                      => $applicant_info['address'],
-                                        'Location_City'                         => $applicant_info['city'],
-                                        'Location_Country'                      => $applicant_info['country'],
-                                        'Location_State'                        => $applicant_info['state'],
-                                        'Location_ZipCode'                      => $applicant_info['zipcode'],
-                                        'PhoneNumber'                           => $applicant_info['phone_number'],
-                                        'profile_picture'                       => $applicant_info['pictures'],
-                                        'user_type'                             => 'Applicant'
-                                    );
+                    $data_employer = array(
+                        'sid'                               => $applicant_info['sid'],
+                        'first_name'                            => $applicant_info['first_name'],
+                        'last_name'                             => $applicant_info['last_name'],
+                        'email'                                 => $applicant_info['email'],
+                        'Location_Address'                      => $applicant_info['address'],
+                        'Location_City'                         => $applicant_info['city'],
+                        'Location_Country'                      => $applicant_info['country'],
+                        'Location_State'                        => $applicant_info['state'],
+                        'Location_ZipCode'                      => $applicant_info['zipcode'],
+                        'PhoneNumber'                           => $applicant_info['phone_number'],
+                        'profile_picture'                       => $applicant_info['pictures'],
+                        'user_type'                             => 'Applicant'
+                    );
 
                     $data['applicant_average_rating']                           = $this->emergency_contacts_model->getApplicantAverageRating($applicant_info['sid'], 'applicant'); //getting average rating of applicant
                     $data['employer']                                           = $data_employer;
@@ -308,16 +314,20 @@ class Emergency_contacts extends Public_Controller
             $data['job_list_sid']                                               = $jobs_listing;
             $data['emp_id']                                                     = $jobs_listing;
             $data['sid']                                                        = $sid;
-//            $data['employee']                                                   = $employer_details;
+            //            $data['employee']                                                   = $employer_details;
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean|required');
-            if($data['contactOptionsStatus']['emergency_contact_email_status']==1){  $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email'); }
+            if ($data['contactOptionsStatus']['emergency_contact_email_status'] == 1) {
+                $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email');
+            }
             $this->form_validation->set_rules('Location_Country', 'Country', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_State', 'State', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            if($data['contactOptionsStatus']['emergency_contact_phone_number_status']==1){ $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required'); }
+            if ($data['contactOptionsStatus']['emergency_contact_phone_number_status'] == 1) {
+                $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required');
+            }
             $this->form_validation->set_rules('Relationship', 'Relationship', 'trim|xss_clean|required');
             $this->form_validation->set_rules('priority', 'Priority', 'trim|xss_clean|required');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -330,14 +340,14 @@ class Emergency_contacts extends Public_Controller
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
                 );
 
                 $data['contactOptionsStatus'] = getEmergencyContactsOptionsStatus($company_id);
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/edit_emergency_contacts');
                 $this->load->view('main/footer');
@@ -359,18 +369,18 @@ class Emergency_contacts extends Public_Controller
                 }
                 //
                 $update_data = array(
-                                        'first_name'                            => $this->input->post('first_name'),
-                                        'last_name'                             => $this->input->post('last_name'),
-                                        'email'                                 => $this->input->post('email'),
-                                        'Location_Country'                      => $this->input->post('Location_Country'),
-                                        'Location_State'                        => $this->input->post('Location_State'),
-                                        'Location_City'                         => $this->input->post('Location_City'),
-                                        'Location_ZipCode'                      => $this->input->post('Location_ZipCode'),
-                                        'Location_Address'                      => $this->input->post('Location_Address'),
-                                        'PhoneNumber'                           => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
-                                        'Relationship'                          => $this->input->post('Relationship'),
-                                        'priority'                              => $this->input->post('priority')
-                                    );
+                    'first_name'                            => $this->input->post('first_name'),
+                    'last_name'                             => $this->input->post('last_name'),
+                    'email'                                 => $this->input->post('email'),
+                    'Location_Country'                      => $this->input->post('Location_Country'),
+                    'Location_State'                        => $this->input->post('Location_State'),
+                    'Location_City'                         => $this->input->post('Location_City'),
+                    'Location_ZipCode'                      => $this->input->post('Location_ZipCode'),
+                    'Location_Address'                      => $this->input->post('Location_Address'),
+                    'PhoneNumber'                           => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
+                    'Relationship'                          => $this->input->post('Relationship'),
+                    'priority'                              => $this->input->post('priority')
+                );
 
                 $sid                                                            = $this->input->post('sid');
                 $result                                                         = $this->emergency_contacts_model->edit_emergency_contacts($update_data, $sid);
@@ -391,27 +401,27 @@ class Emergency_contacts extends Public_Controller
 
                 //
                 checkAndUpdateDD($sid, $type, $company_id, 'emergency_contacts');
-                
-                if($type == 'employee') {
+
+                if ($type == 'employee') {
                     $this->load->model('direct_deposit_model');
                     $this->load->model('hr_documents_management_model');
                     $userData = $this->direct_deposit_model->getUserData($sid, $type);
                     //
                     $doSend = false;
                     //
-                    if(array_key_exists('document_sent_on', $userData)){
+                    if (array_key_exists('document_sent_on', $userData)) {
                         //
                         $doSend = false;
                         //
-                        if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                        if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                             $doSend = true;
                             //
                             $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
                         }
                     }
-    
+
                     // Only send if dosend is true
-                    if($doSend == true){
+                    if ($doSend == true) {
                         // Send document completion alert
                         broadcastAlert(
                             DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -434,7 +444,8 @@ class Emergency_contacts extends Public_Controller
         }
     }
 
-    public function add_emergency_contacts($type = NULL, $sid = NULL, $jobs_listing = NULL) {
+    public function add_emergency_contacts($type = NULL, $sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -473,18 +484,19 @@ class Emergency_contacts extends Public_Controller
                 $reload_location                                                = 'emergency_contacts/applicant/' . $sid . '/' . $jobs_listing;
                 $applicant_info                                                 = $this->emergency_contacts_model->get_applicants_details($sid);
 
-                $data_employer = array( 'sid'                                   => $applicant_info['sid'],
-                                        'first_name'                            => $applicant_info['first_name'],
-                                        'last_name'                             => $applicant_info['last_name'],
-                                        'email'                                 => $applicant_info['email'],
-                                        'Location_Address'                      => $applicant_info['address'],
-                                        'Location_City'                         => $applicant_info['city'],
-                                        'Location_Country'                      => $applicant_info['country'],
-                                        'Location_State'                        => $applicant_info['state'],
-                                        'Location_ZipCode'                      => $applicant_info['zipcode'],
-                                        'PhoneNumber'                           => $applicant_info['phone_number'],
-                                        'profile_picture'                       => $applicant_info['pictures']
-                                    );
+                $data_employer = array(
+                    'sid'                                   => $applicant_info['sid'],
+                    'first_name'                            => $applicant_info['first_name'],
+                    'last_name'                             => $applicant_info['last_name'],
+                    'email'                                 => $applicant_info['email'],
+                    'Location_Address'                      => $applicant_info['address'],
+                    'Location_City'                         => $applicant_info['city'],
+                    'Location_Country'                      => $applicant_info['country'],
+                    'Location_State'                        => $applicant_info['state'],
+                    'Location_ZipCode'                      => $applicant_info['zipcode'],
+                    'PhoneNumber'                           => $applicant_info['phone_number'],
+                    'profile_picture'                       => $applicant_info['pictures']
+                );
 
                 $data['applicant_notes']                                        = $this->emergency_contacts_model->getApplicantNotes($sid); //Getting Notes
                 $data['applicant_average_rating']                               = $this->emergency_contacts_model->getApplicantAverageRating($sid, 'applicant'); //getting average rating of applicant
@@ -521,13 +533,13 @@ class Emergency_contacts extends Public_Controller
 
             $this->form_validation->set_rules('first_name', 'First Name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean|required');
-            $data['contactOptionsStatus']['emergency_contact_email_status']==1?$this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email'):'';
+            $data['contactOptionsStatus']['emergency_contact_email_status'] == 1 ? $this->form_validation->set_rules('email', 'email', 'trim|xss_clean|required|valid_email') : '';
             $this->form_validation->set_rules('Location_Country', 'Country', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_State', 'State', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_ZipCode', 'Zipcode', 'trim|xss_clean');
             $this->form_validation->set_rules('Location_Address', 'Address', 'trim|xss_clean');
-            $data['contactOptionsStatus']['emergency_contact_phone_number_status']==1? $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required'):'';
+            $data['contactOptionsStatus']['emergency_contact_phone_number_status'] == 1 ? $this->form_validation->set_rules('PhoneNumber', 'Phone Number', 'trim|xss_clean|required') : '';
             $this->form_validation->set_rules('Relationship', 'Relationship', 'trim|xss_clean|required');
             $this->form_validation->set_rules('priority', 'Priority', 'trim|xss_clean|required');
             $this->form_validation->set_message('is_unique', '%s is already registered!');
@@ -540,7 +552,7 @@ class Emergency_contacts extends Public_Controller
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
@@ -552,20 +564,21 @@ class Emergency_contacts extends Public_Controller
                 $this->load->view('manage_employer/add_emergency_contacts');
                 $this->load->view('main/footer');
             } else {
-                $insert_data = array(   'users_sid'                             => $employer_id,
-                                        'users_type'                            => $type,
-                                        'first_name'                            => $this->input->post('first_name'),
-                                        'last_name'                             => $this->input->post('last_name'),
-                                        'email'                                 => $this->input->post('email'),
-                                        'Location_Country'                      => $this->input->post('Location_Country'),
-                                        'Location_State'                        => $this->input->post('Location_State'),
-                                        'Location_City'                         => $this->input->post('Location_City'),
-                                        'Location_ZipCode'                      => $this->input->post('Location_ZipCode'),
-                                        'Location_Address'                      => $this->input->post('Location_Address'),
-                                        'PhoneNumber'                           => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
-                                        'Relationship'                          => $this->input->post('Relationship'),
-                                        'priority'                              => $this->input->post('priority')
-                                    );
+                $insert_data = array(
+                    'users_sid'                             => $employer_id,
+                    'users_type'                            => $type,
+                    'first_name'                            => $this->input->post('first_name'),
+                    'last_name'                             => $this->input->post('last_name'),
+                    'email'                                 => $this->input->post('email'),
+                    'Location_Country'                      => $this->input->post('Location_Country'),
+                    'Location_State'                        => $this->input->post('Location_State'),
+                    'Location_City'                         => $this->input->post('city'),
+                    'Location_ZipCode'                      => $this->input->post('Location_ZipCode'),
+                    'Location_Address'                      => $this->input->post('Location_Address'),
+                    'PhoneNumber'                           => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
+                    'Relationship'                          => $this->input->post('Relationship'),
+                    'priority'                              => $this->input->post('priority')
+                );
 
                 $this->emergency_contacts_model->add_emergency_contacts($insert_data);
 
@@ -586,27 +599,27 @@ class Emergency_contacts extends Public_Controller
 
                 //
                 checkAndUpdateDD($sid, $type, $company_id, 'emergency_contacts');
-                
-                if($type == 'employee') {
+
+                if ($type == 'employee') {
                     $this->load->model('direct_deposit_model');
                     $this->load->model('hr_documents_management_model');
                     $userData = $this->direct_deposit_model->getUserData($sid, $type);
                     //
                     $doSend = false;
                     //
-                    if(array_key_exists('document_sent_on', $userData)){
+                    if (array_key_exists('document_sent_on', $userData)) {
                         //
                         $doSend = false;
                         //
-                        if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                        if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                             $doSend = true;
                             //
                             $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
                         }
                     }
-    
+
                     // Only send if dosend is true
-                    if($doSend == true){
+                    if ($doSend == true) {
                         // Send document completion alert
                         broadcastAlert(
                             DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -629,7 +642,8 @@ class Emergency_contacts extends Public_Controller
         }
     }
 
-    public function ajax_handler(){
+    public function ajax_handler()
+    {
         if ($this->input->is_ajax_request()) {
             $users_type = $this->input->post('users_type');
             $users_sid = $this->input->post('users_sid');
@@ -642,7 +656,7 @@ class Emergency_contacts extends Public_Controller
                 $this->em->saveDifference([
                     'user_sid' => $users_sid,
                     'employer_sid' => ($users_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
-                    ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                        ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
                     'history_type' => 'emergencyContact',
                     'profile_data' => json_encode(['action' => 'delete']),
                     'created_at' => date('Y-m-d H:i:s', strtotime('now'))
@@ -654,5 +668,4 @@ class Emergency_contacts extends Public_Controller
             echo 'unauthorized';
         }
     }
-
 }

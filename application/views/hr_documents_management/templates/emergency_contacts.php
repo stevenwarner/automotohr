@@ -20,7 +20,7 @@
                     </div>
                     <div class="col-sm-3 col-xs-3">
                         <label>Relationship</label>
-                        <p><?=!empty($d['relationship']) ? $d['relationship'] : 'N/A';?></p>
+                        <p><?=!empty($d['Relationship']) ? $d['Relationship'] : 'N/A';?></p>
                     </div>
                     <div class="col-sm-3 col-xs-3">
                         <label>Priority</label>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-sm-3 col-xs-3">
                         <label>Postal Code</label>
-                        <p><?=!empty($d['postal_code']) ? $d['postal_code'] : 'N/A';?></p>
+                        <p><?=!empty($d['Location_ZipCode']) ? $d['Location_ZipCode'] : 'N/A';?></p>
                     </div>
                 </div>
 
@@ -68,7 +68,7 @@
                 <div class="row">
                     <div class="col-sm-12 col-xs-12">
                         <label>Location_Address</label>
-                        <p><?=!empty($d['address']) ? $d['address'] : 'N/A';?></p>
+                        <p><?=!empty($d['Location_Address']) ? $d['Location_Address'] : 'N/A';?></p>
                     </div>
                 </div>
             </div>
