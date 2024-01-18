@@ -622,10 +622,10 @@ class Main_model extends CI_Model
             $updateArray['updated_at'] = getSystemDate();
             //
             $this->db
-                ->where('employee_sid', $$employeeId)
+                ->where('employee_sid', $employeeId)
                 ->update('gusto_employees_jobs', $updateArray);
             //
-            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);
+            $wagesInfo = $this->getMinimumWagesData($post['minimumWage'], $post['wagesId']);
             //
             $updateCompensation = [];
             $updateCompensation['rate'] = $post['amount'];
@@ -679,7 +679,7 @@ class Main_model extends CI_Model
                     'gusto_location_uuid' => '',
                     'is_primary' => 1,
                     'hire_date' => formatDateToDB($post['hireDate']),
-                    'title' => $jobTitle['title'],
+                    'title' => $jobTitle,
                     'rate' => $post['amount'],
                     'current_compensation_uuid' => '',
                     'created_at' => getSystemDate(),
@@ -688,7 +688,7 @@ class Main_model extends CI_Model
             //    
             $jobId = $this->db->insert_id();
             // 
-            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);
+            $wagesInfo = $this->getMinimumWagesData($post['minimumWage'], $post['wagesId']);
             //
             $ins = [];
             $ins['gusto_version'] = '';
@@ -761,6 +761,7 @@ class Main_model extends CI_Model
         //
         $this->db
             ->where('employee_sid', $employeeId)
+            ->where('is_primary', 1)
             ->update('gusto_employees_jobs', $dataToUpdate);
     }
 

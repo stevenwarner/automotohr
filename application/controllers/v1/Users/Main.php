@@ -245,7 +245,7 @@ class Main extends Public_Controller
                 $userId,
                 $userType,
                 $this->loggedInCompany["sid"]
-            );
+            );   
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -305,7 +305,7 @@ class Main extends Public_Controller
                 //
                 if ($jobInfo) {
                     //
-                    if ($jobInfo['hire_date'] != $newHireDate) {
+                    // if ($jobInfo['hire_date'] != $newHireDate) {
                         $companyGustoDetails['other_uuid'] = $jobInfo['gusto_uuid'];
                         //
                         $updateJobData = [];
@@ -321,7 +321,7 @@ class Main extends Public_Controller
                                 ]
                             );
                         }
-                    }
+                    // }
                     //
                     $compensationResponse = $this->payroll_model->updateEmployeeCompensation($userId, $post, false);
                     //
