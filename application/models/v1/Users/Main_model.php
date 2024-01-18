@@ -378,6 +378,11 @@ class Main_model extends CI_Model
                 employee_type,
                 overtime_rule,
                 rehire_date,
+                hourly_rate,
+                hourly_technician,
+                flat_rate_technician,
+                semi_monthly_salary,
+                semi_monthly_draw
             ")
             ->where("sid", $userId)
             ->get("users")
@@ -458,6 +463,20 @@ class Main_model extends CI_Model
         // set rate
         $returnArray["rate"] = $gustoProfileData["rate"] ?? 0;
         // set earning types
+        if (!$gustoProfileData["rate"]) {
+            if ($record["hourly_rate"]) {
+                $returnArray["rate"] = $record["hourly_rate"];
+            } elseif ($record["hourly_technician"]) {
+                $returnArray["rate"] = $record["hourly_technician"];
+            } elseif ($record["flat_rate_technician"]) {
+                $returnArray["rate"] = $record["flat_rate_technician"];
+            } elseif ($record["semi_monthly_salary"]) {
+                $returnArray["rate"] = $record["semi_monthly_salary"];
+            } elseif ($record["semi_monthly_draw"]) {
+                $returnArray["rate"] = $record["semi_monthly_draw"];
+            }
+        }
+        //
         $returnArray["earnings"] = $gustoProfileData["earning_types"] ? json_decode($gustoProfileData["earning_types"], true) : [];
         //
         return $returnArray;
