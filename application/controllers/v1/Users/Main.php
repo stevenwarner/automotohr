@@ -191,7 +191,7 @@ class Main extends Public_Controller
                 $userId,
                 $startDate,
                 $endDate
-            );
+            );  
         // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
@@ -240,6 +240,8 @@ class Main extends Public_Controller
                 $userType,
                 $this->loggedInCompany["sid"]
             );
+        // _e($func,true);    
+        // _e($data,true,true);  
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
@@ -393,6 +395,36 @@ class Main extends Public_Controller
                 ]
             );
         }
+    }
+
+    public function updateEmployeeEarnings ($userId, $userType) {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $companyId = $session["company_detail"]["sid"];
+        //
+        if (!$post['employeeEarnings']) {
+            return SendResponse(
+                400,
+                [
+                    'msg' => 'Please select at least one earning for employee.'
+                ]
+            );
+        }
+        //
+        $dataToUpdate = [];
+        $dataToUpdate['earning_types'] = json_encode($post['employeeEarnings']);
+        $this->main_model->updateEmployeeEarnings($userId, $dataToUpdate);
+        //
+        return SendResponse(
+            200,
+            [
+                'msg' => 'You have successfully updated employee earnings.'
+            ]
+        );
+
     }
 
 

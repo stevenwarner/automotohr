@@ -75,7 +75,7 @@
                                     </div>
                                 </div>
 
-                                <!-- wage -->
+                                <!-- job & wage -->
                                 <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
@@ -137,6 +137,34 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- custom earning -->
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="text-medium panel-heading-text">
+                                                <i class="fa fa-money text-orange" aria-hidden="true"></i>
+                                                Custom Earnings
+                                            </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <?php if (!$jobWageData['earnings']) { ?>
+                                                <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary">No Earning Type assign yet.</a>
+                                            <?php } else { ?>
+                                                <?php foreach ($jobWageData['earnings'] as $earningType) { ?>
+                                                    <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary"><?php echo $earningType['title']; ?></a>
+                                                <?php } ?>   
+                                            <?php } ?>      
+                                           
+                                        </div>
+                                        <div class="panel-footer text-center">
+                                            <button class="btn btn-yellow jsEditCustomEarning">
+                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                Edit earning Types
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <!-- time & attendance -->
                             <div class="row">
@@ -146,7 +174,7 @@
                                             <h2 class="text-large">
                                                 <strong>
                                                     <i class="fa fa-clock-o text-orange" aria-hidden="true"></i>
-                                                    &nbsp;Time Sheet <?= $records ? " of " . $timeSheetName : ""; ?>
+                                                    &nbsp;Time Sheet
                                                 </strong>
                                                 <p class="mt-5">
                                                     <?= formatDateToDB(

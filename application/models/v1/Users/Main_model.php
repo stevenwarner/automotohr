@@ -391,6 +391,7 @@ class Main_model extends CI_Model
                 rate,
                 title,
                 current_compensation_uuid,
+                earning_types,
             ")
             ->where("employee_sid", $userId)
             ->where("is_primary", 1)
@@ -424,7 +425,8 @@ class Main_model extends CI_Model
             "overtimeRule" => "N/A",
             "hireDate" => "",
             "rate" => "",
-            "paymentUnit" => ""
+            "paymentUnit" => "",
+            "earnings" => [],
         ];
         //
         if ($record["overtime_rule"] > 0) {
@@ -455,8 +457,92 @@ class Main_model extends CI_Model
         $returnArray["paymentUnit"] = $gustoProfileData["payment_unit"] ?? "Hours";
         // set rate
         $returnArray["rate"] = $gustoProfileData["rate"] ?? 0;
-
+        // set earning types
+        $returnArray["earnings"] = $gustoProfileData["earning_types"] ? json_decode($gustoProfileData["earning_types"], true) : [];
+        //
         return $returnArray;
+    }
+
+    /**
+     * get the user job wage data
+     *
+     * @param int    $userId
+     * @param string $userType
+     * @param int $companyId
+     * @return array
+     */
+    public function pageEmployeeCustomEarnings (
+        int $userId,
+        string $userType,
+        int $companyId
+    ) : array {
+        //
+        // get company earning data
+        $companyEarnings = $this->db
+            ->select("
+                sid,
+                name,
+                fields_json,
+            ")
+            ->where("company_sid", $companyId)
+            ->get("gusto_companies_earning_types")
+            ->result_array();
+        // get employee earning data
+        $employeeEarnings =
+            $this->db
+            ->select("
+                earning_types,
+            ")
+            ->where("employee_sid", $userId)
+            ->where("is_primary", 1)
+            ->get("gusto_employees_jobs")
+            ->row_array();
+        //
+        $returnArray = [];
+        $employeeAssignedEarning = [];
+        //
+        if (!empty($employeeEarnings['earning_types'])) {
+            foreach (json_decode($employeeEarnings['earning_types'],true) as $earning) {
+                $employeeAssignedEarning[$earning['sid']] = $earning['rate'];
+            }
+        } 
+        
+        if (!empty($companyEarnings)) {
+            //
+            foreach ($companyEarnings as $companyEarning) {
+                //
+                $earningData = [
+                    "sid" => "",
+                    "title" => "",
+                    "rate_type" => "N/A",
+                    "wage_type" => "N/A",
+                    "rate" => "0",
+                    "is_assign" => 0
+                ];
+                //
+                $earningData['sid'] = $companyEarning['sid'];
+                //
+                if ($companyEarning['fields_json']) {
+                    $fields_json = json_decode($companyEarning['fields_json'],true);
+                    //
+                    $earningData['title'] = $fields_json['name'];
+                    $earningData['rate_type'] = $fields_json['rate_type'];
+                    $earningData['wage_type'] = $fields_json['wage_type'];
+                } else {
+                    $earningData['title'] = $companyEarning['name'];
+                }
+                //
+                if (isset($employeeAssignedEarning[$companyEarning['sid']])) {
+                    $earningData['is_assign'] = 1;
+                    $earningData['rate'] = $employeeAssignedEarning[$companyEarning['sid']];
+                }
+                //
+                $returnArray['earnings'][] = $earningData;
+            }
+        } 
+       
+        //
+        return $returnArray;  
     }
 
     /**
@@ -656,6 +742,11 @@ class Main_model extends CI_Model
         ->where('employee_sid', $employeeId)
         ->update('gusto_employees_jobs', $dataToUpdate);
     }
-    
 
+    public function updateEmployeeEarnings ($employeeId, $dataToUpdate) {
+        $this->db
+        ->where('employee_sid', $employeeId)
+        ->where("is_primary", 1)
+        ->update('gusto_employees_jobs', $dataToUpdate);
+    }
 }
