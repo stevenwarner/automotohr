@@ -144,7 +144,7 @@
                                         <div class="panel-heading">
                                             <h3 class="text-medium panel-heading-text">
                                                 <i class="fa fa-money text-orange" aria-hidden="true"></i>
-                                                Custom Earning
+                                                Custom Earnings
                                             </h3>
                                         </div>
                                         <div class="panel-body">
@@ -152,7 +152,7 @@
                                                 <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary">No Earning Type assign yet.</a>
                                             <?php } else { ?>
                                                 <?php foreach ($jobWageData['earnings'] as $earningType) { ?>
-                                                    <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary"><?php echo $earningType['name']; ?></a>
+                                                    <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary"><?php echo $earningType['title']; ?></a>
                                                 <?php } ?>   
                                             <?php } ?>      
                                            
