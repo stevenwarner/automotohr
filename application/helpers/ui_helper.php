@@ -312,7 +312,7 @@ if (!function_exists("checkAndCreateFileForVersion")) {
         }
         // get the file data
         $handler = fopen($filePath, "w");
-        fwrite($handler, json_encode($fileDataArray));
+        fwrite($handler, json_encode($fileDataArray, JSON_PRETTY_PRINT));
         fclose($handler);
     }
 }
