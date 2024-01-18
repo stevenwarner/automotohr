@@ -100,9 +100,6 @@ $(function payrollDashboard() {
 		if (!jobObj.amount) {
 			errors.push('"Rate" is missing.');
 		}
-		if (!jobObj.overTimeRule) {
-			errors.push('"Overtime rule" is missing.');
-		}
 		if (jobObj.guaranteeRate) {
 			if (!jobObj.guaranteeTime) {
 				errors.push('"Guarantee time" is missing.');
