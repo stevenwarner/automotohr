@@ -332,7 +332,7 @@ class Main_model extends CI_Model
         // set rate
         $returnArray["rate"] = $gustoProfileData["rate"] ?? 0;
         // set payment_unit
-        $returnArray["per"] = $gustoProfileData["per"] ?? "";
+        $returnArray["per"] = $gustoProfileData["payment_unit"] ?? "";
         // set effective_date
         $returnArray["flsaStatus"] = $gustoProfileData["flsa_status"] ?? "";
         // set effective_date
