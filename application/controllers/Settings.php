@@ -3781,6 +3781,8 @@ class Settings extends Public_Controller
         $this->form_validation->set_rules("first_pay_date", "First pay date", "required|xss_clean|trim|callback_validDate");
         // for dealine
         if ($post["pay_frequency"] === "Every week" || $post["pay_frequency"] === "Every other week") {
+            $post["day_1"] = null;
+            $post["day_2"] = null;
             $this->form_validation->set_rules("deadline_to_run_payroll", "Deadline date", "required|xss_clean|trim|callback_validDate");
         }
         // for days 1 and 2
@@ -3827,7 +3829,7 @@ class Settings extends Public_Controller
             $upd['day_2'] = null;
         }
         // get the company details
-        $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
+        $companyGustoDetails = getCompanyDetailsForGusto($loggedInCompany["sid"]);
         //
         if ($companyGustoDetails) {
             $gustoInfo =
@@ -3837,13 +3839,61 @@ class Settings extends Public_Controller
                 ->get('companies_pay_schedules')
                 ->row_array();
             //
-            $upd['version'] = $gustoInfo['gusto_version'];
-            $companyGustoDetails['other_uuid'] = $gustoInfo['gusto_uuid'];
-            //
             $this->load->helper('v1/payroll' . ($this->db->where([
                 "company_sid" => $loggedInCompany["sid"],
                 "stage" => "production"
             ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+            //
+            if (!$gustoInfo["gusto_uuid"]) {
+                // prepare array
+                $ins = [];
+                $ins["custom_name"] = $post["name"];
+                $ins['frequency'] = $post["pay_frequency"];
+                $ins['anchor_pay_date'] = formatDateToDB($post["first_pay_date"], SITE_DATE);
+                $ins['anchor_end_of_pay_period'] = formatDateToDB($post["first_pay_period_end_date"], SITE_DATE);
+                //
+                if ($post["pay_frequency"] === "Twice a month: Custom") {
+                    $ins['frequency'] = 'Twice per month';
+                    $ins['day_1'] = $post["day_1"];
+                    $ins['day_2'] = $post["day_2"];
+                } else if ($post["pay_frequency"] === "Monthly") {
+                    $ins['day_1'] = $post["pay_day"];
+                } else {
+                    $ins['day_1'] = null;
+                    $ins['day_2'] = null;
+                }
+                //
+                $gustoResponse = gustoCall(
+                    'getPaySchedules',
+                    $companyGustoDetails,
+                    $ins,
+                    "POST"
+                );
+                //
+                $errors = hasGustoErrors($gustoResponse);
+                //
+                if ($errors) {
+                    return SendResponse(400, ["msg" => $errors['errors'][0]]);
+                }
+                //
+                $ins["gusto_uuid"] = $gustoResponse["uuid"];
+                $ins["gusto_version"] = $gustoResponse["version"];
+                //
+                $this->db
+                    ->where("sid", $scheduleId)
+                    ->update(
+                        "companies_pay_schedules",
+                        [
+                            "gusto_uuid" => $gustoResponse["uuid"],
+                            "gusto_version" => $gustoResponse["version"]
+                        ]
+                    );
+                //
+                $gustoInfo["gusto_uuid"] = $gustoResponse["uuid"];
+                $gustoInfo["gusto_version"] = $gustoResponse["version"];
+            }
+            $upd['version'] = $gustoInfo['gusto_version'];
+            $companyGustoDetails['other_uuid'] = $gustoInfo['gusto_uuid'];
             //
             $gustoResponse = gustoCall(
                 'updatePaySchedules',
