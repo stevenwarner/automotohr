@@ -286,6 +286,8 @@ class Export_employees_csv extends Public_Controller
                                             }
                                         } elseif ($value == 'union_member') {
                                             $export_data[$i][$value] = $employee['union_member'] == 1 ? 'Yes' : 'No';
+                                        } elseif ($value == 'employment_type') {
+                                            $export_data[$i][$value] = ucwords(preg_replace("/-_/", " ", $employee["employee_type"]));
                                         } else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
                                         }
