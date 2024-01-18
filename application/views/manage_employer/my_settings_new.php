@@ -297,7 +297,7 @@
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->
                                             <li>
-                                                <a href="<?= base_url("attendance/settings"); ?>">
+                                                <a href="<?= base_url("attendance/dashboard"); ?>">
                                                     Attendance Management
                                                 </a>
                                             </li>

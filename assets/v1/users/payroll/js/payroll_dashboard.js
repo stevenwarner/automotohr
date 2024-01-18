@@ -18,6 +18,50 @@ $(function payrollDashboard() {
 	const modalLoader = modalId + "Loader";
 	const modalBody = modalId + "Body";
 
+	$('#jsStartDate').daterangepicker({
+        singleDatePicker: true,
+		showDropdowns: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
+    })
+
+    $('#jsEndDate').daterangepicker({
+        singleDatePicker: true,
+		showDropdowns: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
+    });
+
+	$(document).on('click', '.jsApplyFilter', function(e) {
+		//
+		var fromText = $('#jsStartDate').val();
+		var toText = $('#jsEndDate').val();
+		// 
+		var fromSplit = fromText.split("/");
+		var toSplit = toText.split("/");
+		// 
+		fromText = fromSplit[0] + "-" + fromSplit[2];
+		toText = toSplit[0] + "-" + toSplit[2];
+		//
+		if (fromText != toText) {
+			let errors = [];
+			errors.push('Please select start date or end date within the same month.');
+
+			return alertify.alert(
+				"ERROR",
+				getErrorsStringFromArray(errors),
+				CB
+			);
+		}      
+		//dashboard/employee
+		window.location.href = window.location.origin + "/payrolls/dashboard/"+ profileUserInfo.userType + "/" + profileUserInfo.userId+"?start="+$('#jsStartDate').val()+"&end="+$('#jsEndDate').val();
+		// window.location.href(URL)
+	})
+
 	/**
 	 * minimum wages show and hide
 	 */
