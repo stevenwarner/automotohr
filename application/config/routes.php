@@ -2208,3 +2208,9 @@ $route["manage_admin/cms/page/edit/(:num)"]["post"] =
 $route['refresh/gusto/OAuthToken'] = 'v1/Payroll/refreshGustoOAuthToken';
 $route['callback/gusto'] = 'v1/Payroll/updateGustoOAuthToken';
 $route["payrolls/employee_earning_types/(:num)/(:any)"]["post"] = "v1/Users/Main/updateEmployeeEarnings/$1/$2/";
+"manage_admin/Cms/editDynamicPageProcess/$1";
+
+//
+$route['timeoff/exporttocsv/(:num)'] = 'Time_off/exportTimeoffToCSV/$1';
+$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/';
+

@@ -6315,7 +6315,9 @@ class Timeoff_model extends CI_Model
                  user_shift_minutes,
                  concat(first_name," ",last_name) as full_name,
                  profile_picture as img,
-                 employee_number
+                 employee_number,
+                 registration_date,
+                 rehire_date
              ')
                 ->from('users')
                 ->where('sid', $v['employee_sid'])
@@ -6336,6 +6338,25 @@ class Timeoff_model extends CI_Model
             $b[$k]['full_name'] = $a->row_array()['full_name'];
             $b[$k]['img'] = $a->row_array()['img'];
             $b[$k]['employee_number'] = $a->row_array()['employee_number'];
+
+            //
+            $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
+            //
+            if (!empty($joiningDate)) {
+                echo $joiningDate;
+                $b[$k]['joining_date'] = $joiningDate;
+            } else {
+                $b[$k]['joining_date'] = "N/A";
+            }
+
+            $rehireDate = get_employee_latest_joined_date("", "", $a->row_array()["rehire_date"], false);
+            //
+            if (!empty($rehireDate)) {
+                $b[$k]['rehire_date'] = $rehireDate;
+            } else {
+                $b[$k]['rehire_date'] = "N/A";
+            }
+
             //
             $defaultTimeFrame = $employeeShiftHours + (round($employeeShiftMinutes / 60, 2));
             $a->free_result();
@@ -7338,5 +7359,35 @@ class Timeoff_model extends CI_Model
             }
         }
         return $returnArray;
+    }
+
+
+
+
+    //
+    function getEmployeeTimeoffRequest($company_sid, $employeeSid, $start_date, $end_date, $filter_policy)
+    {
+        //
+        $this->db->select('timeoff_requests.sid');
+        //
+        $this->db->where('company_sid', $company_sid);
+
+        if ($start_date != '' && $end_date != '') {
+            $this->db->where('request_from_date >=', date('Y-m-d', strtotime($start_date)));
+            $this->db->where('request_from_date <=', date('Y-m-d', strtotime($end_date)));
+        }
+
+        if (is_array($employeeSid)) {
+            $this->db->where_in('employee_sid', $employeeSid);
+        } else {
+            $this->db->where('employee_sid', $employeeSid);
+        }
+
+        $this->db->where('archive', 0);
+        $this->db->where('is_draft', 0);
+        $records_obj = $this->db->get('timeoff_requests');
+        $records_arr = $records_obj->result_array();
+
+        return $records_arr;
     }
 }
