@@ -230,28 +230,27 @@ class Export_employees_csv extends Public_Controller
 
                                             $licenseDetails = "";
                                             if (!empty($drivingData)) {
-                                                foreach (unserialize($drivingData['license_details']) as $key => $val) {
-                                                    $export_data[$i][$key] = $val;
-                                                    $header[$key] = $key;
-                                                }
 
-                                                $header['license_type'] =  $header['license_type'] ?? 'license_type';
-                                                $header['license_authority'] =  $header['license_authority'] ?? 'license_authority';
-                                                $header['license_class'] =  $header['license_class'] ?? 'license_class';
-                                                $header['license_number'] =  $header['license_number'] ?? 'license_number';
-                                                $header['license_issue_date'] =  $header['license_issue_date'] ?? 'license_issue_date';
-                                                $header['license_expiration_date'] =  $header['license_expiration_date'] ?? 'license_expiration_date';
-                                                $header['license_indefinite'] =  $header['license_indefinite'] ?? 'license_indefinite';
-                                                $header['license_notes'] =  $header['license_notes'] ?? 'license_notes';
 
-                                                $export_data[$i]['license_type'] = $export_data[$i]['license_type'] ?? 'N/A';
-                                                $export_data[$i]['license_authority'] = $export_data[$i]['license_authority'] ?? 'N/A';
-                                                $export_data[$i]['license_class'] = $export_data[$i]['license_class'] ?? 'N/A';
-                                                $export_data[$i]['license_number'] = $export_data[$i]['license_number'] ?? 'N/A';
-                                                $export_data[$i]['license_issue_date'] = $export_data[$i]['license_issue_date'] ?? 'N/A';
-                                                $export_data[$i]['license_expiration_date'] = $export_data[$i]['license_expiration_date'] ?? 'N/A';
-                                                $export_data[$i]['license_indefinite'] = $export_data[$i]['license_indefinite'] ?? 'N/A';
-                                                $export_data[$i]['license_notes'] = $export_data[$i]['license_notes'] ?? 'N/A';
+                                                $drivingDataDetails = unserialize($drivingData['license_details']);
+
+                                                $header['license_type'] = 'license_type';
+                                                $header['license_authority'] = 'license_authority';
+                                                $header['license_class'] = 'license_class';
+                                                $header['license_number'] = 'license_number';
+                                                $header['license_issue_date'] = 'license_issue_date';
+                                                $header['license_expiration_date'] = 'license_expiration_date';
+                                                $header['license_indefinite'] = 'license_indefinite';
+                                                $header['license_notes'] = 'license_notes';
+
+                                                $export_data[$i]['license_type'] = $drivingDataDetails['license_type'] ?? 'N/A';
+                                                $export_data[$i]['license_authority'] = $drivingDataDetails['license_authority'] ?? 'N/A';
+                                                $export_data[$i]['license_class'] = $drivingDataDetails['license_class'] ?? 'N/A';
+                                                $export_data[$i]['license_number'] = $drivingDataDetails['license_number'] ?? 'N/A';
+                                                $export_data[$i]['license_issue_date'] = $drivingDataDetails['license_issue_date'] ?? 'N/A';
+                                                $export_data[$i]['license_expiration_date'] = $drivingDataDetails['license_expiration_date'] ?? 'N/A';
+                                                $export_data[$i]['license_indefinite'] = $drivingDataDetails['license_indefinite'] ?? 'N/A';
+                                                $export_data[$i]['license_notes'] = $drivingDataDetails['license_notes'] ?? 'N/A';
                                             } else {
 
 
