@@ -5064,7 +5064,7 @@ class Payroll_model extends CI_Model
      * @param int    $employeeId
      * @param string $gustoUUID
      */
-    public function signEmployeeForm(
+    public function handleRateUpdate(
         int $employeeId,
         string $gustoUUID
     ): array {
@@ -6015,7 +6015,7 @@ class Payroll_model extends CI_Model
     }
 
 
-    public function handleRateUpdate($employeeId)
+    public function handleRateUpdateFromProfile($employeeId)
     {
         // let's check the employee
         $gustoEmployee = $this->db
@@ -6282,5 +6282,70 @@ class Payroll_model extends CI_Model
         $URL = "https://api.gusto" . ($isDemo ? "-demo" : "") . ".com/oauth/authorize?client_id=" . $gustoDetails->CLIENT_ID . "&redirect_uri=" . $gustoDetails->CALLBACK_URL . "&response_type=code&state=" . $dataToInsert['state'];
         //
         return $URL;
+    }
+
+    /**
+     * handles employee profile update
+     *
+     * @param int $employeeId
+     */
+    public function handleUserUpdate(int $employeeId)
+    {
+        // let's check the employee
+        $gustoEmployee = $this->db
+            ->select('gusto_uuid, gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+        // check and create
+        if (!$gustoEmployee) {
+            return [];
+        }
+        // get employee compensation
+        $employee = $this->db
+            ->select("
+                users.parent_sid,
+                users.Location_Address,
+                users.Location_Address_2,
+                users.Location_City,
+                states.state_code,
+                users.Location_ZipCode
+            ")
+            ->join(
+                "states",
+                "states.sid = users.Location_State",
+                "inner"
+            )
+            ->where('users.sid', $employeeId)
+            ->get("users")
+            ->row_array();
+        //
+        if (!$employee) {
+            return false;
+        }
+        //
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($employee["parent_sid"]);
+        // add employee gusto uuid
+        $companyDetails['other_uuid'] = $gustoEmployee['gusto_uuid'];
+        $companyDetails['company_sid'] = $employee["parent_sid"];
+        // handles address
+        // check if address is complete
+        if ($employee["Location_Address"] && $employee["Location_City"] && $employee["Location_ZipCode"]) {
+            // prepare data array
+            $data = [];
+            $data["street_1"] = $employee["Location_Address"];
+            $data["street_2"] = $employee["Location_Address_2"];
+            $data["city"] = $employee["Location_City"];
+            $data["zip"] = $employee["Location_ZipCode"];
+            $data["state"] = $employee["state_code"];
+
+            $this->updateEmployeeHomeAddress(
+                $employeeId,
+                $data
+            );
+        }
+
+        return true;
     }
 }

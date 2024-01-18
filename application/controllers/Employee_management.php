@@ -1899,9 +1899,14 @@ class Employee_management extends Public_Controller
                         //
                         $this->load->model("v1/Payroll_model", "payroll_model");
                         //
-                        $this->payroll_model->handleRateUpdate(
+                        $this->payroll_model->handleRateUpdateFromProfile(
                             $sid
                         );
+                        //
+                        $this->payroll_model
+                            ->handleUserUpdate(
+                                $sid
+                            );
                     }
                     // Profile save intercept
                     $this->handleProfileChange(
