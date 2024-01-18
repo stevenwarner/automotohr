@@ -221,7 +221,7 @@ class Main_model extends CI_Model
                 $companyId
             );
         // get the company overtime rules
-        $returnArray["jobWageData"] = $this->main_model
+        $returnArray["jobWageData"] = $this
             ->getJobWageData(
                 $userId,
                 $userType,
@@ -332,7 +332,7 @@ class Main_model extends CI_Model
         // set rate
         $returnArray["rate"] = $gustoProfileData["rate"] ?? 0;
         // set payment_unit
-        $returnArray["payment_unit"] = $gustoProfileData["per"] ?? "";
+        $returnArray["per"] = $gustoProfileData["per"] ?? "";
         // set effective_date
         $returnArray["flsaStatus"] = $gustoProfileData["flsa_status"] ?? "";
         // set effective_date
@@ -346,7 +346,7 @@ class Main_model extends CI_Model
         //
         $returnArray["guaranteeInfo"] = $gustoProfileData["guarantee_info"] ?
             unserialize($gustoProfileData["guarantee_info"])
-            : [];    
+            : [];
 
         return $returnArray;
     }
@@ -416,7 +416,7 @@ class Main_model extends CI_Model
                     $gustoCompensationData
                 );
             }
-        }    
+        }
 
         // set return array
         $returnArray = [
@@ -440,7 +440,7 @@ class Main_model extends CI_Model
                 )['rule_name'];
         }
         // set employee_title
-        $returnArray["title"] = $gustoProfileData["title"] ?? $record["job_title"] ;
+        $returnArray["title"] = $gustoProfileData["title"] ?? $record["job_title"];
         // set employee_type
         $returnArray["employmentType"] = $record["employee_type"] ?? "";
         // get employee hire date
@@ -471,11 +471,11 @@ class Main_model extends CI_Model
      * @param int $companyId
      * @return array
      */
-    public function pageEmployeeCustomEarnings (
+    public function pageEmployeeCustomEarnings(
         int $userId,
         string $userType,
         int $companyId
-    ) : array {
+    ): array {
         //
         // get company earning data
         $companyEarnings = $this->db
@@ -502,11 +502,11 @@ class Main_model extends CI_Model
         $employeeAssignedEarning = [];
         //
         if (!empty($employeeEarnings['earning_types'])) {
-            foreach (json_decode($employeeEarnings['earning_types'],true) as $earning) {
+            foreach (json_decode($employeeEarnings['earning_types'], true) as $earning) {
                 $employeeAssignedEarning[$earning['sid']] = $earning['rate'];
             }
-        } 
-        
+        }
+
         if (!empty($companyEarnings)) {
             //
             foreach ($companyEarnings as $companyEarning) {
@@ -523,7 +523,7 @@ class Main_model extends CI_Model
                 $earningData['sid'] = $companyEarning['sid'];
                 //
                 if ($companyEarning['fields_json']) {
-                    $fields_json = json_decode($companyEarning['fields_json'],true);
+                    $fields_json = json_decode($companyEarning['fields_json'], true);
                     //
                     $earningData['title'] = $fields_json['name'];
                     $earningData['rate_type'] = $fields_json['rate_type'];
@@ -539,10 +539,10 @@ class Main_model extends CI_Model
                 //
                 $returnArray['earnings'][] = $earningData;
             }
-        } 
-       
+        }
+
         //
-        return $returnArray;  
+        return $returnArray;
     }
 
     /**
@@ -580,19 +580,20 @@ class Main_model extends CI_Model
     ): array {
         // get gusto data
         return $this->db
-        ->select('
+            ->select('
             gusto_uuid
         ')
-        ->where('employee_sid', $employeeId)
-        ->get('gusto_companies_employees')
-        ->row_array();
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
     }
 
-    public function processEmployeeJobData (int $employeeId, array $post) {
+    public function processEmployeeJobData(int $employeeId, array $post)
+    {
         //
         $this->updateEmployeeBasicInfo($employeeId, $post['overTimeRule'], $post['employeeType']);
         //
-        if($this->db
+        if ($this->db
             ->where("employee_sid", $employeeId)
             ->count_all_results('gusto_employees_jobs')
         ) {
@@ -605,7 +606,7 @@ class Main_model extends CI_Model
                 ->where('employee_sid', $$employeeId)
                 ->update('gusto_employees_jobs', $updateArray);
             //
-            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']); 
+            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);
             //
             $updateCompensation = [];
             $updateCompensation['rate'] = $post['amount'];
@@ -614,7 +615,7 @@ class Main_model extends CI_Model
             $updateCompensation['effective_date'] = $post['hireDate'];
             $updateCompensation['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'];
             $updateCompensation['minimum_wages'] = serialize($wagesInfo['minimum_wages']);
-            $updateCompensation['updated_at'] = getSystemDate();   
+            $updateCompensation['updated_at'] = getSystemDate();
             //
             $jobId = $this->db
                 ->select("
@@ -630,7 +631,7 @@ class Main_model extends CI_Model
             //
             $this->updateEmployeeGuaranteeInfo($employeeId, $post);
             //
-            return ['msg' => 'You have successfully updated employee Job & wage.'];    
+            return ['msg' => 'You have successfully updated employee Job & wage.'];
         } else {
             $employeeDetails = $this->db
                 ->select('
@@ -666,9 +667,9 @@ class Main_model extends CI_Model
                     'updated_at' => getSystemDate()
                 ]);
             //    
-            $jobId = $this->db->insert_id();    
+            $jobId = $this->db->insert_id();
             // 
-            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);    
+            $wagesInfo = $this->getMinimumWagesData($post['adjustMinimumWage'], $post['wagesID']);
             //
             $ins = [];
             $ins['gusto_version'] = '';
@@ -685,9 +686,8 @@ class Main_model extends CI_Model
             //
             $this->updateEmployeeGuaranteeInfo($employeeId, $post);
             //
-            return ['msg' => 'You have successfully created employee Job & wage.'];  
-        }  
-        
+            return ['msg' => 'You have successfully created employee Job & wage.'];
+        }
     }
 
     public function getMinimumWagesData($minimumWage, $wagesId)
@@ -718,17 +718,19 @@ class Main_model extends CI_Model
         return $response;
     }
 
-    public function updateEmployeeBasicInfo ($employeeId, $overtimeRule, $employeeType) {
+    public function updateEmployeeBasicInfo($employeeId, $overtimeRule, $employeeType)
+    {
         $dataToUpdate = [];
         $dataToUpdate['overtime_rule'] = $overtimeRule;
         $dataToUpdate['employee_type'] = $employeeType;
         //
         $this->db
-                ->where('sid', $employeeId)
-                ->update('users', $dataToUpdate);
+            ->where('sid', $employeeId)
+            ->update('users', $dataToUpdate);
     }
 
-    public function updateEmployeeGuaranteeInfo ($employeeId, $post) {
+    public function updateEmployeeGuaranteeInfo($employeeId, $post)
+    {
         //
         $guaranteeInfo = [];
         $guaranteeInfo['guarantee_rate'] = $post['guaranteeRate'];
@@ -739,14 +741,15 @@ class Main_model extends CI_Model
         $dataToUpdate['guarantee_info'] = serialize($guaranteeInfo);
         //
         $this->db
-        ->where('employee_sid', $employeeId)
-        ->update('gusto_employees_jobs', $dataToUpdate);
+            ->where('employee_sid', $employeeId)
+            ->update('gusto_employees_jobs', $dataToUpdate);
     }
 
-    public function updateEmployeeEarnings ($employeeId, $dataToUpdate) {
+    public function updateEmployeeEarnings($employeeId, $dataToUpdate)
+    {
         $this->db
-        ->where('employee_sid', $employeeId)
-        ->where("is_primary", 1)
-        ->update('gusto_employees_jobs', $dataToUpdate);
+            ->where('employee_sid', $employeeId)
+            ->where("is_primary", 1)
+            ->update('gusto_employees_jobs', $dataToUpdate);
     }
 }

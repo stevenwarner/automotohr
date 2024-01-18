@@ -240,8 +240,6 @@ class Main extends Public_Controller
                 $userType,
                 $this->loggedInCompany["sid"]
             );
-        // _e($func,true);    
-        // _e($data,true,true);  
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/users/payroll/partials/page_" . $slug, $data, true),
