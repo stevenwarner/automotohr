@@ -4205,8 +4205,7 @@ class Employee_management extends Public_Controller
 
             $output = fopen('php://output', 'w');
 
-
-            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date'));
+            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date','Email Address'));
 
             if (sizeof($employees) > 0) {
 
@@ -4230,12 +4229,13 @@ class Employee_management extends Public_Controller
                     $joiningDate = get_employee_latest_joined_date($employeeRow["registration_date"], $employeeRow["joined_at"], "", true);
                     $rehireDate = get_employee_latest_joined_date("", "", $employeeRow["rehire_date"], true);
 
-
                     $input['Employees'] = $name;
                     $input['Designation'] = $employeeRow['job_title'];
                     $input['Password'] = $employeeRow['password'] ? 'Yes' : 'NO';
                     $input['Joining Date'] = $joiningDate ? $joiningDate : 'N/A';
                     $input['Rehire Date'] = $rehireDate ? $rehireDate : 'N/A';
+                    $input['Email Address'] = $employeeRow['email'] ? $employeeRow['email'] : 'N/A';
+
                     fputcsv($output, $input);
                 }
             }
