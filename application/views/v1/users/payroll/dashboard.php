@@ -192,6 +192,31 @@
                                             </h2>
                                         </div>
                                         <div class="panel-body">
+                                            <!-- filter -->
+                                            <div class="row">
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                    <label>Start Date</label>
+                                                    <input type="text" name="startDate" id="jsStartDate" class="form-control jsStartDatePicker" readonly value="<?php echo formatDateToDB($startDate, DB_DATE, SITE_DATE); ?>" />
+                                                </div>
+                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                                                    <label>EndDate</label>
+                                                    <input type="text" name="endDate" id="jsEndDate" class="form-control jsEndDatePicker" readonly value="<?php echo formatDateToDB($endDate, DB_DATE, SITE_DATE); ?>" />
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                                                    <label>&nbsp;</label>
+                                                    <button class="btn btn-green btn-block jsApplyFilter">
+                                                        Apply Filter
+                                                    </button>
+                                                </div>
+                                                <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
+                                                    <label>&nbsp;</label>
+                                                    <a href="<?php echo base_url("payrolls/dashboard/".$userType."/".$userId); ?>" class="btn btn-black btn-block">
+                                                        Clear Filter
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <!--  -->
+                                            <hr>
                                             <!--  -->
                                             <div class="row">
                                                 <div class="col-sm-12 text-right">
