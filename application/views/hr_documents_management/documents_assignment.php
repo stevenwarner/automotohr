@@ -102,6 +102,10 @@ $assignIdObj = $confidential_sids;
                                                                         <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                         <div class="text-center">
                                                                             <?= reset_datetime(array('datetime' => $w4_form['sent_date'], '_this' => $this)); ?>
+                                                                            <?php if ($w4_form['last_assign_by'] != 0) {
+                                                                                echo "<br>Assigned By: " . getUserNameBySID($w4_form['last_assign_by']);
+                                                                            } ?>
+
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
@@ -124,9 +128,9 @@ $assignIdObj = $confidential_sids;
                                                                                         View hand signed W4
                                                                                     </a>
                                                                                 <?php } else { ?>
-                                                                                        <?php if ($w4_employer_section == 1) { ?>
-                                                                                            <a class="btn <?php echo isW4EmployerSectionCompleted($w4_form) ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo isW4EmployerSectionCompleted($w4_form) ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
-                                                                                        <?php } ?>
+                                                                                    <?php if ($w4_employer_section == 1) { ?>
+                                                                                        <a class="btn <?php echo isW4EmployerSectionCompleted($w4_form) ? 'btn-success' : 'blue-button' ?> edit_employer_section" href="javascript:;" data-form-type="w4_edit_btn"><?php echo isW4EmployerSectionCompleted($w4_form) ? 'Employer Section - Completed' : 'Employer Section - Not Completed' ?></a>
+                                                                                    <?php } ?>
                                                                                     <a class="btn btn-success" data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);">View W4</a>
                                                                                 <?php } ?>
 
@@ -164,7 +168,8 @@ $assignIdObj = $confidential_sids;
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     W9 Fillable <?php echo !empty($w9_form) && !$w9_form['status'] && !isset($w9_form_uploaded) ? '<b>(revoked)</b>' : ''; ?>
-                                                                    <?php if (!empty($w9_form) && $w9_form['status']) { ?>
+                                                                    <?php
+                                                                    if (!empty($w9_form) && $w9_form['status']) { ?>
                                                                         <?php if ($w9_form['user_consent']) { ?>
                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="">
                                                                         <?php } else { ?>
@@ -180,6 +185,12 @@ $assignIdObj = $confidential_sids;
                                                                         <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                         <div class="text-center">
                                                                             <?= reset_datetime(array('datetime' => $w9_form['sent_date'], '_this' => $this)); ?>
+                                                                            <?php
+                                                                            if ($w9_form['last_assign_by'] != '' && $w9_form['last_assign_by'] != '0') {
+                                                                                echo "<br>Assigned By: " . getUserNameBySID($w9_form['last_assign_by']);
+                                                                            }
+                                                                            ?>
+
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
@@ -261,6 +272,12 @@ $assignIdObj = $confidential_sids;
                                                                         <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                         <div class="text-center">
                                                                             <?= reset_datetime(array('datetime' => $i9_form['sent_date'], '_this' => $this)); ?>
+                                                                            <?php
+                                                                            if ($i9_form['last_assign_by'] != '' && $i9_form['last_assign_by'] != 0) {
+                                                                                echo "<br>Assigned By: " . getUserNameBySID($i9_form['last_assign_by']);
+                                                                            }
+                                                                            ?>
+
                                                                         </div>
                                                                     <?php } else { ?>
                                                                         <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
@@ -268,7 +285,8 @@ $assignIdObj = $confidential_sids;
                                                                 </td>
                                                                 <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_fillable')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_fillable')) || $pp_flag == 1) { ?>
                                                                     <td class="col-lg-6 text-center">
-                                                                        <?php if (sizeof($i9_form) > 0) { ?>
+                                                                        <?php
+                                                                        if (sizeof($i9_form) > 0) { ?>
                                                                             <?php if ($i9_form['status']) { ?>
                                                                                 <form id="form_remove_i9" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="remove_i9" />
@@ -368,6 +386,11 @@ $assignIdObj = $confidential_sids;
                                                                                 } else {
                                                                                     echo "N/A";
                                                                                 }
+
+                                                                                if (!empty($eeo_form_info['last_assigned_by']) && $eeo_form_info['last_assigned_by'] != '0') {
+                                                                                    echo "<br>Assigned By: " . getUserNameBySID($eeo_form_info['last_assigned_by']);
+                                                                                }
+
                                                                                 ?>
                                                                             </div>
                                                                         <?php } ?>
@@ -2451,7 +2474,7 @@ if ($user_type == 'employee') {
 <div id="update_eemployer_section_modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <?php
     $companySid = $this->session->userdata('logged_in')['company_detail']['sid'];
-    $employerPrefill = getDataForEmployerPrefill($companySid,$EmployeeSid);
+    $employerPrefill = getDataForEmployerPrefill($companySid, $EmployeeSid);
     ?>
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -4961,12 +4984,13 @@ if ($user_type == 'employee') {
             if ($(this).find('img').length != 0) {
                 let
                     dn = $(this).find('td:nth-child(1)').text(),
-                    aon = $(this).find('td:nth-child(3)').find('.text-center').text().trim(),
+                    //  aon = $(this).find('td:nth-child(3)').find('.text-center').text().trim(),
+                    aon = $(this).find('td:nth-child(3)').find('.text-center').html().trim(),
+
                     btn = $(this).find('td:nth-child(4)').find('a[data-toggle="modal"]').clone().addClass('btn-sm btn-block'),
                     w4_btn = '',
                     i9_btn = '',
                     db = '';
-
                 //
                 if (dn.trim() == 'EEOC FORM') {
                     if (<?= $eeo_form_info['status'] ?? 0; ?> != 1) {
