@@ -2511,7 +2511,6 @@ class Payroll_model extends CI_Model
         $this->db
             ->where(['gusto_uuid' => $gustoResponse['uuid']])
             ->update('gusto_employees_jobs', $ins);
-
         //
         // add compensations
         foreach ($gustoResponse['compensations'] as $compensation) {
@@ -2529,7 +2528,7 @@ class Payroll_model extends CI_Model
                 $this->db
                     ->where(['gusto_uuid' => $compensation['uuid']])
                     ->update('gusto_employees_jobs_compensations', $ins);
-            } else {
+            } else { 
                 $ins['gusto_employees_jobs_sid'] = $gustoJob['sid'];
                 $ins['gusto_uuid'] = $compensation['uuid'];
                 $ins['created_at'] = getSystemDate();
