@@ -165,11 +165,17 @@ class Main extends Public_Controller
                 $companyId
             );
         //
-        $year = getSystemDate("Y");
-        $month = getSystemDate("m");
-        //
-        $startDate = $year . "-" . $month . "-01";
-        $endDate = getSystemDate($year . "-" . $month . "-t");
+        if ($_GET) {
+            $startDate = formatDateToDB($_GET["start"], SITE_DATE, DB_DATE);
+            $endDate = formatDateToDB($_GET["end"], SITE_DATE, DB_DATE);
+        } else {
+            $year = getSystemDate("Y");
+            $month = getSystemDate("m");
+            //
+            $startDate = $year . "-" . $month . "-01";
+            $endDate = getSystemDate($year . "-" . $month . "-t");
+        }
+        
         //
         $this->data["startDate"] = $startDate;
         $this->data["endDate"] =  $endDate;
