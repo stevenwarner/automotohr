@@ -155,7 +155,6 @@ class Export_employees_csv extends Public_Controller
                                         $employeeStatus = $this->export_csv_model->get_employee_last_status_info($employee['sid']);
                                         $export_data[$i]['status'] = $employeeStatus;
                                     }
-                                    
                                 }
 
                                 //
@@ -235,15 +234,33 @@ class Export_employees_csv extends Public_Controller
                                                     $export_data[$i][$key] = $val;
                                                     $header[$key] = $key;
                                                 }
+
+                                                $header['license_type'] =  $header['license_type'] ?? 'license_type';
+                                                $header['license_authority'] =  $header['license_authority'] ?? 'license_authority';
+                                                $header['license_class'] =  $header['license_class'] ?? 'license_class';
+                                                $header['license_number'] =  $header['license_number'] ?? 'license_number';
+                                                $header['license_issue_date'] =  $header['license_issue_date'] ?? 'license_issue_date';
+                                                $header['license_expiration_date'] =  $header['license_expiration_date'] ?? 'license_expiration_date';
+                                                $header['license_indefinite'] =  $header['license_indefinite'] ?? 'license_indefinite';
+                                                $header['license_notes'] =  $header['license_notes'] ?? 'license_notes';
+
+                                                $export_data[$i]['license_type'] = $export_data[$i]['license_type'] ?? '';
+                                                $export_data[$i]['license_authority'] = $export_data[$i]['license_authority'] ?? '';
+                                                $export_data[$i]['license_class'] = $export_data[$i]['license_class'] ?? '';
+                                                $export_data[$i]['license_number'] = $export_data[$i]['license_number'] ?? '';
+                                                $export_data[$i]['license_issue_date'] = $export_data[$i]['license_issue_date'] ?? '';
+                                                $export_data[$i]['license_expiration_date'] = $export_data[$i]['license_expiration_date'] ?? '';
+                                                $export_data[$i]['license_indefinite'] = $export_data[$i]['license_indefinite'] ?? '';
+                                                $export_data[$i]['license_notes'] = $export_data[$i]['license_notes'] ?? '';
                                             } else {
 
-                                                
+
                                                 $export_data[$i]['license_type'] = '';
                                                 $header['license_type'] = 'license_type';
-                                                                                              
+
                                                 $export_data[$i]['license_authority'] = '';
                                                 $header['license_authority'] = 'license_authority';
-  
+
                                                 $export_data[$i]['license_class'] = '';
                                                 $header['license_class'] = 'license_class';
 
@@ -261,10 +278,7 @@ class Export_employees_csv extends Public_Controller
 
                                                 $export_data[$i]['license_notes'] = '';
                                                 $header['license_notes'] = 'license_notes';
-                                                
-
                                             }
-
                                         } elseif ($value == 'profile_picture') {
                                             if (!empty($employee['profile_picture'])) {
                                                 $export_data[$i]['pictures'] = AWS_S3_BUCKET_URL . $employee['profile_picture'];
@@ -282,7 +296,7 @@ class Export_employees_csv extends Public_Controller
                                 //$export_data[$i]['access_level'] =  $employee['access_level'];
                                 // good to go
                                 $row = '';
-                                
+
                                 foreach ($export_data[$i] as $key => $value) {
                                     //
                                     if (DateTime::createFromFormat('Y-m-d', $value) !== false) {
@@ -317,12 +331,11 @@ class Export_employees_csv extends Public_Controller
                                         $header[$key] = "Date of Birth";
                                     } else if ($item == "ssn") {
                                         $header[$key] = "SSN";
-                                    } else if ($item == "eeoc_code") {  
+                                    } else if ($item == "eeoc_code") {
                                         $header[$key] = "EEOC Code";
                                     } else {
-                                        $header[$key] = ucwords(str_replace("_"," ",$item));
+                                        $header[$key] = ucwords(str_replace("_", " ", $item));
                                     }
-                                    
                                 }
                             }
                             //
