@@ -59,4 +59,18 @@ class Payroll_base_model extends CI_Model
             ->get('gusto_companies_employees')
             ->row_array();
     }
+
+    /**
+     * Loads the library
+     *
+     * @param int $companyId
+     */
+    public function loadPayrollLibrary(int $companyId)
+    {
+        // load the payroll helper
+        $this->load->helper('v1/payroll' . ($this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
+    }
 }

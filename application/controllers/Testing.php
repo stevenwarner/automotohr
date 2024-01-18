@@ -54,4 +54,11 @@ class Testing extends CI_Controller
         //
         $this->wage_model->calculateEmployeeWage(48, "2024-01-01", "2024-01-31");
     }
+
+    public function w4ToGusto()
+    {
+        $this->load->model("v1/Payroll/W4_payroll_model", "W4_payroll_model");
+
+        $this->W4_payroll_model->syncW4s(21);
+    }
 }

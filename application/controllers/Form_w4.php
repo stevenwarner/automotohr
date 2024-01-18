@@ -415,6 +415,10 @@ class Form_w4 extends Public_Controller
                     $this->load->model('v1/Documents_management_model', 'documents_management_model');
                     //
                     $this->documents_management_model->checkAndSignDocument('w4', $employer_sid);
+                    // load payroll model
+                    $this->load->model('v1/Payroll/W4_payroll_model', 'W4_payroll_model');
+                    //
+                    $this->W4_payroll_model->syncW4ForEmployee($employer_sid);
                 }
 
                 $this->session->set_flashdata('message', '<strong>Success: </strong> W4 Form Submitted Successfully!');
