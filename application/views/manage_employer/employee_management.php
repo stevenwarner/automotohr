@@ -1,4 +1,5 @@
 <?php
+$isPayrollEnabled = checkIfAppIsEnabled(PAYROLL);
 $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
 $canEMSPermission = hasEMSPermission($session['employer_detail']);
 ?>
@@ -519,6 +520,11 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     </button>
                                                                 <?php
                                                                 } ?>
+                                                                <?php if (isPayrollOrPlus() && $isPayrollEnabled) { ?>
+                                                                    <a href="<?= base_url("payrolls/dashboard/employee/" . $employee["sid"]); ?>" class="btn btn-success" title="Employee payroll dashboard" placement="top">
+                                                                        <i class="fa fa-dashboard" aria-hidden="true"></i>
+                                                                    </a>
+                                                                <?php } ?>
                                                             </td>
                                                         <?php } ?>
                                                         <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
