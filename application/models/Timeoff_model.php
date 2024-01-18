@@ -6315,7 +6315,9 @@ class Timeoff_model extends CI_Model
                  user_shift_minutes,
                  concat(first_name," ",last_name) as full_name,
                  profile_picture as img,
-                 employee_number
+                 employee_number,
+                 registration_date,
+                 rehire_date
              ')
                 ->from('users')
                 ->where('sid', $v['employee_sid'])
@@ -6336,6 +6338,25 @@ class Timeoff_model extends CI_Model
             $b[$k]['full_name'] = $a->row_array()['full_name'];
             $b[$k]['img'] = $a->row_array()['img'];
             $b[$k]['employee_number'] = $a->row_array()['employee_number'];
+
+            //
+            $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
+            //
+            if (!empty($joiningDate)) {
+                echo $joiningDate;
+                $b[$k]['joining_date'] = $joiningDate;
+            } else {
+                $b[$k]['joining_date'] = "N/A";
+            }
+
+            $rehireDate = get_employee_latest_joined_date("", "", $a->row_array()["rehire_date"], false);
+            //
+            if (!empty($rehireDate)) {
+                $b[$k]['rehire_date'] = $rehireDate;
+            } else {
+                $b[$k]['rehire_date'] = "N/A";
+            }
+
             //
             $defaultTimeFrame = $employeeShiftHours + (round($employeeShiftMinutes / 60, 2));
             $a->free_result();

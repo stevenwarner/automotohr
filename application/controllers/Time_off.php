@@ -7550,9 +7550,11 @@ class Time_off extends Public_Controller
             $company_sid,
             $requestIds
         );
+
+        //_e($data,true,true);
         //
 
-        $header_row = 'Request Reference,Employee Name,Policy Title,Start Date,End Date,Status,Level,Reason,Partial Leave,Partial Note,Comments,Total Days,Total Minutes,Breakdown,Attachments';
+        $header_row = 'Request Reference,Employee Name,Policy Title,Start Date,End Date,Status,Level,Reason,Partial Leave,Partial Note,Comments,Total Days,Total Minutes,Breakdown,Attachments,Joining Date,Rehire Date';
 
         $file_content = '';
         $file_content .= $header_row . PHP_EOL;
@@ -7626,7 +7628,7 @@ class Time_off extends Public_Controller
             $row .= $value['requestId'] . ',' . remakeEmployeeName($value, true) . ',' . $value['policy_title'] . ',' . $value['requested_date'] . ',' . $value['request_to_date'] . ',' . $value['status'] . ',' . $level_at . ',' . $reason . ','
                 . $is_partial_leave . ',' . $value['partial_leave_note'] . ',' . $comments . ','
                 . $totlaDays . ',' . $totlaMinutes . ','
-                . $timeoffBrakdown . ',' . $attachments . ',';
+                . $timeoffBrakdown . ',' . $attachments . ','.$value['joining_date'].','.$value['rehire_date'];
             substr($row, 0, -1);
             $rows .= $row . PHP_EOL;
         }
