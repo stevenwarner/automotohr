@@ -244,14 +244,14 @@ class Export_employees_csv extends Public_Controller
                                                 $header['license_indefinite'] =  $header['license_indefinite'] ?? 'license_indefinite';
                                                 $header['license_notes'] =  $header['license_notes'] ?? 'license_notes';
 
-                                                $export_data[$i]['license_type'] = $export_data[$i]['license_type'] ?? '';
-                                                $export_data[$i]['license_authority'] = $export_data[$i]['license_authority'] ?? '';
-                                                $export_data[$i]['license_class'] = $export_data[$i]['license_class'] ?? '';
-                                                $export_data[$i]['license_number'] = $export_data[$i]['license_number'] ?? '';
-                                                $export_data[$i]['license_issue_date'] = $export_data[$i]['license_issue_date'] ?? '';
-                                                $export_data[$i]['license_expiration_date'] = $export_data[$i]['license_expiration_date'] ?? '';
-                                                $export_data[$i]['license_indefinite'] = $export_data[$i]['license_indefinite'] ?? '';
-                                                $export_data[$i]['license_notes'] = $export_data[$i]['license_notes'] ?? '';
+                                                $export_data[$i]['license_type'] = $export_data[$i]['license_type'] ?? 'N/A';
+                                                $export_data[$i]['license_authority'] = $export_data[$i]['license_authority'] ?? 'N/A';
+                                                $export_data[$i]['license_class'] = $export_data[$i]['license_class'] ?? 'N/A';
+                                                $export_data[$i]['license_number'] = $export_data[$i]['license_number'] ?? 'N/A';
+                                                $export_data[$i]['license_issue_date'] = $export_data[$i]['license_issue_date'] ?? 'N/A';
+                                                $export_data[$i]['license_expiration_date'] = $export_data[$i]['license_expiration_date'] ?? 'N/A';
+                                                $export_data[$i]['license_indefinite'] = $export_data[$i]['license_indefinite'] ?? 'N/A';
+                                                $export_data[$i]['license_notes'] = $export_data[$i]['license_notes'] ?? 'N/A';
                                             } else {
 
 
