@@ -304,11 +304,16 @@ if (!function_exists("checkAndCreateFileForVersion")) {
     {
         // set main file path
         $filePath = ROOTPATH . "../protected_files/versions.json";
+        //
+        $originalData = file_get_contents($filePath);
         // get the file data
-        $fileDataArray = json_decode(file_get_contents($filePath), true);
+        $fileDataArray = json_decode($originalData, true);
         //
         if (!$fileDataArray[$type][$fileWithPath]) {
             $fileDataArray[$type][$fileWithPath] = "4.0.0";
+        }
+        if (json_decode($originalData) == json_decode(json_encode($fileDataArray))) {
+            return;
         }
         // get the file data
         $handler = fopen($filePath, "w");
