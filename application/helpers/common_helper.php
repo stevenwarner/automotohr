@@ -15862,7 +15862,7 @@ if (!function_exists('checkDontHireText')) {
             terminated_employees.do_not_hire,
             ' . (getUserFields()) . '
         ')
-            ->join('users', 'users.sid = terminated_employees.changed_by')
+            ->join('users', 'users.sid = terminated_employees.employee_sid')
             ->where_in('terminated_employees.employee_sid', $empIds)
             ->order_by('terminated_employees.sid', 'DESC')
             ->get('terminated_employees')
