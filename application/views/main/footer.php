@@ -208,6 +208,7 @@ $company_sid = $session['employer_detail']['parent_sid'];*/
                 $class != 'announcements' &&
                 $class != 'manage_ems' &&
                 $class != 'complynet' &&
+                $class != 'benefits' &&
                 $class != 'paid_time_off' &&
                 $class != 'performance_management' &&
                 $class != 'time_off' &&
