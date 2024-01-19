@@ -84,7 +84,8 @@ class Testing extends CI_Controller
             $this
                 ->employee_payroll_model
                 ->syncEmployeeFromGustoToStore(
-                    $v0["gusto_uuid"]
+                    $v0["gusto_uuid"],
+                    false
                 );
         }
         exit(count($employees) . " employees are synced!");
