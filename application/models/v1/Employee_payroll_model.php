@@ -507,7 +507,7 @@ class Employee_payroll_model extends Payroll_base_model
         // check the company
         if (!$gustoCompany) {
             if ($doSendResponse) {
-                return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+                return SendResponse(400, ["errors" => ["Failed to verify resource."]]);
             }
             return ["errors" => ["Failed to verify resource."]];
         }
