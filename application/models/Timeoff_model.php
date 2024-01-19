@@ -6116,6 +6116,9 @@ class Timeoff_model extends CI_Model
         u.pay_plan_flag,
         u.user_shift_minutes,
         u.user_shift_hours,
+        u.registration_date,
+        u.joined_at,
+        u.rehire_date,
     ')
             ->from('timeoff_requests tr')
             ->join('timeoff_policies tp', 'tp.sid = tr.timeoff_policy_sid')

@@ -2211,6 +2211,7 @@ $route["payrolls/employee_earning_types/(:num)/(:any)"]["post"] = "v1/Users/Main
 "manage_admin/Cms/editDynamicPageProcess/$1";
 
 //
-$route['timeoff/exporttocsv/(:num)'] = 'Time_off/exportTimeoffToCSV/$1';
-$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/';
+$route['timeoff/exporttocsv/(:any)'] = 'Time_off/exportTimeoffToCSV/$1';
+//$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/$1';
+
 
