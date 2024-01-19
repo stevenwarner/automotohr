@@ -535,7 +535,7 @@ class Employee_payroll_model extends Payroll_base_model
         $this->syncEmployeeForms();
 
         if ($doSendResponse) {
-            return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+            return SendResponse(200, ["synced!"]);
         }
 
         return [
