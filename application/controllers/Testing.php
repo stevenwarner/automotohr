@@ -64,4 +64,29 @@ class Testing extends CI_Controller
         // $this->w4_payroll_model->syncStateW4(21);
         // $this->w4_payroll_model->syncDDI(21);
     }
+
+    public function syncEmployeesToStore()
+    {
+        // get the employees
+        $employees = $this->db
+            ->select("gusto_uuid")
+            ->get("gusto_companies_employees")
+            ->result_array();
+        //
+        if (!$employees) {
+            exit("no employees found");
+        }
+        // load payroll model
+        $this->load->model("v1/Employee_payroll_model", "employee_payroll_model");
+        foreach ($employees as $v0) {
+
+            // handle employee sync
+            $this
+                ->employee_payroll_model
+                ->syncEmployeeFromGustoToStore(
+                    $v0["gusto_uuid"]
+                );
+        }
+        exit(count($employees) . " employees are synced!");
+    }
 }
