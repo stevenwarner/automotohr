@@ -1374,7 +1374,6 @@ class Cms extends Admin_Controller
             )["content"];
         //
         $post = $this->input->post(null, true);
-
         //
         $pageContent = json_decode($pageContent, true);
 
@@ -1385,12 +1384,35 @@ class Cms extends Admin_Controller
             $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"][] = $post;
             $msg = "You have successfully added a card section.";
         }
-
+        //
+        if (isset($post["sortOrder"])) {
+            $tagCards = $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"];
+            $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"] = $this->sortCards($tagCards);
+        }
+        //
         $this->cms_model->updatePage($pageId, json_encode($pageContent));
         //
         return SendResponse(200, [
             "msg" => $msg
         ]);
+    }
+
+    public function sortCards ($cards) {
+        //
+        foreach ($cards as $key => $card) {
+            if (!isset($card['sortOrder'])) {
+                $cards[$key]['sortOrder'] = 0;
+            }
+        }
+        $sortOrders = array_column($cards, 'sortOrder');
+        //
+        array_multisort($sortOrders, SORT_ASC, $cards);
+        //
+        foreach ($cards as $key => $card) {
+            $cards[$key]['index'] = $key;
+        }
+        //
+        return $cards;
     }
 
 

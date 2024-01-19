@@ -51,11 +51,6 @@ $contentToShow = $pageContent["page"]["sections"]["section0"];
 if ($contentToShow["tags"]) {
    
     foreach ($contentToShow["tags"] as $index => $tag) {
-        if ($tag['title'] == 'Payroll Setup and Help Center') {
-            $title = array_column($tag['cards'], 'title');
-            //
-            array_multisort($title, SORT_ASC, $tag['cards']);
-        }
 
         $this->load->view(
             "manage_admin/cms/v1/partials/dynamic/dynamic_tag",

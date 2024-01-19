@@ -3,7 +3,7 @@ $(function () {
 	 * holds the XHR call reference
 	 */
 	let XHR = null;
-
+	//
 	// attach file uploader
 	$("#jsSection0File").msFileUploader({
 		allowedTypes: ["jpg", "jpeg", "png", "webp"],
@@ -119,7 +119,10 @@ $(function () {
 				Title: "Add a Card Section",
 			},
 			function () {
+				//
 				getPageUI("Add", "add_card", function () {
+					//
+					$("#jsSortOrderSection").removeClass("hidden");
 					//
 					$("#jsAddCardForm").validate({
 						rules: {
@@ -127,12 +130,14 @@ $(function () {
 							details: { required: true },
 							buttonText: { required: true },
 							buttonLink: { required: true },
+							sortOrder: { required: true },
 						},
 						submitHandler: function (form) {
 							// get the form object
 							let formDataObj = formArrayToObj(
 								$(form).serializeArray()
 							);
+							console.log(formDataObj)
 							// attach the section id
 							formDataObj.append("section", "section0");
 							formDataObj.append("tagIndex", index);
@@ -187,12 +192,15 @@ $(function () {
 					"edit_card",
 					function () {
 						//
+						$("#jsSortOrderSection").removeClass("hidden");
+						//
 						$("#jsEditCardForm").validate({
 							rules: {
 								title: { required: true },
 								details: { required: true },
 								buttonText: { required: true },
 								buttonLink: { required: true },
+								sortOrder: { required: true },
 							},
 							submitHandler: function (form) {
 								// get the form object

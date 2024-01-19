@@ -42,6 +42,14 @@
                     </label>
                     <input type="text" class="form-control" name="buttonLink" value="" />
                 </div>
+
+                <div id="jsSortOrderSection" class="form-group hidden">
+                    <label>
+                        Sort Order
+                        <strong class="text-danger">*</strong>
+                    </label>
+                    <input type="text" class="form-control" name="sortOrder" value="0" />
+                </div>
             </div>
             <div class="panel-footer text-center">
                 <button class="btn btn-success jsAddCardBtn">
