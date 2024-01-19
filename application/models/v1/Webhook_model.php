@@ -271,10 +271,10 @@ class Webhook_model extends CI_Model
             $this->post["event_type"] === "employee.onboarded"
             || $this->post["event_type"] === "employee.updated"
         ) {
-            // handle forms
+            // handle employee sync
             $this
                 ->employee_payroll_model
-                ->syncForms(
+                ->syncEmployeeFromGustoToStore(
                     $this->post["entity_uuid"]
                 );
         }

@@ -57,8 +57,11 @@ class Testing extends CI_Controller
 
     public function w4ToGusto()
     {
-        $this->load->model("v1/Payroll/W4_payroll_model", "W4_payroll_model");
+        // load payroll model
+        $this->load->model("v1/Payroll/W4_payroll_model", "w4_payroll_model");
 
-        $this->W4_payroll_model->syncW4s(21);
+        // $this->w4_payroll_model->syncW4s(21);
+        // $this->w4_payroll_model->syncStateW4(21);
+        // $this->w4_payroll_model->syncDDI(21);
     }
 }

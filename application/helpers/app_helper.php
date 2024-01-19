@@ -290,10 +290,65 @@ if (!function_exists('updateUserById')) {
      */
     function updateUserById(array $updateArray, int $employeeId)
     {
+        // get the CI instance
+        $CI = &get_instance();
+        // get the difference
+        checkAndSaveTheDifference(
+            $updateArray,
+            $employeeId
+        );
+        // update the user in "users" table
+        $CI->db
+            ->where("sid", $employeeId)
+            ->update('users', $updateArray);
+    }
+}
+
+if (!function_exists('checkAndSaveTheDifference')) {
+    /**
+     * Update user
+     * 
+     * Central point to update user in system, the system will user information to
+     * all the other places, like profile, w4, I9, full employment etc.
+     * 
+     * @param array $newData
+     * @param int $employeeId
+     * @return array
+     */
+    function checkAndSaveTheDifference(array $newData, int $employeeId): array
+    {
         // get CI instance
         $CI = &get_instance();
-        // update the user in "users" table
-        $CI->db->where(['sid' => $employeeId])->update('users', $updateArray);
+        // get the old column data
+        $oldData = $CI->db
+            ->select(array_keys($newData))
+            ->where("sid", $employeeId)
+            ->get("users")
+            ->row_array();
+        // set difference array
+        $diffArray = [];
+        //
+        foreach ($oldData as $index => $value) {
+            if ($newData[$index] != $value) {
+                $diffArray[$index] = [
+                    "old" => $value,
+                    "new" => $newData[$index]
+                ];
+            }
+        }
+        // only add if something is changed
+        if ($diffArray) {
+            // insert the history
+            $CI->db
+                ->insert('profile_history', [
+                    "user_sid" => $employeeId,
+                    "employer_sid" => $CI->session->userdata("logged_in")["employer_detail"]["sid"] ?? 0,
+                    "profile_data" => json_encode($diffArray),
+                    "created_at" => getSystemDate(),
+                ]);
+        }
+        //
+        return $diffArray;
     }
 }
 
