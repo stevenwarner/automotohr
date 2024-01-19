@@ -483,8 +483,9 @@ class Employee_payroll_model extends Payroll_base_model
      * Sync employee from Gusto to Store
      *
      * @param string $gustoEmployeeId
+     * @param bool   $doSendResponse Optional
      */
-    public function syncEmployeeFromGustoToStore(string $gustoEmployeeId)
+    public function syncEmployeeFromGustoToStore(string $gustoEmployeeId, bool $doSendResponse = true)
     {
         // get store employee details
         $storeEmployeeDetails = $this->db
@@ -494,7 +495,10 @@ class Employee_payroll_model extends Payroll_base_model
             ->row_array();
         // check the employee
         if (!$storeEmployeeDetails) {
-            return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+            if ($doSendResponse) {
+                return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+            }
+            return ["errors" => ["Failed to verify entity."]];
         }
         // add the employee gusto uuid
         $storeEmployeeDetails["gusto_uuid"] = $gustoEmployeeId;
@@ -502,7 +506,10 @@ class Employee_payroll_model extends Payroll_base_model
         $gustoCompany = $this->getCompanyDetailsForGusto($storeEmployeeDetails["company_sid"]);
         // check the company
         if (!$gustoCompany) {
-            return SendResponse(400, ["errors" => ["Failed to verify resource."]]);
+            if ($doSendResponse) {
+                return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+            }
+            return ["errors" => ["Failed to verify resource."]];
         }
         //
         $this->loadPayrollLibrary($storeEmployeeDetails["company_sid"]);
@@ -527,12 +534,13 @@ class Employee_payroll_model extends Payroll_base_model
         // let's sync the employee forms
         $this->syncEmployeeForms();
 
-        return SendResponse(
-            200,
-            [
-                "synced!"
-            ]
-        );
+        if ($doSendResponse) {
+            return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
+        }
+
+        return [
+            "synced!"
+        ];
     }
 
 
