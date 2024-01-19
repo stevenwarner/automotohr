@@ -7651,6 +7651,10 @@ class Time_off extends Public_Controller
             }
         }
 
+        $outputFile = $companyHeader. PHP_EOL;
+        $outputFile = $header_row. PHP_EOL;
+        $outputFile = $rows. PHP_EOL;
+
 
         header('Pragma: public');     // required
         header('Expires: 0');         // no cache
@@ -7659,10 +7663,8 @@ class Time_off extends Public_Controller
         header('Content-Type: text/csv');  // Add the mime type from Code igniter.
         header('Content-Disposition: attachment; filename="employees_time_off' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
         header('Content-Transfer-Encoding: binary');
-        header('Content-Length: ' . $file_size); // provide file size
+        header('Content-Length: ' . strlen($outputFile)); // provide file size
         header('Connection: close');
-        echo $companyHeader . PHP_EOL;
-        echo $header_row . PHP_EOL;
-        echo $rows;
+        echo $outputFile;
     }
 }
