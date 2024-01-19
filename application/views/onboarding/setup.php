@@ -1263,6 +1263,10 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $w4_form_data['sent_date'], '_this' => $this)); ?>
+                                                                                                <?php if($w4_form_data['last_assign_by']!='' && $w4_form_data['last_assign_by']!='0' ){
+                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($w4_form_data['last_assign_by']);
+                                                                                                }
+                                                                                                ?>
                                                                                             </div>
                                                                                         <?php } else { ?>
                                                                                             <i class="fa fa-times fa-2x text-danger"></i>
@@ -1301,6 +1305,10 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $w9_form_data['sent_date'], '_this' => $this)); ?>
+                                                                                                <?php if($w9_form_data['last_assign_by']!='' && $w9_form_data['last_assign_by']!='0' ){
+                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($w9_form_data['last_assign_by']);
+                                                                                                }
+                                                                                                ?>
                                                                                             </div>
                                                                                         <?php } else { ?>
                                                                                             <i class="fa fa-times fa-2x text-danger"></i>
@@ -1339,6 +1347,11 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $i9_form_data['sent_date'], '_this' => $this)); ?>
+                                                                                                <?php if($i9_form_data['last_assign_by']!='' && $i9_form_data['last_assign_by']!='0' ){
+                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($i9_form_data['last_assign_by']);
+                                                                                                }
+                                                                                                ?>
+                                                                                                
                                                                                             </div>
                                                                                         <?php } else { ?>
                                                                                             <i class="fa fa-times fa-2x text-danger"></i>
@@ -1375,7 +1388,7 @@ if ($user_type == 'applicant') {
                                                                                             <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                                         </td>
                                                                                         <td class="col-lg-2 text-center">
-                                                                                            <?php if (empty($eeo_form_info)) { ?>
+                                                                                           <?php if (empty($eeo_form_info)) { ?>
                                                                                                 <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                                             <?php } else { ?>
                                                                                                 <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
@@ -1387,6 +1400,10 @@ if ($user_type == 'applicant') {
                                                                                                         echo "N/A";
                                                                                                     }
                                                                                                     ?>
+                                                                                                      <?php if($eeo_form_info['last_assigned_by']!='' && $eeo_form_info['last_assigned_by']!='0' ){
+                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($eeo_form_info['last_assigned_by']);
+                                                                                                }
+                                                                                                ?>
                                                                                                 </div>
                                                                                             <?php } ?>
                                                                                         </td>

@@ -6476,8 +6476,14 @@ class Hr_documents_management_model extends CI_Model
         //
         $is_required = !$is_required ? 0 : $is_required;
         //
+        $data['session'] = $this->session->userdata('logged_in');
+        $assigned_by = $data['session']['employer_detail']['sid'];
+
         if ($sid == 0) {
             //
+
+
+
             $this->db
                 ->insert(
                     'documents_assigned_general',
@@ -6490,7 +6496,8 @@ class Hr_documents_management_model extends CI_Model
                         'note' => $note,
                         'is_required' => $is_required,
                         'assigned_at' => date('Y-m-d H:i:s'),
-                        'is_completed' => 0
+                        'is_completed' => 0,
+                        'assigned_by'=>$assigned_by
                     ]
                 );
             //
@@ -6506,7 +6513,8 @@ class Hr_documents_management_model extends CI_Model
                         'note' => $note,
                         'is_required' => $is_required,
                         'assigned_at' => date('Y-m-d H:i:s'),
-                        'is_completed' => 0
+                        'is_completed' => 0,
+                        'assigned_by'=>$assigned_by
                     ]
                 );
         }

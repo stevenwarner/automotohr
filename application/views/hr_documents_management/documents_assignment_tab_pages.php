@@ -93,6 +93,10 @@ $noActionRequiredDocumentsList = [];
                                                                     echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
                                                                 }
 
+                                                                if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                    echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
+                                                                }
+
                                                                 if ($document['approval_process'] == 1) {
                                                                     echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                 }
@@ -305,7 +309,8 @@ $noActionRequiredDocumentsList = [];
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php if (!empty($uncompleted_offer_letter)) { ?>
+                                                    <?php
+                                                    if (!empty($uncompleted_offer_letter)) { ?>
                                                         <?php foreach ($uncompleted_offer_letter as $document) { ?>
                                                             <?php
                                                             $GLOBALS['uofl'][] = $document;
@@ -322,6 +327,9 @@ $noActionRequiredDocumentsList = [];
 
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                    }
+                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                                     }
 
                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
@@ -475,6 +483,10 @@ $noActionRequiredDocumentsList = [];
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
                                                                     }
 
+                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
+                                                                    }
+
                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                     } else {
@@ -600,6 +612,9 @@ $noActionRequiredDocumentsList = [];
 
                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                     echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                }
+                                                if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                    echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                 }
 
                                                 if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
@@ -734,6 +749,10 @@ $noActionRequiredDocumentsList = [];
 
                                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                    }
+
+                                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                                                     }
 
                                                                                     if ($document['approval_process'] == 1) {
@@ -1034,6 +1053,10 @@ $noActionRequiredDocumentsList = [];
                                                                         echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($document['assigned_date']));
                                                                     }
 
+                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
+                                                                    }
+
                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($document['signature_timestamp']));
                                                                     } else {
@@ -1247,6 +1270,10 @@ $noActionRequiredDocumentsList = [];
 
                                                                             if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                 echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                            }
+
+                                                                            if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                                echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                                             }
 
                                                                             if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
@@ -1518,7 +1545,8 @@ $noActionRequiredDocumentsList = [];
                                                     </thead>
                                                     <tbody>
                                                         <?php if (!empty($completed_w4)) { ?>
-                                                            <?php foreach ($completed_w4 as $w4_form) { ?>
+                                                            <?php
+                                                            foreach ($completed_w4 as $w4_form) { ?>
                                                                 <?php $cd++; ?>
                                                                 <tr>
                                                                     <td class="col-lg-8">
@@ -1526,6 +1554,12 @@ $noActionRequiredDocumentsList = [];
                                                                         <br />
                                                                         <strong>Assigned on: </strong>
                                                                         <?php echo date('M d Y, D', strtotime($w4_form['sent_date'])); ?>
+                                                                        <?php
+                                                                        if ($w4_form['last_assign_by'] != 0 && $w4_form['last_assign_by'] != '') {
+                                                                            echo "<br>Assigned By: " . getUserNameBySID($w4_form['last_assign_by']);
+                                                                        }
+                                                                        ?>
+
                                                                     </td>
                                                                     <td class="col-lg-2">
                                                                         <?php echo $w4_form['form_status']; ?>
@@ -1546,6 +1580,11 @@ $noActionRequiredDocumentsList = [];
                                                                         <br />
                                                                         <strong>Assigned on: </strong>
                                                                         <?php echo date('M d Y, D', strtotime($w9_form['sent_date'])); ?>
+                                                                        <?php
+                                                                        if ($w9_form['last_assign_by'] != 0 && $w9_form['last_assign_by'] != '') {
+                                                                            echo "<br>Assigned By: " . getUserNameBySID($w9_form['last_assign_by']);
+                                                                        }
+                                                                        ?>
                                                                     </td>
                                                                     <td class="col-lg-2">
                                                                         <?php echo $w9_form['form_status']; ?>
@@ -1566,6 +1605,11 @@ $noActionRequiredDocumentsList = [];
                                                                         <br />
                                                                         <strong>Assigned on: </strong>
                                                                         <?php echo date('M d Y, D', strtotime($i9_form['sent_date'])); ?>
+                                                                        <?php
+                                                                        if ($i9_form['last_assign_by'] != 0 && $i9_form['last_assign_by'] != '') {
+                                                                            echo "<br>Assigned By: " . getUserNameBySID($i9_form['last_assign_by']);
+                                                                        }
+                                                                        ?>
                                                                     </td>
                                                                     <td class="col-lg-2">
                                                                         <?php echo $i9_form['form_status']; ?>
@@ -1658,6 +1702,10 @@ $noActionRequiredDocumentsList = [];
 
                                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                                    }
+
+                                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                                                     }
 
                                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
@@ -1832,6 +1880,10 @@ $noActionRequiredDocumentsList = [];
 
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
+                                                                    }
+
+                                                                    if (isset($document['assigned_by']) && $document['assigned_by'] != '' && $document['assigned_by'] != '0') {
+                                                                        echo "<br><b>Assigned By: </b>" . getUserNameBySID($document['assigned_by']);
                                                                     }
 
                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
