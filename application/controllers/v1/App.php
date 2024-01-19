@@ -180,15 +180,6 @@ class App extends CI_Controller
         $this->setCommon("v1/app/css/legal", "css");
         //
         $this->getCommon($data, "sitemap");
-        //
-        foreach ($pageContent["page"]["sections"]["section0"]["tags"] as $index => $tag) {
-            if ($tag['title'] == 'Payroll Setup and Help Center') {
-                $title = array_column($tag['cards'], 'title');
-                //
-                array_multisort($title, SORT_ASC, $tag['cards']);
-                $pageContent["page"]["sections"]["section0"]["tags"][$index]['cards'] =  $tag['cards'];
-            }
-        }
         // 
         $data['pageContent'] = $pageContent; 
         //
