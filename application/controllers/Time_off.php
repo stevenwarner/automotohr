@@ -7652,8 +7652,8 @@ class Time_off extends Public_Controller
         }
 
         $outputFile = $companyHeader. PHP_EOL;
-        $outputFile = $header_row. PHP_EOL;
-        $outputFile = $rows. PHP_EOL;
+        $outputFile .= $header_row. PHP_EOL;
+        $outputFile .= $rows. PHP_EOL;
 
 
         header('Pragma: public');     // required
