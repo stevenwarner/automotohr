@@ -492,6 +492,12 @@ if (typeof formArrayToObj === "undefined") {
 			});
 			return formObj;
 		}
+		//
+		let formObj = new FormData();
+		formArray.map(function (i) {
+			formObj.append(i.name, i.value);
+		});
+		return formObj;
 	}
 }
 
