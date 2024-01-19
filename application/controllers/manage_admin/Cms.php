@@ -1415,6 +1415,41 @@ class Cms extends Admin_Controller
         return $cards;
     }
 
+    public function updateSortOrder (int $pageId) {
+        // get the page record
+        $pageContent = $this->cms_model
+            ->get_page_data(
+                $pageId
+            )["content"];
+        //
+        $post = $this->input->post(null, true);
+        //
+        $pageContent = json_decode($pageContent, true);
+        //
+        if (isset($post["sortOrders"])) {
+            $tagCards = $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"];
+            //
+            $newCardsOrder = [];
+            //
+            foreach ($post["sortOrders"] as $key => $index) {
+                //
+                $item = $tagCards[$index];
+                //
+                $item['index'] = $key;
+                $item['sortOrder'] = $key+1;
+                $newCardsOrder[] = $item; 
+            }
+            //         
+            $pageContent["page"]["sections"]["section0"]["tags"][$post["tagIndex"]]["cards"] = $newCardsOrder;
+            $msg = "You have successfully updated a cards sort order.";
+        }
+        // //
+        $this->cms_model->updatePage($pageId, json_encode($pageContent));
+        //
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
+    }
 
     /**
      * deletes tag card

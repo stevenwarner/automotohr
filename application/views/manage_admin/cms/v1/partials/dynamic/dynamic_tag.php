@@ -19,11 +19,12 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
         </h4>
     </div>
     <div id="jsSectionTag<?= $tagIndex; ?>" class="panel-collapse collapse <?= $collapseIn; ?>" role="tabpanel" aria-labelledby="headingOne">
-        <div class="panel-body">
+        <div class="panel-body jsDraggable">
             <?php
             if ($tagData["cards"]) {
                 foreach ($tagData["cards"] as $index => $card) {
             ?>
+                <div class="jsCardsSortOrder_<?= $tagIndex; ?>" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
                     <div class="row" data-key="<?= $index; ?>" data-index="<?= $tagIndex; ?>">
                         <div class="col-sm-10">
                             <h3><?= convertToStrip($card["title"]); ?></h3>
@@ -45,6 +46,7 @@ $collapseIn =  $this->input->get("page") == 'sectionTag' . $tagIndex ? "in" : ""
                         </div>
                     </div>
                     <hr />
+                </div>    
             <?php
                 }
             }
