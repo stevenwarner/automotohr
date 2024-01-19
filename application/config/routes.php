@@ -2138,6 +2138,7 @@ $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWit
 //
 $route['manage_admin/cms'] = 'manage_admin/Cms/index';
 $route['manage_admin/edit_page/(:num)'] = 'manage_admin/Cms/edit_page/$1';
+$route["cms/update_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSortOrder/$1";
 
 //
 $route['manage_admin/resources'] = 'manage_admin/Resources/index';
