@@ -522,18 +522,25 @@ class Employee_payroll_model extends Payroll_base_model
 
         // let's sync the employee work addresses
         $this->syncEmployeeWorkAddresses();
+        usleep(200);
         // let's sync the employee jobs and compensations
         $this->syncEmployeeJobs();
+        usleep(200);
         // let's sync the employee home address
         $this->syncEmployeeHomeAddress();
+        usleep(200);
         // let's sync the employee federal tax
         $this->syncEmployeeFederalTax();
+        usleep(200);
         // let's sync the employee state tax
         $this->syncEmployeeStateTaxFromGusto();
+        usleep(200);
         // let's sync the employee payment method
         $this->syncEmployeePaymentMethodFromGusto();
+        usleep(200);
         // let's sync the employee forms
         $this->syncEmployeeForms();
+        usleep(200);
 
         if ($doSendResponse) {
             return SendResponse(200, ["synced!"]);
