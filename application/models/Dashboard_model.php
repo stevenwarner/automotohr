@@ -3431,4 +3431,22 @@ class Dashboard_model extends CI_Model
 
         return array_column($b, 'sid');
     }
+
+    //
+    function assigned_shifts_count($employee_id, $company_id)
+    {
+
+        $startDate = formatDateToDB(date('m-01-Y'), SITE_DATE, DB_DATE);
+        $endDate  = formatDateToDB(date('m-t-Y'), SITE_DATE, DB_DATE);;
+
+        $this->db->select('sid');
+        $this->db->where('employee_sid', $employee_id);
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('shift_date>=', $startDate);
+        $this->db->where('shift_date<=', $endDate);
+        $this->db->from('cl_shifts');
+
+        return $this->db->count_all_results();
+
+    }
 }

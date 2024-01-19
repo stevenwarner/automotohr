@@ -2214,3 +2214,5 @@ $route["payrolls/employee_earning_types/(:num)/(:any)"]["post"] = "v1/Users/Main
 $route['timeoff/exporttocsv/(:num)'] = 'Time_off/exportTimeoffToCSV/$1';
 $route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/';
 
+//
+$route["settings/myshifts/manage"]["get"] = "Settings/manageMyShifts";

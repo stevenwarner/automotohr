@@ -326,11 +326,11 @@ class Dashboard extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $employer_id,
-                "employee",
-                0
-            );
+                ->assignGroupDocumentsToUser(
+                    $employer_id,
+                    "employee",
+                    0
+                );
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
@@ -659,7 +659,7 @@ class Dashboard extends Public_Controller
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
                 }
                 if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/','setup-company', true);
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', true);
                 }
 
                 // for payroll
@@ -683,6 +683,9 @@ class Dashboard extends Public_Controller
                 );
 
             $data['documents_count'] += count($companyStateForms["not_completed"]);
+
+            $data['assignedShifts'] = $this->dashboard_model->assigned_shifts_count($employer_id, $company_id);
+
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -847,11 +850,11 @@ class Dashboard extends Public_Controller
 
             // state forms from group
             $this->hr_documents_management_model
-            ->assignGroupDocumentsToUser(
-                $employer_id,
-                "employee",
-                0
-            );
+                ->assignGroupDocumentsToUser(
+                    $employer_id,
+                    "employee",
+                    0
+                );
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //

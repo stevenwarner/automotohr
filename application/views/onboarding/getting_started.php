@@ -940,7 +940,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                 <h2>Team Courses</h2>
                                                 <div><span>&nbsp;</span></div>
                                                 <div class="current-date">
-                                                    <span><?= $subordinateCount?? 0; ?><sub>Employees</sub></span>
+                                                    <span><?= $subordinateCount ?? 0; ?><sub>Employees</sub></span>
                                                 </div>
                                                 <div class="status-panel">
                                                     <!-- <h3>Courses</h3> -->
@@ -950,7 +950,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                         </a>
                                     </div>
                                 </div>
-                            <?php } ?>    
+                            <?php } ?>
                             <!-- LMS - Courses -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
@@ -959,7 +959,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <h2>Courses</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?= $pendingTrainings?? 0; ?><sub>Pending</sub></span>
+                                                <span><?= $pendingTrainings ?? 0; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>Courses</h3>
@@ -970,6 +970,26 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php endif; ?>
+
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="widget-box">
+                                <a href="<?php echo base_url('settings/myshifts/manage'); ?>">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>My Shifts</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        <div class="current-date">
+                                            <span><?= $assignedShifts ?? 0; ?><sub> Assigned</sub></span>
+
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>Manage Shifts</h3>
+                                            <span>Assigned to You</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
