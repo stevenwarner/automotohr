@@ -498,6 +498,7 @@ class Employee_payroll_model extends Payroll_base_model
             if ($doSendResponse) {
                 return SendResponse(400, ["errors" => ["Failed to verify entity."]]);
             }
+            echo $gustoEmployeeId . PHP_EOL;
             return ["errors" => ["Failed to verify entity."]];
         }
         // add the employee gusto uuid
