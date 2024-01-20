@@ -2216,3 +2216,4 @@ $route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/';
 
 //
 $route["settings/myshifts/manage"]["get"] = "Settings/manageMyShifts";
+$route["settings/subordinateshifts/manage"]["get"] = "Settings/manageSubordinateShifts";

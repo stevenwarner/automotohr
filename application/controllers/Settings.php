@@ -5338,7 +5338,7 @@ class Settings extends Public_Controller
         $employeeFilter['jobtitle'] = explode(',', $jobTitle);
 
 
-        if ($filterStartDate != '' ) {
+        if ($filterStartDate != '') {
             $toggleFilter = false;
         }
 
@@ -5389,7 +5389,7 @@ class Settings extends Public_Controller
         }
 
 
-            // load schedule model
+        // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         //
         $employeeIds = array_column($data["employees"], "userId");
@@ -5418,9 +5418,9 @@ class Settings extends Public_Controller
             explode(",", $jobTitle);
 
 
-            $data["filterStartDate"]=$filterStartDate;
-            $data["filterEndDate"]=$filterEndDate;
-            
+        $data["filterStartDate"] = $filterStartDate;
+        $data["filterEndDate"] = $filterEndDate;
+
 
         // get off and holidays
         $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
@@ -5480,6 +5480,190 @@ class Settings extends Public_Controller
 
         $this->load->view('main/header_2022', $data);
         $this->load->view('v1/settings/shifts/my_listing');
+        $this->load->view('main/footer');
+    }
+
+
+    //
+    public function manageSubordinateShifts()
+    {
+        // check if plus or don't have access to the module
+        if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $employeeId = $session['employer_detail']['sid'];
+
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Manage Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // get all active employees
+
+        $myDepartments = $this->shift_model->getMyTeams($employeeId);
+
+        $myDepartmentList = $this->shift_model->getDepartments($myDepartments['departments']);
+        $myTeamList = $this->shift_model->getTeams($myDepartments['teams']);
+
+        $data['myDepartmentList'] = $myDepartmentList;
+        $data['myTeamList'] = $myTeamList;
+
+        $filterStartDate = $this->input->get("start_date");
+        $filterEndDate = $this->input->get("end_date");
+        $filterDepartments = $this->input->get("departments");
+        $filterTeams = $this->input->get("teams");
+
+        $data['filterDepartments'] = $filterDepartments;
+        $data['filterTeams'] = $filterTeams;
+
+        $filterDepartmentsArray = explode(',', $filterDepartments);
+        $filterTeamsArray = explode(',', $filterTeams);
+
+        if ($filterDepartmentsArray[0] == 'all' || $filterDepartmentsArray[0] == '') {
+            $filterDepartmentsArray = array_column($data['myDepartmentList'], 'sid');
+        }
+
+        if ($filterTeamsArray[0] == 'all' || $filterTeamsArray[0] == '') {
+            $filterTeamsArray  = array_column($data['myTeamList'], 'sid');
+        }
+
+        $employeeFilter['departments'] = $filterDepartmentsArray;
+        $employeeFilter['teams'] = $filterTeamsArray;
+
+        $toggleFilter = true;
+
+        if ($filterStartDate != '' || $filterDepartments != '' || $filterEndDate != '') {
+            $toggleFilter = false;
+        }
+
+        $data["employees"] = $this->shift_model->getSubordinatesEmployees(
+            $loggedInCompany["sid"],
+            $employeeFilter
+        );
+
+        $data["allemployees"] = $this->shift_model->getCompanyEmployeesOnly(
+            $loggedInCompany["sid"]
+        );
+
+        //
+        $data["filter"] = [];
+        // set the mode
+        $data["filter"]["mode"] = $this->input->get("mode", true) ?? "month";
+
+        if ($data["filter"]["mode"] === "week") {
+            // get the current week dates
+            $weekDates = getWeekDates(false, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates['end_date'];
+        } elseif ($data["filter"]["mode"] === "two_week") {
+            // get the current week dates
+            $weekDates = getWeekDates(true, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $this->input->get("start_date", true) ??
+                $weekDates["current_week"]['start_date'];
+            // set the end date
+            $data["filter"]["end_date"] = $this->input->get("end_date", true) ??
+                $weekDates["next_week"]['end_date'];
+        } else {
+            $data["filter"]["month"] = $this->input->get("month", true) ?? getSystemDate("m");
+            $data["filter"]["year"] = $this->input->get("year", true) ?? getSystemDate("Y");
+            //
+            $data["filter"]["start_date"] = getDateFromYearAndMonth($data["filter"]["year"], $data["filter"]["month"], "01/m/Y");
+            //
+            $data["filter"]["end_date"] = getDateFromYearAndMonth($data["filter"]["year"], $data["filter"]["month"], "t/m/Y");
+        }
+
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $employeeIds = array_column($data["employees"], "userId");
+        // get the shifts
+        $data["shifts"] = $this->shift_model->getShifts(
+            $data["filter"],
+            $employeeIds
+        );
+        // load time off model
+        $this->load->model("timeoff_model", "timeoff_model");
+        // get the leaves
+        $data["leaves"] = $employeeIds ? $this->timeoff_model
+            ->getEmployeesTimeOffsInRange(
+                $employeeIds,
+                formatDateToDB($data["filter"]["start_date"], SITE_DATE, DB_DATE),
+                formatDateToDB($data["filter"]["end_date"], SITE_DATE, DB_DATE)
+            ) : [];
+
+        $data["company_sid"] =  $loggedInCompany["sid"];
+        $data["filter_team"] = $team;
+        $data["filter_toggle"] = $toggleFilter;
+        $data["filterStartDate"] = $filterStartDate;
+        $data["filterEndDate"] = $filterEndDate;
+
+        // get off and holidays
+        $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
+            $loggedInCompany["sid"],
+            $data["filter"]
+        );
+
+        //
+
+        $data['title'] = "My Scheduling | " . STORE_NAME;
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = 0;
+        $data['page'] = "my_courses";
+        $data['viewMode'] = "my";
+        $data['employee'] = $session['employer_detail'];
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['load_view'] = 1;
+        $data['type'] = "self";
+
+        $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard', true);
+
+        $data['appCSS'] = $bundleCSS;
+
+        // set common files bundle
+        $data["pageCSS"] = [
+            getPlugin("alertify", "css"),
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+            getPlugin("select2", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+            getPlugin("select2", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+            "v1/plugins/ms_modal/main"
+        ];
+
+
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/ems_subordinate_main"
+        ], "public/v1/shifts/", "ems_subordinate_main", false);
+        //
+
+        $this->load->view('main/header_2022', $data);
+        $this->load->view('v1/settings/shifts/subordinate_listing');
         $this->load->view('main/footer');
     }
 }

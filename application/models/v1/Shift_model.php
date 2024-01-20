@@ -1011,4 +1011,169 @@ class Shift_model extends CI_Model
             ]
         );
     }
+
+
+
+    //
+
+
+    function getMyTeams(
+        $sid,
+        $type = 'all'
+    ) {
+        //
+        $departments = $this->db
+            ->select('sid')
+            ->where('departments_management.is_deleted', 0)
+            ->where('departments_management.status', 1)
+            ->where('FIND_IN_SET(' . ($sid) . ', supervisor)', NULL, FALSE)
+            ->get('departments_management')
+            ->result_array();
+        //
+        if (!empty($departments)) {
+            $departments = array_column($departments, 'sid');
+            //
+            $newDept = [];
+            //
+            foreach ($departments as $dept) {
+                //
+                $t = explode(',', $dept);
+                //
+                $newDept = array_merge($t, $newDept);
+            }
+            //
+            $departments = $newDept;
+        }
+        //
+
+        if (!empty($departments)) {
+            $teams = $this->db
+                ->select('
+                    departments_team_management.sid
+                ')
+                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_team_management.status', 1)
+                ->group_start()
+                ->where_in('departments_team_management.department_sid', $departments)
+                ->or_where('FIND_IN_SET(' . ($sid) . ', team_lead)', NULL, FALSE)
+                ->group_end()
+                ->get('departments_team_management')
+                ->result_array();
+        } else {
+            $teams = $this->db
+                ->select('
+                    departments_team_management.sid
+                ')
+                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+                ->where('departments_management.is_deleted', 0)
+                ->where('departments_management.status', 1)
+                ->where('departments_team_management.is_deleted', 0)
+                ->where('departments_team_management.status', 1)
+                ->where('FIND_IN_SET(' . ($sid) . ', team_lead)', NULL, FALSE)
+                ->get('departments_team_management')
+                ->result_array();
+        }
+
+        //
+        if (!empty($teams)) {
+            //
+            $teams = array_column($teams, 'sid');
+            //
+            $newDept = [];
+            //
+            foreach ($teams as $dept) {
+                //
+                $t = explode(',', $dept);
+                //
+                $newDept = array_merge($t, $newDept);
+            }
+            //
+            $teams = $newDept;
+        }
+        //
+        if ($type == 'all') {
+            return ['departments' => $departments, 'teams' => $teams];
+        } else {
+            return ['teams' => $teams];
+        }
+        // 
+
+    }
+
+
+
+    //
+    function getDepartments(
+        $sids
+    ) {
+        //
+        if (!empty($sids)) {
+            $departments = $this->db
+                ->select('sid,name')
+                ->where_in('departments_management.sid', $sids)
+                ->get('departments_management')
+                ->result_array();
+
+            if (!empty($departments)) {
+                return  $departments;
+            } else {
+                return [];
+            }
+        } else {
+            return [];
+        }
+    }
+
+    //
+    function getTeams(
+        $sids
+    ) {
+        //
+        if (!empty($sids)) {
+
+            $teams = $this->db
+                ->select('sid,name')
+                ->where_in('sid', $sids)
+                ->get('departments_team_management')
+                ->result_array();
+
+            if (!empty($teams)) {
+                return  $teams;
+            } else {
+                return [];
+            }
+        } else {
+            return [];
+        }
+    }
+
+    //
+    public function getSubordinatesEmployees(int $companyId, $employeeFilter = []): array
+    {
+
+        if (empty($employeeFilter['departments']) && empty($employeeFilter['teams'])) {
+            return [];
+        } else {
+            $this->db
+                ->select(getUserFields())
+                ->where([
+                    "users.parent_sid" => $companyId,
+                    "users.is_executive_admin" => 0,
+                ]);
+            //
+            if (!empty($employeeFilter['departments'])) {
+                $this->db->where_in("users.department_sid", $employeeFilter['departments']);
+            }
+
+            if (!empty($employeeFilter['teams'])) {
+                $this->db->where_in("users.team_sid", $employeeFilter['teams']);
+            }
+
+            $this->db->order_by("users.first_name", "ASC");
+            return $this->db->get("users")->result_array();
+        }
+    }
 }
