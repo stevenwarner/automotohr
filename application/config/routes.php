@@ -2143,6 +2143,7 @@ $route["cms/update_sort_order/(:num)"]["post"] = "manage_admin/Cms/updateSortOrd
 //
 $route['manage_admin/resources'] = 'manage_admin/Resources/index';
 $route['manage_admin/resources/(:num)'] = 'manage_admin/Resources/index/$1';
+$route['manage_admin/resources/update_sort_order']["post"] = 'manage_admin/Resources/updateResourceSortOrder';
 
 $route['manage_admin/edit_resource/(:num)'] = 'manage_admin/Resources/edit_resource/$1';
 $route['manage_admin/uploadresource'] = 'manage_admin/Resources/upload_file_ajax_handler';
