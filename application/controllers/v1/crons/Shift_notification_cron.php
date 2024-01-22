@@ -23,9 +23,10 @@ class Shift_notification_cron extends CI_Controller
         // load shift notification model
         $this->load->model("v1/Shift_notification_model", "shift_notification_model");
         //
-        $this->shift_notification_model
+        $response = $this->shift_notification_model
             ->sendEmployeesNotificationsWithUpcomingShifts(
-                []
+                ["all"]
             );
+        _e($response, true);
     }
 }

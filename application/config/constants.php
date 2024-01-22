@@ -699,3 +699,7 @@ define("META_DESCRIPTION", "AutomotoHR Helps you differentiate your business and
 define("META_KEYWORDS", "AutomotoHR, People Operations platform, Business Differentiation, Brand Identity, One System Solution, Hire to Retire, Company Distinctiveness, HR Innovation, Unified HR Management, Branding Strategy, Employee Lifecycle, Streamlined Operations, Personnel Management, HR Efficiency, Competitive Advantage, Employee Experience, Seamless Integration, Organizational Uniqueness, HR Transformation, Comprehensive HR Solution, HRIS, HCM, Human Resources Software, Employee Management, Payroll Integration, Benefits Administration, Time and Attendance, Applicant Tracking System (ATS), Onboarding, Performance Management, Employee Self-Service, Compliance Management, HR Analytics, HR Automation, HR Reporting, Talent Management, Workforce Planning, HR Compliance, Employee Records Management, HR Cloud Software, HR Solutions, HR Technology, Employee Benefits, Leave Management, HRIS Integration, HR Software Solutions, HR Administration, HR Dashboard, HR Tools, HR Platform");
 
 define("ALLOWED_EXTENSIONS", "image/*, video/mp4, video/mov");
+
+// set email template for next day
+// shift reminder
+define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 434);
