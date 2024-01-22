@@ -1011,4 +1011,157 @@ class Shift_model extends CI_Model
             ]
         );
     }
+
+    /**
+     * get the number of shifts within a range
+     *
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     * @return int
+     */
+    public function getShiftsCountByEmployeeId(int $employeeId, string $startDate, string $endDate): int
+    {
+        return $this->db
+            ->where('employee_sid', $employeeId)
+            ->where('shift_date >= ', $startDate)
+            ->where('shift_date <= ', $endDate)
+            ->count_all_results('cl_shifts');
+    }
+
+    /**
+     * get the employee subordinates with departments
+     * and teams
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getMySubordinates(int $employeeId, bool $doCount = false): array
+    {
+        $data = getMyDepartmentAndTeams($employeeId);
+        // only return array of employees
+        if ($doCount) {
+            return $data["employees"];
+        }
+        //
+        return $data;
+    }
+
+    /**
+     * get the subordinates by employee
+     *
+     * @param int $employeeId
+     * @param int $employeeId
+     * @param array $departmentIds
+     * @param array $teamIds
+     * @param array $employeeIds
+     * @return array
+     */
+    public function getEmployeeSubOrdinatesWithDepartmentAndTeams(
+        int $employeeId,
+        array $departmentIds,
+        array $teamIds,
+        array $employeeIds
+    ): array {
+        //
+        $ra = [
+            "teams" => [],
+            "departments" => [],
+            "employees" => []
+        ];
+        //
+        $this->db->select("
+            departments_team_management.sid as team_sid,
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.name,
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0)
+            ->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
+            ->group_end();
+
+        // for departments
+        if ($departmentIds) {
+            $this->db->where_in("departments_management.sid", $departmentIds);
+        }
+
+        // for teams
+        if ($teamIds) {
+            $this->db->where_in("departments_team_management.sid", $teamIds);
+        }
+
+
+        $records = $this->db
+            ->get("departments_team_management")
+            ->result_array();
+
+        if (!$records) {
+            return $ra;
+        }
+
+        foreach ($records as $v0) {
+            // for departments
+            if (!$ra["departments"][$v0["sid"]]) {
+                $ra["departments"][$v0["sid"]] = [
+                    "sid" => $v0["sid"],
+                    "title" => $v0["name"]
+                ];
+            }
+            // for teams
+            if (!$ra["teams"][$v0["team_sid"]]) {
+                $ra["teams"][$v0["team_sid"]] = [
+                    "sid" => $v0["team_sid"],
+                    "title" => $v0["team_name"]
+                ];
+            }
+        }
+
+        // get the employees list
+        $teamIds = array_column($records, "team_sid");
+        // get employees
+        $this->db->select("employee_sid")
+            ->where_in("departments_employee_2_team.team_sid", $teamIds);
+        // for employee ids
+        if ($employeeIds) {
+            $this->db->where_in("departments_employee_2_team.employee_sid", $employeeIds);
+        }
+        //
+        $employees = $this->db
+            ->get("departments_employee_2_team")
+            ->result_array();
+        //
+        if (!$employees) {
+            return $ra;
+        }
+
+        $ra["employees"] = array_unique(array_column($employees, "employee_sid"));
+
+        return $ra;
+    }
+
+    /**
+     * get the employee details by id
+     *
+     * @param array $employeeIds
+     * @param int $companyId
+     * @return array
+     */
+    public function getEmployeeDetailsByIds(array $employeeIds, int $companyId): array
+    {
+        return $this->db
+            ->select(getUserFields())
+            ->where_in("sid", $employeeIds)
+            ->where("parent_sid", $companyId)
+            ->get("users")
+            ->result_array();
+    }
 }

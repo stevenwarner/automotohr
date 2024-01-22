@@ -940,7 +940,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                                 <h2>Team Courses</h2>
                                                 <div><span>&nbsp;</span></div>
                                                 <div class="current-date">
-                                                    <span><?= $subordinateCount?? 0; ?><sub>Employees</sub></span>
+                                                    <span><?= $subordinateCount ?? 0; ?><sub>Employees</sub></span>
                                                 </div>
                                                 <div class="status-panel">
                                                     <!-- <h3>Courses</h3> -->
@@ -950,7 +950,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                         </a>
                                     </div>
                                 </div>
-                            <?php } ?>    
+                            <?php } ?>
                             <!-- LMS - Courses -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
@@ -959,7 +959,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                             <h2>Courses</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?= $pendingTrainings?? 0; ?><sub>Pending</sub></span>
+                                                <span><?= $pendingTrainings ?? 0; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>Courses</h3>
@@ -970,6 +970,51 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
                         <?php endif; ?>
+
+
+                        <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) : ?>
+
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('shifts/my'); ?>">
+                                        <div class="link-box bg-redish full-width bg-orange">
+                                            <h2>My Shifts</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?= $myAssignedShifts ?? 0; ?><sub>Scheduled</sub></span>
+
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Show Shifts</h3>
+                                                <span>Scheduled</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('shifts/my/subordinates'); ?>">
+                                        <div class="link-box bg-redish full-width bg-red">
+                                            <h2>My Subordinates</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?= count($mySubordinatesCount); ?></span>
+
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Show Subordinates</h3>
+                                                <span>Shifts</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                        <?php endif; ?>
+
                     </div>
                 </div>
             </div>

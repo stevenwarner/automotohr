@@ -20,7 +20,7 @@
                 <div class="text text-white">
                     <h3>
                         <?php echo $loggedInPersonDetails['first_name'] . ' ' . $loggedInPersonDetails['last_name']; ?>
-                        <span><?php echo $loggedInPersonDetails['access_level']; ?></span>
+                        <span class="label label-danger"><?php echo $loggedInPersonDetails['access_level']; ?></span>
                     </h3>
                     <span>
                         <?= get_user_anniversary_date(
