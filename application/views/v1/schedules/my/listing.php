@@ -39,7 +39,7 @@ if ($filter["mode"] === "month") {
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Dashboard
                             </a>
-                            <a href="<?= base_url("shift/my/subordinates"); ?>" class="btn btn-orange">
+                            <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange">
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 &nbsp;My Subordinates
                             </a>
