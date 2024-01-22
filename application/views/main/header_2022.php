@@ -58,6 +58,12 @@
     <?php if (isset($appCSS)) {
         echo $appCSS;
     } ?>
+
+
+<?= bundleCSS([
+                "v1/app/css/global",
+            ], "public/v1/app/", "global", true); ?>
+
 </head>
 
 <body>
