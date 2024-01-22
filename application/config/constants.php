@@ -702,4 +702,4 @@ define("ALLOWED_EXTENSIONS", "image/*, video/mp4, video/mov");
 
 // set email template for next day
 // shift reminder
-define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 434);
+define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 435);
