@@ -684,7 +684,19 @@ class Dashboard extends Public_Controller
 
             $data['documents_count'] += count($companyStateForms["not_completed"]);
 
-            $data['assignedShifts'] = $this->dashboard_model->assigned_shifts_count($employer_id, $company_id);
+            // load shifts model
+            $this->load->model("v1/Shift_model", "shift_model");
+            $data['myAssignedShifts'] = $this->shift_model
+                ->getShiftsCountByEmployeeId(
+                    $employer_id,
+                    getSystemDate("Y-m-01"),
+                    getSystemDate("Y-m-t")
+                );
+            $data["mySubordinatesCount"] = $this->shift_model
+                ->getMySubordinates(
+                    $employer_id,
+                    true
+                );
 
             //
             $this->load->view('main/header', $data);
@@ -1132,6 +1144,20 @@ class Dashboard extends Public_Controller
                 );
 
             $data['documents_count'] += count($companyStateForms["not_completed"]);
+
+            // load shifts model
+            $this->load->model("v1/Shift_model", "shift_model");
+            $data['myAssignedShifts'] = $this->shift_model
+                ->getShiftsCountByEmployeeId(
+                    $employer_id,
+                    getSystemDate("Y-m-01"),
+                    getSystemDate("Y-m-t")
+                );
+            $data["mySubordinatesCount"] = $this->shift_model
+                ->getMySubordinates(
+                    $employer_id,
+                    true
+                );
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

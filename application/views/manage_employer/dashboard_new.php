@@ -142,7 +142,7 @@
                                                     </div>
                                                 </div>
                                             <?php } ?>
-                                            <?php $this->load->view("v1/attendance/partials/clocks/green/welcome_block");?>
+                                            <?php $this->load->view("v1/attendance/partials/clocks/green/welcome_block"); ?>
                                         </div>
                                     </div>
                                     <div class="example-link-green">Because of recent Google Security updates, we suggest that you only use Google Chrome to access your AutomotoHR account. Internet Explorer is not supported and may cause certain feature glitches and security issues.</div>
@@ -793,6 +793,48 @@
                                                     </h2>
                                                     <div class="button-panel">
                                                         <a href="<?= base_url("settings/shifts/manage"); ?>" class="site-btn">Manage</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+                                    <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
+                                        <!-- Schedule -->
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title" style="margin: 2px 0;">
+                                                        <a href="<?= base_url("shifts/my"); ?>">My Shifts</a>
+                                                    </h2>
+                                                    <div class="count-box" style="font-size: 12px">
+                                                        <small style="font-size: 12px"><?php echo $myAssignedShifts; ?> Scheduled</small><br>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?= base_url("shifts/my"); ?>" class="site-btn">Show</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Schedule -->
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <i class="fa fa-users" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title" style="margin: 2px 0;">
+                                                        <a href="<?= base_url("shifts/my/subordinates"); ?>">My Subordinates</a>
+                                                    </h2>
+                                                    <div class="count-box" style="font-size: 12px">
+                                                        <small style="font-size: 12px"><?php echo count($mySubordinatesCount); ?> Subordinates</small><br>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?= base_url("shifts/my/subordinates"); ?>" class="site-btn">Show</a>
                                                     </div>
                                                 </div>
                                             </div>

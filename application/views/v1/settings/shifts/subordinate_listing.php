@@ -15,8 +15,8 @@ if ($filter["mode"] === "month") {
     $startDate = $filter["start_date"];
     $endDate = $filter["end_date"];
     $monthDates = getDatesInRange(
-        $filter["start_date"],
-        $filter["end_date"],
+        formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE),
+        formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE),
         DB_DATE
     );
 }
@@ -38,8 +38,9 @@ if ($filter["mode"] === "month") {
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Dashboard
                             </a>
-                            <a href="<?= base_url("settings/myshifts/manage"); ?>" class="btn btn-orange">
-                                &nbsp;My Scheduling
+                            <a href="<?= base_url("shifts/my"); ?>" class="btn btn-orange">
+                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                &nbsp;My Shifts
                             </a>
                         </div>
                     </div>
@@ -65,24 +66,36 @@ if ($filter["mode"] === "month") {
 
                                         <?php
                                         $filterFields = '';
-                                        if ($filterDepartments != '') {
-                                            $filterFields .= '&departments=' . $filterDepartments;
+                                        if ($filter["departments"]) {
+                                            foreach ($filter["departments"] as $v0) {
+                                                $filterFields .= '&departments[]=' . $v0;
+                                            }
+                                        } else {
+                                            $filterFields .= '&departments[]=all';
                                         }
 
-                                        if ($filterTeams != '') {
-                                            $filterFields .= '&teams=' . $filterTeams;
+                                        if ($filter["teams"]) {
+                                            foreach ($filter["teams"] as $v0) {
+                                                $filterFields .= '&teams[]=' . $v0;
+                                            }
+                                        } else {
+                                            $filterFields .= '&teams[]=all';
                                         }
+
+                                        $filterFields .= '&start_date=' . $filter["start_date"];
+                                        $filterFields .= '&end_date=' . $filter["end_date"];
+
 
                                         ?>
-                                        <a href="<?= base_url("settings/subordinateshifts/manage?mode=week" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "week" ? "disabled" : ""; ?>">
+                                        <a href="<?= base_url("shifts/my/subordinates?mode=week" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "week" ? "disabled" : ""; ?>">
                                             <i class="fa fa-calendar" aria-hidden="true"></i>
                                             Week
                                         </a>
-                                        <a href="<?= base_url("settings/subordinateshifts/manage?mode=two_week" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "two_week" ? "disabled" : ""; ?>">
+                                        <a href="<?= base_url("shifts/my/subordinates?mode=two_week" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "two_week" ? "disabled" : ""; ?>">
                                             <i class="fa fa-calendar" aria-hidden="true"></i>
                                             2 Week
                                         </a>
-                                        <a href="<?= base_url("settings/subordinateshifts/manage?mode=month" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "month" ? "disabled" : ""; ?>">
+                                        <a href="<?= base_url("shifts/my/subordinates?mode=month" . $filterFields); ?>" class="btn btn-orange <?= $filter["mode"] === "month" ? "disabled" : ""; ?>">
                                             <i class="fa fa-calendar" aria-hidden="true"></i>
                                             Month
                                         </a>
@@ -90,69 +103,70 @@ if ($filter["mode"] === "month") {
 
                                     <div class="col-sm-4 text-right">
 
-                                        <button class="btn btn-blue expander">
+                                        <button class="btn btn-blue jsFilterBtn">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
                                         </button>
                                     </div>
                                 </div>
 
-                                <div class="row" id="TableData">
-                                    <br>
-                                    <div class="col-sm-3">
-                                        <?php if (!empty($myDepartmentList)) { ?>
+                                <div class="row jsFilterRow hidden">
+                                    <form action="<?= current_url(); ?>" method="get">
+                                        <br>
+                                        <div class="col-sm-3">
+                                            <?php if ($departments) { ?>
+                                                <label class="text-medium">Departments</label>
+                                                <select id="js-filter-department" class="jsSelect2" name="departments[]" multiple="multiple">
+                                                    <option value="all" <?= !$filter["departments"] ? "selected" : ""; ?>>All</option>
+                                                    <?php foreach ($departments as $v0) {
+                                                    ?>
+                                                        <option value="<?php echo $v0['sid']; ?>" <?= in_array($v0["sid"], $filter["departments"]) ? "selected" : ""; ?>>
+                                                            <?= $v0['title']; ?>
+                                                        </option>
+                                                    <?php }  ?>
+                                                </select>
+                                            <?php } ?>
+                                        </div>
 
-                                            <label class="text-medium">Departments</label>
-                                            <select id="js-filter-department" class="jsSelect2" multiple="multiple">
-                                                <option value="all">All</option>
-                                                <?php foreach ($myDepartmentList as $deptRow) {
-                                                ?>
-                                                    <option value="<?php echo $deptRow['sid']; ?>" <?= in_array($deptRow["sid"], $filter_employees) ? "selected" : ""; ?>>
-                                                        <?= $deptRow['name'];
-                                                        ?>
-                                                    </option>
-                                                <?php }  ?>
-                                            </select>
-                                        <?php } ?>
-                                    </div>
+                                        <div class="col-sm-3">
+                                            <?php if ($teams) { ?>
+                                                <label class="text-medium">Teams</label>
+                                                <select id="js-filter-team" class="jsSelect2" name="teams[]" multiple="multiple">
+                                                    <option value="all" <?= !$filter["teams"] ? "selected" : ""; ?>>All</option>
+                                                    <?php foreach ($teams as $v0) {
+                                                    ?>
+                                                        <option value="<?php echo $v0['sid']; ?>" <?= in_array($v0["sid"], $filter["teams"]) ? "selected" : ""; ?>>
+                                                            <?= $v0['title']; ?>
+                                                        </option>
+                                                    <?php }  ?>
+                                                </select>
+                                            <?php } ?>
 
-                                    <div class="col-sm-3">
-                                        <?php if (!empty($myTeamList)) { ?>
-                                            <label class="text-medium">Teams</label>
-                                            <select id="js-filter-team" class="jsSelect2" multiple="multiple">
-                                                <option value="all">All</option>
-                                                <?php foreach ($myTeamList as $teamRow) {
-                                                ?>
-                                                    <option value="<?php echo $teamRow['sid']; ?>" <?= in_array($teamRow["sid"], $filter_employees) ? "selected" : ""; ?>>
-                                                        <?= $teamRow['name'];
-                                                        ?>
-                                                    </option>
-                                                <?php } ?>
-                                            </select>
-                                        <?php } ?>
-                                    </div>
+                                        </div>
 
-                                    <div class="col-sm-2">
-                                        <label class="text-medium">
-                                            From Date
-                                        </label>
-                                        <input type="text" class="form-control datepicker hasDatepicker" name="shift_date_from" id="shift_date_from" autocomplete="off" />
-                                    </div>
+                                        <div class="col-sm-2">
+                                            <label class="text-medium">
+                                                From Date
+                                            </label>
+                                            <input type="text" class="form-control datepicker hasDatepicker" name="start_date" id="shift_date_from" autocomplete="off" />
+                                        </div>
 
-                                    <div class="col-sm-2">
-                                        <label class="text-medium">
-                                            To Date
-                                        </label>
-                                        <input type="text" class="form-control " name="shift_date_to" id="shift_date_to" autocomplete="off" />
-                                    </div>
+                                        <div class="col-sm-2">
+                                            <label class="text-medium">
+                                                To Date
+                                            </label>
+                                            <input type="text" class="form-control datepicker hasDatepicker" name="end_date" id="shift_date_to" autocomplete="off" />
+                                        </div>
 
-                                    <div class="col-sm-2 text-right">
-                                        <span class="pull-right">
-                                            <br>
-                                            <button id="btn_apply" type="button" class="btn btn-orange js-apply-my-filter-btn">APPLY</button>
-                                            <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-my-filter-btn">RESET</button>
-                                        </span>
-                                    </div>
+                                        <div class="col-sm-2 text-right">
+                                            <span class="pull-right">
+                                                <br>
+                                                <button id="btn_apply" type="submit" class="btn btn-orange jsFilterApplyBtn">APPLY</button>
+                                                <a href="<?= current_url() . "?mode=" . $filter["mode"]; ?>" class="btn btn-black btn-theme jsFilterResetBtn">RESET</a>
+                                                <input type="hidden" name="mode" value="<?= $filter["mode"]; ?>">
+                                            </span>
+                                        </div>
+                                    </form>
                                 </div>
 
                                 <br />
@@ -168,7 +182,7 @@ if ($filter["mode"] === "month") {
                                 </div>
                                 <!-- Main -->
 
-                                <?php if ($employees) { ?>
+                                <?php if ($subordinateEmployees) { ?>
                                     <div class="schedule-container myt-10">
                                         <div class="row">
                                             <div class="col-sm-3" style="padding-right: 0">
@@ -187,8 +201,8 @@ if ($filter["mode"] === "month") {
                                                         </span>
                                                     </div>
                                                     <!-- employee boxes -->
-                                                    <?php if ($employees) {
-                                                        foreach ($employees as $employee) {
+                                                    <?php if ($subordinateEmployees) {
+                                                        foreach ($subordinateEmployees as $employee) {
                                                             $employeeShiftRow = $shifts[$employee["userId"]];
                                                     ?>
                                                             <div class="schedule-employee-row" data-id="<?= $employee["userId"]; ?>">
@@ -225,29 +239,25 @@ if ($filter["mode"] === "month") {
                                             </div>
                                             <div class="col-sm-9" style="padding-left: 0">
                                                 <div class="schedule-row-container">
-                                                    <?php foreach ($monthDates as $monthDate) { ?>
+                                                    <?php $todaysDate = getSystemDate("Y-m-d");
+                                                    foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
                                                         <?php
-                                                        $employeeLeave = $leaves[$employee["userId"]][$monthDate];
+                                                        $employeeLeave = $leaves[$employee][$monthDate];
+                                                        $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
                                                         ?>
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
-
-                                                            <?php
-                                                            $curentDate = date('Y-m-d');
-                                                            $todatDate = strtotime($curentDate);
-                                                            $cDate = strtotime($monthDate);
-                                                            ?>
-                                                            <div class="schedule-column-header text-center" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;color:#c10;font-weight:900;font-size:20px;' : '' ?>>
+                                                            <div class="schedule-column-header text-center <?= $highlightStyle; ?>">
                                                                 <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                                 </p>
                                                             </div>
-                                                            <?php if ($employees) {
-                                                                foreach ($employees as $employee) {
+                                                            <?php if ($subordinateEmployees) {
+                                                                foreach ($subordinateEmployees as $employee) {
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                             ?>
-                                                                    <div class="schedule-column  schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                                    <div class="schedule-column  schedule-column-<?= $$employee["userId"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $$employee["userId"]; ?>">
                                                                         <?php if ($employeeLeave) { ?>
                                                                             <div class="schedule-dayoff text-primary text-small">
                                                                                 <strong>
@@ -290,7 +300,7 @@ if ($filter["mode"] === "month") {
                                                                 }
                                                             }
                                                             ?>
-                                                            <div class="schedule-footer schedule-border" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                            <div class="schedule-footer schedule-border <?= $highlightStyle; ?>">
                                                                 <p class="text-small text-center">
                                                                     <?= convertSecondsToTime($totalHoursInSeconds); ?>
                                                                 </p>
@@ -323,10 +333,3 @@ if ($filter["mode"] === "month") {
         </div>
     </div>
 </div>
-<script>
-    let filterToggle = '<?php echo $filter_toggle; ?>'
-    let filterEndDate = '<?php echo $filterEndDate; ?>'
-    let filterStartDate = '<?php echo $filterStartDate; ?>'
-    let selectedDepartments = '<?php echo $filterDepartments ?>';
-    let selectedTeams = '<?php echo $filterTeams ?>';
-</script>

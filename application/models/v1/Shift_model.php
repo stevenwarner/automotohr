@@ -1012,168 +1012,156 @@ class Shift_model extends CI_Model
         );
     }
 
+    /**
+     * get the number of shifts within a range
+     *
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     * @return int
+     */
+    public function getShiftsCountByEmployeeId(int $employeeId, string $startDate, string $endDate): int
+    {
+        return $this->db
+            ->where('employee_sid', $employeeId)
+            ->where('shift_date >= ', $startDate)
+            ->where('shift_date <= ', $endDate)
+            ->count_all_results('cl_shifts');
+    }
 
-
-    //
-
-
-    function getMyTeams(
-        $sid,
-        $type = 'all'
-    ) {
+    /**
+     * get the employee subordinates with departments
+     * and teams
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getMySubordinates(int $employeeId, bool $doCount = false): array
+    {
+        $data = getMyDepartmentAndTeams($employeeId);
+        // only return array of employees
+        if ($doCount) {
+            return $data["employees"];
+        }
         //
-        $departments = $this->db
-            ->select('sid')
-            ->where('departments_management.is_deleted', 0)
-            ->where('departments_management.status', 1)
-            ->where('FIND_IN_SET(' . ($sid) . ', supervisor)', NULL, FALSE)
-            ->get('departments_management')
+        return $data;
+    }
+
+    /**
+     * get the subordinates by employee
+     *
+     * @param int $employeeId
+     * @param int $employeeId
+     * @param array $departmentIds
+     * @param array $teamIds
+     * @param array $employeeIds
+     * @return array
+     */
+    public function getEmployeeSubOrdinatesWithDepartmentAndTeams(
+        int $employeeId,
+        array $departmentIds,
+        array $teamIds,
+        array $employeeIds
+    ): array {
+        //
+        $ra = [
+            "teams" => [],
+            "departments" => [],
+            "employees" => []
+        ];
+        //
+        $this->db->select("
+            departments_team_management.sid as team_sid,
+            departments_team_management.name as team_name,
+            departments_management.sid,
+            departments_management.name,
+            departments_management.name,
+        ")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0)
+            ->group_start()
+            ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
+            ->group_end();
+
+        // for departments
+        if ($departmentIds) {
+            $this->db->where_in("departments_management.sid", $departmentIds);
+        }
+
+        // for teams
+        if ($teamIds) {
+            $this->db->where_in("departments_team_management.sid", $teamIds);
+        }
+
+
+        $records = $this->db
+            ->get("departments_team_management")
+            ->result_array();
+
+        if (!$records) {
+            return $ra;
+        }
+
+        foreach ($records as $v0) {
+            // for departments
+            if (!$ra["departments"][$v0["sid"]]) {
+                $ra["departments"][$v0["sid"]] = [
+                    "sid" => $v0["sid"],
+                    "title" => $v0["name"]
+                ];
+            }
+            // for teams
+            if (!$ra["teams"][$v0["team_sid"]]) {
+                $ra["teams"][$v0["team_sid"]] = [
+                    "sid" => $v0["team_sid"],
+                    "title" => $v0["team_name"]
+                ];
+            }
+        }
+
+        // get the employees list
+        $teamIds = array_column($records, "team_sid");
+        // get employees
+        $this->db->select("employee_sid")
+            ->where_in("departments_employee_2_team.team_sid", $teamIds);
+        // for employee ids
+        if ($employeeIds) {
+            $this->db->where_in("departments_employee_2_team.employee_sid", $employeeIds);
+        }
+        //
+        $employees = $this->db
+            ->get("departments_employee_2_team")
             ->result_array();
         //
-        if (!empty($departments)) {
-            $departments = array_column($departments, 'sid');
-            //
-            $newDept = [];
-            //
-            foreach ($departments as $dept) {
-                //
-                $t = explode(',', $dept);
-                //
-                $newDept = array_merge($t, $newDept);
-            }
-            //
-            $departments = $newDept;
-        }
-        //
-
-        if (!empty($departments)) {
-            $teams = $this->db
-                ->select('
-                    departments_team_management.sid
-                ')
-                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-                ->where('departments_management.is_deleted', 0)
-                ->where('departments_management.status', 1)
-                ->where('departments_team_management.is_deleted', 0)
-                ->where('departments_team_management.status', 1)
-                ->group_start()
-                ->where_in('departments_team_management.department_sid', $departments)
-                ->or_where('FIND_IN_SET(' . ($sid) . ', team_lead)', NULL, FALSE)
-                ->group_end()
-                ->get('departments_team_management')
-                ->result_array();
-        } else {
-            $teams = $this->db
-                ->select('
-                    departments_team_management.sid
-                ')
-                ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-                ->where('departments_management.is_deleted', 0)
-                ->where('departments_management.status', 1)
-                ->where('departments_team_management.is_deleted', 0)
-                ->where('departments_team_management.status', 1)
-                ->where('FIND_IN_SET(' . ($sid) . ', team_lead)', NULL, FALSE)
-                ->get('departments_team_management')
-                ->result_array();
+        if (!$employees) {
+            return $ra;
         }
 
-        //
-        if (!empty($teams)) {
-            //
-            $teams = array_column($teams, 'sid');
-            //
-            $newDept = [];
-            //
-            foreach ($teams as $dept) {
-                //
-                $t = explode(',', $dept);
-                //
-                $newDept = array_merge($t, $newDept);
-            }
-            //
-            $teams = $newDept;
-        }
-        //
-        if ($type == 'all') {
-            return ['departments' => $departments, 'teams' => $teams];
-        } else {
-            return ['teams' => $teams];
-        }
-        // 
+        $ra["employees"] = array_unique(array_column($employees, "employee_sid"));
 
+        return $ra;
     }
 
-
-
-    //
-    function getDepartments(
-        $sids
-    ) {
-        //
-        if (!empty($sids)) {
-            $departments = $this->db
-                ->select('sid,name')
-                ->where_in('departments_management.sid', $sids)
-                ->get('departments_management')
-                ->result_array();
-
-            if (!empty($departments)) {
-                return  $departments;
-            } else {
-                return [];
-            }
-        } else {
-            return [];
-        }
-    }
-
-    //
-    function getTeams(
-        $sids
-    ) {
-        //
-        if (!empty($sids)) {
-
-            $teams = $this->db
-                ->select('sid,name')
-                ->where_in('sid', $sids)
-                ->get('departments_team_management')
-                ->result_array();
-
-            if (!empty($teams)) {
-                return  $teams;
-            } else {
-                return [];
-            }
-        } else {
-            return [];
-        }
-    }
-
-    //
-    public function getSubordinatesEmployees(int $companyId, $employeeFilter = []): array
+    /**
+     * get the employee details by id
+     *
+     * @param array $employeeIds
+     * @param int $companyId
+     * @return array
+     */
+    public function getEmployeeDetailsByIds(array $employeeIds, int $companyId): array
     {
-
-        if (empty($employeeFilter['departments']) && empty($employeeFilter['teams'])) {
-            return [];
-        } else {
-            $this->db
-                ->select(getUserFields())
-                ->where([
-                    "users.parent_sid" => $companyId,
-                    "users.is_executive_admin" => 0,
-                ]);
-            //
-            if (!empty($employeeFilter['departments'])) {
-                $this->db->where_in("users.department_sid", $employeeFilter['departments']);
-            }
-
-            if (!empty($employeeFilter['teams'])) {
-                $this->db->where_in("users.team_sid", $employeeFilter['teams']);
-            }
-
-            $this->db->order_by("users.first_name", "ASC");
-            return $this->db->get("users")->result_array();
-        }
+        return $this->db
+            ->select(getUserFields())
+            ->where_in("sid", $employeeIds)
+            ->where("parent_sid", $companyId)
+            ->get("users")
+            ->result_array();
     }
 }
