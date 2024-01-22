@@ -158,7 +158,7 @@ foreach ($tabs as $tab) {
 
                     <?php if (checkIfAppIsEnabled('attendance') && isPayrollOrPlus()) { ?>
 
-                        <li><a href="<?= base_url('attendance/today_overview'); ?>"> Attendance Management</a></li>
+                        <li><a href="<?= base_url('attendance/dashboard'); ?>"> Attendance Management</a></li>
                     <?php } ?>
                     <?php
 

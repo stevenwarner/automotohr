@@ -67,7 +67,7 @@
                                     <div class="p10">
                                         <label class="label csF16 csB7">&nbsp;</label> <br>
                                         <button class="btn btn-orange" type="submit"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;Search</button>
-                                        <a href="<?=base_url('attendance/today_overview');?>" class="btn btn-black" type="clear"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Clear Filter</a>
+                                        <a href="<?=base_url('attendance/dashboard');?>" class="btn btn-black" type="clear"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Clear Filter</a>
                                     </div>
                                 </div>
                             </div>
