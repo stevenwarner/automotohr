@@ -1212,7 +1212,12 @@ class Clock_model extends Base_model
                             $todayDateOBJ->format(DB_DATE)
                         ) {
                             $v1["clocked_out"] =
-                                $clockedInObj->format(DB_DATE) . " 23:59:59";
+                                convertTimeZone(
+                                    $clockedInObj->format(DB_DATE) . " 23:59:59",
+                                    DB_DATE_WITH_TIME,
+                                    STORE_DEFAULT_TIMEZONE_ABBR,
+                                    "UTC"
+                                );
                         }
                         // get the difference
                         $timeInMinutes +=
