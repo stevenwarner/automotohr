@@ -23,15 +23,20 @@
                     <div class="col-sm-2">
 
                         <div class="csEmployeeBox">
-                            <a href="javascript:void(0)">
+                            <a href="<?= base_url("employee_profile/" . $v0["userId"]); ?>">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
                             </a>
                         </div>
                     </div>
-            <?php }
-            }
-            ?>
+                <?php }
+            } else { ?>
+                <div class="col-sm-12">
+                    <div class="alert alert-info text-center">
+                        <p>No staff members have logged in for their work shift.</p>
+                    </div>
+                </div>
+            <?php  } ?>
         </div>
 
     </div>
@@ -52,15 +57,20 @@
                     <div class="col-sm-2">
 
                         <div class="csEmployeeBox">
-                            <a href="javascript:void(0)">
+                            <a href="<?= base_url("employee_profile/" . $v0["userId"]); ?>">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
                             </a>
                         </div>
                     </div>
-            <?php }
-            }
-            ?>
+                <?php }
+            } else { ?>
+                <div class="col-sm-12">
+                    <div class="alert alert-info text-center">
+                        <p>Currently, no employees are on a break.</p>
+                    </div>
+                </div>
+            <?php  } ?>
         </div>
 
     </div>
@@ -70,7 +80,7 @@
     <div class="panel-heading">
         <h3 class="csF16 m0">
             <strong>
-                Clocked Out
+                Not clocked in
             </strong>
         </h3>
     </div>
@@ -81,15 +91,20 @@
                     <div class="col-sm-2">
 
                         <div class="csEmployeeBox">
-                            <a href="javascript:void(0)">
+                            <a href="<?= base_url("employee_profile/" . $v0["userId"]); ?>">
                                 <img src="<?= getImageURL($v0["profile_picture"]); ?>" alt="" />
                                 <p class=""><?= remakeEmployeeName($v0, true, true); ?></p>
                             </a>
                         </div>
                     </div>
-            <?php }
-            }
-            ?>
+                <?php }
+            } else { ?>
+                <div class="col-sm-12">
+                    <div class="alert alert-info text-center">
+                        <p>All employees are present!</p>
+                    </div>
+                </div>
+            <?php  } ?>
         </div>
 
     </div>

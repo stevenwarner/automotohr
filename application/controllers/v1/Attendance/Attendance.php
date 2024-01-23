@@ -63,62 +63,6 @@ class Attendance extends Public_Controller
         $this->sidebarPath = "v1/attendance/sidebar";
     }
 
-    /**
-     * logged in person time sheet
-     */
-    public function myDashboard()
-    {
-        $data["session"] = $this->session->userdata("logged_in");
-
-        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
-        // get access token
-        $data['apiAccessToken'] = getApiAccessToken(
-            $this->loggedInEmployee["sid"],
-            $this->loggedInCompany["sid"]
-        );
-        //
-        $this->setCommon("v1/app/css/system", "css");
-        $this->setCommon("v1/app/css/loader", "css");
-        $this->setCommon("v1/attendance/js/my/dashboard", "js");
-        $data["pageJs"] = [
-            // high charts
-            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/highcharts.min.js?v=3.0"),
-            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/data.js?v=3.0"),
-            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/exporting.js?v=3.0"),
-            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/accessibility.js?v=3.0"),
-        ];
-        $this->getCommon($data, "my_dashboard");
-        $data["sanitizedView"] = true;
-
-        $this->load->view("main/header", $data);
-        $this->load->view("v1/attendance/my_dashboard");
-        $this->load->view("main/footer",);
-    }
-
-    /**
-     * logged in person time sheet
-     */
-    public function myTimeSheet()
-    {
-        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
-        // get access token
-        $data['apiAccessToken'] = getApiAccessToken(
-            $this->loggedInEmployee["sid"],
-            $this->loggedInCompany["sid"]
-        );
-        //
-        $this->setCommon("v1/app/css/system", "css");
-        $this->setCommon("v1/attendance/js/my_timesheet", "js");
-        //
-        $data["load_view"] = true;
-        //
-        $this->getCommon($data, "my_timesheet");
-
-        $this->load->view("main/header", $data);
-        $this->load->view("v1/attendance/my_timesheet");
-        $this->load->view("main/footer",);
-    }
-
     // Employer
 
     /**
@@ -131,9 +75,6 @@ class Attendance extends Public_Controller
         //
         $data["employee"] = $this->loggedInEmployee;
         $data["session"] = checkAndGetSession("all");
-        //
-        $this->setCommon("v1/app/plugins/select2/select2.min", "css");
-        $this->setCommon("v1/app/plugins/select2/select2.min", "js");
         //
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/dashboard", "js");
@@ -185,10 +126,9 @@ class Attendance extends Public_Controller
         // set js
         $this->setCommon("v1/plugins/ms_modal/main", "css");
         $this->setCommon("v1/plugins/ms_modal/main", "js");
-
+        $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/timesheet", "js");
         $this->getCommon($data, "timesheet");
-
         //
         $data["load_view"] = false;
         $data["sanitizedView"] = true;
