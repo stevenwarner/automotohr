@@ -1212,7 +1212,7 @@ class Clock_model extends Base_model
                             $todayDateOBJ->format(DB_DATE)
                         ) {
                             $v1["clocked_out"] =
-                                $clockedInObj->format(DB_DATE) + " 23:59:59";
+                                $clockedInObj->format(DB_DATE) . " 23:59:59";
                         }
                         // get the difference
                         $timeInMinutes +=
@@ -1240,7 +1240,7 @@ class Clock_model extends Base_model
                             $todayDateOBJ->format(DB_DATE)
                         ) {
                             $v1["break_end"] =
-                                $breakInObj->format(DB_DATE) + " 23:59:59";
+                                $breakInObj->format(DB_DATE) . " 23:59:59";
                         }
                         // get the difference
                         $timeInMinutesForBreaks +=
