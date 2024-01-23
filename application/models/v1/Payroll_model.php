@@ -1537,6 +1537,19 @@ class Payroll_model extends CI_Model
                 $ins['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
                 //
                 if ($this->db->where(['gusto_uuid' => $compensation['uuid']])->count_all_results('gusto_employees_jobs_compensations')) {
+                    //
+                    $previousStatus = $this->db
+                        ->select('flsa_status')
+                        ->where([
+                            'gusto_uuid' => $compensation['uuid']
+                        ])
+                        ->get('gusto_employees_jobs_compensations')
+                        ->row_array()['flsa_status'];
+                    //
+                    if ($previousStatus == "Salaried Commission" && $compensation['flsa_status'] == "Salaried Nonexempt") {
+                        unset($ins['flsa_status']);
+                    }
+                    //
                     $ins['updated_at'] = getSystemDate();
                     $this->db
                         ->where(['gusto_uuid' => $compensation['uuid']])
@@ -2540,7 +2553,7 @@ class Payroll_model extends CI_Model
                 $ins['updated_at'] = getSystemDate();
                 $this->db
                     ->where(['gusto_uuid' => $compensation['uuid']])
-                    ->update('gusto_employees_jobs_compensations', $ins);
+                    ->update('gusto_employees_jobs_compensations', $ins);    
             } else { 
                 $ins['gusto_employees_jobs_sid'] = $gustoJob['sid'];
                 $ins['gusto_uuid'] = $compensation['uuid'];
@@ -2622,11 +2635,11 @@ class Payroll_model extends CI_Model
         $request['payment_unit'] = $data['per'];
         //
         $wagesInfo = $this->getMinimumWagesData($data['minimumWage'], $data['wagesId']);
+        $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? true : false;
+        //
         if ($wagesInfo['minimumWage'] == 1) {
-            $request['adjust_for_minimum_wage'] = $wagesInfo['minimumWage'] == 1 ? 'true' : 'false';
             $request['minimum_wages'] = $wagesInfo['minimum_wages'];
         }
-
         //
         // response
         //
@@ -2659,7 +2672,6 @@ class Payroll_model extends CI_Model
             ->update('gusto_employees_jobs_compensations', $ins);
         // set job id
         $companyDetails['other_uuid'] = $gustoResponse['job_uuid'];
-
         // let's sync single job
         $gustoResponse = gustoCall(
             'getSingleJob',
