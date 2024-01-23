@@ -140,7 +140,7 @@ class Shift_notification_model extends CI_Model
                 //
                 foreach ($breaks as $v1) {
                     $ra["breaks"] .= "<p><strong>Title:</strong> " . ($v1["break"]) . "</p>";
-                    $ra["breaks"] .= "<p><strong>Duration:</strong> " . ($v1["duration"]) . "</p>";
+                    $ra["breaks"] .= "<p><strong>Duration:</strong> " . ($v1["duration"]) . " minutes</p>";
                     if ($v1["start_time"]) {
                         $ra["breaks"] .= "<p><strong>Starts at:</strong> " . (formatDateToDB($v1["start_time"], "H:i", "h:i a")) . "</p>";
                         $ra["breaks"] .= "<p><strong>Ends at:</strong> " . (formatDateToDB($v1["end_time"], "H:i", "h:i a")) . "</p>";
