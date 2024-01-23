@@ -2846,21 +2846,22 @@ class Payroll_model extends CI_Model
         $upd['gusto_home_address_version'] = $gustoResponse['version'];
         $upd['gusto_home_address_effective_date'] = $gustoResponse['effective_date'];
         $upd['gusto_home_address_courtesy_withholding'] = $gustoResponse['courtesy_withholding'];
+        $upd["home_address"] = 1;
         //
         $this->db
             ->where(['employee_sid' => $employeeId])
             ->update('gusto_companies_employees', $upd);
         //
-        $upd = [];
-        $upd['Location_Address'] = $request['street_1'];
-        $upd['Location_Address_2'] = $request['street_2'];
-        $upd['Location_City'] = $request['city'];
-        $upd['Location_State'] = getStateColumn(['state_code' => $request['state']], 'sid');
-        $upd['Location_ZipCode'] = $request['zip'];
-
-        $this->db
-            ->where(['sid' => $employeeId])
-            ->update('users', $upd);
+        updateUserById(
+            [
+                "Location_Address" => $request['street_1'],
+                "Location_Address_2" => $request['street_2'],
+                "Location_City" => $request['city'],
+                "Location_State" => getStateColumn(["state_code" => $request["state"]], "sid"),
+                "Location_ZipCode" => $request["zip"],
+            ],
+            $employeeId
+        );
         //
         return ['success' => true];
     }
