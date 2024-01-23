@@ -53,6 +53,8 @@ class Clock_model extends Base_model
     ) {
         // set companyId
         $this->companyId = $companyId;
+        // get company permissions
+        $companyPermissions = unserialize(getUserColumnById($companyId, "extra_info"));
         // set employeeId
         $this->employeeId = $employeeId;
         if ($date) {
@@ -154,6 +156,10 @@ class Clock_model extends Base_model
         }
         $clockArray["text"] = $this->attendance_lib
             ->convertSecondsToHours($clockArray["time"], true);
+        //
+        if (!$companyPermissions['clock_enable_for_attendance']) {
+            $clockArray["blocked"] = true;
+        }
         //
         return $doReturn
             ? $clockArray

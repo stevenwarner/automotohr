@@ -257,6 +257,7 @@ $(function markAttendance() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
+				
 				attendanceObj = resp;
 				//
 				clearInterval(timerREF);
@@ -277,6 +278,11 @@ $(function markAttendance() {
 				}
 				//
 				clockREF = setInterval(startClock, 1000);
+
+				if (resp.blocked) {
+					$(".jsAttendanceBTNs").html("");
+					$(".jsAttendanceClockHeaderBTNs").html("");
+				}
 			});
 	}
 
@@ -393,7 +399,6 @@ $(function markAttendance() {
 		);
 		// Calculate the time elapsed since the start date
 		const elapsedTime = newTime.diff(attendanceObj.timerDateTime);
-
 
 		atteTime.add(elapsedTime, "milliseconds");
 

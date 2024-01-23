@@ -327,6 +327,8 @@ class Settings extends Public_Controller
                 $data['d_license'] = 0;
                 $data['l_employment'] = 0;
                 $company['mtin'] = "";
+                $company['clock_enable_for_attendance'] = "";
+                $company['timesheet_enable_for_attendance'] = "";
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
@@ -336,8 +338,9 @@ class Settings extends Public_Controller
                 $data['d_license'] = isset($serializedata['d_license']) ? $serializedata['d_license'] : 0;
                 $data['l_employment'] = isset($serializedata['l_employment']) ? $serializedata['l_employment'] : 0;
                 $company['mtin'] = isset($serializedata['mtin']) ? $serializedata['mtin'] : 0;
+                $company['clock_enable_for_attendance'] = isset($serializedata['clock_enable_for_attendance']) ? $serializedata['clock_enable_for_attendance'] : 0;
+                $company['timesheet_enable_for_attendance'] = isset($serializedata['timesheet_enable_for_attendance']) ? $serializedata['timesheet_enable_for_attendance'] : 0;
             }
-
             $serializedata = unserialize($company['extra_info']);
             $data['company'] = $company;
             $complynet_status  = $data['session']['company_detail']['complynet_status'];
@@ -409,6 +412,13 @@ class Settings extends Public_Controller
 
                 if ($post["mtin"]) {
                     $company_extra_info["mtin"] = $post["mtin"];
+                }
+
+                if ($post["clock_enable_for_attendance"]) {
+                    $company_extra_info["clock_enable_for_attendance"] = $post["clock_enable_for_attendance"];
+                }
+                if ($post["timesheet_enable_for_attendance"]) {
+                    $company_extra_info["timesheet_enable_for_attendance"] = $post["timesheet_enable_for_attendance"];
                 }
 
                 // Full employment form required

@@ -128,7 +128,9 @@ class Employee extends Base
                 $this->data["filter"]["endDate"]
             );
         //
-        $this->data["isEditAllowed"] = true;
+        // get company permissions
+        $companyPermissions = unserialize(getUserColumnById($this->loggedInCompany["sid"], "extra_info"));
+        $this->data["isEditAllowed"] = $companyPermissions["timesheet_enable_for_attendance"];
         // make the blue portal popup
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_timesheet");

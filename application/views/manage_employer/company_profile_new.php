@@ -79,7 +79,7 @@
                                 <?php echo form_error('ssn'); ?>
                             </div>
                         </div>
-                   
+
                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">
                                 <label>State Tax Id Number</label>
@@ -527,6 +527,32 @@
                                 </label>
                             </div>
                         </div>
+
+                        <?php if (checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <h3>Attendance </h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Enable Clock-in<small class="help_text">Enabling the clock-in feature allows employees to record their entry and exit times within the system.</small>
+                                        <input class="" type="checkbox" id="clock_enable_for_attendance" name="clock_enable_for_attendance" value="1" <?php echo ($company['clock_enable_for_attendance'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Mange Time sheets<small class="help_text">Enabling the time sheet feature enables employees to log their arrival and departure times using the time-sheet.</small>
+                                        <input class="" type="checkbox" id="timesheet_enable_for_attendance" name="timesheet_enable_for_attendance" value="1" <?php echo ($company['timesheet_enable_for_attendance'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        <?php } ?>
 
 
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
