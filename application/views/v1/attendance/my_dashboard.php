@@ -95,6 +95,7 @@
                                 <tr>
                                     <th class="csW csBG4" scope="col">Type</th>
                                     <th class="csW csBG4 text-right" scope="col">Time</th>
+                                    <th class="csW csBG4 text-center" scope="col">On location</th>
                                     <th class="csW csBG4 text-right" scope="col">Duration</th>
                                 </tr>
                             </thead>

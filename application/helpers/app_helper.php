@@ -2979,3 +2979,66 @@ if (!function_exists("getLoggedInPersonTimeZone")) {
         return $tz;
     }
 }
+
+
+if (!function_exists("convertTimeZone")) {
+    /**
+     * convert the time zone
+     * 
+     * @param string $date
+     * @param string $fromFormat
+     * @param string $fromTimeZone
+     * @param string $toTimeZone
+     * @return string
+     */
+    function convertTimeZone(
+        string $date,
+        string $fromFormat,
+        string $fromTimeZone,
+        string $toTimeZone
+    ): string {
+        //
+        return reset_datetime([
+            "datetime" => $date,
+            "from_format" => $fromFormat,
+            "format" => $fromFormat,
+            "_this" => get_instance(),
+            "new_zone" => $toTimeZone,
+            "from_timezone" => $fromTimeZone
+        ]);
+    }
+}
+
+if(!function_exists("haversineDistance")) {
+    function haversineDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        // Radius of the Earth in meters
+        $R = 6371000.0;
+    
+        // Convert latitude and longitude from degrees to radians
+        $lat1 = deg2rad($lat1);
+        $lon1 = deg2rad($lon1);
+        $lat2 = deg2rad($lat2);
+        $lon2 = deg2rad($lon2);
+    
+        // Calculate the differences in coordinates
+        $dlat = $lat2 - $lat1;
+        $dlon = $lon2 - $lon1;
+    
+        // Haversine formula
+        $a = sin($dlat / 2) ** 2 + cos($lat1) * cos($lat2) * sin($dlon / 2) ** 2;
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+    
+        // Calculate the distance
+        return $R * $c;
+    }
+}
+
+function is_within_radius($centerLatLng, $latLng, $radius)
+{
+    $distance = haversineDistance($centerLatLng[0], $centerLatLng[1], $latLng[0], $latLng[1]);
+    return [
+        "within_range" => ($distance <= $radius),
+        "distance" => $distance
+    ];
+}

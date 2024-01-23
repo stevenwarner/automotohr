@@ -150,7 +150,7 @@ $(function timeSheet() {
 								obj.endTime = $(this)
 									.find(`[name="end_time_${obj.id}"]`)
 									.val();
-								obj.employeeId = profileUserInfo.userId;	
+								obj.employeeId = profileUserInfo.userId;
 								formData.push(obj);
 							});
 						}
@@ -218,15 +218,13 @@ $(function timeSheet() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+				//
 				$("#jsTimeSheetHistoryModalBody").html(resp.view);
 
-				if (resp.locations != undefined)  {
-					if (resp.locations.length > 0)  {
-						resp.locations.forEach((element) => {
-							makeLocationMap(element.target, element);
-						});
-					}	
+				if (resp.locations && resp.locations.length > 0) {
+					resp.locations.forEach((v0) => {
+						makeLocationMap("map_" + v0.id, v0);
+					});
 				}
 
 				ml(false, "jsTimeSheetHistoryModalLoader");
@@ -344,6 +342,7 @@ $(function timeSheet() {
 	 * draw map
 	 */
 	function makeLocationMap(containerId, location) {
+		console.log(containerId, location);
 		let map,
 			markers = [],
 			coords = [],
@@ -403,10 +402,45 @@ $(function timeSheet() {
 			line.setMap(map);
 		}
 
-		let LatLngBounds = new google.maps.LatLngBounds();
-		for (let i = 0; i < latlng.length; i++) {
-			LatLngBounds.extend(latlng[i]);
+		if (location["constraint"]) {
+			// Add circle overlay for radius
+			const circle = new google.maps.Circle({
+				map: map,
+				center: {
+					lat: parseFloat(location.constraint.lat),
+					lng: parseFloat(location.constraint.lng),
+				},
+				radius: parseInt(50000 || location.constraint.allowed), // Radius in meters
+				strokeColor: "red", // Circle outline color
+				strokeOpacity: 0.8,
+				strokeWeight: 2,
+				fillColor: "red", // Circle fill color
+				fillOpacity: 0.35,
+			});
+			// Add info window
+			const infoWindow = new google.maps.InfoWindow({
+				content: location.constraint.title,
+			});
+			// Open info window when the circle is clicked
+			google.maps.event.addListener(circle, "click", function (event) {
+				infoWindow.setPosition(event.latLng);
+				infoWindow.open(this.map);
+			});
+
+			latlng.push(
+				new google.maps.LatLng(
+					parseFloat(location.constraint.lat),
+					parseFloat(location.constraint.lng)
+				)
+			);
 		}
+
+		let LatLngBounds = new google.maps.LatLngBounds();
+
+		latlng.forEach((element) => {
+			LatLngBounds.extend(element);
+		});
+
 		map.fitBounds(LatLngBounds);
 
 		google.maps.event.trigger(map, "resize");
@@ -421,30 +455,8 @@ $(function timeSheet() {
 			lng: options.position.lng,
 		});
 	}
-	// Function to calculate distance between two sets of coordinates using Haversine formula
-	function calculateDistance(lat1, lng1, lat2, lng2) {
-		const earthRadius = 6371; // Radius of the Earth in kilometers
 
-		const toRadians = (angle) => (angle * Math.PI) / 180;
-
-		const deltaLat = toRadians(lat2 - lat1);
-		const deltaLng = toRadians(lng2 - lng1);
-
-		const a =
-			Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-			Math.cos(toRadians(lat1)) *
-				Math.cos(toRadians(lat2)) *
-				Math.sin(deltaLng / 2) *
-				Math.sin(deltaLng / 2);
-
-		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-		const distance = earthRadius * c; // Distance in kilometers
-
-		return distance;
-	}
-
-	$(document).on("click", ".jsToggleMapView",function (event) {
+	$(document).on("click", ".jsToggleMapView", function (event) {
 		//
 		event.preventDefault();
 		const sid = $(this).data("id");

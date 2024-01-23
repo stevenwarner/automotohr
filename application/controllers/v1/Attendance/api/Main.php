@@ -81,9 +81,12 @@ class Main extends Public_Controller
         //
         $post = $this->input->post(null, true);
         $latLon = $this->attendance_lib->getRandomLatLon();
-        // set lat long for demo purposes
-        // $post["latitude"] = $latLon["lat"];
-        // $post["longitude"] = $latLon["lng"];
+        //
+        if (isDevServer()) {
+            // set lat long for demo purposes
+            $post["latitude"] = $latLon["lat"];
+            $post["longitude"] = $latLon["lng"];
+        }
         //
         $this->clock_model->markAttendance(
             $this->loggedInCompany["sid"],
@@ -229,7 +232,8 @@ class Main extends Public_Controller
 
         $data = [];
 
-        $data["history"] = $this->clock_model->getTimeSheetHistory($id);
+        $logs =  $this->clock_model->getTimeSheetHistory($id);
+        $data["history"] = $logs["logs"];
 
 
         if ($data["history"]) {
@@ -249,15 +253,7 @@ class Main extends Public_Controller
 
             $data["history"] = $tmp;
         }
-
-        // _e($data["history"], true);
-
-        // $this->load->view(
-        //     "v1/attendance/partials/timesheet_history",
-        //     $data
-        // );
-        // die;
-
+        //
         return SendResponse(
             200,
             [
@@ -266,7 +262,8 @@ class Main extends Public_Controller
                     "v1/attendance/partials/timesheet_history",
                     $data,
                     true
-                )
+                ),
+                "locations" => $logs["pair_locations"]
             ]
         );
     }

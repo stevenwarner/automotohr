@@ -27,23 +27,17 @@
                                             <th scope="col">Event</th>
                                             <th scope="col">Period</th>
                                             <th scope="col">Duration</th>
-                                            <!-- <th scope="col">Breaks</th> -->
-                                            <!-- <th scope="col">On Location</th> -->
-                                            <td scope="col">Location</td>
+                                            <th scope="col" class="text-center">On Location</th>
+                                            <th scope="col">Location</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php foreach ($v0 as $v1) { ?>
-                                            <?php
-
-                                            // Example usage
-
-                                            ?>
                                             <tr>
-                                                <td>
+                                                <td class="csVerticalAlignMiddle">
                                                     <?= $v1["text"]; ?>
                                                 </td>
-                                                <td>
+                                                <td class="csVerticalAlignMiddle">
                                                     <?= formatDateToDB(
                                                         $v1["startTime"],
                                                         DB_DATE_WITH_TIME,
@@ -56,10 +50,16 @@
                                                         "h:i a"
                                                     ) : "Missing"; ?>
                                                 </td>
-                                                <td>
+                                                <td class="csVerticalAlignMiddle">
                                                     <?= $v1["durationText"]; ?>
                                                 </td>
-                                                <td>
+                                                <td class="text-center csVerticalAlignMiddle">
+                                                    <p class="text-<?= $v1["location"]["onSiteFlag"] ? "success" : "danger"; ?>">
+                                                        <i class="fa fa-<?= $v1["location"]["onSiteFlag"] ? "check-circle" : "times-circle"; ?>"></i>
+                                                    </p>
+                                                    <?= !$v1["location"]["onSiteFlag"] ? $v1["location"]["text"] : ""; ?>
+                                                </td>
+                                                <td class="csVerticalAlignMiddle">
                                                     <button class="btn btn-link jsToggleMapView" data-id="<?= $v1["sid"]; ?>">
                                                         View Map
                                                     </button>

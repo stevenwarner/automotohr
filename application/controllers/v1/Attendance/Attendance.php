@@ -208,6 +208,19 @@ class Attendance extends Public_Controller
         $data["filter"]["startDate"] = $data["filter"]["year"] . "-" . $data["filter"]["month"] . "-01";
         $data["filter"]["endDate"] = getSystemDate($data["filter"]["year"] . "-" . $data["filter"]["month"] . "-t");
         $data["records"] = [];
+        //
+        $data["filter"]["startDate"] = convertTimeZone(
+            $data["filter"]["startDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
+        $data["filter"]["endDate"] = convertTimeZone(
+            $data["filter"]["endDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
 
         $data['user_sid'] = 0;
         if ($data["filter"]["employeeId"]) {
@@ -230,7 +243,6 @@ class Attendance extends Public_Controller
                     $data["filter"]["endDate"]
                 );
         }
-
 
         $data["employees"] = $this->clock_model
             ->getEmployees(

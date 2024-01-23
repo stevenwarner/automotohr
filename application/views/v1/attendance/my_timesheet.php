@@ -160,9 +160,11 @@
                                     <th scope="col" class="bg-black">
                                         Status
                                     </th>
-                                    <th scope="col" class="bg-black">
-                                        Actions
-                                    </th>
+                                    <?php if ($isEditAllowed) { ?>
+                                        <th scope="col" class="bg-black">
+                                            Actions
+                                        </th>
+                                    <?php } ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,6 +173,8 @@
                                 $totalWorkedTime =
                                     $totalBreakTime =
                                     $totalOvertime = 0;
+                                //
+                                $todayDate = getSystemDate(DB_DATE);
                                 //
                                 foreach ($datesPool as $v0) {
                                     $attendance = $records[$v0["date"]] ?? [];
@@ -182,7 +186,7 @@
                                         $totalOvertime += $attendance["overtime"];
                                     }
                                 ?>
-                                    <tr class="<?= $v0["date"] === getSystemDate("Y-m-d") ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
+                                    <tr class="<?= $v0["date"] === $todayDate ? "csBoxContent" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
                                         <td class="csVerticalAlignMiddle mh-100">
                                             <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
                                         </td>
@@ -215,23 +219,25 @@
                                                     <?= $attendance && $attendance["is_approved"] ? "APPROVED" : "PENDING"; ?>
                                                 </strong>
                                             </td>
-                                            <td class="csVerticalAlignMiddle mh-100">
-                                                <?php if ($attendance) { ?>
-                                                    <?php if ($attendance["is_approved"] == 0) { ?>
-                                                        <button class="btn btn-orange jsEditTimeSheet">
-                                                            <i class="fa fa-edit" aria-hidden="true"></i>
+                                            <?php if ($isEditAllowed) { ?>
+                                                <td class="csVerticalAlignMiddle mh-100">
+                                                    <?php if ($attendance) { ?>
+                                                        <?php if ($attendance["is_approved"] == 0) { ?>
+                                                            <button class="btn btn-orange jsEditTimeSheet">
+                                                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                                                &nbsp;
+                                                                Edit
+                                                            </button>
+                                                        <?php } ?>
+                                                    <?php } else { ?>
+                                                        <button class="btn btn-orange jsAddTimeSheet">
+                                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                             &nbsp;
-                                                            Edit
+                                                            Add
                                                         </button>
                                                     <?php } ?>
-                                                <?php } else { ?>
-                                                    <button class="btn btn-orange jsAddTimeSheet">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                        &nbsp;
-                                                        Add
-                                                    </button>
-                                                <?php } ?>
-                                            </td>
+                                                </td>
+                                            <?php } ?>
                                         <?php } else { ?>
                                             <td class="csVerticalAlignMiddle text-center mh-100" colspan="6">
                                                 <strong class="text-primary">

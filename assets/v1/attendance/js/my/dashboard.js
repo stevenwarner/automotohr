@@ -29,32 +29,57 @@ $(function myAttendanceDashboard() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (response) {
+				// when there was empty response
+				if (!Object.keys(response).length) {
+					return;
+				}
 				//
-				const values = Object.values(response);
-
-				let passValues = [];
+				let workedTimeArray = [];
+				let breakTimeArray = [];
+				let totalTimeArray = [];
 				//
 				let total = 0;
 				//
-				values?.map(function (value, index) {
-					let loggedTime = 0;
-					if (value.minutes) {
-						loggedTime =
-							parseFloat(value.minutes) +
-							parseFloat(value.hours * 60);
-						total += parseInt(loggedTime);
-					}
-
-					passValues.push(parseInt(loggedTime));
+				$.each(response, function (i, v) {
+					//
+					workedTimeArray.push(
+						parseFloat(
+							(
+								v?.workedTotalTime?.totalInnMinutes || 0.0
+							).toFixed(2)
+						)
+					);
+					breakTimeArray.push(
+						parseFloat(
+							(v?.breakTotalTime?.totalInnMinutes || 0.0).toFixed(
+								2
+							)
+						)
+					);
+					totalTimeArray.push(
+						parseFloat(
+							(v?.totalTime?.totalInnMinutes || 0.0).toFixed(2)
+						)
+					);
+					//
+					total += v?.totalTime?.totalInnMinutes || 0;
 				});
+				//
 				total = total.toFixed(0);
 				//
 				Highcharts.chart("container", {
 					chart: {
 						type: "column",
 					},
+					legend: {
+						itemStyle: {
+							fontSize: "12px",
+						},
+					},
 					title: {
-						text: `You have worked for ${total}m.`,
+						text: `You have worked for ${convertSecondsToTime(
+							total * 60
+						)}.`,
 						align: "left",
 						style: {
 							fontSize: "16px",
@@ -91,23 +116,49 @@ $(function myAttendanceDashboard() {
 						},
 					},
 					tooltip: {
+						style: {
+							fontSize: "12px",
+						},
 						valueSuffix: "m",
+						formatter(e) {
+							const { x, y, colorIndex } = this;
+
+							if (colorIndex === 0) {
+								return `You have consumed breaks for ${convertSecondsToTime(
+									y * 60
+								)} on ${x}`;
+							} else {
+								return `You have worked for ${convertSecondsToTime(
+									y * 60
+								)} on ${x}`;
+							}
+						},
 					},
 					plotOptions: {
-						column: {
-							pointPadding: 0.2,
-							borderWidth: 0,
-							labels: {
+						series: {
+							dataLabels: {
 								style: {
-									fontSize: "40px",
+									fontSize: "20px",
 								},
 							},
 						},
+						column: {},
 					},
 					series: [
 						{
+							name: "Break minutes",
+							data: breakTimeArray,
+							column: {
+								labels: {
+									style: {
+										fontSize: "40px",
+									},
+								},
+							},
+						},
+						{
 							name: "Worked minutes",
-							data: passValues,
+							data: workedTimeArray,
 							column: {
 								labels: {
 									style: {
@@ -118,7 +169,7 @@ $(function myAttendanceDashboard() {
 						},
 					],
 
-					colors: ["#fd7a2a"],
+					colors: ["red", "#fd7a2a"],
 				});
 			});
 	}
@@ -141,14 +192,24 @@ $(function myAttendanceDashboard() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (response) {
-				if (
-					locations.toString() !== response.logs.locations.toString()
-				) {
-					locations = response.logs.locations;
-					callGoogleCB(initMap);
+				if (response.logs) {
+					if (
+						locations.toString() !==
+						response.logs.locations.toString()
+					) {
+						locations = response.logs.locations;
+						callGoogleCB(initMap);
+					}
+				} else {
+					$("#map").html(
+						'<p class="alert alert-info text-center">No footprints yet!</p>'
+					);
 				}
-				logs = response.logs.logs;
-
+				if (response.logs) {
+					logs = response.logs.logs;
+				} else {
+					logs = [];
+				}
 
 				remakeEntries();
 			});
@@ -173,8 +234,6 @@ $(function myAttendanceDashboard() {
 	 * draw map
 	 */
 	function initMap() {
-
-		delete(map)
 		//
 		map = new google.maps.Map(document.getElementById("map"), {
 			center: {
@@ -188,6 +247,9 @@ $(function myAttendanceDashboard() {
 
 		// // Call function to add markers
 		locations.map(function (v0, i) {
+			if (!v0["lat"] || !v0["lat"]) {
+				return;
+			}
 			const options = {
 				map: map,
 				position: {
@@ -204,32 +266,38 @@ $(function myAttendanceDashboard() {
 
 			if (v0["constraint"]) {
 				// Add circle overlay for radius
-				// var circle = new google.maps.Circle({
-				// 	map: map,
-				// 	center: {
-				// 		lat: parseFloat(v0.constraint.lat),
-				// 		lng: parseFloat(v0.constraint.lng),
-				// 	},
-				// 	radius: parseInt(50000 || v0.constraint.allowed), // Radius in meters
-				// 	strokeColor: "blue", // Circle outline color
-				// 	strokeOpacity: 0.8,
-				// 	strokeWeight: 2,
-				// 	fillColor: "blue", // Circle fill color
-				// 	fillOpacity: 0.35,
-				// });
-				// // Add info window
-				// var infoWindow = new google.maps.InfoWindow({
-				// 	content: v0.constraint.title,
-				// });
-				// // Open info window when the circle is clicked
-				// google.maps.event.addListener(
-				// 	circle,
-				// 	"click",
-				// 	function (event) {
-				// 		infoWindow.setPosition(event.latLng);
-				// 		infoWindow.open(this.map);
-				// 	}
-				// );
+				var circle = new google.maps.Circle({
+					map: map,
+					center: {
+						lat: parseFloat(v0.constraint.lat),
+						lng: parseFloat(v0.constraint.lng),
+					},
+					radius: parseInt(50000 || v0.constraint.allowed), // Radius in meters
+					strokeColor: "red", // Circle outline color
+					strokeOpacity: 0.8,
+					strokeWeight: 2,
+					fillColor: "red", // Circle fill color
+					fillOpacity: 0.35,
+				});
+				// Add info window
+				var infoWindow = new google.maps.InfoWindow({
+					content: v0.constraint.title,
+				});
+				// Open info window when the circle is clicked
+				google.maps.event.addListener(
+					circle,
+					"click",
+					function (event) {
+						infoWindow.setPosition(event.latLng);
+						infoWindow.open(this.map);
+					}
+				);
+				latlng.push(
+					new google.maps.LatLng(
+						parseFloat(v0.constraint.lat),
+						parseFloat(v0.constraint.lng)
+					)
+				);
 			}
 			//
 			latlng.push(
@@ -250,10 +318,11 @@ $(function myAttendanceDashboard() {
 
 		line.setMap(map);
 
-		var latlngbounds = new google.maps.LatLngBounds();
-		for (var i = 0; i < latlng.length; i++) {
-			latlngbounds.extend(latlng[i]);
-		}
+		let latlngbounds = new google.maps.LatLngBounds();
+		//
+		latlng.forEach((element) => {
+			latlngbounds.extend(element);
+		});
 		map.fitBounds(latlngbounds);
 	}
 
@@ -264,52 +333,13 @@ $(function myAttendanceDashboard() {
 		coords.push({ lat: options.position.lat, lng: options.position.lng });
 	}
 
-	// Function to calculate distance between two sets of coordinates using Haversine formula
-	function calculateDistance(lat1, lng1, lat2, lng2) {
-		const earthRadius = 6371; // Radius of the Earth in kilometers
-
-		const toRadians = (angle) => (angle * Math.PI) / 180;
-
-		const deltaLat = toRadians(lat2 - lat1);
-		const deltaLng = toRadians(lng2 - lng1);
-
-		const a =
-			Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-			Math.cos(toRadians(lat1)) *
-				Math.cos(toRadians(lat2)) *
-				Math.sin(deltaLng / 2) *
-				Math.sin(deltaLng / 2);
-
-		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-		const distance = earthRadius * c; // Distance in kilometers
-
-		return distance;
-	}
-
-	// Function to check if a point is outside a given radius
-	function isOutsideRadius(centerLat, centerLng, pointLat, pointLng, radius) {
-		const distance = calculateDistance(
-			centerLat,
-			centerLng,
-			pointLat,
-			pointLng
-		);
-		return distance > radius;
-	}
-
-	function metersToFeet(meters) {
-		const feetPerMeter = 3.28084;
-		return meters * feetPerMeter;
-	}
-
 	function remakeEntries() {
 		// set the html holder
 		let html = "";
 		// when no entries are found
 		if (!logs.length) {
-			return $(".jsTimeEntriesBox").html(
-				'<p class="alert alert-info text-center">No time entries yet!</p>'
+			return $(".jsTimeEntriesBox tbody").html(
+				'<tr><td colspan="4"><p class="alert alert-info text-center">No time entries yet!</p></td></tr>'
 			);
 		}
 		let totalDuration = 0;
@@ -340,6 +370,20 @@ $(function myAttendanceDashboard() {
 			}
 			html += "		</p>";
 			html += "	</td>";
+			if (v0.location.onSiteFlag) {
+				html += '	<td class="csVerticalAlignMiddle text-center ">';
+				html += "		<p>";
+				html += '<i class="fa fa-check-circle text-success"></i>';
+				html += "		</p>";
+				html += "	</td>";
+			} else {
+				html += '	<td class="csVerticalAlignMiddle text-center">';
+				html += "		<p>";
+				html += '<i class="fa fa-times-circle text-danger"></i><br />';
+				html += v0["location"]["text"];
+				html += "		</p>";
+				html += "	</td>";
+			}
 			html += '	<td class="csVerticalAlignMiddle text-right">';
 			html += "		<p>";
 			html += v0["durationText"];
@@ -352,7 +396,7 @@ $(function myAttendanceDashboard() {
 		//
 		html = "<tr>";
 		html +=
-			'	<th scope="col" colspan="3" class="csVerticalAlignMiddle text-right">';
+			'	<th scope="col" colspan="4" class="csVerticalAlignMiddle text-right">';
 		html += "	Total: ";
 		html += convertSecondsToTime(totalDuration);
 		html += "	</th>";
@@ -360,7 +404,15 @@ $(function myAttendanceDashboard() {
 		$(".jsTimeEntriesBox tfoot").html(html);
 	}
 
-	setInterval(getGraphs, 10000 * 5);
+	function convertSecondsToTime(differenceInSeconds) {
+		// Convert seconds to hours and minutes
+		let hours = Math.floor(differenceInSeconds / 3600);
+		let minutes = Math.floor((differenceInSeconds % 3600) / 60);
+
+		return hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
+	}
+
+	setInterval(getGraphs, 10000 * 3);
 	setInterval(getFootprints, 10000 * 2);
 	//
 	getGraphs();

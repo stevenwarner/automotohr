@@ -40,14 +40,27 @@ class Employee extends Base
         $this->getCommon($this->data, "my_dashboard");
         $this->data["startDate"] = getSystemDate(DB_DATE, "-7 days");
         $this->data["endDate"] = getSystemDate(DB_DATE);
+        //
+        $this->data["startDate"] = convertTimeZone(
+            $this->data["startDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
+        $this->data["endDate"] = convertTimeZone(
+            $this->data["endDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
 
-        $this->data["title"]  = "Overview";
+        $this->data["title"]  = "My Attendance Dashboard :: " . (STORE_NAME);
         // get todays footprints
         $this->data["record"] = $this->clock_model
             ->getClockWithState(
                 $this->loggedInCompany["sid"],
                 $this->loggedInEmployee["sid"],
-                getSystemDate(DB_DATE),
+                getSystemDateInUTC(DB_DATE),
                 true
             );
         // make the blue portal popup
@@ -57,10 +70,11 @@ class Employee extends Base
 
 
     /**
-     * Employees timesheet
+     * Employees time sheet
      */
     public function timesheet()
     {
+        $this->data["title"]  = "My time sheet :: " . (STORE_NAME);
         // add plugins
         $this->data["pageCSS"] = [
             getPlugin("timepicker", "css"),
@@ -81,6 +95,21 @@ class Employee extends Base
         ];
         $this->data["filter"]["startDate"] = $this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-01";
         $this->data["filter"]["endDate"] = getSystemDate($this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-t");
+
+        //
+        $this->data["filter"]["startDate"] = convertTimeZone(
+            $this->data["filter"]["startDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
+        $this->data["filter"]["endDate"] = convertTimeZone(
+            $this->data["filter"]["endDate"],
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            getLoggedInPersonTimeZone()
+        );
+
         // load schedule model
         $this->load->model("Timeoff_model", "timeoff_model");
         // get employee shifts
@@ -98,7 +127,8 @@ class Employee extends Base
                 $this->data["filter"]["startDate"],
                 $this->data["filter"]["endDate"]
             );
-
+        //
+        $this->data["isEditAllowed"] = true;
         // make the blue portal popup
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_timesheet");

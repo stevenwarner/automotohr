@@ -57,13 +57,17 @@ class Clock_model extends Base_model
         $this->employeeId = $employeeId;
         if ($date) {
             $this->date = $date;
-            $this->dateInUTC = getSystemDateInUTC(DB_DATE, "now", $this->date);
         } else {
             // get todays date
             $this->date = getSystemDate(DB_DATE);
-            // get todays date in UTC
-            $this->dateInUTC = getSystemDateInUTC(DB_DATE);
         }
+        // get todays date in UTC
+        $this->dateInUTC = convertTimeZone(
+            $this->date,
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            "UTC"
+        );
         // set return array
         $clockArray = [
             "clock_time" => "",
@@ -132,7 +136,15 @@ class Clock_model extends Base_model
             }
         }
         //
-        $clockArray["clock_time"] = $lastClockInTime;
+        if ($record["last_event"] === "break_started") {
+            // get the last active break
+            $lastBreak = $clockArray["breaks"][0];
+            //
+            $clockArray["clock_time"] = $lastBreak["start"];
+        } else {
+            //
+            $clockArray["clock_time"] = $lastClockInTime;
+        }
         $clockArray["state"] = $record["last_event"];
         $clockArray["time"] = $found ? $timeInMinutes : 0;
         $clockArray["reference"] = $record["sid"];
@@ -223,29 +235,39 @@ class Clock_model extends Base_model
         $this->companyId = $companyId;
         // set employeeId
         $this->employeeId = $employeeId;
+        // store the
+        $originalStartDate = $startDate;
+        $originalEndDate = $endDate;
         // add times to dates
         $startDate .= " 00:00:00";
-        $endDate .= " 23:59:59";
-        // convert the dates in DB format
-        $startDate = reset_datetime([
-            "datetime" => $startDate,
-            "from_format" => SITE_DATE . " H:i:s",
-            "format" => DB_DATE,
-            "_this" => $this,
-            "new_zone" => "UTC"
-        ]);
-        $endDate = reset_datetime([
-            "datetime" => $endDate,
-            "from_format" => SITE_DATE . " H:i:s",
-            "format" => DB_DATE,
-            "_this" => $this,
-            "new_zone" => "UTC"
-        ]);
+        $endDate .= " 00:00:00";
+        // converted to UTC
+        $startDate = formatDateToDB(
+            convertTimeZone(
+                $startDate,
+                SITE_DATE . " H:i:s",
+                getLoggedInPersonTimeZone(),
+                "UTC"
+            ),
+            SITE_DATE . " H:i:s",
+            DB_DATE
+        );
+        //
+        $endDate = formatDateToDB(
+            convertTimeZone(
+                $endDate,
+                SITE_DATE . " H:i:s",
+                getLoggedInPersonTimeZone(),
+                "UTC"
+            ),
+            SITE_DATE . " H:i:s",
+            DB_DATE
+        );
         // get date array
         $datesPool = $this->attendance_lib
             ->getDatePoolInRange(
-                $startDate,
-                $endDate
+                $originalStartDate,
+                $originalEndDate
             );
         // get the attendance logs within range
         $records = $this->getAttendanceInRange($startDate, $endDate);
@@ -275,7 +297,8 @@ class Clock_model extends Base_model
         // set return array
         $returnArray = [
             "logs" => [],
-            "locations" => []
+            "locations" => [],
+            "pair_locations" => []
         ];
         //
         $logs = $this->db
@@ -317,15 +340,25 @@ class Clock_model extends Base_model
                 "duration" => $v0["duration"],
                 "jobSite" => [],
                 "break" => [],
+                "location" => []
             ];
             // set locations
             $locationArray = [];
+            $pairLocationArray = [];
             // set the text
             if ($v0["clocked_in"]) {
                 $locationArray["clocked_in"] = [
                     "lat" => $v0["lat"],
                     "lng" => $v0["lng"],
                     "title" => "Clocked in"
+                ];
+                $pairLocationArray = [
+                    "id" => $v0["sid"],
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "lat_2" => $v0["lat_2"],
+                    "lng_2" => $v0["lng_2"],
+                    "event" => "clock"
                 ];
                 //
                 if ($v0["clocked_out"]) {
@@ -354,6 +387,14 @@ class Clock_model extends Base_model
                         "title" => "Break end"
                     ];
                 }
+                $pairLocationArray = [
+                    "id" => $v0["sid"],
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "lat_2" => $v0["lat_2"],
+                    "lng_2" => $v0["lng_2"],
+                    "event" => "break"
+                ];
                 $log["text"] = "Break start/end";
                 $log["startTime"] = $v0["break_start"];
                 $log["is_ended"] = $v0["break_end"] ? true : false;
@@ -397,19 +438,68 @@ class Clock_model extends Base_model
                     "allowed" => $log["jobSite"]["site_radius"],
                     "title" => $log["jobSite"]["site_name"]
                 ];
+                $pairLocationArray["constraint"] =
+                    [
+                        "lat" => $log["jobSite"]["lat"],
+                        "lng" => $log["jobSite"]["lng"],
+                        "allowed" => $log["jobSite"]["site_radius"],
+                        "title" => $log["jobSite"]["site_name"]
+                    ];
             }
-
             //
             if ($log["break"]) {
                 $locationArray["break_start"]["title"] .= " for " . $log["break"]["break"];
             }
+            //
+            $pairLocationArray["onSiteFlag"] = true;
+            $pairLocationArray["text"] = "On site";
+
+            // when job site exists
+            if ($log["jobSite"]) {
+                $text1  = "Clocked in";
+                $text2  = "Clocked out";
+                // check for clock in
+                if (!$v0["clocked_in"]) {
+                    $text1  = "Break started";
+                    $text2  = "Break ended";
+                }
+
+                if ($pairLocationArray["lat"] && $pairLocationArray["lng"]) {
+                    $dd = is_within_radius([
+                        $pairLocationArray["lat"], $pairLocationArray["lng"],
+                    ], [
+                        $pairLocationArray["constraint"]["lat"], $pairLocationArray["constraint"]["lng"],
+                    ], $pairLocationArray["constraint"]["lng"]);
+
+
+                    if (!$dd["within_range"]) {
+                        $pairLocationArray["onSiteFlag"] = false;
+                        $pairLocationArray["text"] = $text1 . " " . ($dd["distance"] * 3.28084) . " feet away from the job site - " . $log["jobSite"]["site_name"] . ".";
+                    }
+                } elseif ($pairLocationArray["lat_2"] && $pairLocationArray["lng_2"]) {
+                    $dd = is_within_radius([
+                        $pairLocationArray["lat_2"], $pairLocationArray["lng_2"],
+                    ], [
+                        $pairLocationArray["constraint"]["lat"], $pairLocationArray["constraint"]["lng"],
+                    ], $pairLocationArray["constraint"]["lng"]);
+
+
+                    if (!$dd["within_range"]) {
+                        $pairLocationArray["onSiteFlag"] = false;
+                        $pairLocationArray["text"] = $text2 . " " . ($dd["distance"] * 3.28084) . " feet away from the job site - " . $log["jobSite"]["site_name"] . ".";
+                    }
+                }
+            }
 
             //
+            $log["location"] = $pairLocationArray;
             $returnArray["logs"][] = $log;
             $returnArray["locations"] = array_merge(
                 $returnArray["locations"],
                 array_values($locationArray)
             );
+            $returnArray["pair_locations"][] = $pairLocationArray;
+            //
         }
 
         return $returnArray;
@@ -440,23 +530,28 @@ class Clock_model extends Base_model
         foreach ($records as $v0) {
             // set defaults
             $arr = $v0;
+            $v0["clocked_date"] = convertTimeZone(
+                $v0["clocked_date"],
+                DB_DATE,
+                "UTC",
+                getLoggedInPersonTimeZone()
+            );
             //
-            $arr["clocked_in"] = reset_datetime([
-                "datetime" => $v0["clocked_in"],
-                "from_format" => DB_DATE_WITH_TIME,
-                "format" => DB_DATE_WITH_TIME,
-                "_this" => $this,
-                "from_timezone" => "UTC"
-            ]);
+            $arr["clocked_in"] = convertTimeZone(
+                $v0["clocked_in"],
+                DB_DATE_WITH_TIME,
+                "UTC",
+                getLoggedInPersonTimeZone()
+            );
 
             if ($v0["clocked_out"]) {
-                $arr["clocked_out"] = reset_datetime([
-                    "datetime" => $v0["clocked_out"],
-                    "from_format" => DB_DATE_WITH_TIME,
-                    "format" => DB_DATE_WITH_TIME,
-                    "_this" => $this,
-                    "from_timezone" => "UTC"
-                ]);
+                $arr["clocked_out"] =
+                    convertTimeZone(
+                        $v0["clocked_out"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
             }
             $arr["worked_time"] = 0;
             $arr["overtime"] = 0;
@@ -484,43 +579,42 @@ class Clock_model extends Base_model
             //
             foreach ($arr["logs"] as $k1 => $v1) {
 
-                if ($v0["clocked_in"]) {
+                if ($v1["clocked_in"]) {
                     //
-                    $arr["logs"][$k1]["clocked_in"] = reset_datetime([
-                        "datetime" => $v1["clocked_in"],
-                        "from_format" => DB_DATE_WITH_TIME,
-                        "format" => DB_DATE_WITH_TIME,
-                        "_this" => $this,
-                        "from_timezone" => "UTC"
-                    ]);
+                    $arr["logs"][$k1]["clocked_in"] = convertTimeZone(
+                        $v1["clocked_in"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
 
                     if ($v1["clocked_out"]) {
-                        $arr["logs"][$k1]["clocked_out"] = reset_datetime([
-                            "datetime" => $v1["clocked_out"],
-                            "from_format" => DB_DATE_WITH_TIME,
-                            "format" => DB_DATE_WITH_TIME,
-                            "_this" => $this,
-                            "from_timezone" => "UTC"
-                        ]);
+                        $arr["logs"][$k1]["clocked_out"] =
+                            convertTimeZone(
+                                $v1["clocked_out"],
+                                DB_DATE_WITH_TIME,
+                                "UTC",
+                                getLoggedInPersonTimeZone()
+                            );
                     }
                 }
 
                 if ($v1["break_start"]) {
-                    $arr["logs"][$k1]["break_start"] = reset_datetime([
-                        "datetime" => $v1["break_start"],
-                        "from_format" => DB_DATE_WITH_TIME,
-                        "format" => DB_DATE_WITH_TIME,
-                        "_this" => $this,
-                        "from_timezone" => "UTC"
-                    ]);
+                    $arr["logs"][$k1]["break_start"] =
+                        convertTimeZone(
+                            $v1["break_start"],
+                            DB_DATE_WITH_TIME,
+                            "UTC",
+                            getLoggedInPersonTimeZone()
+                        );
                     if ($v1["break_end"]) {
-                        $arr["logs"][$k1]["break_end"] = reset_datetime([
-                            "datetime" => $v1["break_end"],
-                            "from_format" => DB_DATE_WITH_TIME,
-                            "format" => DB_DATE_WITH_TIME,
-                            "_this" => $this,
-                            "from_timezone" => "UTC"
-                        ]);
+                        $arr["logs"][$k1]["break_end"] =
+                            convertTimeZone(
+                                $v1["break_end"],
+                                DB_DATE_WITH_TIME,
+                                "UTC",
+                                getLoggedInPersonTimeZone()
+                            );
                     }
                 }
 
@@ -1078,10 +1172,19 @@ class Clock_model extends Base_model
         foreach ($attendanceRecords as $v0) {
             //
             $tmp = explode(" ", $v0["clocked_in"])[0];
+            //
+            $tmp =
+                convertTimeZone(
+                    $tmp,
+                    DB_DATE,
+                    "UTC",
+                    getLoggedInPersonTimeZone(),
+                );
             // get the attendance logs
             $records = $this->getAttendanceLogs($v0["sid"]);
             // set the time to add
             $timeInMinutes = 0;
+            $timeInMinutesForBreaks = 0;
 
             if ($records) {
                 // set today date in UTC
@@ -1140,7 +1243,7 @@ class Clock_model extends Base_model
                                 $breakInObj->format(DB_DATE) + " 23:59:59";
                         }
                         // get the difference
-                        $timeInMinutes +=
+                        $timeInMinutesForBreaks +=
                             $this->attendance_lib
                             ->getDurationInMinutes($v1["break_start"], $v1["break_end"]);
                     }
@@ -1148,8 +1251,14 @@ class Clock_model extends Base_model
             }
 
             // add the worked time
-            $datesPool[$tmp] = $this->attendance_lib
-                ->convertSecondsToHours($timeInMinutes);
+            $datesPool[$tmp] = [
+                "totalTime" => $this->attendance_lib
+                    ->convertSecondsToHours($timeInMinutes + $timeInMinutesForBreaks),
+                "workedTotalTime" => $this->attendance_lib
+                    ->convertSecondsToHours($timeInMinutes),
+                "breakTotalTime" => $this->attendance_lib
+                    ->convertSecondsToHours($timeInMinutesForBreaks),
+            ];
         }
         //
         return $datesPool;
@@ -1170,7 +1279,7 @@ class Clock_model extends Base_model
             ->where([
                 "company_sid" => $this->companyId,
                 "employee_sid" => $this->employeeId,
-                "shift_date" => $this->date,
+                "shift_date" => $this->dateInUTC,
             ])
             ->get("cl_shifts")
             ->row_array();
@@ -1209,7 +1318,7 @@ class Clock_model extends Base_model
             ->where([
                 "company_sid" => $this->companyId,
                 "employee_sid" => $this->employeeId,
-                "shift_date" => $this->date,
+                "shift_date" => $this->dateInUTC,
             ])
             ->get("cl_shifts")
             ->row_array();
@@ -1524,6 +1633,13 @@ class Clock_model extends Base_model
 
     public function getPeopleClocks(int $companyId, string $date)
     {
+        // convert the date in UTC
+        $date = convertTimeZone(
+            $date,
+            DB_DATE,
+            STORE_DEFAULT_TIMEZONE_ABBR,
+            "UTC"
+        );
         //
         $returnArray = [
             "breaks" => [],
@@ -1611,7 +1727,7 @@ class Clock_model extends Base_model
             $record["clocked_date"],
         );
 
-        return $this->getAttendanceFootprints($attendanceId, $breaks)["logs"];
+        return $this->getAttendanceFootprints($attendanceId, $breaks);
     }
 
     /**
