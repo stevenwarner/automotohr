@@ -296,9 +296,9 @@ $(function markAttendance() {
 			$(`.jsAttendanceBtn[data-type="${eventType}"]`),
 			true
 		);
-		let ref = _showNotification(
-			"Please wait, while we are processing your request."
-		);
+		// let ref = _showNotification(
+		// 	"Please wait, while we are processing your request."
+		// );
 		//
 		XHR = $.ajax({
 			url: baseUrl("v1/clock/mark"),
@@ -313,7 +313,7 @@ $(function markAttendance() {
 		})
 			.always(function () {
 				callButtonHook(buttonRef, false);
-				closeAlert(ref);
+				// closeAlert(ref);
 				XHR = null;
 			})
 			.fail(handleErrorResponse)
