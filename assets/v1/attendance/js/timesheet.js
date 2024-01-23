@@ -342,7 +342,6 @@ $(function timeSheet() {
 	 * draw map
 	 */
 	function makeLocationMap(containerId, location) {
-		console.log(containerId, location);
 		let map,
 			markers = [],
 			coords = [],
@@ -461,5 +460,15 @@ $(function timeSheet() {
 		event.preventDefault();
 		const sid = $(this).data("id");
 		$(".mapRow" + sid).toggleClass("hidden");
+	});
+
+	//
+	$(".jsDateRangePicker").daterangepicker({
+		showDropdowns: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+			separator: " - ",
+		},
 	});
 });

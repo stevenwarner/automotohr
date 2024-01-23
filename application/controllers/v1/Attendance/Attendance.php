@@ -114,6 +114,7 @@ class Attendance extends Public_Controller
         // add plugins
         $data["pageCSS"] = [
             getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
         ];
         $data["pageJs"] = [
             // Google maps
@@ -121,6 +122,7 @@ class Attendance extends Public_Controller
             getPlugin("google_map", "js"),
             getPlugin("validator", "js"),
             getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
         ];
 
         // set js
@@ -138,25 +140,35 @@ class Attendance extends Public_Controller
         $data["sidebarPath"] = $this->sidebarPath;
         $data["mainContentPath"] = "v1/attendance/timesheet";
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
-
+        //
+        $defaultRange = getSystemDate(SITE_DATE) . ' - ' . getSystemDate(SITE_DATE);
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
         // get todays date
         $data["filter"] = [
             "employeeId" => $this->input->get("employees", true) ?? "",
-            "year" => $this->input->get("year", true) ?? getSystemDate("Y"),
-            "month" => $this->input->get("month", true) ?? getSystemDate("m"),
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange
         ];
-        $data["filter"]["startDate"] = $data["filter"]["year"] . "-" . $data["filter"]["month"] . "-01";
-        $data["filter"]["endDate"] = getSystemDate($data["filter"]["year"] . "-" . $data["filter"]["month"] . "-t");
         $data["records"] = [];
         //
-        $data["filter"]["startDate"] = convertTimeZone(
-            $data["filter"]["startDate"],
+        $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);
+        $endDate = formatDateToDB($endDate, SITE_DATE, DB_DATE);
+        $data["filter"]['startDateDB'] = $startDate;
+        $data["filter"]['endDateDB'] = $endDate;
+        //
+        $startDate = convertTimeZone(
+            $startDate,
             DB_DATE,
             STORE_DEFAULT_TIMEZONE_ABBR,
             getLoggedInPersonTimeZone()
         );
-        $data["filter"]["endDate"] = convertTimeZone(
-            $data["filter"]["endDate"],
+        $endDate = convertTimeZone(
+            $endDate,
             DB_DATE,
             STORE_DEFAULT_TIMEZONE_ABBR,
             getLoggedInPersonTimeZone()
@@ -170,8 +182,8 @@ class Attendance extends Public_Controller
                 ->getAttendanceWithinRange(
                     $this->loggedInCompany["sid"],
                     $data["filter"]["employeeId"],
-                    $data["filter"]["startDate"],
-                    $data["filter"]["endDate"]
+                    $startDate,
+                    $endDate
                 );
             // load schedule model
             $this->load->model("Timeoff_model", "timeoff_model");
@@ -179,8 +191,8 @@ class Attendance extends Public_Controller
             $data["leaves"] = $this->timeoff_model
                 ->getEmployeeTimeOffsInRange(
                     $data["filter"]["employeeId"],
-                    $data["filter"]["startDate"],
-                    $data["filter"]["endDate"]
+                    $startDate,
+                    $endDate
                 );
         }
 

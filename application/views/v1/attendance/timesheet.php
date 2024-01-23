@@ -15,7 +15,7 @@ $timeSheetName = "";
     <div class="panel-body">
         <form action="<?= current_url(); ?>" method="get">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-8">
                     <div class="form-group">
                         <label>
                             Select Employee
@@ -38,39 +38,13 @@ $timeSheetName = "";
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <div class="form-group">
                         <label>
-                            Select Year
+                            Start date range
                             <strong class="text-danger">*</strong>
                         </label>
-                        <select name="year" class="form-control">
-                            <option <?= $filter["year"] === "2023" ? "selected" : ""; ?> value="2023">2023</option>
-                            <option <?= $filter["year"] === "2024" ? "selected" : ""; ?> value="2024">2024</option>
-                            <option <?= $filter["year"] === "2025" ? "selected" : ""; ?> value="2025">2025</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>
-                            Select Month
-                            <strong class="text-danger">*</strong>
-                        </label>
-                        <select name="month" class="form-control">
-                            <option <?= $filter["month"] === "01" ? "selected" : ""; ?> value="01">January</option>
-                            <option <?= $filter["month"] === "02" ? "selected" : ""; ?> value="02">February</option>
-                            <option <?= $filter["month"] === "03" ? "selected" : ""; ?> value="03">March</option>
-                            <option <?= $filter["month"] === "04" ? "selected" : ""; ?> value="04">April</option>
-                            <option <?= $filter["month"] === "05" ? "selected" : ""; ?> value="05">May</option>
-                            <option <?= $filter["month"] === "06" ? "selected" : ""; ?> value="06">June</option>
-                            <option <?= $filter["month"] === "07" ? "selected" : ""; ?> value="07">July</option>
-                            <option <?= $filter["month"] === "08" ? "selected" : ""; ?> value="08">August</option>
-                            <option <?= $filter["month"] === "09" ? "selected" : ""; ?> value="09">September</option>
-                            <option <?= $filter["month"] === "10" ? "selected" : ""; ?> value="10">October</option>
-                            <option <?= $filter["month"] === "11" ? "selected" : ""; ?> value="11">November</option>
-                            <option <?= $filter["month"] === "12" ? "selected" : ""; ?> value="12">December</option>
-                        </select>
+                        <input type="text" class="form-control jsDateRangePicker" readonly placeholder="MM/DD/YYYY - MM/DD/YYYY" name="date_range" value="<?= $filter["dateRange"] ?? ""; ?>" />
                     </div>
                 </div>
             </div>
@@ -103,13 +77,13 @@ $timeSheetName = "";
                 </strong>
                 <p class="mt-5">
                     <?= formatDateToDB(
-                        $filter["startDate"],
+                        $filter["startDateDB"],
                         DB_DATE,
                         DATE
                     ); ?>
                     -
                     <?= formatDateToDB(
-                        $filter["endDate"],
+                        $filter["endDateDB"],
                         DB_DATE,
                         DATE
                     ); ?>
@@ -172,7 +146,7 @@ $timeSheetName = "";
                     </thead>
                     <tbody>
                         <?php
-                        $datesPool = getDatesBetweenDates($filter["startDate"], $filter["endDate"]);
+                        $datesPool = getDatesBetweenDates($filter["startDateDB"], $filter["endDateDB"]);
                         $totalWorkedTime =
                             $totalBreakTime =
                             $totalOvertime = 0;
