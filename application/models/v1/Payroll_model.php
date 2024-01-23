@@ -2524,6 +2524,19 @@ class Payroll_model extends CI_Model
             $ins['adjust_for_minimum_wage'] = $compensation['adjust_for_minimum_wage'];
             //
             if ($this->db->where(['gusto_uuid' => $compensation['uuid']])->count_all_results('gusto_employees_jobs_compensations')) {
+                //
+                $previousStatus = $this->db
+                    ->select('flsa_status')
+                    ->where([
+                        'gusto_uuid' => $compensation['uuid']
+                    ])
+                    ->get('gusto_employees_jobs_compensations')
+                    ->row_array()['flsa_status'];
+                //
+                if ($previousStatus == "Salaried Commission" && $compensation['flsa_status'] == "Salaried Nonexempt") {
+                    unset($ins['flsa_status']);
+                }
+                //
                 $ins['updated_at'] = getSystemDate();
                 $this->db
                     ->where(['gusto_uuid' => $compensation['uuid']])
