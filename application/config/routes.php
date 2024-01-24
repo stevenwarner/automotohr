@@ -359,7 +359,7 @@ $route['login'] = 'users/login';
 $route['employee_login'] = 'users/employee_login';
 $route['register'] = 'users/register';
 $route['forgot_password'] = 'users/forgot_password';
-$route['contact_us'] = 'users/contact_us';
+// $route['contact_us'] = 'users/contact_us';
 $route['change_password/(:any)/(:any)'] = 'users/change_password/$1/$2';
 $route['logout'] = 'users/logout';
 //sub-account
