@@ -16,7 +16,12 @@
         <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <?php } ?>
 
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
+    <!-- <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" /> -->
+    <!-- favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+    <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
 
     <script src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></script>
     <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.datetimepicker.js"></script>
