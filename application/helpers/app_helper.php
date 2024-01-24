@@ -3041,16 +3041,20 @@ if (!function_exists("convertTimeZone")) {
      * @param string $fromFormat
      * @param string $fromTimeZone
      * @param string $toTimeZone
+     * @param bool $doFormat
+     * @param string $toFormat
      * @return string
      */
     function convertTimeZone(
         string $date,
         string $fromFormat,
         string $fromTimeZone,
-        string $toTimeZone
+        string $toTimeZone,
+        bool $doFormat = false,
+        string $toFormat = DB_DATE_WITH_TIME
     ): string {
         //
-        return reset_datetime([
+        $returnedValue = reset_datetime([
             "datetime" => $date,
             "from_format" => $fromFormat,
             "format" => $fromFormat,
@@ -3058,6 +3062,12 @@ if (!function_exists("convertTimeZone")) {
             "new_zone" => $toTimeZone,
             "from_timezone" => $fromTimeZone
         ]);
+        //
+        return !$doFormat ? $returnedValue : formatDateToDB(
+            $returnedValue,
+            $fromFormat,
+            $toFormat
+        );
     }
 }
 

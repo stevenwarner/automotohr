@@ -382,7 +382,16 @@ $assignIdObj = $confidential_sids;
                                                                             <div class="text-center">
                                                                                 <?php
                                                                                 if (!empty($eeo_form_info['last_sent_at'])) {
-                                                                                    echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+                                                                                    //  echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+
+                                                                                    echo convertTimeZone(
+                                                                                        $eeo_form_info['last_sent_at'],
+                                                                                        DB_DATE_WITH_TIME,
+                                                                                        STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                                        getLoggedInPersonTimeZone(),
+                                                                                        true,
+                                                                                        DATE_WITH_TIME
+                                                                                    );
                                                                                 } else {
                                                                                     echo "N/A";
                                                                                 }
@@ -433,7 +442,16 @@ $assignIdObj = $confidential_sids;
                                                                         <?php } ?>
 
                                                                         <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
-                                                                            <p>Last completed on <strong><?= DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s'); ?></strong></p>
+                                                                            <p>Last completed on <strong><?php
+                                                                                                            echo convertTimeZone(
+                                                                                                                $eeo_form_info['last_completed_on'],
+                                                                                                                DB_DATE_WITH_TIME,
+                                                                                                                STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                                                                getLoggedInPersonTimeZone(),
+                                                                                                                true,
+                                                                                                                DATE_WITH_TIME
+                                                                                                            );
+                                                                                                            ?></strong></p>
                                                                         <?php } ?>
                                                                     </td>
                                                                 </tr>
