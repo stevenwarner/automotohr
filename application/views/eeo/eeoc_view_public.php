@@ -270,7 +270,7 @@
                                     <tr>
                                         <td>
                                             <label class="control control--radio">
-                                                <input type=" radio" name="disability" value="NO, I DON'T HAVE A DISABILITY" <?php echo !empty($eeo_form_info['disability']) && $eeo_form_info['disability'] == "NO, I DON'T HAVE A DISABILITY" ? 'checked="checked"' : ''; ?>> NO, I DON'T HAVE A DISABILITY
+                                                <input type="radio" name="disability" value="NO, I DON'T HAVE A DISABILITY" <?php echo !empty($eeo_form_info['disability']) && $eeo_form_info['disability'] == "NO, I DON'T HAVE A DISABILITY" ? 'checked="checked"' : ''; ?>> NO, I DON'T HAVE A DISABILITY
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </td>
