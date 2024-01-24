@@ -250,42 +250,18 @@ class Clock_model extends Base_model
         $this->companyId = $companyId;
         // set employeeId
         $this->employeeId = $employeeId;
-        // store the
-        $originalStartDate = $startDate;
-        $originalEndDate = $endDate;
-        // add times to dates
-        $startDate .= " 00:00:00";
-        $endDate .= " 23:59:59";
-        // converted to UTC
-        $startDate = formatDateToDB(
-            convertTimeZone(
-                $startDate,
-                SITE_DATE . " H:i:s",
-                getLoggedInPersonTimeZone(),
-                DB_TIMEZONE
-            ),
-            SITE_DATE . " H:i:s",
-            DB_DATE
-        );
-        //
-        $endDate = formatDateToDB(
-            convertTimeZone(
-                $endDate,
-                SITE_DATE . " H:i:s",
-                getLoggedInPersonTimeZone(),
-                DB_TIMEZONE
-            ),
-            SITE_DATE . " H:i:s",
-            DB_DATE
-        );
+
         // get date array
         $datesPool = $this->attendance_lib
             ->getDatePoolInRange(
-                $originalStartDate,
-                $originalEndDate
+                $startDate,
+                $endDate
             );
         // get the attendance logs within range
-        $records = $this->getAttendanceInRange($startDate, $endDate);
+        $records = $this->getAttendanceInRange(
+            formatDateToDB($startDate, SITE_DATE, DB_DATE),
+            formatDateToDB($endDate, SITE_DATE, DB_DATE)
+        );
         // when no records are found
         if (!$records) {
             return SendResponse(
@@ -1177,6 +1153,7 @@ class Clock_model extends Base_model
             ->select("
                 sid,
                 clocked_in,
+                clocked_date,
                 last_event
             ")
             ->where("company_sid", $this->companyId)
@@ -1200,15 +1177,7 @@ class Clock_model extends Base_model
         //
         foreach ($attendanceRecords as $v0) {
             //
-            $tmp = explode(" ", $v0["clocked_in"])[0];
-            //
-            $tmp =
-                convertTimeZone(
-                    $tmp,
-                    DB_DATE,
-                    DB_TIMEZONE,
-                    getLoggedInPersonTimeZone(),
-                );
+            $tmp = $v0["clocked_date"];
             // get the attendance logs
             $records = $this->getAttendanceLogs($v0["sid"]);
             // set the time to add
