@@ -6,8 +6,13 @@
     <?php $method = $this->router->fetch_method(); ?>
     <meta charset="utf-8">
     <title><?php echo $title; ?></title>
+    <!-- favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+    <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
+    <!-- <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" /> -->
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="<?= main_url("public/v1/plugins/bootstrap/css/bootstrap.min.css?v=3.0"); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('public/v1/plugins/fontawesome/4/font-awesome.min.css?v=3.0') ?>">
@@ -906,7 +911,7 @@
                                                                 </a>
                                                             </li>
                                                         <?php } ?>
-                                                        
+
                                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                                             <?php
                                                             $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);

@@ -44,8 +44,13 @@
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css">
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/star-rating.css">
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/easy-responsive-tabs.css">
-            <link rel="icon" href="<?= base_url() ?>assets/images/favi-icon.png?v=<?= time(); ?>" />
-            <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
+            <!-- favicons -->
+            <link rel="apple-touch-icon" sizes="180x180" href="<?= image_url('favicon_io'); ?>/apple-touch-icon.png">
+            <link rel="icon" type="image/png" sizes="32x32" href="<?= image_url('favicon_io'); ?>/favicon-32x32.png">
+            <link rel="icon" type="image/png" sizes="16x16" href="<?= image_url('favicon_io'); ?>/favicon-16x16.png">
+            <link rel="manifest" href="<?= image_url('favicon_io'); ?>/site.webmanifest">
+            <!-- <link rel="icon" href="<?= base_url() ?>assets/images/favi-icon.png?v=<?= time(); ?>" /> -->
+            <!-- <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" /> -->
             <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
             <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery-1.11.3.min.js"></script>
             <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.nicescroll.min.js"></script>
