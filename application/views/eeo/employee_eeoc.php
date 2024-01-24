@@ -9,7 +9,6 @@ if (!empty($eeo_form_info) && $eeo_form_info["is_expired"] == 1) {
 }
 
 $eeocFormOptions = get_eeoc_options_status($company_sid);
-
 ?>
 
 <body>
@@ -77,7 +76,7 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                 <?php } ?>
 
                 //
-                <?php if ($eeocFormOptions['dl_vot'] == 1) { ?>
+                <?php if ($eeocFormOptions['dl_vol'] == 1) { ?>
                     if (obj.disability === undefined) {
                         alertify.alert('Please, select disability.');
                         return;
