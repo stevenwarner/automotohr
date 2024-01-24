@@ -71,7 +71,7 @@ $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 $route['legal']['get'] = 'v1/App/legalHub';
 //
-$route['employee_login']['get'] = 'Home/login';
+$route['employee_login']['get'] = 'users/login';
 $route['services/career-website']['get'] = 'Home/index';
 $route['services/onboarding-employee-management']['get'] = 'Home/index';
 
@@ -356,7 +356,7 @@ $route['translate_uri_dashes'] = FALSE;
 $route['schedule_your_free_demo'] = 'demo/schedule_your_free_demo';
 //Register and login
 $route['login'] = 'users/login';
-$route['employee_login'] = 'users/employee_login';
+// $route['employee_login'] = 'users/employee_login';
 $route['register'] = 'users/register';
 $route['forgot_password'] = 'users/forgot_password';
 // $route['contact_us'] = 'users/contact_us';
