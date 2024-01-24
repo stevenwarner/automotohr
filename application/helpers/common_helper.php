@@ -10963,6 +10963,9 @@ if (!function_exists('resetResumeName')) {
 if (!function_exists('send_settings_to_remarket')) {
     function send_settings_to_remarket($url, $new_settings)
     {
+        if (isDevServer()) {
+            return;
+        }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POST, 1);

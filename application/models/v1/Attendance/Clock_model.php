@@ -827,7 +827,7 @@ class Clock_model extends Base_model
         $ins = [];
         $ins["company_sid"] = $this->companyId;
         $ins["employee_sid"] = $this->employeeId;
-        $ins["clocked_date"] = $this->dateInUTC;
+        $ins["clocked_date"] = getSystemDateInLoggedInPersonTZ(DB_DATE);
         $ins["clocked_in"] = getSystemDateInUTC();
         $ins["last_record_time"] = $ins["clocked_in"];
         $ins["is_approved"] = 0;
