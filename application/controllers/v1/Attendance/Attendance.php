@@ -79,14 +79,7 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/dashboard", "js");
         $this->getCommon($data, "overview");
-        // add plugins
-        $data["appCSS"] .= [
-            getPlugin("daterangepicker", "css"),
-        ];
-        $data["appJs"] .= [
-            getPlugin("daterangepicker", "js"),
-        ];
-        //
+        // //
         $data["filter"] = [
             "date" => $this->input->get("date", true) ?? getSystemDate(SITE_DATE)
         ];
