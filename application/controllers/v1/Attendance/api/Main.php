@@ -102,8 +102,8 @@ class Main extends Public_Controller
     {
         $get = $this->input->get(null, true);
         // set start date
-        $startDate = $get["start_date"] ?? getSystemDate(SITE_DATE, "-7 days");
-        $endDate = $get["end_date"] ?? getSystemDate(SITE_DATE);
+        $startDate = $get["start_date"] ?? getSystemDateInLoggedInPersonTZ(SITE_DATE, "-7 days");
+        $endDate = $get["end_date"] ?? getSystemDateInLoggedInPersonTZ(SITE_DATE);
         //
         $this->clock_model
             ->getWorkedHoursForGraph(
@@ -124,7 +124,7 @@ class Main extends Public_Controller
             ->getClockWithState(
                 $this->loggedInCompany["sid"],
                 $this->loggedInEmployee["sid"],
-                getSystemDate(DB_DATE),
+                getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
                 true
             );
         if ($data["record"]["state"]) {

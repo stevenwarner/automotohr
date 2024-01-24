@@ -15966,17 +15966,28 @@ if (!function_exists('getDatesBetweenDates')) {
     function getDatesBetweenDates(
         string $startDate,
         string $endDate,
-        int $requestedHours = 0
+        int $requestedHours = 0,
+        bool $convertTimeZoneToLoggedInPerson = false
     ) {
         //
         $datesArray = [];
         //
-        $period = new DatePeriod(
-            new DateTime($startDate),
-            new DateInterval('P1D'),
-            new DateTime($endDate)
-        );
-
+        if ($convertTimeZoneToLoggedInPerson) {
+            //
+            $loggedInPersonTimeZone = getTimeZoneFromAbbr(getLoggedInPersonTimeZone());
+            //
+            $period = new DatePeriod(
+                new DateTime($startDate, new DateTimeZone($loggedInPersonTimeZone)),
+                new DateInterval('P1D'),
+                new DateTime($endDate, new DateTimeZone($loggedInPersonTimeZone))
+            );
+        } else {
+            $period = new DatePeriod(
+                new DateTime($startDate),
+                new DateInterval('P1D'),
+                new DateTime($endDate)
+            );
+        }
         //
         foreach ($period as $key => $value) {
             $count++;
@@ -16104,6 +16115,23 @@ if (!function_exists('getSystemDate')) {
     }
 }
 
+if (!function_exists('getSystemDateInLoggedInPersonTZ')) {
+    /**
+     * Get the datetime in logged in person tz
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDateInLoggedInPersonTZ(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        // get the date in current timezone
+        $pstDateObject = new DateTime($timestamp, new DateTimeZone(getLoggedInPersonTimeZone()));
+        // return the date
+        return $pstDateObject->format($format);
+    }
+}
+
 if (!function_exists('getSystemDateInUTC')) {
     /**
      * Get the current datetime
@@ -16116,11 +16144,9 @@ if (!function_exists('getSystemDateInUTC')) {
     function getSystemDateInUTC(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now', string $customDate = "")
     {
         // get the date in current timezone
-        $pstDateObject = new DateTime($customDate ?? getSystemDate($format, $timestamp));
-        // set the timezone to utc
-        $pstDateObject->setTimezone(new DateTimeZone("UTC"));
+        $utcDateObject = new DateTime($customDate ?? $timestamp, new DateTimeZone("UTC"));
         // return the date
-        return $pstDateObject->format($format);
+        return $utcDateObject->format($format);
     }
 }
 

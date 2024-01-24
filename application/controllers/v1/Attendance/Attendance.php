@@ -102,6 +102,7 @@ class Attendance extends Public_Controller
 
     /**
      * logged in person time sheet
+     * checked
      */
     public function timesheet()
     {
@@ -160,20 +161,6 @@ class Attendance extends Public_Controller
         $endDate = formatDateToDB($endDate, SITE_DATE, DB_DATE);
         $data["filter"]['startDateDB'] = $startDate;
         $data["filter"]['endDateDB'] = $endDate;
-        //
-        $startDate = convertTimeZone(
-            $startDate,
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
-        $endDate = convertTimeZone(
-            $endDate,
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
-
         $data['user_sid'] = 0;
         if ($data["filter"]["employeeId"]) {
             $data['user_sid'] = $data["filter"]["employeeId"];

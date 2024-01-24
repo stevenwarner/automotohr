@@ -227,4 +227,14 @@ $(function timeSheet() {
 			scrollbar: false,
 		});
 	}
+
+	//
+	$(".jsDateRangePicker").daterangepicker({
+		showDropdowns: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+			separator: " - ",
+		},
+	});
 });

@@ -257,7 +257,6 @@ $(function markAttendance() {
 			})
 			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
 				attendanceObj = resp;
 				//
 				clearInterval(timerREF);
@@ -302,9 +301,6 @@ $(function markAttendance() {
 			$(`.jsAttendanceBtn[data-type="${eventType}"]`),
 			true
 		);
-		// let ref = _showNotification(
-		// 	"Please wait, while we are processing your request."
-		// );
 		//
 		XHR = $.ajax({
 			url: baseUrl("v1/clock/mark"),
@@ -319,7 +315,6 @@ $(function markAttendance() {
 		})
 			.always(function () {
 				callButtonHook(buttonRef, false);
-				// closeAlert(ref);
 				XHR = null;
 			})
 			.fail(handleErrorResponse)

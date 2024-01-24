@@ -1,5 +1,5 @@
 $(function () {
-    let start = moment().subtract(29, "days");
+	let start = moment().subtract(29, "days");
 	let end = moment();
 	$('input[name="dates"]').daterangepicker({
 		showDropdowns: true,
@@ -12,8 +12,6 @@ $(function () {
 		applyButtonClasses: "csBtn csBtnOrange",
 		cancelButtonClasses: "csBtn csBtnBlack",
 	});
-
-	
 
 	$("#jsReportRange").daterangepicker(
 		{
@@ -42,7 +40,7 @@ $(function () {
 		cb
 	);
 
-    function cb(start, end) {
+	function cb(start, end) {
 		$("#jsReportRange span").html(
 			start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY")
 		);

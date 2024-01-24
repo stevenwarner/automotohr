@@ -38,21 +38,8 @@ class Employee extends Base
         // set js
         $this->setCommon("v1/attendance/js/my/dashboard", "js");
         $this->getCommon($this->data, "my_dashboard");
-        $this->data["startDate"] = getSystemDate(DB_DATE, "-7 days");
-        $this->data["endDate"] = getSystemDate(DB_DATE);
-        //
-        $this->data["startDate"] = convertTimeZone(
-            $this->data["startDate"],
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
-        $this->data["endDate"] = convertTimeZone(
-            $this->data["endDate"],
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
+        $this->data["startDate"] = getSystemDateInLoggedInPersonTZ(DB_DATE, "-7 days");
+        $this->data["endDate"] = getSystemDateInLoggedInPersonTZ(DB_DATE);
 
         $this->data["title"]  = "My Attendance Dashboard :: " . (STORE_NAME);
         // get todays footprints
@@ -60,7 +47,7 @@ class Employee extends Base
             ->getClockWithState(
                 $this->loggedInCompany["sid"],
                 $this->loggedInEmployee["sid"],
-                getSystemDateInUTC(DB_DATE),
+                getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
                 true
             );
         // make the blue portal popup
@@ -78,54 +65,52 @@ class Employee extends Base
         // add plugins
         $this->data["pageCSS"] = [
             getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
         ];
         $this->data["pageJs"] = [
             getPlugin("validator", "js"),
             getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
         ];
         // set js
         $this->setCommon("v1/plugins/ms_modal/main", "css");
         $this->setCommon("v1/plugins/ms_modal/main", "js");
         $this->setCommon("v1/attendance/js/my/timesheet", "js");
         $this->getCommon($this->data, "my_timesheet");
+        //
+        $defaultRange = getSystemDateInLoggedInPersonTZ(SITE_DATE) . ' - ' . getSystemDateInLoggedInPersonTZ(SITE_DATE);
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
         // get todays date
         $this->data["filter"] = [
-            "year" => $this->input->get("year", true) ?? getSystemDate("Y"),
-            "month" => $this->input->get("month", true) ?? getSystemDate("m"),
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange,
         ];
-        $this->data["filter"]["startDate"] = $this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-01";
-        $this->data["filter"]["endDate"] = getSystemDate($this->data["filter"]["year"] . "-" . $this->data["filter"]["month"] . "-t");
-
         //
-        $this->data["filter"]["startDate"] = convertTimeZone(
-            $this->data["filter"]["startDate"],
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
-        $this->data["filter"]["endDate"] = convertTimeZone(
-            $this->data["filter"]["endDate"],
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            getLoggedInPersonTimeZone()
-        );
-
+        $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);
+        $endDate = formatDateToDB($endDate, SITE_DATE, DB_DATE);
+        $this->data["filter"]['startDateDB'] = $startDate;
+        $this->data["filter"]['endDateDB'] = $endDate;
         // load schedule model
         $this->load->model("Timeoff_model", "timeoff_model");
         // get employee shifts
         $this->data["leaves"] = $this->timeoff_model
             ->getEmployeeTimeOffsInRange(
                 $this->loggedInEmployee["sid"],
-                $this->data["filter"]["startDate"],
-                $this->data["filter"]["endDate"]
+                $startDate,
+                $endDate
             );
         //
         $this->data["records"] = $this->clock_model
             ->getAttendanceWithinRange(
                 $this->loggedInCompany["sid"],
                 $this->loggedInEmployee["sid"],
-                $this->data["filter"]["startDate"],
-                $this->data["filter"]["endDate"]
+                $startDate,
+                $endDate
             );
         //
         // get company permissions

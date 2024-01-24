@@ -41,7 +41,7 @@ $timeSheetName = "";
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>
-                            Start date range
+                            Select date range
                             <strong class="text-danger">*</strong>
                         </label>
                         <input type="text" class="form-control jsDateRangePicker" readonly placeholder="MM/DD/YYYY - MM/DD/YYYY" name="date_range" value="<?= $filter["dateRange"] ?? ""; ?>" />
@@ -109,7 +109,7 @@ $timeSheetName = "";
             </div>
             <br>
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table">
                     <caption></caption>
                     <thead>
                         <tr>
@@ -151,17 +151,18 @@ $timeSheetName = "";
                             $totalBreakTime =
                             $totalOvertime = 0;
                         //
+                        $employeeTodayDate = getSystemDateInLoggedInPersonTZ(DB_DATE);
+                        //
                         foreach ($datesPool as $v0) {
                             $attendance = $records[$v0["date"]] ?? [];
                             $leave = $leaves && $leaves[$v0["date"]] ? $leaves[$v0["date"]] :  [];
-
                             if ($attendance) {
                                 $totalWorkedTime += $attendance["worked_time"];
                                 $totalBreakTime += $attendance["breaks"];
                                 $totalOvertime += $attendance["overtime"];
                             }
                         ?>
-                            <tr class="<?= $v0["date"] === getSystemDate("Y-m-d") ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
+                            <tr class="<?= $v0["date"] === $employeeTodayDate ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
                                 <td class="csVerticalAlignMiddle mh-100">
                                     <label class="control control--checkbox">
                                         <input type="checkbox" name="individualSelect" class="<?= $attendance ? "jsSingleSelect" : ""; ?> " <?= !$leave && $attendance ? 'value="' . $attendance["sid"] . '"' : "disabled"; ?> />

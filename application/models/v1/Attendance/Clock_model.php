@@ -57,19 +57,22 @@ class Clock_model extends Base_model
         $companyPermissions = unserialize(getUserColumnById($companyId, "extra_info"));
         // set employeeId
         $this->employeeId = $employeeId;
-        if ($date) {
-            $this->date = $date;
-        } else {
-            // get todays date
-            $this->date = getSystemDate(DB_DATE);
+        $this->date = $date;
+        if (!$this->date) {
+            $this->date = getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME);
         }
         // get todays date in UTC
-        $this->dateInUTC = convertTimeZone(
-            $this->date,
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            "UTC"
-        );
+        $this->dateInUTC =
+            formatDateToDB(
+                convertTimeZone(
+                    $this->date,
+                    DB_DATE_WITH_TIME,
+                    getLoggedInPersonTimeZone(),
+                    DB_TIMEZONE
+                ),
+                DB_DATE_WITH_TIME,
+                DB_DATE
+            );
         // set return array
         $clockArray = [
             "clock_time" => "",
@@ -80,13 +83,8 @@ class Clock_model extends Base_model
             "current_job_id" => 0,
         ];
         // set the time as well
-        $clockArray["timerDateTime"] = reset_datetime([
-            "datetime" => getSystemDateInUTC(),
-            "from_format" => DB_DATE_WITH_TIME,
-            "format" => "Y-m-d\TH:i:sO",
-            "_this" => $this,
-            "from_timezone" => "UTC"
-        ]);
+        $clockArray["timerDateTime"] =
+            getSystemDateInLoggedInPersonTZ("Y-m-d\TH:i:sO");
         // set the time as well
         $clockArray["timezone"] = getTimeZoneFromAbbr(getLoggedInPersonTimeZone());
         // set job sites
@@ -95,6 +93,10 @@ class Clock_model extends Base_model
         $clockArray["allowed_breaks"] = $this->getAllowedBreaks();
         // get the attendance state and time
         $record = $this->getAttendanceStateAndTime();
+        //
+        if (!$companyPermissions['clock_enable_for_attendance']) {
+            $clockArray["blocked"] = true;
+        }
         // when no entry is found
         if (!$record) {
             //
@@ -157,10 +159,6 @@ class Clock_model extends Base_model
         $clockArray["text"] = $this->attendance_lib
             ->convertSecondsToHours($clockArray["time"], true);
         //
-        if (!$companyPermissions['clock_enable_for_attendance']) {
-            $clockArray["blocked"] = true;
-        }
-        //
         return $doReturn
             ? $clockArray
             : SendResponse(
@@ -187,7 +185,18 @@ class Clock_model extends Base_model
         // set employeeId
         $this->employeeId = $employeeId;
         // get todays date in UTC
-        $this->dateInUTC = getSystemDateInUTC(DB_DATE);
+        $this->dateInUTC =
+            formatDateToDB(
+                convertTimeZone(
+                    getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
+                    DB_DATE_WITH_TIME,
+                    getLoggedInPersonTimeZone(),
+                    DB_TIMEZONE
+                ),
+                DB_DATE_WITH_TIME,
+                DB_DATE
+            );
+
         // set the time
         $eventType = $post["type"];
         // check if event is same
@@ -246,14 +255,14 @@ class Clock_model extends Base_model
         $originalEndDate = $endDate;
         // add times to dates
         $startDate .= " 00:00:00";
-        $endDate .= " 00:00:00";
+        $endDate .= " 23:59:59";
         // converted to UTC
         $startDate = formatDateToDB(
             convertTimeZone(
                 $startDate,
                 SITE_DATE . " H:i:s",
                 getLoggedInPersonTimeZone(),
-                "UTC"
+                DB_TIMEZONE
             ),
             SITE_DATE . " H:i:s",
             DB_DATE
@@ -264,7 +273,7 @@ class Clock_model extends Base_model
                 $endDate,
                 SITE_DATE . " H:i:s",
                 getLoggedInPersonTimeZone(),
-                "UTC"
+                DB_TIMEZONE
             ),
             SITE_DATE . " H:i:s",
             DB_DATE
@@ -412,7 +421,7 @@ class Clock_model extends Base_model
                 "from_format" => DB_DATE_WITH_TIME,
                 "format" => DB_DATE_WITH_TIME,
                 "_this" => $this,
-                "from_timezone" => "UTC"
+                "from_timezone" => DB_TIMEZONE
             ]);
 
             $log["endTime"] = reset_datetime([
@@ -420,7 +429,7 @@ class Clock_model extends Base_model
                 "from_format" => DB_DATE_WITH_TIME,
                 "format" => DB_DATE_WITH_TIME,
                 "_this" => $this,
-                "from_timezone" => "UTC"
+                "from_timezone" => DB_TIMEZONE
             ]);
             //
             if ($v0["job_site_sid"] && $v0["job_site_sid"] != 0) {
@@ -518,12 +527,25 @@ class Clock_model extends Base_model
         string $startDate,
         string $endDate
     ): array {
+        // convert the incoming dates to utc
+        $startDateUTC = convertTimeZone(
+            $startDate,
+            DB_DATE,
+            getLoggedInPersonTimeZone(),
+            DB_TIMEZONE
+        );
+        $endDateUTC = convertTimeZone(
+            $endDate,
+            DB_DATE,
+            getLoggedInPersonTimeZone(),
+            DB_TIMEZONE
+        );
         //
         $records = $this->getAttendanceByDates(
             $companyId,
             $employeeId,
-            $startDate,
-            $endDate
+            $startDateUTC,
+            $endDateUTC
         );
         // when no record are found
         if (!$records) {
@@ -536,17 +558,18 @@ class Clock_model extends Base_model
         foreach ($records as $v0) {
             // set defaults
             $arr = $v0;
+            // convert the dates back to logged in person timezone
             $v0["clocked_date"] = convertTimeZone(
                 $v0["clocked_date"],
                 DB_DATE,
-                "UTC",
+                DB_TIMEZONE,
                 getLoggedInPersonTimeZone()
             );
             //
             $arr["clocked_in"] = convertTimeZone(
                 $v0["clocked_in"],
                 DB_DATE_WITH_TIME,
-                "UTC",
+                DB_TIMEZONE,
                 getLoggedInPersonTimeZone()
             );
 
@@ -555,7 +578,7 @@ class Clock_model extends Base_model
                     convertTimeZone(
                         $v0["clocked_out"],
                         DB_DATE_WITH_TIME,
-                        "UTC",
+                        DB_TIMEZONE,
                         getLoggedInPersonTimeZone()
                     );
             }
@@ -590,7 +613,7 @@ class Clock_model extends Base_model
                     $arr["logs"][$k1]["clocked_in"] = convertTimeZone(
                         $v1["clocked_in"],
                         DB_DATE_WITH_TIME,
-                        "UTC",
+                        DB_TIMEZONE,
                         getLoggedInPersonTimeZone()
                     );
 
@@ -599,7 +622,7 @@ class Clock_model extends Base_model
                             convertTimeZone(
                                 $v1["clocked_out"],
                                 DB_DATE_WITH_TIME,
-                                "UTC",
+                                DB_TIMEZONE,
                                 getLoggedInPersonTimeZone()
                             );
                     }
@@ -610,7 +633,7 @@ class Clock_model extends Base_model
                         convertTimeZone(
                             $v1["break_start"],
                             DB_DATE_WITH_TIME,
-                            "UTC",
+                            DB_TIMEZONE,
                             getLoggedInPersonTimeZone()
                         );
                     if ($v1["break_end"]) {
@@ -618,7 +641,7 @@ class Clock_model extends Base_model
                             convertTimeZone(
                                 $v1["break_end"],
                                 DB_DATE_WITH_TIME,
-                                "UTC",
+                                DB_TIMEZONE,
                                 getLoggedInPersonTimeZone()
                             );
                     }
@@ -639,7 +662,7 @@ class Clock_model extends Base_model
             // set it
             $returnArray[$v0["clocked_date"]] = $arr;
         }
-
+        //
         return $returnArray;
     }
 
@@ -804,8 +827,8 @@ class Clock_model extends Base_model
         $ins = [];
         $ins["company_sid"] = $this->companyId;
         $ins["employee_sid"] = $this->employeeId;
-        $ins["clocked_date"] = getSystemDateInUTC(DB_DATE);
-        $ins["clocked_in"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        $ins["clocked_date"] = $this->dateInUTC;
+        $ins["clocked_in"] = getSystemDateInUTC();
         $ins["last_record_time"] = $ins["clocked_in"];
         $ins["is_approved"] = 0;
         $ins["last_event"] = $post["type"];
@@ -1183,7 +1206,7 @@ class Clock_model extends Base_model
                 convertTimeZone(
                     $tmp,
                     DB_DATE,
-                    "UTC",
+                    DB_TIMEZONE,
                     getLoggedInPersonTimeZone(),
                 );
             // get the attendance logs
@@ -1194,7 +1217,7 @@ class Clock_model extends Base_model
 
             if ($records) {
                 // set today date in UTC
-                $todayDateOBJ = new DateTime("now", new DateTimeZone("UTC"));
+                $todayDateOBJ = new DateTime("now", new DateTimeZone(DB_TIMEZONE));
                 //
                 foreach ($records as $v1) {
                     // for clock in
@@ -1222,7 +1245,7 @@ class Clock_model extends Base_model
                                     $clockedInObj->format(DB_DATE) . " 23:59:59",
                                     DB_DATE_WITH_TIME,
                                     STORE_DEFAULT_TIMEZONE_ABBR,
-                                    "UTC"
+                                    DB_TIMEZONE
                                 );
                         }
                         // get the difference
@@ -1450,7 +1473,7 @@ class Clock_model extends Base_model
                         "from_format" => "Y-m-d h:i a",
                         "format" => "Y-m-d H:i:s",
                         "_this" => $this,
-                        "new_zone" => "UTC",
+                        "new_zone" => DB_TIMEZONE,
                         "revert" => true
                     ]);
                     $v0["endTime"] =
@@ -1459,7 +1482,7 @@ class Clock_model extends Base_model
                             "from_format" => "Y-m-d h:i a",
                             "format" => "Y-m-d H:i:s",
                             "_this" => $this,
-                            "new_zone" => "UTC",
+                            "new_zone" => DB_TIMEZONE,
                             "revert" => true
                         ]);
                     //
@@ -1528,6 +1551,8 @@ class Clock_model extends Base_model
             //
             $initialClockIn = '';
             $initialClockOut = '';
+            $state = "clocked_in_out";
+            $breakStartTime = "";
             foreach ($post["logs"] as $v0) {
                 $v0["startTime"] =
                     reset_datetime([
@@ -1535,7 +1560,7 @@ class Clock_model extends Base_model
                         "from_format" => "Y-m-d h:i a",
                         "format" => "Y-m-d H:i:s",
                         "_this" => $this,
-                        "new_zone" => "UTC",
+                        "new_zone" => DB_TIMEZONE,
                         "revert" => true
                     ]);
                 $v0["endTime"] =
@@ -1544,12 +1569,14 @@ class Clock_model extends Base_model
                         "from_format" => "Y-m-d h:i a",
                         "format" => "Y-m-d H:i:s",
                         "_this" => $this,
-                        "new_zone" => "UTC",
+                        "new_zone" => DB_TIMEZONE,
                         "revert" => true
                     ]);
                 //
                 $indexOne = $v0["eventType"] == "clocked_in_out" ? "clocked_in" : "break_start";
                 $indexTwo = $v0["eventType"] == "clocked_in_out" ? "clocked_out" : "break_end";
+                $breakStartTime = $v0["endTime"];
+                $state = $v0["eventType"];
 
                 if ($indexOne == "clocked_in" && !$initialClockIn) {
                     $initialClockIn = $v0["startTime"];
@@ -1613,31 +1640,48 @@ class Clock_model extends Base_model
                         );
                 }
             }
+            // set update array
+            $upd = [];
+
+            // when the person was clocked in
+            if ($state === "clocked_in_out") {
+                // set the entry to be clocked out
+                $upd["last_event"] = "clocked_out";
+            } elseif ($state === "break_in_out") {
+                // set the entry to be clocked out
+                $upd["last_event"] = "clocked_in";
+                $upd["clocked_out"] = null;
+                // insert
+                // add the entry to log table
+                $insLog = [];
+                $insLog["cl_attendance_sid"] = $post["sid"];
+                $insLog["clocked_in"] = $breakStartTime;
+                $insLog["lat"] = 0;
+                $insLog["lng"] = 0;
+                $insLog["created_at"] = getSystemDate();
+                $insLog["updated_at"] = $insLog["created_at"];
+                // insert log
+                $this->db->insert(
+                    "cl_attendance_log",
+                    $insLog
+                );
+            }
 
             if ($initialClockIn) {
-                // insert log
-                $this->db
-                    ->where([
-                        "sid" => $post["sid"]
-                    ])->update(
-                        "cl_attendance",
-                        [
-                            "clocked_in" => $initialClockIn
-                        ]
-                    );
+                $upd["clocked_in"] = $initialClockIn;
             }
-            if ($initialClockOut) {
-                // insert log
-                $this->db
-                    ->where([
-                        "sid" => $post["sid"]
-                    ])->update(
-                        "cl_attendance",
-                        [
-                            "clocked_out" => $initialClockOut
-                        ]
-                    );
+            if ($initialClockOut && $state !== "break_in_out") {
+                $upd["clocked_out"] = $initialClockOut;
             }
+            //
+            // insert log
+            $this->db
+                ->where([
+                    "sid" => $post["sid"]
+                ])->update(
+                    "cl_attendance",
+                    $upd
+                );
         }
     }
 
@@ -1649,7 +1693,7 @@ class Clock_model extends Base_model
             $date,
             DB_DATE,
             STORE_DEFAULT_TIMEZONE_ABBR,
-            "UTC"
+            DB_TIMEZONE
         );
         //
         $returnArray = [
