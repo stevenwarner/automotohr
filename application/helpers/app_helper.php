@@ -293,7 +293,7 @@ if (!function_exists('updateUserById')) {
         // get the CI instance
         $CI = &get_instance();
         // get the difference
-        checkAndSaveTheDifference(
+        $differenceArray = checkAndSaveTheDifference(
             $updateArray,
             $employeeId
         );
@@ -301,6 +301,57 @@ if (!function_exists('updateUserById')) {
         $CI->db
             ->where("sid", $employeeId)
             ->update('users', $updateArray);
+
+        // only process if there is a different
+        if ($differenceArray) {
+            checkAndUpdateEmailToNotifications(
+                $updateArray,
+                $employeeId,
+                $differenceArray
+            );
+        }
+    }
+}
+
+if (!function_exists('checkAndUpdateEmailToNotifications')) {
+    /**
+     * Check and update employee details to notifications
+     * 
+     * @param array $updateArray
+     * @param int   $employeeId
+     */
+    function checkAndUpdateEmailToNotifications(array $updateArray, int $employeeId, array $differenceArray = [])
+    {
+        // get the CI instance
+        $CI = &get_instance();
+        //
+        $upd = [];
+        // get the difference
+        $differenceArray = $differenceArray ? $differenceArray :
+            checkAndSaveTheDifference(
+                $updateArray,
+                $employeeId,
+                true
+            );
+        //
+        if ($differenceArray["email"]) {
+            $upd["email"] = $differenceArray["email"]["new"];
+        }
+        //
+        if ($differenceArray["PhoneNumber"]) {
+            $upd["contact_no"] = $differenceArray["PhoneNumber"]["new"];
+        }
+        //
+        if ($differenceArray["first_name"] || $differenceArray["last_name"]) {
+            $upd["contact_name"] = $updateArray["first_name"] . ' ' . $updateArray["last_name"];
+        }
+        //
+        if ($upd) {
+            // update the user in "notifications_emails_management" table
+            $CI->db
+                ->where("employer_sid", $employeeId)
+                ->update('notifications_emails_management', $upd);
+        }
     }
 }
 
@@ -313,9 +364,10 @@ if (!function_exists('checkAndSaveTheDifference')) {
      * 
      * @param array $newData
      * @param int $employeeId
+     * @param bool $doReturn Optional -> false
      * @return array
      */
-    function checkAndSaveTheDifference(array $newData, int $employeeId): array
+    function checkAndSaveTheDifference(array $newData, int $employeeId, bool $doReturn = false): array
     {
         // get CI instance
         $CI = &get_instance();
@@ -337,7 +389,7 @@ if (!function_exists('checkAndSaveTheDifference')) {
             }
         }
         // only add if something is changed
-        if ($diffArray) {
+        if (!$doReturn && $diffArray) {
             // insert the history
             $CI->db
                 ->insert('profile_history', [
@@ -3009,26 +3061,26 @@ if (!function_exists("convertTimeZone")) {
     }
 }
 
-if(!function_exists("haversineDistance")) {
+if (!function_exists("haversineDistance")) {
     function haversineDistance($lat1, $lon1, $lat2, $lon2)
     {
         // Radius of the Earth in meters
         $R = 6371000.0;
-    
+
         // Convert latitude and longitude from degrees to radians
         $lat1 = deg2rad($lat1);
         $lon1 = deg2rad($lon1);
         $lat2 = deg2rad($lat2);
         $lon2 = deg2rad($lon2);
-    
+
         // Calculate the differences in coordinates
         $dlat = $lat2 - $lat1;
         $dlon = $lon2 - $lon1;
-    
+
         // Haversine formula
         $a = sin($dlat / 2) ** 2 + cos($lat1) * cos($lat2) * sin($dlon / 2) ** 2;
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-    
+
         // Calculate the distance
         return $R * $c;
     }

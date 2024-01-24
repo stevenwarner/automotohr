@@ -1882,6 +1882,13 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
 
+                    //
+                    // check and update email in notification module
+                    checkAndUpdateEmailToNotifications(
+                        $data_to_insert,
+                        $sid
+                    );
+
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
@@ -1915,7 +1922,7 @@ class Employee_management extends Public_Controller
                         $sid,
                         $data_to_insert
                     );
-                    //
+                   
                     // Check and Update employee basic profile info
                     $this->checkAndUpdateProfileInfo(
                         $sid,
@@ -4205,7 +4212,7 @@ class Employee_management extends Public_Controller
 
             $output = fopen('php://output', 'w');
 
-            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date','Email Address'));
+            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date', 'Email Address'));
 
             if (sizeof($employees) > 0) {
 
