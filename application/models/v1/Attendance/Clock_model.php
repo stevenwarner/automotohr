@@ -37,6 +37,32 @@ class Clock_model extends Base_model
     private $dateInUTC;
 
     /**
+     * logged in person date time
+     * @var string
+     */
+    private $loggedInPersonDate;
+
+
+    /**
+     * logged in person date time
+     * @var string
+     */
+    private $loggedInPersonDateTime;
+    
+    /**
+     * holds the clock date
+     * @var string
+     */
+    private $clockDate;
+
+
+    public function __construct()
+    {
+        $this->loggedInPersonDateTime = getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME);
+        $this->loggedInPersonDate = getSystemDateInLoggedInPersonTZ(DB_DATE);
+    }
+
+    /**
      * get the clock with state and job sites
      *
      * @param int $companyId
@@ -59,7 +85,7 @@ class Clock_model extends Base_model
         $this->employeeId = $employeeId;
         $this->date = $date;
         if (!$this->date) {
-            $this->date = getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME);
+            $this->date = $this->loggedInPersonDateTime;
         }
         // get todays date in UTC
         $this->dateInUTC =
@@ -188,7 +214,7 @@ class Clock_model extends Base_model
         $this->dateInUTC =
             formatDateToDB(
                 convertTimeZone(
-                    getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
+                    $this->loggedInPersonDateTime,
                     DB_DATE_WITH_TIME,
                     getLoggedInPersonTimeZone(),
                     DB_TIMEZONE
@@ -196,7 +222,6 @@ class Clock_model extends Base_model
                 DB_DATE_WITH_TIME,
                 DB_DATE
             );
-
         // set the time
         $eventType = $post["type"];
         // check if event is same
@@ -780,6 +805,7 @@ class Clock_model extends Base_model
             ->select("
             sid,
             last_event,
+            clocked_date,
             last_record_time
         ")
             ->where([
@@ -803,8 +829,8 @@ class Clock_model extends Base_model
         $ins = [];
         $ins["company_sid"] = $this->companyId;
         $ins["employee_sid"] = $this->employeeId;
-        $ins["clocked_date"] = getSystemDateInLoggedInPersonTZ(DB_DATE);
-        $ins["clocked_in"] = getSystemDateInUTC();
+        $ins["clocked_date"] = $this->loggedInPersonDate;
+        $ins["clocked_in"] = $ins["clocked_date"] . " " . getSystemDateInUTC(TIME);
         $ins["last_record_time"] = $ins["clocked_in"];
         $ins["is_approved"] = 0;
         $ins["last_event"] = $post["type"];
@@ -863,19 +889,20 @@ class Clock_model extends Base_model
     {
         // get attendance
         $record = $this->getAttendanceByDate();
+        $this->clockDate = $record["clocked_date"];
         // handles event states
         $response = $this->handleEventStates($record, $post);
         // update main table
         $upd = [];
         //
         if ($post["type"] === "clocked_out" || $post["type"] === "break_started") {
-            $upd["clocked_out"] = getSystemDateInUTC();
+            $upd["clocked_out"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
         } else {
             $upd["clocked_out"] = null;
         }
         $upd["last_event"] = $post["type"] === "break_ended" ? "clocked_in" : $post["type"];
         $upd["updated_at"] = getSystemDate();
-        $upd["last_record_time"] = $upd["updated_at"];
+        $upd["last_record_time"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
         $upd["is_approved"] = 0;
         //
         $this->db
@@ -909,7 +936,7 @@ class Clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["break_start"] = getSystemDateInUTC();
+        $insLog["break_start"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
         $insLog["job_site_sid"] = $response["job_site_sid"];
@@ -965,7 +992,8 @@ class Clock_model extends Base_model
         }
         // add the entry to log table
         $updLog = [];
-        $updLog["break_end"] = getSystemDateInUTC();
+        $updLog["break_end"] =
+            $this->clockDate . " " . getSystemDateInUTC(TIME);
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
@@ -1000,7 +1028,8 @@ class Clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["clocked_in"] = getSystemDateInUTC();
+        $insLog["clocked_in"] =
+            $this->clockDate . " " . getSystemDateInUTC(TIME);
         $insLog["job_site_sid"] = $post["job_site"];
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
@@ -1044,7 +1073,8 @@ class Clock_model extends Base_model
         }
         // update table log
         $updLog = [];
-        $updLog["clocked_out"] = getSystemDateInUTC();
+        $updLog["clocked_out"] =
+            $this->clockDate . " " . getSystemDateInUTC(TIME);
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
