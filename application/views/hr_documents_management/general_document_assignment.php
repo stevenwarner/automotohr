@@ -570,9 +570,42 @@
                             btnType = 'assign';
                         }
                     }
+
+
+                    //
+                    let banDetails = '<br>';
+                    if (v.document_type == 'direct_deposit') {
+                        if (v.bank_details) {
+                            $.each(v.bank_details, function(index, value) {
+                                if (value['deposit_type'] == 'percentage') {
+                                    if (index == 0) {
+                                        banDetails += "<br>" + value['account_percentage'] + "% amount will be deposited to [" + value['financial_institution_name'] + "]";
+                                    }
+                                    if (index == 1) {
+                                        banDetails += " and " + value['account_percentage'] + "% amount will be deposited to [" + value['financial_institution_name'] + "]";
+                                    }
+
+                                } else {
+                                    if (index == 0) {
+                                        banDetails += "<br>A fixed amount of $" + value['account_percentage'] + "will be deposited to [" + value['financial_institution_name'] + "]";
+                                    }
+                                    if (index == 1) {
+                                        banDetails += " and the rest of the amount will be deposited to [" + value['financial_institution_name'] + "]";
+                                    }
+                                }
+
+                            });
+                        }
+
+
+                    }
+
                     rows += `
                     <tr data-id="${v.document_type}" data-key="${v.sid}">
-                        <td>${slugToName[v.document_type]}</td>
+                        <td>${slugToName[v.document_type]}
+                        ${banDetails}                        
+                        
+                        </td>
                         <td class="text-center jsAssignedOn">
                             ${ v.assigned_at === undefined || v.status == 0 ? '<i class="fa fa-times fa-2x text-danger"></i>' : `<i class="fa fa-check fa-2x text-success"></i> <br />${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}` }
                         ${v.assigned_by_name!='' && v.assigned_at !== undefined && v.status == 1 ? v.assigned_by_name :'' }

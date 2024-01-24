@@ -10657,11 +10657,19 @@ class Hr_documents_management extends Public_Controller
                 );
 
                 //
-                foreach ($documents as $key => $val) {
+                foreach ($documents as $key => $val) { 
+                   
                     if ($val['assigned_by'] != 0 && $val['assigned_by'] != 0) {
-                        $documents[$key]['assigned_by_name'] = "<br>Assigned By: ".getUserNameBySID($val['assigned_by']);
-                    }else{
+                        $documents[$key]['assigned_by_name'] = "<br>Assigned By: " . getUserNameBySID($val['assigned_by']);
+                    } else {
                         $documents[$key]['assigned_by_name'] = '';
+                    }
+
+                    if ($val['document_type'] == 'direct_deposit') {
+                        //
+                        $this->load->model('direct_deposit_model');
+                        $direct_deposit_information = $this->direct_deposit_model->get_direct_deposit_details_all($val['user_type'], $val['user_sid'], $val['company_sid']);
+                       $documents[$key]['bank_details'] = $direct_deposit_information;
                     }
                 }
 
