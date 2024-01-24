@@ -1,15 +1,15 @@
 $(function () {
 	let start = moment().subtract(29, "days");
 	let end = moment();
-	// make select to select2
-	$(".jsSelect2").select2({
-		closeOnSelect: false,
-		placeholder: "Placeholder",
-		allowHtml: true,
-		allowClear: true,
-		tags: true,
-	});
-	
+	// // make select to select2
+	// $(".jsSelect2").select2({
+	// 	closeOnSelect: false,
+	// 	placeholder: "Placeholder",
+	// 	allowHtml: true,
+	// 	allowClear: true,
+	// 	tags: true,
+	// });
+
 	//
 	$('input[name="dates"]').daterangepicker({
 		showDropdowns: true,
@@ -58,35 +58,19 @@ $(function () {
 
 	cb(start, end);
 
-	//   Highcharts.chart("container", {
-	// 		chart: {
-	// 			type: "column",
-	// 		},
-	// 		title: {
-	// 			text: "22h 50m",
-	// 			align: "left",
-	// 		},
-	// 		xAxis: {
-	// 			categories: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-	// 			crosshair: true,
-	// 			accessibility: {
-	// 				description: "Week days",
-	// 			},
-	// 		},
-	// 		tooltip: {
-	// 			valueSuffix: "",
-	// 		},
-	// 		plotOptions: {
-	// 			column: {
-	// 				pointPadding: 0.2,
-	// 				borderWidth: 0,
-	// 			},
-	// 		},
-	// 		series: [
-	// 			{
-	// 				name: "Worked time",
-	// 				data: [4, 5, 10, 0, 0, 0, 0],
-	// 			},
-	// 		],
-	// 	});
+	//
+	$(".jsDateRangePicker").daterangepicker({
+		showDropdowns: true,
+		singleDatePicker: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
+	});
+
+	$(".jsDateRangePicker").on("apply.daterangepicker", function (ev, picker) {
+		window.location.href = baseUrl(
+			`attendance/dashboard?date=${picker.startDate.format("MM/DD/YYYY")}`
+		);
+	});
 });

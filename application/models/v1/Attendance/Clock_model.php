@@ -1687,17 +1687,18 @@ class Clock_model extends Base_model
 
     public function getPeopleClocks(int $companyId, string $date)
     {
-        // convert the date in UTC
-        $date = convertTimeZone(
-            $date,
-            DB_DATE,
-            STORE_DEFAULT_TIMEZONE_ABBR,
-            DB_TIMEZONE
-        );
+        // // convert the date in UTC
+        // $date = convertTimeZone(
+        //     $date,
+        //     DB_DATE,
+        //     STORE_DEFAULT_TIMEZONE_ABBR,
+        //     DB_TIMEZONE
+        // );
         //
         $returnArray = [
             "breaks" => [],
             "clocked_in" => [],
+            "clocked_out" => [],
             "absent" => []
         ];
         //
@@ -1720,6 +1721,8 @@ class Clock_model extends Base_model
                     $returnArray["clocked_in"][] = $v0;
                 } elseif ($v0["last_event"] == "break_started") {
                     $returnArray["breaks"][] = $v0;
+                } elseif ($v0["last_event"] == "clocked_out") {
+                    $returnArray["clocked_out"][] = $v0;
                 }
             }
         }
@@ -1739,7 +1742,6 @@ class Clock_model extends Base_model
         }
         $returnArray["absent"] = $this->db->get("users")
             ->result_array();
-
 
         return $returnArray;
     }

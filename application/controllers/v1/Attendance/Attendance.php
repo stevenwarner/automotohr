@@ -79,6 +79,17 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/dashboard", "js");
         $this->getCommon($data, "overview");
+        // add plugins
+        $data["appCSS"] .= [
+            getPlugin("daterangepicker", "css"),
+        ];
+        $data["appJs"] .= [
+            getPlugin("daterangepicker", "js"),
+        ];
+        //
+        $data["filter"] = [
+            "date" => $this->input->get("date", true) ?? getSystemDate(SITE_DATE)
+        ];
         //
         $data["load_view"] = false;
         $data["sanitizedView"] = true;
@@ -93,7 +104,11 @@ class Attendance extends Public_Controller
         $data["records"] = $this->clock_model
             ->getPeopleClocks(
                 $this->loggedInCompany["sid"],
-                getSystemDate(DB_DATE)
+                formatDateToDB(
+                    $data["filter"]["date"],
+                    SITE_DATE,
+                    DB_DATE
+                )
             );
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
