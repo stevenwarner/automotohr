@@ -142,7 +142,7 @@ $(function () {
                     if (index == 'PhoneNumber') {
                         innerRows += '<td><strong> PRIMARY NUMBER </strong></td>';
                     } else {
-                        innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + 'dd</strong></td>';
+                        innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
                     }
                 }
 
