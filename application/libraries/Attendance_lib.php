@@ -146,7 +146,7 @@ class Attendance_lib
         ];
         //
         if ($doFormat) {
-            return round($obj["hours"]) . "h " . round($obj["minutes"]) . "m";
+            return round($obj["hours"]) . "h " . ceil($obj["minutes"]) . "m";
         }
         $obj["totalInnMinutes"] = ((int)$obj["hours"]) * 60;
         $obj["totalInnMinutes"] += $obj["minutes"];
