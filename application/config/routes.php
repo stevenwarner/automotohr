@@ -60,6 +60,7 @@ $route['forgot-password']['post'] = 'users/forgot_password';
 $route['why-us']['get'] = 'v1/App/whyUs';
 $route['about-us']['get'] = 'v1/App/aboutUs';
 $route['contact-us']['get'] = 'v1/App/contactUs';
+$route['contact_us']['get'] = 'v1/App/contactUs';
 $route['contact-us']['post'] = 'v1/App/contactUsProcess';
 $route['privacy-policy']['get'] = 'v1/App/privacyPolicy';
 $route['terms-of-service']['get'] = 'v1/App/termsOfService';
@@ -69,6 +70,10 @@ $route['schedule-your-no-obligation-consultation']['get'] = 'v1/App/getYourAccou
 $route['affiliate-program']['get'] = 'v1/App/affiliateProgram';
 $route['affiliate_program/process']['post'] = 'v1/App/processAffiliateProgram';
 $route['legal']['get'] = 'v1/App/legalHub';
+//
+$route['employee_login']['get'] = 'Home/login';
+$route['services/career-website']['get'] = 'Home/index';
+$route['services/onboarding-employee-management']['get'] = 'Home/index';
 
 //
 $route['resources']['get'] = 'v1/Resources/index';
