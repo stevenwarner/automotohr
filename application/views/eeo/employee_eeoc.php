@@ -27,7 +27,7 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                                 <i class="fa fa-print" aria-hidden="true"></i>
                                 Print PDF
                             </a>
-                        <?php } ?>l; 
+                        <?php } ?>
                     </div>
                 </div>
                 <hr>
