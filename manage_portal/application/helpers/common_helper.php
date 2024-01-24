@@ -472,6 +472,7 @@ if(!function_exists('get_notification_email_contacts')){
         if($job_sid > 0){
             $CI->db->select('users.active as userActive');
             $CI->db->select('users.terminated_status');
+            $CI->db->select('users.email as userEmail');
             $CI->db->select('portal_job_listings_visibility.employer_sid');
             $CI->db->select('notifications_emails_management.employer_sid as nem_employer_sid');
             $CI->db->select('notifications_emails_management.email as email');
@@ -486,6 +487,7 @@ if(!function_exists('get_notification_email_contacts')){
             $CI->db->select('notifications_emails_management.*');
             $CI->db->select('users.active as userActive');
             $CI->db->select('users.terminated_status');
+            $CI->db->select('users.email as userEmail');
             $CI->db->where('notifications_emails_management.company_sid', $company_sid);
             $CI->db->where('notifications_emails_management.notifications_type', $notification_type);
             $CI->db->where('notifications_emails_management.status', 'active');
@@ -498,6 +500,7 @@ if(!function_exists('get_notification_email_contacts')){
             foreach ($contacts as $key => $contact) {
                 if($contact['employer_sid'] != 0 && $contact['employer_sid'] != null){
                     if($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
+                    $contacts[$key]["email"] = $contact["userEmail"];
                 }
             }
             // Reset the array indexes
