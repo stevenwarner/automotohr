@@ -101,7 +101,7 @@ if (!empty($DT['Teams'])) {
                                     <span class="pull-right">
                                         <a class="btn btn-success" href="javascript:;" id="view_report"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Report</a>
                                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/print"); ?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
-                                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
+                                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true" ></i>&nbsp;Download Report</a>
                                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/exporttocsv"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export Report</a>
 
                                     </span>
@@ -303,7 +303,7 @@ if (!empty($DT['Teams'])) {
                                                                     <a class="btn btn-success jsReportLink" target="_blank" href="<?= base_url("timeoff/report/print/" . ($emp['sid']) . ""); ?>">
                                                                         <i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print
                                                                     </a>
-                                                                    <a class="btn btn-success jsReportLink" target="_blank" href="<?= base_url("timeoff/report/download/" . ($emp['sid']) . ""); ?>">
+                                                                    <a class="btn btn-success jsReportLink" target="_blank" href="<?= base_url("timeoff/report/download/" . ($emp['sid']) . ""); ?>" style="display: none;">
                                                                         <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
                                                                     </a>
                                                                     <a class="btn btn-success jsReportLink" target="_blank" href="<?= base_url("timeoff/exporttocsv/" . ($emp['sid']) . ""); ?>">
@@ -403,7 +403,7 @@ if (!empty($DT['Teams'])) {
                 <div class="row">
                     <div class="col-xs-12 text-right">
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/print"); ?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
-                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
+                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true" ></i>&nbsp;Download Report</a>
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/exporttocsv"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export Report</a>
 
                     </div>
