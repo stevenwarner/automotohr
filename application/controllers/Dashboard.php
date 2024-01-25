@@ -283,6 +283,17 @@ class Dashboard extends Public_Controller
             $data['employee_name'] = $data['employee']['first_name'] . ' ' . $data['employee']['last_name'];
             $data['level'] = $this->timeoff_model->getEmployerApprovalStatus($data['employer_sid']);
 
+            // state forms from group
+            $this->hr_documents_management_model
+                ->assignGroupDocumentsToUser(
+                    $employer_id,
+                    "employee",
+                    0,
+                    true,
+                    $company_id,
+                    0
+                );
+
             $announcements = $this->dashboard_model->get_all_events_count($company_id, $employer_id);
             $messages = $this->dashboard_model->get_all_messages_count($employer_id);
             $incidents = $this->dashboard_model->get_all_incidents_count($company_id, $employer_id);
@@ -323,14 +334,6 @@ class Dashboard extends Public_Controller
                     $documents_count++;
                 }
             }
-
-            // state forms from group
-            $this->hr_documents_management_model
-                ->assignGroupDocumentsToUser(
-                    $employer_id,
-                    "employee",
-                    0
-                );
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
@@ -807,6 +810,17 @@ class Dashboard extends Public_Controller
             $company_detail = $data['session']['company_detail'];
             $jobs_approval_module_status = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
 
+            // state forms from group
+            $this->hr_documents_management_model
+                ->assignGroupDocumentsToUser(
+                    $employer_id,
+                    "employee",
+                    0,
+                    true,
+                    $company_id,
+                    0
+                );
+
             $data['has_approval_access'] = false;
             if (
                 $jobs_approval_module_status == 1 &&
@@ -859,14 +873,6 @@ class Dashboard extends Public_Controller
                     $documents_count++;
                 }
             }
-
-            // state forms from group
-            $this->hr_documents_management_model
-                ->assignGroupDocumentsToUser(
-                    $employer_id,
-                    "employee",
-                    0
-                );
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
