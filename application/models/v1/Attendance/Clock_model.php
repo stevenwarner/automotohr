@@ -48,7 +48,7 @@ class Clock_model extends Base_model
      * @var string
      */
     private $loggedInPersonDateTime;
-    
+
     /**
      * holds the clock date
      * @var string
@@ -529,24 +529,12 @@ class Clock_model extends Base_model
         string $endDate
     ): array {
         // convert the incoming dates to utc
-        $startDateUTC = convertTimeZone(
-            $startDate,
-            DB_DATE,
-            getLoggedInPersonTimeZone(),
-            DB_TIMEZONE
-        );
-        $endDateUTC = convertTimeZone(
-            $endDate,
-            DB_DATE,
-            getLoggedInPersonTimeZone(),
-            DB_TIMEZONE
-        );
         //
         $records = $this->getAttendanceByDates(
             $companyId,
             $employeeId,
-            $startDateUTC,
-            $endDateUTC
+            $startDate,
+            $endDate
         );
         // when no record are found
         if (!$records) {
@@ -559,13 +547,6 @@ class Clock_model extends Base_model
         foreach ($records as $v0) {
             // set defaults
             $arr = $v0;
-            // convert the dates back to logged in person timezone
-            $v0["clocked_date"] = convertTimeZone(
-                $v0["clocked_date"],
-                DB_DATE,
-                DB_TIMEZONE,
-                getLoggedInPersonTimeZone()
-            );
             //
             $arr["clocked_in"] = convertTimeZone(
                 $v0["clocked_in"],
@@ -1850,7 +1831,7 @@ class Clock_model extends Base_model
         // set new record array
         $returnArray = [
             "periods" => [],
-            "worked_time" => 0,
+            "clocked_time" => 0,
             "breaks_time" => 0,
             "paid_break_time" => 0,
             "unpaid_break_time" => 0,
@@ -1862,6 +1843,7 @@ class Clock_model extends Base_model
             $this->db
             ->select("
                 sid,
+                company_sid,
                 clocked_in,
                 clocked_out,
                 is_approved,
@@ -1879,23 +1861,39 @@ class Clock_model extends Base_model
         if (!$records) {
             return $returnArray;
         }
+        // load break model
+        $this->load->model("v1/Shift_break_model", "shift_break_model");
+        // load shift model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // load holiday model
+        $this->load->model("v1/Holiday_model", "holiday_model");
         // get employee overtime rule
         $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
+        // get company breaks
+        $companyBreaks = $this->shift_break_model->get($records[0]["company_sid"], false);
+        // get company holidays date pool
+        $companyHolidays = $this->holiday_model->get($records[0]["company_sid"], getSystemDate("Y", $periodStartDate), true);
+        // convert the array to list
+        $companyBreaks = convertToList($companyBreaks, "break_name");
         // get employee shifts within range
-        $employeeShifts = $this->getEmployeeShiftsWithinRange($employeeId, $periodStartDate, $periodEndDate);
+        $employeeShifts = $this->shift_model->getEmployeeShiftsWithinRange(
+            $employeeId,
+            $periodStartDate,
+            $periodEndDate
+        );
         //
         foreach ($records as $v0) {
             // set a tmp array
             $tmp = [
                 "date" => $v0["clocked_date"],
-                "worked_time" => 0,
+                "clocked_time" => 0,
                 "breaks_time" => 0,
                 "paid_break_time" => 0,
                 "unpaid_break_time" => 0,
                 "overtime" => 0,
                 "double_overtime" => 0,
                 "text" => [
-                    "worked_time" => 0,
+                    "clocked_time" => 0,
                     "breaks_time" => 0,
                     "paid_break_time" => 0,
                     "unpaid_break_time" => 0,
@@ -1919,51 +1917,85 @@ class Clock_model extends Base_model
                 ->result_array();
             //
             foreach ($logs as $v1) {
-                // for clock in
+                // clocked in time
                 if ($v1["clocked_in"]) {
-                    $tmp["worked_time"] += $v1["duration"];
+                    $tmp["clocked_time"] += $v1["duration"];
                 } else {
-                    //
+                    // for break
                     if ($v1["break_id"]) {
-                        // check if the break is paid or not
-                        $isPaid = $this->db
-                            ->where("sid", $v1["break_id"])
-                            ->where("break_type", "paid")
-                            ->count_all_results("company_breaks");
-                        //
-                        if ($isPaid) {
-                            $tmp["paid_break_time"] += $v1["duration"];
+                        // get the relevant break
+                        $break = stringToSlug($employeeShifts[$v0["clocked_date"]]["breaks"][$v1["break_id"]]["break"] ?? "", "_");
+                        // check if exists in company breaks
+                        if ($companyBreaks[$break]) {
+                            // check wether the break is paid or unpaid
+                            // case of paid
+                            if ($companyBreaks[$break]["break_type"] === "paid") {
+                                $tmp["paid_break_time"] += $v1["duration"];
+                            } else {
+                                //case of unpaid
+                                $tmp["unpaid_break_time"] += $v1["duration"];
+                            }
                         } else {
+                            // case when no company break found
                             $tmp["unpaid_break_time"] += $v1["duration"];
                         }
+                    } else {
+                        // when no break id found mark it as unpaid
+                        $tmp["unpaid_break_time"] += $v1["duration"];
                     }
+                    // in any case add the time to break
                     $tmp["breaks_time"] += $v1["duration"];
                 }
             }
-            // for daily
-            if ($employeeOverTime["type"] === "daily") {
+            // calculate overtime for daily
+            if ($employeeOverTime["daily"]) {
                 // get day
                 $day = strtolower(formatDateToDB(
                     $v0["clocked_date"],
                     DB_DATE,
                     "l"
                 ));
-                // for overtime
-                if ($employeeOverTime[$day] && $employeeOverTime[$day]["overtime"]) {
-                    //
-                    $overtime = ($employeeOverTime[$day]["overtime"] ?? 0) * 60 * 60;
-                    $double_overtime = ($employeeOverTime[$day]["double_overtime"] ?? 0) * 60 * 60;
-                    if ($tmp["worked_time"] > $overtime) {
-                        $tmp["overtime"] = $tmp["worked_time"] - $overtime;
+                // for holiday
+                if ($employeeOverTime["holiday"] && $employeeOverTime["holiday"]["overtime"] && in_array($v0["clocked_date"], $companyHolidays)) {
+                    // convert overtime to seconds
+                    $overtime = ($employeeOverTime["holiday"]["overtime"] ?? 0) * 60 * 60;
+                    // convert double-overtime to seconds
+                    $double_overtime = ($employeeOverTime["holiday"]["double_overtime"] ?? 0) * 60 * 60;
+                    // check if clocked time is > overtime
+                    if ($tmp["clocked_time"] > $overtime) {
+                        $tmp["overtime"] = $tmp["clocked_time"] - $overtime;
                     }
-                    if ($double_overtime > 0 && (($tmp["worked_time"] + $tmp["overtime"]) > $double_overtime)) {
-                        $tmp["double_overtime"] = ($tmp["worked_time"] + $overtime) - $double_overtime;
+                    // for double overtime
+                    if ($double_overtime > 0 && ($tmp["clocked_time"] > $double_overtime)) {
+                        // deduct the double overtime from clocked time
+                        $tmp["double_overtime"] = $tmp["clocked_time"] - $double_overtime;
+                        // recalculate overtime
+                        $tmp["overtime"] = $double_overtime - $overtime;
                     }
                 }
+                // for daily overtime
+                elseif ($employeeOverTime["daily"][$day] && $employeeOverTime["daily"][$day]["overtime"]) {
+                    // convert overtime to seconds
+                    $overtime = ($employeeOverTime["daily"][$day]["overtime"] ?? 0) * 60 * 60;
+                    // convert double-overtime to seconds
+                    $double_overtime = ($employeeOverTime["daily"][$day]["double_overtime"] ?? 0) * 60 * 60;
+                    // check if clocked time is > overtime
+                    if ($tmp["clocked_time"] > $overtime) {
+                        $tmp["overtime"] = $tmp["clocked_time"] - $overtime;
+                    }
+                    // for double overtime
+                    if ($double_overtime > 0 && ($tmp["clocked_time"] > $double_overtime)) {
+                        // deduct the double overtime from clocked time
+                        $tmp["double_overtime"] = $tmp["clocked_time"] - $double_overtime;
+                        // recalculate overtime
+                        $tmp["overtime"] = $double_overtime - $overtime;
+                    }
+                }
+                // TODO: seven consecutive day overtime
             }
             // convert to text
             $tmp["text"] = [
-                "worked_time" => convertSecondsToTime($tmp["worked_time"]),
+                "clocked_time" => convertSecondsToTime($tmp["clocked_time"]),
                 "breaks_time" => convertSecondsToTime($tmp["breaks_time"]),
                 "paid_break_time" => convertSecondsToTime($tmp["paid_break_time"]),
                 "unpaid_break_time" => convertSecondsToTime($tmp["unpaid_break_time"]),
@@ -1972,37 +2004,59 @@ class Clock_model extends Base_model
             ];
             // set to main array
             $returnArray["periods"][] = $tmp;
-            $returnArray["worked_time"] += $tmp["worked_time"];
+            $returnArray["clocked_time"] += $tmp["clocked_time"];
             $returnArray["breaks_time"] += $tmp["breaks_time"];
             $returnArray["paid_break_time"] += $tmp["paid_break_time"];
             $returnArray["unpaid_break_time"] += $tmp["unpaid_break_time"];
             $returnArray["overtime"] += $tmp["overtime"];
             $returnArray["double_overtime"] += $tmp["double_overtime"];
         }
-        // TODO
-        // apply overtime rule for weekly, holiday, and seven
+        // apply weekly overtime
+        if ($employeeOverTime["weekly"] && $employeeOverTime["weekly"]["overtime"]) {
+            // convert overtime to seconds
+            $overtime = ($employeeOverTime["weekly"]["overtime"] ?? 0) * 60 * 60;
+            // convert double-overtime to seconds
+            $double_overtime = ($employeeOverTime["weekly"]["double_overtime"] ?? 0) * 60 * 60;
+            //
+            $weekOverTime = 0;
+            $weekDoubleOvertime = 0;
+            // check if clocked time is > overtime
+            if ($returnArray["clocked_time"] > $overtime) {
+                $weekOverTime = $returnArray["clocked_time"] - $overtime;
+            }
+            // for double overtime
+            if ($double_overtime > 0 && ($returnArray["clocked_time"] > $double_overtime)) {
+                // deduct the double overtime from clocked time
+                $weekDoubleOvertime = $returnArray["clocked_time"] - $double_overtime;
+                // recalculate overtime
+                $weekOverTime = $double_overtime - $overtime;
+            }
+            //
+            $returnArray["overtime"] += $weekOverTime;
+            $returnArray["double_overtime"] += $weekDoubleOvertime;
+        }
+        // apply seven consecutive day overtime
         // convert to text
         $returnArray["text"] = [
-            "worked_time" => convertSecondsToTime($returnArray["worked_time"]),
+            "clocked_time" => convertSecondsToTime($returnArray["clocked_time"]),
             "breaks_time" => convertSecondsToTime($returnArray["breaks_time"]),
             "paid_break_time" => convertSecondsToTime($returnArray["paid_break_time"]),
             "unpaid_break_time" => convertSecondsToTime($returnArray["unpaid_break_time"]),
             "overtime" => convertSecondsToTime($returnArray["overtime"]),
             "double_overtime" => convertSecondsToTime($returnArray["double_overtime"]),
         ];
-
+        //
         return $returnArray;
     }
 
 
     public function getEmployeeOverTimeRule(int $employeeId)
     {
+        // set the default array
+        $returnArray = [];
         //
-        $returnArray["type"] = "weekly";
         $returnArray["overtime_multiplier"] = 1.5;
         $returnArray["double_overtime_multiplier"] = 2.0;
-        $returnArray["overtime"] = 0;
-        $returnArray["double_overtime"] = 0;
         //
         $record = $this->db
             ->select("
@@ -2032,25 +2086,40 @@ class Clock_model extends Base_model
         $record["weekly_json"] = json_decode($record["weekly_json"], true);
         $record["seven_consecutive_days_json"] = json_decode($record["seven_consecutive_days_json"], true);
         $record["holiday_json"] = json_decode($record["holiday_json"], true);
+
+        // set holiday overtime
+        if (
+            $record["holiday_json"]["overtime"]["status"] ||
+            $record["holiday_json"]["double"]["status"]
+        ) {
+            $returnArray["holiday"]["type"] = "holiday";
+            $returnArray["holiday"]["overtime"] = $record["holiday_json"]["overtime"]["hours"] ? $record["holiday_json"]["overtime"]["hours"] : 0;
+            $returnArray["holiday"]["double_overtime"] = $record["holiday_json"]["double"]["hours"] ? $record["holiday_json"]["double"]["hours"] : 0;
+        }
+        // set seven consecutive days overtime
+        if (
+            $record["seven_consecutive_days_json"]["overtime"]["status"] ||
+            $record["seven_consecutive_days_json"]["double"]["status"]
+        ) {
+            $returnArray["seven"]["type"] = "seven";
+            $returnArray["seven"]["overtime"] = $record["seven_consecutive_days_json"]["overtime"]["hours"] ? $record["seven_consecutive_days_json"]["overtime"]["hours"] : 0;
+            $returnArray["seven"]["double_overtime"] = $record["seven_consecutive_days_json"]["double"]["hours"] ? $record["seven_consecutive_days_json"]["double"]["hours"] : 0;
+        }
+        // set weekly overtime
+        if (
+            $record["weekly_json"]["overtime"]["status"] ||
+            $record["weekly_json"]["double"]["status"]
+        ) {
+            $returnArray["weekly"]["type"] = "weekly";
+            $returnArray["weekly"]["overtime"] = $record["weekly_json"]["overtime"]["hours"] ? $record["weekly_json"]["overtime"]["hours"] : 0;
+            $returnArray["weekly"]["double_overtime"] = $record["weekly_json"]["double"]["hours"] ? $record["weekly_json"]["double"]["hours"] :  0;
+        }
+        // set daily overtime
+        $returnArray["daily"]["type"] = "daily";
         //
-        if ($record["holiday_json"]["overtime"]["status"]) {
-            $returnArray["type"] = "holiday";
-            $returnArray["overtime"] = $record["holiday_json"]["overtime"]["hours"];
-            $returnArray["double_overtime"] = $record["holiday_json"]["double"]["hours"];
-        } elseif ($record["seven_consecutive_days_json"]["overtime"]["status"]) {
-            $returnArray["type"] = "seven";
-            $returnArray["overtime"] = $record["seven_consecutive_days_json"]["overtime"]["hours"];
-            $returnArray["double_overtime"] = $record["seven_consecutive_days_json"]["double"]["hours"];
-        } elseif ($record["weekly_json"]["overtime"]["status"]) {
-            $returnArray["type"] = "weekly";
-            $returnArray["overtime"] = $record["weekly_json"]["overtime"]["hours"];
-            $returnArray["double_overtime"] = $record["weekly_json"]["double"]["hours"];
-        } else {
-            $returnArray["type"] = "daily";
-            foreach ($record["daily_json"] as $k0 => $v0) {
-                $returnArray[$k0]["overtime"] = $v0["overtime"]["hours"];
-                $returnArray[$k0]["double_overtime"] = $v0["double"]["hours"];
-            }
+        foreach ($record["daily_json"] as $k0 => $v0) {
+            $returnArray["daily"][$k0]["overtime"] = $v0["overtime"]["hours"] ? $v0["overtime"]["hours"] : 0;
+            $returnArray["daily"][$k0]["double_overtime"] = $v0["double"]["hours"] ? $v0["double"]["hours"] : 0;
         }
 
         return $returnArray;

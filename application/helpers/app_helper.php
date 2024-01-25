@@ -2560,8 +2560,11 @@ if (!function_exists("convertSecondsToTime")) {
         $hours = floor($differenceInSeconds / 3600);
         $minutes = floor(($differenceInSeconds % 3600) / 60);
 
+        if ($hours <= 0 && $minutes <= 0) {
+            return "0h";
+        }
 
-        return $hours . "h" . ($minutes > 0 ? " " . $minutes . 'm' : "");
+        return ($hours > 0 ? $hours . "h" : "") . ($minutes > 0 ? " " . $minutes . 'm' : "");
     }
 }
 
@@ -3103,4 +3106,36 @@ function is_within_radius($centerLatLng, $latLng, $radius)
         "within_range" => ($distance <= $radius),
         "distance" => $distance
     ];
+}
+
+
+if (!function_exists("convertToList")) {
+    /**
+     * converts array to list
+     *
+     * @param array  $dataArray
+     * @param string $index
+     * @param bool   $convertToSlug
+     * @return array
+     */
+    function convertToList(array $dataArray, string $index, bool $convertToSlug = true): array
+    {
+        // when empty array provided
+        if (!$dataArray) {
+            return $dataArray;
+        }
+        // set the holder
+        $tmp = [];
+        //
+        foreach ($dataArray as $v0) {
+            $newIndex = $v0[$index];
+            // convert the index to slug
+            if ($convertToSlug) {
+                $newIndex = stringToSlug($newIndex, "_");
+            }
+            $tmp[$newIndex] = $v0;
+        }
+        //
+        return $tmp;
+    }
 }

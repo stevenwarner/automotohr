@@ -51,7 +51,7 @@ $(function overtimeRules() {
 					);
 					formObj.append(
 						"holiday",
-						JSON.stringify(getRule("holiday"))
+						JSON.stringify(getRule("holidays"))
 					);
 					formObj.append("daily", JSON.stringify(getRule("daily")));
 					//
@@ -99,7 +99,7 @@ $(function overtimeRules() {
 					);
 					formObj.append(
 						"holiday",
-						JSON.stringify(getRule("holiday"))
+						JSON.stringify(getRule("holidays"))
 					);
 					formObj.append("daily", JSON.stringify(getRule("daily")));
 					//

@@ -22,15 +22,23 @@ class Shift_break_model extends CI_Model
      * get the overtime rules
      *
      * @param int $companyId
+     * @param bool $order Optional -> true
      * @return array
      */
     public function get(
-        int $companyId
+        int $companyId,
+        bool $order = true
     ): array {
-        return $this->db
+        //
+        $this->db
             ->select("sid, break_name, break_duration, break_type")
-            ->where("company_sid", $companyId)
-            ->order_by("sid", "DESC")
+            ->where("company_sid", $companyId);
+        //
+        if ($order) {
+            $this->db->order_by("sid", "DESC");
+        }
+        //
+        return $this->db
             ->get("company_breaks")
             ->result_array();
     }

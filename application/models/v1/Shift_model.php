@@ -1164,4 +1164,59 @@ class Shift_model extends CI_Model
             ->get("users")
             ->result_array();
     }
+
+    /**
+     * get the employee shifts within a specific
+     * date range
+     *
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     * @return array
+     */
+    public function getEmployeeShiftsWithinRange(
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        //
+        $this->db
+            ->select("
+                shift_date,
+                start_time,
+                end_time,
+                breaks_count,
+                breaks_json,
+                job_sites
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "shift_date >= " => $startDate,
+                "shift_date <= " => $endDate,
+            ]);
+        // get the records
+        $records = $this->db
+            ->get("cl_shifts")
+            ->result_array();
+        // convert the array to list
+        $records = convertToList(
+            $records,
+            "shift_date",
+            false
+        );
+        //
+        if ($records) {
+            foreach($records as $index => $v0) {
+                $records[$index]["breaks"] = convertToList(
+                    json_decode(
+                        $v0["breaks_json"],
+                        true
+                    ),
+                    "id"
+                );
+            }
+        }
+        //
+        return $records;
+    }
 }
