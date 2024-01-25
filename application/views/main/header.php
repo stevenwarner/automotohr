@@ -1257,14 +1257,7 @@
                                                                 </a>
                                                             </li>
                                                         <?php  } ?>
-                                                        <li>
-                                                            <?php $get_data = $this->session->userdata('logged_in');
-                                                            $sub_domain_url = db_get_sub_domain($get_data['company_detail']['sid']); ?>
-                                                            <a href="<?php echo STORE_PROTOCOL_SSL . $sub_domain_url; ?>" target="_blank">
-                                                                <figure><i class="fa fa-globe"></i></figure>
-                                                                Career Website
-                                                            </a>
-                                                        </li>
+                                                     
 
                                                         <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
 
@@ -1304,6 +1297,19 @@
                                                                 </li>
                                                             <?php } ?>
                                                         <?php } ?>
+
+
+
+                                                        <li>
+                                                            <?php $get_data = $this->session->userdata('logged_in');
+                                                            $sub_domain_url = db_get_sub_domain($get_data['company_detail']['sid']); ?>
+                                                            <a href="<?php echo STORE_PROTOCOL_SSL . $sub_domain_url; ?>" target="_blank">
+                                                                <figure><i class="fa fa-globe"></i></figure>
+                                                                Career Website
+                                                            </a>
+                                                        </li>
+
+                                                        
                                                     </ul>
                                                 </li>
                                                 <li><a href="<?= base_url('logout') ?>">Logout</a></li>
