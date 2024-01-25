@@ -165,7 +165,7 @@ if (typeof uploadFile === "undefined") {
 			formData.append("file", fileObject);
 			// push the file to server
 			$.ajax({
-				url: apiURL + "uploader",
+				url:  window.location.origin + "uploader",
 				method: "POST",
 				timeout: 0,
 				processData: false,
@@ -193,7 +193,7 @@ if (typeof uploadStream === "undefined") {
 		return new Promise(function (resolve) {
 			// push the file to server
 			$.ajax({
-				url: apiURL + "uploader/stream",
+				url:  window.location.origin + "uploader/stream",
 				method: "POST",
 				timeout: 0,
 				contentType: "application/json",
@@ -583,5 +583,25 @@ if (typeof convertSecondsToTime === "undefined") {
 		const minutes = Math.floor((durationInSeconds % 3600) / 60);
 		//
 		return hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
+	}
+}
+
+if (typeof goToEmployeeProfile === "undefined") {
+	/**
+	 * converts seconds to hours and minutes
+	 * @param {int} employeeId
+	 */
+	function goToEmployeeProfile(employeeId) {
+		//
+		$.ajax({
+			url:  window.location.origin + "/get_employee_profile_link/" + employeeId,
+			method: "GET",
+		})
+			.success(function (response) {
+				window.open(response.link, '_blank');
+			})
+			.fail(function (error) {
+				
+			});
 	}
 }
