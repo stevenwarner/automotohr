@@ -6497,7 +6497,7 @@ class Hr_documents_management_model extends CI_Model
                         'is_required' => $is_required,
                         'assigned_at' => date('Y-m-d H:i:s'),
                         'is_completed' => 0,
-                        'assigned_by'=>$assigned_by
+                        'assigned_by' => $assigned_by
                     ]
                 );
             //
@@ -6514,7 +6514,7 @@ class Hr_documents_management_model extends CI_Model
                         'is_required' => $is_required,
                         'assigned_at' => date('Y-m-d H:i:s'),
                         'is_completed' => 0,
-                        'assigned_by'=>$assigned_by
+                        'assigned_by' => $assigned_by
                     ]
                 );
         }
@@ -10884,11 +10884,22 @@ class Hr_documents_management_model extends CI_Model
     public function assignGroupDocumentsToUser(
         int $userId,
         string $userType,
-        int $sendGroupEmail
+        int $sendGroupEmail,
+        $groupDocuments = false
     ): array {
         // extract the group ids
         $groupIds = $this->getUserAssignedGroups($userId, $userType);
         // no groups found
+
+        //
+        if ($groupDocuments == true) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+
+            $this->assigneGroupDocuments($company_sid, $userType, $userId);
+        }
+
+
         if (!$groupIds) {
             return ["errors" => ["No groups assigned."]];
         }
@@ -11129,5 +11140,427 @@ class Hr_documents_management_model extends CI_Model
         $a = $a->free_result();
         //
         if (count($b)) $data['W4MN'] = $b;
+    }
+
+    //
+    function assigneGroupDocuments($company_sid, $user_type, $user_sid)
+    {
+
+        $data['session'] = $this->session->userdata('logged_in');
+
+        $eeid = $data['session']['employer_detail']['sid'];
+        $jobs_listing = NULL;
+
+
+        $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
+
+        if (!empty($assign_group_documents)) {
+            foreach ($assign_group_documents as $key => $assign_group_document) {
+                $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
+
+                if ($is_document_assign == 0 && $assign_group_document['document_sid'] > 0) {
+                    $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $assign_group_document['document_sid']);
+
+                    if (!empty($document)) {
+                        $data_to_insert = array();
+                        $data_to_insert['company_sid'] = $company_sid;
+                        $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+                        $data_to_insert['assigned_by'] = $assign_group_document['assigned_by_sid'];
+                        $data_to_insert['user_type'] = $user_type;
+                        $data_to_insert['user_sid'] = $user_sid;
+                        $data_to_insert['document_type'] = $document['document_type'];
+                        $data_to_insert['document_sid'] = $assign_group_document['document_sid'];
+                        $data_to_insert['status'] = 1;
+                        $data_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
+                        $data_to_insert['document_extension'] = $document['uploaded_document_extension'];
+                        $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
+                        $data_to_insert['document_title'] = $document['document_title'];
+                        $data_to_insert['document_description'] = $document['document_description'];
+                        $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                        $data_to_insert['signature_required'] = $document['signature_required'];
+                        $data_to_insert['download_required'] = $document['download_required'];
+                        $data_to_insert['is_confidential'] = $document['is_confidential'];
+                        $data_to_insert['confidential_employees'] = $document['confidential_employees'];
+                        $data_to_insert['is_required'] = $document['is_required'];
+
+                        //
+                        $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                        //
+                        if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                            //
+                            if ($isAuthorized == 1) {
+                                // Managers handling
+                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                    $document['managers_list'],
+                                    $assignment_sid,
+                                    $company_sid,
+                                    $assign_group_document['assigned_by_sid']
+                                );
+                            }
+                        }
+                        //
+                        if ($document['has_approval_flow'] == 1) {
+                            $this->HandleApprovalFlow(
+                                $assignment_sid,
+                                $document['document_approval_note'],
+                                $document["document_approval_employees"],
+                                0,
+                                $document['managers_list']
+                            );
+                        } else {
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        ///
+        $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
+        $assigned_groups = array();
+
+        if (!empty($groups_assign)) {
+            foreach ($groups_assign as $value) {
+                array_push($assigned_groups, $value['group_sid']);
+                $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
+
+                // General Documents
+                foreach ($system_document as $gk => $gv) {
+                    //
+                    if (!in_array($gk, [
+                        'direct_deposit',
+                        'drivers_license',
+                        'occupational_license',
+                        'emergency_contacts',
+                        'dependents'
+                    ])) continue;
+                    //
+                    if ($gv == 1) {
+                        if ($this->hr_documents_management_model->checkAndAssignGeneralDocument(
+                            $user_sid,
+                            $user_type,
+                            $company_sid,
+                            $gk,
+                            $eeid
+                        )) {
+                            //
+                        }
+                    }
+                }
+
+                if (!empty($system_document['w4']) && $system_document['w4'] == 1) {
+                    $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
+
+                    if (empty($is_w4_assign)) {
+                        $w4_data_to_insert = array();
+                        $w4_data_to_insert['employer_sid'] = $user_sid;
+                        $w4_data_to_insert['company_sid'] = $company_sid;
+                        $w4_data_to_insert['user_type'] = $user_type;
+                        $w4_data_to_insert['sent_status'] = 1;
+                        $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                        $w4_data_to_insert['status'] = 1;
+                        $w4_data_to_insert['last_assign_by'] = $assign_group_document['assigned_by_sid'];
+
+                        $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
+                        //
+                    }
+                }
+
+                if (!empty($system_document['w9']) && $system_document['w9'] == 1) {
+                    $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
+
+                    if (empty($is_w9_assign)) {
+                        $w9_data_to_insert = array();
+                        $w9_data_to_insert['user_sid'] = $user_sid;
+                        $w9_data_to_insert['company_sid'] = $company_sid;
+                        $w9_data_to_insert['user_type'] = $user_type;
+                        $w9_data_to_insert['sent_status'] = 1;
+                        $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                        $w9_data_to_insert['status'] = 1;
+                        $w9_data_to_insert['last_assign_by'] = $assign_group_document['assigned_by_sid'];
+                        $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
+                        //
+                    }
+                }
+
+                if (!empty($system_document['i9']) && $system_document['i9'] == 1) {
+                    $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
+
+                    if (empty($is_i9_assign)) {
+                        $i9_data_to_insert = array();
+                        $i9_data_to_insert['user_sid'] = $user_sid;
+                        $i9_data_to_insert['user_type'] = $user_type;
+                        $i9_data_to_insert['company_sid'] = $company_sid;
+                        $i9_data_to_insert['sent_status'] = 1;
+                        $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                        $i9_data_to_insert['status'] = 1;
+                        $i9_data_to_insert['last_assign_by'] = $assign_group_document['assigned_by_sid'];
+
+                        $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+                        //
+                    }
+                }
+
+                if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) {
+                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
+
+                        if (empty($is_eeoc_assign)) {
+                            $eeoc_data_to_insert = array();
+                            $eeoc_data_to_insert['application_sid'] = $user_sid;
+                            $eeoc_data_to_insert['users_type'] = $user_type;
+                            $eeoc_data_to_insert['status'] = 1;
+                            $eeoc_data_to_insert['is_expired'] = 0;
+                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                            $eeoc_data_to_insert['last_sent_at'] = getSystemDate();
+                            $eeoc_data_to_insert['assigned_at'] = getSystemDate();
+                            $eeoc_data_to_insert['last_assigned_by'] = 0;
+                            //
+                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                            //
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    //
+    private function HandleApprovalFlow(
+        $document_sid,
+        $initiator_note,
+        $approvers_list,
+        $send_email,
+        $managers_list
+    ) {
+
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $employer_sid = $session['employer_detail']['sid'];
+        //
+        // Set insert data array
+        //
+        $ins = [];
+        $ins['company_sid'] = $company_sid;
+        $ins['document_sid'] = $document_sid;
+        $ins['assigned_by'] = $employer_sid;
+        $ins['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ins['assigner_note'] = $initiator_note;
+        $ins['status'] = 1;
+        $ins['is_pending'] = 0; // 0 = Pending, 1 = Accepted, 2 = Rejected
+        //
+        // Lets revoke all previous document flows if exist
+        $this->hr_documents_management_model->revoke_document_previous_flow($document_sid);
+
+        // Lets insert the record
+        $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($ins);
+        //
+        // Update user assigned document
+        $this->hr_documents_management_model->change_document_approval_status(
+            $document_sid,
+            [
+                'approval_process' => 1,
+                'approval_flow_sid' => $approvalInsertId,
+                'sendEmail' => $send_email,
+                'managersList' => $managers_list,
+                'has_approval_flow' => 1,
+                'document_approval_employees' => $approvers_list,
+                'document_approval_note' => $initiator_note,
+            ]
+        );
+        //
+        $this->AddAndSendNotificationsToApprovalEmployees(
+            $approvalInsertId,
+            $document_sid,
+            $approvers_list,
+            $initiator_note
+        );
+        //
+        return true;
+    }
+
+    //
+    function AddAndSendNotificationsToApprovalEmployees(
+        $approval_flow_sid,
+        $document_sid,
+        $approvers_list,
+        $initiator_note
+    ) {
+
+        if (!empty($approvers_list)) {
+            $approvalEmployees = explode(",", $approvers_list);
+            //
+            foreach ($approvalEmployees as $key => $approver_sid) {
+                $is_default_approver = $this->hr_documents_management_model->is_default_approver($approver_sid);
+                //
+                if ($is_default_approver) {
+                    $data_to_insert = array();
+                    $data_to_insert['portal_document_assign_sid'] = $approval_flow_sid;
+                    $data_to_insert['assigner_sid'] = $approver_sid;
+                    //
+                    if ($key == 0) {
+                        $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
+                        $data_to_insert['assigner_turn'] = 1;
+                    }
+                    //
+                    $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
+                    //
+                    if ($key == 0) {
+                        //
+                        // Send Email to first approver of this document
+                        $this->SendEmailToCurrentApprover($document_sid);
+                    }
+                }
+            }
+        } else {
+
+            $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+            //
+            $default_approver = $this->hr_documents_management_model->getDefaultApprovers(
+                $document_info['company_sid'],
+                $document_info['approval_flow_sid'],
+                $document_info['has_approval_flow']
+            );
+
+            if (!empty($default_approver)) {
+                //
+                $approver_sid = 0;
+                $approver_email = "";
+                //
+                if (is_numeric($default_approver) && $default_approver > 0) {
+                    $approver_sid = $default_approver;
+                    //
+                    $this->hr_documents_management_model->change_document_approval_status(
+                        $document_sid,
+                        [
+                            'document_approval_employees' => $approver_sid
+                        ]
+                    );
+                } else {
+                    $approver_email = $default_approver;
+                }
+                //
+
+                $this->hr_documents_management_model->insert_assigner_employee(
+                    [
+                        'portal_document_assign_sid' =>  $document_info['approval_flow_sid'],
+                        'assigner_sid' => $approver_sid,
+                        'approver_email' => $approver_email,
+                        'assign_on' =>  date('Y-m-d H:i:s', strtotime('now')),
+                        'assigner_turn' => 1,
+                    ]
+                );
+                //
+                // Send Email to first approver of this document
+                $this->SendEmailToCurrentApprover($document_sid);
+            }
+        }
+    }
+
+
+    //
+    function SendEmailToCurrentApprover($document_sid)
+    {
+
+        //
+        $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+        //
+        $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
+        //
+        $approver_info = array();
+        $current_approver_reference = '';
+        //
+        if ($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])) {
+            //
+            $default_approver = $this->hr_documents_management_model->get_default_outer_approver($document_info['company_sid'], $current_approver_info["approver_email"]);
+            //
+            $approver_name = explode(" ", $default_approver["contact_name"]);
+            //
+            $approver_info['first_name'] = isset($approver_name[0]) ? $approver_name[0] : "";
+            $approver_info['last_name'] = isset($approver_name[1]) ? $approver_name[1] : "";
+            $approver_info['email'] = $default_approver["email"];
+            //
+            $current_approver_reference = $default_approver["email"];
+        } else {
+            //
+            $approver_info = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $current_approver_info["assigner_sid"]);
+            //
+            $current_approver_reference = $current_approver_info["assigner_sid"];
+        }
+
+        //
+        $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
+        //
+        // Get the initiator name
+        $document_initiator_name = getUserNameBySID($approvers_flow_info["assigned_by"]);
+        //
+        // Get the company name
+        $company_name = getCompanyNameBySid($document_info['company_sid']);
+        //
+        // Get assigned document user name
+        if ($document_info['user_type'] == 'employee') {
+            //
+            $t = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        } else {
+            //
+            $t = $this->hr_documents_management_model->get_applicant_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        }
+        //
+        $hf = message_header_footer_domain($document_info['company_sid'], $company_name);
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $accept_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'accept')
+        );
+        //
+        $reject_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'reject')
+        );
+        //
+        $view_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'view')
+        );
+        //
+        $approval_public_link_accept = base_url("hr_documents_management/public_approval_document") . '/' . $accept_code;
+        $approval_public_link_reject = base_url("hr_documents_management/public_approval_document") . '/' . $reject_code;
+        $approval_public_link_view = base_url("hr_documents_management/public_approval_document") . '/' . $view_code;
+        // 
+        $replacement_array['initiator']             = $document_initiator_name;
+        $replacement_array['contact-name']          = $document_assigned_user_name;
+        $replacement_array['company_name']          = ucwords($company_name);
+        $replacement_array['username']              = $replacement_array['contact-name'];
+        $replacement_array['firstname']             = $approver_info['first_name'];
+        $replacement_array['lastname']              = $approver_info['last_name'];
+        $replacement_array['first_name']            = $approver_info['first_name'];
+        $replacement_array['last_name']             = $approver_info['last_name'];
+        $replacement_array['document_title']        = $document_info['document_title'];
+        $replacement_array['user_type']             = $document_info['user_type'];
+        $replacement_array['note']                  = $approvers_flow_info["assigner_note"];
+        $replacement_array['baseurl']               = base_url();
+        $replacement_array['accept_link']           = $approval_public_link_accept;
+        $replacement_array['reject_link']           = $approval_public_link_reject;
+        $replacement_array['view_link']             = $approval_public_link_view;
+        //
+        // Send email notification to approver with a private link
+        log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
     }
 }

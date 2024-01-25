@@ -290,7 +290,6 @@ class Dashboard extends Public_Controller
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
             $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
-            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
@@ -329,8 +328,11 @@ class Dashboard extends Public_Controller
                 ->assignGroupDocumentsToUser(
                     $employer_id,
                     "employee",
-                    0
+                    0,
+                    true
                 );
+
+            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
@@ -825,7 +827,6 @@ class Dashboard extends Public_Controller
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
             $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
-            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
@@ -859,14 +860,16 @@ class Dashboard extends Public_Controller
                     $documents_count++;
                 }
             }
-
             // state forms from group
             $this->hr_documents_management_model
                 ->assignGroupDocumentsToUser(
                     $employer_id,
                     "employee",
-                    0
+                    0,
+                    true
                 );
+
+            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
