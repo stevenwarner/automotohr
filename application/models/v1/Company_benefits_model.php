@@ -272,7 +272,13 @@ class Company_benefits_model extends Payroll_model
                 payrolls.employee_benefits.employee_deduction,
                 payrolls.employee_benefits.company_contribution,
                 payrolls.employee_benefits.company_benefit_sid,
-                payrolls.employee_benefits.active
+                payrolls.employee_benefits.active,
+                payrolls.employee_benefits.company_contribution_annual_maximum,
+                payrolls.employee_benefits.limit_option,
+                payrolls.employee_benefits.catch_up,
+                payrolls.employee_benefits.coverage_amount,
+                payrolls.employee_benefits.coverage_salary_multiplier,
+                payrolls.employee_benefits.deduction_reduces_taxable_income
             ')
             ->join(
                 'users',
@@ -502,6 +508,16 @@ class Company_benefits_model extends Payroll_model
             ];
         }
         //
+        $request['company_contribution_annual_maximum'] = $data['company_contribution_annual_maximum'];
+        $request['limit_option'] = $data['limit_option'];
+        $request['catch_up'] = $data['catch_up'];
+        $request['coverage_amount'] = $data['coverage_amount'];
+        $request['coverage_salary_multiplier'] = $data['coverage_salary_multiplier'];
+        if ($data['deduction_reduces_taxable_income' != null]) {
+            $request['deduction_reduces_taxable_income'] = $data['deduction_reduces_taxable_income'];
+        }
+        
+        //
         foreach ($data['employees'] as $value) {
             // get benefit details
             $gustoEmployee = $this->db
@@ -598,6 +614,15 @@ class Company_benefits_model extends Payroll_model
                 'value' => _a($data['company_contribution'], ''),
                 'type' => 'amount'
             ];
+        }
+        //
+        $request['company_contribution_annual_maximum'] = $data['company_contribution_annual_maximum'];
+        $request['limit_option'] = $data['limit_option'];
+        $request['catch_up'] = $data['catch_up'];
+        $request['coverage_amount'] = $data['coverage_amount'];
+        $request['coverage_salary_multiplier'] = $data['coverage_salary_multiplier'];
+        if ($data['deduction_reduces_taxable_income' != null]) {
+            $request['deduction_reduces_taxable_income'] = $data['deduction_reduces_taxable_income'];
         }
         //
         $gustoResponse = gustoCall(

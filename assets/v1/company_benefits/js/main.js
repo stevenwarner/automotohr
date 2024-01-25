@@ -183,6 +183,12 @@ $(function () {
 			employees: [],
 			employee_deductions: 0,
 			company_contribution: 0,
+			company_contribution_annual_maximum: '',
+			limit_option: '',
+			catch_up: 'false',
+			coverage_amount: '',
+			coverage_salary_multiplier: '0.00',
+			deduction_reduces_taxable_income: null,
 		};
 		// get the selected employees
 		$('input[name="employees[]"]:checked').map(function () {
@@ -192,6 +198,18 @@ $(function () {
 		obj.employee_deductions = $(".jsDeduction").val().trim();
 		// get the company contributions
 		obj.company_contribution = $(".jsCompanyContribution").val().trim();
+		// get the company contributions
+		obj.company_contribution_annual_maximum = $(".jsCompanyContributionAnnualMaximum").val().trim();
+		// get the company contributions
+		obj.limit_option = $(".jsCompanyLimitOption").val().trim();
+		// get the company contributions
+		obj.catch_up = $(".jsCompanyCatchUp option:selected").val().trim();
+		// get the company contributions
+		obj.coverage_amount = $(".jsCoverageAmount").val().trim();
+		// get the company contributions
+		obj.coverage_salary_multiplier = $(".jsCoverageSalaryMultiplier").val().trim();
+		// get the company contributions
+		obj.deduction_reduces_taxable_income = $(".jsDeductionReducesTaxableIncome option:selected").val().trim();
 		//
 		if (!obj.employee_deductions && !obj.company_contribution) {
 			return _error(
@@ -267,6 +285,12 @@ $(function () {
 			employee_deductions: $(".jsDeduction").val().trim() || 0,
 			company_contribution: $(".jsCompanyContribution").val().trim() || 0,
 			active: $(".jsActive option:selected").val(),
+			company_contribution_annual_maximum: $(".jsCompanyContributionAnnualMaximum").val().trim() || 0,
+			limit_option: $(".jsCompanyLimitOption").val().trim(),
+			catch_up: $(".jsCompanyCatchUp option:selected").val().trim(),
+			coverage_amount: $(".jsCoverageAmount").val().trim(),
+			coverage_salary_multiplier: $(".jsCoverageSalaryMultiplier").val().trim(),
+			deduction_reduces_taxable_income: $(".jsDeductionReducesTaxableIncome option:selected").val().trim()
 		};
 		//
 		const errorsArray = [];
