@@ -9743,6 +9743,8 @@ class Hr_documents_management_model extends CI_Model
             $ins['status'] = $ins['sent_status'] = 1;
             $ins['sent_date'] = $dateTime;
             $ins['emp_app_sid'] = $userId;
+            $ins['last_assign_by'] = $userId;
+
             //
             $this->db->insert('applicant_i9form', $ins);
             //
@@ -9777,6 +9779,8 @@ class Hr_documents_management_model extends CI_Model
         $upd["section3_emp_sign"] = NULL;
         $upd["employer_flag"] = NULL;
         $upd["user_consent"] = NULL;
+        $upd['last_assign_by'] = $userId;
+
         //
         $this->db->where($whereArray)->update('applicant_i9form', $upd);
         //
@@ -9819,6 +9823,8 @@ class Hr_documents_management_model extends CI_Model
             $ins['company_sid'] = $companyId;
             $ins['status'] = $ins['sent_status'] = 1;
             $ins['sent_date'] = $dateTime;
+            $ins['last_assign_by'] = $userId;
+
             //
             $this->db->insert('applicant_w9form', $ins);
             //
@@ -9852,6 +9858,8 @@ class Hr_documents_management_model extends CI_Model
         $upd['init_signature_bas64_image'] = NULL;
         $upd['signature_ip_address'] = NULL;
         $upd['signature_user_agent'] = NULL;
+        $upd['last_assign_by'] = $userId;
+
         //
         $this->db->where($whereArray)->update('applicant_w9form', $upd);
         //
