@@ -108,6 +108,78 @@ class Testing extends CI_Controller
         foreach ($employees as $employee) {
             $employeeId = $employee['employee_sid'];
             $employeeInfo = $this->payroll_model->getEmployeeHomeAddress($employeeId);
+
+            //
+            if (
+                !$employeeInfo['Location_Address'] ||
+                !$employeeInfo['Location_City'] ||
+                !$employeeInfo['state_code'] ||
+                !$employeeInfo['Location_ZipCode']
+            ) {
+                //
+                $this->load->model('hr_documents_management_model');
+                // check and get state forms
+                $companyStateForms = $this->hr_documents_management_model
+                    ->getCompanyStateForms(
+                        17100,
+                        $employeeId,
+                        "employee"
+                    );
+                   
+                //
+                if ($companyStateForms['completed']) {
+                    foreach ($companyStateForms['completed'] as $form) {
+                        //
+                        _e($form,true);
+                        if ($form['title'] == "2020 W-4MN, Minnesota Employee Withholding Allowance/Exemption Certificate") {
+                            if (!$employeeInfo['Location_Address']) {
+                                $employeeInfo['Location_Address'] = $form['form_data']['street_1'];
+                            }
+                            //
+                            if (!$employeeInfo['Location_City']) {
+                                $employeeInfo['Location_City'] = $form['form_data']['city'];
+                            }
+                            //
+                            if (!$employeeInfo['state_code']) {
+                                $employeeInfo['state_code'] = getStateColumnById($form['form_data']['state']);
+                            }
+                            //
+                            if (!$employeeInfo['Location_ZipCode']) {
+                                $employeeInfo['Location_ZipCode'] = $form['form_data']['zip_code'];
+                            }
+                        }
+                    }
+                }   
+                //
+                if ($companyStateForms['']) {
+                    if (!$employeeInfo['Location_Address']) {
+                        $employeeInfo['Location_Address'] = $w4FormInfo['home_address'];
+                    }
+                    //
+                    if (!$employeeInfo['Location_City']) {
+                        $employeeInfo['Location_City'] = $w4FormInfo['city'];
+                    }
+                    //
+                    if (!$employeeInfo['state_code']) {
+                        if ($w4FormInfo['state']) {
+                            //
+                            $stateCode = $this->db
+                                ->select("state_code")
+                                ->where('LOWER(state_name)', strtolower($w4FormInfo['state']))
+                                ->get("states")
+                                ->row_array()['state_code'];
+                            //    
+                            $employeeInfo['state_code'] = $stateCode;
+                        }
+                    }
+                    //
+                    if (!$employeeInfo['Location_ZipCode']) {
+                        $employeeInfo['Location_ZipCode'] = $w4FormInfo['zip'];
+                    }
+                }
+                
+            }
+
             //
             if (
                 !$employeeInfo['Location_Address'] ||
@@ -211,6 +283,7 @@ class Testing extends CI_Controller
                 
             }
 
+            _e($employeeInfo,true);
             if (
                 $employeeInfo['Location_Address'] &&
                 $employeeInfo['Location_City'] &&
