@@ -9878,6 +9878,7 @@ class Hr_documents_management_model extends CI_Model
             'employer_sid' => $userId,
             'user_type' => $userType
         ];
+
         //
         $form = $this->getData('form_w4_original', $whereArray, [
             'sid',
@@ -9894,6 +9895,7 @@ class Hr_documents_management_model extends CI_Model
             $ins['company_sid'] = $companyId;
             $ins['status'] = $ins['sent_status'] = 1;
             $ins['sent_date'] = $dateTime;
+            $ins['last_assign_by'] = $userId;
             //
             $this->db->insert('form_w4_original', $ins);
             //
@@ -9923,6 +9925,7 @@ class Hr_documents_management_model extends CI_Model
         $upd['init_signature_bas64_image'] = NULL;
         $upd['ip_address']                 = NULL;
         $upd['user_agent']                 = NULL;
+        $upd['last_assign_by'] =  $userId;
         //
         $this->db->where($whereArray)->update('form_w4_original', $upd);
         //
