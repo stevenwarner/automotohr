@@ -29,7 +29,7 @@
                         <?php } else { ?>
                             <?php if (count($documents) > 0 || !empty($w4_form) || !empty($w9_form) || !empty($i9_form) || !empty($eeoc_form) || count($NotCompletedGeneralDocuments) || $userNotCompletedStateForms) { ?>
                                 <div class="table-responsive">
-                                    <h3>Document Details For Employee: <b><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></b>
+                                    <h3>Document Details For Employee: <b><a href="<?php echo base_url('hr_documents_management/documents_assignment/employee/'.$userDetail['sid']); ?>" class="text" style="font-weight: bold; color:#272727;"><?php echo $userDetail['first_name']; ?> <?php echo $userDetail['last_name']; ?></a></b>
                                     <span class="pull-right">
                                         <button class="btn btn-success jsSendEmailReminder">
                                             Send Email Reminder

@@ -249,7 +249,7 @@
                                                                     <div class="control__indicator" style="top: -7px;"></div>
                                                                 </label>
                                                             </td>
-                                                            <td><?=remakeEmployeeName($employee);?></td>
+                                                            <td><a href="<?php echo base_url('hr_documents_management/documents_assignment/employee/'.$employee['sid']); ?>" class="text" style="font-weight: bold; color:#272727;"><?=remakeEmployeeName($employee);?></a></td>
                                                             <td><?php echo $employee['email']; ?></td>
                                                             <td
                                                                 style="cursor: pointer"
