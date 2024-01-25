@@ -316,6 +316,9 @@ class Payroll_model extends CI_Model
         if ($limit !== 0) {
             $this->db->limit($limit);
         }
+        //
+        $this->db->order_by('gusto_companies_employees.is_onboarded', 'ASC');
+        //
         $records = $this->db->get('gusto_companies_employees')
             ->result_array();
         //

@@ -72,6 +72,10 @@
                                                         <strong class="text-<?= $cl; ?>"><?= $text; ?></strong>
                                                     </td>
                                                     <td class="text-center vam">
+                                                        <a class="btn btn-success csW csBG3 csF16" href="<?= base_url('employee_profile/'.$payrollEmployee['id']); ?>">
+                                                            <i class="fa fa-eye csF16" aria-hidden="true"></i>&nbsp;
+                                                            <span>Employee Profile</span>
+                                                        </a>
                                                         <button class="btn btn-warning csF16 jsPayrollEmployeeEdit">
                                                             <i class="fa fa-edit csF16" aria-hidden="true"></i>&nbsp;
                                                             <span>Edit</span>
