@@ -2669,7 +2669,7 @@ class Home extends CI_Controller
                                 $is_sender_blocked                              = checkForBlockedEmail($sender_email);
                                 $is_receiver_blocked                            = checkForBlockedEmail($receiver_email);
 
-                                if ($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
+                                if ($is_sender_blocked == 'blocked' || $is_receiver_blocked == "blocked") {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you.');
 
                                     redirect('/job_details/' . $sid, 'refresh');
