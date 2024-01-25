@@ -1263,8 +1263,8 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $w4_form_data['sent_date'], '_this' => $this)); ?>
-                                                                                                <?php if($w4_form_data['last_assign_by']!='' && $w4_form_data['last_assign_by']!='0' ){
-                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($w4_form_data['last_assign_by']);
+                                                                                                <?php if ($w4_form_data['last_assign_by'] != '' && $w4_form_data['last_assign_by'] != '0') {
+                                                                                                    echo "<br>Assigned By: " . getUserNameBySID($w4_form_data['last_assign_by']);
                                                                                                 }
                                                                                                 ?>
                                                                                             </div>
@@ -1305,8 +1305,8 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $w9_form_data['sent_date'], '_this' => $this)); ?>
-                                                                                                <?php if($w9_form_data['last_assign_by']!='' && $w9_form_data['last_assign_by']!='0' ){
-                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($w9_form_data['last_assign_by']);
+                                                                                                <?php if ($w9_form_data['last_assign_by'] != '' && $w9_form_data['last_assign_by'] != '0') {
+                                                                                                    echo "<br>Assigned By: " . getUserNameBySID($w9_form_data['last_assign_by']);
                                                                                                 }
                                                                                                 ?>
                                                                                             </div>
@@ -1347,11 +1347,11 @@ if ($user_type == 'applicant') {
                                                                                             <i class="fa fa-check fa-2x text-success"></i>
                                                                                             <div class="text-center">
                                                                                                 <?= reset_datetime(array('datetime' => $i9_form_data['sent_date'], '_this' => $this)); ?>
-                                                                                                <?php if($i9_form_data['last_assign_by']!='' && $i9_form_data['last_assign_by']!='0' ){
-                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($i9_form_data['last_assign_by']);
+                                                                                                <?php if ($i9_form_data['last_assign_by'] != '' && $i9_form_data['last_assign_by'] != '0') {
+                                                                                                    echo "<br>Assigned By: " . getUserNameBySID($i9_form_data['last_assign_by']);
                                                                                                 }
                                                                                                 ?>
-                                                                                                
+
                                                                                             </div>
                                                                                         <?php } else { ?>
                                                                                             <i class="fa fa-times fa-2x text-danger"></i>
@@ -1388,22 +1388,30 @@ if ($user_type == 'applicant') {
                                                                                             <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
                                                                                         </td>
                                                                                         <td class="col-lg-2 text-center">
-                                                                                           <?php if (empty($eeo_form_info)) { ?>
+                                                                                            <?php if (empty($eeo_form_info)) { ?>
                                                                                                 <i aria-hidden="true" class="fa fa-times fa-2x text-danger"></i>
                                                                                             <?php } else { ?>
                                                                                                 <i aria-hidden="true" class="fa fa-check fa-2x text-success"></i>
                                                                                                 <div class="text-center">
                                                                                                     <?php
                                                                                                     if (!empty($eeo_form_info['last_sent_at'])) {
-                                                                                                        echo DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_sent_at'])->format('M d Y, D H:i:s');
+
+                                                                                                        echo convertTimeZone(
+                                                                                                            $eeo_form_info['last_sent_at'],
+                                                                                                            DB_DATE_WITH_TIME,
+                                                                                                            STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                                                            getLoggedInPersonTimeZone(),
+                                                                                                            true,
+                                                                                                            DATE_WITH_TIME
+                                                                                                        );
                                                                                                     } else {
                                                                                                         echo "N/A";
                                                                                                     }
                                                                                                     ?>
-                                                                                                      <?php if($eeo_form_info['last_assigned_by']!='' && $eeo_form_info['last_assigned_by']!='0' ){
-                                                                                                    echo "<br>Assigned By: ".getUserNameBySID($eeo_form_info['last_assigned_by']);
-                                                                                                }
-                                                                                                ?>
+                                                                                                    <?php if ($eeo_form_info['last_assigned_by'] != '' && $eeo_form_info['last_assigned_by'] != '0') {
+                                                                                                        echo "<br>Assigned By: " . getUserNameBySID($eeo_form_info['last_assigned_by']);
+                                                                                                    }
+                                                                                                    ?>
                                                                                                 </div>
                                                                                             <?php } ?>
                                                                                         </td>
@@ -1431,7 +1439,19 @@ if ($user_type == 'applicant') {
                                                                                             <?php } ?>
 
                                                                                             <?php if (!empty($eeo_form_info['last_completed_on'])) { ?>
-                                                                                                <p>Last completed on <strong><?= DateTime::createfromformat('Y-m-d H:i:s', $eeo_form_info['last_completed_on'])->format('M d Y, D H:i:s'); ?></strong></p>
+                                                                                                <p>Last completed on <strong>
+                                                                                                        <?php
+                                                                                                        echo convertTimeZone(
+                                                                                                            $eeo_form_info['last_completed_on'],
+                                                                                                            DB_DATE_WITH_TIME,
+                                                                                                            STORE_DEFAULT_TIMEZONE_ABBR,
+                                                                                                            getLoggedInPersonTimeZone(),
+                                                                                                            true,
+                                                                                                            DATE_WITH_TIME
+                                                                                                        );
+                                                                                                        ?>
+
+                                                                                                    </strong></p>
                                                                                             <?php } ?>
                                                                                         </td>
                                                                                     </tr>

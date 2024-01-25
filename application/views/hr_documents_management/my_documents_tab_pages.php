@@ -433,6 +433,7 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                                     <tr>
                                                         <td class="col-lg-10">
                                                             <?php
+
                                                             echo 'EEOC Form';
                                                             echo $eeoc_form['status'] ? '' : '<b>(revoked)</b>';
                                                             if (isset($eeoc_form['last_sent_at']) && $eeoc_form['last_sent_at'] != '0000-00-00 00:00:00') {

@@ -537,7 +537,7 @@ define('STARTING_DATE_LIMIT', '1900:+20');
 define('DATE', 'M d Y, D');
 define('SITE_DATE', 'm/d/Y');
 define('DB_DATE', 'Y-m-d');
-define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
+define('DATE_WITH_TIME', 'M d, Y, D H:i:s');
 define('TIME', 'H:i:s');
 define('MD', 'H:i');
 define('DB_DATE_WITH_TIME', 'Y-m-d H:i:s');
