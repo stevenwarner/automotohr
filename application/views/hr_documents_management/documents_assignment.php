@@ -5002,8 +5002,7 @@ if ($user_type == 'employee') {
             if ($(this).find('img').length != 0) {
                 let
                     dn = $(this).find('td:nth-child(1)').text(),
-                    //  aon = $(this).find('td:nth-child(3)').find('.text-center').text().trim(),
-                    aon = $(this).find('td:nth-child(3)').find('.text-center').html().trim(),
+                    aon = $(this).find('td:nth-child(3)').find('.text-center').html(),
 
                     btn = $(this).find('td:nth-child(4)').find('a[data-toggle="modal"]').clone().addClass('btn-sm btn-block'),
                     w4_btn = '',

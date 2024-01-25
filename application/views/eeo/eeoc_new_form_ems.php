@@ -238,7 +238,7 @@
     <hr />
     <div class="row">
         <div class="col-sm-12">
-            <button class="btn btn-primary form-control jsSaveEEOC" style="background-color: #3554dc;">Save EEOC</button>
+            <button class="btn btn-primary form-control jsSaveEEOC" style="background-color: #3554dc;">I Consent EEOC</button>
         </div>
     </div>
 <?php } ?>
