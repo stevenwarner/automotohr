@@ -153,14 +153,18 @@
                                     <select require multiple="multiple" name="employees[]" id="uploaded-employees" style="display: block">
                                         <option value="" selected>Please Select Employee</option>
                                         <option value="" selected>All</option>
-
                                     </select>
                                 </div>
+
+                                <div class="spinner-border"></div>
+                                <div class="col-lg-12"><span class="hr-required" id="empAssigneName"></span></div>
+                                <div class="col-lg-12"><span class="hr-required" id='loderText' style="font-size: 18px;font-weight:bold;"></span></div>
                             </div>
+
                             <div class="col-lg-12" id="uploaded-empty-emp" style="display: none;"><span class="hr-required red">This Document Group Is Assigned To All Employees!</span></div>
                             <div class="col-md-12">
                                 <div class="message-action-btn">
-                                    <input type="submit" value="Bulk Assign This Group" id="send-up-doc" class="submit-btn">
+                                    <input type="button" value="Bulk Assign This Group" id="jsBulkassigne" class="submit-btn">
                                 </div>
                             </div>
                         </form>
@@ -170,6 +174,8 @@
         </div>
     </div>
 <?php } ?>
+
+
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.css') ?>">
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.bootstrap3.css') ?>">
 <script src="<?= base_url('assets/js/selectize.min.js') ?>"></script>
@@ -197,6 +203,7 @@
             }
         });
     });
+
 
     var upemployees = $('#uploaded-employees').selectize({
         plugins: ['remove_button'],
@@ -267,5 +274,77 @@
             }
         });
         $('#assign_group_sid').val(group_sid);
+    }
+
+
+    //
+    $("#jsBulkassigne").click(function() {
+
+        var employees = $('#uploaded-employees').val();
+        var groupSid = $('#assign_group_sid').val();
+
+        if (employees != '' && employees != null) {
+
+            $('#loderText').text('Assigning documents to selected employees please wait..!');
+
+            $.ajax({
+                'url': '<?php echo base_url('hr_documents_management/documents_group_management_ajax'); ?>',
+                'type': 'POST',
+                'data': {
+                    'employees': employees,
+                    'group_sid': groupSid
+                },
+                success: function(employeesDetail) {
+
+                    var employeeobj = jQuery.parseJSON(employeesDetail);
+                    var employeeobjcount = employeeobj.length;
+
+                    let employeeCount = 1;
+                    $.each(employeeobj, function(key, value) {
+
+                        //assigne documents
+                        $("#empAssigneName").text(value['full_name']);
+                        //
+                        assign_document_start(value['sid']);
+
+                        if (employeeobjcount === employeeCount) {
+
+                            $('#loderText').text('');
+                            alertify.alert('SUCCESS!', 'Document Group Assigned successfully .');
+                            setTimeout(
+                                function() {
+                                    window.location.reload();
+                                }, 5000);
+
+                            return;
+                        }
+
+                        employeeCount++;
+
+                    });
+
+                    return;
+                }
+            });
+
+        } else {
+            alertify.error('Please select Employee(s)');
+        }
+
+    });
+
+    //
+    function assign_document_start(employeeId) {
+        $.ajax({
+            'url': '<?php echo base_url('hr_documents_management/assigne_group_managements_ajax'); ?>',
+            'type': 'POST',
+            'data': {
+                'employee_sid': employeeId
+            },
+            success: function(employeesDetail) {
+                $("#empAssigneName").text('');
+            }
+        });
+
     }
 </script>
