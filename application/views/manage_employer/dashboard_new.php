@@ -828,10 +828,10 @@
                                                         <i class="fa fa-users" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title" style="margin: 2px 0;">
-                                                        <a href="<?= base_url("shifts/my/subordinates"); ?>">My Subordinates</a>
+                                                        <a href="<?= base_url("shifts/my/subordinates"); ?>">My Team Shifts</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
-                                                        <small style="font-size: 12px"><?php echo count($mySubordinatesCount); ?> Subordinates</small><br>
+                                                        <small style="font-size: 12px"><?php echo count($mySubordinatesCount); ?> My Team</small><br>
                                                     </div>
                                                     <div class="button-panel">
                                                         <a href="<?= base_url("shifts/my/subordinates"); ?>" class="site-btn">Show</a>

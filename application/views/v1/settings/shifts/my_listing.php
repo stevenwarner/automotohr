@@ -39,7 +39,7 @@ if ($filter["mode"] === "month") {
                                 &nbsp;Dashboard
                             </a>
                             <a href="<?= base_url("settings/subordinateshifts/manage"); ?>" class="btn btn-orange">
-                                &nbsp;My Subordinate
+                                &nbsp;My Team Shifts
                             </a>
 
                         </div>

@@ -998,14 +998,14 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('shifts/my/subordinates'); ?>">
                                         <div class="link-box bg-redish full-width bg-red">
-                                            <h2>My Subordinates</h2>
+                                            <h2>My Team Shifts</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
                                                 <span><?= count($mySubordinatesCount); ?></span>
 
                                             </div>
                                             <div class="status-panel">
-                                                <h3>Show Subordinates</h3>
+                                                <h3>Show Team</h3>
                                                 <span>Shifts</span>
                                             </div>
                                         </div>

@@ -53,7 +53,7 @@ if ($filter["mode"] === "month") {
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h2 class="text-large weight-6 panel-heading-text">
-                                    Subordinates Scheduling
+                                    Team Scheduling
                                 </h2>
                             </div>
                             <div class="panel-body">
@@ -133,15 +133,13 @@ if ($filter["mode"] === "month") {
                                                 <label class="text-medium">Teams</label>
                                                 <select id="js-filter-team" class="jsSelect2" name="teams[]" multiple="multiple">
                                                     <option value="all" <?= !$filter["teams"] ? "selected" : ""; ?>>All</option>
-                                                    <?php foreach ($teams as $v0) {
-                                                    ?>
+                                                    <?php foreach ($teams as $v0) { ?>
                                                         <option value="<?php echo $v0['sid']; ?>" <?= in_array($v0["sid"], $filter["teams"]) ? "selected" : ""; ?>>
                                                             <?= $v0['title']; ?>
                                                         </option>
                                                     <?php }  ?>
                                                 </select>
                                             <?php } ?>
-
                                         </div>
 
                                         <div class="col-sm-2">
