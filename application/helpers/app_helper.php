@@ -3139,3 +3139,22 @@ if (!function_exists("convertToList")) {
         return $tmp;
     }
 }
+
+if (!function_exists("getEmployeeProfileLink")) {
+    /**
+     * provide employee profile link
+     *
+     * @param int  $employeeId
+     * @return string
+     */
+    function getEmployeeProfileLink(int $employeeId): string
+    {
+        $link = 'javascript:;';
+        //
+        if (isPayrollOrPlus()) {
+            // $link = base_url("employee_profile/".$employeeId);
+        }
+        //
+        return $link;
+    }
+}

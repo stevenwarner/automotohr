@@ -750,16 +750,4 @@ class App extends CI_Controller
         //
         return SendResponse(200, array_column($pageData, "state_name"));
     }
-
-    public function getEmployeeProfileLink(int $employeeId)
-    {
-        // check and generate error for session
-        checkAndGetSession();
-        // check or plus user
-        onlyPlusAndPayPlanCanAccess();
-        //
-        return SendResponse(200, [
-            "link" => base_url("employee_profile/" . $employeeId)
-        ]);
-    }
 }

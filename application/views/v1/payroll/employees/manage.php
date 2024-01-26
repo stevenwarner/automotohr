@@ -62,7 +62,8 @@
                                                 ?>
                                                 <tr data-id="<?= $payrollEmployee['id']; ?>" data-employee="<?= $payrollEmployee['name']; ?>">
                                                     <td class="vam">
-                                                        <a href="javascript:;" style="color: #000;" onclick="goToEmployeeProfile(<?= $payrollEmployee['id']; ?>)">
+                                                        <?php $link = getEmployeeProfileLink($payrollEmployee['id']); ?>
+                                                        <a href="<?php echo $link; ?>" style="color: #000;" <?php echo $link != "javascript:;" ? 'target="_blank"' : '';?> >
                                                             <strong>
                                                                 <?= $payrollEmployee['name']; ?>
                                                             </strong>

@@ -585,23 +585,3 @@ if (typeof convertSecondsToTime === "undefined") {
 		return hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
 	}
 }
-
-if (typeof goToEmployeeProfile === "undefined") {
-	/**
-	 * converts seconds to hours and minutes
-	 * @param {int} employeeId
-	 */
-	function goToEmployeeProfile(employeeId) {
-		//
-		$.ajax({
-			url:  window.location.origin + "/get_employee_profile_link/" + employeeId,
-			method: "GET",
-		})
-			.success(function (response) {
-				window.open(response.link, '_blank');
-			})
-			.fail(function (error) {
-				
-			});
-	}
-}
