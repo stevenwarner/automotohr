@@ -3152,7 +3152,7 @@ if (!function_exists("getEmployeeProfileLink")) {
         $link = 'javascript:;';
         //
         if (isPayrollOrPlus()) {
-            // $link = base_url("employee_profile/".$employeeId);
+            $link = base_url("employee_profile/".$employeeId);
         }
         //
         return $link;
