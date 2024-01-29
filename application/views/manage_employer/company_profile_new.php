@@ -555,6 +555,23 @@
                         <?php } ?>
 
 
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <h3>Scheduling </h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group autoheight">
+                                    <label class="control control--checkbox">
+                                        Enable Notification<small class="help_text">Enabling notifications on scheduling .</small>
+                                        <input class="" type="checkbox" id="notification_enable_for_scheduling" name="scheduling_email_notification" value="1" <?php echo ($portal['scheduling_email_notification'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+
+
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">
