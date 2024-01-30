@@ -198,6 +198,22 @@ class Main extends Public_Controller
                 $startDate,
                 $endDate
             );  
+        // load the clock model
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        // get the employee worked shifts
+        $clockArray = $this->clock_model->calculateTimeWithinRange(
+            $userId,
+            $startDate,
+            $endDate
+        ); 
+        //
+        if ($clockArray["periods"]) {
+            foreach ($clockArray["periods"] as $pkey => $period) {
+                $clockArray["periods"][$period["date"]] = $period;
+                unset($clockArray["periods"][$pkey]);
+            }
+        } 
+        $this->data["clockArray"] = $clockArray; 
         // _e($this->data,true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");

@@ -3158,3 +3158,37 @@ if (!function_exists("getEmployeeProfileLink")) {
         return $link;
     }
 }
+
+if (!function_exists("getWageFromTime")) {
+    function getWageFromTime($time = 0, $rate = 0): string
+    {
+        $wage = '$0';
+        //
+        if ($rate > 0 && $time > 0) {
+            $wage = '$'. ($time / (60 * 60)) * $rate;
+        }
+        //
+        return $wage;
+    }
+}
+
+if (!function_exists("getTotalWageFromTime")) {
+    function getTotalWageFromTime($record): string
+    {
+        $total = 0;
+        //
+        if ($record['regular_time'] > 0 && $record['normal_rate'] > 0) {
+            $total += ($record['regular_time'] / (60 * 60)) * $record['normal_rate'];
+        }
+        //
+        if ($record['overtime'] > 0 && $record['over_time_rate'] > 0) {
+            $total += ($record['overtime'] / (60 * 60)) * $record['over_time_rate'];
+        }
+        //
+        if ($record['double_overtime'] > 0 && $record['double_over_time_rate'] > 0) {
+            $total += ($record['double_overtime'] / (60 * 60)) * $record['double_over_time_rate'];
+        }
+        //
+        return '$'.$total;
+    }
+}

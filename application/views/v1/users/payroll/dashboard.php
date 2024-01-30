@@ -1,3 +1,86 @@
+<style>
+    .attendance_reports_main
+    {
+        display: flex;
+        gap: 10px;
+        padding: 0 10px;
+        transition: 0.4s;
+    }
+
+    .attendance_report_item
+    {
+        width: 260px;
+        height: 94px;
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+    } 
+
+
+    
+    .attendance_report_line
+    {
+        width: 20px;
+        border: 1px solid #007B55;
+        margin: 0;
+    }
+
+    .attendance_report_details
+    {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .attendance_reports_main li
+    {
+        list-style-type: none;
+    }
+
+    .attendance_report_content h3
+    {
+        color: #000;
+        text-transform: capitalize;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .attendance_report_content p
+    {
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .regular_time 
+    {
+        background-color: #00AB551F;
+    }
+
+    .paid_break_time 
+    {
+        background-color: #7A091614;
+    }
+
+    .over_time 
+    {
+        background-color: #FFAB0014;
+    }
+
+    .double_over_time 
+    {
+        background-color: #00B8D91F;
+    }
+
+    .total_paid 
+    {
+        background-color: #8224E314;
+    }
+</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -166,6 +249,66 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <ul class="attendance_reports_main">
+                                        <li> 
+                                            <div class="attendance_report_item regular_time"> 
+                                                <div class="attendance_report_details"> 
+                                                    <div class="attendance_report_content">
+                                                        <h3>Regular Time</h3>
+                                                        <p>
+                                                        <?= $clockArray ? $clockArray['text']['regular_time'] : "0h"; ?> /<?= $clockArray ? getWageFromTime($clockArray['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
+                                                        </p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </li>
+                                        <li> 
+                                            <div class="attendance_report_item paid_break_time"> 
+                                                <div class="attendance_report_details"> 
+                                                    <div class="attendance_report_content">
+                                                        <h3>Paid Break Time</h3>
+                                                        <p>$0</p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </li>
+                                        <li> 
+                                            <div class="attendance_report_item over_time"> 
+                                                <div class="attendance_report_details"> 
+                                                    <div class="attendance_report_content">
+                                                        <h3>Over Time</h3>
+                                                        <p>
+                                                            <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
+                                                        </p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </li>
+                                        <li> 
+                                            <div class="attendance_report_item double_over_time"> 
+                                                <div class="attendance_report_details"> 
+                                                    <div class="attendance_report_content">
+                                                        <h3>Double Over Time</h3>
+                                                        <?= $clockArray ? $clockArray['text']['double_overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </li>
+                                        <li> 
+                                            <div class="attendance_report_item total_paid"> 
+                                                <div class="attendance_report_details"> 
+                                                    <div class="attendance_report_content">
+                                                        <h3>Total Amount</h3>
+                                                        <p><?= $clockArray ? getTotalWageFromTime($clockArray) : "$0"; ?></p>
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                             <!-- time & attendance -->
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -255,10 +398,19 @@
                                                                 Worked Time
                                                             </th>
                                                             <th scope="col" class="bg-black">
-                                                                Breaks
+                                                                Regular Time
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                Paid Breaks
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                Unpaid Breaks
                                                             </th>
                                                             <th scope="col" class="bg-black">
                                                                 Overtime
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                Double Overtime
                                                             </th>
                                                             <th scope="col" class="bg-black">
                                                                 Status
@@ -277,6 +429,7 @@
                                                         //
                                                         foreach ($datesPool as $v0) {
                                                             $attendance = $records[$v0["date"]] ?? [];
+                                                            $processedData = $clockArray['periods'][$v0["date"]] ?? [];
                                                             $leave = $leaves && $leaves[$v0["date"]] ? $leaves[$v0["date"]] :  [];
 
                                                             if ($attendance) {
@@ -311,13 +464,22 @@
                                                                         )  : "Missing"; ?>
                                                                     </td>
                                                                     <td class="csVerticalAlignMiddle mh-100">
-                                                                        <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
+                                                                        <?= $processedData ? $processedData['text']['clocked_time'] : "0h"; ?> 
                                                                     </td>
                                                                     <td class="csVerticalAlignMiddle mh-100">
-                                                                        <?= $attendance ? convertSecondsToTime($attendance["breaks"]) : "0h"; ?>
+                                                                        <?= $processedData ? $processedData['text']['regular_time'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
                                                                     </td>
                                                                     <td class="csVerticalAlignMiddle mh-100">
-                                                                        <?= $attendance ? convertSecondsToTime($attendance["overtime"]) : "0h"; ?>
+                                                                        <?= $processedData ? $processedData['text']['paid_break_time'] : "0h"; ?>
+                                                                    </td>
+                                                                    <td class="csVerticalAlignMiddle mh-100">
+                                                                        <?= $processedData ? $processedData['text']['unpaid_break_time'] : "0h"; ?>
+                                                                    </td>
+                                                                    <td class="csVerticalAlignMiddle mh-100">
+                                                                        <?= $processedData ? $processedData['text']['overtime'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
+                                                                    </td>
+                                                                    <td class="csVerticalAlignMiddle mh-100">
+                                                                        <?= $processedData ? $processedData['text']['double_overtime'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
                                                                     </td>
                                                                     <td class="csVerticalAlignMiddle mh-100 text-<?= $attendance["is_approved"] ? "green" : "red"; ?>">
                                                                         <strong>
@@ -367,13 +529,22 @@
                                                             <th scope="col" class="bg-black"></th>
                                                             <th scope="col" class="bg-black"></th>
                                                             <th scope="col" class="bg-black">
-                                                                <?= convertSecondsToTime($totalWorkedTime); ?>
+                                                                <?= $clockArray ? $clockArray['text']['clocked_time'] : "0h"; ?>
                                                             </th>
                                                             <th scope="col" class="bg-black">
-                                                                <?= convertSecondsToTime($totalBreakTime); ?>
+                                                                <?= $clockArray ? $clockArray['text']['regular_time'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
                                                             </th>
                                                             <th scope="col" class="bg-black">
-                                                                <?= convertSecondsToTime($totalOvertime); ?>
+                                                                <?= $clockArray ? $clockArray['text']['paid_break_time'] : "0h"; ?>
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                <?= $clockArray ? $clockArray['text']['unpaid_break_time'] : "0h"; ?>
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
+                                                            </th>
+                                                            <th scope="col" class="bg-black">
+                                                                <?= $clockArray ? $clockArray['text']['double_overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
                                                             </th>
                                                             <th scope="col" class="bg-black"></th>
                                                             <th scope="col" class="bg-black"></th>

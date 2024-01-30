@@ -53,9 +53,9 @@ class Testing extends CI_Controller
         $this->load->model("v1/Payroll/Wage_model", "wage_model");
         //
         $this->wage_model->calculateEmployeeWage(
-            48, 
-            "2024-01-22",
-            "2024-01-22"
+            15753, 
+            "2024-01-01",
+            "2024-01-05"
         );
     }
 

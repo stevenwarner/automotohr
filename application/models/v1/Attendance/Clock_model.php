@@ -1837,6 +1837,9 @@ class Clock_model extends Base_model
             "unpaid_break_time" => 0,
             "overtime" => 0,
             "double_overtime" => 0,
+            "normal_rate" => 0,
+            "over_time_rate" => 0,
+            "double_over_time_rate" => 0
         ];
         //
         $records =
@@ -1851,7 +1854,6 @@ class Clock_model extends Base_model
             ")
             ->where([
                 "employee_sid" => $employeeId,
-                "is_approved" => 1,
                 "clocked_date >= " => $periodStartDate,
                 "clocked_date <= " => $periodEndDate,
             ])
@@ -1867,6 +1869,14 @@ class Clock_model extends Base_model
         $this->load->model("v1/Shift_model", "shift_model");
         // load holiday model
         $this->load->model("v1/Holiday_model", "holiday_model");
+        //
+        $this->load->model("v1/Users/main_model", "main_model");
+        //
+        $employeeWageInfo = $this->main_model->getJobWageData(
+            $employeeId,
+            'employee',
+            $records[0]["company_sid"]
+        );  
         // get employee overtime rule
         $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
         // get company breaks
@@ -1881,12 +1891,27 @@ class Clock_model extends Base_model
             $periodStartDate,
             $periodEndDate
         );
+        $wageType = $employeeWageInfo['per'];
+        $employeeRate = $employeeWageInfo['rate'];
+        //
+        if ($wageType == "Hour") {
+            $returnArray['normal_rate'] = $employeeRate;
+            $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
+            $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier'];
+        } else if ($wageType == "Week") {
+
+        } else if ($wageType == "Month") {
+
+        } else if ($wageType == "Year") {
+
+        }    
         //
         foreach ($records as $v0) {
             // set a tmp array
             $tmp = [
                 "date" => $v0["clocked_date"],
                 "clocked_time" => 0,
+                "regular_time" => 0,
                 "breaks_time" => 0,
                 "paid_break_time" => 0,
                 "unpaid_break_time" => 0,
@@ -1894,6 +1919,7 @@ class Clock_model extends Base_model
                 "double_overtime" => 0,
                 "text" => [
                     "clocked_time" => 0,
+                    "regular_time" => 0,
                     "breaks_time" => 0,
                     "paid_break_time" => 0,
                     "unpaid_break_time" => 0,
@@ -1955,6 +1981,7 @@ class Clock_model extends Base_model
                     DB_DATE,
                     "l"
                 ));
+                $tmp["clocked_time"] = $tmp["clocked_time"] - ($tmp["unpaid_break_time"] + $tmp["paid_break_time"]);
                 // for holiday
                 if ($employeeOverTime["holiday"] && $employeeOverTime["holiday"]["overtime"] && in_array($v0["clocked_date"], $companyHolidays)) {
                     // convert overtime to seconds
@@ -1994,17 +2021,25 @@ class Clock_model extends Base_model
                 // TODO: seven consecutive day overtime
             }
             // convert to text
+            $clockedTime = $tmp["clocked_time"] + $tmp["paid_break_time"] + $tmp["unpaid_break_time"];
+            $regularTime = $tmp["clocked_time"]-($tmp["overtime"] + $tmp["double_overtime"]);
+            $tmp['clocked_time'] = $clockedTime;
+            $tmp['regular_time'] = $regularTime;
+            //
             $tmp["text"] = [
-                "clocked_time" => convertSecondsToTime($tmp["clocked_time"]),
+                "clocked_time" => convertSecondsToTime($clockedTime),
+                "regular_time" => convertSecondsToTime($regularTime),
                 "breaks_time" => convertSecondsToTime($tmp["breaks_time"]),
                 "paid_break_time" => convertSecondsToTime($tmp["paid_break_time"]),
                 "unpaid_break_time" => convertSecondsToTime($tmp["unpaid_break_time"]),
                 "overtime" => convertSecondsToTime($tmp["overtime"]),
                 "double_overtime" => convertSecondsToTime($tmp["double_overtime"]),
             ];
+            //
             // set to main array
             $returnArray["periods"][] = $tmp;
-            $returnArray["clocked_time"] += $tmp["clocked_time"];
+            $returnArray["clocked_time"] += $clockedTime;
+            $returnArray["regular_time"] += $regularTime;
             $returnArray["breaks_time"] += $tmp["breaks_time"];
             $returnArray["paid_break_time"] += $tmp["paid_break_time"];
             $returnArray["unpaid_break_time"] += $tmp["unpaid_break_time"];
@@ -2027,17 +2062,18 @@ class Clock_model extends Base_model
             // for double overtime
             if ($double_overtime > 0 && ($returnArray["clocked_time"] > $double_overtime)) {
                 // deduct the double overtime from clocked time
-                $weekDoubleOvertime = $returnArray["clocked_time"] - $double_overtime;
+                // $weekDoubleOvertime = $returnArray["clocked_time"] - $double_overtime;
                 // recalculate overtime
                 $weekOverTime = $double_overtime - $overtime;
             }
             //
-            $returnArray["overtime"] += $weekOverTime;
-            $returnArray["double_overtime"] += $weekDoubleOvertime;
+            // $returnArray["overtime"] += $weekOverTime;
+            // $returnArray["double_overtime"] += $weekDoubleOvertime;
         }
         // apply seven consecutive day overtime
         // convert to text
         $returnArray["text"] = [
+            "regular_time" => convertSecondsToTime($returnArray["regular_time"]),
             "clocked_time" => convertSecondsToTime($returnArray["clocked_time"]),
             "breaks_time" => convertSecondsToTime($returnArray["breaks_time"]),
             "paid_break_time" => convertSecondsToTime($returnArray["paid_break_time"]),

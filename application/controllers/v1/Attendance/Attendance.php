@@ -189,12 +189,30 @@ class Attendance extends Public_Controller
                     $startDate,
                     $endDate
                 );
+            //
+            // load the clock model
+            $this->load->model("v1/Attendance/Clock_model", "clock_model");
+            // get the employee worked shifts
+            $data["clockArray"] = $this->clock_model->calculateTimeWithinRange(
+                $data["filter"]["employeeId"],
+                $startDate,
+                $endDate
+            ); 
+            //
+            if ($data["clockArray"]["periods"]) {
+                foreach ($data["clockArray"]["periods"] as $pkey => $period) {
+                    $data["clockArray"]["periods"][$period["date"]] = $period;
+                    unset($data["clockArray"]["periods"][$pkey]);
+                }
+            }  
         }
-
+        //
         $data["employees"] = $this->clock_model
             ->getEmployees(
                 $this->loggedInCompany["sid"]
-            );
+            );   
+        //  
+        // _e($data["clockArray"],true,true);
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");
