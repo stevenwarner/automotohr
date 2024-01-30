@@ -3165,7 +3165,7 @@ if (!function_exists("getWageFromTime")) {
         $wage = '$0';
         //
         if ($rate > 0 && $time > 0) {
-            $wage = '$'. ($time / (60 * 60)) * $rate;
+            $wage = '$'. round((($time / (60 * 60)) * $rate), 2);
         }
         //
         return $wage;
@@ -3189,6 +3189,6 @@ if (!function_exists("getTotalWageFromTime")) {
             $total += ($record['double_overtime'] / (60 * 60)) * $record['double_over_time_rate'];
         }
         //
-        return '$'.$total;
+        return '$'. round($total, 2);
     }
 }
