@@ -743,7 +743,7 @@
                                 <td>
                                     <label>Date (mm/dd/yyyy)</label>
                                     <span class="value-box no-border" id="">
-                                        <?php echo isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? $authorizedArray[$i]['section3_rehire_date'] : "";?>
+                                        <?php echo isset($authorizedArray[$i]['section3_rehire_date']) && !empty($authorizedArray[$i]['section3_rehire_date']) ? formatDateToDB($authorizedArray[$i]['section3_rehire_date'], "m-d-Y", "m/d/Y") : "";?>
                                     </span>
                                 </td>
                                 <td>
