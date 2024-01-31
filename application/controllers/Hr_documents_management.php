@@ -17037,7 +17037,6 @@ class Hr_documents_management extends Public_Controller
     //
     public function assigne_group_managements_ajax()
     {
-
         //
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data['session']['company_detail']['sid'];

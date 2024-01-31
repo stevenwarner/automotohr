@@ -2224,3 +2224,7 @@ $route['timeoff/exporttocsv/(:any)'] = 'Time_off/exportTimeoffToCSV/$1';
 //
 $route["shifts/my"]["get"] = "v1/Shifts/Employee_shifts/my";
 $route["shifts/my/subordinates"]["get"] = "v1/Shifts/Subordinate_shifts/loggedInPersonSubOrdinateShifts";
+
+// Group assignment to employees
+$route["documents/assign_groups_to_employees"]["post"] = "Hr_documents_management/documents_group_management_ajax";
+$route["documents/assign_group_document_to_employee"]["post"] = "Hr_documents_management/assigne_group_managements_ajax";
