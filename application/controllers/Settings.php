@@ -3060,14 +3060,16 @@ class Settings extends Public_Controller
             check_access_permissions($security_details, 'my_settings', 'talent_network_content_configuration');
             $company_sid = $data['session']['company_detail']['sid'];
             $data['talent_data'] = $this->dashboard_model->get_talent_configuration($company_sid);
+
+            //_e($data['talent_data'],true,true);
             $this->form_validation->set_rules('title', 'Title', 'required|trim|xss_clean');
-            $this->form_validation->set_rules('content', 'Content', 'required|trim|xss_clean');
-            $this->form_validation->set_rules('picture_or_video', 'Show image or video', 'trim|xss_clean|required');
+            //   $this->form_validation->set_rules('content', 'Content', 'required|trim|xss_clean');
+            //   $this->form_validation->set_rules('picture_or_video', 'Show image or video', 'trim|xss_clean|required');
 
             if ($this->input->post('picture_or_video') == 'video') {
-                $this->form_validation->set_rules('youtube_link', 'YouTube Link', 'trim|xss_clean|callback_validate_youtube|required');
+                //  $this->form_validation->set_rules('youtube_link', 'YouTube Link', 'trim|xss_clean|callback_validate_youtube|required');
             } else {
-                $this->form_validation->set_rules('youtube_link', 'YouTube Link', 'trim|xss_clean|callback_validate_youtube');
+                //  $this->form_validation->set_rules('youtube_link', 'YouTube Link', 'trim|xss_clean|callback_validate_youtube');
             }
 
             if ($this->form_validation->run() === FALSE) {
@@ -3083,25 +3085,101 @@ class Settings extends Public_Controller
                 $youtube_link = $this->input->post('youtube_link');
                 $picture_or_video = $this->input->post('picture_or_video');
 
+
+                $insert_array = array();
+
+
                 if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '') {
                     $result = put_file_on_aws('pictures');
                 }
 
+
                 if (isset($youtube_link) && $youtube_link != '' && $youtube_link != NULL) {
-                    $youtube_link = substr($youtube_link, strpos($youtube_link, '=') + 1, strlen($youtube_link));
+                    //  $youtube_link = substr($youtube_link, strpos($youtube_link, '=') + 1, strlen($youtube_link));
+                }
+                ///
+
+
+                $video_source = $this->input->post('video_source');
+                $exist_video_sid = $this->input->post('video_sid');
+                if (!empty($_FILES) && isset($_FILES['video_upload']) && $_FILES['video_upload']['size'] > 0) {
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["video_upload"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["video_upload"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        //  redirect('learning_center/add_online_video', 'refresh');
+                    }
+
+                    $video_id = $file_name;
+
+                    $insert_array['video'] = $video_id;
+                } else {
+                    $video_id = $this->input->post('video_id');
+
+                    //  die($video_id . '#' . $video_source) . 'sdfsdfs';
+
+                    if ($video_source == 'youtube') {
+                        $url_prams = array();
+                        parse_str(parse_url($video_id, PHP_URL_QUERY), $url_prams);
+                        if (isset($url_prams['v'])) {
+                            $video_id = $url_prams['v'];
+
+                            $insert_array['youtube_link'] = $video_id;
+                            $insert_array['vimeo_link'] = '';
+                            $insert_array['video'] = '';
+                            $insert_array['picture'] = '';
+
+
+                        } else {
+                            $video_id = '';
+                        }
+                    } elseif ($video_source == 'vimeo') {
+                        $video_id = $this->vimeo_get_id($video_id);
+                        $insert_array['vimeo_link'] = $video_id;
+                        $insert_array['youtube_link'] = '';
+                        $insert_array['video'] = '';
+                        $insert_array['picture'] = '';
+
+
+                    } elseif ($video_source == 'none') {
+                        $insert_array['picture'] = '';
+                        $insert_array['vimeo_link'] = '';
+                        $insert_array['youtube_link'] = '';
+                        $insert_array['video'] = '';
+                    } else {
+                        //$video_id = $this->vimeo_get_id($video_id);
+                        // $insert_array['vimeo_link'] = $video_id;
+                    }
                 }
 
-                $insert_array = array();
+                //   youtube_link
+                //   die($video_id);
+
                 $insert_array['company_sid'] = $company_sid;
                 $insert_array['title'] = $title;
                 $insert_array['content'] = $content;
-                $insert_array['youtube_link'] = $youtube_link;
                 $insert_array['visibility_employees'] = !empty($this->input->post('visibility', TRUE)) ? implode(',', $this->input->post('visibility', TRUE)) : NULL;
                 $insert_array['picture_or_video'] = $picture_or_video;
 
                 if (isset($result) && $result != 'error' && $result != '') {
                     $insert_array['picture'] = $result;
+                    $insert_array['vimeo_link'] = '';
+                    $insert_array['youtube_link'] = '';
+                    $insert_array['video'] = '';
                 }
+
 
                 $result = $this->dashboard_model->save_talent_configuration($insert_array);
                 $this->session->set_flashdata('message', '<b>Success:</b> Talent Content Configuration is updated successfully');
