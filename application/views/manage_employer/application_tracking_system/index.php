@@ -3704,7 +3704,11 @@ $this->session->set_userdata('ats_params', $_SERVER['REQUEST_URI']);
             });
 
     }
-</script>
 
+    //
+    $("#fair-type").change(function() {
+        $('#app-type').val('Job Fair');
+    });
+</script>
 
 <?php $this->load->view('iframeLoader'); ?>
