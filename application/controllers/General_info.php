@@ -123,6 +123,33 @@ class General_info extends Public_Controller
                 $data['dependents_yes_text'] = $this->lang->line('dependents_yes_text');
                 $data['dependents_no_text'] = $this->lang->line('dependents_no_text');
 
+                if (checkIfAppIsEnabled(PAYROLL) && isEmployeeOnPayroll($employee_sid)) {
+                    $this->load->model("v1/Payroll_model", "payroll_model");
+                    // check and verify employee
+                    $gustoEmployeeDetails = $this->payroll_model
+                        ->getEmployeeDetailsForGusto(
+                            $employee_sid
+                        );
+                    //
+                    $companyGustoDetails = $this->payroll_model
+                        ->getCompanyDetailsForGusto(
+                            $company_sid,
+                            ['status', 'added_historical_payrolls', 'is_ts_accepted']
+                        );
+
+                    // get the company onboard flow
+                    $data['flow'] = gustoCall(
+                        'getCompanyOnboardFlow',
+                        $companyGustoDetails,
+                        [
+                            'flow_type' => "employee_earned_wage_access_enrollment",
+                            "entity_type" => "Employee",
+                            "entity_uuid" => $gustoEmployeeDetails['gusto_uuid']
+                        ],
+                        "POST"
+                    )['url'];
+                }
+
                 $this->load->view('main/header', $data);
                 $this->load->view('general_information/index.php');
                 $this->load->view('main/footer');
@@ -457,7 +484,7 @@ class General_info extends Public_Controller
                         $this->general_info_model->insert_dependent_information($data_to_save);
 
                         checkAndUpdateDD($employee_sid, 'employee', $company_sid, 'dependents');
-                      
+
 
                         $this->session->set_flashdata('message', '<strong>Success</strong> Saved!');
                         redirect(base_url('general_info'), "location");

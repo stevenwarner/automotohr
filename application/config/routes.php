@@ -1796,6 +1796,8 @@ $route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
 // only on demo mode
 $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAccount';
 $route['payrolls/company/verify']['post'] = 'v1/Payroll/verifyCompany';
+// Clair for company
+$route['payrolls/clair/company']['get'] = 'v1/payrolls/CompanyClair/setup';
 // admin routes
 $route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
 // employees
@@ -1818,6 +1820,8 @@ $route['payrolls/flow/employee/(:num)/payment_method']['post'] = 'v1/Payroll/upd
 $route['payrolls/flow/employee/(:num)/bank_account/(:num)']['delete'] = 'v1/Payroll/deleteBankAccount/$1/$2';
 $route['payrolls/flow/employee/(:num)/bank_account/(:num)']['put'] = 'v1/Payroll/useBankAccount/$1/$2';
 $route['payrolls/flow/employee/(:num)/finish_onboard']['post'] = 'v1/Payroll/finishOnboard/$1';
+// Clair for employee
+$route['payrolls/clair/employee/setup']['get'] = 'v1/payrolls/EmployeeClair/setup';
 
 // contractor
 $route['payrolls/contractors']['get'] = 'v1/Payroll/manageContractors/$1';

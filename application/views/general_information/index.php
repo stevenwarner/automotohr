@@ -1007,6 +1007,24 @@ $field_sid = 'employee_sid';
                                 </div>
                             </div>
                         </div>
+
+                        <?php if ($flow) { ?>
+                            <!-- Clair -->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a class="collapsed" data-toggle="collapse" aria-expanded="false" data-parent="#accordion" href="#clair"><span class="glyphicon glyphicon-plus"></span>Clair<strong data-id="clair" class="jsGeneralAssignDocument"></strong></a>
+                                    </h4>
+                                </div>
+
+                                <div id="clair" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <div class="jsNoteArea"></div>
+                                        <iframe src="<?= $flow; ?>" style="width: 100%; height: 800px; border: 0;"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>

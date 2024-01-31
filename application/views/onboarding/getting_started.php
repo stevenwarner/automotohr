@@ -930,21 +930,44 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
+                        <?php if (isCompanyVerifiedForPayroll() && isEmployeeOnPayroll($employee_sid)) { ?>
+                            <!-- Payroll -->
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box bg-box">
+                                    <a href="<?php echo base_url('payrolls/clair/employee/setup'); ?>">
+                                        <div class="link-box bg-grey full-width">
+                                            <div class="bg-icon-holder">
+                                                <i class="fa fa-cogs"></i>
+                                            </div>
+                                            <h2>Set up Clair</h2>
+                                            <div class="status-panel">
+                                                <h3>Set up Clair</h3>
+                                                <span>Setup</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php } ?>
+
                         <?php if ($isLMSModuleEnabled) : ?>
                             <!-- LMS - Team Courses -->
                             <?php if ($haveSubordinate == "yes") { ?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                    <div class="widget-box">
+                                    <div class="widget-box bg-box">
                                         <a href="<?php echo base_url('lms/courses/my'); ?>">
                                             <div class="link-box bg-redish full-width">
+                                                <div class="bg-icon-holder">
+                                                    <i class="fa fa-users"></i>
+                                                </div>
                                                 <h2>Team Courses</h2>
                                                 <div><span>&nbsp;</span></div>
                                                 <div class="current-date">
                                                     <span><?= $subordinateCount ?? 0; ?><sub>Employees</sub></span>
                                                 </div>
                                                 <div class="status-panel">
-                                                    <!-- <h3>Courses</h3> -->
-                                                    <span>Manage Team Courses</span>
+                                                    <h3>Manage Team Courses</h3>
+                                                    <span>Manage</span>
                                                 </div>
                                             </div>
                                         </a>

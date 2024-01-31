@@ -164,7 +164,7 @@ class Payroll extends CI_Controller
                     verify_bank_info,
                     federal_tax_setup,
                     state_setup,
-                    sign_all_forms,
+                    sign_all_forms
                 ",
                 "entity_type" => "Company",
                 "entity_uuid" => $companyGustoDetails['gusto_uuid']
@@ -181,6 +181,10 @@ class Payroll extends CI_Controller
             ->handleInitialEmployeeOnboard(
                 $data['session']['company_detail']['sid']
             );
+        $data["companyOnProduction"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode");
         //
         $this->load
             ->view('main/header', $data)

@@ -182,6 +182,16 @@ $sideBarUrls = [
                             <figure><i class="fa fa-cogs"></i></figure>Payroll Set up
                         </a>
                     </li>
+                    <?php if (isCompanyVerifiedForPayroll()) { ?>
+                        <!-- Payrolls -->
+                        <li>
+                            <a <?php if (uri_string() === 'payrolls/clair/company') {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo base_url('payrolls/clair/company'); ?>">
+                                <figure><i class="fa fa-cogs"></i></figure>Set up Clair For Company
+                            </a>
+                        </li>
+                    <?php } ?>
                     <!-- Manage Admins -->
                     <li>
                         <a <?php if (in_array(uri_string(), $sideBarUrls['admins'])) {
@@ -307,11 +317,6 @@ $sideBarUrls = [
                             echo 'class="active"';
                         } ?> href="<?php echo base_url('payrolls/pay-stubs'); ?>">
                         <figure><i class="fa fa-money"></i></figure>My Pay Stubs
-                    </a>
-                </li>
-                <li class="hidden">
-                    <a class="bg-danger" href="<?php echo base_url('payrolls/start_fresh'); ?>">
-                        <figure><i class="fa fa-times-circle"></i></figure>Start fresh
                     </a>
                 </li>
             </ul>
