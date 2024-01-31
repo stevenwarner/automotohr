@@ -10,7 +10,7 @@
                             <div class="heading-title page-title">
                                 <h1 class="page-title">
                                     <i class="fa fa-cogs"></i>
-                                    <?php echo $page_title.' ('.$companyOnboardingStatus.')'; ?>
+                                    <?php echo $page_title . ' (' . $companyOnboardingStatus . ')'; ?>
                                 </h1>
                             </div>
                             <!-- Main body -->
@@ -53,6 +53,12 @@
                                             <span>Sync</span>
                                         </button>
                                     <?php } ?>
+                                    <?php if (isCompanyVerifiedForPayroll($loggedInCompanyId)) { ?>
+                                        <a href="<?= base_url("sa/payrolls/clair/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
+                                            <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;
+                                            <span>Clair</span>
+                                        </a>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <hr />
@@ -68,14 +74,14 @@
                                             <form action="javascript:void(0)" id="jsCompanyModeForm">
                                                 <div class="form-group">
                                                     <label>Mode <span class="text-danger">*</span></label>
-                                                    <select <?php echo $companyOnboardingStatus != 'Not Connected' ? 'disabled' : '';?> name="company_mode" class="form-control" id="jsCompanyMode">
+                                                    <select <?php echo $companyOnboardingStatus != 'Not Connected' ? 'disabled' : ''; ?> name="company_mode" class="form-control" id="jsCompanyMode">
                                                         <option value="demo" <?= $mode == 'Demo' ? 'selected' : ''; ?>>Demo</option>
                                                         <option value="production" <?= $mode == 'Production' ? 'selected' : ''; ?>>Production</option>
                                                     </select>
                                                 </div>
 
 
-                                                <?php if ($companyOnboardingStatus == 'Not Connected') { ?>                       
+                                                <?php if ($companyOnboardingStatus == 'Not Connected') { ?>
                                                     <div class="form-group text-right">
                                                         <button class="btn btn-success jsCompanyModeBtn csF16" type="submit">
                                                             <i class="fa fa-save csF16" aria-hidden="true"></i>
@@ -165,7 +171,7 @@
 
                                                     <div class="form-group">
                                                         <label>Accepted By Email</label>
-                                                        <input type="text" class="form-control" value="<?= $companyTermsCondition['ts_email'] ?>" disabled  />
+                                                        <input type="text" class="form-control" value="<?= $companyTermsCondition['ts_email'] ?>" disabled />
                                                     </div>
 
                                                     <div class="form-group">
@@ -229,7 +235,7 @@
                                             </div>
                                             <div class="panel-body">
                                                 <!--  -->
-                                                <?php if (empty($companySignatories)) { ?>   
+                                                <?php if (empty($companySignatories)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -237,7 +243,7 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?>    
+                                                <?php } ?>
                                                 <form action="javascript:void(0)">
                                                     <div class="form-group">
                                                         <label>First Name</label>
@@ -246,7 +252,7 @@
 
                                                     <div class="form-group">
                                                         <label>Last Name</label>
-                                                        <input type="text" class="form-control" value="<?= $companySignatories['last_name'] ?>" disabled  />
+                                                        <input type="text" class="form-control" value="<?= $companySignatories['last_name'] ?>" disabled />
                                                     </div>
 
                                                     <div class="form-group">
@@ -292,7 +298,7 @@
                                             </div>
                                             <div class="panel-body">
                                                 <!--  -->
-                                                <?php if (empty($companyBankInfo)) { ?>   
+                                                <?php if (empty($companyBankInfo)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -300,7 +306,7 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?>    
+                                                <?php } ?>
                                                 <form action="javascript:void(0)">
                                                     <div class="form-group">
                                                         <label>Name</label>
@@ -309,7 +315,7 @@
 
                                                     <div class="form-group">
                                                         <label>Account Type</label>
-                                                        <input type="text" class="form-control" value="<?= $companyBankInfo['account_type'] ?>" disabled  />
+                                                        <input type="text" class="form-control" value="<?= $companyBankInfo['account_type'] ?>" disabled />
                                                     </div>
 
                                                     <div class="form-group">
@@ -333,7 +339,7 @@
                                             </div>
                                             <div class="panel-body">
                                                 <!--  -->
-                                                <?php if (empty($companyFederalTaxInfo)) { ?>   
+                                                <?php if (empty($companyFederalTaxInfo)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -341,7 +347,7 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?>    
+                                                <?php } ?>
                                                 <form action="javascript:void(0)">
                                                     <div class="form-group">
                                                         <label>Type</label>
@@ -350,7 +356,7 @@
 
                                                     <div class="form-group">
                                                         <label>Filing Form</label>
-                                                        <input type="text" class="form-control" value="<?= $companyFederalTaxInfo['filing_form'] ?>" disabled  />
+                                                        <input type="text" class="form-control" value="<?= $companyFederalTaxInfo['filing_form'] ?>" disabled />
                                                     </div>
 
                                                     <div class="form-group">
@@ -360,13 +366,13 @@
 
                                                     <div class="form-group">
                                                         <label>EIN Verified</label>
-                                                        <input type="text" class="form-control" value="<?= $companyFederalTaxInfo['ein_verified'] == 0 ? 'No' : 'Yes';?>" disabled />
+                                                        <input type="text" class="form-control" value="<?= $companyFederalTaxInfo['ein_verified'] == 0 ? 'No' : 'Yes'; ?>" disabled />
                                                     </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>    
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -376,7 +382,7 @@
                                             </div>
                                             <div class="panel-body">
                                                 <!--  -->
-                                                <?php if (empty($companyIndustry)) { ?>   
+                                                <?php if (empty($companyIndustry)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -384,8 +390,8 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?>    
-                                                <?php if (empty($companyEarningTypes)) { ?>   
+                                                <?php } ?>
+                                                <?php if (empty($companyEarningTypes)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -393,7 +399,7 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?> 
+                                                <?php } ?>
                                                 <form action="javascript:void(0)">
                                                     <div class="form-group">
                                                         <label>Industry</label>
@@ -407,14 +413,14 @@
                                                             <?php foreach ($companyEarningTypes as $earningType) { ?>
                                                                 <a href="#" style="padding: 8px; margin-bottom: 5px;" class="badge badge-secondary"><?php echo $earningType['name']; ?></a>
                                                             <?php } ?>
-                                                        <?php } ?>    
-                                                        
+                                                        <?php } ?>
+
                                                     </div>
                                                 </form>
                                             </div>
                                         </div>
                                     </div>
-                                </div>  
+                                </div>
 
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -424,7 +430,7 @@
                                             </div>
                                             <div class="panel-body">
                                                 <!--  -->
-                                                <?php if (empty($companyPaySchedules)) { ?>   
+                                                <?php if (empty($companyPaySchedules)) { ?>
                                                     <p class="text-danger csF16">
                                                         <em>
                                                             <strong>
@@ -432,7 +438,7 @@
                                                             </strong>
                                                         </em>
                                                     </p>
-                                                <?php } ?>    
+                                                <?php } ?>
 
                                                 <div class="table-responsive">
                                                     <table class="table table-striped">
@@ -485,80 +491,80 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row">
-                                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                        <div class="panel panel-success">
-                                            <div class="panel-heading">
-                                                <strong class="csF16 csW">Company Employees</strong>
-                                            </div>
-                                            <div class="panel-body">
-                                                <!--  -->
-                                                <?php if (empty($companyEmployees)) { ?>   
-                                                    <p class="text-danger csF16">
-                                                        <em>
-                                                            <strong>
-                                                                No employee sync with gusto.
-                                                            </strong>
-                                                        </em>
-                                                    </p>
-                                                <?php } ?>    
+                                <div class=" row">
+                                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                            <div class="panel panel-success">
+                                                                                <div class="panel-heading">
+                                                                                    <strong class="csF16 csW">Company Employees</strong>
+                                                                                </div>
+                                                                                <div class="panel-body">
+                                                                                    <!--  -->
+                                                                                    <?php if (empty($companyEmployees)) { ?>
+                                                                                        <p class="text-danger csF16">
+                                                                                            <em>
+                                                                                                <strong>
+                                                                                                    No employee sync with gusto.
+                                                                                                </strong>
+                                                                                            </em>
+                                                                                        </p>
+                                                                                    <?php } ?>
 
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped">
-                                                        <caption></caption>
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col" class="csW csBG4">
-                                                                    Name
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Personal<br />detail
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Compensation<br />detail
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Work<br />address
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Home<br />address
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Federal Tax
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    State Tax
-                                                                </th>
-                                                                <th scope="col" class="csW csBG4 text-right">
-                                                                    Is Onboard
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php foreach ($companyEmployees as $employee) { ?>
-                                                                <tr data-id="<?= $value['sid'] ?>">
-                                                                    <td class="vam">
-                                                                        <?= $employee['name']; ?>
-                                                                    </td>
-                                                                    <td class="vam text-right text-<?= $employee['personal_details'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                                    <div class="table-responsive">
+                                                                                        <table class="table table-striped">
+                                                                                            <caption></caption>
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th scope="col" class="csW csBG4">
+                                                                                                        Name
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Personal<br />detail
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Compensation<br />detail
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Work<br />address
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Home<br />address
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Federal Tax
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        State Tax
+                                                                                                    </th>
+                                                                                                    <th scope="col" class="csW csBG4 text-right">
+                                                                                                        Is Onboard
+                                                                                                    </th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                <?php foreach ($companyEmployees as $employee) { ?>
+                                                                                                    <tr data-id="<?= $value['sid'] ?>">
+                                                                                                        <td class="vam">
+                                                                                                            <?= $employee['name']; ?>
+                                                                                                        </td>
+                                                                                                        <td class="vam text-right text-<?= $employee['personal_details'] == 1 ? 'success' : 'danger'; ?>"">
                                                                         <?= $employee['personal_details'] == 1 ? "Yes" : "No"; ?>
                                                                     </td>
-                                                                    <td class="vam text-right text-<?= $employee['compensation_details'] == 1 ? 'success' : 'danger'; ?>"">
-                                                                        <?= $employee['compensation_details'] == 1 ? "Yes" : "No"; ?>
-                                                                    </td>
-                                                                    <td class="vam text-right text-<?= $employee['work_address'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                    <td class=" vam text-right text-<?= $employee['compensation_details'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                                                            <?= $employee['compensation_details'] == 1 ? "Yes" : "No"; ?>
+                                                                                                        </td>
+                                                                                                        <td class="vam text-right text-<?= $employee['work_address'] == 1 ? 'success' : 'danger'; ?>"">
                                                                         <?= $employee['work_address'] == 1 ? "Yes" : "No"; ?>
                                                                     </td>
-                                                                    <td class="vam text-right text-<?= $employee['home_address'] == 1 ? 'success' : 'danger'; ?>"">
-                                                                        <?= $employee['home_address'] == 1 ? "Yes" : "No"; ?>
-                                                                    </td>
-                                                                    <td class="vam text-right text-<?= $employee['federal_tax'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                    <td class=" vam text-right text-<?= $employee['home_address'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                                                            <?= $employee['home_address'] == 1 ? "Yes" : "No"; ?>
+                                                                                                        </td>
+                                                                                                        <td class="vam text-right text-<?= $employee['federal_tax'] == 1 ? 'success' : 'danger'; ?>"">
                                                                         <?= $employee['federal_tax'] == 1 ? "Yes" : "No"; ?>
                                                                     </td>
-                                                                    <td class="vam text-right text-<?= $employee['state_tax'] == 1 ? 'success' : 'danger'; ?>"">
-                                                                        <?= $employee['state_tax'] == 1 ? "Yes" : "No"; ?>
-                                                                    </td>
-                                                                    <td class="vam text-right text-<?= $employee['is_onboarded'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                    <td class=" vam text-right text-<?= $employee['state_tax'] == 1 ? 'success' : 'danger'; ?>"">
+                                                                                                            <?= $employee['state_tax'] == 1 ? "Yes" : "No"; ?>
+                                                                                                        </td>
+                                                                                                        <td class="vam text-right text-<?= $employee['is_onboarded'] == 1 ? 'success' : 'danger'; ?>"">
                                                                         <?= $employee['is_onboarded'] == 1 ? "Yes" : "No"; ?>
                                                                     </td>
                                                                 </tr>

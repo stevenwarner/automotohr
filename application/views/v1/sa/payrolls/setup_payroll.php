@@ -45,6 +45,12 @@
                                         <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
                                         <span>Sync</span>
                                     </button>
+                                    <?php if (isCompanyVerifiedForPayroll($loggedInCompanyId)) { ?>
+                                        <a href="<?= base_url("sa/payrolls/clair/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
+                                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                            <span>Clair</span>
+                                        </a>
+                                    <?php } ?>
                                 </div>
                             </div>
                             <hr />
