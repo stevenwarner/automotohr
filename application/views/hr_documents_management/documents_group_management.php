@@ -153,14 +153,18 @@
                                     <select require multiple="multiple" name="employees[]" id="uploaded-employees" style="display: block">
                                         <option value="" selected>Please Select Employee</option>
                                         <option value="" selected>All</option>
-
                                     </select>
                                 </div>
+
+                                <div class="spinner-border"></div>
+                                <div class="col-lg-12"><span class="hr-required" id="empAssigneName"></span></div>
+                                <div class="col-lg-12"><span class="hr-required" id='loderText' style="font-size: 18px;font-weight:bold;"></span></div>
                             </div>
+
                             <div class="col-lg-12" id="uploaded-empty-emp" style="display: none;"><span class="hr-required red">This Document Group Is Assigned To All Employees!</span></div>
                             <div class="col-md-12">
                                 <div class="message-action-btn">
-                                    <input type="submit" value="Bulk Assign This Group" id="send-up-doc" class="submit-btn">
+                                    <input type="button" value="Bulk Assign This Group" id="jsBulkassigne" class="submit-btn">
                                 </div>
                             </div>
                         </form>
@@ -170,6 +174,8 @@
         </div>
     </div>
 <?php } ?>
+
+
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.css') ?>">
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.bootstrap3.css') ?>">
 <script src="<?= base_url('assets/js/selectize.min.js') ?>"></script>
@@ -198,6 +204,7 @@
         });
     });
 
+
     var upemployees = $('#uploaded-employees').selectize({
         plugins: ['remove_button'],
         delimiter: ',',
@@ -212,13 +219,21 @@
     });
     var up_emp = upemployees[0].selectize;
 
+    //
+    let companyEmployees = [];
+    //
+    let companyEmployeesObj = {};
+
     function func_assign_document_group(group_sid) {
+        companyEmployees = [];
         $('#bulk_assign_document_group_model').modal('show');
         $.ajax({
             type: 'POST',
             url: '<?= base_url('hr_documents_management/get_all_company_employees') ?>',
             success: function(data) {
                 var employees = JSON.parse(data);
+
+                companyEmployees = JSON.parse(data);
 
                 if (employees.length == 0) {
                     up_emp.clearOptions();
@@ -251,6 +266,7 @@
                         }
 
                         for (var i = 0; i < employees.length; i++) {
+                            companyEmployeesObj[employees[i].sid] = employees[i]
                             arr[j++] = {
                                 value: employees[i].sid,
                                 text: employees[i].full_name
@@ -267,5 +283,103 @@
             }
         });
         $('#assign_group_sid').val(group_sid);
+    }
+
+
+    let employeeList = [],
+        groupSid = 0,
+        totalEmployees = 0,
+        currentEmployee = 0
+
+
+    //
+    $("#jsBulkassigne").click(function() {
+
+        employeeList = $('#uploaded-employees').val(),
+            groupSid = $('#assign_group_sid').val();
+
+        //
+        if (!employeeList || employeeList == null) {
+            return alertify.alert("Please select at least one employee.");
+        }
+        $(this).addClass("hidden")
+        //
+        $('#loderText').text("Please wait while we are assigning group to the selected employees.");
+        //
+        $.ajax({
+                'url': "<?= base_url("documents/assign_groups_to_employees"); ?>",
+                'type': 'POST',
+                'data': {
+                    'employees': employeeList,
+                    'group_sid': groupSid
+                },
+            })
+            .always(function() {})
+            .fail(function() {
+                return alertify.alert("Something went wrong!");
+            })
+            .success(function() {
+                $('#loderText').text("Group assigned to the selected employees.");
+                //
+                return startProcessOfAssigningGroupDocuments();
+
+            });
+
+    });
+
+
+    function startProcessOfAssigningGroupDocuments() {
+        // to check if all is selected
+        if ($.inArray("-1", employeeList) !== -1) {
+            // flush the all
+            employeeList = [];
+            // move all employees to selected ones
+            companyEmployees && companyEmployees.forEach(function(v) {
+                //
+                employeeList.push(v.sid);
+            })
+        }
+        // if no employees found
+        if (!employeeList) {
+            return;
+        }
+        // set the length
+        totalEmployees = employeeList.length;
+        // set the current employee
+        currentEmployee = 0;
+        //
+        assignGroupDocumentsToEmployee(currentEmployee);
+    }
+
+
+    function assignGroupDocumentsToEmployee(employeeIndex) {
+        //
+        let employeeId = employeeList[employeeIndex];
+        //
+        if (employeeId === undefined) {
+            return alertify.alert("Group documents assigned to the selected employees.", function() {
+                window.location.reload();
+            })
+        }
+        //
+        let loaderText = "<p class=\"text-center\">Assigning documents to " + companyEmployeesObj[employeeId]["full_name"] + " <br/>";
+        loaderText += (currentEmployee + 1) + " out of " + totalEmployees + "</p>";
+        // show loader
+        $("#loderText").html(loaderText);
+        //
+        $.ajax({
+                url: "<?= base_url("documents/assign_group_document_to_employee"); ?>",
+                type: "post",
+                data: {
+                    employee_sid: employeeId
+                }
+            })
+            .fail(function() {
+                assignGroupDocumentsToEmployee(currentEmployee);
+            })
+            .success(function() {
+                currentEmployee++;
+                assignGroupDocumentsToEmployee(currentEmployee)
+            })
     }
 </script>

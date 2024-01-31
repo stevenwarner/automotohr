@@ -8147,7 +8147,6 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $employees = $this->input->post('employees');
                 $group_assign_sid = $this->input->post('group_sid');
-
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
                 $data_to_insert['group_sid'] = $group_assign_sid;
@@ -8168,6 +8167,7 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
                 }
+
 
                 $this->session->set_flashdata('message', '<strong>Success:</strong> Documents Group Update Successfully!');
                 redirect('hr_documents_management/documents_group_management', 'refresh');
@@ -10659,8 +10659,8 @@ class Hr_documents_management extends Public_Controller
                 //
                 foreach ($documents as $key => $val) {
                     if ($val['assigned_by'] != 0 && $val['assigned_by'] != 0) {
-                        $documents[$key]['assigned_by_name'] = "<br>Assigned By: ".getUserNameBySID($val['assigned_by']);
-                    }else{
+                        $documents[$key]['assigned_by_name'] = "<br>Assigned By: " . getUserNameBySID($val['assigned_by']);
+                    } else {
                         $documents[$key]['assigned_by_name'] = '';
                     }
                 }
@@ -16975,5 +16975,83 @@ class Hr_documents_management extends Public_Controller
         $this->db
             ->where("sid", $w4Form["sid"])
             ->update("form_w4_original", $updateArray);
+    }
+
+
+
+
+    //
+    public function documents_group_management_ajax()
+    {
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $security_sid = $data['session']['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        check_access_permissions($security_details, 'appearance', 'document_management_portal'); // no need to check in this Module as Dashboard will be available to all
+
+        $company_sid = $data['session']['company_detail']['sid'];
+        $employer_sid = $data['session']['employer_detail']['sid'];
+
+
+        $employees = $this->input->post('employees');
+        $group_assign_sid = $this->input->post('group_sid');
+
+        $data_to_insert = array();
+        $data_to_insert['company_sid'] = $company_sid;
+        $data_to_insert['group_sid'] = $group_assign_sid;
+        $data_to_insert['assigned_by_sid'] = $employer_sid;
+        $data_to_insert['applicant_sid'] = 0;
+        if (in_array('-1', $employees)) {
+            $Allemployees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
+            $employees = array_column($Allemployees, 'sid');
+        }
+
+        if (!empty($employees)) {
+            foreach ($employees as $key => $employee) {
+                $data_to_insert['employer_sid'] = $employee;
+                $is_group_assign = $this->hr_documents_management_model->check_group_already_assigned($company_sid, $employee, $group_assign_sid);
+
+                if ($is_group_assign == 0) {
+                    $this->hr_documents_management_model->assign_document_group_2_empliyees($data_to_insert);
+                }
+            }
+        }
+
+
+        //
+        $employeesdata = $this->hr_documents_management_model->fetch_company_employees_by_id($company_sid, $employees);
+        //
+        if (!empty($employeesdata)) {
+            foreach ($employeesdata as $e_key => $employee) {
+                $employeesdata[$e_key]["full_name"] = getUserNameBySID($employee["sid"]);
+            }
+        }
+        //
+
+        echo json_encode($employeesdata);
+    }
+
+
+
+    //
+    public function assigne_group_managements_ajax()
+    {
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data['session']['company_detail']['sid'];
+
+        $employee_sid = $this->input->post('employee_sid');
+        //
+        $this->hr_documents_management_model
+            ->assignGroupDocumentsToUser(
+                $employee_sid,
+                "employee",
+                0,
+                true,
+                $company_sid,
+                0
+            );
+        echo 'ok';
     }
 }

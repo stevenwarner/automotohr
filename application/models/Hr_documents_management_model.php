@@ -11661,4 +11661,16 @@ class Hr_documents_management_model extends CI_Model
         // Send email notification to approver with a private link
         log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
     }
+
+
+
+    //
+    function fetch_company_employees_by_id($company_sid, $employeeId)
+    {
+        $this->db->select('sid,first_name,last_name');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where_in('sid', $employeeId);
+        $result = $this->db->get('users')->result_array();
+        return $result;
+    }
 }
