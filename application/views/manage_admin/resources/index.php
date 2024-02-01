@@ -91,7 +91,21 @@
     </div>
 </div>
 
+<div id="my_loader" class="text-center my_loader" style="display: none;">
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+    <div class="loader-icon-box">
+        <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text" style="display:block; margin-top: 35px;">
+           Please Waite...
+        </div>
+    </div>
+</div>
+
+
 <script>
+
+let XHR = null;
+
     $(".jsDraggable").sortable({
 		update: function(event, ui) {
 			//
@@ -116,17 +130,19 @@
 			XHR.abort();
 		}
 		//
+        $('#my_loader').show();
+
 		XHR = $.ajax({
-			url: baseUrl("manage_admin/resources/update_sort_order"),
+			url: '<?php echo base_Url("manage_admin/resources/update_sort_order")?>',
 			method: "post",
 			data,
 		})
 			.always(function () {
 				XHR = null;
 			})
-			.fail(handleErrorResponse)
 			.done(function (resp) {
-				
+                $('#my_loader').hide();
+            	 alert(resp.msg);
 			});
 	}
 </script>

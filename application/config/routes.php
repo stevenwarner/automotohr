@@ -2216,4 +2216,7 @@ $route["payrolls/employee_earning_types/(:num)/(:any)"]["post"] = "v1/Users/Main
 $route['timeoff/exporttocsv/(:any)'] = 'Time_off/exportTimeoffToCSV/$1';
 //$route['timeoff/exporttocsv/all'] = 'Time_off/exportTimeoffToCSV/$1';
 
+$route["manage_admin/resources/update_sort_order"]["post"] = "manage_admin/resources/updateSortOrder";
+
+
 

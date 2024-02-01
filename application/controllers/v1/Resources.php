@@ -66,6 +66,7 @@ class Resources extends Public_Controller
             'v1/resources/main',
         ], $this->js, 'resources', $this->disableMinifiedFiles);
 
+
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/resources/resources');
         $this->load->view($this->footer);
