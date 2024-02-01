@@ -1,41 +1,42 @@
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <script>
+    function validate_friend_form() {
+        $("#friend-form").validate({
+            // Specify the validation error messages
+            rules: {
+                sender_name: {
+                    required: true
+                },
+                receiver_name: {
+                    required: true
+                },
+                receiver_email: {
+                    required: true
+                }
+
+
+            },
+            messages: {
+                sender_name: "Please provide your name",
+                receiver_name: "Please provide receiver name",
+                receiver_email: "Please provide valid email address",
+            }
+        });
+
+        if ($('#friend-form').valid()) {
+
+            $('#friend-form').submit();
+
+
+        }
+
+    }
     $(document).ready(function() {
         $('.g-recaptcha-err').each(function() {
             $(this).hide();
         });
 
-        function validate_friend_form() {
-            $("#friend-form").validate({
-                // Specify the validation error messages
-                rules: {
-                    sender_name: {
-                        required: true
-                    },
-                    receiver_name: {
-                        required: true
-                    },
-                    receiver_email: {
-                        required: true
-                    }
 
-
-                },
-                messages: {
-                    sender_name: "Please provide your name",
-                    receiver_name: "Please provide receiver name",
-                    receiver_email: "Please provide valid email address",
-                }
-            });
-
-            if ($('#friend-form').valid()) {
-
-                $('#friend-form').submit();
-
-
-            }
-
-        }
 
 
         $('.eeo_check').click(function() {
