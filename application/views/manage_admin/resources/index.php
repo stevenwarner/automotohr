@@ -16,8 +16,8 @@
                                     <div class="hr-box">
                                         <div class="hr-box-header">
                                             <span class="pull-right">
-                                                <a class="btn btn btn-success" href = "<?php echo base_url('manage_admin/edit_resource/0') ?>">Add Resource</a>
-                                                <a class="btn btn btn-success" href = "<?php echo base_url('manage_admin/subscribers_list/' . $page['sid']) ?>">View Subscribers</a>
+                                                <a class="btn btn btn-success" href="<?php echo base_url('manage_admin/edit_resource/0') ?>">Add Resource</a>
+                                                <a class="btn btn btn-success" href="<?php echo base_url('manage_admin/subscribers_list/' . $page['sid']) ?>">View Subscribers</a>
 
                                             </span>
                                         </div>
@@ -56,10 +56,10 @@
                                                                         <td>
                                                                             <?php echo  date_with_time($dataRow['created_at']); ?>
                                                                         </td>
-                                                                        <td class=" <?php echo  $dataRow['status'] ==1 ? ' text-success' :' text-danger' ?> "> <strong><?php echo  strtoupper($dataRow['status'] ==1 ? "Published" :"Unpublished"); ?></strong></td>
-                                                                        <td><a class="btn btn btn-success btn-sm" href = "<?php echo base_url('resources/' . $dataRow['slug']) ?>">View</a></td>
+                                                                        <td class=" <?php echo  $dataRow['status'] == 1 ? ' text-success' : ' text-danger' ?> "> <strong><?php echo  strtoupper($dataRow['status'] == 1 ? "Published" : "Unpublished"); ?></strong></td>
+                                                                        <td><a class="btn btn btn-success btn-sm" href="<?php echo base_url('resources/' . $dataRow['slug']) ?>">View</a></td>
                                                                         <td>
-                                                                        <a class="btn btn-success btn-sm" href = "<?php echo base_url('manage_admin/edit_resource/' . $dataRow['sid']) ?> "><i class="fa fa-pencil"></i></a>
+                                                                            <a class="btn btn-success btn-sm" href="<?php echo base_url('manage_admin/edit_resource/' . $dataRow['sid']) ?> "><i class="fa fa-pencil"></i></a>
                                                                         </td>
                                                                     </tr>
                                                                 <?php } ?>
@@ -96,53 +96,50 @@
     <div class="loader-icon-box">
         <i class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
         <div class="loader-text" style="display:block; margin-top: 35px;">
-           Please Waite...
+            Please Wait...
         </div>
     </div>
 </div>
 
 
 <script>
-
-let XHR = null;
+    let XHR = null;
 
     $(".jsDraggable").sortable({
-		update: function(event, ui) {
-			//
-			var orderList = [];
-			//
-			$(".jsResourcesSortOrder").map(function (i) {
-				orderList.push($(this).data("key"));
-			});
-			// 
-			var obj = {};
-			obj.sortOrders = orderList;
-			//
-			updateCardsSortOrder(obj);
-		}
-	});
+        update: function(event, ui) {
+            //
+            var orderList = [];
+            //
+            $(".jsResourcesSortOrder").map(function(i) {
+                orderList.push($(this).data("key"));
+            });
+            // 
+            var obj = {};
+            obj.sortOrders = orderList;
+            //
+            updateCardsSortOrder(obj);
+        }
+    });
 
-    	//
-	function updateCardsSortOrder(data) {
-        console.log(data)
-		// check if XHR already in progress
-		if (XHR !== null) {
-			XHR.abort();
-		}
-		//
+    //
+    function updateCardsSortOrder(data) {
+        // check if XHR already in progress
+        if (XHR !== null) {
+            XHR.abort();
+        }
+        //
         $('#my_loader').show();
 
-		XHR = $.ajax({
-			url: '<?php echo base_Url("manage_admin/resources/update_sort_order")?>',
-			method: "post",
-			data,
-		})
-			.always(function () {
-				XHR = null;
-			})
-			.done(function (resp) {
+        XHR = $.ajax({
+                url: '<?php echo base_Url("manage_admin/resources/update_sort_order") ?>',
+                method: "post",
+                data,
+            })
+            .always(function() {
+                XHR = null;
+            })
+            .done(function(resp) {
                 $('#my_loader').hide();
-            	 alert(resp.msg);
-			});
-	}
+            });
+    }
 </script>
