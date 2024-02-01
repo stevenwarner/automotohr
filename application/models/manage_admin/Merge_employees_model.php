@@ -75,7 +75,7 @@ class Merge_employees_model extends CI_Model
             'primary_employee_sid' => $primary_employee_sid,
             'secondary_employee_sid' => $secondary_employee_sid,
             'primary_employee_profile_data' => serialize($primary_employee),
-            'secondary_employee_profile_data' => '',
+            'secondary_employee_profile_data' => serialize($secondary_employee),
             'updated_profile_data' => serialize($data_to_update),
             'merge_by' => $merge_by,
             'merge_at' => date('Y-m-d H:i:s', strtotime('now'))
