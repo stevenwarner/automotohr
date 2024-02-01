@@ -17,7 +17,7 @@ class Resources_model extends CI_Model
             $this->db->limit($limit, $start);
         }
         //
-        $this->db->order_by("sid", "desc");
+        $this->db->order_by("sort_order", "Asc");
         $result = $this->db->get('cms_resources')->result_array();
         //
         if (!empty($result)) {
@@ -57,8 +57,9 @@ class Resources_model extends CI_Model
             $this->db->limit($limit, $start);
         }
         //
-        $this->db->order_by("sid", "desc");
+        $this->db->order_by("sort_order", "asc");
         $result = $this->db->get('cms_resources')->result_array();
+
         //
         if (!empty($result)) {
             return $result;

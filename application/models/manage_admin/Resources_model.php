@@ -14,7 +14,7 @@ class resources_model extends CI_Model
             $count = $this->db->count_all_results('cms_resources');
             return $count;
         } else {
-            $query = $this->db->order_by("sid", "DESC")->get('cms_resources');
+            $query = $this->db->order_by("sort_order", "ASC")->get('cms_resources');
             return $query->result_array();
         }
     }

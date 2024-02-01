@@ -271,4 +271,32 @@ class Resources extends Admin_Controller
         $this->data['pages_data'] = $pages_data;
         $this->render('manage_admin/resources/subscribers_list');
     }
+
+    //
+    public function updateSortOrder()
+    {
+            //
+        $newSortKey = $this->input->post(null, true);
+
+        foreach ($newSortKey['sortOrders'] as $key => $value) {
+            $data['sort_order'] = $key;
+            $this->resources_model->update_resources($value, $data);
+        }
+
+        //
+        $msg = "Sort Order Updated Successfully.";
+
+        return SendResponse(200, [
+            "msg" => $msg
+        ]);
+
+    }
+
+
+
+
+
+
+
+      
 }
