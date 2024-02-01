@@ -61,7 +61,7 @@ class Merge_employees_model extends CI_Model
         $secondary_employee = $this->get_employee_profile($secondary_employee_sid);
         $primary_employee = $this->get_employee_profile($primary_employee_sid);
         //
-        $this->db->query("INSERT INTO users SELECT * FROM users where sid = $secondary_employee_sid;");
+        $this->db->query("INSERT INTO deleted_users_by_merge SELECT * FROM users where sid = $secondary_employee_sid;");
         //
         $data_to_update = $this->findDifference($primary_employee, $secondary_employee);
         //
