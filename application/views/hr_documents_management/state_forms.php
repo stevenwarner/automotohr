@@ -20,7 +20,7 @@
                             </thead>
                             <!--  -->
                             <tbody>
-                                <?php foreach ($companyStateForms as $companyStateForm) { ?>
+                                <?php foreach ($companyStateForms as $companyStateForm) {?>
                                     <tr data-id="<?= $companyStateForm["sid"]; ?>">
                                         <td class="vam">
                                             <?= $companyStateForm["title"]; ?>
@@ -39,7 +39,7 @@
                                             <img src="<?= base_url("assets/manage_admin/images/" . ($companyStateForm["is_completed"] ? "on" : "off") . ".gif"); ?>" alt="<?= $companyStateForm["is_completed"] ? "Signed" : "Not signed" ?>" />
                                             <?php if ($companyStateForm["is_completed"]) { ?>
                                                 <p>
-                                                    <?= formatDateToDB($companyStateForm["assigned_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
+                                                    Completed on: <?= formatDateToDB($companyStateForm["signed_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                 </p>
                                             <?php } ?>
                                         </td>
