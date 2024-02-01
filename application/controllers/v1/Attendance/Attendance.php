@@ -212,7 +212,8 @@ class Attendance extends Public_Controller
                 $this->loggedInCompany["sid"]
             );   
         //  
-        // _e($data["clockArray"],true,true);
+        // echo $this->db->last_query();
+        // _e($data["employees"],true,true);
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");

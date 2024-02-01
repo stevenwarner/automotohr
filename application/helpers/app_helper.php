@@ -3162,13 +3162,13 @@ if (!function_exists("getEmployeeProfileLink")) {
 if (!function_exists("getWageFromTime")) {
     function getWageFromTime($time = 0, $rate = 0): string
     {
-        $wage = '$0';
+        $wage = 0;
         //
         if ($rate > 0 && $time > 0) {
-            $wage = '$'. round((($time / (60 * 60)) * $rate), 2);
+            $wage = (($time / (60 * 60)) * $rate);
         }
         //
-        return $wage;
+        return _a($wage);
     }
 }
 
@@ -3189,6 +3189,10 @@ if (!function_exists("getTotalWageFromTime")) {
             $total += ($record['double_overtime'] / (60 * 60)) * $record['double_over_time_rate'];
         }
         //
-        return '$'. round($total, 2);
+        if ($record['paid_break_time'] > 0 && $record['normal_rate'] > 0) {
+            $total += ($record['paid_break_time'] / (60 * 60)) * $record['normal_rate'];
+        }
+        //
+        return _a($total);
     }
 }

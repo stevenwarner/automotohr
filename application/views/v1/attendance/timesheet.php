@@ -128,6 +128,9 @@ $timeSheetName = "";
                                 Period
                             </th>
                             <th scope="col" class="bg-black">
+                                Clocked Time
+                            </th>
+                            <th scope="col" class="bg-black">
                                 Worked Time
                             </th>
                             <th scope="col" class="bg-black">
@@ -162,10 +165,13 @@ $timeSheetName = "";
                         //
                         $employeeTodayDate = getSystemDateInLoggedInPersonTZ(DB_DATE);
                         //
+                        _e($leaves,true);
+                        //
                         foreach ($datesPool as $v0) {
                             $attendance = $records[$v0["date"]] ?? [];
                             $processedData = $clockArray['periods'][$v0["date"]] ?? [];
                             $leave = $leaves && $leaves[$v0["date"]] ? $leaves[$v0["date"]] :  [];
+                            
                             if ($attendance) {
                                 $totalWorkedTime += $attendance["worked_time"];
                                 $totalBreakTime += $attendance["breaks"];
@@ -201,10 +207,13 @@ $timeSheetName = "";
                                         <?= $processedData ? $processedData['text']['clocked_time'] : "0h"; ?> 
                                     </td>
                                     <td class="csVerticalAlignMiddle mh-100">
+                                        <?= $processedData ? $processedData['text']['worked_time'] : "0h"; ?> 
+                                    </td>
+                                    <td class="csVerticalAlignMiddle mh-100">
                                         <?= $processedData ? $processedData['text']['regular_time'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
                                     </td>
                                     <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['paid_break_time'] : "0h"; ?>
+                                        <?= $processedData ? $processedData['text']['paid_break_time'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['paid_break_time'], $clockArray['normal_rate']) : "$0"; ?>
                                     </td>
                                     <td class="csVerticalAlignMiddle mh-100">
                                         <?= $processedData ? $processedData['text']['unpaid_break_time'] : "0h"; ?>
@@ -244,7 +253,7 @@ $timeSheetName = "";
                                         <?php } ?>
                                     </td>
                                 <?php } else { ?>
-                                    <td class="csVerticalAlignMiddle text-center mh-100" colspan="6">
+                                    <td class="csVerticalAlignMiddle text-center mh-100" colspan="10">
                                         <strong class="text-primary">
                                             Time off - <?= $leave["title"]; ?>
                                         </strong>
@@ -267,19 +276,22 @@ $timeSheetName = "";
                                 <?= $clockArray ? $clockArray['text']['clocked_time'] : "0h"; ?>
                             </th>
                             <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['regular_time'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
+                                <?= $clockArray ? $clockArray['text']['worked_time'] : "0h"; ?>
                             </th>
                             <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['paid_break_time'] : "0h"; ?>
+                                <?= $clockArray ? $clockArray['text']['regular_time'] : "0h"; ?> <br> <?= $clockArray ? getWageFromTime($clockArray['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
+                            </th>
+                            <th scope="col" class="bg-black">
+                                <?= $clockArray ? $clockArray['text']['paid_break_time'] : "0h"; ?> <br> <?= $clockArray ? getWageFromTime($clockArray['paid_break_time'], $clockArray['normal_rate']) : "$0"; ?>
                             </th>
                             <th scope="col" class="bg-black">
                                 <?= $clockArray ? $clockArray['text']['unpaid_break_time'] : "0h"; ?>
                             </th>
                             <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
+                                <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> <br> <?= $clockArray ? getWageFromTime($clockArray['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
                             </th>
                             <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['double_overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
+                                <?= $clockArray ? $clockArray['text']['double_overtime'] : "0h"; ?> <br> <?= $clockArray ? getWageFromTime($clockArray['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
                             </th>
                             <th scope="col" class="bg-black"></th>
                             <th scope="col" class="bg-black"></th>
