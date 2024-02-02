@@ -230,14 +230,14 @@ class Users_model extends CI_Model {
     function email_user_data($email) {
         $this->db->select('*');
         $this->db->from('users u');
-        $this->db->join('users u2', 'u.parent_sid = u2.sid', 'left');
+        $this->db->join('users u2', 'u.parent_sid = u2.sid', 'inner');
         $this->db->where('u.email', $email);
         $this->db->limit(1);
         $this->db->order_by('u.sid', 'DESC');
         $this->db->where('u.active', 1);
         $this->db->where('u.terminated_status', 0);
         $this->db->where('u.is_executive_admin', 0);
-        $this->db->where('u2.company_status', 1);
+        $this->db->where('u2.active', 1);
         $query_result  = $this->db->get();
        
         
