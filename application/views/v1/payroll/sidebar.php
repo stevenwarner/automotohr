@@ -191,6 +191,14 @@ $sideBarUrls = [
                                 <figure><i class="fa fa-cogs"></i></figure>Set up Clair For Company
                             </a>
                         </li>
+                        <!-- Payrolls -->
+                        <li>
+                            <a <?php if (uri_string() === 'payrolls/health-insurance/company') {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo base_url('payrolls/health-insurance/company'); ?>">
+                                <figure><i class="fa fa-cogs"></i></figure>Set up Health Insurance For Company
+                            </a>
+                        </li>
                     <?php } ?>
                     <!-- Manage Admins -->
                     <li>

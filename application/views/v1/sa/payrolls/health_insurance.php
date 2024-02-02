@@ -21,9 +21,9 @@
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 text-right">
                                     <!--  -->
-                                    <a href="<?= base_url("sa/payrolls/" . $loggedInCompanyId); ?>" class="btn csW csBG4 csF16">
+                                    <a href="<?= base_url("sa/payrolls/" . $loggedInCompanyId); ?>" class="btn btn-success csW csBG4 csF16">
                                         <i class="fa fa-arrow-left csF16"></i>
-                                        &nbsp;Back to Configuration
+                                        &nbsp;Back to Dashboard
                                     </a>
                                     <!-- admins -->
                                     <a href="<?= base_url("sa/payrolls/company/" . $loggedInCompanyId . "/admins/manage"); ?>" class="btn btn-success csF16">
@@ -47,73 +47,20 @@
                                     </button>
                                     <?php if (isCompanyVerifiedForPayroll($loggedInCompanyId)) { ?>
                                         <a href="<?= base_url("sa/payrolls/clair/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
-                                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                            <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;
                                             <span>Set up Clair</span>
-                                        </a>
-                                        <a href="<?= base_url("sa/payrolls/health-insurance/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
-                                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
-                                            <span>Set up Health Insurance</span>
                                         </a>
                                     <?php } ?>
                                 </div>
                             </div>
                             <hr />
 
-                            <?php if ($payrollBlockers) { ?>
-                                <!-- payroll blockers -->
-                                <div class="panel panel-success">
-                                    <div class="panel-heading">
-                                        <strong class="csF16 csW">Payroll Blockers</strong>
-                                    </div>
-                                    <div class="panel-body">
-                                        <!--  -->
-                                        <p class="text-danger csF16">
-                                            <em>
-                                                <strong>
-                                                    Kindly ensure all the following points are addressed for payroll processing and successful completion of company onboarding.
-                                                </strong>
-                                            </em>
-                                        </p>
-                                        <div class="table-responsive">
-                                            <table class="table table-striped">
-                                                <caption></caption>
-                                                <tbody>
-                                                    <?php foreach ($payrollBlockers as $payrollBlocker) { ?>
-                                                        <tr>
-                                                            <th class="vam" scope="col">
-                                                                <?=
-                                                                ucwords(
-                                                                    str_replace(
-                                                                        '_',
-                                                                        ' ',
-                                                                        $payrollBlocker['key']
-                                                                    )
-                                                                ); ?></th>
-                                                            <td class="vam"><?= $payrollBlocker['message']; ?></td>
-                                                        </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php } ?>
-
                             <!-- company flow -->
                             <div class="panel panel-success">
                                 <div class="panel-heading">
-                                    <strong class="csF16 csW">Company Flow</strong>
+                                    <strong class="csF16 csW">Set up Health Insurance</strong>
                                 </div>
                                 <div class="panel-body">
-                                    <!--  -->
-                                    <p class="text-danger csF16">
-                                        <em>
-                                            <strong>
-                                                Kindly adhere to the provided flow to finalize the company's payroll setup.
-                                            </strong>
-                                        </em>
-                                    </p>
-                                    <br />
                                     <!--  -->
                                     <iframe src="<?= $flow; ?>" frameborder="0" style="height: 800px; width: 100%">
                                     </iframe>

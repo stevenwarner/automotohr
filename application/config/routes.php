@@ -1798,6 +1798,8 @@ $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAcc
 $route['payrolls/company/verify']['post'] = 'v1/Payroll/verifyCompany';
 // Clair for company
 $route['payrolls/clair/company']['get'] = 'v1/payrolls/CompanyClair/setup';
+// HEalth insurance for company
+$route['payrolls/health-insurance/company']['get'] = 'v1/payrolls/healthInsurance/setup';
 // admin routes
 $route['payrolls/earnings/types']['get'] = 'v1/Payroll/earningTypes';
 // employees
@@ -2026,6 +2028,8 @@ $route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmi
 $route['sa/payrolls/company/(:num)/mode']['post'] = 'v1/sa/Payrolls/updateMode/$1';
 // set up clair
 $route['sa/payrolls/clair/(:num)']['get'] = 'v1/sa/Payrolls/setupClair/$1';
+// set up health insurance
+$route['sa/payrolls/health-insurance/(:num)']['get'] = 'v1/sa/Payrolls/setupHealthInsurance/$1';
 
 
 

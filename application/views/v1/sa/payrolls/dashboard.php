@@ -56,7 +56,11 @@
                                     <?php if (isCompanyVerifiedForPayroll($loggedInCompanyId)) { ?>
                                         <a href="<?= base_url("sa/payrolls/clair/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
                                             <i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;
-                                            <span>Clair</span>
+                                            <span>Set up Clair</span>
+                                        </a>
+                                        <a href="<?= base_url("sa/payrolls/health-insurance/" . $loggedInCompanyId); ?>" class="btn btn-success csF16">
+                                            <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;
+                                            <span>Set up Health Insurance</span>
                                         </a>
                                     <?php } ?>
                                 </div>

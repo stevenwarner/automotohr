@@ -202,6 +202,51 @@ class Payrolls extends Admin_Controller
     }
 
     /**
+     * main page
+     *
+     * @param int $companyId
+     */
+    public function setupHealthInsurance(int $companyId)
+    {
+        $this->payroll_model->loadPayrollHelper($companyId);
+        // set the company id
+        $this->data['loggedInCompanyId'] = $companyId;
+        // get gusto details
+        $this->data['companyGustoDetails'] = $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+        //
+        $this->data["mode"] = $this->db->where([
+            "company_sid" => $companyId,
+            "stage" => "production"
+        ])->count_all_results("gusto_companies_mode") ? "Production" : "Demo";
+        //
+        // load set up page
+        if (!$this->data["companyGustoDetails"]) {
+            return $this->createPartnerCompany();
+        }
+        // load agreement page
+        if (!$this->data["companyGustoDetails"]["is_ts_accepted"]) {
+            return $this->agreement();
+        }
+        //
+        $this->data['companyStatus'] = $companyGustoDetails['status'];
+        // get the company onboard flow
+        $this->data['flow'] = gustoCall(
+            'getCompanyOnboardFlow',
+            $companyGustoDetails,
+            [
+                'flow_type' => "company_health_insurance",
+                "entity_type" => "Company",
+                "entity_uuid" => $companyGustoDetails['gusto_uuid']
+            ],
+            "POST"
+        )['url'];
+        // set title
+        $this->data['page_title'] = 'Payroll Health Insurance :: ' . (STORE_NAME);
+        // render the page
+        $this->render('v1/sa/payrolls/health_insurance', 'admin_master');
+    }
+
+    /**
      * Manage admins
      */
     public function manageAdmins(int $companyId)
