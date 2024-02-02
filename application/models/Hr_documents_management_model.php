@@ -10478,6 +10478,7 @@ class Hr_documents_management_model extends CI_Model
             "is_completed" => false,
             "is_employer_completed" => false,
             "assigned_at" => "",
+            "assigned_by" => "",
             "signed_at" => "",
             "form_data" => [],
             "employer_json" => [],
@@ -10491,6 +10492,7 @@ class Hr_documents_management_model extends CI_Model
                 company_sid, 
                 user_consent,
                 created_at,
+                assigned_by,
                 user_consent_at,
                 fields_json,
                 employer_json,
@@ -10544,6 +10546,10 @@ class Hr_documents_management_model extends CI_Model
         //
         if ($result['employer_consent'] == 1) {
             $returnArray['employee_section'] = true;
+        }
+        //
+        if($result["assigned_by"]) {
+            $returnArray["assigned_by"] = getUserNameBySID($result["assigned_by"]);
         }
         // set it to revoked
         $returnArray["status"] = "revoked";
@@ -10602,6 +10608,7 @@ class Hr_documents_management_model extends CI_Model
             $insertArray["status"] = 1;
             $insertArray["user_consent"] = 0;
             $insertArray["user_consent_at"] = null;
+            $insertArray["assigned_by"] = getLoggedInPersonId();
             $insertArray["created_at"] = $insertArray["updated_at"]
                 = getSystemDate();
             //
@@ -10615,6 +10622,7 @@ class Hr_documents_management_model extends CI_Model
             $insertArray["status"] = 1;
             $insertArray["user_consent"] = 0;
             $insertArray["user_consent_at"] = null;
+            $insertArray["assigned_by"] = getLoggedInPersonId();
             $insertArray["created_at"] = $insertArray["updated_at"]
                 = getSystemDate();
             //

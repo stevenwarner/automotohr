@@ -31,6 +31,9 @@
                                                 <p>
                                                     <?= formatDateToDB($companyStateForm["assigned_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                                 </p>
+                                                <p>
+                                                    Assigned by: <?= $companyStateForm["assigned_by"];  ?>
+                                                </p>
                                             <?php } else { ?>
                                                 <i class="fa fa-times fa-2x text-danger" aria-hidden="true"></i>
                                             <?php } ?>

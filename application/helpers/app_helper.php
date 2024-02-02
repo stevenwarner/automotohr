@@ -3152,7 +3152,7 @@ if (!function_exists("getEmployeeProfileLink")) {
         $link = 'javascript:;';
         //
         if (isPayrollOrPlus()) {
-            $link = base_url("employee_profile/".$employeeId);
+            $link = base_url("employee_profile/" . $employeeId);
         }
         //
         return $link;
@@ -3165,7 +3165,7 @@ if (!function_exists("getWageFromTime")) {
         $wage = '$0';
         //
         if ($rate > 0 && $time > 0) {
-            $wage = '$'. round((($time / (60 * 60)) * $rate), 2);
+            $wage = '$' . round((($time / (60 * 60)) * $rate), 2);
         }
         //
         return $wage;
@@ -3189,6 +3189,19 @@ if (!function_exists("getTotalWageFromTime")) {
             $total += ($record['double_overtime'] / (60 * 60)) * $record['double_over_time_rate'];
         }
         //
-        return '$'. round($total, 2);
+        return '$' . round($total, 2);
+    }
+}
+
+if (!function_exists("getLoggedInPersonId")) {
+    /**
+     * get the logged in person id
+     */
+    function getLoggedInPersonId()
+    {
+        // get CI instance
+        return get_instance()
+            ->session
+            ->userdata("logged_in")["employer_detail"]["sid"] ?? null;
     }
 }
