@@ -228,7 +228,7 @@ class Users_model extends CI_Model {
     }
 
     function email_user_data($email) {
-        $this->db->select('*');
+        $this->db->select('u.*');
         $this->db->from('users u');
         $this->db->join('users u2', 'u.parent_sid = u2.sid', 'inner');
         $this->db->where('u.email', $email);
