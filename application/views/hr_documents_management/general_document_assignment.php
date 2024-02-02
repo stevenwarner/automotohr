@@ -580,7 +580,7 @@
                         <td class="text-center">
                             <img src="<?= base_url('assets/manage_admin/images'); ?>/${v.is_completed == 1 ? "on" : "off"}.gif" class="jsGeneralDocumentStatus" title="${v.is_completed == 1 ? "Completed" : "Pending"}" />
                             <br />
-                            <span>${v.is_completed == 1 ? moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s') : ''}</span>
+                            <span>${v.is_completed == 1 ? 'Completed on: '+moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s') : ''}</span>
                         </td>
                         <td class="text-center">
                             <label class="control control--checkbox">

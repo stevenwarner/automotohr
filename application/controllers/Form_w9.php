@@ -258,7 +258,7 @@ class Form_w9 extends Public_Controller
                 $data_to_update['active_signature'] = $active_signature;
                 $data_to_update['signature'] = $signature;
                 $data_to_update['user_consent'] = $user_consent;
-                $data_to_update['signature_timestamp'] = date('Y-m-d H:i:s');
+                $data_to_update['signature_timestamp'] = getSystemDate();
                 $data_to_update['signature_email_address'] = $signature_email_address;
                 $data_to_update['signature_bas64_image'] = $signature_bas64_image;
                 $data_to_update['init_signature_bas64_image'] = $initial_base64;

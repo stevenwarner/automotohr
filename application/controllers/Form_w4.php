@@ -237,7 +237,7 @@ class Form_w4 extends Public_Controller
                 $state = $this->input->post('state');
                 $zip = $this->input->post('zip');
                 $marriage_status = $this->input->post('marriage_status');
-                $signature_timestamp = date('Y-m-d H:i:s');
+                $signature_timestamp = getSystemDate();
                 $signature_email_address = $this->input->post('email_address');
                 $signature_base64 = $this->input->post('signature_bas64_image');
                 $initial_base64 = $this->input->post('init_signature_bas64_image');
@@ -275,7 +275,7 @@ class Form_w4 extends Public_Controller
                     $dw_input_5             = $this->input->post('dw_input_5');
 
                     if (!empty($signature_date)) {
-                        $signature_timestamp = DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
+                        $signature_timestamp = DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d') . " " . getSystemDate("H:i:s");
                     }
                 } else {
                     $different_last_name = $this->input->post('different_last_name');

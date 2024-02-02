@@ -88,7 +88,8 @@ $assignIdObj = $confidential_sids;
                                                                     W4 Fillable <?php echo !empty($w4_form) && !$w4_form['status'] && !isset($w4_form_uploaded) ? '<b>(revoked)</b>' : ''; ?>
                                                                     <?php if (!empty($w4_form) && $w4_form['status']) { ?>
                                                                         <?php if ($w4_form['user_consent']) { ?>
-                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="" />
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="" /></br>
+                                                                            Completed on: <?= reset_datetime(array('datetime' => $w4_form['signature_timestamp'], '_this' => $this)); ?>
                                                                         <?php } else { ?>
                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="" />
                                                                         <?php } ?>
@@ -171,7 +172,9 @@ $assignIdObj = $confidential_sids;
                                                                     <?php
                                                                     if (!empty($w9_form) && $w9_form['status']) { ?>
                                                                         <?php if ($w9_form['user_consent']) { ?>
-                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt="">
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>" alt=""></br>
+                                                                            Completed on: <?= reset_datetime(array('datetime' => $w9_form['signature_timestamp'], '_this' => $this)); ?>
+
                                                                         <?php } else { ?>
                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
                                                                         <?php } ?>
@@ -258,7 +261,9 @@ $assignIdObj = $confidential_sids;
                                                                     I9 Fillable <?php echo sizeof($i9_form) > 0 && !$i9_form['status'] ? '<b>(revoked)</b>' : ''; ?>
                                                                     <?php if (sizeof($i9_form) > 0  && $i9_form['status']) { ?>
                                                                         <?php if ($i9_form['user_consent']) { ?>
-                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                            <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>"> <br>
+                                                                            Completed on: <?= reset_datetime(array('datetime' => $i9_form['section1_today_date'], '_this' => $this)); ?>
+
                                                                         <?php } else { ?>
                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                                                     <?php }
@@ -369,7 +374,9 @@ $assignIdObj = $confidential_sids;
                                                                 <tr>
                                                                     <td class="col-lg-2">
                                                                         EEOC FORM
-                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . ($eeo_form_info['status'] == 1 && $eeo_form_info['is_expired'] == 1 ? 'on' : 'off') . '.gif'); ?>">
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . ($eeo_form_info['status'] == 1 && $eeo_form_info['is_expired'] == 1 ? 'on' : 'off') . '.gif'); ?>"></br>
+                                                                        Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
+
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>

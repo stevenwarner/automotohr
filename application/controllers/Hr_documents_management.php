@@ -6917,7 +6917,6 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
 
-
                                 //
                                 if ($v['Title'] == "I9 Fillable") {
                                     if ($v['Status'] == "pending" || $v['Status'] == "completed") {

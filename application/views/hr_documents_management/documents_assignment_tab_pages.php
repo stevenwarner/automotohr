@@ -1558,6 +1558,9 @@ $noActionRequiredDocumentsList = [];
                                                                         if ($w4_form['last_assign_by'] != 0 && $w4_form['last_assign_by'] != '') {
                                                                             echo "<br>Assigned By: " . getUserNameBySID($w4_form['last_assign_by']);
                                                                         }
+                                                                        if ($w4_form['signature_timestamp'] != '') {
+                                                                            echo "<br>Completed on: " . reset_datetime(array('datetime' => $w4_form['signature_timestamp'], '_this' => $this));
+                                                                        }
                                                                         ?>
 
                                                                     </td>
@@ -1584,6 +1587,9 @@ $noActionRequiredDocumentsList = [];
                                                                         if ($w9_form['last_assign_by'] != 0 && $w9_form['last_assign_by'] != '') {
                                                                             echo "<br>Assigned By: " . getUserNameBySID($w9_form['last_assign_by']);
                                                                         }
+                                                                        if ($w9_form['signature_timestamp'] != '') {
+                                                                            echo "<br>Completed on: " . reset_datetime(array('datetime' => $w9_form['signature_timestamp'], '_this' => $this));
+                                                                        }
                                                                         ?>
                                                                     </td>
                                                                     <td class="col-lg-2">
@@ -1609,6 +1615,11 @@ $noActionRequiredDocumentsList = [];
                                                                         if ($i9_form['last_assign_by'] != 0 && $i9_form['last_assign_by'] != '') {
                                                                             echo "<br>Assigned By: " . getUserNameBySID($i9_form['last_assign_by']);
                                                                         }
+
+                                                                        if ( $i9_form['section1_today_date'] != '') {
+                                                                            echo "<br>Completed: " . reset_datetime(array('datetime' => $i9_form['section1_today_date'], '_this' => $this));
+                                                                        }
+
                                                                         ?>
                                                                     </td>
                                                                     <td class="col-lg-2">
