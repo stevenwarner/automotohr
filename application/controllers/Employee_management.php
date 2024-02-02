@@ -1201,6 +1201,8 @@ class Employee_management extends Public_Controller
                 $data['title'] = "Employee / Team Members Profile";
                 $data['employer_sid'] = $security_sid;
                 $data['main_employer_id'] = $security_sid;
+                // synced the details
+                $this->employee_model->syncEmployeeDetailsToProfile($employer_id);
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
                 //
                 if (!empty($data['employer']['full_employment_application'])) {

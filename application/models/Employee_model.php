@@ -2137,4 +2137,170 @@
 
         return $tmp;
     }
+
+    /**
+     * sync the employee profile details
+     */
+    public function syncEmployeeDetailsToProfile(int $employeeId)
+    {
+        // set columns
+        $userColumns = [
+            "first_name",
+            "middle_name",
+            "last_name",
+            "ssn",
+            "dob",
+            "Location_Address",
+            "Location_State",
+            "Location_City",
+            "Location_ZipCode",
+        ];
+        $w4Columns = [
+            "first_name",
+            "middle_name",
+            "last_name",
+            "home_address",
+            "city",
+            "state",
+            "zip",
+            "ss_number",
+        ];
+        $w9Columns = [
+            "w9_address",
+            "w9_city_state_zip",
+            "w9_social_security_number",
+        ];
+        $i9Columns = [
+            "section1_last_name",
+            "section1_first_name",
+            "section1_middle_initial",
+            "section1_address",
+            "section1_city_town",
+            "section1_state",
+            "section1_zip_code",
+            "section1_date_of_birth",
+            "section1_social_security_number",
+        ];
+        // get the employee
+        $record = $this->db
+            ->select($userColumns)
+            ->where("sid", $employeeId)
+            ->get("users")
+            ->row_array();
+        // set the default flag
+        $missing = false;
+        // check for state
+        if (!$record["Location_State"]) {
+            $missing = true;
+        }
+        //
+        $newData = $record;
+        //
+        if ($missing) {
+            // get the w4 form fields
+            $w4 = $this->getUserW4Form($employeeId, "employee", $w4Columns);
+            // get the w9
+            $w9 = $this->getUserW9Form($employeeId, "employee", $w9Columns);
+            // get the i9
+            $i9 = $this->getUserI9Form($employeeId, "employee", $i9Columns);
+            // extract from w4
+            if ($w4) {
+                $newData["first_name"] = !$newData["first_name"] && $w4["first_name"] ? $w4["first_name"] : $newData["first_name"];
+                $newData["middle_name"] = !$newData["middle_name"] && $w4["middle_name"] ? $w4["middle_name"] : $newData["middle_name"];
+                $newData["last_name"] = !$newData["last_name"] && $w4["last_name"] ? $w4["last_name"] : $newData["last_name"];
+                $newData["ssn"] = !$newData["ssn"] && $w4["ss_number"] ? $w4["ss_number"] : $newData["ssn"];
+                $newData["Location_Address"] = !$newData["Location_Address"] && $w4["home_address"] ? $w4["home_address"] : $newData["Location_Address"];
+                $newData["Location_City"] = !$newData["Location_City"] && $w4["city"] ? $w4["city"] : $newData["Location_City"];
+                $newData["Location_State"] = !$newData["Location_State"] && $w4["state"] ? getStateColumn(["state_name" => $w4["state"]], "sid") : $newData["Location_State"];
+                $newData["Location_ZipCode"] = !$newData["Location_ZipCode"] && $w4["zip"] ? $w4["zip"] : $newData["Location_ZipCode"];
+            }
+            // extract from w9
+            if ($w9) {
+                $newData["Location_Address"] = !$newData["Location_Address"] && $w9["w9_address"] ? trim($w9["w9_address"]) : $newData["Location_Address"];
+                //
+                $cityStateZip = explode(",", $w9["w9_city_state_zip"]);
+                $newData["Location_City"] = !$newData["Location_City"] && $cityStateZip[0] ? trim($cityStateZip[0]) : $newData["Location_City"];
+                $newData["Location_State"] = !$newData["Location_State"] && $cityStateZip[1] ? trim($cityStateZip[1]) : $newData["Location_State"];
+                $newData["Location_ZipCode"] = !$newData["Location_ZipCode"] && $cityStateZip[2] ? trim($cityStateZip[2]) : $newData["Location_ZipCode"];
+                $newData["ssn"] = !$newData["ssn"] && $w9["w9_social_security_number"] ? trim($w9["w9_social_security_number"]) : $newData["ssn"];
+            }
+            // extract from i9
+            if ($i9) {
+                $newData["first_name"] = !$newData["first_name"] && $i9["section1_first_name"] ? $i9["section1_first_name"] : $newData["first_name"];
+                $newData["middle_name"] = !$newData["middle_name"] && $i9["section1_middle_initial"] ? $i9["section1_middle_initial"] : $newData["middle_name"];
+                $newData["last_name"] = !$newData["last_name"] && $i9["section1_last_name"] ? $i9["section1_last_name"] : $newData["last_name"];
+                $newData["Location_Address"] = !$newData["Location_Address"] && $i9["section1_address"] ? $i9["section1_address"] : $newData["Location_Address"];
+                $newData["Location_State"] = !$newData["Location_State"] && $i9["section1_state"] ? getStateColumn(["state_code" => $i9["section1_state"]], "sid") : $newData["Location_State"];
+                $newData["Location_City"] = !$newData["Location_City"] && $i9["section1_city_town"] ? $i9["section1_city_town"] : $newData["Location_City"];
+                $newData["Location_ZipCode"] = !$newData["Location_ZipCode"] && $i9["section1_zip_code"] ? $i9["section1_zip_code"] : $newData["Location_ZipCode"];
+                $newData["dob"] = !$newData["dob"] && $i9["section1_date_of_birth"] && $i9["section1_date_of_birth"] != "0000-00-00 00:00:00" ? formatDateToDB($i9["section1_date_of_birth"], DB_DATE_WITH_TIME, DB_DATE) : $newData["dob"];
+                $newData["ssn"] = !$newData["ssn"] && $i9["section1_social_security_number"] ? $i9["section1_social_security_number"] : $newData["ssn"];
+            }
+        }
+        //
+        updateUserById(
+            $newData,
+            $employeeId
+        );
+    }
+
+    /**
+     * get the user w4 form
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param array $fields
+     * @return array
+     */
+    public function getUserW4Form(int $userId, string $userType, array $fields = ["*"]): array
+    {
+        return $this->db
+            ->select($fields)
+            ->where([
+                "user_type" => $userType,
+                "employer_sid" => $userId
+            ])
+            ->get("form_w4_original")
+            ->row_array();
+    }
+
+    /**
+     * get the user W9 form
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param array $fields
+     * @return array
+     */
+    public function getUserW9Form(int $userId, string $userType, array $fields = ["*"]): array
+    {
+        return $this->db
+            ->select($fields)
+            ->where([
+                "user_type" => $userType,
+                "user_sid" => $userId
+            ])
+            ->get("applicant_w9form")
+            ->row_array();
+    }
+
+    /**
+     * get the user I9 form
+     *
+     * @param int $userId
+     * @param string $userType
+     * @param array $fields
+     * @return array
+     */
+    public function getUserI9Form(int $userId, string $userType, array $fields = ["*"]): array
+    {
+        return $this->db
+            ->select($fields)
+            ->where([
+                "user_type" => $userType,
+                "user_sid" => $userId
+            ])
+            ->get("applicant_i9form")
+            ->row_array();
+    }
 }
