@@ -2224,3 +2224,9 @@ $route['timeoff/exporttocsv/(:any)'] = 'Time_off/exportTimeoffToCSV/$1';
 //
 $route["shifts/my"]["get"] = "v1/Shifts/Employee_shifts/my";
 $route["shifts/my/subordinates"]["get"] = "v1/Shifts/Subordinate_shifts/loggedInPersonSubOrdinateShifts";
+
+//
+$route["settings/shifts/sendemailnotification"]["post"] = "Settings/sendOpenShiftNotificationProcess";
+$route['pickshift/(:any)'] = 'onboarding/pickShift/$1';
+$route["settings/shifts/sendupcomingshiftsnotification"]["post"] = "Settings/sendUpcomingShiftNotificationProcess";
+

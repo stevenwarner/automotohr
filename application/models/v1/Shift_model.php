@@ -1206,7 +1206,7 @@ class Shift_model extends CI_Model
         );
         //
         if ($records) {
-            foreach($records as $index => $v0) {
+            foreach ($records as $index => $v0) {
                 $records[$index]["breaks"] = convertToList(
                     json_decode(
                         $v0["breaks_json"],
@@ -1218,5 +1218,43 @@ class Shift_model extends CI_Model
         }
         //
         return $records;
+    }
+
+    //
+    public function checkPickedShift(
+        int $shiftId
+    ) {
+        return $this->db
+            ->select("sid")
+            ->where("sid", $shiftId)
+            ->where("picked", '0')
+            ->get("cl_shifts")
+            ->row_array();
+    }
+
+
+    //
+    public function savePickedShift(
+        $shiftId,
+        $data
+    ) {
+        $this->db
+            ->where("sid", $shiftId)
+            ->update("cl_shifts", $data);
+    }
+
+    //
+    public function getSingleByDate(
+        $companyId,
+        $employeeId,
+        $shiftDate
+    ){
+        return $this->db
+
+            ->where("company_sid", $companyId)
+            ->where("employee_sid", $employeeId)
+            ->where("shift_date", $shiftDate)
+
+            ->get("cl_shifts")->num_rows();
     }
 }

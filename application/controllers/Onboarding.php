@@ -233,7 +233,7 @@ class Onboarding extends CI_Controller
                     //
                     if ($assigned_document['document_sid'] == 0) {
                         if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
-                            if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            if ($assigned_document['pay_roll_catgory'] == 0) {
                                 $assigned_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_documents[] = $assigned_document;
@@ -244,7 +244,7 @@ class Onboarding extends CI_Controller
                                     unset($assigned_documents[$key]);
                                 }
                             }
-                        }    
+                        }
                     } else {
                         //
                         $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -267,7 +267,7 @@ class Onboarding extends CI_Controller
                             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                                 $document_body = $assigned_document['document_description'];
                                 $magic_codes = array('{{signature}}', '{{inital}}');
-    
+
                                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                     $is_magic_tag_exist = 1;
                                 }
@@ -337,12 +337,12 @@ class Onboarding extends CI_Controller
                                                 $is_document_completed = 0;
                                             }
                                         }
-    
+
                                         if ($is_document_completed > 0) {
-    
+
                                             if ($assigned_document['is_confidential'] == 0) {
                                                 if ($assigned_document['pay_roll_catgory'] == 0) {
-    
+
                                                     $signed_document_sids[] = $assigned_document['document_sid'];
                                                     $signed_documents[] = $assigned_document;
                                                     unset($assigned_documents[$key]);
@@ -359,7 +359,7 @@ class Onboarding extends CI_Controller
                                                 $uncompleted_payroll_documents[] = $assigned_document;
                                                 unset($assigned_documents[$key]);
                                             }
-    
+
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                         }
                                     } else {
@@ -383,7 +383,7 @@ class Onboarding extends CI_Controller
                                             }
                                             //
                                             $assigned_sids[] = $assigned_document['document_sid'];
-                                        } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_documents[] = $assigned_document;
@@ -394,7 +394,7 @@ class Onboarding extends CI_Controller
                                                 unset($assigned_documents[$key]);
                                             }
                                         }
-                                    }    
+                                    }
                                 } else {
                                     $revoked_sids[] = $assigned_document['document_sid'];
                                 }
@@ -402,7 +402,7 @@ class Onboarding extends CI_Controller
                         } else if ($assigned_document['archive'] == 1) {
                             unset($assigned_documents[$key]);
                         }
-                    }    
+                    }
                 }
                 //
                 $data['history_doc_sids'] = $history_doc_sids;
@@ -8945,7 +8945,7 @@ class Onboarding extends CI_Controller
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
                         //$view = $this->load->view('form_w4/form_w4', $data, TRUE);
-                        $view = $this->load->view('form_w4/download_w4_2023', $data,TRUE);
+                        $view = $this->load->view('form_w4/download_w4_2023', $data, TRUE);
                         $this->pdfgenerator->generate($view, 'Form W4', true, 'A4');
                     }
 
@@ -9163,7 +9163,7 @@ class Onboarding extends CI_Controller
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
             if (!empty($onboarding_details)) {
-                redirect('forms/i9/user/section/applicant/'.$onboarding_details['applicant_sid'].'/applicant_onboarding');
+                redirect('forms/i9/user/section/applicant/' . $onboarding_details['applicant_sid'] . '/applicant_onboarding');
                 $data['onboarding_details'] = $onboarding_details;
                 $applicant_info = $onboarding_details['applicant_info'];
                 $data['applicant'] = $applicant_info;
@@ -9728,9 +9728,8 @@ class Onboarding extends CI_Controller
 
             $previous_form = $this->onboarding_model->get_original_w4_form('applicant', $applicant_sid);
             $data['pre_form'] = $previous_form;
-           // $this->load->view('form_w4/print_w4_form', $data);
+            // $this->load->view('form_w4/print_w4_form', $data);
             $this->load->view('form_w4/print_w4_2023', $data);
-
         } else {
             redirect('login', "refresh");
         }
@@ -9756,7 +9755,7 @@ class Onboarding extends CI_Controller
         }
         //
         if ($d[0] == "I9") {
-            redirect('forms/i9/user/section/applicant/'.$d[1].'/public_link');
+            redirect('forms/i9/user/section/applicant/' . $d[1] . '/public_link');
         }
         //
         $document = [];
@@ -11145,7 +11144,38 @@ class Onboarding extends CI_Controller
                     ]
                 );
         }
+    }
 
-       
+
+    //
+    function pickShift($token)
+    {
+        // Load encryptipn library
+        $this->load->library('encryption', 'encrypt');
+        // Clean token
+        $redirect_token = $token;
+        $token = str_replace(['$eb$eb$1', '$eb$eb$2'], ['/', '+'], $token);
+        // Decode and convert to array
+        $d = explode('/', $this->encrypt->decode($token));
+
+        $shiftId = $d[0];
+        $employeeId = $d[1];
+
+        //Check if Shift is already picked
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $employeeIds = array_column($data["employees"], "userId");
+        // get the shifts
+        $shiftData = $this->shift_model->checkPickedShift($shiftId);
+        if (!empty($shiftData)) {
+            $data["updated_at"] = getSystemDate();
+            $data["picked"] = '1';
+            $data["employee_sid"] = $employeeId;
+            $shiftData = $this->shift_model->savePickedShift($shiftId, $data);
+            $this->session->set_flashdata('message', '<strong> You Pick This Shift Sucessfully!</strong>');
+        } else {
+            $this->session->set_flashdata('message', '<strong> This Shift is  Not Available!</strong>');
+        }
+        redirect('login', 'refresh');
     }
 }

@@ -81,6 +81,15 @@ if ($filter["mode"] === "month") {
                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                             Delete
                                         </button>
+                                        <?php if ($employees) {
+                                            $employeeIds = implode(',',array_column($employees, 'userId'));
+                                        ?>
+                                            <button class="btn btn-orange jsUpcomingShiftNotification" data-employeeids="<?php echo $employeeIds; ?>">
+                                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                                Send Up coming Shifts Notification
+                                            </button>
+                                        <?php } ?>
+
                                     </div>
                                     <div class="col-sm-4 text-center">
 
@@ -187,6 +196,7 @@ if ($filter["mode"] === "month") {
                                                     </div>
                                                     <!-- employee boxes -->
                                                     <?php if ($employees) {
+
                                                         foreach ($employees as $employee) {
                                                             $employeeShiftRow = $shifts[$employee["userId"]];
                                                     ?>

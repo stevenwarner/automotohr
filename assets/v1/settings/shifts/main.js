@@ -1253,4 +1253,88 @@ $(function manageShifts() {
 		//
 		return html;
 	}
+
+
+
+
+	//
+	$(document).on("click", ".jsOpenShiftNotification", function (event) {
+		event.preventDefault();
+		//
+		const shiftId = $(this).data("id");
+		let employeeJobTitle = $(this).data("jobtitle");
+		let employeeId = $(this).data("employeeid");
+		let shiftDate = $(this).data("shiftdate");
+		let startTime = $(this).data("starttime");
+		let endTime = $(this).data("endtime");
+
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to send email notification?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				formObj.append("id", shiftId);
+				formObj.append("employeeJobTitle", employeeJobTitle);
+				formObj.append("employeeId", employeeId);
+				formObj.append("shiftDate", shiftDate);
+				formObj.append("startTime", startTime);
+				formObj.append("endTime", endTime);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/sendemailnotification",
+					function (resp) {
+						// show the message
+						_success(resp, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+
+	//
+	$(document).on("click", ".jsUpcomingShiftNotification", function (event) {
+		event.preventDefault();
+		//
+		let employeeIds = $(this).data("employeeids");
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to send email notification?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				formObj.append("employeeIds", employeeIds);
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/sendupcomingshiftsnotification",
+					function (resp) {
+						// show the message
+						_success(resp, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+
 });

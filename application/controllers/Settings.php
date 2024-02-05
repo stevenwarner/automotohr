@@ -691,10 +691,10 @@ class Settings extends Public_Controller
                 //Emergency Contact
                 $portal_data['emergency_contact_phone_number_status'] = $this->input->post('emergency_contact_phone_number_status')  ? 1 : 0;
                 $portal_data['emergency_contact_email_status'] = $this->input->post('emergency_contact_email_status')  ? 1 : 0;
-                
+
                 $portal_data['scheduling_email_notification'] = $this->input->post('scheduling_email_notification')  ? 1 : 0;
 
-               
+
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');
                 redirect("my_settings", "location");
@@ -4196,7 +4196,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", true);
+        ], "public/v1/shifts/", "main", false);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -4894,6 +4894,7 @@ class Settings extends Public_Controller
         // get the records
         $data["jobSites"] = $this->job_sites_model
             ->get($session["company_detail"]["sid"]);
+        $data['company_sid'] = $session["company_detail"]["sid"];
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/shifts/partials/edit_single_shift", $data, true),
@@ -5678,5 +5679,92 @@ class Settings extends Public_Controller
         $this->load->view('main/header_2022', $data);
         $this->load->view('v1/settings/shifts/subordinate_listing');
         $this->load->view('main/footer');
+    }
+
+
+
+    //
+    public function sendOpenShiftNotificationProcess()
+    {
+        $session = checkAndGetSession();
+        $companyId = $session["company_detail"]["sid"];
+        $companyName = $session["company_detail"]["CompanyName"];
+
+
+        $jobTitle = $this->input->post('employeeJobTitle', true);
+        $shiftId = $this->input->post('id', true);
+        $employeeId = $this->input->post('employeeId', true);
+        $shiftDate = $this->input->post('shiftDate', true);
+        $startTime = $this->input->post('startTime', true);
+        $endTime = $this->input->post('endTime', true);
+
+        $employeesList = getEmployeesWithSameJobTitle($companyId, $jobTitle, $employeeId);
+
+        $this->load->library('encryption', 'encrypt');
+        $this->load->model("v1/Shift_model", "shift_model");
+
+
+        if (!empty($employeesList)) {
+            foreach ($employeesList as $key => $value) {
+
+                $shiftcount = $this->shift_model->getSingleByDate(
+                    $companyId,
+                    $value['sid'],
+                    $shiftDate
+                );
+
+                if ($shiftcount > 0) {
+                    unset($employeesList[$key]);
+                }
+
+                $employeesList[$key]['company_name'] = $companyName;
+                $employeesList[$key]['shift_date'] = formatDateToDB($shiftDate, 'Y-m-d', 'M d Y, D');
+                $employeesList[$key]['shiftId'] = $shiftId;
+                $employeesList[$key]['shift_start_time'] = $startTime;
+                $employeesList[$key]['shift_end_time'] = $endTime;
+
+                $encryptedKey = $this->encrypt->encode($shiftId . '/' . $value['sid']);
+                $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
+                $employeesList[$key]['link'] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('pickshift/' . ($encryptedKey) . '')) . '">Pick Shift</a>';
+            }
+        }
+
+        if (!empty($employeesList)) {
+            foreach ($employeesList as $key => $value) {
+                log_and_send_templated_email(
+                    OPEN_SHIFT_REMINDER_EMAIL,
+                    $value["email"],
+                    $value,
+                    message_header_footer_domain(
+                        $value["parent_sid"],
+                        $value["company_name"]
+                    )
+                );
+            }
+        }
+
+        //
+        echo "Notification sent sucessfully";
+    }
+
+
+    //
+    public function sendUpcomingShiftNotificationProcess()
+    {
+        $session = checkAndGetSession();
+        $companyId = $session["company_detail"]["sid"];
+        $employeeIds = $this->input->post('employeeIds', true);
+
+        $employeeIds = explode(',', $employeeIds);
+        $this->load->model("v1/Shift_notification_model", "shift_notification_model");
+        //
+        $this->shift_notification_model
+            ->sendEmployeesNotificationsWithUpcomingShifts(
+                $employeeIds,
+                $companyId
+
+            );
+        //
+        echo "Notification sent sucessfully";
     }
 }

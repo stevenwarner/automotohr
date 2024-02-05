@@ -3152,9 +3152,43 @@ if (!function_exists("getEmployeeProfileLink")) {
         $link = 'javascript:;';
         //
         if (isPayrollOrPlus()) {
-            $link = base_url("employee_profile/".$employeeId);
+            $link = base_url("employee_profile/" . $employeeId);
         }
         //
         return $link;
     }
+}
+
+
+//
+function checkSchedulingEmailNotificationEnabled(int $companyId)
+{
+    $CI = &get_instance();
+    //
+    $CI->db->where('user_sid', $companyId);
+    $CI->db->where('scheduling_email_notification', 1);
+    $CI->db->where('status', 1);
+    $resultData = $CI->db->get('portal_employer');
+    if ($resultData->num_rows() > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//
+
+//
+function getEmployeesWithSameJobTitle($companyId, $jobTitle, $employeeId)
+{
+    $CI = &get_instance();
+    //
+    $employeesList = $CI->db->select('sid,first_name, last_name, email, parent_sid')
+        ->where('parent_sid', $companyId)
+        ->where("LOWER(job_title) = ", strtolower($jobTitle))
+        ->where('sid!=', $employeeId)
+        ->get('users')
+        ->result_array();
+
+    return $employeesList;
 }
