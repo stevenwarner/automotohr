@@ -1366,6 +1366,45 @@ ul.select2-selection__rendered li{
             $('#name_' + val).html('No file selected');
         }
     }
+
+
+//
+
+function check_video_file(val) {
+        var fileName = $("#" + val).val();
+        if (fileName.length > 0) {
+            $('#name_' + val).html(fileName.substring(0, 45));
+            var ext = fileName.split('.').pop();
+            if (val == 'video_upload') {
+                if (ext != "mp4" && ext != "m4a" && ext != "m4v" && ext != "f4v" && ext != "f4a" && ext != "m4b" && ext != "m4r" && ext != "f4b" && ext != "mov") {
+                    $("#" + val).val(null);
+                    alertify.error("Please select a valid video format.");
+                    $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
+                    return false;
+                } else {
+                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
+                    if (video_size_limit < file_size) {
+                        $("#" + val).val(null);
+                        alertify.error('<?php echo ERROR_UPLOAD_VIDEO_SIZE; ?>');
+                        $('#name_' + val).html('');
+                        return false;
+                    } else {
+                        var selected_file = fileName;
+                        var original_selected_file = selected_file.substring(selected_file.lastIndexOf('\\') + 1, selected_file.length);
+                        $('#name_' + val).html(original_selected_file);
+                        return true;
+                    }
+                }
+            }
+        } else {
+            $('#name_' + val).html('No video selected');
+            alertify.error("No video selected");
+            $('#name_' + val).html('<p class="red">Please select video</p>');
+        }
+    }
+
+
     //
     $(document).ready(function(){
         $('.jsSelect2').select2({ closeOnSelect: false});

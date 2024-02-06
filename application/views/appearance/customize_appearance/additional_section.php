@@ -63,10 +63,13 @@
                                         </select>
                                     </div>
                                 </li>
+
+
+
                                 <?php $video_url = isset($box['video']) && !empty($box['video']) ? 'https://www.youtube.com/embed/' . $box['video'] : ''; ?>
                                 <?php if(!empty($video_url)) { ?>
                                 <li class="form-col-100 autoheight">
-                                    <h2>Video</h2>
+                                    <h2>Youtube Video</h2>
                                     <div class="well well-sm">
                                         <div class="embed-responsive embed-responsive-16by9">
                                             <iframe class="embed-responsive-item" src="<?php echo $video_url; ?>"></iframe>
@@ -81,18 +84,90 @@
                                     <?php echo form_input('video', set_value('video', $video_url), 'class="invoice-fields video-url"'); ?>
                                     <?php echo form_error('video'); ?>
                                 </li>
-                                <li class="form-col-50-left">
+
+   
+                                <?php $vimeo_video_url = isset($box['vimeo_video']) && !empty($box['vimeo_video']) ? 'https://player.vimeo.com/video/' . $box['vimeo_video'] : ''; ?>
+                                <?php if(!empty($vimeo_video_url)) { ?>
+                                <li class="form-col-100 autoheight">
+                                    <h2>Vimeo Video</h2>
+                                    <div class="well well-sm">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <iframe id="vimeo_player" src="<?php echo $vimeo_video_url; ?>?title=0&byline=0&portrait=0&autoplay=0&loop=0&muted=0&controls=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </li>
+                                <?php } ?>
+
+                                <li class="form-col-100">
+                                    <label>Vimeo Video URL</label>
+                                    <?php $vimeo_video_url = isset($box['vimeo_video']) && !empty($box['vimeo_video']) ? 'https://vimeo.com/' . $box['vimeo_video'] : ''; ?>
+                                    <?php echo form_input('vimeo_video', set_value('vimeo_video', $vimeo_video_url), 'class="invoice-fields video-url"'); ?>
+                                    <?php echo form_error('vimeo_video'); ?>
+                                </li>
+
+
+
+
+                                <?php $uploaded_video_url = isset($box['uploaded_video']) && !empty($box['uploaded_video']) ? 'https://player.vimeo.com/video/' . $box['uploaded_video'] : ''; ?>
+                                <?php if(!empty($vimeo_video_url)) { ?>
+                                <li class="form-col-100 autoheight">
+                                    <h2>Uploaded Video</h2>
+                                    <div class="well well-sm">
+                                        <div class="embed-responsive embed-responsive-16by9">
+                                            <iframe id="vimeo_player" src="<?php echo $vimeo_video_url; ?>?title=0&byline=0&portrait=0&autoplay=0&loop=0&muted=0&controls=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                    <br />
+                                </li>
+                                <?php } ?>
+
+                                <li class="form-col-100">
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="up_video_container">
+                                        <label for="uploaded_video_section_02">Upload Video <span class="hr-required">*</span></label>
+                                        <div class="upload-file invoice-fields">
+                                            <span class="selected-file" id="name_video_upload"></span>
+                                            <input type="file" name="uploaded_video_section_02" id="uploaded_video_section_02" onchange="check_video_file('uploaded_video_section_02');">
+                                            <a href="javascript:;">Choose Video</a>
+                                        </div>
+                                    </div>
+                                </li>
+
+
+
+
+
+                                <li class="form-col-60-left">
                                     <label>Show Image/Video</label>
                                     <div class="hr-box-body hr-innerpadding">
                                         <div class="row">
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                 <label class="control control--radio">
-                                                    Video
+                                                Youtube Video
                                                     <input type="radio" name="show_video_or_image" id="show_video"  value="video" <?php echo $box['show_video_or_image'] == 'video' ? 'checked="checked"' : '';?> >
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </div>
-                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+
+                                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                                                <label class="control control--radio">
+                                                Vimeo Video
+                                                    <input type="radio" name="show_video_or_image" id="show_vimeo_video"  value="vimeo_video" <?php echo $box['show_video_or_image'] == 'vimeo_video' ? 'checked="checked"' : '';?> >
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+
+                                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                                                <label class="control control--radio">
+                                                Uploaded Video
+                                                    <input type="radio" name="show_video_or_image" id="show_uploaded_video"  value="uploaded_video" <?php echo $box['show_video_or_image'] == 'uploaded_video' ? 'checked="checked"' : '';?> >
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+
+
+                                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                                 <label class="control control--radio">
                                                     Image
                                                     <input type="radio" name="show_video_or_image" id="show_image"  value="image" <?php echo $box['show_video_or_image'] == 'image' ? 'checked="checked"' : '';?> >

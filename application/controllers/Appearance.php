@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Appearance extends Public_Controller {
-    public function __construct() {
+class Appearance extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('appearance_model');
         $this->load->model('customize_appearance_model');
@@ -11,7 +13,8 @@ class Appearance extends Public_Controller {
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
 
-    public function index() {
+    public function index()
+    {
         header("X-XSS-Protection: 0");
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -84,7 +87,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function enterprise_theme_activation() {
+    public function enterprise_theme_activation()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $data['employer_sid'] = $security_sid = $data['session']['employer_detail']['sid'];
@@ -109,9 +113,10 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function customize_appearance($theme_id = 0) {
+    public function customize_appearance($theme_id = 0)
+    {
         header("X-XSS-Protection: 0");
-          if ($this->session->userdata('logged_in')) {
+        if ($this->session->userdata('logged_in')) {
             if ($theme_id == 0) { // theme not found - redirect to appreance
                 $this->session->set_flashdata('message', '<b>Error:</b> Theme not found!');
                 redirect('appearance', 'refresh');
@@ -128,12 +133,12 @@ class Appearance extends Public_Controller {
             $data['job_fair_configuration'] = $job_fair_configuration;
             $data['theme_id'] = $theme_id;
             $job_fair_multiple_forms = array();
-            
+
             if ($job_fair_configuration == 1) {
                 $job_fair_multiple_forms = $this->appearance_model->get_all_job_fair_forms($company_id); //get default form data from main table and custom form data from secondary table
             }
 
-            $data['job_fair_data'] = array('title'=>'N/A');
+            $data['job_fair_data'] = array('title' => 'N/A');
             $data['job_fair_multiple_forms'] = $job_fair_multiple_forms;
             $jobs_detail_page_banner = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'jobs_detail', 'jobs_detail_page_banner');
 
@@ -143,7 +148,7 @@ class Appearance extends Public_Controller {
                 $sid = $this->input->post('sid');
                 $job_fair_homepage_page_url = !empty($this->input->post('job_fair_homepage_page_url')) ? implode(',', $this->input->post('job_fair_homepage_page_url')) : '';
                 $theme4_enable_job_fair_homepage = 0;
-                
+
                 if (isset($_POST['job_fair'])) {
                     $theme4_enable_job_fair_homepage = 1;
                 }
@@ -154,7 +159,7 @@ class Appearance extends Public_Controller {
                     $title_color = $_POST['title_color'];
                     $f_bgcolor = $_POST['f_bgcolor'];
                     $font_color = $this->input->post('font_color');
-                    
+
                     if (isset($_FILES['pictures']) && $_FILES['pictures']['name'] != '') {
                         $file = explode(".", $_FILES['pictures']['name']);
                         $file_name = str_replace(" ", "-", $file[0]);
@@ -230,15 +235,15 @@ class Appearance extends Public_Controller {
                 $enableHeaderBG = $postData['enable_header_bg'];
                 $enableHeaderOverlay = $postData['enable_header_overlay'];
 
-                               
+
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'site_settings', [
-                    'enable_header_bg' => $enableHeaderBG ? 1: 0,
-                    'enable_header_overlay' => $enableHeaderOverlay ? 1: 0,
+                    'enable_header_bg' => $enableHeaderBG ? 1 : 0,
+                    'enable_header_overlay' => $enableHeaderOverlay ? 1 : 0,
                 ]);
                 $this->session->set_flashdata('message', '<b>Success:</b> You have successfully updated the site settings!');
                 redirect('customize_appearance/' . $theme_id, 'refresh');
             }
-            
+
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_01') {
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
@@ -254,14 +259,14 @@ class Appearance extends Public_Controller {
 
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
                 $update_section_meta = $this->generate_page_section_meta_array('', '', $title, $tag_line, '', 0, $show_img_vdo, '', $do_capitalize);
-                             
+
                 $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
                 // Added on: 10-03-2019
                 // Overwrite tagline
-                if($tag_line == '') $dataToStore['tag_line'] = NULL;
-                if($title == '') $dataToStore['title'] = '';
+                if ($tag_line == '') $dataToStore['tag_line'] = NULL;
+                if ($title == '') $dataToStore['title'] = '';
                 $dataToStore['do_capitalize'] = $do_capitalize == 'on' ? 1 : 0;
-               
+
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
             }
 
@@ -277,7 +282,68 @@ class Appearance extends Public_Controller {
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
             }
 
+
+            if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_section_01_vimeo_video') {
+                $theme_name = $_POST["theme_name"];
+                $page_name = $_POST["page_name"];
+                $video = $_POST['vimeo_video_section_01'];
+                $vimeo_video = explode('vimeo.com/', $video, 2);
+                $vimeo_video_id = $vimeo_video[1];
+                $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
+                $update_section_meta = $this->generate_page_section_meta_array('', '', '', '', '', 0, '', '', '', $vimeo_video_id);
+
+                $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
+
+                $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
+            }
+
+
+            if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_section_01_uploaded_video') {
+                $theme_name = $_POST["theme_name"];
+                $page_name = $_POST["page_name"];
+
+                if (!empty($_FILES) && isset($_FILES['uploaded_video_section_01']) && $_FILES['uploaded_video_section_01']['size'] > 0) {
+
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["uploaded_video_section_01"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["uploaded_video_section_01"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["uploaded_video_section_01"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        redirect('customize_appearance/' . $theme_id, 'refresh');
+                    }
+
+                    $video = $file_name;
+                }
+
+
+
+                //_e($video, true, true);
+
+                // $vimeo_video = explode('vimeo.com/', $video, 2);
+                // $vimeo_video_id = $vimeo_video[1];
+                $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
+                $update_section_meta = $this->generate_page_section_meta_array('', '', '', '', '', 0, '', '', '', '', $video);
+
+                $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
+
+                $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
+            }
+
+
+
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_xx') {
+
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
                 $title = $_POST['title'];
@@ -288,13 +354,15 @@ class Appearance extends Public_Controller {
                 $section_id = $_POST['section_id'];
                 $status = 1;
 
+                $vimeo_video = $_POST['vimeo_video'];
+
                 if (isset($_POST['status'])) {
                     $status = $_POST['status'];
                 }
 
                 $image = '';
                 $aws_file_name = upload_file_to_aws('image', $company_id, 'theme_4_section_image', '', AWS_S3_BUCKET_NAME);
-                
+
                 if (!empty($aws_file_name) && $aws_file_name != 'error') {
                     $image = $aws_file_name;
                 }
@@ -306,9 +374,16 @@ class Appearance extends Public_Controller {
                 if (isset($url_prams['v'])) {
                     $video_id = $url_prams['v'];
                 }
+                //
+                $vimeo_video_id = '';
+                if (!empty($vimeo_video)) {
+                    $vimeo_video = explode('vimeo.com/', $vimeo_video, 2);
+                    $vimeo_video_id = $vimeo_video[1];
+               }
+
 
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, $section_id);
-                $update_section_meta = $this->generate_page_section_meta_array($image, $video_id, $title, '', $content, $status, $show_video_or_image, $column_type);
+                $update_section_meta = $this->generate_page_section_meta_array($image, $video_id, $title, '', $content, $status, $show_video_or_image, $column_type,'',$vimeo_video_id);
                 //$data_to_store = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
 
                 $data_to_store = array();
@@ -317,12 +392,12 @@ class Appearance extends Public_Controller {
                 }
 
                 foreach ($update_section_meta as $key => $value) {
-                    if(!in_array($key, ['image', 'video'])) {
+                    if (!in_array($key, ['image', 'video'])) {
                         $data_to_store[$key] = $update_section_meta[$key];
                         // if (array_key_exists($key, $data_to_store)) {
                         // }
                     } else {
-                        if(isset($update_section_meta[$key]) && !empty($update_section_meta[$key])){
+                        if (isset($update_section_meta[$key]) && !empty($update_section_meta[$key])) {
                             $data_to_store[$key] = $update_section_meta[$key];
                         }
                     }
@@ -546,7 +621,7 @@ class Appearance extends Public_Controller {
                 if (isset($_POST['sid'])) {
                     $record_id = $_POST['sid'];
                 }
-                
+
                 $job_fair_page_url = !empty($_POST['job_fair_page_url']) ? implode(',', $_POST['job_fair_page_url']) : '';
                 $this->themes_pages_model->Save($sid, $company_id, $theme_name, $page_name, $page_title, $page_content, $page_status, $job_opportunities, $job_opportunities_text, $job_fair, $job_fair_page_url);
             }
@@ -628,15 +703,15 @@ class Appearance extends Public_Controller {
                     $aws->putToBucket($pictures, 'images/' . $pictures, AWS_S3_BUCKET_NAME);
                     $jobsPageBannerImage['jobs_detail_page_banner'] = $pictures;
                 }
-                if(isset($_POST['job_detail_banner_type'])){
-                    if(empty($jobsPageBannerImage) && isset($jobs_detail_page_banner) && !empty($jobs_detail_page_banner['jobs_detail_page_banner'])){
+                if (isset($_POST['job_detail_banner_type'])) {
+                    if (empty($jobsPageBannerImage) && isset($jobs_detail_page_banner) && !empty($jobs_detail_page_banner['jobs_detail_page_banner'])) {
                         $jobsPageBannerImage['jobs_detail_page_banner'] = $jobs_detail_page_banner['jobs_detail_page_banner'];
                     }
                     $jobsPageBannerImage['banner_type'] = $_POST['job_detail_banner_type'];
                     $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'jobs_detail_page_banner', $jobsPageBannerImage);
                     $this->session->set_flashdata('message', '<b>Success:</b> Job Detail Banner Updated Successfully');
                 }
-                redirect(current_url(),'refresh');
+                redirect(current_url(), 'refresh');
             }
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_home_page_youtube_video') {
@@ -728,7 +803,7 @@ class Appearance extends Public_Controller {
                 $status = !empty($status) && !is_null($status) ? $status : 0;
                 $image = '';
                 $aws_file_name = upload_file_to_aws('image', $company_id, 'theme_4_section_image', '', AWS_S3_BUCKET_NAME);
-                
+
                 if (!empty($aws_file_name) && $aws_file_name != 'error') {
                     $image = $aws_file_name;
                 }
@@ -762,24 +837,24 @@ class Appearance extends Public_Controller {
                 $this->customize_appearance_model->update_additional_sections($box_sid, $data_to_store);
                 redirect('customize_appearance/' . $theme_id, 'refresh');
             }
-            
+
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_home_job_opportunity') {
                 $theme4_enable_home_job_opportunity = $_POST['job_button_customization'];
                 $theme4_home_job_opportunity_text = $_POST['job_opportunities_text'];
                 $theme4_enable_job_fair_homepage = 0;
                 $job_fair_homepage_page_url = !empty($_POST['job_fair_homepage_page_url']) ? implode(',', $_POST['job_fair_homepage_page_url']) : '';
-                
+
                 if (isset($_POST['job_fair'])) {
                     $theme4_enable_job_fair_homepage = 1;
                 }
-                
+
                 $dataToStore = array(
-                                        'theme4_enable_home_job_opportunity' => $theme4_enable_home_job_opportunity,
-                                        'theme4_home_job_opportunity_text' => $theme4_home_job_opportunity_text,
-                                        'theme4_enable_job_fair_homepage' => $theme4_enable_job_fair_homepage,
-                                        'job_fair_homepage_page_url' => $job_fair_homepage_page_url
-                                    );
-                
+                    'theme4_enable_home_job_opportunity' => $theme4_enable_home_job_opportunity,
+                    'theme4_home_job_opportunity_text' => $theme4_home_job_opportunity_text,
+                    'theme4_enable_job_fair_homepage' => $theme4_enable_job_fair_homepage,
+                    'job_fair_homepage_page_url' => $job_fair_homepage_page_url
+                );
+
                 $this->customize_appearance_model->update_font_configurations($company_id, $dataToStore);
             }
 
@@ -804,11 +879,11 @@ class Appearance extends Public_Controller {
                 if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'update_jobs_page_title') { //Save Jobs Page Title
                     $company_sid = $company_id; //$_POST['company_sid'];
                     $jobs_page_title = $_POST['jobs_page_title'];
-                   // $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
+                    // $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
                     $jobs_page_title = str_replace('{{company_name}}', '', $jobs_page_title);
                     $jobs_page_title = trim($jobs_page_title);
                     $jobs_page_title = str_replace('  ', ' ', $jobs_page_title);
-                  //  $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
+                    //  $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
                     $jobs_page_title = str_replace('\`', '', $jobs_page_title);
                     $jobs_page_title = str_replace('"', '', $jobs_page_title);
                     $jobs_page_title = str_replace('\'', '', $jobs_page_title);
@@ -825,14 +900,16 @@ class Appearance extends Public_Controller {
                     $this->customize_appearance_model->fSaveThemeMetaData($company_sid, $theme_name, $page_name, 'jobs_page_title', $jobs_page_title);
                     $theme4_enable_job_fair_careerpage = 0;
                     $job_fair_career_page_url = !empty($_POST['job_fair_career_page_url']) ? implode(',', $_POST['job_fair_career_page_url']) : '';
-                    
+
                     if (isset($_POST['job_fair'])) {
                         $theme4_enable_job_fair_careerpage = 1;
                     }
 
-                    $dataToStore = array('theme4_enable_job_fair_careerpage' => $theme4_enable_job_fair_careerpage,
-                                         'job_fair_career_page_url' => $job_fair_career_page_url);
-                    
+                    $dataToStore = array(
+                        'theme4_enable_job_fair_careerpage' => $theme4_enable_job_fair_careerpage,
+                        'job_fair_career_page_url' => $job_fair_career_page_url
+                    );
+
                     $this->customize_appearance_model->update_font_configurations($company_sid, $dataToStore);
                     $theme_info = $this->customize_appearance_model->get_theme($theme_id);
                     $data['theme'] = $theme_info;
@@ -864,8 +941,8 @@ class Appearance extends Public_Controller {
                 $partners = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'home', 'partners');
                 $jobs_page_banner = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'jobs', 'jobs_page_banner');
                 $jobs_page_title = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'jobs', 'jobs_page_title');
-//                $advanced_section_01_meta['title'] = str_replace("{{company_name}}", $data['session']['company_detail']['CompanyName'], $advanced_section_01_meta['title']);
-//                $advanced_section_01_meta['content'] = str_replace("{{company_name}}", $data['session']['company_detail']['CompanyName'], $advanced_section_01_meta['content']);
+                //                $advanced_section_01_meta['title'] = str_replace("{{company_name}}", $data['session']['company_detail']['CompanyName'], $advanced_section_01_meta['title']);
+                //                $advanced_section_01_meta['content'] = str_replace("{{company_name}}", $data['session']['company_detail']['CompanyName'], $advanced_section_01_meta['content']);
 
                 if (is_array($jobs_page_title)) {
                     $jobs_page_title = '';
@@ -893,7 +970,7 @@ class Appearance extends Public_Controller {
                 $data['section_06_meta'] = $section_06_meta;
                 $data['partners'] = $partners;
                 $data['testimonials'] = $testimonials;
-                $data['advanced_section_01_meta'] = '';//$advanced_section_01_meta;
+                $data['advanced_section_01_meta'] = ''; //$advanced_section_01_meta;
                 $counter = 0;
 
                 foreach ($data['testimonials'] as $testimonial) {
@@ -915,9 +992,9 @@ class Appearance extends Public_Controller {
 
                 $data['jobs_page_banner'] = $jobs_page_banner;
                 $data['jobs_detail_page_banner'] = $jobs_detail_page_banner;
-//                echo '<pre>';
-//                print_r($jobs_detail_page_banner);
-             
+                //                echo '<pre>';
+                //                print_r($jobs_detail_page_banner);
+
                 $data['jobs_page_title'] = $jobs_page_title;
                 $data['footer_content'] = $footer_content;
                 $google_fonts = $this->customize_appearance_model->get_google_fonts(); // get list of all the google font family
@@ -949,7 +1026,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function theme_status() {
+    public function theme_status()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_id = $data["session"]["company_detail"]["sid"];
@@ -960,7 +1038,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function restore_default() {
+    public function restore_default()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_id = $data["session"]["company_detail"]["sid"];
@@ -1006,7 +1085,8 @@ class Appearance extends Public_Controller {
     }
 
     // Theme Meta Data
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $data['title'] = "Themes";
@@ -1127,7 +1207,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function enterprise_theme_email() {
+    public function enterprise_theme_email()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_id = $data["session"]["company_detail"]["sid"];
@@ -1169,7 +1250,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function career_logo_management() {
+    public function career_logo_management()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = "Career Page Logo Management";
             $data['session'] = $this->session->userdata('logged_in');
@@ -1220,7 +1302,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function get_pages_name() {
+    public function get_pages_name()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $sid = $this->input->get('sid');
         $company_id = $data["session"]["company_detail"]["sid"];
@@ -1229,7 +1312,8 @@ class Appearance extends Public_Controller {
         exit(0);
     }
 
-    public function add_additional_sections($theme_id) {
+    public function add_additional_sections($theme_id)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1241,7 +1325,7 @@ class Appearance extends Public_Controller {
             $data['theme'] = $theme_id;
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'Save Section') {
-                unset($_POST['perform_action']);               
+                unset($_POST['perform_action']);
                 $video = $this->input->post('video');
                 unset($_POST['video']);
                 $video_id = '';
@@ -1251,23 +1335,23 @@ class Appearance extends Public_Controller {
                 if (isset($url_prams['v'])) {
                     $video_id = $url_prams['v'];
                 }
-                
+
                 $pictures = upload_file_to_aws('image', $company_id, 'image', '', AWS_S3_BUCKET_NAME);
                 $_POST['company_sid'] = $company_id;
-                
+
                 if (!empty($pictures) && $pictures != 'error') {
                     $_POST['image'] = $pictures;
                 }
-                
+
                 $newArray = array_map(function ($v) {
                     return trim(strip_tags($v));
                 }, $_POST);
-                
-                
+
+
                 if (!empty($video_id)) {
                     $newArray['video'] = $video_id;
                 }
-                                
+
                 $this->customize_appearance_model->add_additional_content_boxes($newArray);
                 redirect(base_url('customize_appearance/' . $theme_id), 'refresh');
             }
@@ -1280,7 +1364,8 @@ class Appearance extends Public_Controller {
         }
     }
 
-    public function ajax_change_page_status(){
+    public function ajax_change_page_status()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -1288,15 +1373,15 @@ class Appearance extends Public_Controller {
             $is_published = $_POST['is_published'];
             $customize_career_site = $this->company_model->get_customize_career_site_data($company_sid);
             $inactive_pages = $customize_career_site['inactive_pages'];
-                    
-            if($is_published){
-                if(in_array($inactive_page, $inactive_pages)){
+
+            if ($is_published) {
+                if (in_array($inactive_page, $inactive_pages)) {
                     if (($key = array_search($inactive_page, $inactive_pages)) !== false) {
                         unset($inactive_pages[$key]);
                     }
                 }
-            }else{
-                if(!in_array($inactive_page, $inactive_pages)){
+            } else {
+                if (!in_array($inactive_page, $inactive_pages)) {
                     $inactive_pages[] = $inactive_page;
                 }
             }
@@ -1307,7 +1392,8 @@ class Appearance extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-    private function generate_page_section_meta_array($image, $video, $title, $tag_line, $content, $status, $show_video_or_image, $column_type = 'left_right', $do_capitalize = 0) {
+    private function generate_page_section_meta_array($image, $video, $title, $tag_line, $content, $status, $show_video_or_image, $column_type = 'left_right', $do_capitalize = 0, $vimeo_video = '', $uploaded_video = '')
+    {
         $dataToSave = array(
             'image' => $image,
             'video' => $video,
@@ -1317,7 +1403,9 @@ class Appearance extends Public_Controller {
             'status' => $status,
             'do_capitalize' => $do_capitalize,
             'show_video_or_image' => $show_video_or_image,
-            'column_type' => $column_type
+            'column_type' => $column_type,
+            'vimeo_video' => $vimeo_video,
+            'uploaded_video' => $uploaded_video,
         );
 
         return $dataToSave;
