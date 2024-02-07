@@ -241,7 +241,7 @@ if ($filter["mode"] === "month") {
                                                     foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
                                                         <?php
-                                                        $employeeLeave = $leaves[$employee][$monthDate];
+
                                                         $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
                                                         ?>
                                                         <!-- column-->
@@ -252,6 +252,7 @@ if ($filter["mode"] === "month") {
                                                             </div>
                                                             <?php if ($subordinateEmployees) {
                                                                 foreach ($subordinateEmployees as $employee) {
+                                                                    $employeeLeave = $leaves[$employee["userId"]][$monthDate];
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                             ?>
@@ -289,9 +290,6 @@ if ($filter["mode"] === "month") {
                                                                                 </button>
                                                                             </div>
                                                                         <?php } else { ?>
-                                                                            <button class="btn btn-red text-small btn-xs">
-                                                                                Day Off
-                                                                            </button>
                                                                         <?php } ?>
                                                                     </div>
                                                             <?php

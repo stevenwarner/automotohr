@@ -228,9 +228,7 @@ if ($filter["mode"] === "month") {
                                                 <div class="schedule-row-container">
                                                     <?php foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
-                                                        <?php
-                                                        $employeeLeave = $leaves[$employee["userId"]][$monthDate];
-                                                        ?>
+                                                        
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
 
@@ -245,6 +243,7 @@ if ($filter["mode"] === "month") {
                                                             </div>
                                                             <?php if ($employees) {
                                                                 foreach ($employees as $employee) {
+                                                                    $employeeLeave = $leaves[$employee["userId"]][$monthDate];
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                             ?>
