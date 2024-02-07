@@ -214,7 +214,7 @@ class Main extends Public_Controller
             }
         } 
         $this->data["clockArray"] = $clockArray; 
-        // _e($this->data,true,true);     
+        // _e($this->data["clockArray"],true,true);     
         // make the blue portal popup
         $this->renderView("v1/users/payroll/dashboard");
     }
