@@ -192,7 +192,7 @@ if ($filter["mode"] === "month") {
                                                         </div>
                                                         <?php $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
                                                         ?>
-                                                        <div class="schedule-column  schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
+                                                        <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
                                                             <?php if ($employeeLeave) { ?>
                                                                 <div class="schedule-dayoff text-primary text-small">
                                                                     <strong>
@@ -226,9 +226,6 @@ if ($filter["mode"] === "month") {
                                                                     </button>
                                                                 </div>
                                                             <?php } else { ?>
-                                                                <button class="btn btn-red text-small btn-xs">
-                                                                    Day Off
-                                                                </button>
                                                             <?php } ?>
                                                         </div>
                                                         <?php

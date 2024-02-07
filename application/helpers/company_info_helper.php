@@ -3223,3 +3223,33 @@ if (!function_exists("isCompanyVerifiedForPayroll")) {
             ->count_all_results("gusto_companies");
     }
 }
+
+
+if (!function_exists("getCompanyExtraColumn")) {
+    /**
+     * get the company extra column
+     *
+     * @param int $companyId
+     * @param string $column
+     * @return bool
+     */
+    function getCompanyExtraColumn(int $companyId, string $column)
+    {
+        // get CI
+        $CI = &get_instance();
+        // get the company extra fields
+        $result = $CI->db
+            ->select("extra_info")
+            ->where("sid", $companyId)
+            ->get("users")
+            ->row_array();
+        //
+        if (!$result || !$result['extra_info']) {
+            return "";
+        }
+        //
+        $data = unserialize($result["extra_info"]);
+        //
+        return $data[$column] ? $data[$column] : "";
+    }
+}

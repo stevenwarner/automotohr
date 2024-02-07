@@ -467,7 +467,7 @@ class Shift_model extends CI_Model
             $records = $holidays;
         }
         //
-        return array_merge($records, getSundaysAndSaturdays($startDate, $endDate));
+        return array_merge($records, getCompanyOffDaysDatesWithinRange($startDate, $endDate, getCompanyExtraColumn($companyId, "week_off_days")));
     }
 
     /**
@@ -520,7 +520,8 @@ class Shift_model extends CI_Model
             $records = $holidays;
         }
 
-        $offs = getSundaysAndSaturdays($startDate, $endDate);
+        // get company off days
+        $offs = getCompanyOffDaysDatesWithinRange($startDate, $endDate, getCompanyExtraColumn($companyId, "week_off_days"));
         foreach ($offs as $date) {
             if (!$records[$date]) {
                 $records[$date] = [
@@ -952,7 +953,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Copied the shift to the selected employees." . (
+                "msg" => "You have successfully copied the shift to the selected employees." . (
                     $employeesAlreadyExists ? "<p>However, the below employees already have shifts.</p>" : ""
                 ),
                 "list" => $employeesAlreadyExists
@@ -989,7 +990,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Deleted the shifts to the selected employees."
+                "msg" => "You have successfully deleted the shifts of the selected employees."
             ]
         );
     }
@@ -1007,7 +1008,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Deleted the shift to the selected employee."
+                "msg" => "You have successfully deleted the shift of the selected employee."
             ]
         );
     }
@@ -1206,7 +1207,7 @@ class Shift_model extends CI_Model
         );
         //
         if ($records) {
-            foreach($records as $index => $v0) {
+            foreach ($records as $index => $v0) {
                 $records[$index]["breaks"] = convertToList(
                     json_decode(
                         $v0["breaks_json"],
