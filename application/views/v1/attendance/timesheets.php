@@ -22,7 +22,7 @@ $timeSheetName = "";
                         </label>
                         <select name="department" class="form-control">
                             <?php if ($departments) { ?>
-                                <option value="0">Select Department</option>
+                                <option value="all" <?php echo $filter["departments"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($departments as $department) { ?>
                                     <option value="<?php echo $department['sid']; ?>" <?php echo isset($filter["departments"]) && $filter["departments"] ==  $department['sid'] ? 'selected="selected"' : ''; ?>><?php echo $department['name']; ?></option>
                                 <?php } ?>
@@ -40,7 +40,7 @@ $timeSheetName = "";
                         </label>
                         <select name="teams[]" class="form-control multipleSelect" multiple>
                             <?php if ($teams) { ?>
-                                <option value="0">Select Team</option>
+                                <option value="all" <?php echo $filter["teams"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($teams as $team) { ?>
                                     <option value="<?php echo $team['sid']; ?>" <?php echo in_array($team['sid'], $filter["teams"]) ? 'selected="selected"' : ''; ?>><?php echo $team['name']; ?></option>
                                 <?php } ?>
@@ -58,7 +58,7 @@ $timeSheetName = "";
                         </label>
                         <select name="jobTitle[]" class="form-control multipleSelect" multiple>
                             <?php if ($jobTitles) { ?>
-                                <option value="0">Select Job Title</option>
+                                <option value="all" <?php echo $filter["jobTitles"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($jobTitles as $jobTitle) { ?>
                                     <option value="<?php echo $jobTitle['title']; ?>" <?php echo in_array($jobTitle['title'], $filter["jobTitles"]) ? 'selected="selected"' : ''; ?>><?php echo $jobTitle['title']; ?></option>
                                 <?php } ?>
@@ -77,6 +77,7 @@ $timeSheetName = "";
                         </label>
                         <select name="employees[]" class="form-control multipleSelect" multiple>
                             <?php if ($employees) { ?>
+                                <option value="all" <?php echo $filter["jobTitles"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($employees as $v0) { ?>
                                     <option value="<?= $v0["userId"]; ?>" <?= in_array($v0["userId"], $filter["employees"]) ? "selected" : ""; ?>><?= remakeEmployeeName($v0); ?></option>
                                 <?php } ?>
@@ -158,7 +159,7 @@ $timeSheetName = "";
                     <tbody>
                         <?php if (empty($filterEmployees)) { ?>
                             <tr>
-                                <td colspan="3">
+                                <td colspan="4">
                                     <span class="no-data">No Employee Payroll Found</span>
                                 </td>
                             </tr>

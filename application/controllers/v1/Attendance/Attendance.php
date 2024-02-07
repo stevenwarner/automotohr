@@ -264,10 +264,10 @@ class Attendance extends Public_Controller
         // get todays date
         //
         $data["filter"] = [
-            "employees" => $this->input->get("employees", true) ?? "",
-            "departments" => $this->input->get("department", true) ?? getSystemDate("Y"),
-            "teams" => $this->input->get("teams", true),
-            "jobTitles" => $this->input->get("jobTitle", true),
+            "employees" => $this->input->get("employees", true) ?? "all",
+            "departments" => $this->input->get("department", true) ?? "all",
+            "teams" => $this->input->get("teams", true) ?? "all",
+            "jobTitles" => $this->input->get("jobTitle", true) ?? "all",
         ];
         //
         $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);
@@ -284,7 +284,7 @@ class Attendance extends Public_Controller
                     $data["filter"]["teams"],
                     $data["filter"]["departments"],
                     $data["filter"]["jobTitles"]
-                );
+                );       
         //
         if ($data["filterEmployees"]) {
             foreach ($data["filterEmployees"] as $ekey => $employee) {

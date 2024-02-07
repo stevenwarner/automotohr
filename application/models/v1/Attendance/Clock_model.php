@@ -2270,10 +2270,10 @@ class Clock_model extends Base_model
 
     function getFilterEmployees (
         $companyId,
-        $employees = [],
-        $teams = [],
-        $department = 0,
-        $jobTitles = ''
+        $employees,
+        $teams,
+        $department,
+        $jobTitles
     ) {
         $this->db->select('
             users.sid,
@@ -2292,19 +2292,21 @@ class Clock_model extends Base_model
         $this->db->where('users.parent_sid', $companyId);
         $this->db->where('users.terminated_status', 0);
         //
-        if ($employees) { 
+        if ($employees && $employees != "all") { 
             $this->db->where_in('users.sid', $employees);
         }
         //
-        if  ($department != 0) {
+        if  ($department != "all") {
             $this->db->where('departments_employee_2_team.department_sid', $department);
         }
 
-        if ($teams) {
+        if ($teams != "all") {
             $this->db->where_in('departments_employee_2_team.team_sid', $teams);
         }
-
-        if($jobTitles){ $this->db->where_in('users.job_title', $jobTitles);}
+        //
+        if ($jobTitles != "all") { 
+            $this->db->where_in('users.job_title', $jobTitles);
+        }
         //
         $a = $this->db->get('departments_employee_2_team');
         //
