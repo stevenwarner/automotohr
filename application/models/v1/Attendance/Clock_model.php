@@ -1841,7 +1841,25 @@ class Clock_model extends Base_model
             "double_overtime" => 0,
             "normal_rate" => 0,
             "over_time_rate" => 0,
-            "double_over_time_rate" => 0
+            "double_over_time_rate" => 0,
+            "paid_time_off" => [],
+            "shift_status" => [
+                "approved_count" => 0,
+                "unapproved_count" => 0,
+                "total_shifts" => 0
+            ],
+            "text" => [
+                "clocked_time" => '0h',
+                "worked_time" => '0h',
+                "regular_time" => '0h',
+                "breaks_time" => '0h',
+                "paid_break_time" => '0h',
+                "unpaid_break_time" => '0h',
+                "overtime" => '0h',
+                "double_overtime" => '0h',
+                "overtime_detail" => '0h',
+                "double_overtime_detail" => '0h',
+            ]
         ];
         //
         $records =
@@ -1865,6 +1883,7 @@ class Clock_model extends Base_model
         if (!$records) {
             return $returnArray;
         }
+        //
         // load break model
         $this->load->model("v1/Shift_break_model", "shift_break_model");
         // load shift model
@@ -1874,11 +1893,21 @@ class Clock_model extends Base_model
         //
         $this->load->model("v1/Users/main_model", "main_model");
         //
+        $this->load->model("Timeoff_model", "timeoff_model");
+        // get employee shifts
+        $returnArray['paid_time_off'] = $this->timeoff_model
+            ->getEmployeePaidTimeOffsInRange(
+                $employeeId,
+                $periodStartDate,
+                $periodEndDate
+            );   
+        //
         $employeeWageInfo = $this->main_model->getJobWageData(
             $employeeId,
             'employee',
             $records[0]["company_sid"]
-        );  
+        ); 
+        //
         // get employee overtime rule
         $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
         // get company breaks
@@ -1893,22 +1922,22 @@ class Clock_model extends Base_model
             $periodStartDate,
             $periodEndDate
         );
-        $wageType = $employeeWageInfo['per'];
-        $employeeRate = $employeeWageInfo['rate'];
         //
-        if ($wageType == "Hour") {
-            $returnArray['normal_rate'] = $employeeRate;
-            $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
-            $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier'];
-        } else if ($wageType == "Week") {
-
-        } else if ($wageType == "Month") {
-
-        } else if ($wageType == "Year") {
-
-        }    
+        $employeeRate = getRatePerHour($employeeWageInfo['rate'], $employeeWageInfo['per']);
+        //
+        $returnArray['normal_rate'] = $employeeRate;
+        $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
+        $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier']; 
         //
         foreach ($records as $v0) {
+            //
+            $returnArray['shift_status']['total_shifts'] += 1;
+            //
+            if ($v0["is_approved"] == 1) {
+                $returnArray['shift_status']['approved_count'] += 1;
+            } else {
+                $returnArray['shift_status']['unapproved_count'] += 1;
+            }
             // set a tmp array
             $tmp = [
                 "date" => $v0["clocked_date"],
@@ -2075,6 +2104,13 @@ class Clock_model extends Base_model
                 $weekOverTime = $double_overtime - $overtime;
             }
             //
+            $overtime_detail = "Daily overtime: ".convertSecondsToTime($returnArray["overtime"])
+                            . " <br> Weekly overtime: ". convertSecondsToTime($weekOverTime)
+                            . " <br> Total overtime: ". convertSecondsToTime($returnArray["overtime"] + $weekOverTime);
+            $double_overtime_detail = "Daily double overtime: ".convertSecondsToTime($returnArray["double_overtime"])
+                            . " <br> Weekly double overtime: ". convertSecondsToTime($weekDoubleOvertime)
+                            . " <br> Total double overtime: ". convertSecondsToTime($returnArray["double_overtime"] + $weekDoubleOvertime);
+            //
             $returnArray["overtime"] += $weekOverTime;
             $returnArray["double_overtime"] += $weekDoubleOvertime;
         }
@@ -2089,7 +2125,11 @@ class Clock_model extends Base_model
             "unpaid_break_time" => convertSecondsToTime($returnArray["unpaid_break_time"]),
             "overtime" => convertSecondsToTime($returnArray["overtime"]),
             "double_overtime" => convertSecondsToTime($returnArray["double_overtime"]),
+            "overtime_detail" => $overtime_detail,
+            "double_overtime_detail" => $double_overtime_detail,
         ];
+        //
+        // _e($returnArray,true,true);
         //
         return $returnArray;
     }
@@ -2168,5 +2208,108 @@ class Clock_model extends Base_model
         }
 
         return $returnArray;
+    }
+
+    function getDepartments($companySid)
+    {
+        $a = $this->db
+            ->select('sid, name')
+            ->where('company_sid', $companySid)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->order_by('sort_order', 'ASC')
+            ->get('departments_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function getTeams($companySid, $departments)
+    {
+        //
+        if (!$departments || !count($departments)) return [];
+        //
+        $a = $this->db
+            ->select('sid, name')
+            ->where('company_sid', $companySid)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->where_in('department_sid', array_column($departments, 'sid'))
+            ->order_by('sort_order', 'ASC')
+            ->get('departments_team_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function getJobTitles()
+    {
+        $a = $this->db
+            ->select('sid, title')
+            ->where('status', 1)
+            ->order_by('title', 'ASC')
+            ->get('portal_job_title_templates');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function getFilterEmployees (
+        $companyId,
+        $employees = [],
+        $teams = [],
+        $department = 0,
+        $jobTitles = ''
+    ) {
+        $this->db->select('
+            users.sid,
+            users.first_name,
+            users.last_name,
+            users.email,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.job_title,
+            users.timezone,
+            users.pay_plan_flag
+        ');
+        $this->db->join('users', 'users.sid = departments_employee_2_team.employee_sid');
+        $this->db->where('users.active', 1);
+        $this->db->where('users.parent_sid', $companyId);
+        $this->db->where('users.terminated_status', 0);
+        //
+        if ($employees) { 
+            $this->db->where_in('users.sid', $employees);
+        }
+        //
+        if  ($department != 0) {
+            $this->db->where('departments_employee_2_team.department_sid', $department);
+        }
+
+        if ($teams) {
+            $this->db->where_in('departments_employee_2_team.team_sid', $teams);
+        }
+
+        if($jobTitles){ $this->db->where_in('users.job_title', $jobTitles);}
+        //
+        $a = $this->db->get('departments_employee_2_team');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    function getEmployeeTeamOrDepartment($employeeId, $demartmentId, $teamIds)
+    {
+        $this->db->where('applicant_job_sid', $applicant_sid);
+        $this->db->from('portal_misc_notes');
+        return $this->db->count_all_results();
     }
 }

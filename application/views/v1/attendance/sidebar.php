@@ -27,7 +27,7 @@
         </div>
         <div class="navbar-collapse collapse admin-sidebar-navbar-collapse">
             <ul class="nav navbar-nav">
-                <li>
+                <li> 
                     <a href="<?php echo base_url('/dashboard'); ?>">
                         <figure><i class="fa fa-th"></i></figure>Dashboard
                     </a>
@@ -43,7 +43,11 @@
                         <figure><i class="fa fa-file"></i></figure>TimeSheet
                     </a>
                 </li>
-
+                <li>
+                    <a href="<?php echo base_url('attendance/employees/timesheets'); ?>" <?= preg_match('/attendance\/employees\/timesheets/im', uri_string()) ? $activeClass : ''; ?>>
+                        <figure><i class="fa fa-file"></i></figure>Employees timesheets
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
