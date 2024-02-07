@@ -1,13 +1,3 @@
-<style>
-    .active-link a {
-        background-color: #518401;
-        color: #fff !important;
-    }
-
-    .nav-link a {
-        color: #000;
-    }
-</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
