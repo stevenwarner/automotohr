@@ -2147,7 +2147,7 @@ $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
 $route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
-// $route["attendance/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
+$route["attendance/employees/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
 //

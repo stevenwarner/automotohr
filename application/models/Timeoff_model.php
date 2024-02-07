@@ -7198,11 +7198,103 @@ class Timeoff_model extends CI_Model
                 if ($v1["date"] >= $startDate && $v1["date"] <= $endDate) {
                     $returnArray[$v1["date"]] = [
                         "reason" => $v0["reason"],
-                        "title" => $v0["title"],
+                        "title" => $v0["title"]
                     ];
                 }
             }
         }
+        return $returnArray;
+    }
+
+    /**
+     * Get the employees time off within dates
+     * 
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function getEmployeePaidTimeOffsInRange(
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        // get the timeoffs ids within range
+        $records = $this->db
+            ->select("
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_requests.reason,
+            timeoff_policies.title,
+            timeoff_requests.timeoff_days
+        ")
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+            ->where("timeoff_policies.policy_category_type", 1)
+            ->where("timeoff_requests.employee_sid", $employeeId)
+            ->group_start()
+            ->group_start()
+            ->where('timeoff_requests.request_from_date <=', $startDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date >=', $startDate)
+            ->where('timeoff_requests.request_to_date <=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->group_end()
+            ->group_end()
+            ->where('timeoff_requests.status', 'approved')
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return [];
+        }
+
+        $returnArray = [
+            "polices" => [],
+            "total_hours" => 0
+        ];
+
+        foreach ($records as $record) {
+            $timeoffDays = json_decode($record['timeoff_days'], true)['days'];
+            //
+            foreach ($timeoffDays as $dayInfo) {
+                $timeoffDate = DateTime::createFromFormat('m-d-Y', $dayInfo['date'])->format('Y-m-d');
+                //
+                if ($timeoffDate >= $startDate && $timeoffDate <= $endDate) {
+                    if (!$returnArray['polices'][$record['title']]) {
+                        $returnArray['polices'][$record['title']] = [
+                            'title' => $record['title'],
+                            'hours' => ($dayInfo['time'] / 60),
+                            'day_count' => 1,
+                            'days' => [
+                                [
+                                    'date' => $timeoffDate,
+                                    'hours' => ($dayInfo['time'] / 60)
+                                ]
+                            ]
+                        ];
+                    } else {
+                        $returnArray['polices'][$record['title']]['hours'] += ($dayInfo['time'] / 60);
+                        $returnArray['polices'][$record['title']]['day_count'] += 1;
+                        $returnArray['polices'][$record['title']]['days'][] = [
+                            'date' => $timeoffDate,
+                            'hours' => ($dayInfo['time'] / 60)
+                        ];
+                    }
+                    //
+                    $returnArray['total_hours'] += ($dayInfo['time'] / 60);
+                    $returnArray['total_days'] += 1;
+                    //
+                }
+            }
+        }
+        //
         return $returnArray;
     }
 
