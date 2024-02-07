@@ -83,15 +83,20 @@ class Clock_model extends Base_model
         $companyPermissions = unserialize(getUserColumnById($companyId, "extra_info"));
         // set employeeId
         $this->employeeId = $employeeId;
+        //
         $this->date = $date;
+        //
+        $dateWithTime = $date;
+        //
         if (!$this->date) {
-            $this->date = $this->loggedInPersonDateTime;
+            $this->date = $this->loggedInPersonDate;
+            $dateWithTime = $this->loggedInPersonDateTime;
         }
         // get todays date in UTC
         $this->dateInUTC =
             formatDateToDB(
                 convertTimeZone(
-                    $this->date,
+                    $dateWithTime,
                     DB_DATE_WITH_TIME,
                     getLoggedInPersonTimeZone(),
                     DB_TIMEZONE
@@ -707,7 +712,7 @@ class Clock_model extends Base_model
             ->where([
                 "employee_sid" => $this->employeeId,
                 "company_sid" => $this->companyId,
-                "clocked_date" => $this->dateInUTC,
+                "clocked_date" => $this->date,
             ])
             ->limit(1)
             ->get("cl_attendance")
@@ -751,7 +756,7 @@ class Clock_model extends Base_model
             ->where([
                 "employee_sid" => $this->employeeId,
                 "company_sid" => $this->companyId,
-                "clocked_date" => $this->dateInUTC,
+                "clocked_date" => $this->date,
                 "last_event" => $eventType,
             ])
             ->limit(1)
@@ -769,7 +774,7 @@ class Clock_model extends Base_model
             ->where([
                 "employee_sid" => $this->employeeId,
                 "company_sid" => $this->companyId,
-                "clocked_date" => $this->dateInUTC,
+                "clocked_date" => $this->date,
             ])
             ->limit(1)
             ->count_all_results("cl_attendance");
@@ -792,7 +797,7 @@ class Clock_model extends Base_model
             ->where([
                 "employee_sid" => $this->employeeId,
                 "company_sid" => $this->companyId,
-                "clocked_date" => $this->dateInUTC,
+                "clocked_date" => $this->date,
             ])
             ->limit(1)
             ->get("cl_attendance")
@@ -1876,7 +1881,7 @@ class Clock_model extends Base_model
             $employeeId,
             'employee',
             $records[0]["company_sid"]
-        );  
+        );
         // get employee overtime rule
         $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
         // get company breaks
@@ -1899,12 +1904,9 @@ class Clock_model extends Base_model
             $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
             $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier'];
         } else if ($wageType == "Week") {
-
         } else if ($wageType == "Month") {
-
         } else if ($wageType == "Year") {
-
-        }    
+        }
         //
         foreach ($records as $v0) {
             // set a tmp array
@@ -2022,7 +2024,7 @@ class Clock_model extends Base_model
             }
             // convert to text
             $clockedTime = $tmp["clocked_time"] + $tmp["paid_break_time"] + $tmp["unpaid_break_time"];
-            $regularTime = $tmp["clocked_time"]-($tmp["overtime"] + $tmp["double_overtime"]);
+            $regularTime = $tmp["clocked_time"] - ($tmp["overtime"] + $tmp["double_overtime"]);
             $tmp['clocked_time'] = $clockedTime;
             $tmp['regular_time'] = $regularTime;
             //
