@@ -385,13 +385,16 @@ class Shift_model extends CI_Model
                 ->where("shift_date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE))
                 ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
         }
-
         //
         $records = $this->db
             ->get("cl_shifts")
             ->result_array();
         //
         if ($records) {
+            // extract employee ids
+            $employeeIds = array_column($records, "employee_sid");
+            // get the job color codes by employees jobs
+            $employeesJobColorCodes = $this->getEmployeesJobColor($employeeIds);
             //
             $employees = [];
             //
@@ -401,7 +404,8 @@ class Shift_model extends CI_Model
                     $employees[$v0["employee_sid"]] = [
                         "totalTimeText" => '0h',
                         "totalTime" => 0,
-                        "dates" => []
+                        "dates" => [],
+                        "jobColor" => $employeesJobColorCodes[$v0["employee_sid"]] ?? "#eeeeee"
                     ];
                 }
                 //
@@ -1219,5 +1223,43 @@ class Shift_model extends CI_Model
         }
         //
         return $records;
+    }
+
+    /**
+     * get the employee job colors
+     *
+     * @param array $employeeIds
+     * @return array
+     */
+    private function getEmployeesJobColor(array $employeeIds): array
+    {
+        //
+        $result =
+            $this->db
+            ->select("portal_job_title_templates.color_code")
+            ->select("users.sid")
+            ->join(
+                "portal_job_title_templates",
+                "
+                    LOWER(REGEXP_REPLACE(portal_job_title_templates.title, '[^a-zA-Z]', '')) = 
+                    LOWER(REGEXP_REPLACE(users.job_title, '[^a-zA-Z]', ''))
+                ",
+                "inner"
+            )
+            ->where_in("users.sid", $employeeIds)
+            ->get("users")
+            ->result_array();
+        //
+        if (!$result) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($result as $v) {
+            $ra[$v["sid"]] = $v["color_code"];
+        }
+        //
+        return $ra;
     }
 }

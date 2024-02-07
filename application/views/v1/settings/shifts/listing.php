@@ -246,6 +246,7 @@ if ($filter["mode"] === "month") {
                                                                     $employeeLeave = $leaves[$employee["userId"]][$monthDate];
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
+                                                                    $bgColor = $shifts[$employee["userId"]]["jobColor"] ?? "";
                                                             ?>
                                                                     <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                         <?php if ($employeeLeave) { ?>
@@ -257,7 +258,7 @@ if ($filter["mode"] === "month") {
                                                                         <?php } elseif ($employeeShift) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
-                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>">
+                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor;?>" title="<?=$employee["job_title"];?>" placement="top">
                                                                                 <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>
