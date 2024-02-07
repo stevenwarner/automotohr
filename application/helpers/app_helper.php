@@ -3205,3 +3205,17 @@ if (!function_exists("getLoggedInPersonId")) {
             ->userdata("logged_in")["employer_detail"]["sid"] ?? null;
     }
 }
+
+
+if (!function_exists("generateRandomColor")) {
+    function generateRandomColor()
+    {
+        $red = rand(0, 255);
+        $green = rand(0, 255);
+        $blue = rand(0, 255);
+
+        $hexColor = sprintf("#%02x%02x%02x", $red, $green, $blue);
+
+        return $hexColor;
+    }
+}

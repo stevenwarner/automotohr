@@ -554,6 +554,21 @@
                             </div>
                         <?php } ?>
 
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>Shifts </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Send shift reminder emails<small class="help_text">Activating this functionality will result in the issuance of reminder notification emails for the upcoming day shift.</small>
+                                    <input class="" type="checkbox" id="shift_reminder_email_for_next_day" name="shift_reminder_email_for_next_day" value="1" <?php echo ($company['shift_reminder_email_for_next_day'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
 
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">

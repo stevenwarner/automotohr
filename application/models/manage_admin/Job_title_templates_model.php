@@ -9,25 +9,27 @@ class job_title_templates_model extends CI_Model
     }
 
 
-    public function InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    public function InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code)
     {
         $data = array(
             'title' => $title,
             'complynet_job_title' => $complynetJobTitle,
             'archive_status' => 'active',
             'status' => 1,
-            'sort_order' => $sortOrder
+            'sort_order' => $sortOrder,
+            "color_code" => $color_code
         );
 
         $this->db->insert('portal_job_title_templates', $data);
     }
 
-    public function UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    public function UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code)
     {
         $data = array(
             'title' => $title,
             'complynet_job_title' => $complynetJobTitle,
-            'sort_order' => $sortOrder
+            'sort_order' => $sortOrder,
+            "color_code" => $color_code
         );
 
         $this->db->where('sid', $sid);
@@ -48,12 +50,12 @@ class job_title_templates_model extends CI_Model
         // $this->db->update('portal_job_applications', $data);
     }
 
-    public function SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    public function SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code)
     {
         if ($sid == null) {
-            $this->InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder);
+            $this->InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code);
         } else {
-            $this->UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder);
+            $this->UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code);
         }
     }
 
