@@ -329,6 +329,7 @@ class Settings extends Public_Controller
                 $company['mtin'] = "";
                 $company['clock_enable_for_attendance'] = "";
                 $company['timesheet_enable_for_attendance'] = "";
+                $company['shift_reminder_email_for_next_day'] = 0;
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
@@ -340,6 +341,7 @@ class Settings extends Public_Controller
                 $company['mtin'] = isset($serializedata['mtin']) ? $serializedata['mtin'] : 0;
                 $company['clock_enable_for_attendance'] = isset($serializedata['clock_enable_for_attendance']) ? $serializedata['clock_enable_for_attendance'] : 0;
                 $company['timesheet_enable_for_attendance'] = isset($serializedata['timesheet_enable_for_attendance']) ? $serializedata['timesheet_enable_for_attendance'] : 0;
+                $company['shift_reminder_email_for_next_day'] = isset($serializedata['shift_reminder_email_for_next_day']) ? $serializedata['shift_reminder_email_for_next_day'] : 0;
             }
             $serializedata = unserialize($company['extra_info']);
             $data['company'] = $company;
@@ -419,6 +421,9 @@ class Settings extends Public_Controller
                 }
                 if ($post["timesheet_enable_for_attendance"]) {
                     $company_extra_info["timesheet_enable_for_attendance"] = $post["timesheet_enable_for_attendance"];
+                }
+                if ($post["shift_reminder_email_for_next_day"]) {
+                    $company_extra_info["shift_reminder_email_for_next_day"] = $post["shift_reminder_email_for_next_day"];
                 }
 
                 // Full employment form required
