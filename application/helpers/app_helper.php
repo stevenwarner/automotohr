@@ -2594,6 +2594,32 @@ if (!function_exists("getSundaysAndSaturdays")) {
     }
 }
 
+if (!function_exists("getCompanyOffDaysDatesWithinRange")) {
+    function getCompanyOffDaysDatesWithinRange($startDate, $endDate, $offDays)
+    {
+        $sundaysSaturdays = [];
+
+        // Create DateTime objects from the input strings
+        $startDateTime = new DateTime($startDate);
+        $endDateTime = new DateTime($endDate);
+
+        // Iterate through the days
+        $currentDate = $startDateTime;
+        while ($currentDate <= $endDateTime) {
+            // Check if the current day is Sunday or Saturday
+            $dayOfWeek = $currentDate->format('N');
+            if (in_array($dayOfWeek, $offDays)) {
+                $sundaysSaturdays[] = $currentDate->format('Y-m-d');
+            }
+
+            // Move to the next day
+            $currentDate->modify('+1 day');
+        }
+
+        return $sundaysSaturdays;
+    }
+}
+
 if (!function_exists("haversine")) {
     function haversine($lat1, $lon1, $lat2, $lon2)
     {
