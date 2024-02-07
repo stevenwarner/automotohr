@@ -215,6 +215,8 @@ class Clock_model extends Base_model
         $this->companyId = $companyId;
         // set employeeId
         $this->employeeId = $employeeId;
+        //
+        $this->date = $this->loggedInPersonDate;
         // get todays date in UTC
         $this->dateInUTC =
             formatDateToDB(
