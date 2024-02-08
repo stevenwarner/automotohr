@@ -1217,12 +1217,13 @@ if (!function_exists('getStateByCol')) {
 
     function getStateColumn(array $where, string $column): string
     {
-        $CI = &get_instance();
-        return $CI->db
+        $result  = &get_instance()->db
             ->select($column)
             ->where($where)
             ->get('states')
-            ->row_array()[$column];
+            ->row_array();
+
+        return $result && $result[$column] ?  $result[$column] : "";
     }
 }
 
@@ -3244,7 +3245,7 @@ if (!function_exists("getTotalWorkTime")) {
             $total += $record['double_overtime'] / (60 * 60);
         }
         //
-        return $total.'h';
+        return $total . 'h';
     }
 }
 
