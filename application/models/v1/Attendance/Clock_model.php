@@ -2292,21 +2292,21 @@ class Clock_model extends Base_model
         $this->db->where('users.parent_sid', $companyId);
         $this->db->where('users.terminated_status', 0);
         //
-        if ($employees && $employees != "all") { 
+        if ($employees && array_search("all", $employees) === false) {
             $this->db->where_in('users.sid', $employees);
         }
         //
-        if  ($department != "all") {
+        if  ($department && $department != "all") {
             $this->db->where('departments_employee_2_team.department_sid', $department);
         }
 
-        if ($teams != "all") {
+        if ($teams && array_search("all", $teams) === false) {
             $this->db->where_in('departments_employee_2_team.team_sid', $teams);
         }
         //
-        if ($jobTitles != "all") { 
+        if ($jobTitles && array_search("all", $jobTitles) === false) { 
             $this->db->where_in('users.job_title', $jobTitles);
-        }
+        } 
         //
         $a = $this->db->get('departments_employee_2_team');
         //

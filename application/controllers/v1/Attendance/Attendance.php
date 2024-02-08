@@ -264,10 +264,10 @@ class Attendance extends Public_Controller
         // get todays date
         //
         $data["filter"] = [
-            "employees" => $this->input->get("employees", true) ?? "all",
+            "employees" => $this->input->get("employees", true) ?? ["all"],
             "departments" => $this->input->get("department", true) ?? "all",
-            "teams" => $this->input->get("teams", true) ?? "all",
-            "jobTitles" => $this->input->get("jobTitle", true) ?? "all",
+            "teams" => $this->input->get("teams", true) ?? ["all"],
+            "jobTitles" => $this->input->get("jobTitle", true) ?? ["all"],
         ];
         //
         $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);

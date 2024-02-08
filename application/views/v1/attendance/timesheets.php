@@ -40,7 +40,7 @@ $timeSheetName = "";
                         </label>
                         <select name="teams[]" class="form-control multipleSelect" multiple>
                             <?php if ($teams) { ?>
-                                <option value="all" <?php echo $filter["teams"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
+                                <option value="all" <?php echo in_array("all", $filter["teams"]) ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($teams as $team) { ?>
                                     <option value="<?php echo $team['sid']; ?>" <?php echo in_array($team['sid'], $filter["teams"]) ? 'selected="selected"' : ''; ?>><?php echo $team['name']; ?></option>
                                 <?php } ?>
@@ -58,7 +58,7 @@ $timeSheetName = "";
                         </label>
                         <select name="jobTitle[]" class="form-control multipleSelect" multiple>
                             <?php if ($jobTitles) { ?>
-                                <option value="all" <?php echo $filter["jobTitles"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
+                                <option value="all" <?php echo in_array("all", $filter["jobTitles"]) ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($jobTitles as $jobTitle) { ?>
                                     <option value="<?php echo $jobTitle['title']; ?>" <?php echo in_array($jobTitle['title'], $filter["jobTitles"]) ? 'selected="selected"' : ''; ?>><?php echo $jobTitle['title']; ?></option>
                                 <?php } ?>
@@ -77,7 +77,7 @@ $timeSheetName = "";
                         </label>
                         <select name="employees[]" class="form-control multipleSelect" multiple>
                             <?php if ($employees) { ?>
-                                <option value="all" <?php echo $filter["jobTitles"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
+                                <option value="all" <?php echo in_array("all", $filter["employees"]) ? 'selected="selected"' : ''; ?>>All</option>
                                 <?php foreach ($employees as $v0) { ?>
                                     <option value="<?= $v0["userId"]; ?>" <?= in_array($v0["userId"], $filter["employees"]) ? "selected" : ""; ?>><?= remakeEmployeeName($v0); ?></option>
                                 <?php } ?>
