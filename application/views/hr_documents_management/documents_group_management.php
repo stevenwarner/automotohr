@@ -91,7 +91,7 @@
                                                     $group_doc_count = $group_doc_count + count($groups_dociments);
 
                                                     foreach ($groups_dociments as $doc_row) {
-                                                        $group_doc_name = $group_doc_name . '&rarr; ' . $doc_row["document_sid"]." - ".$doc_row['document_title'] . "<br>";
+                                                        $group_doc_name = $group_doc_name . '&rarr; ' . $doc_row['document_title'] . "<br>";
                                                     }
                                                 }
 
