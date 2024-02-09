@@ -142,6 +142,7 @@ class Appearance extends Public_Controller
             $data['job_fair_multiple_forms'] = $job_fair_multiple_forms;
             $jobs_detail_page_banner = $this->customize_appearance_model->fGetThemeMetaData($company_id, 'theme-4', 'jobs_detail', 'jobs_detail_page_banner');
 
+
             if (isset($_POST["action"]) && $_POST["action"] == "update") {
                 $theme_name = $this->input->post('theme_name');
 
@@ -327,11 +328,6 @@ class Appearance extends Public_Controller
                 }
 
 
-
-                //_e($video, true, true);
-
-                // $vimeo_video = explode('vimeo.com/', $video, 2);
-                // $vimeo_video_id = $vimeo_video[1];
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
                 $update_section_meta = $this->generate_page_section_meta_array('', '', '', '', '', 0, '', '', '', '', $video);
 
@@ -341,9 +337,8 @@ class Appearance extends Public_Controller
             }
 
 
-
+            //
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_xx') {
-
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
                 $title = $_POST['title'];
@@ -379,11 +374,41 @@ class Appearance extends Public_Controller
                 if (!empty($vimeo_video)) {
                     $vimeo_video = explode('vimeo.com/', $vimeo_video, 2);
                     $vimeo_video_id = $vimeo_video[1];
-               }
+                }
+
+
+                if (!empty($_FILES) && isset($_FILES['uploaded_video_section_02']) && $_FILES['uploaded_video_section_02']['size'] > 0) {
+
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["uploaded_video_section_02"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["uploaded_video_section_02"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["uploaded_video_section_02"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        redirect('customize_appearance/' . $theme_id, 'refresh');
+                    }
+
+                    $video = $file_name;
+                }
+
+                //
+                if ($_FILES['uploaded_video_section_02']['size'] == 0) {
+                    $video  = $_POST['uploaded_video_section_02_old'];
+                }
 
 
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, $section_id);
-                $update_section_meta = $this->generate_page_section_meta_array($image, $video_id, $title, '', $content, $status, $show_video_or_image, $column_type,'',$vimeo_video_id);
+                $update_section_meta = $this->generate_page_section_meta_array($image, $video_id, $title, '', $content, $status, $show_video_or_image, $column_type, '', $vimeo_video_id, $video);
                 //$data_to_store = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
 
                 $data_to_store = array();
@@ -454,20 +479,61 @@ class Appearance extends Public_Controller
             }
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_section_04_video') {
+
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
-                $video = $_POST['video_section_04'];
                 $status = 1;
+
+                $videoSource = $_POST['video_source_section_04'];
+                $video = $_POST['yt_vm_video_url_section_04'];
 
                 if (isset($_POST['status_section_04'])) {
                     $status = $_POST['status_section_04'];
                 }
 
-                $youtube_video = explode('v=', $video, 2);
-                $youtube_video_id = $youtube_video[1];
+                //
+                $youtube_video_id = ' ';
+                if ($videoSource == 'youtube') {
+                    $youtube_video = explode('v=', $video, 2);
+                    $youtube_video_id = $youtube_video[1];
+                }
+
+                //
+                $vimeo_video_id = ' ';
+                if ($videoSource == 'vimeo') {
+                    $vimeo_video = explode('vimeo.com/', $video, 2);
+                    $vimeo_video_id = $vimeo_video[1];
+                }
+
+                //
+                $upload_video_id = ' ';
+                if ($videoSource == 'upload') {
+                    if (!empty($_FILES) && isset($_FILES['video_upload_section_04']) && $_FILES['video_upload_section_04']['size'] > 0) {
+
+                        $random = generateRandomString(5);
+                        $company_id = $data['session']['company_detail']['sid'];
+                        $target_file_name = basename($_FILES["video_upload_section_04"]["name"]);
+                        $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $filename = $target_dir . $company_id;
+
+                        if (!file_exists($filename)) {
+                            mkdir($filename);
+                        }
+
+                        if (move_uploaded_file($_FILES["video_upload_section_04"]["tmp_name"], $target_file)) {
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload_section_04"]["name"]) . ' has been uploaded.');
+                        } else {
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect('customize_appearance/' . $theme_id, 'refresh');
+                        }
+                        $upload_video_id = $file_name;
+                    }
+                }
+
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_04');
-                //$update_section_me = $this->generate_page_section_meta_array($image, $video, $title, $tag_line, $content, $status, $show_video_or_image)
-                $update_section_meta = $this->generate_page_section_meta_array('', $youtube_video_id, '', '', '', $status, '');
+                $update_section_meta = $this->generate_page_section_meta_array('', $youtube_video_id, '', '', '', $status, '', '', '', $vimeo_video_id, $upload_video_id);
                 $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_04', $dataToStore);
             }
@@ -646,20 +712,56 @@ class Appearance extends Public_Controller
             }
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_page_youtube_video') {
-                $youtube_video_id = '';
-                $url_prams = array();
-                parse_str(parse_url($_POST['page_youtube_video'], PHP_URL_QUERY), $url_prams);
 
-                if (isset($url_prams['v'])) {
-                    $youtube_video_id = $url_prams['v'];
-                } else {
-                    $youtube_video_id = '';
+
+                $videoSource = $_POST['video_source_section_04'];
+                $video = $_POST['yt_vm_video_url_section_04'];
+
+                //
+                $youtube_video_id = ' ';
+                if ($videoSource == 'youtube') {
+                    $youtube_video = explode('v=', $video, 2);
+                    $youtube_video_id = $youtube_video[1];
+                }
+
+                //
+                $vimeo_video_id = ' ';
+                if ($videoSource == 'vimeo') {
+                    $vimeo_video = explode('vimeo.com/', $video, 2);
+                    $youtube_video_id = $vimeo_video[1];
+                }
+
+                //
+                $upload_video_id = ' ';
+                if ($videoSource == 'upload') {
+                    if (!empty($_FILES) && isset($_FILES['video_upload_section_04']) && $_FILES['video_upload_section_04']['size'] > 0) {
+
+                        $random = generateRandomString(5);
+                        $company_id = $data['session']['company_detail']['sid'];
+                        $target_file_name = basename($_FILES["video_upload_section_04"]["name"]);
+                        $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                        $target_dir = "assets/uploaded_videos/";
+                        $target_file = $target_dir . $file_name;
+                        $filename = $target_dir . $company_id;
+
+                        if (!file_exists($filename)) {
+                            mkdir($filename);
+                        }
+
+                        if (move_uploaded_file($_FILES["video_upload_section_04"]["tmp_name"], $target_file)) {
+                            $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["video_upload_section_04"]["name"]) . ' has been uploaded.');
+                        } else {
+                            $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                            redirect('customize_appearance/' . $theme_id, 'refresh');
+                        }
+                        $youtube_video_id = $file_name;
+                    }
                 }
 
 
                 $video_location = $_POST['video_location'];
                 $sid = $_POST['sid'];
-                $this->themes_pages_model->UpdateYoutubeVideo($sid, $youtube_video_id, $video_location);
+                $this->themes_pages_model->UpdateYoutubeVideo($sid, $youtube_video_id, $video_location, $videoSource);
                 $youtube_video_status = 0;
 
                 if (isset($_POST['page_youtube_video_status'])) {

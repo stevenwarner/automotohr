@@ -129,12 +129,12 @@ class themes_pages_model extends CI_Model {
         $this->db->update($this->tableName, $data);
     }
 
-    public function UpdateYoutubeVideo($sid, $youtubeVideo, $video_location) {
+    public function UpdateYoutubeVideo($sid, $youtubeVideo, $video_location,$video_type='') {
         $data = array(
             'page_youtube_video' => $youtubeVideo,
-            'video_location' => $video_location
+            'video_location' => $video_location,
+            'video_type' => $video_type
         );
-
         $this->db->where('sid', $sid);
         $this->db->update($this->tableName, $data);
     }

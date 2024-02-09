@@ -267,6 +267,9 @@
         fValidateImageSection01();
         fValidateVimeoVideoSection01();
         fValidateUploadedVideoSection01();
+
+        fValidateVideoSection04();
+
     });
 
     function fSaveConfigSection01() {
@@ -327,13 +330,12 @@
     }
 
 
-//
+    //
     function fSaveVimeoVideoSection01() {
         if ($('#form_vimeo_video_section_01').valid()) {
             $('#form_vimeo_video_section_01').submit();
         }
     }
-
 
     //
     function fValidateUploadedVideoSection01() {
