@@ -15550,7 +15550,7 @@ if (!function_exists('get_all_group_documents')) {
     {
         $CI = &get_instance();
         $CI->db->select('documents_2_group.*,documents_management.document_title');
-        $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid');
+        $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid', "inner");
         $CI->db->where('group_sid', $group_sid);
         if ($excludeArchivedDocuments) {
             $CI->db->where('documents_management.archive', 0);
