@@ -3266,12 +3266,12 @@ if (!function_exists("getLoggedInPersonId")) {
 if (!function_exists("generateRandomColor")) {
     function generateRandomColor()
     {
-        $red = rand(0, 255);
-        $green = rand(0, 255);
-        $blue = rand(0, 255);
+        // Generate random RGB values with higher intensity
+        $red = mt_rand(150, 255);
+        $green = mt_rand(150, 255);
+        $blue = mt_rand(150, 255);
 
-        $hexColor = sprintf("#%02x%02x%02x", $red, $green, $blue);
-
-        return $hexColor;
+        // Convert RGB values to hexadecimal
+        return sprintf("#%02x%02x%02x", $red, $green, $blue);
     }
 }
