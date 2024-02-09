@@ -1838,6 +1838,8 @@ class Clock_model extends Base_model
         // set new record array
         $returnArray = [
             "periods" => [],
+            "schedule_time" => 0,
+            "difference_time" => 0,
             "clocked_time" => 0,
             "worked_time" => 0,
             "regular_time" => 0,
@@ -1856,6 +1858,8 @@ class Clock_model extends Base_model
                 "total_shifts" => 0
             ],
             "text" => [
+                "schedule_time" => "0h",
+                "difference_time" => "0h",
                 "clocked_time" => '0h',
                 "worked_time" => '0h',
                 "regular_time" => '0h',
@@ -1930,6 +1934,7 @@ class Clock_model extends Base_model
             $periodStartDate,
             $periodEndDate
         );
+        // _e($employeeShifts,true,true);
         //
         $employeeRate = getRatePerHour($employeeWageInfo['rate'], $employeeWageInfo['per']);
         //
@@ -1949,6 +1954,8 @@ class Clock_model extends Base_model
             // set a tmp array
             $tmp = [
                 "date" => $v0["clocked_date"],
+                "schedule_time" => 0,
+                "difference_time" => 0,
                 "clocked_time" => 0,
                 "worked_time" => 0,
                 "regular_time" => 0,
@@ -1958,14 +1965,16 @@ class Clock_model extends Base_model
                 "overtime" => 0,
                 "double_overtime" => 0,
                 "text" => [
-                    "clocked_time" => 0,
-                    "worked_time" => 0,
-                    "regular_time" => 0,
-                    "breaks_time" => 0,
-                    "paid_break_time" => 0,
-                    "unpaid_break_time" => 0,
-                    "overtime" => 0,
-                    "double_overtime" => 0,
+                    "schedule_time" => '0h',
+                    "difference_time" => '',
+                    "clocked_time" => '0h',
+                    "worked_time" => '0h',
+                    "regular_time" => '0h',
+                    "breaks_time" => '0h',
+                    "paid_break_time" => '0h',
+                    "unpaid_break_time" => '0h',
+                    "overtime" => '0h',
+                    "double_overtime" => '0h',
                 ]
             ];
             // get the attendance log
@@ -2068,7 +2077,41 @@ class Clock_model extends Base_model
             $regularTime = $tmp["worked_time"]-($tmp["overtime"] + $tmp["double_overtime"]);
             $tmp['regular_time'] = $regularTime;
             //
+            if ($employeeShifts[$v0['clocked_date']]) {
+                $shiftStart = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["start_time"];
+                $shiftEnd = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["end_time"];
+                //
+                $d1Obj = new DateTime($shiftStart, new DateTimeZone("UTC"));
+                // convert d1 to UTC
+                $d2Obj = new DateTime($shiftEnd, new DateTimeZone("UTC"));
+                // apply difference
+                $diff = $d2Obj->diff($d1Obj);
+                // if diference is off one minute
+                $shiftDuration =
+                    $diff->s
+                    + ($diff->i * 60)
+                    + ($diff->h * 3600)
+                    + ($diff->d * 86400)
+                    + ($diff->m * 2592000)
+                    + ($diff->y * 31536000);
+                //
+                $tmp['schedule_time'] = $shiftDuration;
+                $tmp['difference_time'] = $tmp['clocked_time'] - $shiftDuration;
+            } else {
+                $tmp['difference_time'] = $tmp['clocked_time'];
+            }
+            //
+            $shifyDifference = '';
+            //
+            if ($tmp["difference_time"] < 0) {
+                $shifyDifference = '<span class="label label-danger"> -'.convertSecondsToTime(str_replace('-', '', $tmp["difference_time"])).' </span>';
+            } else if ($tmp["difference_time"] > 0) {
+                $shifyDifference = '<span class="label label-warning"> +'.convertSecondsToTime($tmp["difference_time"]).'</span>';
+            }
+            //
             $tmp["text"] = [
+                "schedule_time" => convertSecondsToTime($tmp['schedule_time']),
+                "difference_time" => $shifyDifference,
                 "clocked_time" => convertSecondsToTime($tmp['clocked_time']),
                 "worked_time" => convertSecondsToTime($tmp["worked_time"]),
                 "regular_time" => convertSecondsToTime($tmp['regular_time']),
@@ -2081,6 +2124,8 @@ class Clock_model extends Base_model
             //
             // set to main array
             $returnArray["periods"][] = $tmp;
+            $returnArray["schedule_time"] += $tmp['schedule_time'];
+            $returnArray["difference_time"] += $tmp['difference_time'];
             $returnArray["clocked_time"] += $tmp['clocked_time'];
             $returnArray["worked_time"] += $tmp['worked_time'];
             $returnArray["regular_time"] += $tmp['regular_time'];
@@ -2124,7 +2169,17 @@ class Clock_model extends Base_model
         }
         // apply seven consecutive day overtime
         // convert to text
+        $totalDifference = '';
+        
+        if ($returnArray["difference_time"] < 0) {
+            $totalDifference = '<span class="label label-danger"> -'.convertSecondsToTime($returnArray["difference_time"]).' </span>';
+        } else if ($returnArray["difference_time"] > 0) {
+            $totalDifference = '<span class="label label-warning"> +'.convertSecondsToTime($returnArray["difference_time"]).'</span>';
+        }
+        //
         $returnArray["text"] = [
+            "schedule_time" => convertSecondsToTime($returnArray["schedule_time"]),
+            "difference_time" => $totalDifference,
             "clocked_time" => convertSecondsToTime($returnArray["clocked_time"]),
             "worked_time" => convertSecondsToTime($returnArray["worked_time"]),
             "regular_time" => convertSecondsToTime($returnArray["regular_time"]),
@@ -2142,6 +2197,40 @@ class Clock_model extends Base_model
         return $returnArray;
     }
 
+    public function getClockedInEmployees ($companyId, $date) {
+        $records =
+            $this->db
+            ->select("
+                sid,
+                employee_sid,
+                clocked_date
+            ")
+            ->where([
+                "company_sid" => $companyId,
+                "clocked_date" => $date,
+            ])
+            ->get("cl_attendance")
+            ->result_array();
+        //
+        foreach ($records as $rkey => $row) {
+            $location = $this->db
+            ->select("
+                lat,
+                lng,
+                lat_2,
+                lng_2
+            ")
+            ->where("cl_attendance_sid", $row['sid'])
+            ->order_by("sid", "ASC")
+            ->get("cl_attendance_log")
+            ->row_array();
+            //
+            $records[$rkey]['location'] = $location;
+            $records[$rkey]['picture'] = getImageURL(get_employee_profile_info($row['sid'])['profile_picture']);
+        }    
+        //
+        return $records; 
+    }
 
     public function getEmployeeOverTimeRule(int $employeeId)
     {
@@ -2312,6 +2401,9 @@ class Clock_model extends Base_model
         //
         $b = $a->result_array();
         $a = $a->free_result();
+        //
+        // _e($b,true);
+        // _e($this->db->last_query(),true);
         //
         return $b;
     }

@@ -196,6 +196,12 @@
                         Unpaid Breaks
                     </th>
                     <th scope="col" class="bg-black">
+                        Schedule Time
+                    </th>
+                    <th scope="col" class="bg-black">
+                        Difference
+                    </th>
+                    <th scope="col" class="bg-black">
                         Overtime
                     </th>
                     <th scope="col" class="bg-black">
@@ -268,6 +274,12 @@
                                 <?= $processedData ? $processedData['text']['unpaid_break_time'] : "0h"; ?>
                             </td>
                             <td class="csVerticalAlignMiddle mh-100">
+                                <?= $processedData ? $processedData['text']['schedule_time'] : "0h"; ?>
+                            </td>
+                            <td class="csVerticalAlignMiddle mh-100">
+                                <?= $processedData ? $processedData['text']['difference_time'] : ""; ?>
+                            </td>
+                            <td class="csVerticalAlignMiddle mh-100">
                                 <?= $processedData ? $processedData['text']['overtime'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
                             </td>
                             <td class="csVerticalAlignMiddle mh-100">
@@ -301,7 +313,7 @@
                                 <?php } ?>
                             </td>
                         <?php } else { ?>
-                            <td class="csVerticalAlignMiddle text-center mh-100" colspan="10">
+                            <td class="csVerticalAlignMiddle text-center mh-100" colspan="14">
                                 <strong class="text-primary">
                                     Time off - <?= $leave["title"]; ?>
                                 </strong>
@@ -338,6 +350,12 @@
                     </th>
                     <th scope="col" class="bg-black">
                         <?= $clockArray ? $clockArray['text']['unpaid_break_time'] : "0h"; ?>
+                    </th>
+                    <th scope="col" class="bg-black">
+                        <?= $clockArray ? $clockArray['text']['schedule_time'] : "0h"; ?>
+                    </th>
+                    <th scope="col" class="bg-black">
+                        <?= $clockArray ? $clockArray['text']['difference_time'] : "0h"; ?>
                     </th>
                     <th scope="col" class="bg-black">
                         <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> 

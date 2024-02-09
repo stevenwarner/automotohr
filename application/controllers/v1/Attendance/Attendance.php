@@ -52,7 +52,7 @@ class Attendance extends Public_Controller
         $this->loggedInEmployee = checkAndGetSession("employer_detail");
         $this->loggedInCompany = checkAndGetSession("company_detail");
         //
-        $this->disableCreationOfMinifyFiles = true;
+        $this->disableCreationOfMinifyFiles = false;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
@@ -253,7 +253,7 @@ class Attendance extends Public_Controller
         $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
         //
         $data["sidebarPath"] = $this->sidebarPath;
-        $data["mainContentPath"] = "v1/attendance/timesheets";
+        $data["mainContentPath"] = "v1/attendance/employees_timesheets";
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
         //
         $defaultRange = getSystemDate(SITE_DATE) . ' - ' . getSystemDate(SITE_DATE);
@@ -303,6 +303,80 @@ class Attendance extends Public_Controller
         $data['departments'] = $this->clock_model->getDepartments($this->loggedInCompany["sid"]); 
         $data['teams'] = $this->clock_model->getTeams($this->loggedInCompany["sid"], $data['departments']);
         $data['jobTitles'] = $this->clock_model->getJobTitles();
+        //   
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
+    }
+
+    /**
+     * logged in employees locations
+     */
+    public function locations()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/plugins/ms_modal/main", "css");
+        $this->setCommon("v1/plugins/ms_modal/main", "js");
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/locations", "js");
+        $this->getCommon($data, "timesheets");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/employees_locations";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        //
+        $defaultDate = getSystemDate(SITE_DATE);
+        $selectedDate = $this->input->get("clocked_in_date") ?? $defaultDate;
+        //
+        $clockedInDate = formatDateToDB($selectedDate, SITE_DATE, DB_DATE);
+        //
+        $data["filter"]['clocked_in_date'] = $selectedDate;
+        //
+        $data["clockedInEmployees"] = $this->clock_model
+                ->getClockedInEmployees(
+                    $this->loggedInCompany["sid"],
+                    $clockedInDate
+                );    
+        //           
+        // //
+        // if ($data["filterEmployees"]) {
+        //     foreach ($data["filterEmployees"] as $ekey => $employee) {
+        //         // get the employee worked shifts
+        //         $clockArray = $this->clock_model->calculateTimeWithinRange(
+        //             $employee['sid'],
+        //             $startDate,
+        //             $endDate
+        //         ); 
+        //         //
+        //         $data["filterEmployees"][$ekey]['clockArray'] = $clockArray;
+        //     }
+        // } 
         //   
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
