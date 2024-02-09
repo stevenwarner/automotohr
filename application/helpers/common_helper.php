@@ -15552,6 +15552,7 @@ if (!function_exists('get_all_group_documents')) {
         $CI->db->select('documents_2_group.*,documents_management.document_title');
         $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid', "inner");
         $CI->db->where('group_sid', $group_sid);
+        $CI->db->where('documents_management.is_specific', 0);
         if ($excludeArchivedDocuments) {
             $CI->db->where('documents_management.archive', 0);
         }
