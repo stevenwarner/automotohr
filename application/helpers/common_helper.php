@@ -15560,7 +15560,15 @@ if (!function_exists('get_all_group_documents')) {
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            return $record_arr;
+            //
+            $tmp = [];
+            foreach($record_arr as $rc) {
+                if (!$tmp[$rc["document_sid"]]) {
+                    $tmp[$rc["document_sid"]] = $rc;
+                }
+            }
+            return array_values($tmp);
+            // return $record_arr;
         } else {
             return array();
         }
