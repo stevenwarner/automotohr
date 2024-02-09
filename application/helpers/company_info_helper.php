@@ -3115,6 +3115,8 @@ if (!function_exists('getGroupOtherDocuments')) {
      */
     function getGroupOtherDocuments(array $group, bool $doCount = false)
     {
+        $stateForm = json_decode($group['state_forms_json']);
+
         //
         $documentArray = [];
         // check for I9
@@ -3152,6 +3154,11 @@ if (!function_exists('getGroupOtherDocuments')) {
         // check for occupational license
         if ($group['occupational_license'] == 1) {
             $documentArray[] = 'Occupational License Information';
+        }
+
+        // check for occupational license
+        if (!empty($stateForm) && $stateForm[0] == 1) {
+            $documentArray[] = 'State Forms';
         }
         //
         return $doCount ? count($documentArray) : $documentArray;
