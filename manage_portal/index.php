@@ -239,7 +239,9 @@ if (is_dir($application_folder)) {
 		$application_folder = $_temp;
 	}
 
+
 	define('APPPATH', $application_folder . DIRECTORY_SEPARATOR);
+
 } else {
 	if (!is_dir(BASEPATH . $application_folder . DIRECTORY_SEPARATOR)) {
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);

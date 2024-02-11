@@ -184,3 +184,4 @@ define('SES_PORT', '587');
 
 // Added on- 27/01/2022
 define('FULL_EMPLOYMENT_APPLICATION_REQUEST', 333);
+define('UPLOADED_VIDEO_PATH', 'http://automotohr.local/assets/uploaded_videos/');

@@ -14,7 +14,19 @@
                 <div class="embed-responsive embed-responsive-16by9">
                     <iframe id="player" class="embed-responsive-item" src="//www.youtube.com/embed/<?php echo (isset($section_01_meta['video']) && $section_01_meta['video'] != '' ? $section_01_meta['video'] : '' );?>/?autoplay=0&loop=1&rel=0&controls=0&showinfo=0&enablejsapi=1"></iframe>
                 </div>
+            <?php } else if($section_01_meta['show_video_or_image'] == 'vimeo_video') {?>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe id="vimeo_player" src="https://player.vimeo.com/video/<?php echo $section_01_meta['vimeo_video']; ?>?title=0&byline=0&portrait=0&autoplay=0&loop=0&muted=0&controls=1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                </div>
+            <?php }  else if($section_01_meta['show_video_or_image'] == 'uploaded_video') {?>
+                <div class="embed-responsive embed-responsive-16by9">
+                <video controls width="100%">
+                <source src="<?php echo UPLOADED_VIDEO_PATH . $section_01_meta['uploaded_video']; ?>" type='video/mp4'>
+            </video>
+                </div>
             <?php } ?>
+
+
         </div>
         <div class="slider-text">
             <div class="slide-inner">
