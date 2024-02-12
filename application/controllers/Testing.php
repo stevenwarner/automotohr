@@ -311,4 +311,121 @@ class Testing extends CI_Controller
         }
         _e("script process complete", true, true);
     }
+
+
+
+
+
+    // Time off 
+    public function timeOffHistoryMove($employeeSid)
+    {
+
+        $results = $this->db->select("*")
+            ->where("new_employee_sid", $employeeSid)
+            ->order_by('sid', 'Desc')
+            ->limit(1)
+            ->get("employees_transfer_log")
+            ->result_array();
+
+        if (empty($results)) {
+            echo "employee transfer log not found";
+        } else {
+
+            //
+            $adminId = getCompanyAdminSid($results[0]['to_company_sid']);
+            $previousEmployeeSid = $results[0]['previous_employee_sid'];
+            //
+            $this->load->model('timeoff_model');
+
+            $employeeRequests = $this->timeoff_model
+                ->getEmployeeRequestsPrevious(
+                    $previousEmployeeSid
+                );
+
+            //
+            if ($employeeRequests) {
+                foreach ($employeeRequests as $request) {
+                    //Get Ploicy Title
+                    $policyData = $this->timeoff_model
+                        ->getPreviousPlicyTitle(
+                            $request['company_sid'],
+                            $request['timeoff_policy_sid']
+                        );
+
+                    // Get Policy Id
+                    $newPolicyId = $this->timeoff_model
+                        ->getPreviousPlicySid(
+                            $results[0]['to_company_sid'],
+                            $policyData['title']
+                        );
+                    //
+                    $requestId = $request['sid'];
+                    $approvedBy = $request['approved_by'];
+                    //
+                    unset($request['sid']);
+                    //
+                    $request['company_sid'] = $results[0]['to_company_sid'];
+                    $request['employee_sid'] = $results[0]['new_employee_sid'];
+                    $request['timeoff_policy_sid'] = $newPolicyId['sid'];
+                    $request['creator_sid'] = $request['creator_sid'] ==  $results[0]['new_employee_sid'] ? $results[0]['to_company_sid'] : $adminId;
+                    $request['approved_by'] = $request['approved_by'] ? $adminId : $request['approved_by'];
+                    //
+                    $whereArray = [
+                        'employee_sid' => $results[0]['to_company_sid'],
+                        'timeoff_policy_sid' => $newPolicyId['sid'],
+                        'request_from_date' => $request['request_from_date'],
+                        'request_to_date' => $request['request_to_date'],
+                        'status' => $request['status']
+                    ];
+                    //
+                    if (!$this->db->where($whereArray)->count_all_results('timeoff_requests')) {
+                        //
+                        $this->db->insert(
+                            'timeoff_requests',
+                            $request
+                        );
+                        //
+                        if ($approvedBy) {
+                            //
+                            $newRequestId = $this->db->insert_id();
+                            //
+                            $comment = $this->timeoff_model
+                                ->getRequestApproverComment(
+                                    $requestId,
+                                    $approvedBy
+                                );
+                            // Insert the time off timeline
+                            $insertTimeline = array();
+                            $insertTimeline['request_sid'] = $newRequestId;
+                            $insertTimeline['employee_sid'] = $adminId;
+                            $insertTimeline['action'] = 'update';
+                            $insertTimeline['note'] = json_encode([
+                                'status' => $request['status'],
+                                'canApprove' => 1,
+                                'details' => [
+                                    'startDate' => $request['request_from_date'],
+                                    'endDate' => $request['request_to_date'],
+                                    'time' => $request['requested_time'],
+                                    'policyId' => $newPolicyId,
+                                    'policyTitle' => $this->db
+                                        ->select('title')
+                                        ->where('sid', $newPolicyId)
+                                        ->get('timeoff_policies')->row_array()['title'],
+                                ],
+                                'comment' => $comment
+                            ]);
+                            $insertTimeline['created_at'] = getSystemDate();
+                            $insertTimeline['updated_at'] = getSystemDate();
+                            $insertTimeline['is_moved'] = 0;
+                            $insertTimeline['comment'] = $comment;
+                            //
+                            $this->db->insert('timeoff_request_timeline', $insertTimeline);
+                        }
+                    }
+                }
+            }
+
+            echo "Done";
+        }
+    }
 }

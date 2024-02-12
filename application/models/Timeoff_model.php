@@ -7485,4 +7485,39 @@ class Timeoff_model extends CI_Model
 
         return $records_arr;
     }
+
+    //
+    public function getEmployeeRequestsPrevious(int $employeeId)
+    {
+        //
+        return $this->db
+            ->where('employee_sid', $employeeId)
+            ->get('timeoff_requests')
+            ->result_array();
+    }
+
+
+    //
+    public function getPreviousPlicyTitle(int $companyId, int $policyId)
+    {
+        //
+        return $this->db
+            ->select('title')
+            ->where('company_sid', $companyId)
+            ->where('sid', $policyId)
+            ->get('timeoff_policies')
+            ->row_array();
+    }
+
+    //
+    public function getPreviousPlicySid(int $companyId, string $title)
+    {
+        //
+        return $this->db
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->where('title', $title)
+            ->get('timeoff_policies')
+            ->row_array();
+    }
 }
