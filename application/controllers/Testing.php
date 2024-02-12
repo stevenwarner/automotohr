@@ -358,6 +358,11 @@ class Testing extends CI_Controller
                             $results[0]['to_company_sid'],
                             $policyData['title']
                         );
+                        
+                    if (empty($newPolicyId)) {
+                        die("newPolicyId is null");
+                    }
+
                     //
                     $requestId = $request['sid'];
                     $approvedBy = $request['approved_by'];
@@ -406,10 +411,10 @@ class Testing extends CI_Controller
                                     'startDate' => $request['request_from_date'],
                                     'endDate' => $request['request_to_date'],
                                     'time' => $request['requested_time'],
-                                    'policyId' => $newPolicyId,
+                                    'policyId' => $newPolicyId['sid'],
                                     'policyTitle' => $this->db
                                         ->select('title')
-                                        ->where('sid', $newPolicyId)
+                                        ->where('sid', $newPolicyId['sid'])
                                         ->get('timeoff_policies')->row_array()['title'],
                                 ],
                                 'comment' => $comment
