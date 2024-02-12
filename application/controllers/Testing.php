@@ -377,7 +377,7 @@ class Testing extends CI_Controller
 
                             // insert the policy
                             $this->db->insert('timeoff_policies', $policyDetails);
-                            $newPolicyId = $this->db->insert_id();
+                            $newPolicyId['sid'] = $this->db->insert_id();
                     }
 
                     //
