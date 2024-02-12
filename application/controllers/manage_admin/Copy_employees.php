@@ -944,7 +944,8 @@ class Copy_employees extends Admin_Controller
                         'employee_sid' => $destinationEmployeeId,
                         'timeoff_policy_sid' => $newPolicyId,
                         'request_from_date' => $request['request_from_date'],
-                        'request_to_date' => $request['request_to_date']
+                        'request_to_date' => $request['request_to_date'],
+                        'status' => $request['status'],
                     ];
                     //
                     if (!$this->db->where($whereArray)->count_all_results('timeoff_requests')) {
