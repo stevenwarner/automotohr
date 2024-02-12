@@ -352,6 +352,8 @@ class Testing extends CI_Controller
                             $request['timeoff_policy_sid']
                         );
 
+                    _e($policyData,true);    
+
                     // Get Policy Id
                     $newPolicyId = $this->timeoff_model
                         ->getPreviousPlicySid(
