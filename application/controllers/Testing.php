@@ -389,11 +389,11 @@ class Testing extends CI_Controller
                     $request['company_sid'] = $results[0]['to_company_sid'];
                     $request['employee_sid'] = $results[0]['new_employee_sid'];
                     $request['timeoff_policy_sid'] = $newPolicyId['sid'];
-                    $request['creator_sid'] = $request['creator_sid'] ==  $results[0]['new_employee_sid'] ? $results[0]['to_company_sid'] : $adminId;
+                    $request['creator_sid'] = $request['creator_sid'] ==  $results[0]['new_employee_sid'] ? $results[0]['new_employee_sid'] : $adminId;
                     $request['approved_by'] = $request['approved_by'] ? $adminId : $request['approved_by'];
                     //
                     $whereArray = [
-                        'employee_sid' => $results[0]['to_company_sid'],
+                        'employee_sid' => $results[0]['new_employee_sid'],
                         'timeoff_policy_sid' => $newPolicyId['sid'],
                         'request_from_date' => $request['request_from_date'],
                         'request_to_date' => $request['request_to_date'],
