@@ -350,9 +350,7 @@ class Testing extends CI_Controller
                         ->getPreviousPlicyTitle(
                             $request['company_sid'],
                             $request['timeoff_policy_sid']
-                        );
-
-                    _e($policyData,true);    
+                        );    
 
                     // Get Policy Id
                     $newPolicyId = $this->timeoff_model
@@ -362,7 +360,24 @@ class Testing extends CI_Controller
                         );
                         
                     if (empty($newPolicyId)) {
-                        die("newPolicyId is null");
+                        $policyDetails =
+                                $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
+                            //
+                            unset($policyDetails['sid']);
+                            //
+                            $policyDetails['company_sid'] = $results[0]['to_company_sid'];
+                            $policyDetails['creator_sid'] = $adminId;
+                            $policyDetails['type_sid'] = $this->timeoff_model
+                                ->checkAndAddType(
+                                    $policyDetails['type_sid'],
+                                    $results[0]['to_company_sid']
+                                );
+                            $policyDetails['is_entitled_employee'] = 1;
+                            $policyDetails['assigned_employees'] = $employeeSid;
+
+                            // insert the policy
+                            $this->db->insert('timeoff_policies', $policyDetails);
+                            $newPolicyId = $this->db->insert_id();
                     }
 
                     //
