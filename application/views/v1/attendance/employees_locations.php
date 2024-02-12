@@ -61,6 +61,10 @@ $timeSheetName = "";
 
 
     <div class="panel-body">
-    <div id="jsMapLocation" style="height: 400px"></div>
+    <div id="map" style="width: 100%;"></div>
     </div>
 </div>
+
+<script>
+    var jsMapData = JSON.parse('<?=json_encode($markers);?>');
+</script>

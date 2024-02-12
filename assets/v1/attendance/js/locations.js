@@ -8,18 +8,79 @@ $(function locations() {
 			format: "MM/DD/YYYY",
 		},
 	});
+	//
+	console.log(jsMapData);
+	//
+	if(Object.keys(jsMapData).length){
+		//
+		$('#map').css('height', '440px')
+		//
+		const myLatLng = {
+			lat: 39.696621,
+			lng: -98.672710
+		};
+		//
+		const map = new google.maps.Map(document.getElementById("map"), {
+			zoom: 4,
+			mapTypeControl: true,
+			center: myLatLng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		});
+		//
+		jsMapData.map(function(mark, i){
+			//
+			const icon = {
+				url: mark['logo'], // url
+				scaledSize: new google.maps.Size(25, 25), // scaled size
+				origin: new google.maps.Point(0,0), // origin
+				anchor: new google.maps.Point(0, 0) // anchor
+			};
+			//
+			var pin = {lat: parseFloat(mark['lat']), 'lng': parseFloat(mark['lng'])};
+			//
+			new google.maps.Marker({
+				position: pin,
+				map: map,
+				icon: icon,
+				title: mark['name'],
+				optimized: false
+			});
+			//
+			console.log(mark)
+			//
+			// addCSSRule(document.styleSheets[0],
+            //     'img[src="' + logo  +'#' + i + '"]',
+            //     'background:url(' + logo + ') no-repeat 4px 4px');
+		});
+	} else {
+		$('#map').html('<p class="alert alert-info text-center csF16">No foot prints found.</p>');
+	}
+
+	function addCSSRule(sheet, selector, rules, index) {
+        if ("insertRule" in sheet) {
+            sheet.insertRule(selector + "{" + rules + "}", index);
+        } else if ("addRule" in sheet) {
+            sheet.addRule(selector, rules, index);
+        }
+    }
 
 	// $('.jsDatePicker').datepicker({
 	// 	format: 'mm-dd-yyyy',
 	// 	beforeShowDay: unavailable,
 	// 	minDate: 1
 	// });
+	// console.log(locations);
 
-    makeLocationMap("jsMapLocation",{"lat":51.508742,"lng":-0.120850});
+	
+	// locations.map(function(v,i){
+	// 	console.log(v,i);
+	// })
 
-    /**
-	 * draw map
-	 */
+    // makeLocationMap("jsMapLocation",{"lat":51.508742,"lng":-0.120850});
+
+    // /**
+	//  * draw map
+	//  */
 	function makeLocationMap(containerId, location) {
 		let map,
 			markers = [],
@@ -124,13 +185,13 @@ $(function locations() {
 		google.maps.event.trigger(map, "resize");
 	}
 
-	function addMarker(options) {
-		let marker = new google.maps.Marker(options);
+	// function addMarker(options) {
+	// 	let marker = new google.maps.Marker(options);
 
-		options.markers.push(marker);
-		options.coords.push({
-			lat: options.position.lat,
-			lng: options.position.lng,
-		});
-	}
+	// 	options.markers.push(marker);
+	// 	options.coords.push({
+	// 		lat: options.position.lat,
+	// 		lng: options.position.lng,
+	// 	});
+	// }
 });

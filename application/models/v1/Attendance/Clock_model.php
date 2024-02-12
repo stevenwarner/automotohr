@@ -2212,6 +2212,8 @@ class Clock_model extends Base_model
             ->get("cl_attendance")
             ->result_array();
         //
+        $markers = [];
+        //
         foreach ($records as $rkey => $row) {
             $location = $this->db
             ->select("
@@ -2225,11 +2227,30 @@ class Clock_model extends Base_model
             ->get("cl_attendance_log")
             ->row_array();
             //
-            $records[$rkey]['location'] = $location;
-            $records[$rkey]['picture'] = getImageURL(get_employee_profile_info($row['sid'])['profile_picture']);
+            if(!empty($location['lat']) || !empty($location['lng'])){
+                //
+                $userInfo = get_employee_profile_info($row['employee_sid']);
+                //
+                $markers[] = [
+                    'employeeId' => $row['employee_sid'],
+                    'lat' => $location['lat'], 
+                    'lng' => $location['lng'], 
+                    'logo' => getImageURL($userInfo['profile_picture']),
+                    'name' => remakeEmployeeName([
+                        'first_name' => $userInfo['first_name'],
+                        'last_name' => $userInfo['last_name'],
+                        'access_level' => $userInfo['access_level'],
+                        'timezone' => isset($userInfo['timezone']) ? $userInfo['timezone'] : '',
+                        'access_level_plus' => $userInfo['access_level_plus'],
+                        'is_executive_admin' => $userInfo['is_executive_admin'],
+                        'pay_plan_flag' => $userInfo['pay_plan_flag'],
+                        'job_title' => $userInfo['job_title'],
+                    ]) 
+                ];
+            }
         }    
         //
-        return $records; 
+        return $markers; 
     }
 
     public function getEmployeeOverTimeRule(int $employeeId)
