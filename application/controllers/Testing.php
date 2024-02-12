@@ -38,10 +38,16 @@ class Testing extends CI_Controller
      */
     public function test()
     {
-        // load payroll model
-        $this->load->model("v1/Payroll/Copy_model", "copy_model");
-        //
-        $this->copy_model->copyCompanyEarningTypes(56885, 21);
+        $results = $this->db->select("sid")
+            ->get("portal_job_title_templates")
+            ->result_array();
+
+        foreach ($results as $v) {
+            $this->db->where("sid", $v["sid"])
+                ->update("portal_job_title_templates", [
+                    "color_code" => generateRandomColor()
+                ]);
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ class Testing extends CI_Controller
         $this->load->model("v1/Payroll/Wage_model", "wage_model");
         //
         $this->wage_model->calculateEmployeeWage(
-            15753, 
+            15753,
             "2024-01-01",
             "2024-01-05"
         );
@@ -95,7 +101,8 @@ class Testing extends CI_Controller
         exit(count($employees) . " employees are synced!");
     }
 
-    public function syncEmployeeHomeAddress () {
+    public function syncEmployeeHomeAddress()
+    {
         $employees = $this->db
             ->select("employee_sid, gusto_uuid")
             ->where('gusto_home_address_uuid', NULL)
@@ -105,7 +112,7 @@ class Testing extends CI_Controller
         //
         if (!$employees) {
             exit("no employees found");
-        }  
+        }
         //
         $this->load->model("v1/Payroll_model", "payroll_model");
         //
@@ -129,12 +136,12 @@ class Testing extends CI_Controller
                         $employeeId,
                         "employee"
                     );
-                   
+
                 //
                 if ($companyStateForms['completed']) {
                     foreach ($companyStateForms['completed'] as $form) {
                         //
-                        _e($form,true);
+                        _e($form, true);
                         if ($form['title'] == "2020 W-4MN, Minnesota Employee Withholding Allowance/Exemption Certificate") {
                             if (!$employeeInfo['Location_Address']) {
                                 $employeeInfo['Location_Address'] = $form['form_data']['street_1'];
@@ -153,7 +160,7 @@ class Testing extends CI_Controller
                             }
                         }
                     }
-                }   
+                }
                 //
                 if ($companyStateForms['']) {
                     if (!$employeeInfo['Location_Address']) {
@@ -181,7 +188,6 @@ class Testing extends CI_Controller
                         $employeeInfo['Location_ZipCode'] = $w4FormInfo['zip'];
                     }
                 }
-                
             }
 
             //
@@ -221,7 +227,6 @@ class Testing extends CI_Controller
                         $employeeInfo['Location_ZipCode'] = $w4FormInfo['zip'];
                     }
                 }
-                
             }
 
             if (
@@ -236,7 +241,7 @@ class Testing extends CI_Controller
                 //
                 if ($i9FormInfo) {
                     if (!$employeeInfo['Location_Address']) {
-                        $employeeInfo['Location_Address'] = $i9FormInfo['section1_address'].' '.$i9FormInfo['section1_apt_number'];
+                        $employeeInfo['Location_Address'] = $i9FormInfo['section1_address'] . ' ' . $i9FormInfo['section1_apt_number'];
                     }
                     //
                     if (!$employeeInfo['Location_City']) {
@@ -283,18 +288,17 @@ class Testing extends CI_Controller
                     if (!$employeeInfo['Location_ZipCode']) {
                         $employeeInfo['Location_ZipCode'] = $fullEmploymentApplication['TextBoxAddressZIPFormer1'];
                     }
-                }    
-                
+                }
             }
 
-            _e($employeeInfo,true);
+            _e($employeeInfo, true);
             if (
                 $employeeInfo['Location_Address'] &&
                 $employeeInfo['Location_City'] &&
                 $employeeInfo['state_code'] &&
                 $employeeInfo['Location_ZipCode']
             ) {
-                
+
                 // sync employee address
                 $this->payroll_model->createEmployeeHomeAddress($employeeId, [
                     'street_1' => $employeeInfo['Location_Address'],
@@ -305,6 +309,6 @@ class Testing extends CI_Controller
                 ]);
             }
         }
-        _e("script process complete",true,true);  
+        _e("script process complete", true, true);
     }
 }

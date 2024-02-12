@@ -3703,7 +3703,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('documents_2_group');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
+ 
         if (!empty($records_arr)) {
             foreach ($records_arr as $key => $document) {
                 if ($document['group_sid'] != $group_id) {

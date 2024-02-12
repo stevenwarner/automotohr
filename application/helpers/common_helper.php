@@ -15546,18 +15546,30 @@ if (!function_exists('get_documents_assigned_data')) {
     }
 }
 if (!function_exists('get_all_group_documents')) {
-    function get_all_group_documents($group_sid)
+    function get_all_group_documents($group_sid, $excludeArchivedDocuments = false)
     {
         $CI = &get_instance();
         $CI->db->select('documents_2_group.*,documents_management.document_title');
-        $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid');
+        $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid', "inner");
         $CI->db->where('group_sid', $group_sid);
+        $CI->db->where('documents_management.is_specific', 0);
+        if ($excludeArchivedDocuments) {
+            $CI->db->where('documents_management.archive', 0);
+        }
         $record_obj = $CI->db->get('documents_2_group');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            return $record_arr;
+            //
+            $tmp = [];
+            foreach($record_arr as $rc) {
+                if (!$tmp[$rc["document_sid"]]) {
+                    $tmp[$rc["document_sid"]] = $rc;
+                }
+            }
+            return array_values($tmp);
+            // return $record_arr;
         } else {
             return array();
         }
