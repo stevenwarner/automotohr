@@ -278,7 +278,6 @@ $(function () {
                 balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
                 //
                 $.each(v, (index, poli) => {
-                    console.log(poli)
                     if (index == "total") return "";
                     balancePolicyOBJ[v.total.UserId]['allowed'].push({
                         policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>)',
@@ -349,11 +348,14 @@ $(function () {
 
     //
     function getBalanceBox(v, userRow, popo) {
-        console.log({userRow})
         return `
         <!--  -->
         <div class="col-sm-3">
-            <div class="csBox jsBox csShadow csRadius5"  data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}">
+            <div class="csBox jsBox csShadow csRadius5"  data-id="${
+				v.total.UserId
+			}" data-name="${userRow.first_name} ${
+			userRow.last_name
+		}" data-anniversary="${userRow.anniversary_text}">
                 <!-- Box Header -->
                 <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">
                     <span class="pull-right">
@@ -367,12 +369,28 @@ $(function () {
                 <div class="csBoxContent">
                     <!-- Section 1 -->
                     <div class="csBoxContentEmpployeeSection">
-                        <a href="${baseURL}employee_profile/${userRow.userId}" target="_blank">
+                        <a href="${baseURL}employee_profile/${
+			userRow.userId
+		}" target="_blank">
                         <div class="col-sm-3">
-                            <img src="${getImageURL(userRow.image)}" class="csRoundImg" />
+                            <img src="${getImageURL(
+								userRow.image
+							)}" class="csRoundImg" />
                         </div>
                         <div class="col-sm-9 pr0">
-                            <p><strong>${userRow.first_name} ${userRow.last_name}</strong> <br /> ${remakeEmployeeName(userRow, false)}</p>
+                            <p><strong>${userRow.first_name} ${
+			userRow.last_name
+		}</strong>${
+			userRow.terminated_status === "1"
+				? ' (<span class="text-danger">Terminated</span>)'
+				: ""
+		}
+        ${
+			userRow.terminated_status === "0" && userRow.active === "0"
+				? ' (<span class="text-danger">Deactivated</span>)'
+				: ""
+		}
+                            <br /> ${remakeEmployeeName(userRow, false)}</p>
                             ${userRow.anniversary_text}
                             </div>
                         </a>
@@ -381,7 +399,11 @@ $(function () {
                     <!-- Section 2 -->
                     <div class="csBoxBalanceSection">
                         <div class="col-sm-12">
-                            <p><strong>${v.total.AllowedTime.text == "" ? "0 hours" : v.total.AllowedTime.text}</strong></p>
+                            <p><strong>${
+								v.total.AllowedTime.text == ""
+									? "0 hours"
+									: v.total.AllowedTime.text
+							}</strong></p>
                             <p>Allowed Time</p>
                             <!--  -->
                             <div class="csFixedToRight jsCustomPopover" data-type="allowed" title="p" placement="right">
@@ -393,7 +415,11 @@ $(function () {
                     <!-- Section 3 -->
                     <div class="csBoxBalanceSection">
                         <div class="col-sm-12">
-                            <p><strong>${v.total.ConsumedTime.text == "" ? "0 hours" : v.total.ConsumedTime.text}</strong></p>
+                            <p><strong>${
+								v.total.ConsumedTime.text == ""
+									? "0 hours"
+									: v.total.ConsumedTime.text
+							}</strong></p>
                             <p>Consumed Paid Time</p>
                         </div>
                         <div class="clearfix"></div>
@@ -401,7 +427,11 @@ $(function () {
                     <!-- Section 4 -->
                     <div class="csBoxBalanceSection">
                         <div class="col-sm-12">
-                            <p><strong>${v.total.UnpaidConsumedTime.text == "" ? "0 hours" : v.total.UnpaidConsumedTime.text}</strong></p>
+                            <p><strong>${
+								v.total.UnpaidConsumedTime.text == ""
+									? "0 hours"
+									: v.total.UnpaidConsumedTime.text
+							}</strong></p>
                             <p>Consume Unpaid Time</p>
                         </div>
                         <div class="clearfix"></div>
@@ -409,7 +439,11 @@ $(function () {
                     <!-- Section 5 -->
                     <div class="csBoxBalanceSection">
                         <div class="col-sm-12">
-                            <p><strong>${v.total.RemainingTime.text == "" ? "0 hours" : v.total.RemainingTime.text}</strong></p>
+                            <p><strong>${
+								v.total.RemainingTime.text == ""
+									? "0 hours"
+									: v.total.RemainingTime.text
+							}</strong></p>
                             <p>Remaining Time</p>
                             <!--  -->
                             <div class="csFixedToRight jsCustomPopover" data-type="pending" title="p">

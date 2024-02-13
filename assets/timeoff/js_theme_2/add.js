@@ -753,6 +753,9 @@ $(function () {
         window.timeoff.companyEmployees = resp.Data;
         //
         resp.Data.map((employee) => {
+            if (employee.terminated_status === "1" || employee.active === "0") {
+                return
+            }
             options += `<option value="${employee.user_id}">${remakeEmployeeName(employee)}</option>`;
         });
 

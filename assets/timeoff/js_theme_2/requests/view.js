@@ -813,7 +813,10 @@ $(function () {
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-9 col-xs-9 pr0">`;
-        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}<br /></strong> ${remakeEmployeeName(userRow, false)}</p>`;
+        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}
+        ${userRow.terminated_status === "1" ? '<span class="text-danger"> Terminated</span>' : ''}
+        ${userRow.terminated_status === "0" && userRow.active === "1" ? '<span class="text-danger"> Deactivated</span>' : ''}
+        <br /></strong> ${remakeEmployeeName(userRow, false)}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;

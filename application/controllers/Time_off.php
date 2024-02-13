@@ -2540,7 +2540,8 @@ class Time_off extends Public_Controller
                 // Check if policy already exists for current company
                 $employees = $this->timeoff_model->getCompanyEmployees(
                     $post['companyId'],
-                    $post['employerId']
+                    $post['employerId'],
+                    true
                 );
 
                 if (!sizeof($employees)) {
