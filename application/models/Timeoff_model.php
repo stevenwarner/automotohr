@@ -3638,13 +3638,15 @@ class Timeoff_model extends CI_Model
             user_shift_minutes,
             employee_status,
             is_executive_admin,
-            employee_type
+            employee_type,
+            terminated_status,
+            active
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId)
-            ->where('active', 1)
-            ->where('terminated_status', 0);
+            ->where('sid', $employeeId);
+            // ->where('active', 1)
+            // ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
