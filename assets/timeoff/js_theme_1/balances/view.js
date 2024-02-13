@@ -177,7 +177,7 @@ $(function () {
                 //
                 if (Object.keys(userRow).length == 0) return;
                 //
-                rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}">`;
+                rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}" data-active="${userRow.anniversary_text}" data-terminatedstatus="${userRow.terminated_status}"  >`;
                 rows += '    <td scope="row">';
                 rows += '        <div class="employee-info">';
                 rows += "            <figure>";
@@ -186,7 +186,7 @@ $(function () {
                 )}" class="img-circle emp-image" />`;
                 rows += "            </figure>";
                 rows += '            <div class="text">';
-                rows += `                <h4>${userRow.first_name} ${userRow.last_name}</h4>`;
+                rows += `                <h4>${userRow.first_name} ${userRow.last_name} <strong style='color:#c10'>&nbsp;&nbsp; ${userRow.active == 0 ? "(Inactive)" : ""} &nbsp;&nbsp;</strong></h4> `;
                 rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
                 rows += `                <p><a href="${baseURL}employee_profile/${userRow.userId
                     }" target="_blank">Id: ${getEmployeeId(
@@ -257,7 +257,8 @@ $(function () {
                             <li><a href="#" class="jsViewBalance">Manage Balance</a></li>
                             <li><a href="#" class="jsViewApprovers">View Approvers</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#" class="jsCreateRequest">Create Time-off</a></li>
+                            ${userRow.active == 1 ? "<li><a href='#'' class='jsCreateRequest'> Create Time-off</a></li>" : ""}
+                            
                             </ul>
                         </div>`;
                 rows += `    </td>`;
@@ -302,7 +303,9 @@ $(function () {
         startBalanceProcess(
             $(this).closest("tr").data("id"),
             $(this).closest("tr").data("name"),
-            $(this).closest("tr").data("anniversary")
+            $(this).closest("tr").data("anniversary"),
+            $(this).closest("tr").data("active"),
+            $(this).closest("tr").data("terminatedstatus")
         );
     });
 
