@@ -68,10 +68,13 @@ $(function () {
         //
         e.preventDefault();
         //
-        startBalanceProcess(
+         startBalanceProcess(
             $(this).closest(".jsBox").data("id"),
             $(this).closest(".jsBox").data("name"),
-            $(this).closest(".jsBox").data("anniversary")
+            $(this).closest(".jsBox").data("anniversary"),
+            $(this).closest(".jsBox").data("active"),
+            $(this).closest(".jsBox").data("terminatedstatus")
+       
         );
     });
 
@@ -270,6 +273,10 @@ $(function () {
             if (v.total !== undefined) {
                 //
                 let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
+
+               // console.log(userRow.active);
+
+              // console.log(resp.Data.Employees.active);
                 //
                 if (Object.keys(userRow).length == 0) return;
                 //
@@ -278,7 +285,7 @@ $(function () {
                 balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
                 //
                 $.each(v, (index, poli) => {
-                    console.log(poli)
+                  //  console.log(poli)
                     if (index == "total") return "";
                     balancePolicyOBJ[v.total.UserId]['allowed'].push({
                         policy: index + ' <strong class="text-' + (poli.policy_type == 1 ? 'success' : 'danger') + '">(' + (poli.policy_type == 1 ? 'Paid' : 'Unpaid') + '</strong>)',
@@ -349,14 +356,15 @@ $(function () {
 
     //
     function getBalanceBox(v, userRow, popo) {
-        console.log({userRow})
+        console.log(userRow.active);
         return `
         <!--  -->
         <div class="col-sm-3">
-            <div class="csBox jsBox csShadow csRadius5"  data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}">
+            <div class="csBox jsBox csShadow csRadius5"  data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}" data-active="${userRow.active}" data-terminatedstatus="${userRow.terminated_status}">
                 <!-- Box Header -->
-                <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">
-                    <span class="pull-right">
+                <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0"  ${userRow.active == 0 ? " style='background-color:#c10'" : ""} 
+                >
+                    <span class="pull-right">  <span> <strong> ${userRow.active == 0 ? "Inactive" : ""} &nbsp;&nbsp;</strong></span>
                         <span target="_blank" class="csCircleBtn csRadius50 jsViewPolicies jsTooltip" title="View Policies" placement="top"><i class="fa fa-eye"></i></span>
                         <span target="_blank" class="csCircleBtn csRadius50 jsViewBalance jsTooltip" title="Manage Balance" placement="top"><i class="fa fa-balance-scale"></i></span>
                         <span target="_blank" class="csCircleBtn csRadius50 jsViewApprovers jsTooltip" title="View Approvers" placement="top"><i class="fa fa-users"></i></span>
@@ -422,7 +430,7 @@ $(function () {
                 <!-- Box Footer -->
                 <div class="csBoxFooter">
                     <div class="col-sm-12 pl0 pr0">
-                        <button class="btn btn-orange btn-lg form-control jsCreateRequest"><i class="fa fa-plus-circle"></i> Create time-off</button>
+                    ${userRow.active == 1 ? "<button class='btn btn-orange btn-lg form-control jsCreateRequest'><i class='fa fa-plus-circle'></i> Create time-off</button>" : ""}
                     </div>
                 </div>
             </div>

@@ -117,13 +117,14 @@ class Timeoff_model extends CI_Model
             pay_plan_flag,
             joined_at,
             registration_date,
-            rehire_date
+            rehire_date,
+            active
         ')
             ->from('users')
             ->where('parent_sid', $companySid)
-            ->where('active', 1)
+           // ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->where('terminated_status', 0)
+           // ->where('terminated_status', 0)
             ->order_by('first_name', 'ASC');
         if (!empty($ids)) $this->db->where_in('sid', $ids);
 
@@ -2680,9 +2681,9 @@ class Timeoff_model extends CI_Model
             user_shift_minutes
         ')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId)
-            ->where('active', 1)
-            ->where('terminated_status', 0);
+            ->where('sid', $employeeId);
+           // ->where('active', 1)
+           // ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
@@ -6531,14 +6532,16 @@ class Timeoff_model extends CI_Model
             registration_date,
             rehire_date,
             employee_status,
-            employee_type
+            employee_type,
+            active,
+            terminated_status
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $post['companyId'])
-            ->where('active', 1)
+            // ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->limit($post['offset'], $post['inset'])
-            ->where('terminated_status', 0);
+            ->limit($post['offset'], $post['inset']);
+        // ->where('terminated_status', 0);
         //
         if (!empty($inIds)) $this->db->where_in('sid', $inIds);
         if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all') $this->db->where('sid', $post['filter']['employees']);

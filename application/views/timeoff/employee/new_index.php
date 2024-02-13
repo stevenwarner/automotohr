@@ -54,7 +54,7 @@
                                     <!-- Loader -->
                                     <div class="csIPLoader jsIPLoader" data-page="requests"><i
                                             class="fa fa-circle-o-notch fa-spin"></i></div>
-                                    <!-- View  -->
+                                    <!-- View  -->  
                                     <?php $this->load->view('timeoff/partials/employee/new_view'); ?>
                                 </div>
                             </div>

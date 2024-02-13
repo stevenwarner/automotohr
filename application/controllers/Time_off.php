@@ -3725,7 +3725,8 @@ class Time_off extends Public_Controller
                 //
                 $policies = $this->timeoff_model->getEmployeePoliciesById(
                     $post['companyId'],
-                    $post['employeeId']
+                    $post['employeeId'],
+                    true
                 );
                 //
 

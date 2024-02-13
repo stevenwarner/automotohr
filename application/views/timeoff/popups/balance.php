@@ -31,7 +31,7 @@
     let balanceFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startBalanceProcess(employeeId, employeeName,anniversarytext) {
+    async function startBalanceProcess(employeeId, employeeName, anniversarytext, active = 1, terminatedStatus = 0) {
         // Set the employee id
         balanceEmployeeId = employeeId;
         // Load Modal
@@ -41,7 +41,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
-                        <h4 class="modal-title">Time off Balance for ${employeeName}</h4>
+                        <h4 class="modal-title">Time off Balance for ${employeeName} </h4>
                         ${anniversarytext}
                     </div>
                     <div class="modal-body">
@@ -124,7 +124,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-black" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-success btn-theme  jsBalanceSaveBtn">Save</button>
+                        ${active==1  ? '<button type="button" class="btn btn-success btn-theme  jsBalanceSaveBtn">Save</button>':''} 
                         <button type="button" class="btn btn-success btn-theme jsBalanceHistoryBtn pull-left">Balance History</button>
                         <button type="button" class="btn btn-success btn-theme jsBalanceAddBtn pull-left">Add Balance</button>
                     </div>
@@ -551,7 +551,7 @@
             rows += '<tr>';
             rows += '   <td colspan="6">';
             if (balance.is_manual == 0 && balance.is_allowed == 1) {
-                rows += '       <p><strong>Note</strong>: A balance of <b>'+(balance.added_time/60)+'</b> hours is available against policy <b>"' +balance.title+ '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat)+'</b>';
+                rows += '       <p><strong>Note</strong>: A balance of <b>' + (balance.added_time / 60) + '</b> hours is available against policy <b>"' + balance.title + '"</b> effective from <b>' + moment(balance.effective_at, 'YYYY-MM-DD').format(timeoffDateFormat) + '</b>';
             } else {
                 rows += '       <p><strong>Note</strong>: <strong>' + (employeeName) + '</strong> has ' + (balance.is_manual == 1 ? (balance.is_added == 1 ? 'added balance' : 'subtracted balance') : 'approved time off') + ' against policy "<strong>' + (balance.title) + '</strong>" on <strong>' + (moment(balance.created_at, 'YYYY-MM-DD').format(timeoffDateFormatWithTime)) + '</strong> which will take effect ' + (startDate == endDate ? 'on ' : ' from ') + ' <strong>' + (startDate) + '' + (startDate != endDate ? (' to  ' + endDate) : '') + '</strong>.</p>';
             }
