@@ -91,6 +91,9 @@ class Clock_model extends Base_model
         if (!$this->date) {
             $this->date = $this->loggedInPersonDate;
             $dateWithTime = $this->loggedInPersonDateTime;
+        } else {
+            // set the date from date time
+            $this->date = explode(" ", $date)[0];
         }
         // get todays date in UTC
         $this->dateInUTC =
