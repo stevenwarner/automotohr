@@ -20,7 +20,11 @@
                             CALENDAR</button>
                     </div>
                     <div class="col-sm-4 pr0">
-                        <button class="btn btn-orange form-control jsCreateRequest" data-id="1"><i class="fa fa-plus-circle"></i> CREATE REQUEST</button>
+                        <?php
+                        $employeeData = getUserNameBySID($employee_sid, false);
+                        if ($employeeData[0]['active'] != 0) { ?>
+                            <button class="btn btn-orange form-control jsCreateRequest" data-id="1"><i class="fa fa-plus-circle"></i> CREATE REQUEST</button>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -73,8 +77,7 @@
                     <span class="pull-right">
                         <br />
                         <button id="btn_apply" type="button" class="btn btn-orange js-apply-filter-btn">APPLY</button>
-                        <button id="btn_reset" type="button"
-                            class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
+                        <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
                     </span>
                 </div>
                 <div class="clearfix"></div>

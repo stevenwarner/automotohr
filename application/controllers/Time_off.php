@@ -891,6 +891,7 @@ class Time_off extends Public_Controller
     {
         $data = array();
         $data = employee_right_nav($sid);
+
         $this->check_login($data);
         if ($data['is_super_admin'] == 0 && $data['session']['employer_detail']['pay_plan_flag'] == 0) redirect('dashboard', 'refresh');
         //
