@@ -1069,6 +1069,20 @@ class Clock_model extends Base_model
      */
     private function clockOut(array $post, int $attendanceId)
     {
+        // we need to confirm it first
+        // when check out
+        if (!$post["confirmed"]) {
+            // check if worked as of schedule time
+            $response = $this->checkIfClockingOutBeforeShiftEnd($attendanceId);
+            // if does
+            if ($response) {
+                // send back the response for confirmation
+                return SendResponse(200, [
+                    "confirm" => true,
+                    "msg" => $response["msg"]
+                ]);
+            }
+        }
         // check and end break
         $this->checkAndEndBreak($post, $attendanceId);
         // get the last open clock in
@@ -2343,5 +2357,59 @@ class Clock_model extends Base_model
         $a = $a->free_result();
         //
         return $b;
+    }
+
+    /**
+     * check if the employee is clocking out
+     * before the shift ends
+     * 
+     * @param int $attendanceId
+     * @return array
+     */
+    private function checkIfClockingOutBeforeShiftEnd(int $attendanceId)
+    {
+        // get the clocked in and out
+        $record = $this->db
+            ->select("clocked_in, clocked_out, clocked_date, employee_sid")
+            ->where("sid", $attendanceId)
+            ->get("cl_attendance")
+            ->row_array();
+        // when no record found
+        if (!$record) {
+            return [];
+        }
+        // set clock in date and time
+        $clockedInDateTime = $record["clocked_in"];
+        // set clock out date and time
+        // when clock out date time not present use the current one
+        $clockedOutDateTime = $record["clocked_out"] ? $record["clocked_out"] : getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME);
+        // get the duration in between
+        $duration =
+            $this->attendance_lib
+            ->getDurationInMinutes(
+                $clockedInDateTime,
+                $clockedOutDateTime
+            );
+        // load shift model
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $employeeShift =
+            $this->shift_model->getEmployeeShiftByDateAndId(
+                $record["employee_sid"],
+                $record["clocked_date"],
+                true
+            );
+        // set difference
+        $difference = $employeeShift - $duration;
+        // generate text
+        $differenceText = convertSecondsToTime($difference);
+        //
+        if ($differenceText != "0h") {
+            return [
+                "msg" => "You are clocking out outside of the schedule by <strong>{$differenceText}</strong>.<br/> Would you like to still clock out?"
+            ];
+        }
+        //
+        return [];
     }
 }

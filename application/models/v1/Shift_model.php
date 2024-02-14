@@ -1262,4 +1262,44 @@ class Shift_model extends CI_Model
         //
         return $ra;
     }
+
+    /**
+     * get shift by employee id and date
+     *
+     * @param int    $employeeId
+     * @param string $clockedDate
+     * @param bool   $convertToSeconds If false then hours will be returned otherwise seconds
+     * @return int
+     */
+    public function getEmployeeShiftByDateAndId(int $employeeId, string $clockedDate, bool $convertToSeconds = false)
+    {
+        // get the shift
+        $record = $this->db
+            ->select("
+                start_time,
+                end_time
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "shift_date" => $clockedDate,
+                // "is_published" => 1, // enable this check when publish work is live
+            ])
+            ->get("cl_shifts")
+            ->row_array();
+        // when no record found
+        if (!$record) {
+            return 0;
+        }
+        // set start date and time
+        $startDateTime = $clockedDate . " " . $record["start_time"];
+        $endDateTime = $clockedDate . " " . $record["end_time"];
+        // get the difference
+        $duration = $this->attendance_lib
+            ->getDurationInMinutes(
+                $startDateTime,
+                $endDateTime
+            );
+        //
+        return $convertToSeconds ? $duration : $duration / 60 / 60;
+    }
 }

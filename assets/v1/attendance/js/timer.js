@@ -293,8 +293,15 @@ $(function markAttendance() {
 	 * @param {string} latitude
 	 * @param {string} longitude
 	 * @param {number} jobSiteId
+	 * @param {bool} confirmed
 	 */
-	function markAttendance(eventType, latitude, longitude, jobSiteId) {
+	function markAttendance(
+		eventType,
+		latitude,
+		longitude,
+		jobSiteId,
+		confirmed
+	) {
 		// check if the call is already been made
 		if (XHR !== null) {
 			return;
@@ -304,15 +311,21 @@ $(function markAttendance() {
 			true
 		);
 		//
+		const passData = {
+			type: eventType,
+			latitude,
+			longitude,
+			job_site: jobSiteId,
+		};
+		// when confirmed
+		if (confirmed !== undefined) {
+			passData.confirmed = confirmed;
+		}
+		//
 		XHR = $.ajax({
 			url: baseUrl("v1/clock/mark"),
 			method: "POST",
-			data: JSON.stringify({
-				type: eventType,
-				latitude,
-				longitude,
-				job_site: jobSiteId,
-			}),
+			data: JSON.stringify(passData),
 			headers: { "content-type": "application/json" },
 		})
 			.always(function () {
@@ -320,7 +333,21 @@ $(function markAttendance() {
 				XHR = null;
 			})
 			.fail(handleErrorResponse)
-			.done(function () {
+			.done(function (resp) {
+				console.log(resp)
+				// check for confirmation
+				if (resp.confirm) {
+					return _confirm(resp.msg, function () {
+						markAttendance(
+							eventType,
+							latitude,
+							longitude,
+							jobSiteId,
+							true
+						);
+					});
+				}
+				//
 				_success("You have successfully " + getType(eventType) + ".");
 				fetchAttendance();
 			});
