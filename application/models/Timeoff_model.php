@@ -1963,8 +1963,8 @@ class Timeoff_model extends CI_Model
             ->where('sid', $employeeId);
         //
         if (!$includeArchived) {
-            // $this->db->where('active', 1)
-                // ->where('terminated_status', 0);
+            $this->db->where('active', 1)
+                ->where('terminated_status', 0);
         }
         //
         $a = $this->db->get('users');
@@ -2688,9 +2688,9 @@ class Timeoff_model extends CI_Model
             user_shift_minutes
         ')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId);
-            // ->where('active', 1)
-            // ->where('terminated_status', 0);
+            ->where('sid', $employeeId)
+            ->where('active', 1)
+            ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
@@ -3644,9 +3644,9 @@ class Timeoff_model extends CI_Model
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId);
-            // ->where('active', 1)
-            // ->where('terminated_status', 0);
+            ->where('sid', $employeeId)
+            ->where('active', 1)
+            ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
@@ -6546,10 +6546,10 @@ class Timeoff_model extends CI_Model
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $post['companyId'])
-            // ->where('active', 1)
+            ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->limit($post['offset'], $post['inset']);
-            // ->where('terminated_status', 0);
+            ->limit($post['offset'], $post['inset'])
+            ->where('terminated_status', 0);
         //
         if (!empty($inIds)) $this->db->where_in('sid', $inIds);
         if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all') $this->db->where('sid', $post['filter']['employees']);
@@ -6744,9 +6744,9 @@ class Timeoff_model extends CI_Model
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
-            // ->where('active', 1)
-            ->where('is_executive_admin', 0);
-            // ->where('terminated_status', 0);
+            ->where('active', 1)
+            ->where('is_executive_admin', 0)
+            ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employees = $a->result_array();
