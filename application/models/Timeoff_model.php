@@ -3194,6 +3194,8 @@ class Timeoff_model extends CI_Model
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
             ->where('timeoff_policies.is_archived', 0)
+            ->where('users.active', 1)
+            ->where('users.terminated_status', 0)
             ->where('timeoff_requests.company_sid', $post['companyId']);
         //
         if ($post['type'] != 'archive') {
