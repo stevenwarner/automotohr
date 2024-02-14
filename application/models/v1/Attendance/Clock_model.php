@@ -1071,7 +1071,7 @@ class Clock_model extends Base_model
     {
         // we need to confirm it first
         // when check out
-        if (!$post["confirmed"]) {
+        if (!$post["confirmed"] && $post["type"] !== "break_start") {
             // check if worked as of schedule time
             $response = $this->checkIfClockingOutBeforeShiftEnd($attendanceId);
             // if does
