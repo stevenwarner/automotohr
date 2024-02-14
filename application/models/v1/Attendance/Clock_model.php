@@ -1303,7 +1303,7 @@ class Clock_model extends Base_model
             ->where([
                 "company_sid" => $this->companyId,
                 "employee_sid" => $this->employeeId,
-                "shift_date" => $this->dateInUTC,
+                "shift_date" => $this->date,
             ])
             ->get("cl_shifts")
             ->row_array();
@@ -1342,7 +1342,7 @@ class Clock_model extends Base_model
             ->where([
                 "company_sid" => $this->companyId,
                 "employee_sid" => $this->employeeId,
-                "shift_date" => $this->dateInUTC,
+                "shift_date" => $this->date,
             ])
             ->get("cl_shifts")
             ->row_array();
