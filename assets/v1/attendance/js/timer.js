@@ -421,6 +421,7 @@ $(function markAttendance() {
 		} else if (state === "break_started") {
 			// show break end and clock out buttons
 			buttons += generateButton("break_end");
+			buttons += generateButton("clocked_out");
 		} else {
 			// show clock in
 			buttons += generateButton("clocked_in");
@@ -465,7 +466,7 @@ $(function markAttendance() {
 			html +=
 				'&nbsp;<button class="btn btn-yellow jsAttendanceBtn" data-type="break_ended">';
 			html += '	<i class="fa fa-stop csF16" aria-hidden="true"></i>';
-			html += "	&nbsp;Break end & clock in";
+			html += "	&nbsp;Break end";
 			html += "</button>";
 		}
 

@@ -1008,6 +1008,30 @@ class Clock_model extends Base_model
     }
 
     /**
+     * check and end break break
+     *
+     * @param int $attendanceId
+     * @param array $post
+     * @return array
+     */
+    private function checkAndEndBreak(array $post, int $attendanceId)
+    {
+        // get last open break
+        $record = $this->db
+            ->select("sid, break_start, job_site_sid")
+            ->where("cl_attendance_sid", $attendanceId)
+            ->where("break_start is not null", null, null)
+            ->where("break_end is null", null, null)
+            ->limit(1)
+            ->get("cl_attendance_log")
+            ->row_array();
+        if ($record) {
+            return $this->endBreak($post, $attendanceId);
+        }
+        return [];
+    }
+
+    /**
      * clock in
      *
      * @param int $attendanceId
@@ -1045,6 +1069,8 @@ class Clock_model extends Base_model
      */
     private function clockOut(array $post, int $attendanceId)
     {
+        // check and end break
+        $this->checkAndEndBreak($post, $attendanceId);
         // get the last open clock in
         $record = $this->db
             ->select("sid, clocked_in, job_site_sid")
@@ -1910,14 +1936,14 @@ class Clock_model extends Base_model
                 $employeeId,
                 $periodStartDate,
                 $periodEndDate
-            );   
+            );
         //
         $employeeWageInfo = $this->main_model->getJobWageData(
             $employeeId,
             'employee',
             $records[0]["company_sid"]
 
-        ); 
+        );
         //
         // get employee overtime rule
         $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
@@ -1938,7 +1964,7 @@ class Clock_model extends Base_model
         //
         $returnArray['normal_rate'] = $employeeRate;
         $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
-        $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier']; 
+        $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier'];
         //
         foreach ($records as $v0) {
             //
@@ -2068,7 +2094,7 @@ class Clock_model extends Base_model
                 // TODO: seven consecutive day overtime
             }
             // convert to text
-            $regularTime = $tmp["worked_time"]-($tmp["overtime"] + $tmp["double_overtime"]);
+            $regularTime = $tmp["worked_time"] - ($tmp["overtime"] + $tmp["double_overtime"]);
             $tmp['regular_time'] = $regularTime;
             //
             $tmp["text"] = [
@@ -2115,12 +2141,12 @@ class Clock_model extends Base_model
                 $weekOverTime = $double_overtime - $overtime;
             }
             //
-            $overtime_detail = "Daily overtime: ".convertSecondsToTime($returnArray["overtime"])
-                            . " <br> Weekly overtime: ". convertSecondsToTime($weekOverTime)
-                            . " <br> Total overtime: ". convertSecondsToTime($returnArray["overtime"] + $weekOverTime);
-            $double_overtime_detail = "Daily double overtime: ".convertSecondsToTime($returnArray["double_overtime"])
-                            . " <br> Weekly double overtime: ". convertSecondsToTime($weekDoubleOvertime)
-                            . " <br> Total double overtime: ". convertSecondsToTime($returnArray["double_overtime"] + $weekDoubleOvertime);
+            $overtime_detail = "Daily overtime: " . convertSecondsToTime($returnArray["overtime"])
+                . " <br> Weekly overtime: " . convertSecondsToTime($weekOverTime)
+                . " <br> Total overtime: " . convertSecondsToTime($returnArray["overtime"] + $weekOverTime);
+            $double_overtime_detail = "Daily double overtime: " . convertSecondsToTime($returnArray["double_overtime"])
+                . " <br> Weekly double overtime: " . convertSecondsToTime($weekDoubleOvertime)
+                . " <br> Total double overtime: " . convertSecondsToTime($returnArray["double_overtime"] + $weekDoubleOvertime);
             //
             $returnArray["overtime"] += $weekOverTime;
             $returnArray["double_overtime"] += $weekDoubleOvertime;
@@ -2271,7 +2297,7 @@ class Clock_model extends Base_model
         return $b;
     }
 
-    function getFilterEmployees (
+    function getFilterEmployees(
         $companyId,
         $employees,
         $teams,
@@ -2299,7 +2325,7 @@ class Clock_model extends Base_model
             $this->db->where_in('users.sid', $employees);
         }
         //
-        if  ($department && $department != "all") {
+        if ($department && $department != "all") {
             $this->db->where('departments_employee_2_team.department_sid', $department);
         }
 
@@ -2307,9 +2333,9 @@ class Clock_model extends Base_model
             $this->db->where_in('departments_employee_2_team.team_sid', $teams);
         }
         //
-        if ($jobTitles && array_search("all", $jobTitles) === false) { 
+        if ($jobTitles && array_search("all", $jobTitles) === false) {
             $this->db->where_in('users.job_title', $jobTitles);
-        } 
+        }
         //
         $a = $this->db->get('departments_employee_2_team');
         //
