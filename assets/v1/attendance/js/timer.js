@@ -117,6 +117,7 @@ $(function markAttendance() {
 					// check on break start time
 					if (
 						selectedBreak[0]["start_time"] &&
+						selectedBreak[0]["start_time"] != "" &&
 						moment() <
 							moment(selectedBreak[0]["start_time"], "hh:mm a")
 					) {
@@ -129,6 +130,7 @@ $(function markAttendance() {
 					// check the end time
 					if (
 						selectedBreak[0]["end_time"] &&
+						selectedBreak[0]["end_time"] != "" &&
 						moment() >
 							moment(selectedBreak[0]["end_time"], "hh:mm a")
 					) {
