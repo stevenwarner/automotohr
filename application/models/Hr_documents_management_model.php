@@ -3296,11 +3296,53 @@ class Hr_documents_management_model extends CI_Model
 
     function fetch_documents_employees($doc_sid, $doc_type, $company_sid)
     {
-        $this->db->select('user_sid');
-        $this->db->from('documents_assigned');
-        $this->db->where('document_sid', $doc_sid);
-        $this->db->where('document_type', $doc_type);
-        $where_clause = $this->db->get_compiled_select();
+
+        if ($doc_sid == 'W4 Fillable') {
+            $this->db->select('employer_sid');
+            $this->db->from('form_w4_original');
+            $this->db->where('user_type', 'employee');
+            $this->db->where('company_sid', $company_sid);
+            $where_clause = $this->db->get_compiled_select();
+        } elseif ($doc_sid == 'I9 Fillable') {
+            $this->db->select('user_sid');
+            $this->db->from('applicant_i9form');
+            $this->db->where('user_type', 'employee');
+            $this->db->where('company_sid', $company_sid);
+            $where_clause = $this->db->get_compiled_select();
+        } elseif ($doc_sid == 'W9 Fillable') {
+            $this->db->select('user_sid');
+            $this->db->from('applicant_w9form');
+            $this->db->where('user_type', 'employee');
+            $this->db->where('company_sid', $company_sid);
+            $where_clause = $this->db->get_compiled_select();
+        } elseif (
+            $doc_sid == 'dependents' ||
+            $doc_sid == 'direct_deposit' ||
+            $doc_sid == 'drivers_license' ||
+            $doc_sid == 'emergency_contacts' ||
+            $doc_sid == 'occupational_license'
+        ) {
+            $this->db->select('user_sid');
+            $this->db->from('documents_assigned_general');
+            $this->db->where('user_type', 'employee');
+            $this->db->where('document_type', $doc_sid);
+            $this->db->where('company_sid', $company_sid);
+            $where_clause = $this->db->get_compiled_select();
+        } elseif ($doc_sid == 'State Forms') {
+            $this->db->select('user_sid');
+            $this->db->from('portal_state_form');
+            $this->db->where('user_type', 'employee');
+            $this->db->where('company_sid', $company_sid);
+            $where_clause = $this->db->get_compiled_select();
+        } else {
+
+            $this->db->select('user_sid');
+            $this->db->from('documents_assigned');
+            $this->db->where('document_sid', $doc_sid);
+            $this->db->where('document_type', $doc_type);
+            $where_clause = $this->db->get_compiled_select();
+        }
+
         $this->db->select('
             sid,
             first_name,
@@ -3703,7 +3745,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('documents_2_group');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
- 
+
         if (!empty($records_arr)) {
             foreach ($records_arr as $key => $document) {
                 if ($document['group_sid'] != $group_id) {
@@ -10548,7 +10590,7 @@ class Hr_documents_management_model extends CI_Model
             $returnArray['employee_section'] = true;
         }
         //
-        if($result["assigned_by"]) {
+        if ($result["assigned_by"]) {
             $returnArray["assigned_by"] = getUserNameBySID($result["assigned_by"]);
         }
         // set it to revoked

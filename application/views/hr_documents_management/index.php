@@ -1,4 +1,7 @@
 <?php
+
+use function GuzzleHttp\Psr7\str;
+
 $allDocuments = [];
 $requiredMessage = 'This document is required to complete the process.';
 ?>
@@ -84,17 +87,50 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                 </thead>
                                                                 <tbody>
 
-                                                                    <?php if ($active_group['other_documents']) {?>
-                                                                        <?php foreach ($active_group['other_documents'] as $otherDocument) : ?>
+                                                                    <?php if ($active_group['other_documents']) {
+                                                                       // _e($active_group['other_documents'], true);
+                                                                    ?>
+                                                                        <?php foreach ($active_group['other_documents'] as $otherDocument) :
+                                                                            $docName = strtolower($otherDocument);
+                                                                            $docName = preg_replace('/\s+/', '', $docName);
+                                                                        ?>
+                                                                            <?php
+                                                                            $preview = '';
+                                                                            if ($docName == 'i9fillable') {
+                                                                                $preview = "#i9_modal";
+                                                                            } elseif ($docName == 'w9fillable') {
+                                                                                $preview = "#w9_modal";
+                                                                            } elseif ($docName == 'w4fillable') {
+                                                                                $preview = "#w4_modal";
+                                                                            }
+                                                                            ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $otherDocument?></td>
-                                                                                <td class="col-xs-2"> </td>
+                                                                                <td class="col-xs-6"><?php echo $otherDocument ?></td>
+                                                                                <td class="col-xs-2">
+                                                                                </td>
+                                                                                <td class="col-xs-1">
+                                                                                    <?php //if($preview!=''){
+                                                                                    ?>
+                                                                                    <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalEligibility(this);" data-title="<?php echo $otherDocument; ?>" data-description="<?php echo $otherDocument; ?>" data-document-type="<?php echo $otherDocument; ?>" data-document-sid="<?php echo $otherDocument; ?>">Bulk Assign</button>
+                                                                                    <?php //}
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td class="col-xs-1"> </td>
+                                                                                <td class="col-xs-1">
+
+
+                                                                                    <?php if ($preview != '') { ?>
+                                                                                        <a class="btn btn-info btn-sm btn-block" data-toggle="modal" data-target="<?php echo $preview ?>" href="javascript:void(0);">Preview</a>
+                                                                                    <?php } else {
+                                                                                        echo "N/A";
+                                                                                    } ?>
+
+                                                                                </td>
                                                                                 <td class="col-xs-1"></td>
                                                                                 <td class="col-xs-1"></td>
-                                                                                <td class="col-xs-1"></td>
-                                                                                <td class="col-xs-1"></td>
-                                                                                <td class="col-xs-1"></td>
-                                                                                <td></td>
+                                                                                <td>
+                                                                                    <button class="btn btn-success btn-sm js-employees-with-pending-documents" data-id="<?= $otherDocument; ?>" data-title="<?= $otherDocument; ?>">View Employee(s)</button>
+                                                                                </td>
                                                                             </tr>
                                                                         <?php endforeach; ?>
                                                                     <?php } ?>
@@ -990,6 +1026,201 @@ $requiredMessage = 'This document is required to complete the process.';
         </div>
     </div>
 </div>
+
+<div id="w9_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="review_modal_title">W9 Form</h4>
+            </div>
+            <div id="review_modal_body" class="modal-body">
+                <?php $view = get_form_view('w9', '');
+                echo $view; ?>
+            </div>
+            <div id="review_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".form").hide();
+    </script>
+</div>
+
+<div id="w4_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="review_modal_title">W4 Form</h4>
+            </div>
+            <div id="review_modal_body" class="modal-body">
+                <?php $view = get_form_view('w4', '');
+                echo $view; ?>
+            </div>
+            <div id="review_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".form").hide();
+    </script>
+</div>
+
+<div id="i9_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="review_modal_title">I9 Form</h4>
+            </div>
+            <div id="review_modal_body" class="modal-body">
+                <?php $view = get_form_view('i9', '');
+                echo $view; ?>
+            </div>
+            <div id="review_modal_footer" class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div id="model_eligibility_doc" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="eligibility_document_title">Bulk Assign This Document</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form method='post' id='register-form-eligibility' name='register-form-eligibility' action="<?= current_url(); ?>">
+                        <div class="col-lg-12">
+                            <div class="form-group full-width">
+                                <h4 id="eligibility_document_label"></h4>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12" id='eligibility_note'>
+                            <div class="form-group full-width">
+                                <label>Note</label>
+                                <textarea required style="padding:5px; height:200px; width:100%;" class="ckeditor" id="gen_doc_description" name="document_description"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Department/Employee Check -->
+                        <div class="col-lg-12">
+                            <div class="form-group full-width">
+                                <h4>Assign document to </h4>
+                                <label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="employee" class="js-assign-type" /> Employee
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="department" class="js-assign-type" /> Department &nbsp;
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    <input type="radio" name="assign_type" value="team" class="js-assign-type" /> Team &nbsp;
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 js-department-box">
+                            <div class="form-group full-width">
+                                <label>Departments <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="departments[]" id="departmentEligibility" required>
+                                        <option value="" selected>Please Select Departments</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12 js-team-box">
+                            <div class="form-group full-width">
+                                <label>Teams <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="teams[]" id="teamEligibility" required>
+                                        <option value="" selected>Please Select Teams</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12 js-employee-box">
+                            <div class="form-group full-width">
+                                <label>Employees <span class="hr-required red">*</span></label>
+                                <div class="">
+                                    <select multiple="multiple" name="employees[]" id="employeesEligibility" required>
+                                        <option value="" selected>Please Select Employee</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12" id="empty-emp" style="display: none;">
+                            <span class="hr-required red">This Document Is Assigned To All Employees!</span>
+                        </div>
+
+
+                        <div class="col-lg-12" id='eligibility_required'>
+
+                            <div class="form-group full-width">
+                                <br>
+                                <label>The document is required?</label>
+                                <br>
+                                <label class="control control--radio">
+                                    Yes&nbsp;&nbsp;&nbsp;
+                                    <input type="radio" class="GeneralDocumentRequired" name="GeneralDocumentRequired" value="1">
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    No
+                                    <input type="radio" class="GeneralDocumentRequired" name="GeneralDocumentRequired" value="0" checked>
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group full-width">
+                                <h4>Send notification emails? </h4>
+                                <label class="control control--radio">
+                                    <input type="radio" name="notification_email" value="yes" class="js-notification-email-gen" /> Yes &nbsp;
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    <input type="radio" name="notification_email" value="no" class="js-notification-email-gen" /> No &nbsp;
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <input type="hidden" id="perform_action" name="perform_action" value="assign_document" />
+                            <input type="hidden" name="document_type" id="elig-doc-type">
+                            <input type="hidden" id="document_sid_for_validation">
+                            <div class="message-action-btn">
+                                <input type="button" value="Bulk Assign This Document" id="send-gen-doc" class="submit-btn" onclick="send_bulk_elig_document()">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+
+
 <?php $this->load->view('hr_documents_management/authorized_signature_popup'); ?>
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.css') ?>">
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.bootstrap3.css') ?>">
@@ -1410,6 +1641,16 @@ $requiredMessage = 'This document is required to complete the process.';
         create: false
     });
 
+
+    var employeesEligibility = $('#employeesEligibility').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        allowEmptyOption: false,
+        persist: true,
+        create: false
+    });
+
+
     var departments = $('#department').selectize({
         plugins: ['remove_button'],
         delimiter: ',',
@@ -1426,9 +1667,33 @@ $requiredMessage = 'This document is required to complete the process.';
         create: false
     });
 
+
+
+    var departmentsEligibility = $('#departmentEligibility').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        allowEmptyOption: false,
+        persist: true,
+        create: false
+    });
+
+    var teamsEligibility = $('#teamEligibility').selectize({
+        plugins: ['remove_button'],
+        delimiter: ',',
+        allowEmptyOption: false,
+        persist: true,
+        create: false
+    });
+
+
     var emp = employees[0].selectize;
     var dept = departments[0].selectize;
     var tem = teams[0].selectize;
+
+    var empElig = employeesEligibility[0].selectize;
+    var deptElig = departmentsEligibility[0].selectize;
+    var temElig = teamsEligibility[0].selectize;
+
 
     function fLaunchModalGen(source) {
         // Reset modal
@@ -2000,6 +2265,226 @@ $requiredMessage = 'This document is required to complete the process.';
             return r;
         }
     })
+
+    //
+
+    function fLaunchModalEligibility(source) {
+
+        // Reset modal
+        $('.js-department-box').hide();
+        $('.js-team-box').hide();
+        $('.js-employee-box').show();
+        $('.js-assign-type[value="employee"]').prop('checked', true);
+        $('.js-notification-email-gen[value="yes"]').prop('checked', true);
+
+        var document_title = $(source).attr('data-title');
+        var document_description = $(source).attr('data-description');
+        var document_type = $(source).attr('data-document-type');
+        var document_sid = $(source).attr('data-document-sid');
+        var title = 'Modify and Bulk Assign This Document';
+        var document_label = "Are you sure you want to bulk assign this document: [<b>" + document_title + "</b>]";
+        var button_title = 'Bulk Assign This Document';
+        $('#document_sid_for_validation').val(document_sid);
+
+        //  console.log(document_description)
+
+        if (document_sid == "Dependents" ||
+            document_sid == "Direct Deposit Information" ||
+            document_sid == "Drivers License Information" ||
+            document_sid == "Emergency Contacts" ||
+            document_sid == "Occupational License Information") {
+            $("#eligibility_note").show();
+            $("#eligibility_required").show();
+        } else {
+            $("#eligibility_note").hide();
+            $("#eligibility_required").hide();
+
+        }
+
+        $('#model_eligibility_doc').modal('toggle');
+        //        $('#gen-doc-title').val(document_title);
+        CKEDITOR.instances.gen_doc_description.setData('');
+        $('#gen-doc-description').html(document_description);
+        $('#elig-doc-type').val(document_type);
+        // $('#gen-doc-sid').val(document_sid);
+        $('#send-gen-doc').val(button_title);
+        $('#generated_document_title').html(title);
+        $('#eligibility_document_label').html(document_label);
+        $.ajax({
+            type: 'POST',
+            url: '<?= base_url('hr_documents_management/get_document_employees') ?>',
+            data: {
+                doc_sid: document_sid,
+                doc_type: document_sid
+            },
+            success: function(data) {
+                console.log(data);
+                var employees = data.Employees;
+                var departments = data.Departments;
+                var teams = data.Teams;
+
+                if (employees.length == 0) {
+                    empElig.clearOptions();
+                    empElig.load(function(callback) {
+                        var arr = [{}];
+                        arr[0] = {
+                            value: '',
+                            text: 'Please Select Employeeaa'
+                        }
+                        callback(arr);
+                        empElig.addItems('');
+                        empElig.refreshItems();
+                    });
+                    $('#empty-emp').show();
+                    empElig.disable();
+                } else {
+                    $('#empty-emp').hide();
+                    empElig.enable();
+                    empElig.clearOptions();
+                    empElig.load(function(callback) {
+
+                        var arr = [{}];
+                        var j = 0;
+                        arr[j++] = {
+                            value: -1,
+                            text: 'All'
+                        };
+
+                        for (var i = 0; i < employees.length; i++) {
+                            var dr = '';
+                            if (employees[i]['job_title'] != '' && employees[i]['job_title'] != null)
+                                dr += ' (' + (employees[i]['job_title']) + ')';
+                            dr += ' [' + remakeAccessLevel(employees[i]) + ']';
+                            arr[j++] = {
+                                value: employees[i].sid,
+                                text: employees[i].first_name + ' ' + employees[i].last_name + dr
+                            }
+                        }
+
+                        callback(arr);
+                        empElig.refreshItems();
+                    });
+                }
+                // 
+                if (departments.length == 0 && employees.length == 0) {
+                    deptElig.clearOptions();
+                    deptElig.load(function(callback) {
+                        var arr = [{}];
+                        arr[0] = {
+                            value: '',
+                            text: 'Please Select a Department'
+                        }
+                        callback(arr);
+                        deptElig.addItems('');
+                        deptElig.refreshItems();
+                    });
+                    $('#empty-emp').show();
+                    deptElig.disable();
+                } else {
+                    $('#empty-emp').hide();
+                    deptElig.enable();
+                    deptElig.clearOptions();
+                    deptElig.load(function(callback) {
+
+                        var arr = [{}];
+                        var j = 0;
+                        arr[j++] = {
+                            value: -1,
+                            text: 'All'
+                        };
+
+                        for (var i = 0; i < departments.length; i++) {
+
+                            arr[j++] = {
+                                value: departments[i].sid,
+                                text: departments[i].name
+                            }
+                        }
+
+                        callback(arr);
+                        deptElig.refreshItems();
+                    });
+                }
+                // 
+                if (teams.length == 0 && employees.length == 0) {
+                    temElig.clearOptions();
+                    temElig.load(function(callback) {
+                        var arr = [{}];
+                        arr[0] = {
+                            value: '',
+                            text: 'Please Select a Department'
+                        }
+                        callback(arr);
+                        temElig.addItems('');
+                        temElig.refreshItems();
+                    });
+                    $('#empty-emp').show();
+                    temElig.disable();
+                } else {
+                    $('#empty-emp').hide();
+                    temElig.enable();
+                    temElig.clearOptions();
+                    temElig.load(function(callback) {
+
+                        var arr = [{}];
+                        var j = 0;
+                        arr[j++] = {
+                            value: -1,
+                            text: 'All'
+                        };
+
+                        for (var i = 0; i < teams.length; i++) {
+
+                            arr[j++] = {
+                                value: teams[i].sid,
+                                text: teams[i].name
+                            }
+                        }
+
+                        callback(arr);
+                        temElig.refreshItems();
+                    });
+                }
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+
+    //
+    function send_bulk_elig_document() {
+        alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to assign this document as bulk?',
+            function() {
+                // 
+                if ($('#model_eligibility_doc').find('.js-assign-type:checked').val() == 'department') {
+
+                    if (deptElig.getValue().length == 0) {
+                        alertify.alert('ERROR!', 'Please select at least one department.');
+                        return;
+                    }
+                } else if ($('#model_eligibility_doc').find('.js-assign-type:checked').val() == 'team') {
+
+                    if (temElig.getValue().length == 0) {
+                        alertify.alert('ERROR!', 'Please select at least one team.');
+                        return;
+                    }
+                } else {
+                    if (empElig.getValue().length == 0) {
+                        alertify.alert('ERROR!', 'Please select at least one employee.');
+                        return;
+                    }
+                }
+
+                $('#register-form-eligibility').submit();
+            },
+            function() {
+                alertify.error('Cancelled!');
+            });
+    }
 </script>
 
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>

@@ -67,7 +67,7 @@ class Hr_documents_management extends Public_Controller
             if ($this->form_validation->run() == false) {
                 if (!empty($groups)) {
 
-                  //  _e($groups,true,true);
+                    //  _e($groups,true,true);
                     foreach ($groups as $key => $group) {
                         $group_status = $group['status'];
                         $group_sid = $group['sid'];
@@ -93,7 +93,6 @@ class Hr_documents_management extends Public_Controller
                                 'documents' => $group_documents,
                                 'other_documents' => $otherDocuments
                             );
-
                         } else {
                             $in_active_groups[] = array(
                                 'sid' => $group_sid,
@@ -134,6 +133,8 @@ class Hr_documents_management extends Public_Controller
                 $this->load->view('hr_documents_management/index');
                 $this->load->view('main/footer');
             } else {
+
+
                 $perform_action = $this->input->post('perform_action');
                 $post = $this->input->post(NULL, TRUE);
 
@@ -172,7 +173,6 @@ class Hr_documents_management extends Public_Controller
                         $document_sid = $this->input->post('document_sid');
                         $select_employees = $this->input->post('employees');
                         $user_type = 'employee';
-
                         $authorized_signature_required = $this->input->post('auth_sign_sid');
 
                         if ($authorized_signature_required > 0) {
@@ -209,80 +209,169 @@ class Hr_documents_management extends Public_Controller
                             $company_name
                         );
                         foreach ($select_employees as $emp) {
-                            $check_exist = $this->hr_documents_management_model->check_assigned_document($document_sid, $emp, $user_type);
-                            if (!empty($check_exist)) {
-                                $assignment_sid = $check_exist[0]['sid'];
-                                $assigned_document = $this->hr_documents_management_model->get_assigned_document_details($company_sid, $assignment_sid);
-                                unset($assigned_document['sid']);
-                                $assigned_document['doc_sid'] = $assignment_sid;
-                                $this->hr_documents_management_model->insert_documents_assignment_record_history($assigned_document);
+                            //
+                            if ($document_type == 'W4 Fillable') {
+                                $w4_data_to_insert = array();
+                                $w4_data_to_insert['employer_sid'] = $emp;
+                                $w4_data_to_insert['company_sid'] = $company_sid;
+                                $w4_data_to_insert['user_type'] = 'employee';
+                                $w4_data_to_insert['sent_status'] = 1;
+                                $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                                $w4_data_to_insert['status'] = 1;
+                                $w4_data_to_insert['last_assign_by'] = $employer_sid;
+                                $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
+                            } else if ($document_type == 'I9 Fillable') {
+                                $i9_data_to_insert = array();
+                                $i9_data_to_insert['user_sid'] = $emp;
+                                $i9_data_to_insert['user_type'] = 'employee';
+                                $i9_data_to_insert['company_sid'] = $company_sid;
+                                $i9_data_to_insert['sent_status'] = 1;
+                                $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                                $i9_data_to_insert['status'] = 1;
+                                $i9_data_to_insert['version'] = getSystemDate('Y');
+                                $i9_data_to_insert['last_assign_by'] = $employer_sid;
 
-                                $data_to_update = array();
-                                $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
-                                $data_to_update['company_sid'] = $company_sid;
-                                $data_to_update['assigned_date'] = date('Y-m-d H:i:s');
-                                $data_to_update['assigned_by'] = $employer_sid;
-                                $data_to_update['user_type'] = $user_type;
-                                $data_to_update['user_sid'] = $emp;
-                                $data_to_update['document_type'] = $document_type;
-                                $data_to_update['document_sid'] = $document_sid;
-                                $data_to_update['status'] = 1;
-                                $data_to_update['document_original_name'] = $document['uploaded_document_original_name'];
-                                $data_to_update['document_extension'] = $document['uploaded_document_extension'];
-                                $data_to_update['document_s3_name'] = $document['uploaded_document_s3_name'];
-                                $data_to_update['document_title'] = $document['document_title'];
-                                $data_to_update['document_description'] = htmlentities($this->input->post('document_description'));
-                                $data_to_update['acknowledged'] = NULL;
-                                $data_to_update['acknowledged_date'] = NULL;
-                                $data_to_update['downloaded'] = NULL;
-                                $data_to_update['downloaded_date'] = NULL;
-                                $data_to_update['uploaded'] = NULL;
-                                $data_to_update['uploaded_date'] = NULL;
-                                $data_to_update['uploaded_file'] = NULL;
-                                $data_to_update['signature_timestamp'] = NULL;
-                                $data_to_update['signature'] = NULL;
-                                $data_to_update['signature_email'] = NULL;
-                                $data_to_update['signature_ip'] = NULL;
-                                $data_to_update['user_consent'] = 0;
-                                $data_to_update['submitted_description'] = NULL;
-                                $data_to_update['signature_base64'] = NULL;
-                                $data_to_update['signature_initial'] = NULL;
-                                $data_to_update['download_required'] = $document['download_required'];
-                                $data_to_update['signature_required'] = $document['signature_required'];
-                                $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
-                                $data_to_update['is_required'] = $document['is_required'];
+                                $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
+                            } else if ($document_type == 'W9 Fillable') {
+
+                                $w9_data_to_insert = array();
+                                $w9_data_to_insert['user_sid'] = $emp;
+                                $w9_data_to_insert['company_sid'] = $company_sid;
+                                $w9_data_to_insert['user_type'] = 'employee';
+                                $w9_data_to_insert['sent_status'] = 1;
+                                $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                                $w9_data_to_insert['status'] = 1;
+                                $w9_data_to_insert['last_assign_by'] = $employer_sid;
+                                $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
+                            } else if (
+                                $document_type == 'Dependents' ||
+                                $document_type == 'Direct Deposit Information' ||
+                                $document_type == 'Drivers License Information' ||
+                                $document_type == 'Emergency Contacts' ||
+                                $document_type == 'Occupational License Information'
+                            ) {
+
+                                $docType = '';
+                                if ($document_type == 'Dependents') {
+                                    $docType = 'dependents';
+                                }
+                                if ($document_type == 'Direct Deposit Information') {
+                                    $docType = 'direct_deposit';
+                                }
+                                if ($document_type == 'Drivers License Information') {
+                                    $docType = 'drivers_license';
+                                }
+                                if ($document_type == 'Emergency Contacts') {
+                                    $docType = 'emergency_contacts';
+                                }
+                                if ($document_type == 'Occupational License Information') {
+                                    $docType = 'occupational_license';
+                                }
+
+                                $note = $this->input->post('document_description', true);
+                                $isRequired = $this->input->post('GeneralDocumentRequired', true);
+
+                                $this->hr_documents_management_model->assignGeneralDocument(
+                                    $emp,
+                                    'employee',
+                                    $company_sid,
+                                    $docType,
+                                    $employer_sid,
+                                    0,
+                                    $note,
+                                    $isRequired
+                                );
+                            } else if ($document_type == 'State Forms') {
                                 //
-                                addColumnsForDocumentAssigned($data_to_update, $document);
-                                $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
-                            } else {
-                                $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
-                                $data_to_insert = array();
-                                $data_to_insert['company_sid'] = $company_sid;
-                                $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
-                                $data_to_insert['assigned_by'] = $employer_sid;
-                                $data_to_insert['user_type'] = $user_type;
-                                $data_to_insert['user_sid'] = $emp;
-                                $data_to_insert['document_type'] = $document_type;
-                                $data_to_insert['document_sid'] = $document_sid;
-                                $data_to_insert['status'] = 1;
-                                $data_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
-                                $data_to_insert['document_extension'] = $document['uploaded_document_extension'];
-                                $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
-                                $data_to_insert['document_title'] = $document['document_title'];
-                                $data_to_insert['document_description'] = htmlentities($this->input->post('document_description'));
-                                $data_to_insert['download_required'] = $document['download_required'];
-                                $data_to_insert['signature_required'] = $document['signature_required'];
-                                $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
-                                $data_to_insert['is_required'] = $document['is_required'];
-
-                                //
-                                $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
-
-                                //
-                                addColumnsForDocumentAssigned($data_to_insert, $document);
-
-                                $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                               $this->hr_documents_management_model->handleStateForm(
+                                    $emp,
+                                    'employee',
+                                    '1',
+                                    'assign',
+                                    false
+                                );
                             }
+
+                            //
+                            else {
+
+                                $check_exist = $this->hr_documents_management_model->check_assigned_document($document_sid, $emp, $user_type);
+                                if (!empty($check_exist)) {
+                                    $assignment_sid = $check_exist[0]['sid'];
+                                    $assigned_document = $this->hr_documents_management_model->get_assigned_document_details($company_sid, $assignment_sid);
+                                    unset($assigned_document['sid']);
+                                    $assigned_document['doc_sid'] = $assignment_sid;
+                                    $this->hr_documents_management_model->insert_documents_assignment_record_history($assigned_document);
+
+                                    $data_to_update = array();
+                                    $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                                    $data_to_update['company_sid'] = $company_sid;
+                                    $data_to_update['assigned_date'] = date('Y-m-d H:i:s');
+                                    $data_to_update['assigned_by'] = $employer_sid;
+                                    $data_to_update['user_type'] = $user_type;
+                                    $data_to_update['user_sid'] = $emp;
+                                    $data_to_update['document_type'] = $document_type;
+                                    $data_to_update['document_sid'] = $document_sid;
+                                    $data_to_update['status'] = 1;
+                                    $data_to_update['document_original_name'] = $document['uploaded_document_original_name'];
+                                    $data_to_update['document_extension'] = $document['uploaded_document_extension'];
+                                    $data_to_update['document_s3_name'] = $document['uploaded_document_s3_name'];
+                                    $data_to_update['document_title'] = $document['document_title'];
+                                    $data_to_update['document_description'] = htmlentities($this->input->post('document_description'));
+                                    $data_to_update['acknowledged'] = NULL;
+                                    $data_to_update['acknowledged_date'] = NULL;
+                                    $data_to_update['downloaded'] = NULL;
+                                    $data_to_update['downloaded_date'] = NULL;
+                                    $data_to_update['uploaded'] = NULL;
+                                    $data_to_update['uploaded_date'] = NULL;
+                                    $data_to_update['uploaded_file'] = NULL;
+                                    $data_to_update['signature_timestamp'] = NULL;
+                                    $data_to_update['signature'] = NULL;
+                                    $data_to_update['signature_email'] = NULL;
+                                    $data_to_update['signature_ip'] = NULL;
+                                    $data_to_update['user_consent'] = 0;
+                                    $data_to_update['submitted_description'] = NULL;
+                                    $data_to_update['signature_base64'] = NULL;
+                                    $data_to_update['signature_initial'] = NULL;
+                                    $data_to_update['download_required'] = $document['download_required'];
+                                    $data_to_update['signature_required'] = $document['signature_required'];
+                                    $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
+                                    $data_to_update['is_required'] = $document['is_required'];
+                                    //
+                                    addColumnsForDocumentAssigned($data_to_update, $document);
+                                    $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
+                                } else {
+                                    $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
+                                    $data_to_insert = array();
+                                    $data_to_insert['company_sid'] = $company_sid;
+                                    $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+                                    $data_to_insert['assigned_by'] = $employer_sid;
+                                    $data_to_insert['user_type'] = $user_type;
+                                    $data_to_insert['user_sid'] = $emp;
+                                    $data_to_insert['document_type'] = $document_type;
+                                    $data_to_insert['document_sid'] = $document_sid;
+                                    $data_to_insert['status'] = 1;
+                                    $data_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
+                                    $data_to_insert['document_extension'] = $document['uploaded_document_extension'];
+                                    $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
+                                    $data_to_insert['document_title'] = $document['document_title'];
+                                    $data_to_insert['document_description'] = htmlentities($this->input->post('document_description'));
+                                    $data_to_insert['download_required'] = $document['download_required'];
+                                    $data_to_insert['signature_required'] = $document['signature_required'];
+                                    $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                                    $data_to_insert['is_required'] = $document['is_required'];
+
+                                    //
+                                    $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
+
+                                    //
+                                    addColumnsForDocumentAssigned($data_to_insert, $document);
+
+                                    $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                                }
+                            }
+
+
 
                             //
                             if ($doSendEmails == 'no') continue;
@@ -2100,6 +2189,7 @@ class Hr_documents_management extends Public_Controller
                         case 'assign_document':
                             $document_type = $this->input->post('document_type');
                             $document_sid = $this->input->post('document_sid');
+
                             $check_exist = $this->hr_documents_management_model->check_assigned_document($document_sid, $user_sid, $user_type);
                             $authorized_signature_required = $this->input->post('auth_sign_sid');
 
@@ -7984,9 +8074,29 @@ class Hr_documents_management extends Public_Controller
         $doc_sid = $this->input->post('doc_sid');
         $doc_type = $this->input->post('doc_type');
 
+        if ($doc_sid == 'Dependents') {
+            $doc_sid = 'dependents';
+        }
+        if ($doc_sid == 'Direct Deposit Information') {
+            $doc_sid = 'direct_deposit';
+        }
+
+        if ($doc_sid == 'Drivers License Information') {
+            $doc_sid = 'drivers_license';
+        }
+        if ($doc_sid == 'Emergency Contacts') {
+            $doc_sid = 'emergency_contacts';
+        }
+        if ($doc_sid == 'Occupational License Information') {
+            $doc_sid = 'occupational_license';
+        }
+
+
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data['session']['company_detail']['sid'];
         $employees = $this->hr_documents_management_model->fetch_documents_employees($doc_sid, $doc_type, $company_sid);
+
+
         if (!$this->input->post('departments')) {
             // Get all active Departments
             $departments = $this->hr_documents_management_model->getDepartments(
