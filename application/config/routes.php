@@ -2148,6 +2148,8 @@ $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
 $route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
 $route["attendance/employees/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
+$route["attendance/employees/locations"]["get"] = "v1/Attendance/Attendance/locations";
+$route["attendance/location_detail"]["get"] = "v1/Attendance/Attendance/location_detail";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
 //

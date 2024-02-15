@@ -253,7 +253,7 @@ class Attendance extends Public_Controller
         $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
         //
         $data["sidebarPath"] = $this->sidebarPath;
-        $data["mainContentPath"] = "v1/attendance/timesheets";
+        $data["mainContentPath"] = "v1/attendance/employees_timesheets";
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
         //
         $defaultRange = getSystemDate(SITE_DATE) . ' - ' . getSystemDate(SITE_DATE);
@@ -304,6 +304,140 @@ class Attendance extends Public_Controller
         $data['teams'] = $this->clock_model->getTeams($this->loggedInCompany["sid"], $data['departments']);
         $data['jobTitles'] = $this->clock_model->getJobTitles();
         //   
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
+    }
+
+    /**
+     * logged in employees locations
+     */
+    public function locations()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/plugins/select2/select2.min", "css");
+        $this->setCommon("v1/plugins/select2/select2.min", "js");
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/locations", "js");
+        $this->getCommon($data, "timesheets");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/employees_locations";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        //
+        $defaultDate = getSystemDate(SITE_DATE);
+        $selectedDate = $this->input->get("clocked_in_date") ?? $defaultDate;
+        //
+        $clockedInDate = formatDateToDB($selectedDate, SITE_DATE, DB_DATE);
+        //
+        $data["filter"] = [
+            "employees" => $this->input->get("employees", true) ?? ["all"]
+        ];
+        $data["filter"]['clockedInDate'] = $clockedInDate;
+        $data["filter"]['selectedDate'] = $selectedDate;
+        //
+        $data["markers"] = $this->clock_model
+                ->getClockedInEmployees(
+                    $this->loggedInCompany["sid"],
+                    $clockedInDate,
+                    $data["filter"]["employees"]
+                ); 
+        //        
+        // _e($data["markers"],true);   
+        $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);        
+        //           
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
+    }
+
+    public function location_detail()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/plugins/ms_modal/main", "css");
+        $this->setCommon("v1/plugins/ms_modal/main", "js");
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/location_detail", "js");
+        $this->getCommon($data, "timesheets");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/location_detail";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        //
+        $selectedDate = $this->input->get("date");
+        $employeeId = $this->input->get("sid");
+        //
+        $clockedInDate = formatDateToDB($selectedDate, SITE_DATE, DB_DATE);
+        $data['clockedInDate'] = $clockedInDate;
+        $data['employeeInfo'] = get_employee_profile_info($employeeId);
+        //
+        $data["history"] = $this->clock_model
+                ->getEmployeeLoginHistory(
+                    $employeeId,
+                    $clockedInDate,
+                ); 
+        //
+        // get the employee worked shifts
+        $data["clockArray"] = $this->clock_model->calculateTimeWithinRange(
+            $employeeId,
+            $clockedInDate,
+            $clockedInDate
+        ); 
+        //        
+        // _e($data["clockArray"],true);           
+        //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");
