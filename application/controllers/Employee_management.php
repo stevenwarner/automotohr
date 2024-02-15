@@ -1924,7 +1924,7 @@ class Employee_management extends Public_Controller
                         $sid,
                         $data_to_insert
                     );
-                   
+
                     // Check and Update employee basic profile info
                     $this->checkAndUpdateProfileInfo(
                         $sid,
@@ -1951,6 +1951,14 @@ class Employee_management extends Public_Controller
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);
                         }
                     }
+
+                    // update the data in verification forms
+                    // W9, I9, and W4
+                    $this->employee_model
+                        ->updateProfileDataToVerificationDocuments(
+                            $company_id,
+                            $sid
+                        );
 
                     //
                     $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully.');

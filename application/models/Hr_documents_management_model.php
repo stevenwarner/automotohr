@@ -1619,6 +1619,24 @@ class Hr_documents_management_model extends CI_Model
             return array();
         }
     }
+    
+    function get_w4_form($user_type, $user_sid)
+    {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+        $this->db->from('form_w4_original');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr[0];
+        } else {
+            return array();
+        }
+    }
 
     function check_i9_exist($user_type, $user_sid)
     {

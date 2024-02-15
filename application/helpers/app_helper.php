@@ -3275,3 +3275,25 @@ if (!function_exists("generateRandomColor")) {
         return sprintf("#%02x%02x%02x", $red, $green, $blue);
     }
 }
+
+if (!function_exists("saveHistoryToProfile")) {
+    /**
+     * saves the history of profile
+     *
+     * @param int $employeeId
+     * @param array $diffArray
+     */
+    function saveHistoryToProfile(int $employeeId, array $diffArray)
+    {
+        // get CI instance
+        $CI = get_instance();
+        // insert the history
+        $CI->db
+            ->insert('profile_history', [
+                "user_sid" => $employeeId,
+                "employer_sid" => $CI->session->userdata("logged_in")["employer_detail"]["sid"] ?? 0,
+                "profile_data" => json_encode($diffArray),
+                "created_at" => getSystemDate(),
+            ]);
+    }
+}
