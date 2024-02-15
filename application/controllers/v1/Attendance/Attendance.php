@@ -339,7 +339,7 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/plugins/select2/select2.min", "js");
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/locations", "js");
-        $this->getCommon($data, "timesheets");
+        $this->getCommon($data, "employee_locations");
 
         //
         $data["load_view"] = false;
@@ -404,7 +404,7 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/plugins/ms_modal/main", "js");
         $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/location_detail", "js");
-        $this->getCommon($data, "timesheets");
+        $this->getCommon($data, "location_detail");
 
         //
         $data["load_view"] = false;

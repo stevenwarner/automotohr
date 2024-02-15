@@ -99,6 +99,12 @@ $(function locations() {
 		return content;
 	}
 	//
-	callGoogleCB(initMap);
+	if (!locations.length) {
+		$("#map").html(
+			'<p class="alert alert-info text-center">Employees footprint not found!</p>'
+		);
+	} else {
+		callGoogleCB(initMap);
+	}
 	//
 });
