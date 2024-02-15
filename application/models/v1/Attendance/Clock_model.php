@@ -1934,7 +1934,6 @@ class Clock_model extends Base_model
             $periodStartDate,
             $periodEndDate
         );
-        // _e($employeeShifts,true,true);
         //
         $employeeRate = getRatePerHour($employeeWageInfo['rate'], $employeeWageInfo['per']);
         //
@@ -2024,6 +2023,7 @@ class Clock_model extends Base_model
                 }
             }
             //
+            $tmp["clocked_time"] =  $tmp["clocked_time"] + ($tmp["unpaid_break_time"] + $tmp["paid_break_time"]);
             $tmp["worked_time"] =  $tmp["clocked_time"] - ($tmp["unpaid_break_time"] + $tmp["paid_break_time"]);
             // calculate
             // calculate overtime for daily
@@ -2192,65 +2192,95 @@ class Clock_model extends Base_model
             "double_overtime_detail" => $double_overtime_detail,
         ];
         //
-        // _e($returnArray,true,true);
-        //
         return $returnArray;
     }
 
-    public function getClockedInEmployees ($companyId, $date) {
-        $records =
-            $this->db
-            ->select("
-                sid,
-                employee_sid,
-                clocked_date
-            ")
-            ->where([
-                "company_sid" => $companyId,
-                "clocked_date" => $date,
-            ])
-            ->get("cl_attendance")
-            ->result_array();
+    public function getClockedInEmployees ($companyId, $date, $employees) {
+        //
+        $this->db->select('
+            sid,
+            employee_sid,
+            clocked_date
+        ');
+        //
+        $this->db->where('company_sid', $companyId);
+        $this->db->where('clocked_date', $date);
+        //
+        if ($employees && array_search("all", $employees) === false) {
+            $this->db->where_in('employee_sid', $employees);
+        }
+        //
+        $a = $this->db->get('cl_attendance');
+        //
+        $records = $a->result_array();
+        $a = $a->free_result();
         //
         $markers = [];
         //
-        foreach ($records as $rkey => $row) {
-            $location = $this->db
-            ->select("
-                lat,
-                lng,
-                lat_2,
-                lng_2
-            ")
-            ->where("cl_attendance_sid", $row['sid'])
-            ->order_by("sid", "ASC")
-            ->get("cl_attendance_log")
-            ->row_array();
-            //
-            if(!empty($location['lat']) || !empty($location['lng'])){
+        if ($records) {
+            foreach ($records as $row) {
+                $location = $this->db
+                ->select("
+                    lat,
+                    lng,
+                    lat_2,
+                    lng_2
+                ")
+                ->where("cl_attendance_sid", $row['sid'])
+                ->order_by("sid", "ASC")
+                ->get("cl_attendance_log")
+                ->row_array();
                 //
-                $userInfo = get_employee_profile_info($row['employee_sid']);
-                //
-                $markers[] = [
-                    'employeeId' => $row['employee_sid'],
-                    'lat' => $location['lat'], 
-                    'lng' => $location['lng'], 
-                    'logo' => getImageURL($userInfo['profile_picture']),
-                    'name' => remakeEmployeeName([
-                        'first_name' => $userInfo['first_name'],
-                        'last_name' => $userInfo['last_name'],
-                        'access_level' => $userInfo['access_level'],
-                        'timezone' => isset($userInfo['timezone']) ? $userInfo['timezone'] : '',
-                        'access_level_plus' => $userInfo['access_level_plus'],
-                        'is_executive_admin' => $userInfo['is_executive_admin'],
-                        'pay_plan_flag' => $userInfo['pay_plan_flag'],
-                        'job_title' => $userInfo['job_title'],
-                    ]) 
-                ];
-            }
-        }    
+                if(!empty($location['lat']) || !empty($location['lng'])){
+                    //
+                    $userInfo = get_employee_profile_info($row['employee_sid']);
+                    //
+                    $markers[] = [
+                        'employeeId' => $row['employee_sid'],
+                        'lat' => $location['lat'], 
+                        'lng' => $location['lng'], 
+                        'logo' => getImageURL($userInfo['profile_picture']),
+                        'name' => remakeEmployeeName([
+                            'first_name' => $userInfo['first_name'],
+                            'last_name' => $userInfo['last_name'],
+                            'access_level' => $userInfo['access_level'],
+                            'timezone' => isset($userInfo['timezone']) ? $userInfo['timezone'] : '',
+                            'access_level_plus' => $userInfo['access_level_plus'],
+                            'is_executive_admin' => $userInfo['is_executive_admin'],
+                            'pay_plan_flag' => $userInfo['pay_plan_flag'],
+                            'job_title' => $userInfo['job_title'],
+                        ]) 
+                    ];
+                }
+            } 
+        } 
         //
         return $markers; 
+    }
+
+    public function getEmployeeLoginHistory ($employeeId, $date) {
+        $record =
+            $this->db
+            ->select("
+                sid
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "clocked_date" => $date,
+            ])
+            ->get("cl_attendance")
+            ->row_array();
+        //
+        $history = [
+            'logs' => '',
+            'locations' => ''
+        ]; 
+        //    
+        if ($record) {
+            $history = $this->getTimeSheetHistory($record['sid']);
+        } 
+        //
+        return $history;
     }
 
     public function getEmployeeOverTimeRule(int $employeeId)
@@ -2422,9 +2452,6 @@ class Clock_model extends Base_model
         //
         $b = $a->result_array();
         $a = $a->free_result();
-        //
-        // _e($b,true);
-        // _e($this->db->last_query(),true);
         //
         return $b;
     }
