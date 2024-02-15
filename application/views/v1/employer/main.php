@@ -33,7 +33,11 @@
                     </a>
 
                     <a href="<?php echo base_url('attendance/employees/timesheets'); ?>" class="btn btn-orange <?= preg_match('/attendance\/employees\/timesheets/im', uri_string()) ? 'active-link' : ''; ?>">
-                        <i class="fa fa-file"></i> Employees timesheets
+                        <i class="fa fa-files-o"></i> Employees timesheets
+                    </a>
+
+                    <a href="<?php echo base_url('attendance/employees/locations'); ?>" class="btn btn-orange <?= preg_match('/attendance\/employees\/locations/im', uri_string()) ? 'active-link' : ''; ?>">
+                        <i class="fa fa-map-marker"></i> Employees locations
                     </a>
                 </div>
             </div>
