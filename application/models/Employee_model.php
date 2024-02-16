@@ -2304,7 +2304,14 @@
             ->row_array();
     }
 
-
+    /**
+     * updates employee personal details to verification
+     * forms; W4, and I9
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @return array
+     */
     public function updateProfileDataToVerificationDocuments(
         int $companyId,
         int $employeeId
