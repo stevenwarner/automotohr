@@ -501,14 +501,19 @@ class Copy_employees extends Admin_Controller
 
                 if (!empty($assigned_documents)) {
                     foreach ($assigned_documents as $key => $assigned_document) {
+                        //
                         $insert_assigned_document = array();
-
+                        //
                         foreach ($assigned_document as $key => $value) {
                             $insert_assigned_document[$key] = $value;
                         }
-
+                        //
+                        $documentID = $this->copy_employees_model->getAssignedDocumentId($to_company, $assigned_document);
+                        //
                         $insert_assigned_document['company_sid'] = $to_company;
                         $insert_assigned_document['user_sid'] = $new_employee_sid;
+                        $insert_assigned_document['document_sid'] = $documentID;
+                        //
                         unset($insert_assigned_document['sid']);
                         unset($insert_assigned_document['acknowledgment_required']);
                         unset($insert_assigned_document['download_required']);
@@ -527,13 +532,17 @@ class Copy_employees extends Admin_Controller
                 if (!empty($assigned_offer_letters)) {
                     foreach ($assigned_offer_letters as $key => $offer_letter) {
                         $insert_offer_letter = array();
-
+                        //
                         foreach ($offer_letter as $key => $value) {
                             $insert_offer_letter[$key] = $value;
                         }
-
+                        //
+                        $offerLetterID = $this->copy_employees_model->getAssignedOfferLetterId($to_company, $offer_letter);
+                        //
                         $insert_offer_letter['company_sid'] = $to_company;
                         $insert_offer_letter['user_sid'] = $new_employee_sid;
+                        $insert_offer_letter['document_sid'] = $offerLetterID;
+                        //
                         unset($insert_offer_letter['sid']);
                         unset($insert_offer_letter['acknowledgment_required']);
                         unset($insert_offer_letter['download_required']);
@@ -1227,13 +1236,17 @@ class Copy_employees extends Admin_Controller
         if (!empty($assigned_documents)) {
             foreach ($assigned_documents as $key => $assigned_document) {
                 $insert_assigned_document = array();
-
+                //
                 foreach ($assigned_document as $key => $value) {
                     $insert_assigned_document[$key] = $value;
                 }
-
+                //
+                $documentID = $this->copy_employees_model->getAssignedDocumentId($to_company, $assigned_document);
+                //
                 $insert_assigned_document['company_sid'] = $to_company;
                 $insert_assigned_document['user_sid'] = $new_employee_sid;
+                $insert_assigned_document['document_sid'] = $documentID;
+                //
                 unset($insert_assigned_document['sid']);
                 unset($insert_assigned_document['acknowledgment_required']);
                 unset($insert_assigned_document['download_required']);
@@ -1252,13 +1265,17 @@ class Copy_employees extends Admin_Controller
         if (!empty($assigned_offer_letters)) {
             foreach ($assigned_offer_letters as $key => $offer_letter) {
                 $insert_offer_letter = array();
-
+                //
                 foreach ($offer_letter as $key => $value) {
                     $insert_offer_letter[$key] = $value;
                 }
-
+                //
+                $offerLetterID = $this->copy_employees_model->getAssignedOfferLetterId($to_company, $offer_letter);
+                //
                 $insert_offer_letter['company_sid'] = $to_company;
                 $insert_offer_letter['user_sid'] = $new_employee_sid;
+                $insert_offer_letter['document_sid'] = $offerLetterID;
+                //
                 unset($insert_offer_letter['sid']);
                 unset($insert_offer_letter['acknowledgment_required']);
                 unset($insert_offer_letter['download_required']);
