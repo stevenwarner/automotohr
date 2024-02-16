@@ -252,8 +252,8 @@ class Dashboard extends CI_Controller
                 $url = base_url() . 'dashboard/change_password/' . $user_data["username"] . '/' . $user_data["activation_code"];
                 $emailTemplateBody = 'Dear ' . $user_data["username"] . ', <br>';
                 $emailTemplateBody = $emailTemplateBody . 'You can change your password by following the link below : ' . '<br>';
-                $emailTemplateBody = $emailTemplateBody . 'Your username is : ' . $user_data["username"] . '<br>';
-                $emailTemplateBody = $emailTemplateBody . '<a href="' . $url . '">Change Your Password</a><br><br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Your username is : ' . $user_data["username"] . '</strong><br><br>';
+                $emailTemplateBody = $emailTemplateBody . '<a href="' . $url . '" style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block">Change Your Password</a><br><br>';
                 $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
                 $to = $email;
                 $subject = 'Password Recovery'; //$emailTemplateData['subject'];
