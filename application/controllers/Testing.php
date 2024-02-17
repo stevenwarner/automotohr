@@ -447,7 +447,44 @@ class Testing extends CI_Controller
         }
     }
 
-    public function fixDocument ($company_sid, $user_sid) {
-
+    public function fixDocument ($companyId) {
+        $companyDocuments = $this->db
+            ->select(
+                'sid, document_sid, document_type, offer_letter_type'
+            )
+            ->where('company_sid', $companyId)
+            ->where('document_sid <>', 0)
+            ->get('documents_assigned')
+            ->result_array();
+        //
+        if ($companyDocuments) {
+            //
+            $this->load->model('manage_admin/copy_employees_model');
+            //
+            $updatedDocumentCount = 0;
+            $updatedDocument = [];
+            //
+            foreach ($companyDocuments as $document) {
+                if ($document['document_type'] == 'offer_letter') {
+                    $newDocumentID = $this->copy_employees_model->getAssignedOfferLetterId($companyId, $document);
+                } else {
+                    $newDocumentID = $this->copy_employees_model->getAssignedDocumentId($companyId, $document);   
+                }
+                //
+                if ($document['document_sid'] != $newDocumentID) {
+                    //
+                    $dataToUpdate = [];
+                    $dataToUpdate['document_sid'] = $newDocumentID;
+                    $this->db->where('sid', $document['sid']);
+                    $this->db->update('documents_assigned', $dataToUpdate);
+                    //
+                    $updatedDocumentCount++;
+                    $updatedDocument[] = $document;
+                }
+                
+            }
+        } 
+        _e($updatedDocumentCount." document(s) updated.",true);  
+        _e($updatedDocument,true,true); 
     }
 }
