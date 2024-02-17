@@ -489,6 +489,19 @@ class Testing extends CI_Controller
     }
 
     public function deleteDocument(){
+        $documents = [12294,12295,12296,12297,12298,12299,12300,12301,12302,12303,12304,12305,12306,12307,12308,12309,12310,12311,12312,12313,12314,12315,12316,12317,12318,12319,12320,12321,12322
+        ,12323,12324,12325,12326,12327,12328,12329,12330,12331,12332,12333,12334,12335,12336,12337,12338,12339,12340,12341,12342,12343,12344,12345,12346,12347,12348,12349,12350
+        ,12351,12352];
+        //
+        foreach ($documents as $sid) {
+            $this->db->where('new_document_sid', $sid);
+            $this->db->delete('copy_document_track');
+        }
+        echo count($documents);
+        _e($documents,true);
+    }
+
+    public function updateDocument(){
         $documents = Array
         (
             Array
