@@ -1031,7 +1031,7 @@ class Testing extends CI_Controller
             $dataToUpdate = [];
             $dataToUpdate['document_sid'] = $doc['document_sid'];
             $this->db->where('sid', $doc['sid']);
-            $this->db->update('documents_management', $dataToUpdate);
+            $this->db->update('documents_assigned', $dataToUpdate);
         }
         echo count($documents);
         _e($documents,true);
