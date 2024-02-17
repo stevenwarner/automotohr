@@ -1167,17 +1167,19 @@ class Copy_employees_model extends CI_Model
             ->row_array();
         //
         if (!$record) {
-            $transferDocument = $this->db
-                ->select('new_document_sid')
-                ->where('to_company_sid', $companyId)
-                ->where('document_sid', $document['document_sid'])
-                ->where('document_type', 'document')
-                ->get('copy_document_track')
-                ->row_array();
             //
-            if ($transferDocument) {
-                $documentId = $transferDocument['new_document_sid'];
+            $result = $this->db
+                 ->select('sid')
+                 ->where('company_sid', $companyId)
+                 ->where('document_title', $document['document_title'])
+                 ->where('document_type', $document['document_type'])
+                 ->get('documents_management')
+                 ->row_array();
+            //     
+            if ($result) {
+                $documentId = $result['sid'];
             } else {
+                
                 // Fetch document details
                 $result = $this->db
                     ->select('*')
@@ -1262,16 +1264,17 @@ class Copy_employees_model extends CI_Model
             ->row_array();
         //
         if (!$record) {
-            $transferDocument = $this->db
-                ->select('new_document_sid')
-                ->where('to_company_sid', $companyId)
-                ->where('document_sid', $document['document_sid'])
-                ->where('document_type', 'offer_letter')
-                ->get('copy_document_track')
-                ->row_array();
             //
-            if ($transferDocument) {
-                $offerLetterId = $transferDocument['new_document_sid'];
+            $result = $this->db
+                 ->select('sid')
+                 ->where('company_sid', $companyId)
+                 ->where('letter_name', $document['document_title'])
+                 ->where('letter_type', $document['offer_letter_type'])
+                 ->get('offer_letter')
+                 ->row_array();
+            //     
+            if ($result) {
+                $offerLetterId = $result['sid'];
             } else {
                 // Fetch document details
                 $result = $this->db

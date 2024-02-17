@@ -450,7 +450,7 @@ class Testing extends CI_Controller
     public function fixDocument ($companyId) {
         $companyDocuments = $this->db
             ->select(
-                'sid, document_sid, document_type, offer_letter_type'
+                'sid, document_sid, document_title, document_type, offer_letter_type'
             )
             ->where('company_sid', $companyId)
             ->where('document_sid <>', 0)
