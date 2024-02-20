@@ -28,7 +28,6 @@ $(function attendanceDetail() {
         //
         $('#map').css('height', '440px');
         const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-        
 		//
 		map = new google.maps.Map(document.getElementById("map"), {
 			center: {
@@ -157,22 +156,11 @@ $(function attendanceDetail() {
 			</div>
 			<div class="details">
 				<div class="price">${activity.title}</div>
-				<div class="address">${activity.title}</div>
+				<div class="address">${activity.address}</div>
 				<div class="features">
                     <div>
-                        <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
-                        <span class="fa-sr-only">bedroom</span>
-                        <span>${activity.title}</span>
-                    </div>
-                    <div>
-                        <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
-                        <span class="fa-sr-only">bathroom</span>
-                        <span>${activity.title}</span>
-                    </div>
-                    <div>
-                        <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
-                        <span class="fa-sr-only">size</span>
-                        <span>${activity.title} ft<sup>2</sup></span>
+                        <span class="fa-sr-only">Time</span>
+                        <span>${moment(activity["time"], "YYYY-MM-DD HH:mm:ss").format("hh:mm a")}</span>
                     </div>
 				</div>
 			</div>
@@ -180,34 +168,6 @@ $(function attendanceDetail() {
 		//
 		return content;
 	}
-
-    async function getLocationAddress () {
-		//
-		const geocoder = new google.maps.Geocoder();
-		//
-		let allPromises = locations.map(async function (record, index) {
-			geocoder
-				.geocode({ location: {
-					lat: parseFloat(record["lat"]),
-					lng: parseFloat(record["lng"]),
-				} })
-				.then((response) => {
-					if (response.results[0]) {
-						console.log(response.results[0].formatted_address)
-						
-					} else {
-						console.log("Unknown Location");
-					}
-				})
-				.catch((e) => {
-					console.log("Unknown Location");
-				});
-		});
-		// make sure all promises are resolved
-		await Promise.all(allPromises);
-		//
-		console.log(locations);
-    }
 
 	function remakeEntries() {
 		// set the html holder
@@ -286,8 +246,7 @@ $(function attendanceDetail() {
 			'<p class="alert alert-info text-center">No footprints yet!</p>'
 		);
 	} else {
-		getLocationAddress();
-		// callGoogleCB(initMap);
+		callGoogleCB(initMap);
 	}
 	
 	remakeEntries();

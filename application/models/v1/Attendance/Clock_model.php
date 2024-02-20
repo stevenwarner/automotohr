@@ -436,6 +436,7 @@ class Clock_model extends Base_model
                 $locationArray["break_start"] = [
                     "lat" => $v0["lat"],
                     "lng" => $v0["lng"],
+                    "address" => getLocationAddress($v0["lat"], $v0["lng"]),
                     "time" => reset_datetime([
                         "datetime" => $log["startTime"],
                         "from_format" => DB_DATE_WITH_TIME,
@@ -450,6 +451,7 @@ class Clock_model extends Base_model
                     $locationArray["break_end"] = [
                         "lat" => $v0["lat_2"],
                         "lng" => $v0["lng_2"],
+                        "address" => getLocationAddress($v0["lat_2"], $v0["lng_2"]),
                         "time" => reset_datetime([
                             "datetime" => $log["endTime"],
                             "from_format" => DB_DATE_WITH_TIME,

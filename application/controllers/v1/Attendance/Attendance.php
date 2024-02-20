@@ -52,7 +52,7 @@ class Attendance extends Public_Controller
         $this->loggedInEmployee = checkAndGetSession("employer_detail");
         $this->loggedInCompany = checkAndGetSession("company_detail");
         //
-        $this->disableCreationOfMinifyFiles = false;
+        $this->disableCreationOfMinifyFiles = true;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
@@ -436,7 +436,7 @@ class Attendance extends Public_Controller
             $clockedInDate
         ); 
         //        
-        _e($data["history"],true);           
+        // _e($data["history"],true);           
         //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
