@@ -308,7 +308,7 @@
                                                                     </label>
                                                                 <?php } ?>
                                                             </td>
-                                                            <td><?=remakeEmployeeName($employee);?><br><?php echo $employee['email']; ?></td>
+                                                            <td><a href="<?php echo getEmployeeProfileLink($employee['sid']);?>" target="_blank" class="text" style="font-weight: bold; color:#272727;"><?=remakeEmployeeName($employee);?><br><?php echo $employee['email']; ?></a></td>
                                                             <?php if (in_array('w4', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
                                                                 <td
                                                                     style="cursor: pointer"

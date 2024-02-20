@@ -1217,12 +1217,13 @@ if (!function_exists('getStateByCol')) {
 
     function getStateColumn(array $where, string $column): string
     {
-        $CI = &get_instance();
-        return $CI->db
+        $result  = &get_instance()->db
             ->select($column)
             ->where($where)
             ->get('states')
-            ->row_array()[$column];
+            ->row_array();
+
+        return $result && $result[$column] ?  $result[$column] : "";
     }
 }
 
@@ -2560,8 +2561,11 @@ if (!function_exists("convertSecondsToTime")) {
         $hours = floor($differenceInSeconds / 3600);
         $minutes = floor(($differenceInSeconds % 3600) / 60);
 
+        if ($hours <= 0 && $minutes <= 0) {
+            return "0h";
+        }
 
-        return $hours . "h" . ($minutes > 0 ? " " . $minutes . 'm' : "");
+        return ($hours > 0 ? $hours . "h" : "") . ($minutes > 0 ? " " . $minutes . 'm' : "");
     }
 }
 
@@ -2580,6 +2584,32 @@ if (!function_exists("getSundaysAndSaturdays")) {
             // Check if the current day is Sunday or Saturday
             $dayOfWeek = $currentDate->format('N');
             if ($dayOfWeek == 7 /* Sunday */ || $dayOfWeek == 6 /* Saturday */) {
+                $sundaysSaturdays[] = $currentDate->format('Y-m-d');
+            }
+
+            // Move to the next day
+            $currentDate->modify('+1 day');
+        }
+
+        return $sundaysSaturdays;
+    }
+}
+
+if (!function_exists("getCompanyOffDaysDatesWithinRange")) {
+    function getCompanyOffDaysDatesWithinRange($startDate, $endDate, $offDays)
+    {
+        $sundaysSaturdays = [];
+
+        // Create DateTime objects from the input strings
+        $startDateTime = new DateTime($startDate);
+        $endDateTime = new DateTime($endDate);
+
+        // Iterate through the days
+        $currentDate = $startDateTime;
+        while ($currentDate <= $endDateTime) {
+            // Check if the current day is Sunday or Saturday
+            $dayOfWeek = $currentDate->format('N');
+            if (in_array($dayOfWeek, $offDays)) {
                 $sundaysSaturdays[] = $currentDate->format('Y-m-d');
             }
 
@@ -3041,16 +3071,20 @@ if (!function_exists("convertTimeZone")) {
      * @param string $fromFormat
      * @param string $fromTimeZone
      * @param string $toTimeZone
+     * @param bool $doFormat
+     * @param string $toFormat
      * @return string
      */
     function convertTimeZone(
         string $date,
         string $fromFormat,
         string $fromTimeZone,
-        string $toTimeZone
+        string $toTimeZone,
+        bool $doFormat = false,
+        string $toFormat = DB_DATE_WITH_TIME
     ): string {
         //
-        return reset_datetime([
+        $returnedValue = reset_datetime([
             "datetime" => $date,
             "from_format" => $fromFormat,
             "format" => $fromFormat,
@@ -3058,6 +3092,12 @@ if (!function_exists("convertTimeZone")) {
             "new_zone" => $toTimeZone,
             "from_timezone" => $fromTimeZone
         ]);
+        //
+        return !$doFormat ? $returnedValue : formatDateToDB(
+            $returnedValue,
+            $fromFormat,
+            $toFormat
+        );
     }
 }
 
@@ -3093,4 +3133,167 @@ function is_within_radius($centerLatLng, $latLng, $radius)
         "within_range" => ($distance <= $radius),
         "distance" => $distance
     ];
+}
+
+
+if (!function_exists("convertToList")) {
+    /**
+     * converts array to list
+     *
+     * @param array  $dataArray
+     * @param string $index
+     * @param bool   $convertToSlug
+     * @return array
+     */
+    function convertToList(array $dataArray, string $index, bool $convertToSlug = true): array
+    {
+        // when empty array provided
+        if (!$dataArray) {
+            return $dataArray;
+        }
+        // set the holder
+        $tmp = [];
+        //
+        foreach ($dataArray as $v0) {
+            $newIndex = $v0[$index];
+            // convert the index to slug
+            if ($convertToSlug) {
+                $newIndex = stringToSlug($newIndex, "_");
+            }
+            $tmp[$newIndex] = $v0;
+        }
+        //
+        return $tmp;
+    }
+}
+
+if (!function_exists("getEmployeeProfileLink")) {
+    /**
+     * provide employee profile link
+     *
+     * @param int  $employeeId
+     * @return string
+     */
+    function getEmployeeProfileLink(int $employeeId): string
+    {
+        $link = 'javascript:;';
+        //
+        if (isPayrollOrPlus()) {
+            $link = base_url("employee_profile/" . $employeeId);
+        }
+        //
+        return $link;
+    }
+}
+
+if (!function_exists("getWageFromTime")) {
+    function getWageFromTime($time = 0, $rate = 0): string
+    {
+        $wage = 0;
+        //
+        if ($rate > 0 && $time > 0) {
+            $wage = (($time / (60 * 60)) * $rate);
+        }
+        //
+        return _a($wage);
+    }
+}
+
+if (!function_exists("getTotalWageFromTime")) {
+    function getTotalWageFromTime($record, $type): string
+    {
+        $total = 0;
+        //
+        if ($record['regular_time'] > 0 && $record['normal_rate'] > 0) {
+            $total += ($record['regular_time'] / (60 * 60)) * $record['normal_rate'];
+        }
+        //
+        if ($record['overtime'] > 0 && $record['over_time_rate'] > 0) {
+            $total += ($record['overtime'] / (60 * 60)) * $record['over_time_rate'];
+        }
+        //
+        if ($record['double_overtime'] > 0 && $record['double_over_time_rate'] > 0) {
+            $total += ($record['double_overtime'] / (60 * 60)) * $record['double_over_time_rate'];
+        }
+        //
+        // if ($record['paid_break_time'] > 0 && $record['normal_rate'] > 0) {
+        //     $total += ($record['paid_break_time'] / (60 * 60)) * $record['normal_rate'];
+        // }
+        //
+        if ($type == "all" && $record['paid_time_off'] > 0 && $record['normal_rate'] > 0) {
+            $total += ($record['paid_time_off']['total_hours']) * $record['normal_rate'];
+        }
+        //
+        return _a($total);
+    }
+}
+
+if (!function_exists("getTotalWorkTime")) {
+    function getTotalWorkTime($record): string
+    {
+        $total = 0;
+        //
+        if ($record['regular_time'] > 0) {
+            $total += $record['regular_time'] / (60 * 60);
+        }
+        //
+        if ($record['overtime'] > 0) {
+            $total += $record['overtime'] / (60 * 60);
+        }
+        //
+        if ($record['double_overtime'] > 0) {
+            $total += $record['double_overtime'] / (60 * 60);
+        }
+        //
+        return $total . 'h';
+    }
+}
+
+if (!function_exists("getLoggedInPersonId")) {
+    /**
+     * get the logged in person id
+     */
+    function getLoggedInPersonId()
+    {
+        // get CI instance
+        return get_instance()
+            ->session
+            ->userdata("logged_in")["employer_detail"]["sid"] ?? null;
+    }
+}
+
+
+if (!function_exists("generateRandomColor")) {
+    function generateRandomColor()
+    {
+        // Generate random RGB values with higher intensity
+        $red = mt_rand(150, 255);
+        $green = mt_rand(150, 255);
+        $blue = mt_rand(150, 255);
+
+        // Convert RGB values to hexadecimal
+        return sprintf("#%02x%02x%02x", $red, $green, $blue);
+    }
+}
+
+if (!function_exists("saveHistoryToProfile")) {
+    /**
+     * saves the history of profile
+     *
+     * @param int $employeeId
+     * @param array $diffArray
+     */
+    function saveHistoryToProfile(int $employeeId, array $diffArray)
+    {
+        // get CI instance
+        $CI = get_instance();
+        // insert the history
+        $CI->db
+            ->insert('profile_history', [
+                "user_sid" => $employeeId,
+                "employer_sid" => $CI->session->userdata("logged_in")["employer_detail"]["sid"] ?? 0,
+                "profile_data" => json_encode($diffArray),
+                "created_at" => getSystemDate(),
+            ]);
+    }
 }
