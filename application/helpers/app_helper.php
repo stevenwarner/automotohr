@@ -3297,3 +3297,18 @@ if (!function_exists("saveHistoryToProfile")) {
             ]);
     }
 }
+
+if (!function_exists("getLocationAddress")) {
+    function getLocationAddress ($lat, $lng)
+    {
+        $geoCodeJson = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng='.$lat.','.$lng.'&sensor=false&key=AIzaSyBZFbi_PJLj0Sl42it9ThtQybsfu4MGY6w');
+        $output = json_decode($geoCodeJson);
+        $status = $output->status;
+        //
+        if ($status=="OK") {
+            return $output->results[0]->formatted_address;
+        } else {
+            return "Unknown Location";
+        }
+    }
+}

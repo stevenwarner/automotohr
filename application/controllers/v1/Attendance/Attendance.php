@@ -52,7 +52,7 @@ class Attendance extends Public_Controller
         $this->loggedInEmployee = checkAndGetSession("employer_detail");
         $this->loggedInCompany = checkAndGetSession("company_detail");
         //
-        $this->disableCreationOfMinifyFiles = true;
+        $this->disableCreationOfMinifyFiles = false;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
@@ -403,7 +403,7 @@ class Attendance extends Public_Controller
         $this->setCommon("v1/plugins/ms_modal/main", "css");
         $this->setCommon("v1/plugins/ms_modal/main", "js");
         $this->setCommon("v1/app/css/system", "css");
-        $this->setCommon("v1/attendance/js/location_detail", "js");
+        $this->setCommon("v1/attendance/js/location_detail_1", "js");
         $this->getCommon($data, "location_detail");
 
         //
@@ -436,7 +436,7 @@ class Attendance extends Public_Controller
             $clockedInDate
         ); 
         //        
-        // _e($data["clockArray"],true);           
+        _e($data["history"],true);           
         //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");

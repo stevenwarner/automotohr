@@ -373,11 +373,7 @@ class Clock_model extends Base_model
             $pairLocationArray = [];
             // set the text
             if ($v0["clocked_in"]) {
-                $locationArray["clocked_in"] = [
-                    "lat" => $v0["lat"],
-                    "lng" => $v0["lng"],
-                    "title" => "Clocked in"
-                ];
+                //
                 $pairLocationArray = [
                     "id" => $v0["sid"],
                     "lat" => $v0["lat"],
@@ -387,32 +383,43 @@ class Clock_model extends Base_model
                     "event" => "clock"
                 ];
                 //
-                if ($v0["clocked_out"]) {
-                    $locationArray["clocked_out"] = [
-                        "lat" => $v0["lat_2"],
-                        "lng" => $v0["lng_2"],
-                        "title" => "Clocked out"
-                    ];
-                }
                 $log["text"] = "Clocked in/out";
                 $log["startTime"] =
                     $v0["clocked_in"];
                 $log["is_ended"] = $v0["clocked_in"] ? true : false;
                 $log["endTime"] = $v0["clocked_out"] ?? "";
-            } else {
-                $locationArray["break_start"] = [
+                //
+                $locationArray["clocked_in"] = [
                     "lat" => $v0["lat"],
                     "lng" => $v0["lng"],
-                    "title" => "Break started"
+                    "address" => getLocationAddress($v0["lat"], $v0["lng"]),
+                    "time" => reset_datetime([
+                        "datetime" => $log["startTime"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => DB_TIMEZONE
+                    ]),
+                    "title" => "Clocked in"
                 ];
                 //
-                if ($v0["break_end"]) {
-                    $locationArray["break_end"] = [
+                if ($v0["clocked_out"]) {
+                    $locationArray["clocked_out"] = [
                         "lat" => $v0["lat_2"],
                         "lng" => $v0["lng_2"],
-                        "title" => "Break end"
+                        "address" => getLocationAddress($v0["lat_2"], $v0["lng_2"]),
+                        "time" => reset_datetime([
+                            "datetime" => $log["endTime"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => DB_TIMEZONE
+                        ]),
+                        "title" => "Clocked out"
                     ];
                 }
+            } else {
+                //
                 $pairLocationArray = [
                     "id" => $v0["sid"],
                     "lat" => $v0["lat"],
@@ -425,8 +432,36 @@ class Clock_model extends Base_model
                 $log["startTime"] = $v0["break_start"];
                 $log["is_ended"] = $v0["break_end"] ? true : false;
                 $log["endTime"] = $v0["break_end"] ?? "";
+                //
+                $locationArray["break_start"] = [
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "time" => reset_datetime([
+                        "datetime" => $log["startTime"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => DB_TIMEZONE
+                    ]),
+                    "title" => "Break started"
+                ];
+                //
+                if ($v0["break_end"]) {
+                    $locationArray["break_end"] = [
+                        "lat" => $v0["lat_2"],
+                        "lng" => $v0["lng_2"],
+                        "time" => reset_datetime([
+                            "datetime" => $log["endTime"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => DB_TIMEZONE
+                        ]),
+                        "title" => "Break end"
+                    ];
+                }
             }
-
+            //
             $log["startTime"] = reset_datetime([
                 "datetime" => $log["startTime"],
                 "from_format" => DB_DATE_WITH_TIME,
@@ -434,7 +469,7 @@ class Clock_model extends Base_model
                 "_this" => $this,
                 "from_timezone" => DB_TIMEZONE
             ]);
-
+            //  
             $log["endTime"] = reset_datetime([
                 "datetime" => $log["endTime"],
                 "from_format" => DB_DATE_WITH_TIME,
@@ -516,7 +551,6 @@ class Clock_model extends Base_model
                     }
                 }
             }
-
             //
             $log["location"] = $pairLocationArray;
             $returnArray["logs"][] = $log;

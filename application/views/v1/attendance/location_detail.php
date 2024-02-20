@@ -1,4 +1,10 @@
 <style>
+    :root {
+    --break-color: #FF9800;
+    --house-color: #0288D1;
+    --shop-color: #7B1FA2;
+    --clocked-color: #558B2F;
+    }
     .employee_clocked_activity {
         background-color: #4285F4;
         border-radius: 8px;
@@ -48,6 +54,180 @@
         height: 100%;
         border-radius: 5px;
     }
+    
+    .activity {
+        align-items: center;
+        background-color: #FFFFFF;
+        border-radius: 50%;
+        color: #263238;
+        display: flex;
+        font-size: 14px;
+        gap: 15px;
+        height: 30px;
+        justify-content: center;
+        padding: 4px;
+        position: relative;
+        position: relative;
+        transition: all 0.3s ease-out;
+        width: 30px;
+    }
+
+    .activity::after {
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-top: 9px solid #FFFFFF;
+        content: "";
+        height: 0;
+        left: 50%;
+        position: absolute;
+        top: 91%;
+        transform: translate(-50%, 0);
+        transition: all 0.3s ease-out;
+        width: 0;
+        z-index: 1;
+    }
+
+    .activity .icon {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        color: #FFFFFF;
+    }
+
+    .activity .icon svg {
+        height: 20px;
+        width: auto;
+    }
+
+    .activity .details {
+        display: none;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .activity .address {
+        color: #9E9E9E;
+        font-size: 10px;
+        margin-bottom: 10px;
+        margin-top: 5px;
+    }
+
+    .activity .features {
+        align-items: flex-end;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .activity .features > div {
+        align-items: center;
+        background: #F5F5F5;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        display: flex;
+        font-size: 10px;
+        gap: 5px;
+        padding: 5px;
+    }
+
+    /*
+    * Property styles in highlighted state.
+    */
+    .activity.highlight {
+        background-color: #FFFFFF;
+        border-radius: 8px;
+        box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.2);
+        height: 80px;
+        padding: 8px 15px;
+        width: auto;
+    }
+
+    .activity.highlight::after {
+        border-top: 9px solid #FFFFFF;
+    }
+
+    .activity.highlight .details {
+        display: flex;
+    }
+
+    .activity.highlight .icon svg {
+        width: 50px;
+        height: 50px;
+    }
+
+    .activity .bed {
+        color: #FFA000;
+    }
+
+    .activity .bath {
+        color: #03A9F4;
+    }
+
+    .activity .size {
+        color: #388E3C;
+    }
+
+    /*
+    * House icon colors.
+    */
+    .activity.highlight:has(.fa-house) .icon {
+        color: var(--house-color);
+    }
+
+    .activity:not(.highlight):has(.fa-house) {
+        background-color: var(--house-color);
+    }
+
+    .activity:not(.highlight):has(.fa-house)::after {
+        border-top: 9px solid var(--house-color);
+    }
+
+    /*
+    * Building icon colors.
+    */
+    .activity.highlight:has(.fa-coffee) .icon {
+        color: var(--break-color);
+    }
+
+    .activity:not(.highlight):has(.fa-coffee) {
+        background-color: var(--break-color);
+    }
+
+    .activity:not(.highlight):has(.fa-coffee)::after {
+        border-top: 9px solid var(--break-color);
+    }
+
+    /*
+    * Warehouse icon colors.
+    */
+    .activity.highlight:has(.fa-clock-o) .icon {
+        color: var(--clocked-color);
+    }
+
+    .activity:not(.highlight):has(.fa-clock-o) {
+        background-color: var(--clocked-color);
+    }
+
+    .activity:not(.highlight):has(.fa-clock-o)::after {
+        border-top: 9px solid var(--clocked-color);
+    }
+
+    /*
+    * Shop icon colors.
+    */
+    .activity.highlight:has(.fa-shop) .icon {
+        color: var(--shop-color);
+    }
+
+    .activity:not(.highlight):has(.fa-shop) {
+        background-color: var(--shop-color);
+    }
+
+    .activity:not(.highlight):has(.fa-shop)::after {
+        border-top: 9px solid var(--shop-color);
+    }
+
+
 </style>
 <!-- data -->
 <hr>
