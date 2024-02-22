@@ -16,18 +16,28 @@
                                         <strong>Click to modify search criteria</strong>
                                     </div>
                                     <div class="hr-search-main" style="display: block;" >
-                                        <div class="row">
+                                    <div class="row">
                                             <div class="col-xs-6">
                                                 <div class="field-row">
-                                                    <?php $email = $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>
+                                                    <?php $fromEmail = $this->uri->segment(3) != 'all' ? urldecode($this->uri->segment(3)) : ''; ?>
+                                                    <label>From Email / name</label>
+                                                    <input type="text" class="invoice-fields" name="from_email_or_name" id="from_email_or_name" value="<?php echo set_value('keyword', $fromEmail); ?>" />
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <div class="field-row">
+                                                    <?php $email = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
                                                     <label>To Email</label>
                                                     <input type="text" class="invoice-fields" name="email" id="email" value="<?php echo set_value('keyword', $email); ?>" />
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                        </div>
+                                        <div class="row">
+                                            
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="field-row">
                                                     <label class="">Date From</label>
-                                                    <?php $start_date = $this->uri->segment(4) != 'all' ? urldecode($this->uri->segment(4)) : ''; ?>
+                                                    <?php $start_date = $this->uri->segment(5) != 'all' ? urldecode($this->uri->segment(5)) : ''; ?>
                                                     <input class="invoice-fields"
                                                            placeholder=""
                                                            type="text"
@@ -36,10 +46,10 @@
                                                            value="<?php echo set_value('start_date', $start_date); ?>"/>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="field-row">
                                                     <label class="">Date To</label>
-                                                    <?php $end_date = $this->uri->segment(5) != 'all' ? urldecode($this->uri->segment(5)) : ''; ?>
+                                                    <?php $end_date = $this->uri->segment(6) != 'all' ? urldecode($this->uri->segment(6)) : ''; ?>
                                                     <input class="invoice-fields"
                                                            placeholder=""
                                                            type="text"
@@ -155,14 +165,16 @@
     }
 
     function generate_url() {
-        var email = $('#email').val();
+        var fromEmailOrName = $('#from_email_or_name').val();
+        var toEmail = $('#email').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
 
-        email = email != '' && email != null && email != undefined && email != 0 ? encodeURIComponent(email) : 'all';
+        fromEmailOrName = fromEmailOrName != '' && fromEmailOrName != null && fromEmailOrName != undefined && fromEmailOrName != 0 ? encodeURIComponent(fromEmailOrName) : 'all';
+        toEmail = toEmail != '' && toEmail != null && toEmail != undefined && toEmail != 0 ? encodeURIComponent(toEmail) : 'all';
         start_date = start_date != '' && start_date != null && start_date != undefined && start_date != 0 ? encodeURIComponent(start_date) : 'all';
         end_date = end_date != '' && end_date != null && end_date != undefined && end_date != 0 ? encodeURIComponent(end_date) : 'all';
-        var url = '<?php echo base_url('manage_admin/notification_email_log'); ?>' + '/' + email + '/' + start_date + '/' + end_date;
+        var url = '<?php echo base_url('manage_admin/notification_email_log'); ?>' + '/' + fromEmailOrName + '/' + toEmail + '/' + start_date + '/' + end_date;
         $('#btn_apply_filters').attr('href', url);
     }
 
