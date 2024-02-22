@@ -668,8 +668,8 @@ $route['manage_admin/company_onboarding/(:num)'] = 'manage_admin/logs/company_on
 //Notification Email logs
 $route['manage_admin/notification_email_log'] = 'manage_admin/logs/notification_email_log';
 $route['manage_admin/notification_email_log_view/(:num)'] = 'manage_admin/logs/notification_log/$1';
-$route['manage_admin/notification_email_log/(:any)/(:any)/(:any)'] = 'manage_admin/logs/notification_email_log/$1/$2/$3';
-$route['manage_admin/notification_email_log/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/logs/notification_email_log/$1/$2/$3/$4';
+$route['manage_admin/notification_email_log/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/logs/notification_email_log/$1/$2/$3/$4';
+$route['manage_admin/notification_email_log/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/logs/notification_email_log/$1/$2/$3/$4/$5';
 //private messages
 $route['manage_admin/inbox_message_detail/(:num)'] = 'manage_admin/private_messages/inbox_message_detail/$1';
 $route['manage_admin/outbox_message_detail/(:num)'] = 'manage_admin/private_messages/outbox_message_detail/$1';
