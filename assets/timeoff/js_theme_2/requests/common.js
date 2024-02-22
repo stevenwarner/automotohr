@@ -6,6 +6,7 @@ let cmnOBJ = {
             employerId: employerId,
             employeeId: employeeId,
             public: 0,
+            all: 0,
         }
     },
     Policies: {
@@ -26,7 +27,8 @@ fetchPolicies();
 
 
 // Employees
-function fetchEmployees() {
+function fetchEmployees(employeeStatus) {
+    cmnOBJ.Employees.Main.all = employeeStatus === undefined ? 0 : employeeStatus;
     $.post(handlerURL, cmnOBJ.Employees.Main, function(resp) {
         //
         if (resp.Redirect === true) {

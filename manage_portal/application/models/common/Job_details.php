@@ -827,7 +827,7 @@ class Job_details extends CI_Model {
             $approval_status = $has_job_approval_rights['has_job_approval_rights'];
 
         $this->db
-        ->select('*')
+        ->select('portal_job_listings.*')
         ->from('portal_job_listings')
         ->where('portal_job_listings.active', 1)
         ->where('portal_job_listings.published_on_career_page', 1)
@@ -1075,7 +1075,11 @@ class Job_details extends CI_Model {
     }
     function get_all_company_jobs_ams($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $career_site_company_sid = array(), $limit = null, $offset = null, $count_record = false) {
         //        echo $country.' - '.$state.' - '.$city.' - '.$categoryId.' - '.$keyword.'';
-                $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
+                $this->db->select('portal_job_listings.*, 
+                users.CompanyName, users.YouTubeVideo, 
+                users.Logo, users.ContactName, 
+                users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, 
+                portal_employer.domain_type, users.has_job_approval_rights');
                 $this->db->where('portal_job_listings.active', 1);
                 $this->db->where('portal_job_listings.organic_feed', 1);
                 $this->db->where('portal_job_listings.published_on_career_page', 1);

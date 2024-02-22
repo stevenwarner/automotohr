@@ -1,7 +1,7 @@
 <!-- View Page -->
 <div class="js-page" id="js-page-view">
     <!-- View Page -->
-    <div class="js-page " id="js-page-view" <?=$page != 'view' ? 'style="display: none;"' : '';?>>
+    <div class="js-page " id="js-page-view" <?= $page != 'view' ? 'style="display: none;"' : ''; ?>>
         <div class="csPageHeader">
             <div class="row">
                 <div class="col-sm-6">
@@ -66,12 +66,19 @@
                     <label>To Date</label>
                     <input type="text" readonly class="invoice-fields csRadius100" id="js-filter-to-date" />
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label>Employee Status</label>
+                        <div>
+                            <?= showEmployeeStatusSelect([0], 'class="jsFilterEmployeeStatus"'); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
                     <span class="pull-right">
                         <br />
                         <button id="btn_apply" type="button" class="btn btn-orange js-apply-filter-btn">APPLY</button>
-                        <button id="btn_reset" type="button"
-                            class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
+                        <button id="btn_reset" type="button" class="btn btn-black btn-theme js-reset-filter-btn">RESET</button>
                     </span>
                 </div>
                 <div class="clearfix"></div>
@@ -113,7 +120,7 @@
                             <div class="col-lg-2" style="background: rgba(242, 222, 222, .5); padding: 16px;"></div>
                             <div class="col-lg-10" style="padding: 6px; font-weight: 700;">The time-off request is rejected by the 50% approver.</div>
                         </div>
-                    </div>    
+                    </div>
                     <div class="col-lg-6"></div>
                 </div>
                 <br />

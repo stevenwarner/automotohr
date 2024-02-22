@@ -3299,16 +3299,93 @@ if (!function_exists("saveHistoryToProfile")) {
 }
 
 if (!function_exists("getLocationAddress")) {
-    function getLocationAddress ($lat, $lng)
+    function getLocationAddress($lat, $lng)
     {
-        $geoCodeJson = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng='.$lat.','.$lng.'&sensor=false&key=AIzaSyBZFbi_PJLj0Sl42it9ThtQybsfu4MGY6w');
+        $geoCodeJson = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?latlng=' . $lat . ',' . $lng . '&sensor=false&key=AIzaSyBZFbi_PJLj0Sl42it9ThtQybsfu4MGY6w');
         $output = json_decode($geoCodeJson);
         $status = $output->status;
         //
-        if ($status=="OK") {
+        if ($status == "OK") {
             return $output->results[0]->formatted_address;
         } else {
             return "Unknown Location";
         }
+    }
+}
+
+if (!function_exists("showEmployeeStatusSelect")) {
+    /**
+     * get the employee status dropdown
+     *
+     * @param array $selectedOptions
+     * @param string $props
+     * @return string
+     */
+    function showEmployeeStatusSelect(array $selectedOptions = [], string $props = ""): string
+    {
+        // set option array
+        $options = [];
+        // add options
+        $options[0] = "[Select An Employee]";
+        $options[8] = "Active Employee";
+        $options[7] = "Active Employee On Leave";
+        $options[4] = "Active Employee Suspended";
+        $options[6] = "In-Active Employee";
+        $options[1] = "Terminated";
+        $options[2] = "Retired Employee";
+        $options[3] = "Deceased Employee";
+        //
+        $html = '';
+        $html = "<select {$props}>";
+        foreach ($options as $index => $option) {
+            $html .= '<option value="' . ($index) . '" ';
+            $html .=  $selectedOptions && in_array($index, $selectedOptions) ? "selected" : "";
+            $html .= ">";
+            $html .= $option;
+            $html .= '</option>';
+        }
+        $html .= "</select>";
+        //
+        return $html;
+    }
+}
+
+
+if (!function_exists("getTheWhereFromEmployeeStatus")) {
+    /**
+     * get the where from employee status id
+     *
+     * @param string $statusCode
+     * @return array
+     */
+    function getTheWhereFromEmployeeStatus(string $statusCode): array
+    {
+        // set where array
+        $whereArray = [];
+        if ($statusCode == 6) {
+            // for inactive employees
+            $whereArray = [
+                "users.active" => 0
+            ];
+        } elseif ($statusCode == 1) {
+            // for terminated employees
+            $whereArray = [
+                "users.active" => 0,
+                "users.terminated_status" => 1
+            ];
+        } elseif ($statusCode == 2) {
+            // for retired employees
+            $whereArray = [
+                "users.general_status" => "retired"
+            ];
+        } else {
+            // when all is selected
+            $whereArray = [
+                "users.active" => 1,
+                "users.terminated_status" => 0
+            ];
+        }
+        //
+        return $whereArray;
     }
 }
