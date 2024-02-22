@@ -41,6 +41,20 @@ $(document).on("click", ".jsExpandBalance", function (e) {
 	$(`#${$(this).data("target")}`).toggle();
 });
 
+if (typeof getSearchParam === "undefined") {
+	/**
+	 * get the search parameter
+	 * @param {string} index
+	 * @returns
+	 */
+	function getSearchParam(index) {
+		//
+		const param = new URLSearchParams(window.location.search);
+		//
+		return param.get(index) || false;
+	}
+}
+
 //
 $(".jsImportBalance").click((e) => {
 	//
