@@ -95,7 +95,7 @@ class Timeoff_model extends CI_Model
      * 
      * @return Array
      */
-    function getCompanyEmployees($companySid, $employerId = false, $addTerminatedEmployees = false)
+    function getCompanyEmployees($companySid, $employerId = false, int $employeeStatus = 0)
     {
         //
         $ses = $this->session->userdata('logged_in')['employer_detail'];
@@ -125,8 +125,8 @@ class Timeoff_model extends CI_Model
             ->where('parent_sid', $companySid)
             ->where('is_executive_admin', 0)
             ->order_by('first_name', 'ASC');
-        // include terminated and inactive people
-        if (!$addTerminatedEmployees) {
+        // include terminated and inactive people 
+        if ($employeeStatus === 0) {
             $this->db
                 ->where('active', 1)
                 ->where('terminated_status', 0);
@@ -1963,8 +1963,8 @@ class Timeoff_model extends CI_Model
             ->where('sid', $employeeId);
         //
         if (!$includeArchived) {
-            $this->db->where('active', 1)
-                ->where('terminated_status', 0);
+            // $this->db->where('active', 1)
+                // ->where('terminated_status', 0);
         }
         //
         $a = $this->db->get('users');
@@ -2688,9 +2688,9 @@ class Timeoff_model extends CI_Model
             user_shift_minutes
         ')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId)
-            ->where('active', 1)
-            ->where('terminated_status', 0);
+            ->where('sid', $employeeId);
+            // ->where('active', 1)
+            // ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
@@ -3186,6 +3186,8 @@ class Timeoff_model extends CI_Model
             users.joined_at,
             users.registration_date,
             users.rehire_date,
+            users.terminated_status,
+            users.active,
             timeoff_policies.title,
             timeoff_policies.policy_category_type as categoryType,
             ' . (getUserFields()) . '
@@ -3194,8 +3196,6 @@ class Timeoff_model extends CI_Model
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
             ->where('timeoff_policies.is_archived', 0)
-            ->where('users.active', 1)
-            ->where('users.terminated_status', 0)
             ->where('timeoff_requests.company_sid', $post['companyId']);
         //
         if ($post['type'] != 'archive') {
@@ -3256,6 +3256,15 @@ class Timeoff_model extends CI_Model
                 $this->db->group_end();
             }
         }
+
+        // check and add the employee status
+        if ($post["filter"]["employeeStatus"]) {
+            $this->db->where(getTheWhereFromEmployeeStatus($post["filter"]["employeeStatus"]));
+        } else {
+            $this->db->where('users.active', 1)
+                ->where('users.terminated_status', 0);
+        }
+
         //
         $requests = $this->db->get('timeoff_requests')
             ->result_array();
@@ -6548,13 +6557,20 @@ class Timeoff_model extends CI_Model
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $post['companyId'])
-            ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->limit($post['offset'], $post['inset'])
-            ->where('terminated_status', 0);
+            ->limit($post['offset'], $post['inset']);
         //
         if (!empty($inIds)) $this->db->where_in('sid', $inIds);
         if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all') $this->db->where('sid', $post['filter']['employees']);
+        //
+        if ($post["filter"]["all"]) {
+            $this->db->where(getTheWhereFromEmployeeStatus($post["filter"]["all"]));
+        } else {
+            $this->db->where([
+                "users.active" => 1,
+                "users.terminated_status" => 0,
+            ]);
+        }
         //
         $a = $this->db->get('users');
         $employees = $a->result_array();

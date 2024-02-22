@@ -11,6 +11,7 @@ $(function () {
                 type: "pending",
                 filter: {
                     employees: "all",
+                    employeeStatus: 0,
                     policies: "all",
                     status: "all",
                     order: "upcoming",
@@ -26,6 +27,9 @@ $(function () {
 
     //
     $("#js-filter-status").select2();
+    $(".jsFilterEmployeeStatus").select2({
+		minimumResultsForSearch: -1,
+	});
     $("#js-filter-sort").select2({
         minimumResultsForSearch: -1
     });
@@ -81,6 +85,7 @@ $(function () {
         //
         e.preventDefault();
         //
+        $(".jsFilterEmployeeStatus").select2("val", "0");
         $("#js-filter-employee").select2("val", "all");
         $("#js-filter-policies").select2("val", "all");
         $("#js-filter-status").select2("val", "all");
@@ -89,29 +94,41 @@ $(function () {
         $("#js-filter-end-date").val("");
         //
         callOBJ.Requests.Main.filter.employees = "all";
+        callOBJ.Requests.Main.filter.employeeStatus = 0;
         callOBJ.Requests.Main.filter.policies = "all";
         callOBJ.Requests.Main.filter.status = "all";
         callOBJ.Requests.Main.filter.order = "upcoming";
         callOBJ.Requests.Main.filter.startDate = "";
         callOBJ.Requests.Main.filter.endDate = "";
         //
+        window.timeoff.employees = [];
+        fetchEmployees(callOBJ.Requests.Main.filter.employeeStatus);
+        //
         fetchTimeOffs();
     }
 
     //
     function applyFilter(e) {
-        //
-        e.preventDefault();
-        //
-        callOBJ.Requests.Main.filter.employees = $("#js-filter-employee").val();
-        callOBJ.Requests.Main.filter.policies = $("#js-filter-policies").val();
-        callOBJ.Requests.Main.filter.status = $("#js-filter-status").val();
-        callOBJ.Requests.Main.filter.order = $("#js-filter-sort").val();
-        callOBJ.Requests.Main.filter.startDate = $("#js-filter-from-date").val();
-        callOBJ.Requests.Main.filter.endDate = $("#js-filter-to-date").val();
-        //
-        fetchTimeOffs();
-    }
+		//
+		e.preventDefault();
+		//
+		callOBJ.Requests.Main.filter.employeeStatus = $(
+			".jsFilterEmployeeStatus"
+		).val();
+		callOBJ.Requests.Main.filter.employees = $("#js-filter-employee").val();
+		callOBJ.Requests.Main.filter.policies = $("#js-filter-policies").val();
+		callOBJ.Requests.Main.filter.status = $("#js-filter-status").val();
+		callOBJ.Requests.Main.filter.order = $("#js-filter-sort").val();
+		callOBJ.Requests.Main.filter.startDate = $(
+			"#js-filter-from-date"
+		).val();
+		callOBJ.Requests.Main.filter.endDate = $("#js-filter-to-date").val();
+		//
+		window.timeoff.employees = [];
+		fetchEmployees(callOBJ.Requests.Main.filter.employeeStatus);
+		//
+		fetchTimeOffs();
+	}
 
     // Fetch plans
     function fetchTimeOffs() {
