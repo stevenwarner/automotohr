@@ -8,6 +8,9 @@ $(function () {
 	$("#jsJobTitles").select2({ closeOnSelect: false });
 	$("#jsEmploymentTypes").select2({ closeOnSelect: false });
 	$("#jsNewHires").select2({ closeOnSelect: false });
+	$(".jsFilterEmployeeStatus").select2({
+		minimumResultsForSearch: -1,
+	});
 	//
 	$("#jsReportStartDate").datepicker({
 		format: "m/d/y",

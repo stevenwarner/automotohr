@@ -1154,6 +1154,8 @@ class Time_off extends Public_Controller
             $filter_policy = "all";
         }
 
+        $employeeStatus = $this->input->get("employee_status", true) ?? 0;
+
 
         //
         $data['start_date'] = $start_date;
@@ -1171,7 +1173,7 @@ class Time_off extends Public_Controller
         //
         $empTimeoff = $this->timeoff_model->getEmployeesWithTimeoffRequestNew($data['company_sid'], 'employees_only', $start_date, $end_date, $filter_policy);
         $timeoffRequests = $this->timeoff_model->getEmployeesWithTimeoffRequestNew($data['company_sid'], 'records_only', $start_date, $end_date, $filter_policy);
-        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid'], $filter_employees, $filter_departments, $filter_teams);
+        $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid'], $filter_employees, $filter_departments, $filter_teams, $employeeStatus);
         //
         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
         $employee_sid = $data['session']['employer_detail']['sid'];
@@ -1182,7 +1184,13 @@ class Time_off extends Public_Controller
             $data['assign_teams'] = $getEmployeeDepartmentsTeams['teams'];
             $data['assign_employees'] = $getEmployeeDepartmentsTeams['employees'];
         } else if ($access_level_plus == 1) {
-            $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($data['company_sid']);
+            $company_employees_filter = $this->timeoff_model->getEmployeesWithDepartmentAndTeams(
+                $data['company_sid'],
+                "all",
+                "all",
+                "all",
+                $employeeStatus
+            );
             $data['assign_departments'] = $this->timeoff_model->get_all_departments($data['company_sid']);
             $data['assign_teams'] = $this->timeoff_model->get_all_teams($data['company_sid']);
             $data['assign_employees'] = array_column($company_employees_filter, 'sid');
@@ -1190,7 +1198,6 @@ class Time_off extends Public_Controller
 
 
         $data['policies'] = $this->timeoff_model->get_all_policies($data['company_sid']);
-
         //
         foreach ($company_employees as $ekey => $employee) {
             if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
@@ -1219,7 +1226,6 @@ class Time_off extends Public_Controller
             }
         }
         //
-        //  _e($company_employees,true,true);
         $data['company_employees'] = $company_employees;
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;

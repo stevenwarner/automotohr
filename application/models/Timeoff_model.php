@@ -5580,7 +5580,7 @@ class Timeoff_model extends CI_Model
 
 
     //
-    function getEmployeesWithDepartmentAndTeams($companyId, $employees = 'all', $departments = 'all', $teams = 'all')
+    function getEmployeesWithDepartmentAndTeams($companyId, $employees = 'all', $departments = 'all', $teams = 'all', $employeeStatus = 0)
     {
         //
         $this->db->select('
@@ -5620,8 +5620,17 @@ class Timeoff_model extends CI_Model
         }
 
         $this->db->where('parent_sid', $companyId);
-        $this->db->where('active', 1);
-        $this->db->where('terminated_status', 0);
+
+        if ($employeeStatus == 0) {
+
+            $this->db->where('active', 1);
+            $this->db->where('terminated_status', 0);
+        } else {
+            $this->db
+            ->where(
+                getTheWhereFromEmployeeStatus($employeeStatus)
+            );
+        }
         $this->db->order_by('first_name', 'ASC');
         // Get employees
         $a = $this->db->get('users');
