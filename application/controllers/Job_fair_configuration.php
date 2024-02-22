@@ -1119,7 +1119,7 @@ class Job_fair_configuration extends Public_Controller
                 'status'                            => $job_data[0]['status'],
                 'video_type'                            => $job_data[0]['video_type'],
                 'banner_image'                            => $job_data[0]['banner_image'],
-                'page_url'                            => $job_data[0]['page_url']
+                'page_url'                            => ""
             );
 
 
