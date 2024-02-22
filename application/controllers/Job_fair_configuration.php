@@ -1119,10 +1119,10 @@ class Job_fair_configuration extends Public_Controller
                 'status'                            => $job_data[0]['status'],
                 'video_type'                            => $job_data[0]['video_type'],
                 'banner_image'                            => $job_data[0]['banner_image'],
-                'page_url'                            => $job_data[0]['page_url']
+                'page_url'                            => ''
             );
 
-
+           
             $job_fairs_forms_sid = $this->job_fair_model->add_new_data($form_data, 'job_fairs_forms');
             $video_resume_default_field = $this->job_fair_model->get_default_video_form_fields($company_sid, $sid);
 
