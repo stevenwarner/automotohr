@@ -152,7 +152,7 @@ if (
     $this->uri->segment(2) == 'cms' ||
     $this->uri->segment(2) == 'edit_page' ||
     $this->uri->segment(2) == 'resources' ||
-    
+
     base_url(uri_string()) == site_url('sa/lms/courses') ||
     $this->uri->segment(2) == 'benefits' ||
     $this->uri->segment(2) == 'job_title_templates' ||
@@ -221,7 +221,9 @@ if (
     $this->uri->segment(3) == 'applicant_origination_statistics' ||
     $this->uri->segment(3) == 'accurate_background' ||
     $this->uri->segment(3) == 'invoice_item_usage' ||
-    $this->uri->segment(3) == 'complynet_report'
+    $this->uri->segment(3) == 'complynet_report' ||
+    $this->uri->segment(3) == 'applicantsReporting'
+
 ) {
     $reports_menu = true;
 } else if (
@@ -799,7 +801,7 @@ if (
 
                         <div class="menu-item">
                             <a <?php
-                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) =='cms' || $this->uri->segment(2) == 'edit_page') {
+                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) == 'cms' || $this->uri->segment(2) == 'edit_page') {
                                     echo 'class="active"';
                                 }
                                 ?> href="<?php echo site_url('manage_admin/cms'); ?>">Content Management System</a>
@@ -1210,6 +1212,14 @@ if (
                                     } ?> href="<?php echo site_url('manage_admin/reports/complynet_report'); ?>">ComplyNet Report</a>
                             </div>
                         <?php } ?>
+
+
+                        <div class="menu-item">
+                            <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/applicantsReporting')) !== false || ($this->uri->segment(3) == 'applicants_reporting')) {
+                                    echo 'class="active"';
+                                } ?> href="<?php echo site_url('manage_admin/reports/applicantsReporting'); ?>">Applicant Reporting</a>
+                        </div>
+
 
                     </div>
                 </li>

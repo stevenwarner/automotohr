@@ -2244,3 +2244,12 @@ $route["shifts/my/subordinates"]["get"] = "v1/Shifts/Subordinate_shifts/loggedIn
 // Group assignment to employees
 $route["documents/assign_groups_to_employees"]["post"] = "Hr_documents_management/documents_group_management_ajax";
 $route["documents/assign_group_document_to_employee"]["post"] = "Hr_documents_management/assigne_group_managements_ajax";
+
+
+//
+$route['manage_admin/reports/applicants_reporting/viewJobs']["get"] = 'manage_admin/reports/applicants_reporting/viewJobs/';
+$route['manage_admin/reports/applicantsReporting'] = 'manage_admin/reports/applicants_reporting/index';
+$route['manage_admin/reports/applicantsReporting/(:any)/(:any)'] = 'manage_admin/reports/applicants_reporting/index/$1/$2';
+$route['manage_admin/reports/applicantsReporting/(:any)/(:any)/(:any)'] = 'manage_admin/reports/applicants_reporting/index/$1/$2/$3';
+
+
