@@ -5598,7 +5598,9 @@ class Timeoff_model extends CI_Model
             employee_number,
             joined_at,
             registration_date,
-            rehire_date
+            rehire_date,
+            active,
+            terminated_status,
         ');
 
         // echo '<pre>';
@@ -6100,7 +6102,6 @@ class Timeoff_model extends CI_Model
         $records_obj = $this->db->get('timeoff_requests');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
         $return_data = array();
 
         if (!empty($records_arr)) {
@@ -6149,6 +6150,8 @@ class Timeoff_model extends CI_Model
         u.registration_date,
         u.joined_at,
         u.rehire_date,
+        u.active,
+        u.terminated_status,
     ')
             ->from('timeoff_requests tr')
             ->join('timeoff_policies tp', 'tp.sid = tr.timeoff_policy_sid')
@@ -6163,7 +6166,6 @@ class Timeoff_model extends CI_Model
         }
 
         if (!empty($filter_policy) && $filter_policy != 'all') {
-
             $this->db->where_in('tr.timeoff_policy_sid', $filter_policy);
         }
 

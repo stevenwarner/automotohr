@@ -1212,6 +1212,21 @@ class Time_off extends Public_Controller
                         //
                         $processRequest = splitTimeoffRequest($request);
                         //
+                        if ($employee['active'] == 1) {
+                            $company_employees[$ekey]['employeeStatus'] = 'Active';
+                        } else {
+                            if ($employee['terminated_status'] == 1) {
+                                $company_employees[$ekey]['employeeStatus'] = 'Terminated';
+                            } else {
+                                $this->load->model('export_csv_model');
+                                $company_employees[$ekey]['employeeStatus'] = $this->export_csv_model->get_employee_last_status_info($employee['sid']);
+
+                                if ($company_employees[$ekey]['employeeStatus'] == 'Archived Employee') {
+                                    $company_employees[$ekey]['employeeStatus'] = 'Archived';
+                                }
+                            }
+                        }
+                        //
                         if ($processRequest['type'] == 'multiple') {
                             //
                             foreach ($processRequest['requestData'] as $split) {
@@ -1227,6 +1242,7 @@ class Time_off extends Public_Controller
         }
         //
         $data['company_employees'] = $company_employees;
+        
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
@@ -1550,8 +1566,6 @@ class Time_off extends Public_Controller
             $filter_session = $this->session->userdata($_GET['token']);
         }
 
-        //   $employeeId = $filter_session != null ? implode(',', $filter_session) : $employeeId;
-
         if (isset($filter_session['policy']) && $filter_session['policy'] != 'null' && $filter_session['policy'] != '') {
             $filter_policy = explode(',', $filter_session['policy']);
         } else {
@@ -1562,18 +1576,41 @@ class Time_off extends Public_Controller
         if ($employeeId == '' || $employeeId == 'all') {
             $employeeIds = $filter_session['employees'] != 'null' ? explode(',', $filter_session['employees']) : 'all';
         } else {
-            $employeeIds = $employeeId;
+            $employeeIds = strpos($employeeId, ',') !== false ? explode(',', $employeeId) : $employeeId;
         }
 
 
         $data['data'] = $this->timeoff_model->getEmployeesTimeOffNew(
             $data['company_sid'],
             $employeeIds,
-            // strpos($employeeId, ',') !== false ? explode(',', $employeeId) : $employeeId,
             $this->input->get('start', true),
             $this->input->get('end', true),
             $filter_policy
         );
+        //
+        if ($data['data']) {
+            foreach ($data['data'] as $key => $row) {
+                //
+                $employeeStatus = '';
+                //
+                if ($row['active'] == 1) {
+                    $employeeStatus = 'Active';
+                } else {
+                    if ($row['terminated_status'] == 1) {
+                        $employeeStatus = 'Terminated';
+                    } else {
+                        $this->load->model('export_csv_model');
+                        $employeeStatus = $this->export_csv_model->get_employee_last_status_info($row['employeeId']);
+
+                        if ($employeeStatus == 'Archived Employee') {
+                            $employeeStatus = 'Archived';
+                        }
+                    }
+                }
+                //
+                $data['data'][$key]['employeeStatus'] = $employeeStatus;
+            }
+        }
         //
         $this->load->view('timeoff/' . (strtolower(trim($action))) . '_report', $data);
     }
@@ -7532,7 +7569,7 @@ class Time_off extends Public_Controller
         if ($employeeId == '' || $employeeId == 'all') {
             $employeeIds = $filter_session['employees'] != 'null' ? explode(',', $filter_session['employees']) : 'all';
         } else {
-            $employeeIds = $employeeId;
+            $employeeIds = strpos($employeeId, ',') !== false ? explode(',', $employeeId) : $employeeId;
         }
 
 
@@ -7544,7 +7581,6 @@ class Time_off extends Public_Controller
             $filter_policy
         );
         //
-
         $start = '';
         if ($this->input->get('start', true) && $this->input->get('end', true)) {
             $start = $this->input->get('start', true) . ' - ' . $this->input->get('end', true);
@@ -7563,7 +7599,7 @@ class Time_off extends Public_Controller
 
         $header_row . PHP_EOL;
 
-        $header_row = 'Employee,Policy,Time Taken,Start Date,End Date,Status,Joining Date,Rehire Date';
+        $header_row = 'Employee,Employee Status,Policy,Time Taken,Start Date,End Date,Status,Joining Date,Rehire Date';
 
         $file_content = '';
         $file_content .= $header_row . PHP_EOL;
@@ -7581,6 +7617,24 @@ class Time_off extends Public_Controller
 
         if (!empty($data['data'])) {
             foreach ($data['data'] as $row) {
+                //
+                $employeeStatus = '';
+                //
+                if ($row['active'] == 1) {
+                    $employeeStatus = 'Active';
+                } else {
+                    if ($employee['terminated_status'] == 1) {
+                        $employeeStatus = 'Terminated';
+                    } else {
+                        $this->load->model('export_csv_model');
+                        $employeeStatus = $this->export_csv_model->get_employee_last_status_info($row['employeeId']);
+
+                        if ($employeeStatus == 'Archived Employee') {
+                            $employeeStatus = 'Archived';
+                        }
+                    }
+                }
+                //
 
                 $joiningDate = get_employee_latest_joined_date($row["registration_date"], $row["joined_at"], "", false);
                 //
@@ -7612,6 +7666,7 @@ class Time_off extends Public_Controller
                         //
                         //
                         $rows  .=  (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' ' . (remakeEmployeeName($request, false)) . ',';
+                        $rows  .=  $employeeStatus . ',';
                         $rows  .=  $request['title'] . ',';
                         $rows  .= $consumed_time . ',';
                         $rows .= DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y') . ',';
@@ -7637,6 +7692,7 @@ class Time_off extends Public_Controller
                     $consumed_time = $processRequest['requestData']['consumed_time'];
 
                     $rows  .=  (ucwords($processRequest['requestData']['first_name'] . ' ' . $processRequest['requestData']['last_name'])) . ' ' . (remakeEmployeeName($processRequest['requestData'], false)) . ',';
+                    $rows  .=  $employeeStatus . ',';
                     $rows  .=  $processRequest['requestData']['title'] . ',';
                     $rows  .= $consumed_time . ',';
                     $rows .= DateTime::createfromformat('Y-m-d', $processRequest['requestData']['request_from_date'])->format('m/d/Y') . ',';
@@ -7658,7 +7714,7 @@ class Time_off extends Public_Controller
             }
         }
 
-        $outputFile = $companyHeader. PHP_EOL;
+        // $outputFile = $companyHeader. PHP_EOL;
         $outputFile .= $header_row. PHP_EOL;
         $outputFile .= $rows. PHP_EOL;
 

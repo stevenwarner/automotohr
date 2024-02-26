@@ -1662,6 +1662,15 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         $html =  '';
         $html .= '<tr style="' . $rowColor . '">';
         $html .= '  <td>' . (ucwords($request['first_name'] . ' ' . $request['last_name'])) . ' <br /> ' . (remakeEmployeeName($request, false)) . ' <br /> ' . (!empty($request['employee_number']) ? $request['employee_number'] : $request['employeeId']) . '</td>';
+        //
+        if ($request['employeeStatus'] == 'Active') {
+            $html .= '<td><strong class="text-success">Active</strong></td>';
+        } else if ($request['employeeStatus'] == 'Terminated') {
+            $html .= '<td><strong class="text-danger">Terminated</strong></td>';
+        } else {
+            $html .= '<td><strong class="text-warning">'.$request['employeeStatus'].'</strong></td>';
+        }
+        //
         $html .= '  <td>' . ($request['title']) . '</td>';
         $html .= '  <td>' . ($consumed_time) . '</td>';
         $html .= '  <td>' . (DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('m/d/Y')) . '</td>';
