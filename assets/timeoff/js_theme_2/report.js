@@ -85,13 +85,25 @@ $(function () {
 		}
 
 		//
+		// window.open(
+		// 	$(this).prop("href") +
+		// 		"/" +
+		// 		(selectedEmployees.length == 0 ||
+		// 		selectedEmployees.length == employeeList.length
+		// 			? "all"
+		// 			: selectedEmployees.join(",")) +
+		// 		"?start=" +
+		// 		startDate +
+		// 		"&end=" +
+		// 		endDate +
+		// 		"&token=" +
+		// 		sToken
+		// );
+		//
 		window.open(
 			$(this).prop("href") +
 				"/" +
-				(selectedEmployees.length == 0 ||
-				selectedEmployees.length == employeeList.length
-					? "all"
-					: selectedEmployees.join(",")) +
+				employeeSids.join(",") +
 				"?start=" +
 				startDate +
 				"&end=" +
