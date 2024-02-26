@@ -277,6 +277,7 @@ if (!function_exists('getUrl')) {
         $urls['createSignatory'] = "v1/companies/$key/signatories";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        $urls['getCompanyEarningWage'] = "v1/companies/$key/earned_wage_access";
         // for sync purpose
         $urls['getFederalTax'] = "v1/companies/$key/federal_tax_details";
         $urls['getIndustry'] = "v1/companies/$key/industry_selection";
