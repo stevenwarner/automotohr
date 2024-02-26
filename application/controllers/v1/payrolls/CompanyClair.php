@@ -49,7 +49,7 @@ class CompanyClair extends Public_Controller
             "GET"
         );
         //
-        if ($response["enrolled"]) {
+        if (isset($response["enrolled"])) {
             $companyGustoDetails["is_clair_active"] = $response["enrolled"];
             //
             $this->db
