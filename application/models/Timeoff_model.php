@@ -6378,7 +6378,6 @@ class Timeoff_model extends CI_Model
             $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
             //
             if (!empty($joiningDate)) {
-                echo $joiningDate;
                 $b[$k]['joining_date'] = $joiningDate;
             } else {
                 $b[$k]['joining_date'] = "N/A";
