@@ -7584,14 +7584,19 @@ class Time_off extends Public_Controller
         );
         //
         $start = '';
+        $period = '';
         if ($this->input->get('start', true) && $this->input->get('end', true)) {
             $start = $this->input->get('start', true) . ' - ' . $this->input->get('end', true);
+            $period = $this->input->get('start', true) . '_' . $this->input->get('end', true);
         } else if ($this->input->get('start', true)) {
             $start = $this->input->get('start', true) . ' - N/A';
+            $period = $this->input->get('start', true) . '_N/A';
         } else if ($this->input->get('end', true)) {
             $start = 'N/A - ' . $this->input->get('end', true);
+            $period = 'N/A_' . $this->input->get('end', true);
         } else {
             $start = 'N/A';
+            $period = 'N/A';
         }
 
 
@@ -7720,17 +7725,19 @@ class Time_off extends Public_Controller
             }
         }
 
-        $outputFile = $companyHeader. PHP_EOL;
+        // $outputFile = $companyHeader. PHP_EOL;
         $outputFile .= $header_row. PHP_EOL;
         $outputFile .= $rows. PHP_EOL;
 
+        //
+        $fileName = 'employees_time_off/Company_Name:'.str_replace(" ", "_", $data['session']['company_detail']['CompanyName'])."/Generated_By:". $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] ."/Report_Period:".$period."/Generated_Date:". date('Y_m_d-H:i:s') . '.csv';
 
         header('Pragma: public');     // required
         header('Expires: 0');         // no cache
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Type: text/csv');  // Add the mime type from Code igniter.
-        header('Content-Disposition: attachment; filename="employees_time_off' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
+        header('Content-Disposition: attachment; filename="'.$fileName.'"');  // Add the file name
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($outputFile)); // provide file size
         header('Connection: close');
