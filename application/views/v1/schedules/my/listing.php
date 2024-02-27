@@ -39,6 +39,10 @@ if ($filter["mode"] === "month") {
                                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 &nbsp;Dashboard
                             </a>
+                            <a href="javascript:;" class="btn btn-orange jsEmployeeAvailability" data-eid="<?php echo $loggedInEmployee["sid"]; ?>">
+                                <i class="fa fa-user-times" aria-hidden="true"></i>
+                                &nbsp;My availability
+                            </a>
                             <a href="<?= base_url("shifts/my/subordinates"); ?>" class="btn btn-orange">
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 &nbsp;My Team Shifts
