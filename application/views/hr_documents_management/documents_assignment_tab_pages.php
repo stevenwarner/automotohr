@@ -68,7 +68,8 @@ $noActionRequiredDocumentsList = [];
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!empty($assigned_documents)) { ?>
+                                    <?php
+                                    if (!empty($assigned_documents)) { ?>
                                         <?php $assigned_documents = array_reverse($assigned_documents);  ?>
                                         <?php foreach ($assigned_documents as $document) { ?>
                                             <?php if (!in_array($document['sid'], $payroll_documents_sids)) { ?>
@@ -206,7 +207,8 @@ $noActionRequiredDocumentsList = [];
                                                                 </td>
 
                                                                 <td class="col-lg-2">
-                                                                    <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
+                                                                    <?php
+                                                                    if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
                                                                         <button class="btn btn-success btn-sm btn-block" onclick="fLaunchModalFillable(this);" date-letter-type="generated" data-on-action="assigned" data-preview-url="<?php echo $document['fillable_documents_slug']; ?>" data-s3-name="<?php echo $document['fillable_documents_slug']; ?>" data-document-sid="<?php echo $document['document_sid']; ?>" data-document-title="Assigned Document">
                                                                             Preview Assigned
                                                                         </button>
@@ -214,7 +216,6 @@ $noActionRequiredDocumentsList = [];
                                                                         <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="generated" data-doc-sid="<?php echo $document['sid']; ?>" data-on-action="assigned" data-from="assigned_document">
                                                                             Preview Assigned
                                                                         </button>
-                                                                        dashboard
                                                                     <?php } ?>
 
 
@@ -269,9 +270,78 @@ $noActionRequiredDocumentsList = [];
                                                                     <?php } ?>
                                                                 <?php } ?>
 
-                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { 
-                                                                    ?>
-                                                                    <?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' || $document['fillable_documents_slug'] == 'notice-of-separation' ) { ?>
+
+                                                                <?php if ($document['performance_document_json'] != '') {
+                                                                    $performanceDocumentData = json_decode($document['performance_document_json'], true);
+                                                                ?>
+                                                                    <?php if ($performanceDocumentData['section1']['status'] != 'completed') { ?>
+
+                                                                        <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section1" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>">
+                                                                            Section 1 - Not Completed
+
+                                                                        </a>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+
+                                                                <?php if ($document['performance_document_json'] != '') {
+                                                                    $performanceDocumentData = json_decode($document['performance_document_json'], true);
+                                                                ?>
+                                                                    <?php if ($performanceDocumentData['section3']['status'] != 'completed') { ?>
+
+                                                                        <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section3" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-managercomment="<?php echo $performanceDocumentData['section3']['data']['section3ManagerComment'] ? $performanceDocumentData['section3']['data']['section3ManagerComment'] : '' ?>" data-employeecomment="<?php echo $performanceDocumentData['section3']['data']['section3EmployeeComment'] ? $performanceDocumentData['section3']['data']['section3EmployeeComment'] : ''; ?>">
+
+                                                                            <?php if ($performanceDocumentData['section3']['data']['section3ManagerComment'] == '') {
+                                                                                echo "Section 3 - Manager Not Completed";
+                                                                            } else if ($performanceDocumentData['section3']['data']['section3EmployeeComment'] == '') {
+
+                                                                                echo "Section 3 - Employee Not Completed";
+                                                                            } else {
+                                                                                echo "Section 3 - Not Completed";
+                                                                            }
+
+                                                                            ?>
+
+
+                                                                        </a>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+
+
+
+                                                                <?php if ($document['performance_document_json'] != '') {
+                                                                    $performanceDocumentData = json_decode($document['performance_document_json'], true);
+                                                                ?>
+                                                                    <?php if ($performanceDocumentData['section4']['status'] != 'completed' && $performanceDocumentData['section3']['status'] == 'completed' ) { ?>
+                                                                        <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section4" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-managercomment="<?php echo $performanceDocumentData['section3']['data']['section3ManagerComment'] ? $performanceDocumentData['section3']['data']['section3ManagerComment'] : '' ?>" data-employeecomment="<?php echo $performanceDocumentData['section3']['data']['section3EmployeeComment'] ? $performanceDocumentData['section3']['data']['section3EmployeeComment'] : ''; ?>">
+
+                                                                            <?php if ($performanceDocumentData['section4']['data']['section4EmployeeSignature'] == '') {
+                                                                                echo "Section 4 - Employee Not Completed";
+                                                                            } else if ($performanceDocumentData['section4']['data']['section4ManagerSignature'] == '') {
+
+                                                                                echo "Section 4 - Manager Not Completed";
+                                                                            } else if ($performanceDocumentData['section4']['data']['section4NextLevelSignature'] == '') {
+
+                                                                                echo "Section 4 - Next Level Not Completed";
+                                                                            } else if ($performanceDocumentData['section4']['data']['section4HumanResourceSignature'] == '') {
+
+                                                                                echo "Section 4 - Human Resource Not Completed";
+                                                                            } else {
+                                                                                echo "Section 4 - Not Completed";
+                                                                            }
+
+                                                                            ?>
+
+                                                                        </a>
+                                                                    <?php } ?>
+                                                                <?php } ?>
+
+
+                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) {
+                                                                ?>
+                                                                    <?php if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' || $document['fillable_documents_slug'] == 'notice-of-separation') { ?>
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                                         <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
                                                                             <?php if ($document['authorized_sign_status'] == 0) { ?>
@@ -2073,6 +2143,814 @@ $noActionRequiredDocumentsList = [];
         </div>
     </div>
 </div>
+
+
+
+
+<div id="performance_doc_section2_Modal" class="modal fade" role="dialog">
+    <?php
+    $userPrefillInfo  = [];
+    $userPrefillInfo = get_employee_profile_info_detail($EmployeeSid, $Type);
+    ?>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Performance Section1</h4>
+            </div>
+            <div class="modal-body">
+                <div id="performance_doc_section1">
+                    <form id="employee_performance_doc_section1" enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="perform_action" value="employee_performance_doc_section1" />
+                        <input type="hidden" name="user_sid" value="<?php echo $employer_sid; ?>" />
+                        <input type="hidden" name="document_sid" id='performance_document_sid' />
+                        <input type="hidden" name="employee_sid" id='employee_sid' />
+                        <input type="hidden" name="employee_type" id='employee_type' />
+
+
+                        <!-- Section to populate current user info -->
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="table-responsive">
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;"><br><br>
+                                                        <strong style="font-size: 14px;">Manager Section 1: Employee Year in Review Evaluation
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Employee Name <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Job Title <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName']; ?>" name="empName" id="empName" data-type='text' autocomplete="off" />
+                                                                        <label id="empNameError" class="error"></label>
+
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empJobTitle']; ?>" name="empJobTitle" id="empJobTitle" data-type='text' autocomplete="off" />
+                                                                        <label id="empJobTitleError" class="error"></label>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Department <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Manager <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empDepartment']; ?>" name="empDepartment" id="empDepartment" data-type='text' autocomplete="off" />
+                                                                        <label id="empDepartmentError" class="error"></label>
+
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox" type="text" value="<?= $formInputData['empManager'] ? $formInputData['short_textbox_3'] : '' ?>" name="empManager" id="empManager" data-type='text' autocomplete="off" />
+                                                                        <label id="empManagerError" class="error"></label>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Hire Date with DeFOUW Automotive <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Start Date in Current Position <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_4'] ? $formInputData['short_textbox_4'] : '' ?>" name="empHireDate" id="empHireDate" data-type='text' autocomplete="off" />
+                                                                        <label id="empHireDateError" class="error"></label>
+
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_5'] ? $formInputData['short_textbox_5'] : '' ?>" name="empStartDate" id="empStartDate" data-type='text' autocomplete="off" />
+                                                                        <label id="empStartDateError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Review Period Start <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <strong> Review Period End <span class="staric">*</span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>" name="reviewPeriodStart" id="reviewPeriodStart" data-type='text' autocomplete="off" />
+                                                                        <label id="reviewPeriodStartError" class="error"></label>
+
+                                                                    </td>
+                                                                    <td width="50%" style="font-size: 14px;">
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="reviewPeriodEnd" id="reviewPeriodEnd" data-type='text' autocomplete="off" />
+                                                                        <label id="reviewPeriodEndError" class="error"></label>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">Rate the employee in each area below. Comments are required for each section. </strong><br>
+
+                                                        <strong style="font-size: 14px;"> POSITION KNOWLEDGE: </strong> To what level is this employee knowledgeable of the job duties of the position to include methods, procedures, standard practices, and techniques? This may have been acquired through formal training, education and/or experience.
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Knowledge is below the minimum requirements of the position. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="solid; font-size: 14px;">
+                                                                        <strong> Knowledge is sufficient to perform the requirements of the position.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is exceptionally well informed and competent in all aspects of the position..</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="knowledgeBelow" id="knowledgeBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="knowledgeSufficient" id="knowledgeSufficient" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="knowledgeExceptionally" id="knowledgeExceptionally" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="knowledgeComment" name="knowledgeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_0_id_sec'> </div>
+                                                                        <label id="knowledgeCommentError" class="error"></label>
+
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s position knowledge be improved?. <?= $formInputData['short_textbox_9'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+
+                                                        <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quantity of work produced.
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Output is below that required of the position. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Output meets that required of the position.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Output consistently exceeds that required of the position.</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="outputBelow" id="outputBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="outputMeets" id="outputMeets" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="outputConsistently" id="outputConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="outputComment" name="outputComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_1_id_sec'> </div>
+                                                                        <label id="outputCommentError" class="error"></label>
+
+                                                                    </td>
+
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_11'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quality of work produced in accordance with requirements for accuracy, completeness, and attention to detail.
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style=" border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Quality of work is frequently below position requirements. Improvement is mandatory. </strong>
+
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Quality of work meets position requirements.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Quality of work consistently exceeds position requirements.</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="qualityBelow" id="qualityBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="qualityMeets" id="qualityMeets" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="qualityConsistently" id="qualityConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="qualityComment" name="qualityComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_2_id_sec'> </div>
+                                                                        <label id="qualityCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_13'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> INTERPERSONAL RELATIONS: </strong> o what level does this individual demonstrate cooperative behavior and contribute to a supportive work environment?.
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is frequently non-supportive. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately contributes to supportive environment.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee consistently contributes to supportive work environment.</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeFrequently" id="employeeFrequently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeAdequately" id="employeeAdequately" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeConsistently" id="employeeConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="employeeComment" name="employeeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_3_id_sec'> </div>
+                                                                        <label id="employeeCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+
+                                                        <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Level of mission focus is often below the required/acceptable standard. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately contributes to high quality mission.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee consistently demonstrates exceptional commitment to the mission.</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="missionBelow" id="missionBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="missionHigh" id="missionHigh" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="missionExceptional" id="missionExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="missionComment" name="missionComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_4_id_sec'> </div>
+                                                                        <label id="missionCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s customer service skills/delivery be improved?. <?= $formInputData['short_textbox_17'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> DEPENDABILITY: </strong> To what level is the employee dependable; How often does the employee show up to work on time and complete their scheduled shifts? Can the employee be counted on to complete tasks and meet deadlines consistently?
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is late, absent, misses deadlines. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately attends work, rarely misses or late, meets deadlines.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee consistently on time, at work and completes deadlines ahead of schedule.</strong>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeLate" id="employeeLate" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeAdequatelyAttends" id="employeeAdequatelyAttends" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeOnTime" id="employeeOnTime" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="employeeTimeComment" name="employeeTimeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_5_id_sec'> </div>
+                                                                        <label id="employeeTimeCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s dependability be improved?. <?= $formInputData['short_textbox_19'] ? $formInputData['short_textbox_19'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> ADHERENCE TO POLICY & PROCEDURE: </strong> To what level does the employee adhere to standard operating policies and procedures?
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is frequently coached on standard operating policies and procedures. Improvement is mandatory. </strong>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately adheres to standard operating policies and procedures with few reminders.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is consistently exceptional in following standard operating policies and procedures..</strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeFrequentlyCoached" id="employeeFrequentlyCoached" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeAdequatelyAdheres" id="employeeAdequatelyAdheres" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeConsistentlyExceptional" id="employeeConsistentlyExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="employeeFrequentlyCoachedComment" name="employeeFrequentlyCoachedComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_6_id_sec'> </div>
+                                                                        <label id="employeeFrequentlyCoachedCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;">How may the employee’s adherence to policy and procedure be improved?. <?= $formInputData['short_textbox_21'] ? $formInputData['short_textbox_21'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_22'] ? $formInputData['short_textbox_22'] : '' ?>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
+
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately meets standard as outlined above.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is consistently exceptional in meeting performance standard.</strong>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeOutlinedAbove" id="employeeOutlinedAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeOutlinedStandardAbove" id="employeeOutlinedStandardAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeeOutlinedStandard" id="employeeOutlinedStandard" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="employeeOutlinedComment" name="employeeOutlinedComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_7_id_sec'> </div>
+                                                                        <label id="employeeOutlinedCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </section>
+
+                                    <section class="pdf-cover-page">
+                                        <table class="table table-border-collapse" style="margin-top: -10px;">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
+                                                        <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_25'] ? $formInputData['short_textbox_25'] : '' ?>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td width="50%" style="border-top:0px;">
+                                                        <table class="table" style="border-collapse: collapse;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
+
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee adequately meets standard as outlined above.</strong>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <strong> Employee is consistently exceptional in meeting performance standard.</strong>
+                                                                    </td>
+                                                                </tr>
+
+
+                                                                <tr>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeePerformanceOutlinedAbove" id="employeePerformanceOutlinedAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeePerformanceOutlinedStandard" id="employeePerformanceOutlinedStandard" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+
+                                                                    <td style="font-size: 14px;">
+                                                                        <input type="checkbox" name="employeePerformanceOutlinedExceptional" id="employeePerformanceOutlinedExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Comment: <span class="staric">*</span></strong>
+                                                                        <textarea id="employeePerformanceComment" name="employeePerformanceComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_8_id_sec'> </div>
+                                                                        <label id="employeePerformanceCommentError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>How may employee’s performance in meeting this standard be improved?</strong> <?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr>
+                                                                    <td colspan="3" width="50%" style="font-size: 14px;">
+                                                                        <strong>Managers Additional Comments for the Review Period: </strong>
+                                                                        <textarea id="managersAdditionalComments" name="managersAdditionalComments" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                                                        <div id='long_textbox_9_id_sec'> </div>
+                                                                        <label id="managersAdditionalCommentsError" class="error"></label>
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button id="performanceSection1Save" type="button" class="btn btn-success break-word-text">Save</button>
+                                <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="performance_doc_section3_Modal" class="modal fade" role="dialog">
+    <?php
+    $userPrefillInfo  = [];
+    $userPrefillInfo = get_employee_profile_info_detail($EmployeeSid, $Type);
+    ?>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Performance Section3</h4>
+            </div>
+            <div class="modal-body">
+                <div id="performance_doc_section1">
+                    <form id="employee_performance_doc_section3" enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="perform_action" value="employee_performance_doc_section3" />
+                        <input type="hidden" name="document_sid" id='section3_performance_document_sid' />
+                        <input type="hidden" name="employee_type" id='section3_employee_type' />
+                        <input type="hidden" name="section3_employee_sid" id='section3_employee_sid' />
+
+                        <section class="pdf-cover-page">
+                            <table class="table table-border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td width="50%" style="border-top:0px;">
+                                            <strong style="font-size: 14px;">
+                                                Section 3: The Year in Review </strong><br>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td width="50%" style="border-top:0px;">
+                                            <strong style="font-size: 14px;">
+                                                Additional Comments, Feedback - Managers Comments: <span class="staric">*</span></strong> <br>
+                                            <textarea id="section3ManagerComment" name="section3ManagerComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
+                                            <div id='long_textbox_12_id_sec'></div>
+                                            <label id="section3ManagerCommentError" class="error"></label>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td width="50%" style="border-top:0px;">
+                                            <strong style="font-size: 14px;">
+                                                Additional Comments, Feedback - Employee Comments:</strong> <br>
+                                            <textarea id="section3EmployeeComment" name="section3EmployeeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea' readonly></textarea>
+                                            <div id='long_textbox_13_id_sec'></div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <hr />
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button id="performanceSection3Save" type="button" class="btn btn-success break-word-text">Save</button>
+                                <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<div id="performance_doc_section4_Modal" class="modal fade" role="dialog">
+    <?php
+    $userPrefillInfo  = [];
+    $userPrefillInfo = get_employee_profile_info_detail($EmployeeSid, $Type);
+    ?>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Performance Section4</h4>
+            </div>
+            <div class="modal-body">
+                <div id="performance_doc_section1">
+                    <form id="employee_performance_doc_section3" enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="perform_action" value="employee_performance_doc_section3" />
+                        <input type="hidden" name="document_sid" id='section3_performance_document_sid' />
+                        <input type="hidden" name="employee_type" id='section3_employee_type' />
+                        <input type="hidden" name="section3_employee_sid" id='section3_employee_sid' />
+
+                       ddfsdfsdfsdfsdfsf
+
+                        <hr />
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button id="performanceSection3Save" type="button" class="btn btn-success break-word-text">Save</button>
+                                <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <script>
     $('.js-ncd').text(<?= $ncd; ?>);

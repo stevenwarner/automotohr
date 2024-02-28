@@ -5792,6 +5792,244 @@ $this->load->view('hr_documents_management/scripts/index', [
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
     }
+
+
+
+    //
+    $('.performance_doc_section1').on('click', function() {
+
+        $('#performance_doc_section2_Modal').modal('show');
+        let performanceDocSid = $(this).attr('data-sid');
+        let employeeSid = $(this).attr('data-employeesid');
+        let employeetype = $(this).attr('data-employeetype');
+
+        $("#performance_document_sid").val(performanceDocSid);
+        $("#employee_sid").val(employeeSid);
+        $("#employee_type").val(employeetype);
+
+
+    });
+
+    $('#performanceSection1Save').on('click', function() {
+
+
+        var empName = $("#empName").val();
+        var empJobTitle = $("#empJobTitle").val();
+        var empDepartment = $("#empDepartment").val();
+        var empManager = $("#empManager").val();
+        var empHireDate = $("#empHireDate").val();
+        var empStartDate = $("#empStartDate").val();
+        var reviewPeriodStart = $("#reviewPeriodStart").val();
+        var reviewPeriodEnd = $("#reviewPeriodEnd").val();
+        var knowledgeComment = $("#knowledgeComment").val();
+        var outputComment = $("#outputComment").val();
+        var missionComment = $("#missionComment").val();
+        var employeeComment = $("#employeeComment").val();
+        var qualityComment = $("#qualityComment").val();
+        var employeeTimeComment = $("#employeeTimeComment").val();
+        var employeeFrequentlyCoachedComment = $("#employeeFrequentlyCoachedComment").val();
+        var employeeOutlinedComment = $("#employeeOutlinedComment").val();
+        var employeePerformanceComment = $("#employeePerformanceComment").val();
+        var managersAdditionalComments = $("#managersAdditionalComments").val();
+
+
+        var flag = 0;
+
+        if (empName == '') {
+            $("#empNameError").text('Employer name is required.');
+            flag = 1;
+        } else {
+            $("#empNameError").text('');
+        }
+
+        if (empJobTitle == '') {
+            $("#empJobTitleError").text('Job Titleis required.');
+            flag = 1;
+        } else {
+            $("#empJobTitleError").text('');
+        }
+
+        if (empDepartment == '') {
+            $("#empDepartmentError").text('Department required.');
+            flag = 1;
+        } else {
+            $("#empDepartmentError").text('');
+        }
+
+        if (empManager == '') {
+            $("#empManagerError").text('Manager required.');
+            flag = 1;
+        } else {
+            $("#empManagerError").text('');
+        }
+
+        if (empHireDate == '') {
+            $("#empHireDateError").text('Hire Date with DeFOUW Automotive required.');
+            flag = 1;
+        } else {
+            $("#empHireDateError").text('');
+        }
+
+        if (empStartDate == '') {
+            $("#empStartDateError").text('Start Date in Current Position required.');
+            flag = 1;
+        } else {
+            $("#empStartDateError").text('');
+        }
+
+        if (reviewPeriodStart == '') {
+            $("#reviewPeriodStartError").text('Review Period Start required.');
+            flag = 1;
+        } else {
+            $("#reviewPeriodStartError").text('');
+        }
+
+        if (reviewPeriodEnd == '') {
+            $("#reviewPeriodEndError").text('Review Period End required.');
+            flag = 1;
+        } else {
+            $("#reviewPeriodEndError").text('');
+        }
+
+        if (knowledgeComment == '') {
+            $("#knowledgeCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#knowledgeCommentError").text('');
+        }
+        if (outputComment == '') {
+            $("#outputCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#outputCommentError").text('');
+        }
+
+        if (qualityComment == '') {
+            $("#qualityCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#qualityCommentError").text('');
+        }
+
+        if (employeeComment == '') {
+            $("#employeeCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#employeeCommentError").text('');
+        }
+
+        if (missionComment == '') {
+            $("#missionCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#missionCommentError").text('');
+        }
+        if (employeeTimeComment == '') {
+            $("#employeeTimeCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#employeeTimeCommentError").text('');
+        }
+        if (employeeFrequentlyCoachedComment == '') {
+            $("#employeeFrequentlyCoachedCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#employeeFrequentlyCoachedCommentError").text('');
+        }
+
+        if (employeeOutlinedComment == '') {
+            $("#employeeOutlinedCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#employeeOutlinedCommentError").text('');
+        }
+        if (employeePerformanceComment == '') {
+            $("#employeePerformanceCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#employeePerformanceCommentError").text('');
+        }
+
+        if (managersAdditionalComments == '') {
+            $("#managersAdditionalCommentsError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#managersAdditionalCommentsError").text('');
+        }
+
+
+
+        if (flag == 1) {
+            return false;
+        } else {
+            $("#employee_performance_doc_section1").submit();
+        }
+
+
+    });
+
+
+
+    //
+    $('.performance_doc_section3').on('click', function() {
+
+        $('#performance_doc_section3_Modal').modal('show');
+        let performanceDocSid = $(this).attr('data-sid');
+        let employeeSid = $(this).attr('data-employeesid');
+        let employeetype = $(this).attr('data-employeetype');
+        let managercomment = $(this).attr('data-managercomment');
+        let employeecomment = $(this).attr('data-employeecomment');
+
+        $("#section3_performance_document_sid").val(performanceDocSid);
+        $("#section3_employee_sid").val(employeeSid);
+        $("#section3_employee_type").val(employeetype);
+        $("#section3ManagerComment").val(managercomment);
+        $("#section3EmployeeComment").val(employeecomment);
+
+    });
+
+    //
+    $('#performanceSection3Save').on('click', function() {
+
+        var section3ManagerComment = $("#section3ManagerComment").val();
+        var flag = 0;
+
+        if (section3ManagerComment == '') {
+            $("#section3ManagerCommentError").text('Comment required.');
+            flag = 1;
+        } else {
+            $("#section3ManagerCommentError").text('');
+        }
+
+        if (flag == 1) {
+            return false;
+        } else {
+            $("#employee_performance_doc_section3").submit();
+        }
+
+    });
+
+
+    //
+    $('.performance_doc_section4').on('click', function() {
+
+
+        $('#performance_doc_section4_Modal').modal('show');
+        /*
+let performanceDocSid = $(this).attr('data-sid');
+let employeeSid = $(this).attr('data-employeesid');
+let employeetype = $(this).attr('data-employeetype');
+let managercomment = $(this).attr('data-managercomment');
+let employeecomment = $(this).attr('data-employeecomment');
+
+$("#section3_performance_document_sid").val(performanceDocSid);
+$("#section3_employee_sid").val(employeeSid);
+$("#section3_employee_type").val(employeetype);
+$("#section3ManagerComment").val(managercomment);
+$("#section3EmployeeComment").val(employeecomment);
+*/
+
+    });
 </script>
 
 

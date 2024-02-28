@@ -159,6 +159,7 @@ class Hr_documents_management extends Public_Controller
                         break;
                     case 'assign_document':
 
+
                         $document_type = $this->input->post('document_type');
                         $document_sid = $this->input->post('document_sid');
                         $select_employees = $this->input->post('employees');
@@ -270,6 +271,16 @@ class Hr_documents_management extends Public_Controller
                                 //
                                 $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
                                 $data_to_insert['fillable_documents_slug'] = $document['fillable_documents_slug'];
+                               
+                                //
+                                if($document['fillable_documents_slug']=='employee-performance-evaluation'){
+                                  $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                  $data_to_insert['performance_document_json'] = json_encode($performanceDocumentJson);
+                                }
 
                                 //
                                 addColumnsForDocumentAssigned($data_to_insert, $document);
@@ -2088,6 +2099,72 @@ class Hr_documents_management extends Public_Controller
                 if ($this->form_validation->run() != false) {
                     $perform_action = $this->input->post('perform_action');
                     switch ($perform_action) {
+
+                        case 'employee_performance_doc_section1':
+                            $document_sid = $this->input->post('document_sid');
+
+                                    //
+                                    $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+                                    if(!empty($sectionsdata)){
+
+                                    $section1Formdata=$_POST;
+
+                                    unset($section1Formdata['perform_action']);
+                                    unset($section1Formdata['user_sid']);
+                                    unset($section1Formdata['document_sid']);
+
+                                    $section1Formdata['completed_by']=$eeid;
+                                    $section1Formdata['completed_on']= date('Y-m-d H:i:s');
+
+                                    $employee_sid=$section1Formdata['employee_sid'];
+                                    $user_type=$section1Formdata['employee_type'];
+                                    $sectionsdata['section1']['data']=$section1Formdata;
+                                    $sectionsdata['section1']['status']='completed';
+                                    $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+
+                                    $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+
+                                    }
+                  
+                            $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                            
+                            break;
+
+                            case 'employee_performance_doc_section3':
+                                $document_sid = $this->input->post('document_sid');
+    
+                                        //
+                                        $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+                                        if(!empty($sectionsdata)){
+    
+                                        $section1Formdata=$_POST;
+    
+                                        unset($section1Formdata['perform_action']);
+                                        unset($section1Formdata['user_sid']);
+                                        unset($section1Formdata['document_sid']);
+    
+                                        if($section1Formdata['section3ManagerComment']!='' && $section1Formdata['section3EmployeeComment']!='' ){
+                                        $section1Formdata['completed_on']= date('Y-m-d H:i:s');
+                                        $sectionsdata['section3']['status']='completed';
+                                        }else{
+                                            $section1Formdata['completed_on']='';
+                                            $sectionsdata['section3']['status']='';
+                                        }
+    
+                                        $employee_sid=$section1Formdata['employee_sid'];
+                                        $user_type=$section1Formdata['employee_type'];
+                                        $sectionsdata['section3']['data']=$section1Formdata;
+
+                                        $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+    
+                                        $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+    
+                                        }
+                      
+                                $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                                
+                                    break;
+
                         case 'activate_uploaded_document':
                             $document_sid = $this->input->post('document_sid');
                             $document_type = $this->input->post('document_type');
@@ -5968,7 +6045,7 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function sign_hr_document($doc = NULL, $document_sid)
-    { 
+    {
         if ($this->session->userdata('logged_in')) {
 
             $data['session'] = $this->session->userdata('logged_in');
@@ -6296,7 +6373,69 @@ class Hr_documents_management extends Public_Controller
                 // else if($perform_action == 'upload_document') $isCompleted = true;
                 // else if($perform_action == 'acknowledge_document') $isCompleted = true;
                 //
+
                 switch ($perform_action) {
+
+                    case 'employee_performance_doc_section_2_3':
+                        $save_input_values = array();
+                        $user_type = 'employee';
+                        $user_sid = $employer_sid;
+                      
+                        $save_input_values = serialize($save_input_values);
+                        $data_to_update = array();
+                    
+                        $data_to_update['signature_ip'] = getUserIP();
+                        $data_to_update['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                       
+                        // $data_to_update['user_consent'] = $user_consent == 1 ? 1 : 0;
+                     
+                        $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
+
+                        if(!empty($sectionsdata)){
+                             if (isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
+                                $data_to_update['form_input_data'] ='';
+                                $save_input_values = $_POST['save_input_values'];
+
+                               $section2Data=json_decode($save_input_values,true);
+
+                               $section3EmployeeComment=$section2Data['section3EmployeeComment'];
+
+                               unset($section2Data['section3ManagerComment']);
+                               unset($section2Data['section3EmployeeComment']);
+                               
+                               $sectionsdata['section2']['data']=$section2Data;
+                               $sectionsdata['section2']['status']='completed';
+
+                            //Section 3
+                           if($save_input_values['section3EmployeeComment']){
+
+                            if($sectionsdata['section3']['data']['section3ManagerComment']!='' && $section3EmployeeComment!='' ){
+                                $sectionsdata['section3']['completed1_on']= date('Y-m-d H:i:s');
+                                $sectionsdata['section3']['status']='completed';
+                                }else{
+                                    $sectionsdata['section3']['completed_onop']='';
+                                    $sectionsdata['section3']['status']='';
+                                }
+
+                                $sectionsdata['section3']['data']['section3EmployeeComment']=$section3EmployeeComment;
+                            }
+                               $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+                            }
+                        }
+                        
+
+                       $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                        $this->session->set_flashdata('message', '<b>Success: </b> You Have Successfully Saved This Document!');
+                        //
+                
+                        if ($user_type == 'employee') {
+                            redirect('hr_documents_management/sign_hr_document/' . $doc . '/' . $document_sid, 'refresh');
+                        } else {
+                            redirect('onboarding/sign_hr_document/' . $document_sid);
+                        }
+
+                        break;
+
                     case 'acknowledge_document':
                         $user_type = $this->input->post('user_type');
                         $user_sid = $this->input->post('user_sid');
@@ -6486,7 +6625,7 @@ class Hr_documents_management extends Public_Controller
                         $save_input_values = serialize($save_input_values);
 
                         $data_to_update = array();
-
+                       
                         if ($save_signature == 'yes' || $save_initial == 'yes' || $save_date == 'yes') {
                             $company_sid = $data['session']['company_detail']['sid'];
                             $signature = get_e_signature($company_sid, $user_sid, $user_type);
@@ -6512,7 +6651,11 @@ class Hr_documents_management extends Public_Controller
                         $data_to_update['uploaded'] = 1;
                         $data_to_update['uploaded_date'] = date('Y-m-d H:i:s');
                         $data_to_update['form_input_data'] = $save_input_values;
+
+                        //
+
                         $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                        
                         $this->session->set_flashdata('message', '<b>Success: </b> You Have Successfully Signed This Document!');
 
                         //

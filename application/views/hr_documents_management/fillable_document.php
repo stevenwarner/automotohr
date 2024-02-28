@@ -262,7 +262,7 @@
 
 
                                     <?php if (!empty($employeesList)) { ?>
-                                        <?php if($document_info['fillable_documents_slug']=='notice-of-separation' || $document_info['fillable_documents_slug']=='written-employee-counseling-report-form' ){?>
+                                        <?php if($document_info['fillable_documents_slug']=='notice-of-separation' || $document_info['fillable_documents_slug']=='written-employee-counseling-report-form' || $document_info['fillable_documents_slug']=='employee-performance-evaluation' ){?>
                                             <div class="row">
                                                 <div class="col-xs-12">
                                                     <div class="hr-box">

@@ -100,9 +100,12 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
                                                 //
 
                                                 $doc = str_replace('-', '_', $document['fillable_documents_slug']);
+
                                                 ?>
 
+
                                                 <?php $this->load->view('v1/fillable_documents/' . $doc, $document); ?>
+
                                                 <br>
                                             </div>
 
@@ -148,7 +151,15 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
 
                                         <?php if ($save_offer_letter_type == 'save_only') { ?>
                                             <form id="user_consent_form" enctype="multipart/form-data" method="post" action="">
-                                                <input type="hidden" name="perform_action" value="sign_document" />
+
+                                                <?php if ($document['fillable_documents_slug']) { ?>
+                                                    <input type="hidden" name="perform_action" value="employee_performance_doc_section_2_3" />
+
+                                                <?php } else { ?>
+                                                    <input type="hidden" name="perform_action" value="sign_document" />
+
+                                                <?php } ?>
+
                                                 <input type="hidden" name="page_content" value="">
                                                 <input type="hidden" name="save_signature" id="save_signature" value="no">
                                                 <input type="hidden" name="save_signature_initial" id="save_signature_initial" value="no">
