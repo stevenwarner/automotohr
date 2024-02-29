@@ -384,6 +384,9 @@
                                         if (check_access_permissions_for_view($security_details, 'send_bulk_email')) { ?>
                                             <li><a href="javascript:void(0);" class="btn btn-success" id="send_bulk_email">Send Bulk Email</a></li>
                                         <?php } ?>
+
+                                        <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
+
                                         <!--                                        <li><a href="javascript:void(0);" class="btn btn-primary" id="send_candidate_email">Send Candidate Notification</a></li>-->
                                     </ul>
                                 </div>
@@ -2512,6 +2515,7 @@
             $(this).next().show();
         });
 
+
         $('#send_rej_email').click(function() {
             if ($(".ej_checkbox:checked").size() > 0) {
                 alertify.confirm('Confirmation', "Are you sure you want to send rejection email to selected Applicant(s)?",
@@ -2986,6 +2990,65 @@
             }
         }
     }
+
+
+
+    //
+    $('#send_still_interested_email').click(function() {
+        if ($(".ej_checkbox:checked").size() > 0) {
+            alertify.confirm('Confirmation', "Are you sure you want to send still interested email to selected Applicant(s)?",
+                function() {
+                    var ids = [{}];
+                    var counter = 0;
+                    $.each($(".ej_checkbox:checked"), function() {
+                        ids[counter++] = $(this).val();
+                    });
+
+                    var ids = [{}];
+                    var list_ids = [{}];
+                    var counter = 0;
+                    var job_titles = [{}];
+
+                    $.each($(".ej_checkbox:checked"), function() {
+                        job_titles[counter] = $(this).attr('data-job_title');
+                        ids[counter] = $(this).val();
+                        list_ids[counter++] = $(this).attr('data-list');
+                    });
+
+                    var form_data = new FormData();
+                    form_data.set('ids', ids);
+                    form_data.set('list_ids', list_ids);
+                    form_data.set('job_titles', job_titles);
+
+                    $('#candidate-loader').show();
+                    url_to = "<?= base_url() ?>send_manual_email/send_still_interested_email";
+                    $.ajax({
+                        url: url_to,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        type: 'post',
+                        data: form_data,
+                        success: function(response) {
+                            $('#candidate-loader').hide();
+                            alertify.success('Success: Email sent to selected applicants.');
+                        },
+                        error: function() {}
+                    });
+
+                },
+                function() {
+                    alertify.error('Cancelled');
+                }).set('labels', {
+                ok: 'Yes',
+                cancel: 'No'
+            });
+        } else {
+            alertify.alert('Send Still Interested Email Error', 'Please select Applicant(s) to send Are You Still Interested  email.');
+        }
+
+    });
+
 </script>
 
 
