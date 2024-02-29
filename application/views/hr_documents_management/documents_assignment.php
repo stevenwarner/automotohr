@@ -178,6 +178,8 @@ $assignIdObj = $confidential_sids;
                                                                         <?php } else { ?>
                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
                                                                         <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" title="Unsigned" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>" alt="">
                                                                     <?php } ?>
                                                                 </td>
                                                                 <td class="col-lg-1 text-center">
