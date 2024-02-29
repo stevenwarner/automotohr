@@ -542,9 +542,11 @@ class Send_manual_email extends Public_Controller
         $job_titles          = explode(',', $this->input->post('job_titles'));
 
         //
-        $temp_id           = 7920;
+        $template_code           = 'are_you_still_interested';
         $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
-        $still_interested_email_template = $this->portal_email_templates_model->getSingleTemplateDetails($temp_id);
+        $still_interested_email_template = $this->portal_email_templates_model-> get_portal_email_template_by_code($template_code, $company_sid);
+
+       
 
         $i = 0;
 
