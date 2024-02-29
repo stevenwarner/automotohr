@@ -528,4 +528,50 @@ class Send_manual_email extends Public_Controller
             $sent_flag = true;
         }
     }
+
+
+    ///
+    function send_still_interested_email()
+    {
+
+        $data = $this->session->userdata('logged_in');
+        $company_detail = $data['company_detail'];
+        $company_sid    = $company_detail['sid'];
+        $company_name   = $company_detail['CompanyName'];
+        $applicant_ids     = explode(',', $this->input->post('ids'));
+        $job_titles          = explode(',', $this->input->post('job_titles'));
+
+        //
+        $temp_id           = 7920;
+        $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
+        $still_interested_email_template = $this->portal_email_templates_model->getSingleTemplateDetails($temp_id);
+
+        $i = 0;
+
+        foreach ($applicant_ids as $applicant_id) {
+            $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
+            $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
+
+            $applicant_fname = $applicant_data['first_name'];
+            $applicant_lname = $applicant_data['last_name'];
+            //
+            $toArray = array($company_name, $applicant_fname, $applicant_lname, $job_title, $applicant_fname . ' ' . $applicant_lname, $applicant_data['email']);
+            $subject = $still_interested_email_template['subject'];
+            $body    = $still_interested_email_template['message_body'];
+
+            replace_magic_quotes($subject, $fromArray, $toArray);
+            replace_magic_quotes($body, $fromArray, $toArray);
+
+            $from_name                    = $company_name;
+            $message_hf                   = message_header_footer_domain($company_sid, $company_name);
+
+            $body = $message_hf['header'] . $body . $message_hf['footer'];
+
+            log_and_sendEmail(REPLY_TO, $applicant_data['email'], $subject, $body, $from_name);
+            $i++;
+
+        }
+
+    }
+  
 }
