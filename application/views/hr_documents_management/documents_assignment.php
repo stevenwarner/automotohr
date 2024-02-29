@@ -375,8 +375,9 @@ $assignIdObj = $confidential_sids;
                                                                     <td class="col-lg-2">
                                                                         EEOC FORM
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . ($eeo_form_info['status'] == 1 && $eeo_form_info['is_expired'] == 1 ? 'on' : 'off') . '.gif'); ?>"></br>
-                                                                        Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
-
+                                                                        <?php if ($eeo_form_info && $eeo_form_info["status" == 1]) { ?>
+                                                                            Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
+                                                                        <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -5016,15 +5017,11 @@ if ($user_type == 'employee') {
                     i9_btn = '',
                     db = '';
                 //
-                console.log(dn)
                 if (dn.trim() == 'EEOC FORM') {
-                    console.log(<?= $eeo_form_info['status']; ?> )
                     if (<?= $eeo_form_info['status'] ?? 0; ?> != 1) {
                         return;
                     }
                 }
-
-
                 //
                 if ($(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').length !== 0) {
                     btn = $(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').clone().addClass('btn-sm btn-block');
