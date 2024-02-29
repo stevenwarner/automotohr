@@ -132,6 +132,16 @@ class Employee_shifts extends Public_Controller
     }
 
     public function getPageContent () {
-        
+        return SendResponse(
+            200,
+            [
+                "view" =>
+                $this->load->view(
+                    "v1/schedules/my/un_availability",
+                    [],
+                    true
+                )
+            ]
+        );
     }
 }
