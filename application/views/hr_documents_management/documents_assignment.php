@@ -5016,10 +5016,10 @@ if ($user_type == 'employee') {
                     i9_btn = '',
                     db = '';
                 //
+                console.log("I am here")
                 if (dn.trim() == 'EEOC FORM') {
                     console.log(<?= $eeo_form_info['status']; ?> )
                     if (<?= $eeo_form_info['status'] ?? 0; ?> != 1) {
-                        
                         return;
                     }
                 }
