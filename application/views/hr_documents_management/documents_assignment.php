@@ -5017,8 +5017,9 @@ if ($user_type == 'employee') {
                     db = '';
                 //
                 if (dn.trim() == 'EEOC FORM') {
+                    console.log(<?= $eeo_form_info['status']; ?> )
                     if (<?= $eeo_form_info['status'] ?? 0; ?> != 1) {
-                        console.log(<?= $eeo_form_info['status'] ?? 0; ?> )
+                        
                         return;
                     }
                 }
