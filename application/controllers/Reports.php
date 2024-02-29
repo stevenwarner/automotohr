@@ -295,11 +295,11 @@ class Reports extends Public_Controller
                                         $reviewNote = '';
                                         if (!empty($applicant['review_comment'])) {
                                             foreach ($applicant['review_comment'] as $commentRow) {
-                                                $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n" . " Rating: " . $commentRow['rating'] . "\n\n Note: " . strip_tags($commentRow['comment']). "\n\n Date: " . date_with_time($commentRow['date_added'])."\n\n";
+                                                $reviewNote .=  "\n Employer: " . getUserNameBySID($commentRow['employer_sid']) . "\n\n" . " Rating: " . $commentRow['rating'] . "\n\n Note: " . strip_tags($commentRow['comment']) . "\n\n Date: " . date_with_time($commentRow['date_added']) . "\n\n";
                                             }
                                             $input[$myColumn] = $reviewNote;
-                                        }else{
-                                            $input[$myColumn] ="N/A";
+                                        } else {
+                                            $input[$myColumn] = "N/A";
                                         }
                                     } else {
                                         $input[$myColumn] = $applicant[$myColumn];
@@ -3406,6 +3406,8 @@ class Reports extends Public_Controller
             $post['employeeStatus'] = $post['dd-status-emp'];
 
             $employeedocument = $this->reports_model->getEmployeeAssignedDocument($post);
+            //_e($employeedocument,true,true);
+
 
             if (sizeof($employeedocument['Data'])) {
 
@@ -3429,6 +3431,9 @@ class Reports extends Public_Controller
                     array(
                         'Employees',
                         '# of Documents',
+                        '# Not Completed',
+                        '# Completed',
+                        '# No Action Required',
                         'Documents'
                     )
                 );
@@ -3439,60 +3444,157 @@ class Reports extends Public_Controller
 
                 //
                 foreach ($rows as $row) {
+
                     //
                     $totalAssignedDocs = count($row['assigneddocuments']);
                     $totalAssignedGeneralDocs = count($row['assignedgeneraldocuments']);
                     $totalDocs = $totalAssignedDocs + $totalAssignedGeneralDocs;
+
+                    $totalDocsNotCompleted = 0;
+                    $totalDocsCompleted = 0;
+                    $totalDocsNoaction = 0;
+                    $completedStatus ='';
                     //
-                    if ($row['assignedi9document'] == 1) {
+                    if (!empty($row['assignedi9document'])) {
                         $totalDocs = $totalDocs + 1;
+                        if ($row['assignedi9document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                           // $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                          //  $completedStatus = ' (Not Completed) ';
+
+                        }
                     }
-                    if ($row['assignedw9document'] == 1) {
+                    if (!empty($row['assignedw9document'])) {
                         $totalDocs = $totalDocs + 1;
+                        if ($row['assignedw9document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                          //  $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                           // $completedStatus = ' (Not Completed) ';
+
+                        }
                     }
-                    if ($row['assignedw4document'] == 1) {
+                    if (!empty($row['assignedw4document'])) {
                         $totalDocs = $totalDocs + 1;
+                        if ($row['assignedw4document'][0]['user_consent'] == 1) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                          //  $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            //$completedStatus = ' (Not Completed) ';
+
+                        }
                     }
-                    if ($row['assignedeeocdocument'] == 1) {
+                    if (!empty($row['assignedeeocdocument'])) {
                         $totalDocs = $totalDocs + 1;
+                        if ($row['assignedeeocdocument'][0]['last_completed_on'] != '' && $row['assignedeeocdocument'][0]['last_completed_on'] != null) {
+                            $totalDocsCompleted = $totalDocsCompleted + 1;
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            $completedStatus = ' (Not Completed) ';
+                        }
                     }
 
                     //
                     $doc = '';
 
-                    if ($row['assignedi9document'] == 1) {
-                        $doc .= "I9 Fillable" . "\n\n";
+                    if (!empty($row['assignedi9document'])) {
+
+                        if ($row['assignedi9document'][0]['user_consent'] == 1) {
+                            $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $completedStatus = ' (Not Completed) ';
+
+                        }
+
+                        $doc .= "I9 Fillable" . $completedStatus . "\n\n";
                     }
-                    if ($row['assignedw9document'] == 1) {
-                        $doc .= "W9 Fillable" . "\n\n";
+                    if (!empty($row['assignedw9document'])) {
+
+                        if ($row['assignedw9document'][0]['user_consent'] == 1) {
+                            $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $completedStatus = ' (Not Completed) ';
+
+                        }
+
+                        $doc .= "W9 Fillable" . $completedStatus . "\n\n";
                     }
-                    if ($row['assignedw4document'] == 1) {
-                        $doc .= "W4 Fillable" . "\n\n";
+                    if (!empty($row['assignedw4document'])) {
+
+                        if ($row['assignedw4document'][0]['user_consent'] == 1) {
+                            $completedStatus = ' (Completed) ';
+
+                        } else {
+                            $completedStatus = ' (Not Completed) ';
+
+                        }
+                        $doc .= "W4 Fillable" . $completedStatus . "\n\n";
                     }
-                    if ($row['assignedeeocdocument'] == 1) {
-                        $doc .= "EEOC Form" . "\n\n";
+                    if (!empty($row['assignedeeocdocument'])) {
+
+                        if ($row['assignedeeocdocument'][0]['last_completed_on'] != '' && $row['assignedeeocdocument'][0]['last_completed_on'] != null) {
+                            $completedStatus = ' (Completed) ';
+                        } else {
+                            $completedStatus = ' (Not Completed) ';
+                        }
+                        $doc .= "EEOC Form" . $completedStatus . "\n\n";
                     }
 
                     //
                     if (count($row['assignedgeneraldocuments']) > 0) {
                         foreach ($row['assignedgeneraldocuments'] as $rowGeneral) {
-                            $doc .= ucwords(str_replace('_', ' ', $rowGeneral['document_type'])) . "\n\n";
+
+                            if ($rowGeneral['is_completed'] == 1) {
+                                $totalDocsCompleted = $totalDocsCompleted + 1;
+                                $completedStatus = ' (Completed) ';
+                            } else {
+                                $completedStatus = ' (Not Completed) ';
+                                $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                            }
+
+                            $doc .= ucwords(str_replace('_', ' ', $rowGeneral['document_type'])) . $completedStatus . "\n\n";
                         }
                     }
 
                     //
                     if (count($row['assigneddocuments']) > 0) {
                         foreach ($row['assigneddocuments'] as $assigned_row) {
+                            $completedStatus ='';
+                            if ($assigned_row['completedStatus'] == 'Not Completed') {
+                                $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
+                                $completedStatus = ' (Not Completed) ';
+                            }
+                            if ($assigned_row['completedStatus'] == 'Completed') {
+                                $totalDocsCompleted = $totalDocsCompleted + 1;
+                                $completedStatus = ' (Completed) ';
+                            }
+
+                            if ($assigned_row['completedStatus'] == 'No Action Required') {
+                                $totalDocsNoaction = $totalDocsNoaction  +1;
+                               $completedStatus = ' (No Action Required) ';
+                            }
+
                             if ($assigned_row['confidential_employees'] != null) {
                                 $confidentialEmployees = explode(',', $assigned_row['confidential_employees']);
 
                                 if (in_array($data['employerSid'], $confidentialEmployees)) {
-                                    $doc .= $assigned_row['document_title'] . "\n\n";
+                                    $doc .= $assigned_row['document_title'] . $completedStatus . "\n\n";
                                 } else {
                                     $totalDocs = $totalDocs - 1;
                                 }
                             } else {
-                                $doc .= $assigned_row['document_title'] . "\n\n";
+
+                                $doc .= $assigned_row['document_title'] . $completedStatus . "\n\n";
                             }
                         }
                     }
@@ -3501,6 +3603,9 @@ class Reports extends Public_Controller
                     $a = [];
                     $a[] = $employeeOBJ[$row['sid']];
                     $a[] = $totalDocs;
+                    $a[] = $totalDocsNotCompleted;
+                    $a[] = $totalDocsCompleted;
+                    $a[] = $totalDocsNoaction;
                     $a[] = $doc;
                     //
                     fputcsv($output, $a);
