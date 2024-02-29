@@ -1049,4 +1049,9 @@ class Testing extends CI_Controller
         echo count($documents);
         _e($documents,true);
     }
-}
+
+    public function eeoc ($employeeID) {
+        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employeeID, "employee");
+        _e($eeo_form_info,true,true);
+    }
+}    
