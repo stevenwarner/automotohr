@@ -703,6 +703,8 @@ define("ALLOWED_EXTENSIONS", "image/*, video/mp4, video/mov");
 // set email template for next day
 // shift reminder
 define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 435);
+define("ARE_YOU_STILL_INTERESTED", 436);
+
 
 
 // set database timezone

@@ -103,6 +103,8 @@ class portal_email_templates_model extends CI_Model
         $templates = $result->result_array();
         // Free results from memory
         $result = $result->free_result();
+        //
+        
         // If no difference found 
         // return false
         if (sizeof($templates)) {
@@ -142,7 +144,7 @@ class portal_email_templates_model extends CI_Model
                     'original_file_name' => $v0['attachment']
                 ));
             }
-        }
+        } 
 
         // Add Admin Templates to client end *** Start ***
         $hr_documents_notification = $this->check_admin_template_exists(HR_DOCUMENTS_NOTIFICATION, $company_sid);
@@ -167,6 +169,7 @@ class portal_email_templates_model extends CI_Model
 
         // Add Admin Templates to client
         $hr_documents_notification = $this->check_admin_template_exists(HR_DOCUMENTS_NOTIFICATION_EMS, $company_sid);
+
         if (empty($hr_documents_notification)) { // the template does not exists for following company, Please add it
             $admin_template_data = $this->get_admin_template_by_id(HR_DOCUMENTS_NOTIFICATION_EMS);
 
@@ -274,6 +277,31 @@ class portal_email_templates_model extends CI_Model
             }
         }
         // Add Admin Templates to Client end ***  End  ***
+
+
+        // Add Admin Templates to client end *** Start ***
+        $aysi = $this->check_admin_template_exists(ARE_YOU_STILL_INTERESTED, $company_sid);
+
+        if (empty($aysi)) { // the template does not exists for following company, Please add it
+            $admin_template_data = $this->get_admin_template_by_id(ARE_YOU_STILL_INTERESTED);
+
+            if (!empty($admin_template_data)) {
+                $data = array();
+                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid']                                            = $company_sid;
+                $data['created']                                                = date('Y-m-d H:i:s');
+                $data['template_name']                                          = $admin_template_data['name'];
+                $data['from_name']                                              = '{{company_name}}';
+                $data['from_email']                                             = $admin_template_data['from_email'];
+                $data['subject']                                                = $admin_template_data['subject'];
+                $data['message_body']                                           = $admin_template_data['text'];
+                $data['enable_auto_responder']                                  = 0;
+                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $this->db->insert("portal_email_templates", $data);
+            }
+        }
+        // Add Admin Templates to Client end ***  End  ***
+
     }
 
     function getCompanyName($company_sid)
@@ -330,6 +358,21 @@ class portal_email_templates_model extends CI_Model
         $this->db->select('*');
         $this->db->where('template_code', $template_code);
         $this->db->where('company_sid', $company_sid);
+        $record_obj = $this->db->get('portal_email_templates');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+    function get_portal_email_template_by_Id($templateId)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $templateId);
         $record_obj = $this->db->get('portal_email_templates');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();

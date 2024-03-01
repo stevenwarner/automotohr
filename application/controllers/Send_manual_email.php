@@ -540,16 +540,17 @@ class Send_manual_email extends Public_Controller
         $company_name   = $company_detail['CompanyName'];
         $applicant_ids     = explode(',', $this->input->post('ids'));
         $job_titles          = explode(',', $this->input->post('job_titles'));
-
         //
-        $template_code           = 'are-you-still-interested-';
         $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
-        $still_interested_email_template = $this->portal_email_templates_model-> get_portal_email_template_by_code($template_code, $company_sid);
-
-       
-
+        //
+        $primary_admin_email = FROM_EMAIL_INFO;
+        $this->portal_email_templates_model->check_default_tables($company_sid, $primary_admin_email, $company_name);
+        //
+        $templateSid = $this->portal_email_templates_model->check_admin_template_exists(ARE_YOU_STILL_INTERESTED, $company_sid)[0]['sid'];
+        $still_interested_email_template = $this->portal_email_templates_model->get_portal_email_template_by_Id($templateSid);
+        //
         $i = 0;
-
+        //
         foreach ($applicant_ids as $applicant_id) {
             $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
             $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
