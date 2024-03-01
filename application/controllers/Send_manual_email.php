@@ -538,8 +538,9 @@ class Send_manual_email extends Public_Controller
         $company_detail = $data['company_detail'];
         $company_sid    = $company_detail['sid'];
         $company_name   = $company_detail['CompanyName'];
-        $applicant_ids     = explode(',', $this->input->post('ids'));
-        $job_titles          = explode(',', $this->input->post('job_titles'));
+        $employer_id    = $data['employer_detail']['sid'];
+        $applicant_ids  = explode(',', $this->input->post('ids'));
+        $job_titles     = explode(',', $this->input->post('job_titles'));
         //
         $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
         //
@@ -561,23 +562,37 @@ class Send_manual_email extends Public_Controller
             $toArray = array($company_name, $applicant_fname, $applicant_lname, $job_title, $applicant_fname . ' ' . $applicant_lname, $applicant_data['email']);
             $subject = $still_interested_email_template['subject'];
             $body    = $still_interested_email_template['message_body'];
-
+            //
             replace_magic_quotes($subject, $fromArray, $toArray);
             replace_magic_quotes($body, $fromArray, $toArray);
-
+            //
             $from_name                    = $company_name;
             $message_hf                   = message_header_footer_domain($company_sid, $company_name);
             //
-            $identity_key = generateRandomString(48);
-            $secret_key = $identity_key . "__";
-
+            $message_data = [];
+            $message_data['from_id']      = $employer_id;
+            $message_data['to_id']        = $applicant_id;
+            $message_data['from_type']    = 'employer';
+            $message_data['to_type']      = 'applicant';
+            $message_data['users_type']   = 'employee';
+            $message_data['subject']      = $subject;
+            $message_data['message']      = $body;
+            $message_data['date']         = date('Y-m-d H:i:s');
+            $message_data['contact_name'] = $applicant_fname . ' ' . $applicant_lname;
+            $message_data['company_sid']  = $company_sid;
+            $message_data['identity_key'] = generateRandomString(48);
+            //
+            $secret_key = $message_data['identity_key'] . "__";
+            //
             $body = $message_hf['header'] 
                     . $body
                     . $message_hf['footer']
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
-
+            //
             log_and_sendEmail(REPLY_TO, $applicant_data['email'], $subject, $body, $from_name);
+            $this->portal_email_templates_model->save_message($message_data);
+            //
             $i++;
 
         }
