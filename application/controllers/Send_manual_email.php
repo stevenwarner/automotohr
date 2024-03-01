@@ -567,8 +567,15 @@ class Send_manual_email extends Public_Controller
 
             $from_name                    = $company_name;
             $message_hf                   = message_header_footer_domain($company_sid, $company_name);
+            //
+            $identity_key = generateRandomString(48);
+            $secret_key = $identity_key . "__";
 
-            $body = $message_hf['header'] . $body . $message_hf['footer'];
+            $body = $message_hf['header'] 
+                    . $body
+                    . $message_hf['footer']
+                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                    . $secret_key . '</div>';
 
             log_and_sendEmail(REPLY_TO, $applicant_data['email'], $subject, $body, $from_name);
             $i++;
