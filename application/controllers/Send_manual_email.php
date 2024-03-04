@@ -574,7 +574,7 @@ class Send_manual_email extends Public_Controller
             $message_data['to_id']        = $applicant_id;
             $message_data['from_type']    = 'employer';
             $message_data['to_type']      = 'applicant';
-            $message_data['users_type']   = 'employee';
+            $message_data['users_type']   = 'applicant';
             $message_data['subject']      = $subject;
             $message_data['message']      = $body;
             $message_data['date']         = date('Y-m-d H:i:s');

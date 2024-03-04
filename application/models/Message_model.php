@@ -186,7 +186,7 @@ class message_model extends CI_Model {
 
 //ADMIN Outbox messages 
     public function get_outbox_message_detail($message_id) {
-        $this->db->select('from_type, to_type, from_id as username, attachment, to_id, subject, date, message, private_message.id as msg_id, contact_name, job_id');
+        $this->db->select('from_type, to_type, from_id as username, attachment, to_id, subject, date, message, private_message.id as msg_id, contact_name, users_type, job_id');
         //$this->db->join('administrator_users', 'administrator_users.id = private_message.to_id');
         $this->db->where('private_message.id', $message_id);
         return $this->db->get('private_message')->result_array();
