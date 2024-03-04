@@ -591,6 +591,7 @@ class Send_manual_email extends Public_Controller
                     . $secret_key . '</div>';
             //
             log_and_sendEmail(REPLY_TO, $applicant_data['email'], $subject, $body, $from_name);
+            //
             $this->portal_email_templates_model->save_message($message_data);
             //
             $i++;
