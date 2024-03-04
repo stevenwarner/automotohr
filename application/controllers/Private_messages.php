@@ -79,7 +79,8 @@ class Private_messages extends Public_Controller
             // 
             foreach ($data['messages'] as $myKey => $message) {
                 if (is_numeric($message['username'])) {
-                    $result_data = $this->message_model->get_name_by_id($message['username'], $message['users_type']);
+                    $result_data = $this->message_model->get_name_by_id($message['username'], $message['from_type']);
+                    // $result_data = $this->message_model->get_name_by_id($message['username'], $message['users_type']);
                     $data['messages'][$myKey]['username'] = $result_data['name'];
                     $data['messages'][$myKey]['email'] = $result_data['email'];
                 } else {
@@ -367,6 +368,15 @@ class Private_messages extends Public_Controller
                         $contact_details['message_type'] = $userInfo['userType'];
                         $contact_details['from_name'] = $userInfo['userName'];
                     }
+                }
+                //
+                if (is_numeric($message_data[0]['username']) && $message_data[0]['from_type'] == "applicant" ) {
+                    $result_data = $this->message_model->get_name_by_id($message_data[0]['username'], $message_data[0]['users_type']);
+                    //
+                    $contact_details['from_email'] = $result_data['email'];
+                    $contact_details['from_name'] = $result_data['name'];
+                    $contact_details['from_profile_link'] = base_url("applicant_profile/".$message_data[0]['username']);
+                 
                 }
                 //
                 $data['contact_details'] = $contact_details;
