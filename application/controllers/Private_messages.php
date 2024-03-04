@@ -84,7 +84,6 @@ class Private_messages extends Public_Controller
                     $data['messages'][$myKey]['email'] = $result_data['email'];
                 } else {
                     if (valid_email(trim($message['username']))) {
-                        //if(filter_var(trim($message['username']), FILTER_SANITIZE_EMAIL)) {
                         $data['messages'][$myKey]['email'] = $message['username'];
                         $data['messages'][$myKey]['username'] = $this->message_model->fetch_name($message['username'], $company_id);
                     }
@@ -230,10 +229,10 @@ class Private_messages extends Public_Controller
             $employer_id = $employer_detail['sid'];
             $company_id = $company_detail['sid'];
             $data['messages'] = $this->message_model->get_employer_outbox_messages($employer_id, $between);
-            //            $data['messages']                                                   = $db_data->result_array();
+            //     
             $data['employee'] = $employer_detail;
             $this->load->helper('email');
-            //            echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            //            
             foreach ($data['messages'] as $myKey => $message) {
                 if (is_numeric($message['to_id'])) {
                     $result_data = $this->message_model->get_name_by_id($message['to_id'], $message['users_type']);
