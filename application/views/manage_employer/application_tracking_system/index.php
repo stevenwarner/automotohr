@@ -384,9 +384,9 @@
                                         if (check_access_permissions_for_view($security_details, 'send_bulk_email')) { ?>
                                             <li><a href="javascript:void(0);" class="btn btn-success" id="send_bulk_email">Send Bulk Email</a></li>
                                         <?php } ?>
-
+                                        <?php if (in_array($session['company_detail']['sid'], [15708, 8578, 51])) { ?>   
                                         <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
-
+                                        <?php } ?>   
                                         <!--                                        <li><a href="javascript:void(0);" class="btn btn-primary" id="send_candidate_email">Send Candidate Notification</a></li>-->
                                     </ul>
                                 </div>
@@ -492,7 +492,7 @@
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
                                                     <label class="control control--checkbox">
-                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $originalJobTitle; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list='<?php echo $employer_job['sid'] ?>' class="ej_checkbox applicant_sids">
+                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $originalJobTitle; ?>" data-job_id="<?php echo $employer_job["job_sid"]; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list='<?php echo $employer_job['sid'] ?>' class="ej_checkbox applicant_sids">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -3008,17 +3008,20 @@
                     var list_ids = [{}];
                     var counter = 0;
                     var job_titles = [{}];
+                    var job_ids = [{}];
 
                     $.each($(".ej_checkbox:checked"), function() {
                         job_titles[counter] = $(this).attr('data-job_title');
                         ids[counter] = $(this).val();
                         list_ids[counter++] = $(this).attr('data-list');
+                        job_ids[counter] = $(this).attr('data-job_id');
                     });
 
                     var form_data = new FormData();
                     form_data.set('ids', ids);
                     form_data.set('list_ids', list_ids);
                     form_data.set('job_titles', job_titles);
+                    form_data.set('job_ids', job_ids);
 
                     $('#candidate-loader').show();
                     url_to = "<?= base_url() ?>send_manual_email/send_still_interested_email";

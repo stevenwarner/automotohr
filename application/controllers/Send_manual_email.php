@@ -541,6 +541,7 @@ class Send_manual_email extends Public_Controller
         $employer_id    = $data['employer_detail']['sid'];
         $applicant_ids  = explode(',', $this->input->post('ids'));
         $job_titles     = explode(',', $this->input->post('job_titles'));
+        $job_ids        = explode(',', $this->input->post('job_ids'));
         //
         $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
         //
@@ -555,6 +556,7 @@ class Send_manual_email extends Public_Controller
         foreach ($applicant_ids as $applicant_id) {
             $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
             $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
+            $jobId           = isset($job_ids[$i]) ? $job_ids[$i] : 0;
 
             $applicant_fname = $applicant_data['first_name'];
             $applicant_lname = $applicant_data['last_name'];
@@ -580,6 +582,7 @@ class Send_manual_email extends Public_Controller
             $message_data['date']         = date('Y-m-d H:i:s');
             $message_data['contact_name'] = $applicant_fname . ' ' . $applicant_lname;
             $message_data['company_sid']  = $company_sid;
+            $message_data['job_id']       = $jobId ;
             $message_data['identity_key'] = generateRandomString(48);
             //
             $secret_key = $message_data['identity_key'] . "__";
