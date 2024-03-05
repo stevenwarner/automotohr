@@ -485,7 +485,7 @@
                                         $employer_job['job_title'] .= ', ' . db_get_state_name($employer_job['Location_State'])['state_name'];
                                     }
                                     ?>
-
+                                    <?php //_e($employer_job,true); ?>
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
                                                                                                                         echo strtolower(preg_replace('/[^a-z]/i', '', $employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
