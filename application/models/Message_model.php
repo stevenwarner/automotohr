@@ -268,7 +268,7 @@ class message_model extends CI_Model {
         return $result;
     }
     
-    public function get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type) {
+    public function get_contact_name($msg_id, $to_id, $from_id, $from_type, $to_type, $companyId = 0) {
         //echo $msg_id.'<br>'.$to_id.'<br>'.$from_id.'<br>'.$from_type.'<br>'.$to_type; //exit;
         $to_name = $to_id;
         $to_email = $to_id;
@@ -277,6 +277,7 @@ class message_model extends CI_Model {
         $to_profile_link = '';
         $from_profile_link = '';
         $message_type = 'applicant';
+        $to_message_type = 'applicant';
         
         if($to_type == 'admin' || $to_type == 'applicant') {
             if($to_id == 1 || $to_id == '1') {
@@ -286,6 +287,9 @@ class message_model extends CI_Model {
                 if(!is_numeric($to_id)) {
                     $this->db->select('sid, first_name, last_name, email');
                     $this->db->where('email', $to_id);
+                    if ($companyId != 0) {
+                        $this->db->where('employer_sid', $companyId);
+                    }
                     $records_obj = $this->db->get('portal_job_applications');
                     $records_arr = $records_obj->result_array();
                     $records_obj->free_result();
@@ -301,6 +305,7 @@ class message_model extends CI_Model {
                         $obj = $this->db->get('portal_applicant_jobs_list');
                         $result_arr = $obj->result_array();
                         $obj->free_result();
+
                         
                         if(!empty($result_arr)) {
                             $to_profile_link = base_url('applicant_profile') . '/' . $portal_job_applications_sid . '/'.$result_arr[0]['sid'];
@@ -316,6 +321,9 @@ class message_model extends CI_Model {
                 $this->db->where('sid', $to_id);
             } else {
                 $this->db->where('email', $to_id);
+                if ($companyId != 0) {
+                    $this->db->where('parent_sid', $companyId);
+                }
             }
             $this->db->order_by(SORT_COLUMN,SORT_ORDER);
             $records_obj = $this->db->get('users');
@@ -337,6 +345,9 @@ class message_model extends CI_Model {
                 if(!is_numeric($from_id)) {
                     $this->db->select('sid, first_name, last_name, email');
                     $this->db->where('email', $from_id);
+                    if ($companyId != 0) {
+                        $this->db->where('employer_sid', $companyId);
+                    }
                     $records_obj = $this->db->get('portal_job_applications');
                     $records_arr = $records_obj->result_array();
                     $records_obj->free_result();
@@ -372,6 +383,9 @@ class message_model extends CI_Model {
                     $this->db->where('sid', $from_id);
                 } else {
                     $this->db->where('email', $from_id);
+                    if ($companyId != 0) {
+                        $this->db->where('parent_sid', $companyId);
+                    }
                 }
                 $this->db->order_by(SORT_COLUMN,SORT_ORDER);
                 $records_obj = $this->db->get('users');
