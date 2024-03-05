@@ -73,18 +73,26 @@ $(function myAvailability() {
 		$(".jsHoursContainer").append(generateBreakHtml(uniqId));
 		//
 		applyTimePicker();
-	});	/**
+	});	
+	
+	/**
 	* remove the break
 	*/
-   $(document).on("click", ".jsDeleteHourRow", function (event) {
-	   event.preventDefault();
-	   //
-	   const uniqId = $(this).closest(".jsHoursRow").data("key");
-	   $('.jsHoursRow[data-key="' + uniqId + '"]').remove();
-   });
+   	$(document).on("click", ".jsDeleteHourRow", function (event) {
+		event.preventDefault();
+		//
+		const uniqId = $(this).closest(".jsHoursRow").data("key");
+		$('.jsHoursRow[data-key="' + uniqId + '"]').remove();
+   	});
 
-
-
+	/**
+	* remove the break
+	*/
+	$(document).on("click", ".jsPageCreateUnavailabilityBtn", function (event) {
+		event.preventDefault();
+		//
+		alert("Please save unavilibility");
+   	});
 
 	/**
 	 * Create my unavailability
