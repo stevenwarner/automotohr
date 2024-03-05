@@ -104,7 +104,7 @@ class portal_email_templates_model extends CI_Model
         // Free results from memory
         $result = $result->free_result();
         //
-        
+
         // If no difference found 
         // return false
         if (sizeof($templates)) {
@@ -144,7 +144,7 @@ class portal_email_templates_model extends CI_Model
                     'original_file_name' => $v0['attachment']
                 ));
             }
-        } 
+        }
 
         // Add Admin Templates to client end *** Start ***
         $hr_documents_notification = $this->check_admin_template_exists(HR_DOCUMENTS_NOTIFICATION, $company_sid);
@@ -434,6 +434,47 @@ class portal_email_templates_model extends CI_Model
         }
 
         return $result;
+    }
+
+
+    function getApplicantDataByJobId($applicantJobListId, $companyId)
+    {
+        // Updated on: 29-04-2019
+        $this->db->select('
+            portal_job_applications.sid,
+            portal_job_applications.email,
+            portal_job_applications.first_name,
+            portal_job_applications.last_name,
+            portal_applicant_jobs_list.job_sid,
+            portal_job_applications.phone_number,
+            portal_job_applications.city,
+            portal_job_applications.resume,
+            portal_job_listings.Title,
+            portal_applicant_jobs_list.desired_job_title,
+            portal_job_applications.desired_job_title as d2,
+        ');
+        $this->db->where('portal_applicant_jobs_list.sid', $applicantJobListId);
+        $this->db->where('portal_applicant_jobs_list.company_sid', $companyId);
+        // Added on: 29-04-2019
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid  = portal_job_applications.sid', 'inner');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+        $records_obj = $this->db->get('portal_applicant_jobs_list');
+        $record_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        //
+        if ($record_arr) {
+            //
+            $record_arr["job_title"] = "";
+            // set the job title
+            if ($record_arr["job_sid"]) {
+                $record_arr["job_title"] = $record_arr["Title"];
+            } elseif ($record_arr["desired_job_title"]) {
+                $record_arr["job_title"] = $record_arr["desired_job_title"];
+            } elseif ($record_arr["d2"]) {
+                $record_arr["job_title"] = $record_arr["d2"];
+            }
+        }
+        return $record_arr;
     }
 
     public function save_message($product_data)
