@@ -613,7 +613,6 @@ class Send_manual_email extends Public_Controller
             $message_data['date']         = getSystemDate();
             $message_data['contact_name'] = $applicant_data["first_name"] . ' ' . $applicant_data["last_name"];
             $message_data['company_sid']  = $company_sid;
-            $message_data['job_id']       = $jobId ;
             $message_data['identity_key'] = generateRandomString(48);
             //
             $secret_key = $message_data['identity_key'] . "__";
