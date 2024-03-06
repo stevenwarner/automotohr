@@ -689,30 +689,32 @@ if ($user_type == 'applicant') {
                                         <button type="button" class="btn btn-success" id="add_custom_item_dtn">Add Custom Item To Bring</button>
                                         <hr />
                                         <div class="row grid-columns" id="custom_office_item_section">
-                                            <?php if (!empty($what_to_bring)) { ?>
-                                                <?php foreach ($what_to_bring as $key => $item) { ?>
-                                                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
-                                                        <label class="package_label" for="item_<?php echo $item['sid']; ?>">
-                                                            <div class="img-thumbnail text-center package-info-box">
-                                                                <figure>
-                                                                    <i class="fa fa-star"></i>
-                                                                </figure>
-                                                                <div class="caption">
-                                                                    <h3>
-                                                                        <strong><?php echo $item['item_title']; ?></strong>
-                                                                        <br />
-                                                                        <small>
-                                                                            <?php echo $item['item_description']; ?>
-                                                                        </small>
-                                                                    </h3>
-                                                                    <hr />
+                                            <?php if (!empty($what_to_bring) || !empty($custom_office_items)) { ?>
+                                                <?php if ($what_to_bring) { ?>
+                                                    <?php foreach ($what_to_bring as $key => $item) { ?>
+                                                        <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
+                                                            <label class="package_label" for="item_<?php echo $item['sid']; ?>">
+                                                                <div class="img-thumbnail text-center package-info-box">
+                                                                    <figure>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </figure>
+                                                                    <div class="caption">
+                                                                        <h3>
+                                                                            <strong><?php echo $item['item_title']; ?></strong>
+                                                                            <br />
+                                                                            <small>
+                                                                                <?php echo $item['item_description']; ?>
+                                                                            </small>
+                                                                        </h3>
+                                                                        <hr />
+                                                                    </div>
+                                                                    <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
                                                                 </div>
-                                                                <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
-                                                            </div>
-                                                        </label>
-                                                    </div>
+                                                            </label>
+                                                        </div>
+                                                    <?php } ?>
                                                 <?php } ?>
-                                                <?php if (!empty($custom_office_items)) { ?>
+                                                <?php if ($custom_office_items) { ?>
                                                     <?php foreach ($custom_office_items as $key => $custom_item) { ?>
                                                         <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
                                                             <label class="package_label" for="custom_item_<?php echo $custom_item['sid']; ?>">
