@@ -384,7 +384,7 @@
                                         if (check_access_permissions_for_view($security_details, 'send_bulk_email')) { ?>
                                             <li><a href="javascript:void(0);" class="btn btn-success" id="send_bulk_email">Send Bulk Email</a></li>
                                         <?php } ?>
-                                        <?php if (in_array($session['company_detail']['sid'], [15708, 8578, 51])) { ?>   
+                                        <?php if (check_access_permissions_for_view($security_details, 'send_still_interested_email')) {?>   
                                         <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
                                         <?php } ?>   
                                         <!--                                        <li><a href="javascript:void(0);" class="btn btn-primary" id="send_candidate_email">Send Candidate Notification</a></li>-->
