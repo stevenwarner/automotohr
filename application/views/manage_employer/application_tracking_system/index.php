@@ -485,7 +485,6 @@
                                         $employer_job['job_title'] .= ', ' . db_get_state_name($employer_job['Location_State'])['state_name'];
                                     }
                                     ?>
-                                    <?php //_e($employer_job,true); ?>
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
                                                                                                                         echo strtolower(preg_replace('/[^a-z]/i', '', $employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
@@ -2990,68 +2989,6 @@
             }
         }
     }
-
-
-
-    //
-    $('#send_still_interested_email').click(function() {
-        if ($(".ej_checkbox:checked").size() > 0) {
-            alertify.confirm('Confirmation', "Are you sure you want to send still interested email to selected Applicant(s)?",
-                function() {
-                    var ids = [{}];
-                    var counter = 0;
-                    $.each($(".ej_checkbox:checked"), function() {
-                        ids[counter++] = $(this).val();
-                    });
-
-                    var ids = [{}];
-                    var list_ids = [{}];
-                    var counter = 0;
-                    var job_titles = [{}];
-                    var job_ids = [{}];
-
-                    $.each($(".ej_checkbox:checked"), function() {
-                        job_titles[counter] = $(this).attr('data-job_title');
-                        ids[counter] = $(this).val();
-                        list_ids[counter++] = $(this).attr('data-list');
-                        job_ids[counter] = $(this).attr('data-job_id');
-                    });
-
-                    var form_data = new FormData();
-                    form_data.set('ids', ids);
-                    form_data.set('list_ids', list_ids);
-                    form_data.set('job_titles', job_titles);
-                    form_data.set('job_ids', job_ids);
-
-                    $('#candidate-loader').show();
-                    url_to = "<?= base_url() ?>send_manual_email/send_still_interested_email";
-                    $.ajax({
-                        url: url_to,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        type: 'post',
-                        data: form_data,
-                        success: function(response) {
-                            $('#candidate-loader').hide();
-                            alertify.success('Success: Email sent to selected applicants.');
-                        },
-                        error: function() {}
-                    });
-
-                },
-                function() {
-                    alertify.error('Cancelled');
-                }).set('labels', {
-                ok: 'Yes',
-                cancel: 'No'
-            });
-        } else {
-            alertify.alert('Send Still Interested Email Error', 'Please select Applicant(s) to send Are You Still Interested  email.');
-        }
-
-    });
-
 </script>
 
 
@@ -3775,6 +3712,56 @@ $this->session->set_userdata('ats_params', $_SERVER['REQUEST_URI']);
     $("#fair-type").change(function() {
         $('#app-type').val('Job Fair');
     });
+</script>
+
+<script>
+    $(function() {
+        //
+        $('#send_still_interested_email').click(function() {
+            //
+            if ($(".ej_checkbox:checked").size() === 0) {
+                return _error(
+                    "Please select at least one applicant."
+                );
+            }
+
+            return _confirm(
+                'Do you confirm your intention to dispatch the message "Are You Still Interested"?',
+                sendEmailsToSelectedApplicants
+            );
+        });
+
+
+        function sendEmailsToSelectedApplicants() {
+            //
+            let selectedApplicantIds = [];
+            //
+            $('input[name="ej_check[]"]:checked').map(function() {
+                selectedApplicantIds.push(
+                    $(this).data('list')
+                );
+            });
+            $('#candidate-loader').show();
+            //
+            const formData = new FormData();
+            //
+            formData.append("applicant_ids", selectedApplicantIds);
+            //
+            $.ajax({
+                url: "<?= base_url() ?>send_manual_email/send_still_interested_email",
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'post',
+                data: formData,
+                success: function(response) {
+                    $('#candidate-loader').hide();
+                    _success('Success: Email sent to selected applicants.');
+                },
+                error: function() {}
+            });
+        }
+    })
 </script>
 
 <?php $this->load->view('iframeLoader'); ?>

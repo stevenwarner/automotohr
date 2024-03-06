@@ -533,35 +533,66 @@ class Send_manual_email extends Public_Controller
     ///
     function send_still_interested_email()
     {
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return SendResponse(400, [
+                "errors" => [
+                    "Session is expired."
+                ]
+            ]);
+        }
 
-        $data = $this->session->userdata('logged_in');
-        $company_detail = $data['company_detail'];
-        $company_sid    = $company_detail['sid'];
-        $company_name   = $company_detail['CompanyName'];
-        $employer_id    = $data['employer_detail']['sid'];
-        $applicant_ids  = explode(',', $this->input->post('ids'));
-        $job_titles     = explode(',', $this->input->post('job_titles'));
-        $job_ids        = explode(',', $this->input->post('job_ids'));
+        // set post
+        $post = $this->input->post(null, true);
+        //
+        if (!$post["applicant_ids"]) {
+            return SendResponse(400, [
+                "errors" => [
+                    "Data index is missing."
+                ]
+            ]);
+        }
+        //
+        $applicantIds = explode(",", $post["applicant_ids"]);
+        //
+        if (!$applicantIds) {
+            return SendResponse(400, [
+                "errors" => [
+                    "Data index is missing."
+                ]
+            ]);
+        }
+        // set session
+        $session = $this->session->userdata('logged_in');
+        // set company details
+        $company_sid = $session["company_detail"]["sid"];
+        $company_name = $session["company_detail"]["CompanyName"];
         //
         $fromArray = array('{{company_name}}', '{{first_name}}', '{{last_name}}', '{{job_title}}', '{{applicant_name}}', '{{email}}');
         //
         $primary_admin_email = FROM_EMAIL_INFO;
+        //
         $this->portal_email_templates_model->check_default_tables($company_sid, $primary_admin_email, $company_name);
         //
-        $templateSid = $this->portal_email_templates_model->check_admin_template_exists(ARE_YOU_STILL_INTERESTED, $company_sid)[0]['sid'];
-        $still_interested_email_template = $this->portal_email_templates_model->get_portal_email_template_by_Id($templateSid);
+        $still_interested_email_template = $this->portal_email_templates_model->get_portal_email_template_by_Id(
+            $this->portal_email_templates_model->check_admin_template_exists(ARE_YOU_STILL_INTERESTED, $company_sid)[0]['sid']
+        );
         //
-        $i = 0;
+        $message_hf                   = message_header_footer_domain($company_sid, $company_name);
         //
-        foreach ($applicant_ids as $applicant_id) {
-            $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
-            $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
-            $jobId           = isset($job_ids[$i]) ? $job_ids[$i] : 0;
-
-            $applicant_fname = $applicant_data['first_name'];
-            $applicant_lname = $applicant_data['last_name'];
+        foreach ($applicantIds as $applicantId) {
+            // get the details
+            $applicant_data  = $this->portal_email_templates_model->getApplicantDataByJobId($applicantId, $company_sid);
             //
-            $toArray = array($company_name, $applicant_fname, $applicant_lname, $job_title, $applicant_fname . ' ' . $applicant_lname, $applicant_data['email']);
+            $toArray = array(
+                $company_name,
+                $applicant_data["first_name"],
+                $applicant_data["last_name"],
+                $applicant_data["job_title"],
+                $applicant_data["first_name"] . ' ' . $applicant_data["last_name"],
+                $applicant_data['email']
+            );
+            //
             $subject = $still_interested_email_template['subject'];
             $body    = $still_interested_email_template['message_body'];
             //
@@ -569,38 +600,34 @@ class Send_manual_email extends Public_Controller
             replace_magic_quotes($body, $fromArray, $toArray);
             //
             $from_name                    = $company_name;
-            $message_hf                   = message_header_footer_domain($company_sid, $company_name);
             //
             $message_data = [];
-            $message_data['from_id']      = $employer_id;
+            $message_data['from_id']      = $session["employer_detail"]["sid"];
             $message_data['to_id']        = $applicant_data['email'];
             $message_data['from_type']    = 'employer';
             $message_data['to_type']      = 'applicant';
             $message_data['users_type']   = 'employee';
             $message_data['subject']      = $subject;
             $message_data['message']      = $body;
-            $message_data['date']         = date('Y-m-d H:i:s');
-            $message_data['contact_name'] = $applicant_fname . ' ' . $applicant_lname;
+            $message_data['job_id']      = $applicant_data["job_sid"] ? $applicant_data["job_sid"] : -1;
+            $message_data['date']         = getSystemDate();
+            $message_data['contact_name'] = $applicant_data["first_name"] . ' ' . $applicant_data["last_name"];
             $message_data['company_sid']  = $company_sid;
-            $message_data['job_id']       = $jobId ;
             $message_data['identity_key'] = generateRandomString(48);
             //
             $secret_key = $message_data['identity_key'] . "__";
             //
-            $body = $message_hf['header'] 
-                    . $body
-                    . $message_hf['footer']
-                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                    . $secret_key . '</div>';
+            $body = $message_hf['header']
+                . $body
+                . $message_hf['footer']
+                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                . $secret_key . '</div>';
             //
             log_and_sendEmail(REPLY_TO, $applicant_data['email'], $subject, $body, $from_name);
             //
             $this->portal_email_templates_model->save_message($message_data);
-            //
-            $i++;
-
         }
 
+        echo "success";
     }
-  
 }
