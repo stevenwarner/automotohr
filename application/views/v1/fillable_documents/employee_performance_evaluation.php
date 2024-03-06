@@ -41,12 +41,10 @@ if ($document['form_input_data'] == '' || $document['form_input_data'] == null) 
 }
 
 $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
-//_e($sectionsdata, true);
 
 ?>
 <div class="row">
     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-
         <div style="text-align: left; padding-right: 20px; padding-left: 15px;">
             <h3>Eemployee Performance Evaluation </h3>
             <strong> How to complete the Employee Performance Evaluation Process:
@@ -84,12 +82,9 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
 <div class="row" style="text-align: left;">
     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
 
-     <!-- Section1 Start -->
-
-        <?php if ($sectionsdata['section1']['status'] == 'completed----') { ?>
-
+        <!-- Section1 Start -->
+        <?php if ($sectionsdata['section1']['status'] == 'completed') { ?>
             <section class="pdf-cover-page">
-
                 <table class="table table-border-collapse">
                     <tbody>
 
@@ -99,115 +94,99 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                 </strong>
                             </td>
                         </tr>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <table class="table" style="border: 1px solid;   border-collapse: collapse;">
                                     <tbody>
-
                                         <tr>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee Name <span class="staric">*</span></strong>
+                                                <strong> Employee Name</strong>
                                             </td>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Job Title <span class="staric">*</span></strong>
+                                                <strong> Job Title</strong>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empName']; ?>" name="short_textbox_0" id="short_textbox_0_id" data-type='text' autocomplete="off" />
+                                                <?php echo $sectionsdata['section1']['data']['empName'] ? $sectionsdata['section1']['data']['empName'] : ''; ?>
                                             </td>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
 
-                                                <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empJobTitle']; ?>" name="short_textbox_1" id="short_textbox_1_id" data-type='text' autocomplete="off" />
+                                                <?php echo $sectionsdata['section1']['data']['empJobTitle'] ? $sectionsdata['section1']['data']['empJobTitle'] : ''; ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <strong> Department</strong>
+
+                                            </td>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <strong> Manager</strong>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Department <span class="staric">*</span></strong>
+                                                <?php echo $sectionsdata['section1']['data']['empDepartment'] ? $sectionsdata['section1']['data']['empDepartment'] : ''; ?>
+                                            </td>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <?php echo $sectionsdata['section1']['data']['empManager'] ? $sectionsdata['section1']['data']['empManager'] : ''; ?>
+
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <strong> Hire Date with DeFOUW Automotive</strong>
 
                                             </td>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Manager <span class="staric">*</span></strong>
+                                                <strong> Start Date in Current Position</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <?php echo $sectionsdata['section1']['data']['empHireDate'] ? $sectionsdata['section1']['data']['empHireDate'] : ''; ?>
+
+                                            </td>
+                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                <?php echo $sectionsdata['section1']['data']['empStartDate'] ? $sectionsdata['section1']['data']['empStartDate'] : ''; ?>
+
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empDepartment']; ?>" name="short_textbox_2" id="short_textbox_2_id" data-type='text' autocomplete="off" />
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox" type="text" value="<?= $formInputData['short_textbox_3'] ? $formInputData['short_textbox_3'] : '' ?>" name="short_textbox_3" id="short_textbox_3_id" data-type='text' autocomplete="off" />
-
-                                            </td>
-                                        </tr>
-
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Hire Date with DeFOUW Automotive <span class="staric">*</span></strong>
+                                                <strong> Review Period Start/strong>
 
                                             </td>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Start Date in Current Position <span class="staric">*</span></strong>
+                                                <strong> Review Period End</strong>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_4'] ? $formInputData['short_textbox_4'] : '' ?>" name="short_textbox_4" id="short_textbox_4_id" data-type='text' autocomplete="off" />
-
-
+                                                <?php echo $sectionsdata['section1']['data']['reviewPeriodStart'] ? $sectionsdata['section1']['data']['reviewPeriodStart'] : ''; ?>
                                             </td>
                                             <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_5'] ? $formInputData['short_textbox_5'] : '' ?>" name="short_textbox_5" id="short_textbox_5_id" data-type='text' autocomplete="off" />
-
-                                            </td>
-                                        </tr>
-
-
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Review Period Start <span class="staric">*</span></strong>
-
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Review Period End <span class="staric">*</span></strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>" name="short_textbox_6" id="short_textbox_6_id" data-type='text' autocomplete="off" />
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="short_textbox_7" id="short_textbox_7_id" data-type='text' autocomplete="off" />
+                                                <?php echo $sectionsdata['section1']['data']['reviewPeriodEnd'] ? $sectionsdata['section1']['data']['reviewPeriodEnd'] : ''; ?>
                                             </td>
                                         </tr>
 
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
-
-
             <section class="pdf-cover-page">
-
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Rate the employee in each area below. Comments are required for each section. </strong><br>
-
                                 <strong style="font-size: 14px;"> POSITION KNOWLEDGE: </strong> To what level is this employee knowledgeable of the job duties of the position to include methods, procedures, standard practices, and techniques? This may have been acquired through formal training, education and/or experience.
-
                             </td>
                         </tr>
 
@@ -229,51 +208,39 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             </td>
 
                                         </tr>
-
-
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeBelow'] == '1' ? 'checked' : '' ?> disabled>
 
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_1" id="checkbox_1_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeSufficient'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_2" id="checkbox_2_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeExceptionally'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_0_id" name="long_textbox_0" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_0_id_sec'> </div>
-
+                                                <strong>Comment:</strong> <br>
+                                                <?php echo $sectionsdata['section1']['data']['knowledgeComment'] ? $sectionsdata['section1']['data']['knowledgeComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
-
-
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s position knowledge be improved?. <?= $formInputData['short_textbox_9'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quantity of work produced.
-
                             </td>
                         </tr>
 
@@ -293,37 +260,29 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Output consistently exceeds that required of the position.</strong>
                                             </td>
-
                                         </tr>
-
-
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_3" id="checkbox_3_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputBelow'] == '1' ? 'checked' : '' ?> disabled>
 
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_4" id="checkbox_4_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputMeets'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_5" id="checkbox_5_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputConsistently'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
-
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_1_id" name="long_textbox_1" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_1_id_sec'> </div>
+                                                <strong>Comment:</strong> <br>
+                                                <?php echo $sectionsdata['section1']['data']['outputComment'] ? $sectionsdata['section1']['data']['outputComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
@@ -331,16 +290,12 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_11'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quality of work produced in accordance with requirements for accuracy, completeness, and attention to detail.
-
                             </td>
                         </tr>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -357,42 +312,32 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Quality of work consistently exceeds position requirements.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_6" id="checkbox_6_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_7" id="checkbox_7_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityMeets'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
-
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_8" id="checkbox_8_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityConsistently'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-
-                                                <textarea id="long_textbox_2_id" name="long_textbox_2" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_2_id_sec'> </div>
+                                                <strong>Comment:</strong>
+                                                <?php echo $sectionsdata['section1']['data']['qualityComment'] ? $sectionsdata['section1']['data']['qualityComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
-
-
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
@@ -400,9 +345,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_13'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> INTERPERSONAL RELATIONS: </strong> o what level does this individual demonstrate cooperative behavior and contribute to a supportive work environment?.
-
                             </td>
                         </tr>
 
@@ -413,7 +356,6 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee is frequently non-supportive. Improvement is mandatory. </strong>
-
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee adequately contributes to supportive environment.</strong>
@@ -422,34 +364,27 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee consistently contributes to supportive work environment.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_9" id="checkbox_9_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_10" id="checkbox_10_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequately'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_11" id="checkbox_11_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistently'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-
-                                                <textarea id="long_textbox_3_id" name="long_textbox_3" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_3_id_sec'> </div>
-
+                                                <strong>Comment:</strong>
+                                                <?php echo $sectionsdata['section1']['data']['employeeComment'] ? $sectionsdata['section1']['data']['employeeComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
@@ -464,9 +399,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
-
                             </td>
                         </tr>
 
@@ -477,7 +410,6 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Level of mission focus is often below the required/acceptable standard. Improvement is mandatory. </strong>
-
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee adequately contributes to high quality mission.</strong>
@@ -486,38 +418,29 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee consistently demonstrates exceptional commitment to the mission.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_12" id="checkbox_12_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionBelow'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_13" id="checkbox_13_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionHigh'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
-
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_14" id="checkbox_14_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionExceptional'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-
-                                                <textarea id="long_textbox_4_id" name="long_textbox_4" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_4_id_sec'> </div>
-
+                                                <strong>Comment:</strong> <br>
+                                                <?php echo $sectionsdata['section1']['data']['missionComment'] ? $sectionsdata['section1']['data']['missionComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
@@ -525,16 +448,12 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s customer service skills/delivery be improved?. <?= $formInputData['short_textbox_17'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> DEPENDABILITY: </strong> To what level is the employee dependable; How often does the employee show up to work on time and complete their scheduled shifts? Can the employee be counted on to complete tasks and meet deadlines consistently?
-
                             </td>
                         </tr>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -551,49 +470,41 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee consistently on time, at work and completes deadlines ahead of schedule.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_15" id="checkbox_15_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeLate'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_16" id="checkbox_16_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAttends'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_17" id="checkbox_17_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOnTime'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_5_id" name="long_textbox_5" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_5_id_sec'> </div>
+                                                <strong>Comment:</strong><br>
+                                                <?php echo $sectionsdata['section1']['data']['employeeTimeComment'] ? $sectionsdata['section1']['data']['employeeTimeComment'] : ''; ?>
                                             </td>
                                         </tr>
 
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
-
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">How may the employee’s dependability be improved?. <?= $formInputData['short_textbox_19'] ? $formInputData['short_textbox_19'] : '' ?> </strong><br>
-
                                 <strong style="font-size: 14px;"> ADHERENCE TO POLICY & PROCEDURE: </strong> To what level does the employee adhere to standard operating policies and procedures?
-
                             </td>
                         </tr>
 
@@ -613,28 +524,24 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee is consistently exceptional in following standard operating policies and procedures..</strong>
                                             </td>
-
                                         </tr>
-
-
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_18" id="checkbox_18_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_19" id="checkbox_19_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAdheres'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_20" id="checkbox_20_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistentlyExceptional'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_6_id" name="long_textbox_6" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_6_id_sec'> </div>
+                                                <strong>Comment:</strong><br>
+                                                <?php echo $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] ? $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] : ''; ?>
                                             </td>
                                         </tr>
 
@@ -673,36 +580,30 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee is consistently exceptional in meeting performance standard.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_21" id="checkbox_21_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_22" id="checkbox_22_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandardAbove'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
 
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_23" id="checkbox_23_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandard'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_7_id" name="long_textbox_7" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_7_id_sec'> </div>
+                                                <strong>Comment:</strong>
+                                                <?php echo $sectionsdata['section1']['data']['employeeOutlinedComment'] ? $sectionsdata['section1']['data']['employeeOutlinedComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
@@ -710,7 +611,6 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse" style="margin-top: -10px;">
                     <tbody>
-
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
@@ -725,7 +625,6 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
-
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee adequately meets standard as outlined above.</strong>
@@ -734,53 +633,43 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <td style="border: 1px solid; font-size: 14px;">
                                                 <strong> Employee is consistently exceptional in meeting performance standard.</strong>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_24" id="checkbox_24_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_25" id="checkbox_25_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedStandard'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
-
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_26" id="checkbox_26_id" value="" class="counseling user_checkbox" data-type='checkbox'>
+                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedExceptional'] == '1' ? 'checked' : '' ?> disabled>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment: <span class="staric">*</span></strong>
-                                                <textarea id="long_textbox_8_id" name="long_textbox_8" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_8_id_sec'> </div>
+                                                <strong>Comment:</strong><br>
+                                                <?php echo $sectionsdata['section1']['data']['employeePerformanceComment'] ? $sectionsdata['section1']['data']['employeePerformanceComment'] : ''; ?>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                                 <strong>How may employee’s performance in meeting this standard be improved?</strong> <?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>
                                             </td>
-
                                         </tr>
-
 
                                         <tr>
                                             <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Managers Additional Comments for the Review Period: </strong>
-                                                <textarea id="long_textbox_9_id" name="long_textbox_9" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'></textarea>
-                                                <div id='long_textbox_9_id_sec'> </div>
+                                                <strong>Managers Additional Comments for the Review Period: </strong><br><br>
+                                                <?php echo $sectionsdata['section1']['data']['managersAdditionalComments'] ? $sectionsdata['section1']['data']['managersAdditionalComments'] : ''; ?>
                                             </td>
                                         </tr>
 
                                     </tbody>
                                 </table>
                         </tr>
-
                     </tbody>
                 </table>
             </section>
@@ -791,7 +680,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
         <section class="pdf-cover-page">
             <table class="table table-border-collapse">
                 <?php
-               // $managerSectionReadonly = 'disabled';
+                // $managerSectionReadonly = 'disabled';
                 $managerSectionReadonly = '';
 
                 ?>
@@ -875,13 +764,11 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                 </tbody>
                             </table>
                     </tr>
-
                 </tbody>
             </table>
         </section>
 
         <section class="pdf-cover-page">
-
             <table class="table table-border-collapse">
                 <tbody>
 
@@ -1045,8 +932,8 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                         <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                             <strong> Have you and your manager reviewed your job description for this review period? </strong><br>
                                             <select class="invoice-fields js_select_document" name="select2_manager_reviewed" id="manager_reviewed" data-type='text' required>
-                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD0']==1?"selected":"";?>>Yes</option>
-                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD0']!=1?"selected":"";?>>No</option>
+                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD0'] == 1 ? "selected" : ""; ?>>Yes</option>
+                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD0'] != 1 ? "selected" : ""; ?>>No</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -1056,9 +943,9 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                             <strong> 2.Do you have access to equipment and resources necessary to perform your job function?
                                                 (If No, please list the equipment you deem necessary subject to Managers approval and budgeting) </strong><br>
 
-                                            <select class="invoice-fields" name="section_equipment_access" id="equipment_access"  required>
-                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD1']==1?"selected":"";?>>Yes</option>
-                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD1']!=1?"selected":"";?>>No</option>
+                                            <select class="invoice-fields" name="section_equipment_access" id="equipment_access" required>
+                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD1'] == 1 ? "selected" : ""; ?>>Yes</option>
+                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD1'] != 1 ? "selected" : ""; ?>>No</option>
                                             </select>
                                         </td>
                                     </tr>
@@ -1067,8 +954,8 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                                         <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                             <strong> 3.Is there any additional support or training you feel would be helpful for DeFOUW Automotive to provide for you to help you succeed in your current role?</strong><br>
                                             <select class="invoice-fields js_select_document" name="additional_support" id="additional_support" data-type='text' required>
-                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD2']==1?"selected":"";?>>Yes</option>
-                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD2']!=1?"selected":"";?>>No</option>
+                                                <option value="1" <?php echo $sectionsdata['section2']['data']['selectDD2'] == 1 ? "selected" : ""; ?>>Yes</option>
+                                                <option value="0" <?php echo $sectionsdata['section2']['data']['selectDD2'] != 1 ? "selected" : ""; ?>>No</option>
                                             </select>
                                     </tr>
 
@@ -1076,7 +963,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
 
                                         <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                             <strong>Employee Additional Comments:</strong> <br>
-                                            <textarea id="additional_comment" name="additional_comment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'><?php echo $sectionsdata['section2']['data']['additional_comment']?></textarea>
+                                            <textarea id="additional_comment" name="additional_comment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'><?php echo $sectionsdata['section2']['data']['additional_comment'] ?></textarea>
                                             <div id='section_additional_comment'></div>
                                         </td>
                                     </tr>
@@ -1090,48 +977,47 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
         <!-- Section 2 End -- -->
 
         <!-- Section 3 Start -->
-        <?php //if ($sectionsdata['section3']['status'] == 'completed') { ?>
+        <section class="pdf-cover-page">
+            <table class="table table-border-collapse">
+                <tbody>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">
+                                Section 3: The Year in Review </strong><br>
+                        </td>
+                    </tr>
 
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">
-                                    Section 3: The Year in Review </strong><br>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">
+                                Additional Comments, Feedback - Managers Comments: <br>
+                                <textarea id="section3ManagerComment" name="section3ManagerComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea' readonly><?php echo $sectionsdata['section3']['data']['section3ManagerComment'] ?></textarea>
+                                <div id='long_textbox_12_id_sec'></div>
 
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">
-                                    Additional Comments, Feedback - Managers Comments: <br>
-                                    <textarea id="section3ManagerComment" name="section3ManagerComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea' readonly><?php echo $sectionsdata['section3']['data']['section3ManagerComment']?></textarea>
-                                    <div id='long_textbox_12_id_sec'></div>
+                            </strong>
+                        </td>
+                    </tr>
 
-                                </strong>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td width="50%" style="border-top:0px;">
+                            <strong style="font-size: 14px;">
+                                Additional Comments, Feedback - Employee Comments: <span class="staric">*</span></strong> <br>
+                            <textarea id="section3EmployeeComment" name="section3EmployeeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'><?php echo $sectionsdata['section3']['data']['section3EmployeeComment'] ?></textarea>
+                            <div id='long_textbox_13_id_sec'></div>
+                            </strong>
+                        </td>
+                    </tr>
 
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">
-                                    Additional Comments, Feedback - Employee Comments: <span class="staric">*</span></strong>  <br>
-                                    <textarea id="section3EmployeeComment" name="section3EmployeeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea'><?php echo $sectionsdata['section3']['data']['section3EmployeeComment']?></textarea>
-                                    <div id='long_textbox_13_id_sec'></div>
-                                </strong>
-                            </td>
-                        </tr>
+                </tbody>
+            </table>
+        </section>
+        <?php //} 
+        ?>
 
-                    </tbody>
-                </table>
-            </section>
-        <?php //} ?>
-
-        <!-- Section 3 End -->
 
         <!-- Section 4 Start -->
-        <?php if ($sectionsdata['section4']['status'] == 'completed') { ?>
+        <?php if ($sectionsdata['section2']['status'] == 'completed' && $sectionsdata['section3']['status'] == 'completed') {
+        ?>
 
             <section class="pdf-cover-page">
                 <table class="table table-border-collapse">
@@ -1150,40 +1036,66 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee Date </strong>
+                                                <strong> Employee </strong>
 
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Manager Date. </strong>
+                                                <strong> Manager </strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border: 1px solid; font-size: 14px;"> Signature:
+                                                <?php if ($sectionsdata['section4']['data']['section4employeeSignature'] != '' || $sectionsdata['section4']['data']['section4employeeSignature'] != null) { ?>
+                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $sectionsdata['section4']['data']['section4employeeSignature']; ?>" />
+                                                <?php } else { ?>
+                                                    <a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="" id="draw_upload_img" />
+                                                <?php } ?>
+                                                <br>
+                                                <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4employeeSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4employeeSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
+
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4employeeSignature'] ? $sectionsdata['section4']['data']['section4employeeSignature'] : '' ?>" name="section4employeeSignature" id="section4employeeSignature" data-type='text' autocomplete="off" />
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4employeeSignatureDate'] ? $sectionsdata['section4']['data']['section4employeeSignatureDate'] : '' ?>" name="section4employeeSignatureDate" id="section4employeeSignatureDate" data-type='text' autocomplete="off" />
+
+                                            </td>
+                                            <td style="border: 1px solid; font-size: 14px;">
+                                                <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $sectionsdata['section4']['data']['section4managerSignature'] ? $sectionsdata['section4']['data']['section4managerSignature'] : ''; ?>" />
+                                                </span><br>
+                                                <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4employeeSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4employeeSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
+
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4managerSignature'] ? $sectionsdata['section4']['data']['section4managerSignature'] : '' ?>" name="section4managerSignature" id="section4managerSignature" data-type='text' autocomplete="off" />
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4managerSignatureDate'] ? $sectionsdata['section4']['data']['section4managerSignatureDate'] : '' ?>" name="section4managerSignatureDate" id="section4managerSignatureDate" data-type='text' autocomplete="off" />
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+
+                                            <td style="border: 1px solid; font-size: 14px;">
+                                                <strong> Next Level Approval</strong>
+                                            </td>
+                                            <td style="border: 1px solid; font-size: 14px;">
+                                                <strong> Human Resources</strong>
                                             </td>
                                         </tr>
 
                                         <tr>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_50'] ? $formInputData['short_textbox_50'] : '' ?>" name="short_textbox_50" id="short_textbox_50_id" data-type='text' autocomplete="off" />
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_51'] ? $formInputData['short_textbox_51'] : '' ?>" name="short_textbox_51" id="short_textbox_51_id" data-type='text' autocomplete="off" />
-                                            </td>
-                                        </tr>
+                                                <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $sectionsdata['section4']['data']['section4nextLevelSignature'] ? $sectionsdata['section4']['data']['section4nextLevelSignature'] : ''; ?>" />
+                                                </span><br>
+                                                <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4nextLevelSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4nextLevelSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
 
-                                        <tr>
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4nextLevelSignature'] ? $sectionsdata['section4']['data']['section4nextLevelSignature'] : '' ?>" name="section4nextLevelSignature" id="section4nextLevelSignature" data-type='text' autocomplete="off" />
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4nextLevelSignatureDate'] ? $sectionsdata['section4']['data']['section4nextLevelSignatureDate'] : '' ?>" name="section4nextLevelSignatureDate" id="section4nextLevelSignatureDate" data-type='text' autocomplete="off" />
 
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Next Level Approval Date </strong>
                                             </td>
                                             <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Human Resources Date. </strong>
-                                            </td>
-                                        </tr>
+                                                <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $sectionsdata['section4']['data']['section4hrSignature'] ? $sectionsdata['section4']['data']['section4hrSignature'] : ''; ?>" />
+                                                </span><br>
+                                                <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4hrSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4hrSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
 
-                                        <tr>
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4hrSignature'] ? $sectionsdata['section4']['data']['section4hrSignature'] : '' ?>" name="section4hrSignature" id="section4hrSignature" data-type='text' autocomplete="off" />
+                                                <input class="invoice-fields short_textbox " type="hidden" value="<?= $sectionsdata['section4']['data']['section4hrSignatureDate'] ? $sectionsdata['section4']['data']['section4hrSignatureDate'] : '' ?>" name="section4hrSignatureDate" id="section4hrSignatureDateDate" data-type='text' autocomplete="off" />
 
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_52'] ? $formInputData['short_textbox_52'] : '' ?>" name="short_textbox_52" id="short_textbox_52_id" data-type='text' autocomplete="off" />
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_53'] ? $formInputData['short_textbox_53'] : '' ?>" name="short_textbox_53" id="short_textbox_53_id" data-type='text' autocomplete="off" />
                                             </td>
                                         </tr>
 
@@ -1194,7 +1106,8 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                     </tbody>
                 </table>
             </section>
-        <?php } ?>
+        <?php }
+        ?>
 
         <!-- section 4 End -->
         <!-- Section 5 Start -->
@@ -1213,38 +1126,38 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
-                                <input class="invoice-fields short_textbox " type="text" value="<?= $formInputData['short_textbox_54'] ? $formInputData['short_textbox_54'] : '' ?>" name="short_textbox_54" id="short_textbox_54_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5currentRate'] ? $sectionsdata['section5']['data']['section5currentRate'] : ''; ?>" data-type='text' autocomplete="off" readonly />
                             </td>
                         </tr>
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
-                                <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_55'] ? $formInputData['short_textbox_55'] : '' ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5recommendedIncrease'] ? $sectionsdata['section5']['data']['section5recommendedIncrease'] : ''; ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" readonly />
                             </td>
                         </tr>
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Approved Amount:</strong>
-                                <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_56'] ? $formInputData['short_textbox_56'] : '' ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedAmount'] ? $sectionsdata['section5']['data']['section5approvedAmount'] : ''; ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" readonly />
                             </td>
                         </tr>
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Approved By:</strong>
-                                <input class="invoice-fields short_textbox  " type="text" value="<?= $formInputData['short_textbox_57'] ? $formInputData['short_textbox_57'] : '' ?>" name="short_textbox_57" id="short_textbox_57_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <img style="max-height: 75px" alt="" class="authorized_signature_img_1" src="<?php echo $sectionsdata['section5']['data']['section5approvedBySignature'] ? $sectionsdata['section5']['data']['section5approvedBySignature'] : ''; ?>">
                             </td>
                         </tr>
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Approved Date:</strong>
-                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_58'] ? $formInputData['short_textbox_58'] : '' ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" readonly />
                             </td>
                         </tr>
 
                         <tr>
                             <td width="50%" style="border-top:0px;">
                                 <strong style="font-size: 14px;">Effective Date of Increase:</strong>
-                                <input class="invoice-fields short_textbox date_picker " type="text" value="<?= $formInputData['short_textbox_59'] ? $formInputData['short_textbox_59'] : '' ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" <?php echo  $managerSectionReadonly; ?> />
+                                <input class="invoice-fields short_textbox" type="text" value="<?php echo $sectionsdata['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" readonly />
                             </td>
                         </tr>
 

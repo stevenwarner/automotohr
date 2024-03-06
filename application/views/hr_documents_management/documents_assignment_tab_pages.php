@@ -287,7 +287,7 @@ $noActionRequiredDocumentsList = [];
                                                                 <?php if ($document['performance_document_json'] != '') {
                                                                     $performanceDocumentData = json_decode($document['performance_document_json'], true);
                                                                 ?>
-                                                                    <?php if ($performanceDocumentData['section3']['status'] != 'completed') { ?>
+                                                                    <?php if ($performanceDocumentData['section3']['status'] != 'completed' && $performanceDocumentData['section1']['status'] == 'completed' ) { ?>
 
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                                         <a class="<?php echo $btn_show; ?> performance_doc_section3" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-managercomment="<?php echo $performanceDocumentData['section3']['data']['section3ManagerComment'] ? $performanceDocumentData['section3']['data']['section3ManagerComment'] : '' ?>" data-employeecomment="<?php echo $performanceDocumentData['section3']['data']['section3EmployeeComment'] ? $performanceDocumentData['section3']['data']['section3EmployeeComment'] : ''; ?>">
@@ -313,9 +313,9 @@ $noActionRequiredDocumentsList = [];
                                                                 <?php if ($document['performance_document_json'] != '') {
                                                                     $performanceDocumentData = json_decode($document['performance_document_json'], true);
                                                                 ?>
-                                                                    <?php if ($performanceDocumentData['section4']['status'] != 'completed' && $performanceDocumentData['section3']['status'] == 'completed' ) { ?>
+                                                                    <?php if ($performanceDocumentData['section4']['status'] != 'completed' && $performanceDocumentData['section3']['status'] == 'completed') { ?>
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section4" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-managercomment="<?php echo $performanceDocumentData['section3']['data']['section3ManagerComment'] ? $performanceDocumentData['section3']['data']['section3ManagerComment'] : '' ?>" data-employeecomment="<?php echo $performanceDocumentData['section3']['data']['section3EmployeeComment'] ? $performanceDocumentData['section3']['data']['section3EmployeeComment'] : ''; ?>">
+                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section4" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-section4employeeSignature="<?php echo $performanceDocumentData['section4']['data']['section4employeeSignature'] ? $performanceDocumentData['section4']['data']['section4employeeSignature'] : ''; ?>" data-section4employeeSignatureDate="<?php echo $performanceDocumentData['section4']['data']['section4employeeSignatureDate'] ? formatDateToDB($performanceDocumentData['section4']['data']['section4employeeSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section4managerSignature="<?php echo $performanceDocumentData['section4']['data']['section4managerSignature'] ? $performanceDocumentData['section4']['data']['section4managerSignature'] : ''; ?>" data-section4managerSignatureDate="<?php echo $performanceDocumentData['section4']['data']['section4managerSignatureDate'] ? formatDateToDB($performanceDocumentData['section4']['data']['section4managerSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section4nextLevelSignature="<?php echo $performanceDocumentData['section4']['data']['section4nextLevelSignature'] ? $performanceDocumentData['section4']['data']['section4nextLevelSignature'] : ''; ?>" data-section4nextLevelSignatureDate="<?php echo $performanceDocumentData['section4']['data']['section4nextLevelSignatureDate'] ? formatDateToDB($performanceDocumentData['section4']['data']['section4nextLevelSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section4hrSignature="<?php echo $performanceDocumentData['section4']['data']['section4hrSignature'] ? $performanceDocumentData['section4']['data']['section4hrSignature'] : ''; ?>" data-section4hrSignatureDate="<?php echo $performanceDocumentData['section4']['data']['section4hrSignatureDate'] ? formatDateToDB($performanceDocumentData['section4']['data']['section4hrSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>">
 
                                                                             <?php if ($performanceDocumentData['section4']['data']['section4EmployeeSignature'] == '') {
                                                                                 echo "Section 4 - Employee Not Completed";
@@ -336,6 +336,17 @@ $noActionRequiredDocumentsList = [];
 
                                                                         </a>
                                                                     <?php } ?>
+
+
+                                                                    <?php if ($performanceDocumentData['section5']['status'] != 'completed' && $performanceDocumentData['section4']['status'] == 'completed') { 
+                                                                    ?>
+                                                                    <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                    <a class="<?php echo $btn_show; ?> performance_doc_section5" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-section5approvedBySignature="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignature'] ? $performanceDocumentData['section5']['data']['section5approvedBySignature'] : ''; ?>" data-section5approvedBySignatureDate="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section5approvedAmount="<?php echo $performanceDocumentData['section5']['data']['section5approvedAmount'] ? $performanceDocumentData['section5']['data']['section5approvedAmount'] : ''; ?>" data-section5recommendedIncrease="<?php echo $performanceDocumentData['section5']['data']['section5recommendedIncrease'] ? $performanceDocumentData['section5']['data']['section5recommendedIncrease'] : ''; ?>" data-section5currentRate="<?php echo $performanceDocumentData['section5']['data']['section5currentRate'] ? $performanceDocumentData['section5']['data']['section5currentRate'] : ''; ?>"  data-section5IncreaseEffectiveDate="<?php echo $performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                        Section 5 - Not Completed
+                                                                    </a>
+                                                                    <?php } 
+                                                                    ?>
+
                                                                 <?php } ?>
 
 
@@ -2907,11 +2918,6 @@ $noActionRequiredDocumentsList = [];
 </div>
 
 
-
-
-
-
-
 <div id="performance_doc_section4_Modal" class="modal fade" role="dialog">
     <?php
     $userPrefillInfo  = [];
@@ -2925,18 +2931,64 @@ $noActionRequiredDocumentsList = [];
             </div>
             <div class="modal-body">
                 <div id="performance_doc_section1">
-                    <form id="employee_performance_doc_section3" enctype="multipart/form-data" method="POST">
-                        <input type="hidden" name="perform_action" value="employee_performance_doc_section3" />
-                        <input type="hidden" name="document_sid" id='section3_performance_document_sid' />
-                        <input type="hidden" name="employee_type" id='section3_employee_type' />
-                        <input type="hidden" name="section3_employee_sid" id='section3_employee_sid' />
+                    <form id="employee_performance_doc_section4" enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="perform_action" value="employee_performance_doc_section4" />
+                        <input type="hidden" name="document_sid" id='section4_performance_document_sid' />
+                        <input type="hidden" name="employee_type" id='section4_employee_type' />
+                        <input type="hidden" name="section4_employee_sid" id='section4_employee_sid' />
 
-                       ddfsdfsdfsdfsdfsf
+                        <input type="hidden" name="section4managerSignature" id='section3_authorized_signature_1' />
+                        <input type="hidden" name="section4nextLevelSignature" id='section3_authorized_signature_2' />
+                        <input type="hidden" name="section4hrSignature" id='section3_authorized_signature_3' />
+
+                        <section class="pdf-cover-page">
+                            <table class="table table-border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td style="border-top:0px;">
+                                            <strong>Employee Signature :</strong>
+                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="" id="section4employeeSignature" />
+                                            <br><br>
+                                            <strong> Signature Date : <span id="section4employeeSignatureDate"></span> </strong><br>
+                                        </td>
+
+                                        <td style="border-top:0px;">
+                                            <label> Manaer Signature :</label>
+                                            <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_1" data-key="1">
+                                                Create E-Signature
+                                            </a><img style="max-height: 75px" alt="" class="authorized_signature_img_1" id="section4managerSignature"><br><br>
+
+                                            <strong> Signature Date : </strong> <span id="section4managerSignatureDate"></span><br>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <label> Next Level Approval Signature:</label>
+                                            <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_2" data-key="2">
+                                                Create E-Signature
+                                            </a><img style="max-height: 75px" alt="" class="authorized_signature_img_2" id="section4nextLevelSignature"> <br><br>
+                                            <strong> Signature Date : </strong><span id="section4nextLevelSignatureDate"></span><br>
+                                        </td>
+
+                                        <td>
+                                            <label>Human Resources Signature:</label>
+                                            <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_3" data-key="3">
+                                                Create E-Signature
+                                            </a><img style="max-height: 75px" alt="" class="authorized_signature_img_3" id="section4hrSignature"> <br><br>
+                                            <strong> Signature Date : </strong><span id="section4hrSignatureDate"></span><br>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </section>
+
 
                         <hr />
                         <div class="row">
                             <div class="col-lg-12 text-center">
-                                <button id="performanceSection3Save" type="button" class="btn btn-success break-word-text">Save</button>
+                                <button id="performanceSection4Save" type="button" class="btn btn-success break-word-text">Save</button>
                                 <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
                             </div>
                         </div>
@@ -2951,6 +3003,88 @@ $noActionRequiredDocumentsList = [];
 </div>
 
 
+
+<div id="performance_doc_section5_Modal" class="modal fade" role="dialog">
+    <?php
+    $userPrefillInfo  = [];
+    $userPrefillInfo = get_employee_profile_info_detail($EmployeeSid, $Type);
+    ?>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Performance Section 5 Salary Recommendation</h4>
+            </div>
+            <div class="modal-body">
+                <div id="performance_doc_section1">
+                    <form id="employee_performance_doc_section5" enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="perform_action" value="employee_performance_doc_section5" />
+                        <input type="hidden" name="document_sid" id='section5_performance_document_sid' />
+                        <input type="hidden" name="employee_type" id='section5_employee_type' />
+                        <input type="hidden" name="section5_employee_sid" id='section5_employee_sid' />
+
+                        <input type="hidden" name="section5approvedBySignature" id='section5_authorized_signature_1' />
+
+                        <section class="pdf-cover-page">
+                            <table class="table table-border-collapse">
+                                <tbody>
+                                    <tr>
+                                        <td style="border-top:0px;">
+                                            <label> Employees Current Pay Rate: </label>
+                                            <input type="text" class="form-control" name="section5currentRate" id='section5currentRate' autocomplete="off"/>
+                                        </td>
+
+                                        <td style="border-top:0px;">
+                                            <label> Recommended Pay Increase: </label>
+                                            <input type="text" class="form-control" name="section5recommendedIncrease" id='section5recommendedIncrease' autocomplete="off" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <label> Approved Amount: </label>
+                                            <input type="text" class="form-control" name="section5approvedAmount" id='section5approvedAmount' autocomplete="off"/>
+                                        </td>
+
+                                        <td>
+                                            <label>Approved By:</label>
+                                            <a class="btn btn-success btn-sm jsSetAuthorizedSignature jsSetAuthorizedSignature_1" data-key="1">
+                                                Create E-Signature
+                                            </a><img style="max-height: 75px" alt="" class="authorized_signature_img_1" id="section5approvedBySignature"> <br><br>
+                                            <strong> Approved Date : </strong><span id="section5approvedBySignatureDate"></span><br>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td>
+                                            <label> Effective Date of Increase: </label>
+                                            <input type="text" class="form-control date_picker2" name="section5IncreaseEffectiveDate" id='section5IncreaseEffectiveDate' autocomplete="off"/>
+                                        </td>
+
+                                        <td></td>
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <hr />
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button id="performanceSection5Save" type="button" class="btn btn-success break-word-text">Save</button>
+                                <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     $('.js-ncd').text(<?= $ncd; ?>);
@@ -3005,7 +3139,6 @@ $noActionRequiredDocumentsList = [];
                     'document_sid': sid
                 };
                 var myUrl = '<?php echo base_url("hr_documents_management/handler"); ?>';
-
 
 
                 myRequest = $.ajax({

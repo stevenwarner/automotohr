@@ -90,6 +90,10 @@ class Fillable_documents extends Public_Controller
             $data['formInputData'] = json_decode(unserialize($document['form_input_data']), true);
         }
 
+        if($cocumentSlug='employee-performance-evaluation'){
+            $data['sectionsdata'] = employeePerformanceDocSectionsData($documentId);
+        }
+        
 
         $previewDoc = 'print_' . str_replace('-', '_', $cocumentSlug);
         $data['printDownload'] = $printDownload;
@@ -99,16 +103,20 @@ class Fillable_documents extends Public_Controller
     }
 
 
-    public function previeFillableSubmited($cocumentSlug,$documentId)
+    public function previeFillableSubmited($cocumentSlug, $documentId)
     {
         //
         $document = $this->fillable_documents_model->get_assigned_document($documentId);
         $data['document'] = $document;
         $data['formInputData'] = json_decode(unserialize($document['form_input_data']), true);
 
+        if($cocumentSlug='employee-performance-evaluation'){
+            $data['sectionsdata'] = employeePerformanceDocSectionsData($documentId);
+        }
+
         $previewDoc = 'hr_' . str_replace('-', '_', $cocumentSlug);
 
-        $this->load->view('v1/fillable_documents/' . $previewDoc,$data);
+        $this->load->view('v1/fillable_documents/' . $previewDoc, $data);
     }
 
 

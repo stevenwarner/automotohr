@@ -310,34 +310,26 @@
                         <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Tips: </strong>
                             The employee should have the Manager’s undivided attention during the performance evaluation meeting. The Manager should articulate the employee’s strengths and, if there are any improvement opportunities, the Manager should propose suggestions on how the employee can improve. During the dialog with the employee, the Manager will review the employee’s feedback on the form they filled out and that of the Manager. <br>
                             This performance evaluation discussion is intended to be a constructive exchange relative to the individual's past performance, improvement opportunities, and future expectations. It offers a chance for the employee to improve in areas that are needed. The dialogue should be a two-way conversation between the employee and the Manager.
-
                         </strong><br>
-
                     </td>
-
                 </tr>
             </tbody>
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
-
         <table class="table table-border-collapse">
             <tbody>
-
                 <tr>
                     <td width="50%" style="border-top:0px;"><br><br>
                         <strong style="font-size: 14px;">Manager Section 1: Employee Year in Review Evaluation
                         </strong>
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
                             <tbody>
-
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong> Employee Name</strong>
@@ -350,11 +342,11 @@
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_0'] ? $formInputData['short_textbox_0'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empName'] ? $sectionsdata['section1']['data']['empName'] : ''; ?>
 
                                     </td>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_1'] ? $formInputData['short_textbox_1'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empJobTitle'] ? $sectionsdata['section1']['data']['empJobTitle'] : ''; ?>
                                     </td>
                                 </tr>
 
@@ -370,14 +362,13 @@
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_2'] ? $formInputData['short_textbox_2'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empDepartment'] ? $sectionsdata['section1']['data']['empDepartment'] : ''; ?>
 
                                     </td>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_3'] ? $formInputData['short_textbox_3'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empManager'] ? $sectionsdata['section1']['data']['empManager'] : ''; ?>
                                     </td>
                                 </tr>
-
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
@@ -391,15 +382,13 @@
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_4'] ? $formInputData['short_textbox_4'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empHireDate'] ? $sectionsdata['section1']['data']['empHireDate'] : ''; ?>
 
                                     </td>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_5'] ? $formInputData['short_textbox_5'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['empStartDate'] ? $sectionsdata['section1']['data']['empStartDate'] : ''; ?>
                                     </td>
                                 </tr>
-
-
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
@@ -413,37 +402,31 @@
 
                                 <tr>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['reviewPeriodStart'] ? $sectionsdata['section1']['data']['reviewPeriodStart'] : ''; ?>
 
                                     </td>
                                     <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['reviewPeriodEnd'] ? $sectionsdata['section1']['data']['reviewPeriodEnd'] : ''; ?>
                                     </td>
                                 </tr>
 
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
-
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
 
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Rate the employee in each area below. Comments are required for each section. </strong><br>
-
                         <strong style="font-size: 14px;"> POSITION KNOWLEDGE: </strong> To what level is this employee knowledgeable of the job duties of the position to include methods, procedures, standard practices, and techniques? This may have been acquired through formal training, education and/or experience.
-
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -462,24 +445,24 @@
                                     </td>
 
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_0'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeBelow'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_1'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeSufficient'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_2'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeExceptionally'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                        <strong>Comment:</strong> <br><?= $formInputData['long_textbox_0'] ? $formInputData['long_textbox_0'] : '' ?>
+                                        <strong>Comment:</strong> <br>
+                                        <?php echo $sectionsdata['section1']['data']['knowledgeComment'] ? $sectionsdata['section1']['data']['knowledgeComment'] : ''; ?>
+
                                     </td>
 
                                 </tr>
@@ -487,12 +470,9 @@
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
@@ -524,25 +504,23 @@
                                     </td>
 
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_3'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputBelow'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_4'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputMeets'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_5'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputConsistently'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong> <br>
-                                        <?= $formInputData['long_textbox_1'] ? $formInputData['long_textbox_1'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['outputComment'] ? $sectionsdata['section1']['data']['outputComment'] : ''; ?>
                                     </td>
 
                                 </tr>
@@ -550,15 +528,12 @@
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_11'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
@@ -567,7 +542,6 @@
 
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -586,18 +560,16 @@
                                     </td>
 
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_6'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_7'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityMeets'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_8'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityConsistently'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -605,33 +577,26 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_2'] ? $formInputData['long_textbox_2'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['qualityComment'] ? $sectionsdata['section1']['data']['qualityComment'] : ''; ?>
                                     </td>
 
                                 </tr>
-
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_13'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                         <strong style="font-size: 14px;"> INTERPERSONAL RELATIONS: </strong> o what level does this individual demonstrate cooperative behavior and contribute to a supportive work environment?.
-
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -648,32 +613,26 @@
                                     <td style="border: 1px solid; font-size: 14px;">
                                         <strong> Employee consistently contributes to supportive work environment.</strong>
                                     </td>
-
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_7'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_8'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequately'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_9'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistently'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
-
                                 <tr>
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_3'] ? $formInputData['long_textbox_3'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['employeeComment'] ? $sectionsdata['section1']['data']['employeeComment'] : ''; ?>
                                     </td>
-
                                 </tr>
-
                             </tbody>
                         </table>
                 </tr>
@@ -682,16 +641,13 @@
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-
                         <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
-
                     </td>
                 </tr>
 
@@ -711,20 +667,18 @@
                                     <td style="border: 1px solid; font-size: 14px;">
                                         <strong> Employee consistently demonstrates exceptional commitment to the mission.</strong>
                                     </td>
-
                                 </tr>
-
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_10'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionBelow'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_11'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionHigh'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_13'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionExceptional'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -732,11 +686,9 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_4'] ? $formInputData['long_textbox_4'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['missionComment'] ? $sectionsdata['section1']['data']['missionComment'] : ''; ?>
                                     </td>
-
                                 </tr>
-
                             </tbody>
                         </table>
                 </tr>
@@ -745,11 +697,9 @@
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">How may the employee’s customer service skills/delivery be improved?. <?= $formInputData['short_textbox_17'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
@@ -766,7 +716,6 @@
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
                                         <strong> Employee is late, absent, misses deadlines. Improvement is mandatory. </strong>
-
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
                                         <strong> Employee adequately attends work, rarely misses or late, meets deadlines.</strong>
@@ -777,18 +726,16 @@
                                     </td>
 
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_14'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeLate'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_15'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAttends'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_16'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOnTime'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -796,7 +743,7 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_5'] ? $formInputData['long_textbox_5'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['employeeTimeComment'] ? $sectionsdata['section1']['data']['employeeTimeComment'] : ''; ?>
                                     </td>
 
                                 </tr>
@@ -804,11 +751,9 @@
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
 
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
@@ -822,7 +767,6 @@
 
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -841,18 +785,16 @@
                                     </td>
 
                                 </tr>
-
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_15'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_16'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAdheres'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_18'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistentlyExceptional'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -860,19 +802,16 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_6'] ? $formInputData['long_textbox_6'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] ? $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] : ''; ?>
                                     </td>
 
                                 </tr>
-
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
 
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
@@ -886,7 +825,6 @@
 
                     </td>
                 </tr>
-
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <table class="table" style="border: 1px solid;   border-collapse: collapse;">
@@ -906,17 +844,16 @@
 
                                 </tr>
 
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_19'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_20'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandardAbove'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_21'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandard'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -924,11 +861,10 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_7'] ? $formInputData['long_textbox_7'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['employeeOutlinedComment'] ? $sectionsdata['section1']['data']['employeeOutlinedComment'] : ''; ?>
                                     </td>
 
                                 </tr>
-
                             </tbody>
                         </table>
                 </tr>
@@ -937,7 +873,6 @@
         </table>
     </section>
 
-
     <section class="pdf-cover-page">
         <table class="table table-border-collapse" style="margin-top: -10px;">
             <tbody>
@@ -945,9 +880,7 @@
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
-
                         <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_25'] ? $formInputData['short_textbox_25'] : '' ?>
-
                     </td>
                 </tr>
 
@@ -968,17 +901,16 @@
                                     </td>
                                 </tr>
 
-
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_22'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_23'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedStandard'] == '1' ? 'checked' : '' ?>>
                                     </td>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['checkbox_24'] == 'yes' ? 'Yes' : '' ?>
+                                        <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedExceptional'] == '1' ? 'checked' : '' ?>>
                                     </td>
                                 </tr>
 
@@ -986,10 +918,9 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Comment:</strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_8'] ? $formInputData['long_textbox_8'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['employeePerformanceComment'] ? $sectionsdata['section1']['data']['employeePerformanceComment'] : ''; ?>
                                     </td>
                                 </tr>
-
 
                                 <tr>
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
@@ -1002,18 +933,15 @@
                                     <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
                                         <strong>Managers Additional Comments for the Review Period: </strong>
                                         <br>
-                                        <?= $formInputData['long_textbox_9'] ? $formInputData['long_textbox_9'] : '' ?>
+                                        <?php echo $sectionsdata['section1']['data']['managersAdditionalComments'] ? $sectionsdata['section1']['data']['managersAdditionalComments'] : ''; ?>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
-
 
     <section class="pdf-cover-page">
         <table class="table table-border-collapse">
@@ -1037,7 +965,7 @@
                                     <td width="10%" style="border: 1px solid; font-size: 14px;  width:10%">
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <strong> Accomplishment </strong>
+                                        <strong> Accomplishment</strong>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
@@ -1050,11 +978,11 @@
                                         1
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_26'] ? $formInputData['short_textbox_26'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment1'] ? $sectionsdata['section2']['data']['accomplishment1'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment1_emp_comment'] ? $sectionsdata['section2']['data']['accomplishment1_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
 
@@ -1064,11 +992,11 @@
                                         2
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_28'] ? $formInputData['short_textbox_28'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment2'] ? $sectionsdata['section2']['data']['accomplishment2'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_29'] ? $formInputData['short_textbox_29'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment2_emp_comment'] ? $sectionsdata['section2']['data']['accomplishment2_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
 
@@ -1077,11 +1005,11 @@
                                         3
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_30'] ? $formInputData['short_textbox_30'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment3'] ? $sectionsdata['section2']['data']['accomplishment3'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_31'] ? $formInputData['short_textbox_31'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment3_emp_comment'] ? $sectionsdata['section2']['data']['accomplishment3_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
 
@@ -1089,23 +1017,18 @@
                                     <td style="border: 1px solid; font-size: 14px;"> 4
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_32'] ? $formInputData['short_textbox_32'] : '' ?>
-
+                                        <?= $sectionsdata['section2']['data']['accomplishment4'] ? $sectionsdata['section2']['data']['accomplishment4'] : '' ?>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_33'] ? $formInputData['short_textbox_33'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['accomplishment4_emp_comment'] ? $sectionsdata['section2']['data']['accomplishment4_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
-
-
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
-
 
     <section class="pdf-cover-page">
 
@@ -1142,25 +1065,23 @@
                                         1
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_34'] ? $formInputData['short_textbox_34'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity1'] ? $sectionsdata['section2']['data']['opportunity1'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_35'] ? $formInputData['short_textbox_35'] : '' ?>
-                                    </td>
+                                        <?= $sectionsdata['section2']['data']['opportunity1_emp_comment'] ? $sectionsdata['section2']['data']['opportunity1_emp_comment'] : '' ?> </td>
                                 </tr>
-
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
                                         2
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_36'] ? $formInputData['short_textbox_36'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity2'] ? $sectionsdata['section2']['data']['opportunity2'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_37'] ? $formInputData['short_textbox_37'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity2_emp_comment'] ? $sectionsdata['section2']['data']['opportunity2_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
 
@@ -1169,11 +1090,11 @@
                                         3
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_38'] ? $formInputData['short_textbox_38'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity3'] ? $sectionsdata['section2']['data']['opportunity3'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_39'] ? $formInputData['short_textbox_39'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity3_emp_comment'] ? $sectionsdata['section2']['data']['opportunity3_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
 
@@ -1181,15 +1102,13 @@
                                     <td style="border: 1px solid; font-size: 14px;"> 4
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_40'] ? $formInputData['short_textbox_40'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity4'] ? $sectionsdata['section2']['data']['opportunity4'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_41'] ? $formInputData['short_textbox_41'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['opportunity4_emp_comment'] ? $sectionsdata['section2']['data']['opportunity4_emp_comment'] : '' ?>
                                     </td>
                                 </tr>
-
-
                             </tbody>
                         </table>
                 </tr>
@@ -1231,12 +1150,11 @@
                                         1
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_42'] ? $formInputData['short_textbox_42'] : '' ?>
+                                        <?= $sectionsdata['section2']['data']['goal1'] ? $sectionsdata['section2']['data']['goal1'] : '' ?>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_43'] ? $formInputData['short_textbox_43'] : '' ?>
-                                    </td>
+                                        <?= $sectionsdata['section2']['data']['goal1_emp_comment'] ? $sectionsdata['section2']['data']['goal1_emp_comment'] : '' ?> </td>
                                 </tr>
 
 
@@ -1245,12 +1163,10 @@
                                         2
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_44'] ? $formInputData['short_textbox_44'] : '' ?>
-
+                                        <?= $sectionsdata['section2']['data']['goal2'] ? $sectionsdata['section2']['data']['goal2'] : '' ?>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_45'] ? $formInputData['short_textbox_45'] : '' ?>
-                                    </td>
+                                        <?= $sectionsdata['section2']['data']['goal2_emp_comment'] ? $sectionsdata['section2']['data']['goal2_emp_comment'] : '' ?> </td>
                                 </tr>
 
                                 <tr>
@@ -1258,32 +1174,27 @@
                                         3
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_46'] ? $formInputData['short_textbox_46'] : '' ?>
-
+                                        <?= $sectionsdata['section2']['data']['goal3'] ? $sectionsdata['section2']['data']['goal3'] : '' ?>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_47'] ? $formInputData['short_textbox_47'] : '' ?>
-                                    </td>
+                                        <?= $sectionsdata['section2']['data']['goal3_emp_comment'] ? $sectionsdata['section2']['data']['goal3_emp_comment'] : '' ?> </td>
                                 </tr>
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;"> 4
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_48'] ? $formInputData['short_textbox_48'] : '' ?>
-
+                                        <?= $sectionsdata['section2']['data']['goal4'] ? $sectionsdata['section2']['data']['goal4'] : '' ?>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_49'] ? $formInputData['short_textbox_49'] : '' ?>
-                                    </td>
+                                        <?= $sectionsdata['section2']['data']['goal4_emp_comment'] ? $sectionsdata['section2']['data']['goal4_emp_comment'] : '' ?> </td>
                                 </tr>
-
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                         <strong> Have you and your manager reviewed your job description for this review period? </strong><br>
-                                        <strong style="font-size: 14px;" name="termination_voluntary"> <?= $formInputData['selectDD0'] ? 'Yes' : '' ?> </strong>
-                                        <strong style="font-size: 14px;" name="termination_voluntary"> <?= $formInputData['selectDD0'] ? 'No' : '' ?> </strong>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"> <?= $sectionsdata['section2']['data']['selectDD0'] == 1 ? 'Yes' : '' ?> </strong>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"> <?= $sectionsdata['section2']['data']['selectDD0'] != 1 ? 'No' : '' ?> </strong>
                                     </td>
                                 </tr>
 
@@ -1293,29 +1204,28 @@
                                         <strong> 2.Do you have access to equipment and resources necessary to perform your job function?
                                             (If No, please list the equipment you deem necessary subject to Managers approval and budgeting) </strong>
 
-                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $formInputData['selectDD1'] ? 'Yes' : '' ?></strong><br>
-                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $formInputData['selectDD1'] ? 'No' : '' ?></strong>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $sectionsdata['section2']['data']['selectDD1'] == 1 ? 'Yes' : '' ?></strong><br>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $sectionsdata['section2']['data']['selectDD1'] != 1 ? 'No' : '' ?></strong>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                         <strong> 3.Is there any additional support or training you feel would be helpful for DeFOUW Automotive to provide for you to help you succeed in your current role?</strong>
-                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $formInputData['selectDD2'] ? 'Yes' : '' ?> </strong><br>
-                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $formInputData['selectDD2'] ? 'No' : '' ?> </strong>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $sectionsdata['section2']['data']['selectDD2'] == 1 ? 'Yes' : '' ?> </strong><br>
+                                        <strong style="font-size: 14px;" name="termination_voluntary"><?= $sectionsdata['section2']['data']['selectDD2'] != 1  ? 'No' : '' ?> </strong>
                                 </tr>
 
                                 <tr>
 
                                     <td style="border: 1px solid; font-size: 14px;" colspan="3">
                                         <strong>Employee Additional Comments:</strong> <br>
-                                        <?= $formInputData['long_textbox_10'] ? $formInputData['long_textbox_10'] : '' ?>
+                                        <?php echo $sectionsdata['section2']['data']['additional_comment'] ?>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                 </tr>
-
             </tbody>
         </table>
     </section>
@@ -1327,7 +1237,7 @@
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">
-                        Section 3: The Year in Review </strong><br>
+                            Section 3: The Year in Review </strong><br>
                     </td>
                 </tr>
 
@@ -1335,8 +1245,7 @@
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">
                             Additional Comments, Feedback - Managers Comments: <br>
-                            <?= $formInputData['long_textbox_12'] ? $formInputData['long_textbox_11'] : '' ?>
-
+                            <?php echo $sectionsdata['section3']['data']['section3ManagerComment'] ?>
                         </strong>
                     </td>
                 </tr>
@@ -1345,8 +1254,7 @@
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">
                             Additional Comments, Feedback - Employee Comments: <br>
-                            <?= $formInputData['long_textbox_13'] ? $formInputData['long_textbox_12'] : '' ?>
-
+                            <?php echo $sectionsdata['section3']['data']['section3EmployeeComment'] ?>
                         </strong>
                     </td>
                 </tr>
@@ -1374,41 +1282,51 @@
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <strong> Employee Date </strong>
+                                        <strong> Employee </strong>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <strong> Manager Date. </strong>
+                                        <strong> Manager </strong>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_50'] ? $formInputData['short_textbox_50'] : '' ?>
-                                    </td>
-                                    <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_51'] ? $formInputData['short_textbox_51'] : '' ?>
-                                    </td>
-                                </tr>
+                                        <span><strong> Signature:</strong>
+                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>; vertical-align: middle;" src="<?php echo $sectionsdata['section4']['data']['section4employeeSignature']; ?>" /> </span>
+                                        <br>
+                                        <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4employeeSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4employeeSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
 
-                                <tr>
-
-                                    <td style="border: 1px solid; font-size: 14px;">
-                                        <strong> Next Level Approval Date </strong>
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <strong> Human Resources Date. </strong>
+                                        <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>; vertical-align: middle;" src="<?php echo $sectionsdata['section4']['data']['section4managerSignature'] ? $sectionsdata['section4']['data']['section4managerSignature'] : ''; ?>" />
+                                        </span><br>
+                                        <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4employeeSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4employeeSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
                                     </td>
                                 </tr>
 
                                 <tr>
 
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_52'] ? $formInputData['short_textbox_52'] : '' ?>
+                                        <strong> Next Level Approval</strong>
+                                    </td>
+                                    <td style="border: 1px solid; font-size: 14px;">
+                                        <strong> Human Resources </strong>
+                                    </td>
+                                </tr>
+
+                                <tr>
+
+                                    <td style="border: 1px solid; font-size: 14px;">
+                                        <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>; vertical-align: middle;" src="<?php echo $sectionsdata['section4']['data']['section4nextLevelSignature'] ? $sectionsdata['section4']['data']['section4nextLevelSignature'] : ''; ?>" />
+                                        </span><br>
+                                        <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4nextLevelSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4nextLevelSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
 
                                     </td>
                                     <td style="border: 1px solid; font-size: 14px;">
-                                        <?= $formInputData['short_textbox_53'] ? $formInputData['short_textbox_53'] : '' ?>
+                                        <span><strong>Signature:</strong><img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>; vertical-align: middle;" src="<?php echo $sectionsdata['section4']['data']['section4hrSignature'] ? $sectionsdata['section4']['data']['section4hrSignature'] : ''; ?>" />
+                                        </span><br>
+                                        <span><strong>Signature Date: </strong><?php echo $sectionsdata['section4']['data']['section4hrSignatureDate'] ? formatDateToDB($sectionsdata['section4']['data']['section4hrSignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?> </span>
                                     </td>
                                 </tr>
 
@@ -1434,53 +1352,43 @@
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
-                        <?= $formInputData['short_textbox_54'] ? $formInputData['short_textbox_54'] : '' ?>
-
+                        <?php echo $sectionsdata['section5']['data']['section5currentRate'] ? $sectionsdata['section5']['data']['section5currentRate'] : ''; ?>
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
-                        <?= $formInputData['short_textbox_55'] ? $formInputData['short_textbox_55'] : '' ?>
-
+                        <?php echo $sectionsdata['section5']['data']['section5recommendedIncrease'] ? $sectionsdata['section5']['data']['section5recommendedIncrease'] : ''; ?>
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Approved Amount:</strong>
-                        <?= $formInputData['short_textbox_56'] ? $formInputData['short_textbox_56'] : '' ?>
-
+                        <?php echo $sectionsdata['section5']['data']['section5approvedAmount'] ? $sectionsdata['section5']['data']['section5approvedAmount'] : ''; ?>
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Approved By:</strong>
-                        <?= $formInputData['short_textbox_57'] ? $formInputData['short_textbox_57'] : '' ?>
-
+                        <img style="max-height: 75px; vertical-align: middle;" alt="" class="authorized_signature_img_1" src="<?php echo $sectionsdata['section5']['data']['section5approvedBySignature'] ? $sectionsdata['section5']['data']['section5approvedBySignature'] : ''; ?>">
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Approved Date:</strong>
-                        <?= $formInputData['short_textbox_58'] ? $formInputData['short_textbox_58'] : '' ?>
-
+                        <?php echo $sectionsdata['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>
                     </td>
                 </tr>
 
                 <tr>
                     <td width="50%" style="border-top:0px;">
                         <strong style="font-size: 14px;">Effective Date of Increase:</strong>
-                        <?= $formInputData['short_textbox_59'] ? $formInputData['short_textbox_59'] : '' ?>
-
+                        <?php echo $sectionsdata['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>
                     </td>
                 </tr>
 
             </tbody>
         </table>
     </section>
-
-
-
-
 
 </div>

@@ -6013,23 +6013,173 @@ $this->load->view('hr_documents_management/scripts/index', [
     //
     $('.performance_doc_section4').on('click', function() {
 
-
         $('#performance_doc_section4_Modal').modal('show');
-        /*
-let performanceDocSid = $(this).attr('data-sid');
-let employeeSid = $(this).attr('data-employeesid');
-let employeetype = $(this).attr('data-employeetype');
-let managercomment = $(this).attr('data-managercomment');
-let employeecomment = $(this).attr('data-employeecomment');
 
-$("#section3_performance_document_sid").val(performanceDocSid);
-$("#section3_employee_sid").val(employeeSid);
-$("#section3_employee_type").val(employeetype);
-$("#section3ManagerComment").val(managercomment);
-$("#section3EmployeeComment").val(employeecomment);
-*/
+        let performanceDocSid = $(this).attr('data-sid');
+        let employeeSid = $(this).attr('data-employeesid');
+        let employeetype = $(this).attr('data-employeetype');
+
+
+        let section4employeeSignature = $(this).attr('data-section4employeeSignature');
+        let section4employeeSignatureDate = $(this).attr('data-section4employeeSignatureDate');
+        let section4managerSignature = $(this).attr('data-section4managerSignature');
+        let section4managerSignatureDate = $(this).attr('data-section4managerSignatureDate');
+        let section4nextLevelSignature = $(this).attr('data-section4nextLevelSignature');
+        let section4nextLevelSignatureDate = $(this).attr('data-section4nextLevelSignatureDate');
+        let section4hrSignature = $(this).attr('data-section4hrSignature');
+        let section4hrSignatureDate = $(this).attr('data-section4hrSignatureDate');
+
+        //  alert(section4managerSignature);
+
+        $("#section4_performance_document_sid").val(performanceDocSid);
+        $("#section4_employee_sid").val(employeeSid);
+        $("#section4_employee_type").val(employeetype);
+
+
+        if (section4employeeSignature != '') {
+            $('#section4employeeSignature').attr('src', section4employeeSignature);
+            $("#section4employeeSignatureDate").text(section4employeeSignatureDate);
+        }
+
+        if (section4managerSignature != '') {
+            $('#section4managerSignature').attr('src', section4managerSignature);
+            $('.jsSetAuthorizedSignature_1').hide();
+            $("#section4managerSignatureDate").text(section4managerSignatureDate);
+        }
+
+        if (section4hrSignature != '') {
+            $('#section4hrSignature').attr('src', section4hrSignature);
+            $('.jsSetAuthorizedSignature_3').hide();
+            $("#section4hrSignatureDate").text(section4hrSignatureDate);
+        }
+
+        if (section4nextLevelSignature != '') {
+            $('#section4nextLevelSignature').attr('src', section4nextLevelSignature);
+            $('.jsSetAuthorizedSignature_2').hide();
+            $("#section4nextLevelSignatureDate").text(section4nextLevelSignatureDate);
+
+        }
+
 
     });
+
+
+    //
+    $('#performanceSection4Save').on('click', function() {
+
+        $("#employee_performance_doc_section4").submit();
+
+    });
+
+
+
+    $('.performance_doc_section5').on('click', function() {
+
+        $('#performance_doc_section5_Modal').modal('show');
+
+        let performanceDocSid = $(this).attr('data-sid');
+        let employeeSid = $(this).attr('data-employeesid');
+        let employeetype = $(this).attr('data-employeetype');
+
+        let section5currentRate = $(this).attr('data-section5currentRate');
+        let section5recommendedIncrease = $(this).attr('data-section5recommendedIncrease');
+        let section5approvedAmount = $(this).attr('data-section5approvedAmount');
+        let section5approvedBySignature = $(this).attr('data-section5approvedBySignature');
+        let section5approvedBySignatureDate = $(this).attr('data-section5approvedBySignatureDate');
+        let section5IncreaseEffectiveDate = $(this).attr('data-section5IncreaseEffectiveDate');
+
+        
+
+        $("#section5_performance_document_sid").val(performanceDocSid);
+        $("#section5_employee_sid").val(employeeSid);
+        $("#section5_employee_type").val(employeetype);
+
+
+        if (section5currentRate != '') {
+            $('#section5currentRate').val(section5currentRate);
+        }
+
+        if (section5recommendedIncrease != '') {
+            $('#section5recommendedIncrease').val(section5recommendedIncrease);
+        }
+
+        if (section5approvedAmount != '') {
+            $('#section5approvedAmount').val(section5approvedAmount);
+        }
+        if (section5approvedBySignatureDate != '') {
+            $('#section5approvedBySignatureDate').text(section5approvedBySignatureDate)
+        }
+        if (section5IncreaseEffectiveDate != '') {
+            $('#section5IncreaseEffectiveDate').val(section5IncreaseEffectiveDate)
+        }
+        
+
+        if (section5approvedBySignature != '') {
+            $('#section5approvedBySignature').attr('src', section5approvedBySignature);
+            $('.jsSetAuthorizedSignature_1').hide();
+            $("#section5_authorized_signature_1").text(section5approvedBySignature);
+        }
+
+
+
+    });
+
+
+    //
+    $('#performanceSection5Save').on('click', function() {
+
+        if (employeePerformanceSection5FormValidation() == true) {
+            return;
+        }
+        $("#employee_performance_doc_section5").submit();
+    });
+
+
+
+    function employeePerformanceSection5FormValidation() {
+
+        var section5validationError = false;
+
+        //
+        if ($('#section5currentRate').val() == '') {
+            alertify.error('Please provide Current Rate');
+            section5validationError = true;
+        }
+
+        //
+        if ($('#section5recommendedIncrease').val() == '') {
+            alertify.error('Please provide recommended pay increase');
+            section5validationError = true;
+        }
+        //
+        if ($('#section5approvedAmount').val() == '') {
+            alertify.error('Please provide approved amount');
+            section5validationError = true;
+        }
+
+        if ($('#section5IncreaseEffectiveDate').val() == '') {
+            alertify.error('Please provide effective date of increase');
+            section5validationError = true;
+        }
+
+
+        
+
+        //        
+        let section5approvedBySignature = $('#section5approvedBySignature').attr('src');
+
+        if (section5approvedBySignature == undefined || section5approvedBySignature == '') {
+            alertify.error('Please provide approved by signature');
+            section5validationError = true;
+        } else {
+            $("#section5_authorized_signature_1").val(section5approvedBySignature);
+        }
+
+
+        //
+        return section5validationError;
+
+    }
 </script>
 
 

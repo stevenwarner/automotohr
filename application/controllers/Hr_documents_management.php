@@ -159,7 +159,6 @@ class Hr_documents_management extends Public_Controller
                         break;
                     case 'assign_document':
 
-
                         $document_type = $this->input->post('document_type');
                         $document_sid = $this->input->post('document_sid');
                         $select_employees = $this->input->post('employees');
@@ -2164,6 +2163,179 @@ class Hr_documents_management extends Public_Controller
                                 $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
                                 
                                     break;
+
+                                    case 'employee_performance_doc_section4':
+                                        $document_sid = $this->input->post('document_sid');
+          
+                                                //
+                                                $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+                                               
+                                                if(!empty($sectionsdata)){
+            
+                                                $section4Formdata=$_POST;
+            
+                                                unset($section4Formdata['perform_action']);
+                                                unset($section4Formdata['document_sid']);
+
+                                                //
+                                                $section4data = [];
+                                                if(!$sectionsdata['section4']['data']['section4managerSignature']){
+                                                    if($section4Formdata['section4managerSignature']!=''){
+                                                       $section4data['section4managerSignature'] = $section4Formdata['section4managerSignature'];
+                                                       $section4data['section4managerSignatureDate'] = date('Y-m-d H:i:s');
+                                                    }
+                                                }else{
+                                                    $section4data['section4managerSignature'] = $sectionsdata['section4']['data']['section4managerSignature'];
+                                                    $section4data['section4managerSignatureDate'] = $sectionsdata['section4']['data']['section4managerSignatureDate'];
+                                                    }
+
+
+                                                if(!$sectionsdata['section4']['data']['section4nextLevelSignature']){
+                                                    if($section4Formdata['section4nextLevelSignature']!=''){
+                                                       $section4data['section4nextLevelSignature'] = $section4Formdata['section4nextLevelSignature'];
+                                                       $section4data['section4nextLevelSignatureDate'] = date('Y-m-d H:i:s');
+                                                    }
+                                                }else{
+                                                    $section4data['section4nextLevelSignature'] = $sectionsdata['section4']['data']['section4nextLevelSignature'];
+                                                    $section4data['section4nextLevelSignatureDate'] = $sectionsdata['section4']['data']['section4nextLevelSignatureDate'];
+                                                }
+
+                                                if(!$sectionsdata['section4']['data']['section4hrSignature']){
+                                                    if($section4Formdata['section4hrSignature']!=''){
+                                                       $section4data['section4hrSignature'] = $section4Formdata['section4hrSignature'];
+                                                       $section4data['section4hrSignatureDate'] = date('Y-m-d H:i:s');
+                                                    }
+                                                }else{
+
+                                                    $section4data['section4hrSignature'] = $sectionsdata['section4']['data']['section4hrSignature'];
+                                                    $section4data['section4hrSignatureDate'] = $sectionsdata['section4']['data']['section4hrSignatureDate'];
+                                                }
+
+                                                if($sectionsdata['section4']['data']['section4employeeSignature']!=''){
+                                                    $section4data['section4employeeSignature']=$sectionsdata['section4']['data']['section4employeeSignature'];
+                                                    $section4data['section4employeeSignatureDate']=$sectionsdata['section4']['data']['section4employeeSignatureDate'];
+                                                }
+
+                                                $sectionsdata['section4']['data'] = $section4data;
+                                                
+                                                if($sectionsdata['section4']['data']['section4managerSignature']!='' && $sectionsdata['section4']['data']['section4nextLevelSignature']!='' && $sectionsdata['section4']['data']['section4hrSignature']!='' && $sectionsdata['section4']['data']['section4employeeSignature']!=''){
+                                                    $sectionsdata['section4']['completed_on'] = date('Y-m-d H:i:s');
+                                                    $sectionsdata['section4']['status']='completed';
+                                                }else{
+                                                    $sectionsdata['section4']['completed_on']='';
+                                                    $sectionsdata['section4']['status']='';
+                                                }
+            
+                                                $employee_sid=$section4Formdata['employee_sid'];
+                                                $user_type=$section4Formdata['employee_type'];
+
+        
+                                                $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+
+                                                $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+            
+                                                }
+                              
+                                        $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                                        
+                                            break;
+
+                                            case 'employee_performance_doc_section5':
+                                             
+                                                $document_sid = $this->input->post('document_sid');
+                                                 //
+                                                $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+        
+                                                        if(!empty($sectionsdata)){
+                    
+                                                        $section5Formdata=$_POST;
+                    
+                                                        unset($section5Formdata['perform_action']);
+                                                        unset($section5Formdata['document_sid']);
+        
+                                                        //
+                                                        
+                                                        $section5data = [];
+                                                        if(!$sectionsdata['section5']['data']['section5approvedBySignature']){
+                                                            if($section5Formdata['section5approvedBySignature']!=''){
+                                                               $section5data['section5approvedBySignature'] = $section5Formdata['section5approvedBySignature'];
+                                                               $section5data['section5approvedBySignatureDate'] = date('Y-m-d H:i:s');
+                                                            }
+                                                        }else{
+                                                            $section5data['section5approvedBySignature'] = $sectionsdata['section5']['data']['section5approvedBySignature'];
+                                                            $section5data['section5approvedBySignatureDate'] = date('Y-m-d H:i:s');//$sectionsdata['section5']['data']['section5approvedBySignatureDate'];
+                                                            }
+
+        
+                                                        if(!$sectionsdata['section5']['data']['section5currentRate']){
+                                                            if($section5Formdata['section5currentRate']!=''){
+                                                               $section5data['section5currentRate'] = $section5Formdata['section5currentRate'];
+                                                            }
+                                                        }else{
+                                                            $section5data['section5currentRate'] = $sectionsdata['section5']['data']['section5currentRate'];
+                                                        }
+        
+        
+                                                        if(!$sectionsdata['section5']['data']['section5recommendedIncrease']){
+                                                            if($section5Formdata['section5recommendedIncrease']!=''){
+                                                               $section5data['section5recommendedIncrease'] = $section5Formdata['section5recommendedIncrease'];
+                                                            }
+                                                        }else{
+        
+                                                            $section5data['section5recommendedIncrease'] = $sectionsdata['section5']['data']['section5recommendedIncrease'];
+                                                        }
+        
+                                                        if(!$sectionsdata['section5']['data']['section5approvedAmount']){
+                                                            if($section5Formdata['section5approvedAmount']!=''){
+                                                               $section5data['section5approvedAmount'] = $section5Formdata['section5approvedAmount'];
+                                                            }
+                                                        }else{
+        
+                                                            $section5data['section5approvedAmount'] = $sectionsdata['section5']['data']['section5approvedAmount'];
+                                                        }
+
+                                                        if(!$sectionsdata['section5']['data']['section5IncreaseEffectiveDate']){
+                                                            if($section5Formdata['section5IncreaseEffectiveDate']!=''){
+                                                               $section5data['section5IncreaseEffectiveDate'] = formatDateToDB($section5Formdata['section5IncreaseEffectiveDate'], 'm-d-Y', 'Y-m-d');
+                                                                                                                          }
+                                                        }else{
+        
+                                                            $section5data['section5IncreaseEffectiveDate'] = $sectionsdata['section5']['data']['section5IncreaseEffectiveDate'];
+                                                        }
+                                                                                                                 
+        
+                                                        $sectionsdata['section5']['data'] = $section5data;
+        
+                                                        if($section5data['section5approvedBySignature']!='' && $section5data['section5approvedBySignature']!=null){
+                                                        $section5Formdata['completed_on']= date('Y-m-d H:i:s');
+                                                        $sectionsdata['section5']['status']='completed';
+                                                        }else{
+                                                            $section5Formdata['completed_on']='';
+                                                            $sectionsdata['section5']['status']='';
+                                                        }
+                    
+                                                        $employee_sid=$section5Formdata['employee_sid'];
+                                                        $user_type=$section5Formdata['employee_type'];
+
+                                                         if($sectionsdata['section1']['status'] =='completed' 
+                                                         && $sectionsdata['section2']['status'] =='completed' 
+                                                         && $sectionsdata['section3']['status'] =='completed'
+                                                         && $sectionsdata['section4']['status'] =='completed'
+                                                         && $sectionsdata['section5']['status'] =='completed'){
+
+                                                            $data_to_update['user_consent'] =1;
+                                                         }
+                                                         
+
+                                                        $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+
+                                                        $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                    
+                                                        }
+                                      
+                                                    $this->redirectHandler('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
+                                                
+                                                    break;
 
                         case 'activate_uploaded_document':
                             $document_sid = $this->input->post('document_sid');
@@ -6401,30 +6573,50 @@ class Hr_documents_management extends Public_Controller
                                $section3EmployeeComment=$section2Data['section3EmployeeComment'];
 
                                unset($section2Data['section3ManagerComment']);
-                               unset($section2Data['section3EmployeeComment']);
+                             //  unset($section2Data['section3EmployeeComment']);
                                
                                $sectionsdata['section2']['data']=$section2Data;
                                $sectionsdata['section2']['status']='completed';
 
                             //Section 3
-                           if($save_input_values['section3EmployeeComment']){
+
+                         //   _e($section2Data,true,true);
+                           if($section2Data['section3EmployeeComment']){
 
                             if($sectionsdata['section3']['data']['section3ManagerComment']!='' && $section3EmployeeComment!='' ){
-                                $sectionsdata['section3']['completed1_on']= date('Y-m-d H:i:s');
+                                $sectionsdata['section3']['completed_on']= date('Y-m-d H:i:s');
                                 $sectionsdata['section3']['status']='completed';
                                 }else{
-                                    $sectionsdata['section3']['completed_onop']='';
+                                    $sectionsdata['section3']['completed_on']='';
                                     $sectionsdata['section3']['status']='';
                                 }
 
-                                $sectionsdata['section3']['data']['section3EmployeeComment']=$section3EmployeeComment;
+                                $sectionsdata['section3']['data']=['section3EmployeeComment'=>$section3EmployeeComment];
                             }
+
+                             //Section 4
+                            if($section2Data['section4employeeSignature']){
+                                if($section2Data['section4employeeSignature']!='' && $sectionsdata['section4']['data']['section4managerSignature']!='' && $sectionsdata['section4']['data']['section4nextLevelSignature']!='' && $sectionsdata['section4']['data']['section4hrSignature']!='' ){
+                                    $sectionsdata['section4']['completed_on']= date('Y-m-d H:i:s');
+                                    $sectionsdata['section4']['status']='completed';
+                                    }else{
+                                        $sectionsdata['section4']['completed_on']='';
+                                        $sectionsdata['section4']['status']='';
+                                    }
+
+                                    $signaturearray=[];
+                                    $empsignaturearray['section4employeeSignature']=$section2Data['section4employeeSignature'];
+                                    $empsignaturearray['section4employeeSignatureDate']=date('Y-m-d H:i:s');
+
+                                    $sectionsdata['section4']['data']=$empsignaturearray;
+                                }
+                               
+
                                $data_to_update['performance_document_json'] =json_encode($sectionsdata);
                             }
                         }
                         
-
-                       $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                        $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
                         $this->session->set_flashdata('message', '<b>Success: </b> You Have Successfully Saved This Document!');
                         //
                 
@@ -12259,7 +12451,6 @@ class Hr_documents_management extends Public_Controller
     {
 
         //
-        //
         $r = [
             'Status' => FALSE,
             'Response' => 'Invalid request'
@@ -12387,8 +12578,15 @@ class Hr_documents_management extends Public_Controller
             $a['fillable_documents_slug'] = $post['fillable_documents_slug'];
             }
 
-
-
+           //
+            if($post['fillable_documents_slug']=='employee-performance-evaluation'){
+                                  $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                  $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                  $a['performance_document_json'] = json_encode($performanceDocumentJson);
+            }
 
             //
             if (isset($post['file'])) {

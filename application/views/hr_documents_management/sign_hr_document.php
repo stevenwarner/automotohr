@@ -154,7 +154,6 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
 
                                                 <?php if ($document['fillable_documents_slug']) { ?>
                                                     <input type="hidden" name="perform_action" value="employee_performance_doc_section_2_3" />
-
                                                 <?php } else { ?>
                                                     <input type="hidden" name="perform_action" value="sign_document" />
 
@@ -1433,6 +1432,12 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
             alertify.error('Please provide Comment ');
             validationError = true;
         }
+
+        
+        //
+        let section4employeeSignature = $('#draw_upload_img').attr('src');
+        $('#section4employeeSignature').val(section4employeeSignature);
+        
         return validationError;
 
     }
