@@ -2248,3 +2248,4 @@ $route["documents/assign_group_document_to_employee"]["post"] = "Hr_documents_ma
 
 // Indeed questionnaie route
 $route["indeed/(:any)/jobQuestions.json"]["get"] = "v1/Indeed/jobQuestions/$1";
+$route["indeed/authorize"]["get"] = "manage_admin/Job_feeds_management/generateIndeedToken";

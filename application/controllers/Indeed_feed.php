@@ -422,7 +422,7 @@ class Indeed_feed extends CI_Controller
             if ($indeedPost["questionsAndAnswers"]) {
 
                 die("in it");
-            } 
+            }
 
             die("out it");
 
@@ -518,9 +518,7 @@ class Indeed_feed extends CI_Controller
                                 $replacement_array['applicant_profile_link'] = $profile_anchor;
                                 $replacement_array['original_job_title'] = $original_job_title;
                                 log_and_send_templated_notification_email(APPLY_ON_JOB_EMAIL_ID, $contact['email'], $replacement_array, $message_hf, $company_sid, $job_sid, 'new_applicant_notification');
-                                //mail($this->debug_email, 'Company notification for: ' . $company_name, 'applicant_email: ' . $applicant_email . ' Send Mail to: ' . $contact['email']);
                             }
-                            //mail($this->debug_email, 'Indeed Applicant Notification', print_r($replacement_array, true ));
                         }
                     } // send email to 'new applicant notification' users *** END *** ////////
 
