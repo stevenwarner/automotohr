@@ -445,7 +445,8 @@ class Indeed_feed extends CI_Controller
                     'ip_address' => $data['analytics']['ip'],
                     'user_agent' => $userAgent,
                     'resume' => $applicant_resume,
-                    'last_update' => date('Y-m-d')
+                    'last_update' => date('Y-m-d'),
+                    "indeed_ats_sid"=> $indeedPost["id"]
                 );
                 sleep(1);
                 $final_check = $this->all_feed_model->applicant_list_exists_check($job_applications_sid, $job_sid, $companyId);

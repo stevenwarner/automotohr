@@ -13,19 +13,12 @@ class Indeed_lib
      */
     private $ci;
 
-    /**
-     * holds the url
-     * @var string
-     */
-    private $url;
 
     // call upon load
     public function __construct()
     {
         // get CI instance
         $this->ci = &get_instance();
-        // set the url
-        $this->url = "https://apis.indeed.com/";
     }
 
     /**
@@ -37,21 +30,27 @@ class Indeed_lib
         extract(
             $this->getClientIdAndSecret()
         );
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = http_build_query([
+            "grant_type" => "client_credentials",
+            "scope" => "employer_access",
+            "client_id" => $clientId,
+            "client_secret" => $clientSecret,
+            // "employer" => "1ee142ff6861db372f0735513e44bd5d",
+        ]);
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/x-www-form-urlencoded",
+            "Accept: application/json",
+        ];
         // make the call to generate access
         // and refresh tokens
         $response = $this->makeCall(
-            "oauth/v2/tokens",
+            "https://apis.indeed.com/oauth/v2/tokens",
             "POST",
-            [
-                "grant_type" => "client_credentials",
-                "scope" => "employer_access",
-                "client_id" => $clientId,
-                "client_secret" => $clientSecret,
-            ],
-            [
-                "Content-Type: application/x-www-form-urlencoded",
-                "Accept: application/json",
-            ]
+            $options
         );
         //
         if (!$response["resultArray"]["access_token"]) {
@@ -63,6 +62,79 @@ class Indeed_lib
         return $this->updateIndeedAccessToken(
             $response["resultArray"]["access_token"]
         );
+    }
+
+    /**
+     * Send disposition call
+     *
+     * @param string $atsId
+     * @param string $status
+     * @return array
+     */
+    public function sendDispositionCall(
+        string $atsId,
+        string $status
+    ) {
+        // create the request
+        $request = '
+        {
+            dispositionStatus: ' . ($status) . ',
+            rawDispositionStatus: ' . (ucfirst($status)) . ',
+            rawDispositionDetails: "",
+            identifiedBy: [
+                indeedApplyID: ' . ($atsId) . ',
+            ],
+            atsName: "AutomotoHR",
+            statusChangeDateTime: ' . (getSystemDateInUTC("c")) . ',
+        }
+        ';
+        //
+        $requestWrap = 'mutation {
+            partnerDisposition {
+                send(input: {
+                dispositions: [' . (json_encode($request)) . '],
+                }) {
+                numberGoodDispositions
+                failedDispositions {
+                    identifiedBy {
+                    indeedApplyID
+                    }
+                    rationale
+                }
+                }
+            }
+        };';
+
+        // get the acccess token
+        $accessToken = $this->getAccessToken();
+        // when no access token found
+        if (!$accessToken) {
+            return ["error" => "Failed to retrieve access token."];
+        }
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = $requestWrap;
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Authorization: Bearer {$accessToken}"
+        ];
+        _e($options, true, true);
+        // make the call
+        $response = $this->makeCall(
+            "https://apis.indeed.com/graphql",
+            "POST",
+            $options
+        );
+        _e($response, true, true);
+        // when error occured
+        if ($response["errors"]) {
+            return ["error" => $response["errors"]];
+        }
+
+        _e($response, true, true);
     }
 
     /**
@@ -93,8 +165,7 @@ class Indeed_lib
     private function makeCall(
         string $url,
         string $method = "GET",
-        array $post = [],
-        array $headers = []
+        array $customOptions = []
     ) {
         // set return array
         $returnArray = [
@@ -106,7 +177,7 @@ class Indeed_lib
         // set curl default options
         $options =
             [
-                CURLOPT_URL => $this->url . $url,
+                CURLOPT_URL => $url,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -116,12 +187,7 @@ class Indeed_lib
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => $method,
-                CURLOPT_HTTPHEADER => $headers
-            ];
-        //
-        if ($method === "POST") {
-            $options[CURLOPT_POSTFIELDS] = http_build_query($post);
-        }
+            ] + $customOptions;
         //
         $curl = curl_init();
         //
@@ -175,6 +241,24 @@ class Indeed_lib
         fwrite($handler, json_encode($fileContentArray));
         // close the file
         fclose($handler);
+        //
+        return $accessToken;
+    }
+
+    /**
+     * get the access token
+     *
+     * @return string
+     */
+    private function getAccessToken(): string
+    {
+        // get the access token from credentails
+        $accessToken = getCreds("AHR")->INDEED->ACCESS_TOKEN;
+        // when no access token found
+        // generate a new one
+        if (!$accessToken) {
+            return $this->generateAccessToken();
+        }
         //
         return $accessToken;
     }

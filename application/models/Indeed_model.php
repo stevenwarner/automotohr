@@ -527,4 +527,47 @@ class Indeed_model extends CI_Model
             ->where("user_sid", $companyId)
             ->count_all_results("portal_employer");
     }
+
+
+    /**
+     * Push the applicant status to Indeed
+     * using disposition API
+     *
+     * @param string $status
+     * @param int $applicantListId
+     */
+    public function pushTheApplicantStatus(
+        string $status,
+        int $applicantListId
+    ) {
+        // check if an applicant has Indeed ATS Id
+        if (!$this->db
+            ->where("sid", $applicantListId)
+            ->where("indeed_ats_sid <>", null)
+            ->count_all_results("portal_applicant_jobs_list")) {
+            return [
+                "error" => "Indeed ATS id not found."
+            ];
+        }
+        // get the indeed ats id
+        $indeedAtsId = $this->db
+            ->select("indeed_ats_sid")
+            ->where("sid", $applicantListId)
+            ->where("indeed_ats_sid <>", null)
+            ->get("portal_applicant_jobs_list")
+            ->row_array()["indeed_ats_sid"];
+        // load the library
+        $this->load->library("Indeed_lib");
+        // send the call
+        $response = $this->indeed_lib
+            ->sendDispositionCall(
+                $indeedAtsId,
+                "NEW"
+            );
+        // when error occurred
+        if ($response["error"]){
+            return $response;
+        }
+        return true;
+    }
 }
