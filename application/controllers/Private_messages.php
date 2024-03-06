@@ -489,6 +489,7 @@ class Private_messages extends Public_Controller
 
             if ($this->form_validation->run() === FALSE) {
                 $data['page'] = 'compose';
+                $data['message_subject'] = '';
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
                 $access_level = $employer_detail['access_level'];
 
@@ -1051,19 +1052,18 @@ class Private_messages extends Public_Controller
             check_access_permissions($security_details, 'dashboard', 'private_messages');
             $data['title'] = 'Reply to Messages';
             $data['message_type'] = $user_id = $this->message_model->get_message_type($edit_id);
+            $data['message_subject'] = $user_id = $this->message_model->get_message_subject($edit_id);
             //            echo $this->db->last_query().'<br>'.$data['message_type']; 
             $data['backbtn'] = base_url('private_messages');
             //
             $type_flag = '';
-
-
             //
             if ($data['message_type'] != 1) {
                 if (is_numeric($data['message_type'])) {
                     $this->load->model('dashboard_model');
                     $employerData = $this->dashboard_model->getEmployerDetail($data['message_type']);
                     $data['message_type'] = $employerData['email'];
-                    //                    echo '<br>'.$data['message_type']; exit;
+                    //
                     $data['messgae_type_flag'] = 'employer';
                     $type_flag = 'employer';
                 } else {
@@ -1074,14 +1074,14 @@ class Private_messages extends Public_Controller
                 $data['messgae_type_flag'] = 'admin';
                 $type_flag = 'admin';
             }
-
+            //
             $this->load->library('form_validation');
             $this->form_validation->set_rules('subject', 'Subject', 'trim|required');
             $this->form_validation->set_rules('message', 'Message', 'trim|required');
-
+            //
             $this->load->model('application_tracking_system_model');
             $this->load->model('portal_email_templates_model');
-
+            //
             if ($this->form_validation->run() === FALSE) {
                 $data['page'] = 'reply';
                 $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, null, null, $company_id);
@@ -1104,10 +1104,9 @@ class Private_messages extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 $message = $this->message_model->get_message($edit_id);
-
                 //
                 $formpost = $this->input->post(NULL, TRUE);
-
+                //
                 $attach_body       = '';
                 if (!empty($formpost['template'])) {
                     $attachments       = $this->portal_email_templates_model->get_all_email_template_attachments($formpost['template']);
@@ -1119,7 +1118,7 @@ class Private_messages extends Public_Controller
                         }
                     }
                 }
-
+                //
                 $fromArray = [
                     '{{company_name}}',
                     '{{date}}',
@@ -1135,9 +1134,7 @@ class Private_messages extends Public_Controller
                 //
                 $today   = new DateTime();
                 $today   = reset_datetime(array('datetime' => $today->format('Y-m-d'), '_this' => $this, 'type' => 'company', 'with_timezone' => true));
-
-
-
+                //
                 if (isset($message[0])) {
                     $user_type = $message[0]['to_type'];
 
@@ -1179,8 +1176,7 @@ class Private_messages extends Public_Controller
                     $job_title ='';
 
                 }
-
-
+                //
                 foreach ($formpost as $key => $value) {
                     if ($key != 'send_invoice' && $key != 'to-email') { // exclude these values from array
                         if (is_array($value)) {
@@ -1189,7 +1185,7 @@ class Private_messages extends Public_Controller
                         $message_data[$key] = $value;
                     }
                 }
-
+                //
                 $message_data['contact_name'] = $first_name . ' ' . $last_name;
                 $message_data['from_id'] = $employer_id;
                 $message_data['from_type'] = 'employer';
@@ -1222,22 +1218,19 @@ class Private_messages extends Public_Controller
                 $secret_key = $message_data['identity_key'] . "__";
                 //                $message_data['to_id']                                        = $message_data['toemail'];
                 unset($message_data['toemail']);
-
-
-                $toArray = array($company_detail['CompanyName'], $today, $first_name, $last_name, $job_title,  ' ', $email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
-
                 //
-
+                $toArray = array($company_detail['CompanyName'], $today, $first_name, $last_name, $job_title,  ' ', $email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+                //
                 $body    = $formpost["message"];
                 $subject    = $formpost["subject"];
-
+                //
                 replace_magic_quotes($subject, $fromArray, $toArray);
                 replace_magic_quotes($body, $fromArray, $toArray);
                 $body .= $attach_body;
-
+                //
                 $message_data['subject'] = $subject;
                 $message_data['message'] = $body;
-
+                //
                 $employerData = $this->message_model->user_data_by_id($employer_id);
                 $employer_name = $employerData['username'];
                 // $from = $employerData['email'];
@@ -1270,7 +1263,10 @@ class Private_messages extends Public_Controller
                     //
                     $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
                 }
-
+                //
+                if (!is_numeric($message[0]['from_id']) && $message[0]['from_type'] == "applicant") {
+                    $message_data['to_type'] = 'applicant';
+                }
                 //
                 unset($message_data['template']);
                 $this->message_model->save_message($message_data);

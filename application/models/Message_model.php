@@ -249,7 +249,14 @@ class message_model extends CI_Model {
         $result = $this->db->get('private_message')->result_array();
         return $result[0]['from_id'];
     }
-    
+
+    public function get_message_subject($message_id) {
+        $this->db->select('subject');
+        $this->db->where('id', $message_id);
+        $result = $this->db->get('private_message')->row_array();
+        return $result['subject'];
+    }
+
     public function get_message($message_id) {
         $this->db->where('id', $message_id);
         $result = $this->db->get('private_message')->result_array();
