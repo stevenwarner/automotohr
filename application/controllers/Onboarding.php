@@ -184,6 +184,15 @@ class Onboarding extends CI_Controller
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_documents_slug'] = $document['fillable_documents_slug'];
 
+                            if($document['fillable_documents_slug']=='employee-performance-evaluation'){
+                                $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                $data_to_insert['performance_document_json'] = json_encode($performanceDocumentJson);
+                              }
+
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -4783,6 +4792,16 @@ class Onboarding extends CI_Controller
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_documents_slug'] = $document['fillable_documents_slug'];
+                           
+                            //
+                            if($document['fillable_documents_slug']=='employee-performance-evaluation'){
+                                $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                $data_to_insert['performance_document_json'] = json_encode($performanceDocumentJson);
+                              }
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);

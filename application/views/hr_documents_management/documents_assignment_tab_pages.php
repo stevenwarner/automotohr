@@ -287,7 +287,7 @@ $noActionRequiredDocumentsList = [];
                                                                 <?php if ($document['performance_document_json'] != '') {
                                                                     $performanceDocumentData = json_decode($document['performance_document_json'], true);
                                                                 ?>
-                                                                    <?php if ($performanceDocumentData['section3']['status'] != 'completed' && $performanceDocumentData['section1']['status'] == 'completed' ) { ?>
+                                                                    <?php if ($performanceDocumentData['section3']['status'] != 'completed' && $performanceDocumentData['section1']['status'] == 'completed') { ?>
 
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                                         <a class="<?php echo $btn_show; ?> performance_doc_section3" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-managercomment="<?php echo $performanceDocumentData['section3']['data']['section3ManagerComment'] ? $performanceDocumentData['section3']['data']['section3ManagerComment'] : '' ?>" data-employeecomment="<?php echo $performanceDocumentData['section3']['data']['section3EmployeeComment'] ? $performanceDocumentData['section3']['data']['section3EmployeeComment'] : ''; ?>">
@@ -338,13 +338,13 @@ $noActionRequiredDocumentsList = [];
                                                                     <?php } ?>
 
 
-                                                                    <?php if ($performanceDocumentData['section5']['status'] != 'completed' && $performanceDocumentData['section4']['status'] == 'completed') { 
+                                                                    <?php if ($performanceDocumentData['section5']['status'] != 'completed' && $performanceDocumentData['section4']['status'] == 'completed') {
                                                                     ?>
-                                                                    <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                    <a class="<?php echo $btn_show; ?> performance_doc_section5" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-section5approvedBySignature="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignature'] ? $performanceDocumentData['section5']['data']['section5approvedBySignature'] : ''; ?>" data-section5approvedBySignatureDate="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section5approvedAmount="<?php echo $performanceDocumentData['section5']['data']['section5approvedAmount'] ? $performanceDocumentData['section5']['data']['section5approvedAmount'] : ''; ?>" data-section5recommendedIncrease="<?php echo $performanceDocumentData['section5']['data']['section5recommendedIncrease'] ? $performanceDocumentData['section5']['data']['section5recommendedIncrease'] : ''; ?>" data-section5currentRate="<?php echo $performanceDocumentData['section5']['data']['section5currentRate'] ? $performanceDocumentData['section5']['data']['section5currentRate'] : ''; ?>"  data-section5IncreaseEffectiveDate="<?php echo $performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>">
-                                                                        Section 5 - Not Completed
-                                                                    </a>
-                                                                    <?php } 
+                                                                        <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                        <a class="<?php echo $btn_show; ?> performance_doc_section5" href="javascript:;" data-sid="<?php echo $document['sid']; ?>" data-employeesid="<?php echo $document['user_sid']; ?>" data-employeetype="<?php echo $document['user_type']; ?>" data-section5approvedBySignature="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignature'] ? $performanceDocumentData['section5']['data']['section5approvedBySignature'] : ''; ?>" data-section5approvedBySignatureDate="<?php echo $performanceDocumentData['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" data-section5approvedAmount="<?php echo $performanceDocumentData['section5']['data']['section5approvedAmount'] ? $performanceDocumentData['section5']['data']['section5approvedAmount'] : ''; ?>" data-section5recommendedIncrease="<?php echo $performanceDocumentData['section5']['data']['section5recommendedIncrease'] ? $performanceDocumentData['section5']['data']['section5recommendedIncrease'] : ''; ?>" data-section5currentRate="<?php echo $performanceDocumentData['section5']['data']['section5currentRate'] ? $performanceDocumentData['section5']['data']['section5currentRate'] : ''; ?>" data-section5IncreaseEffectiveDate="<?php echo $performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($performanceDocumentData['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                            Section 5 - Not Completed
+                                                                        </a>
+                                                                    <?php }
                                                                     ?>
 
                                                                 <?php } ?>
@@ -2396,13 +2396,10 @@ $noActionRequiredDocumentsList = [];
                                                                         <label id="outputCommentError" class="error"></label>
 
                                                                     </td>
-
                                                                 </tr>
-
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
@@ -2416,7 +2413,6 @@ $noActionRequiredDocumentsList = [];
                                                         <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quality of work produced in accordance with requirements for accuracy, completeness, and attention to detail.
                                                     </td>
                                                 </tr>
-
                                                 <tr>
                                                     <td width="50%" style="border-top:0px;">
                                                         <table class="table" style=" border-collapse: collapse;">
@@ -2460,11 +2456,9 @@ $noActionRequiredDocumentsList = [];
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
-
                                     <section class="pdf-cover-page">
                                         <table class="table table-border-collapse" style="margin-top: -10px;">
                                             <tbody>
@@ -2519,7 +2513,6 @@ $noActionRequiredDocumentsList = [];
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
@@ -2532,7 +2525,6 @@ $noActionRequiredDocumentsList = [];
                                                         <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
 
                                                         <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
-
                                                     </td>
                                                 </tr>
 
@@ -2578,7 +2570,6 @@ $noActionRequiredDocumentsList = [];
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
@@ -2630,11 +2621,9 @@ $noActionRequiredDocumentsList = [];
 
                                                                     </td>
                                                                 </tr>
-
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
@@ -2685,11 +2674,9 @@ $noActionRequiredDocumentsList = [];
 
                                                                     </td>
                                                                 </tr>
-
                                                             </tbody>
                                                         </table>
                                                 </tr>
-
                                             </tbody>
                                         </table>
                                     </section>
@@ -2837,16 +2824,12 @@ $noActionRequiredDocumentsList = [];
                         </div>
                     </form>
                 </div>
-
             </div>
             <div class="modal-footer">
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 <div id="performance_doc_section3_Modal" class="modal fade" role="dialog">
     <?php
@@ -2899,7 +2882,6 @@ $noActionRequiredDocumentsList = [];
                                 </tbody>
                             </table>
                         </section>
-
                         <hr />
                         <div class="row">
                             <div class="col-lg-12 text-center">
@@ -2916,7 +2898,6 @@ $noActionRequiredDocumentsList = [];
         </div>
     </div>
 </div>
-
 
 <div id="performance_doc_section4_Modal" class="modal fade" role="dialog">
     <?php
@@ -2936,7 +2917,6 @@ $noActionRequiredDocumentsList = [];
                         <input type="hidden" name="document_sid" id='section4_performance_document_sid' />
                         <input type="hidden" name="employee_type" id='section4_employee_type' />
                         <input type="hidden" name="section4_employee_sid" id='section4_employee_sid' />
-
                         <input type="hidden" name="section4managerSignature" id='section3_authorized_signature_1' />
                         <input type="hidden" name="section4nextLevelSignature" id='section3_authorized_signature_2' />
                         <input type="hidden" name="section4hrSignature" id='section3_authorized_signature_3' />
@@ -2983,8 +2963,6 @@ $noActionRequiredDocumentsList = [];
                                 </tbody>
                             </table>
                         </section>
-
-
                         <hr />
                         <div class="row">
                             <div class="col-lg-12 text-center">
@@ -3001,8 +2979,6 @@ $noActionRequiredDocumentsList = [];
         </div>
     </div>
 </div>
-
-
 
 <div id="performance_doc_section5_Modal" class="modal fade" role="dialog">
     <?php
@@ -3022,16 +2998,14 @@ $noActionRequiredDocumentsList = [];
                         <input type="hidden" name="document_sid" id='section5_performance_document_sid' />
                         <input type="hidden" name="employee_type" id='section5_employee_type' />
                         <input type="hidden" name="section5_employee_sid" id='section5_employee_sid' />
-
                         <input type="hidden" name="section5approvedBySignature" id='section5_authorized_signature_1' />
-
                         <section class="pdf-cover-page">
                             <table class="table table-border-collapse">
                                 <tbody>
                                     <tr>
                                         <td style="border-top:0px;">
                                             <label> Employees Current Pay Rate: </label>
-                                            <input type="text" class="form-control" name="section5currentRate" id='section5currentRate' autocomplete="off"/>
+                                            <input type="text" class="form-control" name="section5currentRate" id='section5currentRate' autocomplete="off" />
                                         </td>
 
                                         <td style="border-top:0px;">
@@ -3042,7 +3016,7 @@ $noActionRequiredDocumentsList = [];
                                     <tr>
                                         <td>
                                             <label> Approved Amount: </label>
-                                            <input type="text" class="form-control" name="section5approvedAmount" id='section5approvedAmount' autocomplete="off"/>
+                                            <input type="text" class="form-control" name="section5approvedAmount" id='section5approvedAmount' autocomplete="off" />
                                         </td>
 
                                         <td>
@@ -3054,16 +3028,14 @@ $noActionRequiredDocumentsList = [];
                                         </td>
                                     </tr>
 
-
                                     <tr>
                                         <td>
                                             <label> Effective Date of Increase: </label>
-                                            <input type="text" class="form-control date_picker2" name="section5IncreaseEffectiveDate" id='section5IncreaseEffectiveDate' autocomplete="off"/>
+                                            <input type="text" class="form-control date_picker2" name="section5IncreaseEffectiveDate" id='section5IncreaseEffectiveDate' autocomplete="off" />
                                         </td>
 
                                         <td></td>
                                     </tr>
-
 
                                 </tbody>
                             </table>

@@ -132,7 +132,7 @@
 </head>
 
 <body class="A4">
-    <div class="sheet padding-10mm" id="jsFormDownload" style="width: 800px; margin-left: 20; margin-right: 20; margin-top: 20;">
+    <div class="sheet padding-10mm" id="jsFormDownload" style="width: 700px; margin-left: 20; margin-right: 20; margin-top: 20;">
         <section class="pdf-cover-page">
             <table class="table-border-collapse">
                 <tbody>

@@ -3717,6 +3717,16 @@ class Hr_documents_management extends Public_Controller
 
                             $data_to_insert['fillable_documents_slug'] = $document['fillable_documents_slug'];
 
+                            //
+                            if($document['fillable_documents_slug']=='employee-performance-evaluation'){
+                                $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                $data_to_insert['performance_document_json'] = json_encode($performanceDocumentJson);
+                              }
+
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -3935,7 +3945,7 @@ class Hr_documents_management extends Public_Controller
 
                     } else if ($assigned_document['user_consent'] == 1) { 
 
-                        if($assigned_document['fillable_documents_slug']=='written-employee-counseling-report-form' || $assigned_document['fillable_documents_slug']=='notice-of-separation' ){
+                        if($assigned_document['fillable_documents_slug']=='written-employee-counseling-report-form' || $assigned_document['fillable_documents_slug']=='notice-of-separation'){
                             if (!empty($assigned_document['authorized_signature'])) {
                             $signed_document_sids[] = $assigned_document['document_sid'];
                             $signed_documents[] = $assigned_document;
@@ -5747,6 +5757,16 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_documents_slug'] = $document['fillable_documents_slug'];
+                            //
+                            if($document['fillable_documents_slug']=='employee-performance-evaluation'){
+                                $performanceDocumentJson['section1']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section2']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section3']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section4']=array('data' => '', 'status' => 'pending');
+                                $performanceDocumentJson['section5']=array('data' => '', 'status' => 'pending');
+                                $data_to_insert['performance_document_json'] = json_encode($performanceDocumentJson);
+                              }
+
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -13021,6 +13041,13 @@ class Hr_documents_management extends Public_Controller
         if($docTitle == 'written-employee-counseling-report-form' || $docTitle == 'notice-of-separation' ){
             $authManagerslist=true;
         }
+
+        //
+        if($docTitle == 'employee-performance-evaluation' ){
+            $authManagerslist=true;
+        }
+        
+
 
 
         //

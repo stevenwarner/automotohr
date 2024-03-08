@@ -6088,7 +6088,7 @@ $this->load->view('hr_documents_management/scripts/index', [
         let section5approvedBySignatureDate = $(this).attr('data-section5approvedBySignatureDate');
         let section5IncreaseEffectiveDate = $(this).attr('data-section5IncreaseEffectiveDate');
 
-        
+
 
         $("#section5_performance_document_sid").val(performanceDocSid);
         $("#section5_employee_sid").val(employeeSid);
@@ -6112,7 +6112,7 @@ $this->load->view('hr_documents_management/scripts/index', [
         if (section5IncreaseEffectiveDate != '') {
             $('#section5IncreaseEffectiveDate').val(section5IncreaseEffectiveDate)
         }
-        
+
 
         if (section5approvedBySignature != '') {
             $('#section5approvedBySignature').attr('src', section5approvedBySignature);
@@ -6144,16 +6144,25 @@ $this->load->view('hr_documents_management/scripts/index', [
         if ($('#section5currentRate').val() == '') {
             alertify.error('Please provide Current Rate');
             section5validationError = true;
+        } else if (isNumberValue($('#section5currentRate').val()) == false) {
+            alertify.error('Please provide Current Rate in Number ');
+            section5validationError = true;
         }
 
         //
         if ($('#section5recommendedIncrease').val() == '') {
             alertify.error('Please provide recommended pay increase');
             section5validationError = true;
+        } else if (isNumberValue($('#section5recommendedIncrease').val()) == false) {
+            alertify.error('Please provide recommended pay increase in Number ');
+            section5validationError = true;
         }
         //
         if ($('#section5approvedAmount').val() == '') {
             alertify.error('Please provide approved amount');
+            section5validationError = true;
+        } else if (isNumberValue($('#section5approvedAmount').val()) == false) {
+            alertify.error('Please provide approved amount in Number ');
             section5validationError = true;
         }
 
@@ -6162,8 +6171,6 @@ $this->load->view('hr_documents_management/scripts/index', [
             section5validationError = true;
         }
 
-
-        
 
         //        
         let section5approvedBySignature = $('#section5approvedBySignature').attr('src');
@@ -6179,6 +6186,11 @@ $this->load->view('hr_documents_management/scripts/index', [
         //
         return section5validationError;
 
+    }
+
+
+    function isNumberValue(value) {
+        return !isNaN(parseFloat(value)) && isFinite(value);
     }
 </script>
 

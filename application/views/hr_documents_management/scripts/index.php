@@ -324,6 +324,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows += getSigners();
 			}
 
+			//
+			if (d.fillable_documents_slug == 'employee-performance-evaluation') {
+				rows += getSigners();
+			}
+
 			rows += getVisibilty(do_descpt);
 			//
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'], true); ?>`;
