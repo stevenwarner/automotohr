@@ -38,7 +38,7 @@
                                         <label>Banner Image</label>
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <?php if (isset($box['image']) && $box['image'] != '') { ?>
+                                                <?php if (isset($box['show_video_or_image']) &&  $box['show_video_or_image']=='image' && $box['image'] != '') { ?>
                                                     <div class="well well-sm">
                                                         <img style="width: 100%;" class="img-responsive" src="<?php echo (isset($box['image']) ? AWS_S3_BUCKET_URL . $box['image'] : ''); ?>" alt="" />
                                                     </div>
@@ -72,7 +72,7 @@
 
 
                                 <div id="jsHomeYoutube_<?php echo $box['sid'] ?>">
-                                    <?php $video_url = isset($box['video']) && !empty($box['video']) ? 'https://www.youtube.com/embed/' . $box['video'] : ''; ?>
+                                    <?php $video_url = isset($box['show_video_or_image']) && $box['show_video_or_image']=='video' &&  !empty($box['video']) ? 'https://www.youtube.com/embed/' . $box['video'] : ''; ?>
                                     <?php if (!empty($video_url)) { ?>
                                         <li class="form-col-100 autoheight">
                                             <h2>Youtube Video</h2>
@@ -86,7 +86,7 @@
                                     <?php } ?>
                                     <li class="form-col-100">
                                         <label>Youtube Video URL </label>
-                                        <?php $video_url = isset($box['video']) && !empty($box['video']) ? 'https://www.youtube.com/watch?v=' . $box['video'] : ''; ?>
+                                        <?php $video_url = isset($box['show_video_or_image']) && $box['show_video_or_image']=='video' && !empty($box['video']) ? 'https://www.youtube.com/watch?v=' . $box['video'] : ''; ?>
                                         <?php echo form_input('video', set_value('video', $video_url), 'class="invoice-fields video-url"'); ?>
                                         <?php echo form_error('video'); ?>
                                     </li>
@@ -96,7 +96,7 @@
 
                                 <div id="jsHomeVimeo_<?php echo $box['sid'] ?>">
 
-                                    <?php $vimeo_video_url = isset($box['vimeo_video']) && !empty($box['vimeo_video']) ? 'https://player.vimeo.com/video/' . $box['vimeo_video'] : ''; ?>
+                                    <?php $vimeo_video_url = isset($box['show_video_or_image']) && $box['show_video_or_image']=='vimeo_video' && !empty($box['video']) ? 'https://player.vimeo.com/video/' . $box['video'] : ''; ?>
                                     <?php if (!empty($vimeo_video_url)) { ?>
                                         <li class="form-col-100 autoheight">
                                             <h2>Vimeo Video</h2>
@@ -111,7 +111,7 @@
 
                                     <li class="form-col-100">
                                         <label>Vimeo Video URL</label>
-                                        <?php $vimeo_video_url = isset($box['vimeo_video']) && !empty($box['vimeo_video']) ? 'https://vimeo.com/' . $box['vimeo_video'] : ''; ?>
+                                        <?php $vimeo_video_url = isset($box['show_video_or_image']) && $box['show_video_or_image']=='vimeo_video' && !empty($box['video']) ? 'https://vimeo.com/' . $box['video'] : ''; ?>
                                         <?php echo form_input('vimeo_video', set_value('vimeo_video', $vimeo_video_url), 'class="invoice-fields video-url"'); ?>
                                         <?php echo form_error('vimeo_video'); ?>
                                     </li>
@@ -120,15 +120,16 @@
 
 
                                 <div id="jsHomeUploaded_<?php echo $box['sid'] ?>">
+                                
 
-                                    <?php if (isset($box['uploaded_video']) && !empty($box['uploaded_video'])) { ?>
+                                    <?php if (isset($box['show_video_or_image']) && $box['show_video_or_image']=='uploaded_video' && !empty($box['video'])) { ?>
                                         <li class="form-col-100 autoheight">
-                                            <input type="hidden" value="<?php echo $box['uploaded_video']; ?>" name="uploaded_video_section_02_old">
+                                            <input type="hidden" value="<?php echo $box['video']; ?>" name="uploaded_video_section_02_old">
 
                                             <div class="well well-sm">
                                                 <div class="embed-responsive embed-responsive-16by9">
                                                     <video controls width="100%">
-                                                        <source src="<?php echo base_url('assets/uploaded_videos/' . $box['uploaded_video']); ?>" type='video/mp4'>
+                                                        <source src="<?php echo base_url('assets/uploaded_videos/' . $box['video']); ?>" type='video/mp4'>
                                                     </video>
                                                 </div>
                                             </div>
@@ -137,10 +138,10 @@
 
                                     <li class="form-col-100">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="up_video_container">
-                                            <label for="uploaded_video_section_02">Upload Video<span class="hr-required">*</span></label>
+                                            <label for="uploaded_video_section_<?php echo $box['sid'] ?>">Upload Video<span class="hr-required">*</span></label>
                                             <div class="upload-file invoice-fields">
-                                                <span class="selected-file" id="name_uploaded_video_section_02"></span>
-                                                <input type="file" name="uploaded_video_section_02" id="uploaded_video_section_02" onchange="check_video_file('uploaded_video_section_02');">
+                                                <span class="selected-file" id="name_uploaded_video_section_<?php echo $box['sid'] ?>"></span>
+                                                <input type="file" name="uploaded_video_section_02" id="uploaded_video_section_<?php echo $box['sid'] ?>" onchange="check_video_file('uploaded_video_section_<?php echo $box['sid'] ?>');">
                                                 <a href="javascript:;">Choose Video</a>
                                             </div>
                                         </div>

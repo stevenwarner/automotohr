@@ -892,6 +892,10 @@ class Appearance extends Public_Controller
             }
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'Save Section') {
+
+
+                //  _e($_POST, true, true);
+
                 $box_sid = $this->input->post('box-sid');
                 $theme_name = $this->input->post("theme_name");
                 $page_name = $this->input->post("page_name");
@@ -904,6 +908,10 @@ class Appearance extends Public_Controller
                 $status = $this->input->post('status');
                 $status = !empty($status) && !is_null($status) ? $status : 0;
                 $image = '';
+
+
+                $vimeo_video = $_POST['vimeo_video'];
+
                 $aws_file_name = upload_file_to_aws('image', $company_id, 'theme_4_section_image', '', AWS_S3_BUCKET_NAME);
 
                 if (!empty($aws_file_name) && $aws_file_name != 'error') {
@@ -919,6 +927,13 @@ class Appearance extends Public_Controller
                     $video_id = $url_prams['v'];
                 }
 
+                //
+                $vimeo_video_id = '';
+                if (!empty($vimeo_video)) {
+                    $vimeo_video = explode('vimeo.com/', $vimeo_video, 2);
+                    $vimeo_video_id = $vimeo_video[1];
+                }
+
                 $data_to_store = array();
                 $data_to_store['title'] = $title;
                 $data_to_store['content'] = $content;
@@ -927,15 +942,47 @@ class Appearance extends Public_Controller
                 if (!empty($image)) {
                     $data_to_store['image'] = $image;
                 }
-
                 if (!empty($video_id)) {
                     $data_to_store['video'] = $video_id;
                 }
+
+
+                if (!empty($vimeo_video_id)) {
+                    $data_to_store['video'] = $vimeo_video_id;
+                }
+
+                if (!empty($_FILES) && isset($_FILES['uploaded_video_section_02']) && $_FILES['uploaded_video_section_02']['size'] > 0) {
+
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["uploaded_video_section_02"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["uploaded_video_section_02"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["uploaded_video_section_02"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        redirect('customize_appearance/' . $theme_id, 'refresh');
+                    }
+
+                    $video = $file_name;
+                    $data_to_store['video'] = $video;
+                }
+
+                //
 
                 $data_to_store['column_type'] = $column_type;
                 $data_to_store['status'] = $status;
                 $data_to_store['company_sid'] = $company_id;
                 $data_to_store['created_date'] = date('Y-m-d H:i:s');
+
                 $this->customize_appearance_model->update_additional_sections($box_sid, $data_to_store);
                 redirect('customize_appearance/' . $theme_id, 'refresh');
             }
@@ -1432,16 +1479,21 @@ class Appearance extends Public_Controller
                 unset($_POST['video']);
                 $video_id = '';
                 $url_prams = array();
+
+                $vimeo_video = $_POST['vimeo_video'];
+
+               if($video!='' && $_POST['show_video_or_image']=='video' )
                 parse_str(parse_url($video, PHP_URL_QUERY), $url_prams);
 
                 if (isset($url_prams['v'])) {
                     $video_id = $url_prams['v'];
                 }
+                
 
                 $pictures = upload_file_to_aws('image', $company_id, 'image', '', AWS_S3_BUCKET_NAME);
                 $_POST['company_sid'] = $company_id;
 
-                if (!empty($pictures) && $pictures != 'error') {
+                if (!empty($pictures) && $pictures != 'error' && $_POST['show_video_or_image']=='image') {
                     $_POST['image'] = $pictures;
                 }
 
@@ -1449,17 +1501,54 @@ class Appearance extends Public_Controller
                     return trim(strip_tags($v));
                 }, $_POST);
 
+                //
+                $vimeo_video_id = '';
+                if (!empty($vimeo_video) && $_POST['show_video_or_image']=='vimeo_video') {
+                    $vimeo_video = explode('vimeo.com/', $vimeo_video, 2);
+                    $vimeo_video_id = $vimeo_video[1];
+                }
 
                 if (!empty($video_id)) {
                     $newArray['video'] = $video_id;
                 }
 
+                if (!empty($vimeo_video_id)) {
+                    $newArray['video'] = $vimeo_video_id;
+                }
+
+                if (!empty($_FILES) && isset($_FILES['uploaded_video_section_02']) && $_FILES['uploaded_video_section_02']['size'] > 0) {
+
+                    $random = generateRandomString(5);
+                    $company_id = $data['session']['company_detail']['sid'];
+                    $target_file_name = basename($_FILES["uploaded_video_section_02"]["name"]);
+                    $file_name = strtolower($company_id . '/' . $random . '_' . $target_file_name);
+                    $target_dir = "assets/uploaded_videos/";
+                    $target_file = $target_dir . $file_name;
+                    $filename = $target_dir . $company_id;
+
+                    if (!file_exists($filename)) {
+                        mkdir($filename);
+                    }
+
+                    if (move_uploaded_file($_FILES["uploaded_video_section_02"]["tmp_name"], $target_file)) {
+                        $this->session->set_flashdata('message', '<strong>The file ' . basename($_FILES["uploaded_video_section_02"]["name"]) . ' has been uploaded.');
+                    } else {
+                        $this->session->set_flashdata('message', '<strong>Sorry, there was an error uploading your file.');
+                        redirect('customize_appearance/' . $theme_id, 'refresh');
+                    }
+
+                    $video = $file_name;
+                    $newArray['video'] = $video;
+                }
+
+                unset($newArray['vimeo_video']);
+                
                 $this->customize_appearance_model->add_additional_content_boxes($newArray);
                 redirect(base_url('customize_appearance/' . $theme_id), 'refresh');
             }
 
             $this->load->view('main/header', $data);
-            $this->load->view('appearance/customize_appearance/add_additional_sections');
+            $this->load->view('appearance/customize_appearance/add_additional_sections_new');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");

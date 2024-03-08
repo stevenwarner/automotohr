@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="jsHomeImg">
                 <div class="col-xs-12">
                     <div>
                         <h2>Banner Image</h2>
@@ -134,7 +134,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="jsHomeYoutube">
                 <div class="col-xs-12">
                     <div>
                         <h2>Youtube Video</h2>
@@ -167,7 +167,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" id="jsHomeVimeo">
                 <div class="col-xs-12">
                     <div>
                         <h2>Vimeo Video</h2>
@@ -201,7 +201,7 @@
             </div>
 
 
-            <div class="row">
+            <div class="row" id="jsHomeUploaded">
                 <div class="col-xs-12">
                     <div>
                         <h2>Uploaded Video</h2>
@@ -354,6 +354,71 @@
             $('#form_uploaded_video_section_01').submit();
         }
     }
+
+
+    //
+    $('input[name=show_img_vdo_section_01]').change(function() {
+        var sectionValue = $('input[name=show_img_vdo_section_01]:checked').val();
+        if (sectionValue == 'uploaded_video') {
+            $("#jsHomeImg").hide();
+            $("#jsHomeYoutube").hide();
+            $("#jsHomeVimeo").hide();
+            $("#jsHomeUploaded").show();
+        }
+        if (sectionValue == 'vimeo_video') {
+            $("#jsHomeImg").hide();
+            $("#jsHomeYoutube").hide();
+            $("#jsHomeVimeo").show();
+            $("#jsHomeUploaded").hide();
+
+        }
+        if (sectionValue == 'video') {
+            $("#jsHomeImg").hide();
+            $("#jsHomeYoutube").show();
+            $("#jsHomeVimeo").hide();
+            $("#jsHomeUploaded").hide();
+        }
+        if (sectionValue == 'image') {
+            $("#jsHomeImg").show();
+            $("#jsHomeYoutube").hide();
+            $("#jsHomeVimeo").hide();
+            $("#jsHomeUploaded").hide();
+        }
+
+
+
+    });
+
+
+    <?php if ($section_01_meta['show_video_or_image'] == 'video') { ?>
+        $("#jsHomeImg").hide();
+        $("#jsHomeYoutube").show();
+        $("#jsHomeVimeo").hide();
+        $("#jsHomeUploaded").hide();
+
+    <? } ?>
+    <?php if ($section_01_meta['show_video_or_image'] == 'image') { ?>
+        $("#jsHomeImg").show();
+        $("#jsHomeYoutube").hide();
+        $("#jsHomeVimeo").hide();
+        $("#jsHomeUploaded").hide();
+    <?php } ?>
+
+    <?php if ($section_01_meta['show_video_or_image'] == 'vimeo_video') { ?>
+        $("#jsHomeImg").hide();
+        $("#jsHomeYoutube").hide();
+        $("#jsHomeVimeo").show();
+        $("#jsHomeUploaded").hide();
+
+    <? } ?>
+    <?php if ($section_01_meta['show_video_or_image'] == 'uploaded_video') { ?>
+        $("#jsHomeImg").hide();
+        $("#jsHomeYoutube").hide();
+        $("#jsHomeVimeo").hide();
+        $("#jsHomeUploaded").show();
+
+    <? } ?>
+
 
     //
 </script>

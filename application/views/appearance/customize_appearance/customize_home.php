@@ -33,5 +33,5 @@
         $view_data['panel_title'] = 'Additional Section ' . str_pad(($key + 1), 3, '0', STR_PAD_LEFT);
         $view_data['perform_action'] = 'Save Section';
         $view_data['theme'] = $theme;
-        $this->load->view('appearance/customize_appearance/additional_section', $view_data);
+        $this->load->view('appearance/customize_appearance/additional_section_new', $view_data);
     }
