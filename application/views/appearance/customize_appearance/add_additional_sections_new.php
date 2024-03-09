@@ -43,8 +43,6 @@
                                                                             <textarea class="ckeditor" name="content" rows="8" cols="60"><?php echo set_value('content', $box['content']); ?></textarea>
                                                                         </li>
 
-
-
                                                                         <div id="jsHomeImg">
 
                                                                             <li class="form-col-50-left">

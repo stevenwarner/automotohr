@@ -30,9 +30,6 @@
                                     <div style='margin-bottom:5px;'><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
                                     <textarea class="ckeditor" id="<?php echo $box['sid'] ?>" name="content" rows="8" cols="60"><?php echo set_value('content', $box['content']); ?></textarea>
                                 </li>
-
-
-
                                 <div id="jsHomeImg_<?php echo $box['sid'] ?>">
                                     <li class="form-col-100 autoheight">
                                         <label>Banner Image</label>

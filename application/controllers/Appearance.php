@@ -341,7 +341,7 @@ class Appearance extends Public_Controller
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_xx') {
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
-                $title = $_POST['title'];
+                $title =  $_POST['title'];
                 $content = $_POST['content'];
                 $video = $_POST['video'];
                 $column_type = $_POST['column_type'];
@@ -892,7 +892,6 @@ class Appearance extends Public_Controller
             }
 
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'Save Section') {
-
 
                 //  _e($_POST, true, true);
 

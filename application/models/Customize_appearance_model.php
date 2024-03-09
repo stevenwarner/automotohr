@@ -32,6 +32,8 @@
         );
 
         $this->db->where('sid', $sid);
+
+        $data=sc_remove($data);
         $this->db->update('portal_themes', $data);
     }
 
@@ -48,6 +50,8 @@
             'theme4_enable_job_fair_homepage' => $theme4_enable_job_fair_homepage,
             'job_fair_homepage_page_url' => $job_fair_homepage_page_url
         );
+
+        $data=sc_remove($data);
 
         $this->db->where('sid', $sid);
         $this->db->update('portal_themes', $data);
@@ -67,6 +71,8 @@
             'job_fair_homepage_page_url' => $job_fair_homepage_page_url
         );
 
+        $data=sc_remove($data);
+
         $this->db->where('sid', $sid);
         $this->db->update('portal_themes', $data);
     }
@@ -83,6 +89,8 @@
             'theme4_enable_job_fair_homepage' => $theme4_enable_job_fair_homepage,
             'job_fair_homepage_page_url' => $job_fair_homepage_page_url
         );
+
+        $data=sc_remove($data);
 
         $this->db->where('sid', $sid);
         $this->db->update('portal_themes', $data);
@@ -103,6 +111,8 @@
             'job_fair_homepage_page_url' => $job_fair_homepage_page_url
         );
 
+        $data=sc_remove($data);
+
         $this->db->where('sid', $sid);
         $this->db->update('portal_themes', $data);
     }
@@ -120,6 +130,8 @@
             'theme4_enable_job_fair_homepage' => $theme4_enable_job_fair_homepage,
             'job_fair_homepage_page_url' => $job_fair_homepage_page_url
         );
+
+        $data=sc_remove($data);
 
         $this->db->where('sid', $sid);
         $this->db->update('portal_themes', $data);
@@ -159,6 +171,9 @@
             'meta_value' => $metaValue
         );
 
+        $data=sc_remove($data);
+
+
         $this->db->insert($this->tableName, $data);
     }
 
@@ -183,6 +198,8 @@
         $data =  array(
             'meta_value' => $metaValue
         );
+
+        $data=sc_remove($data);
 
         $this->db->update($this->tableName, $data);
         //
@@ -257,6 +274,7 @@
 
     function fSaveThemeMetaData($companyId, $themeName, $pageName, $metaKey, $metaValue)
     {
+
         $valueToSave = serialize($metaValue);
 
         if ($this->fCheckIfMetaExists($companyId, $themeName, $pageName, $metaKey)) {
@@ -264,6 +282,8 @@
         } else {
             $this->fInsertThemeMeta($companyId, $themeName, $pageName, $metaKey, $valueToSave);
         }
+        $valueToSave=sc_remove($valueToSave);
+
         $portal_themes['theme_name'] = $themeName;
         $portal_themes['page_name'] = $pageName;
         $portal_themes['company_id'] = $companyId;
@@ -335,6 +355,9 @@
 
     function update_font_configurations($sid, $data)
     {
+
+        $data=sc_remove($data);
+
         $this->db->where('user_sid', $sid);
         $this->db->where('theme_name', 'theme-4');
         $this->db->update('portal_themes', $data);
@@ -353,6 +376,8 @@
 
     function update_additional_sections($sid, $data)
     {
+        $data=sc_remove($data);
+
         $this->db->where('sid', $sid);
         $this->db->update('portal_theme4_additional_sections', $data);
     }
