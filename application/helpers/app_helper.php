@@ -2190,9 +2190,19 @@ if (!function_exists("convertEnterToSpan")) {
 
 
 if (!function_exists("onlyPlusAndPayPlanCanAccess")) {
-    function onlyPlusAndPayPlanCanAccess()
+    function onlyPlusAndPayPlanCanAccess(bool $isAJAX = false)
     {
         if (!isPayrollOrPlus()) {
+            if ($isAJAX) {
+                return SendResponse(
+                    400,
+                    [
+                        "errors" => [
+                            "You are not allowed to perform this action."
+                        ]
+                    ]
+                );
+            }
             get_instance()->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }

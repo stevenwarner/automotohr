@@ -385,6 +385,17 @@
                 </a>
             </li>
         <?php } ?>
+        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+            <!-- Attendance module settings -->
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), site_url('attendance/settings')) !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?= base_url("attendance/settings"); ?>">
+                    <figure><i class="fa fa-cogs"></i></figure>
+                    Attendance Settings
+                </a>
+            </li>
+        <?php } ?>
 
     </ul>
 </div>

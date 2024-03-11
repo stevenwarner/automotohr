@@ -9,12 +9,20 @@
  */
 class Base_model extends CI_Model
 {
+    protected $loggedInSession;
+    protected $loggedInCompanyId;
+    protected $loggedInEmployeeId;
     /**
      * main entry point
      */
     public function __construct()
     {
         parent::__construct();
+
+        $this->loggedInSession = checkAndGetSession("all");
+        //
+        $this->loggedInCompanyId = $this->loggedInSession["company_detail"]["sid"];
+        $this->loggedInEmployeeId = $this->loggedInSession["employer_detail"]["sid"];
     }
 
     /**

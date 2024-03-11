@@ -154,4 +154,260 @@ class Attendance_lib
         //
         return $obj;
     }
+
+    /**
+     * generates clock entries against a company
+     *
+     * @param int $companyId
+     * @param string $startDate
+     * @param string $endDate
+     * @return array
+     */
+    public function generateClockEntries(
+        int $companyId,
+        string $startDate,
+        string $endDate
+    ) {
+        // get the company employees
+        $companyAtiveEmployeeIds = $this->getCompanyActiveEmployeeIds($companyId);
+        //
+        if (!$companyAtiveEmployeeIds) {
+            return ["errors" => ["No employees found."]];
+        }
+        //
+        $processedEmployeesCount = 0;
+        // get the dates within range
+        $datesRange = getDatesInRange($startDate, $endDate);
+        // loop through the data
+        foreach ($companyAtiveEmployeeIds as $employeeId) {
+            // get the clocks witin date range
+            $clockedDatesArray = $this->getEmployeClockedDatesWithinRange(
+                $employeeId,
+                $startDate,
+                $endDate
+            );
+            //
+            $addedRecords = 0;
+            // loop through the dates
+            foreach ($datesRange as $date) {
+                // check if there is already an entry
+                if (in_array($date, $clockedDatesArray)) {
+                    continue;
+                }
+                $addedRecords = 1;
+                // get the day main array and entries
+                $entry = $this->getDayEntryWithLog($date);
+                // make insert array
+                $ins = $entry["main"];
+                $ins["company_sid"] = $companyId;
+                $ins["employee_sid"] = $employeeId;
+                // insert the data
+                $this->CI->db->insert("cl_attendance", $ins);
+                // get the last inserted id
+                $attendanceId = $this->CI->db->insert_id();
+                // failed to insert data
+                if (!$attendanceId) {
+                    continue;
+                }
+                //
+                foreach ($entry["log"] as $log) {
+                    // reset the insert array
+                    $ins = $log;
+                    $ins["cl_attendance_sid"] = $attendanceId;
+                    // insert the data log
+                    $this->CI->db->insert("cl_attendance_log", $ins);
+                }
+            }
+            //
+            if ($addedRecords) {
+                $processedEmployeesCount++;
+            }
+        }
+        //
+        return ["success" => "You have successfully added records against " . ($processedEmployeesCount) . " out of " . (count($companyAtiveEmployeeIds)) . " employees."];
+    }
+
+    /**
+     * generates clock entries against a company
+     *
+     * @param string $date
+     * @return array
+     */
+    public function getDayEntryWithLog(string $date): array
+    {
+        //
+        $todayDateTime = getSystemDate();
+        // get a random clock time
+        $time = $this->getRandomTime();
+        // set default array
+        $entryArray = [
+            "main" => [],
+            "log" => [],
+        ];
+        // add the main table data
+        $entryArray["main"]["clocked_in"] = $date . " " . $time["start"];
+        $entryArray["main"]["clocked_date"] = $date;
+        $entryArray["main"]["is_approved"] = 0;
+        $entryArray["main"]["created_at"] = $todayDateTime;
+        // when end time present
+        if (array_key_exists("end", $time)) {
+            $entryArray["main"]["last_event"] = "clocked_out";
+            $entryArray["main"]["clocked_out"] = $date . " " . $time["end"];
+            $entryArray["main"]["last_record_time"] = $entryArray["main"]["clocked_out"];
+        } else {
+            $entryArray["main"]["last_event"] = "clocked_in";
+            $entryArray["main"]["clocked_out"] = null;
+            $entryArray["main"]["last_record_time"] = $entryArray["main"]["clocked_in"];
+        }
+        $entryArray["main"]["updated_at"] = $todayDateTime;
+        //
+        $entryArray["log"] = [];
+        //
+        foreach ($time["breakdown"] as $log) {
+            // set the log array
+            $logArray = [];
+            //
+            $latLonArray = $this->getRandomLatLon();
+            //
+            $logArray["lat"] = $latLonArray["lat"];
+            $logArray["lng"] = $latLonArray["lng"];
+            //
+            if ($log[0] === "clocked_in") {
+                $logArray["clocked_in"] = $date . " " . $log[1];
+                //
+                if ($log[2]) {
+                    //
+                    $latLonArray = $this->getRandomLatLon();
+                    //
+                    $logArray["lat_2"] = $latLonArray["lat"];
+                    $logArray["lng_2"] = $latLonArray["lng"];
+                    //
+                    $logArray["clocked_out"] = $date . " " . $log[2];
+                }
+            }
+            //
+            $logArray["created_at"] = $todayDateTime;
+            $logArray["updated_at"] = $todayDateTime;
+
+            $entryArray["log"][] = $logArray;
+        }
+        //
+        return $entryArray;
+    }
+
+    /**
+     * get the random slot
+     *
+     * @return array
+     */
+    private function getRandomTime(): array
+    {
+        //
+        $timeArray = [];
+        //
+        $timeArray[] = [
+            "start" => "09:00:00",
+            "end" => "17:00:00",
+            "breakdown" => [
+                ["clocked_in", "09:00:00", "17:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "09:00:00",
+            "end" => "13:00:00",
+            "breakdown" => [
+                ["clocked_in", "09:00:00", "13:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "11:00:00",
+            "end" => "19:00:00",
+            "breakdown" => [
+                ["clocked_in", "11:00:00", "19:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "10:00:00",
+            "end" => "12:00:00",
+            "breakdown" => [
+                ["clocked_in", "10:00:00", "12:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "15:00:00",
+            "end" => "18:00:00",
+            "breakdown" => [
+                ["clocked_in", "15:00:00", "18:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "15:00:00",
+            "breakdown" => [
+                ["clocked_in", "15:00:00"],
+            ]
+        ];
+        //
+        $timeArray[] = [
+            "start" => "09:00:00",
+            "end" => "20:00:00",
+            "breakdown" => [
+                ["clocked_in", "09:00:00", "20:00:00"],
+            ]
+        ];
+        //
+        return $timeArray[rand(0, 5)];
+    }
+
+    /**
+     * Get the company active employee ids
+     *
+     * @param int $companyId
+     * @return array
+     */
+    private function getCompanyActiveEmployeeIds(int $companyId): array
+    {
+        $records = $this->CI
+            ->db
+            ->select("sid")
+            ->where([
+                "active" => 1,
+                "terminated_status" => 0,
+                "parent_sid" => $companyId,
+                "is_executive_admin" => 0,
+            ])
+            ->get("users")
+            ->result_array();
+        //
+        return $records ? array_column($records, "sid") : [];
+    }
+
+    /**
+     * Get the employee clocked in dates
+     *
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     * @return array
+     */
+    private function getEmployeClockedDatesWithinRange(
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        $records = $this->CI
+            ->db
+            ->select("clocked_date")
+            ->where("employee_sid", $employeeId)
+            ->where("clocked_date >= ", $startDate)
+            ->where("clocked_date <= ", $endDate)
+            ->get("cl_attendance")
+            ->result_array();
+        //
+        return $records ? array_column($records, "clocked_date") : [];
+    }
 }

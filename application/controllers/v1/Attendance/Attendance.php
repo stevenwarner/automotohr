@@ -52,7 +52,7 @@ class Attendance extends Public_Controller
         $this->loggedInEmployee = checkAndGetSession("employer_detail");
         $this->loggedInCompany = checkAndGetSession("company_detail");
         //
-        $this->disableCreationOfMinifyFiles = true;
+        $this->disableCreationOfMinifyFiles = false;
         //
         $this->css = "public/v1/css/attendance/";
         $this->js = "public/v1/js/attendance/";
@@ -197,20 +197,20 @@ class Attendance extends Public_Controller
                 $data["filter"]["employeeId"],
                 $startDate,
                 $endDate
-            ); 
+            );
             //
             if ($data["clockArray"]["periods"]) {
                 foreach ($data["clockArray"]["periods"] as $pkey => $period) {
                     $data["clockArray"]["periods"][$period["date"]] = $period;
                     unset($data["clockArray"]["periods"][$pkey]);
                 }
-            }  
+            }
         }
         //
         $data["employees"] = $this->clock_model
             ->getEmployees(
                 $this->loggedInCompany["sid"]
-            );   
+            );
         //  
         // echo $this->db->last_query();
         // _e($data["employees"],true,true);
@@ -278,13 +278,13 @@ class Attendance extends Public_Controller
         $data["filter"]["dateRange"] = $dateRange;
         //
         $data["filterEmployees"] = $this->clock_model
-                ->getFilterEmployees(
-                    $this->loggedInCompany["sid"],
-                    $data["filter"]["employees"],
-                    $data["filter"]["teams"],
-                    $data["filter"]["departments"],
-                    $data["filter"]["jobTitles"]
-                );       
+            ->getFilterEmployees(
+                $this->loggedInCompany["sid"],
+                $data["filter"]["employees"],
+                $data["filter"]["teams"],
+                $data["filter"]["departments"],
+                $data["filter"]["jobTitles"]
+            );
         //
         if ($data["filterEmployees"]) {
             foreach ($data["filterEmployees"] as $ekey => $employee) {
@@ -293,14 +293,14 @@ class Attendance extends Public_Controller
                     $employee['sid'],
                     $startDate,
                     $endDate
-                ); 
+                );
                 //
                 $data["filterEmployees"][$ekey]['clockArray'] = $clockArray;
             }
-        }                
+        }
         //
         $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);
-        $data['departments'] = $this->clock_model->getDepartments($this->loggedInCompany["sid"]); 
+        $data['departments'] = $this->clock_model->getDepartments($this->loggedInCompany["sid"]);
         $data['teams'] = $this->clock_model->getTeams($this->loggedInCompany["sid"], $data['departments']);
         $data['jobTitles'] = $this->clock_model->getJobTitles();
         //   
@@ -363,14 +363,14 @@ class Attendance extends Public_Controller
         $data["filter"]['selectedDate'] = $selectedDate;
         //
         $data["markers"] = $this->clock_model
-                ->getClockedInEmployees(
-                    $this->loggedInCompany["sid"],
-                    $clockedInDate,
-                    $data["filter"]["employees"]
-                ); 
+            ->getClockedInEmployees(
+                $this->loggedInCompany["sid"],
+                $clockedInDate,
+                $data["filter"]["employees"]
+            );
         //        
         // _e($data["markers"],true);   
-        $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);        
+        $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);
         //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
@@ -424,23 +424,94 @@ class Attendance extends Public_Controller
         $data['employeeInfo'] = get_employee_profile_info($employeeId);
         //
         $data["history"] = $this->clock_model
-                ->getEmployeeLoginHistory(
-                    $employeeId,
-                    $clockedInDate,
-                ); 
+            ->getEmployeeLoginHistory(
+                $employeeId,
+                $clockedInDate,
+            );
         //
         // get the employee worked shifts
         $data["clockArray"] = $this->clock_model->calculateTimeWithinRange(
             $employeeId,
             $clockedInDate,
             $clockedInDate
-        ); 
+        );
         //        
         // _e($data["history"],true);           
         //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");
+    }
+
+    public function settings()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/settings", "js");
+        $this->getCommon($data, "settings");
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Attendance | Settings";
+        $data['security_details'] =
+            $data['securityDetails'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        // load the settings model
+        $this->load->model("v1/Attendance/Clock_setting_model", "clock_setting_model");
+        // get the settings
+        $data["settings"] = $this->clock_setting_model->get();
+        //
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/attendance/settings_new");
+        $this->load->view("main/footer");
+    }
+
+    /**
+     * update settings
+     * @return json
+     */
+    public function processSettings()
+    {
+        // only a plus can perform this question
+        onlyPlusAndPayPlanCanAccess(true);
+        // get the sanitized post
+        $sanitizedPost = $this->input->post(null, true);
+        // prepare update array
+        $upd = [];
+        $upd["setting_json"] = json_encode(
+            $sanitizedPost
+        );
+        $upd["last_modified_by"] = $this->loggedInEmployee["sid"];
+        $upd["updated_at"] = getSystemDate();
+        // update settings
+        $this->db
+            ->where("company_sid", $this->loggedInCompany["sid"])
+            ->update(
+                "cl_attendance_settings",
+                $upd
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully updated the attendance settings."
+            ]
+        );
     }
 
 

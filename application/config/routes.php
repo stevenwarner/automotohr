@@ -2151,6 +2151,7 @@ $route["attendance/employees/timesheets"]["get"] = "v1/Attendance/Attendance/tim
 $route["attendance/employees/locations"]["get"] = "v1/Attendance/Attendance/locations";
 $route["attendance/location_detail"]["get"] = "v1/Attendance/Attendance/location_detail";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
+$route["attendance/settings"]["post"] = "v1/Attendance/Attendance/processSettings";
 $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
 //
 $route['manage_admin/cms'] = 'manage_admin/Cms/index';

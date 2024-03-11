@@ -968,3 +968,25 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	background: #000ccc1a !important;
 	/* color: var(--txColor) !important; */
 }
+
+/*  */
+.csCircleText{
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	border: 1px solid var(--bgBlackColorSoft);
+	color: var(--bgBlackColor);
+	border-radius: 50%;
+	text-align: center;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.csCircleText.active,
+.csCircleText:hover,
+.csCircleText:focus{
+	background: var(--bgOrangeColor);
+	border-color: var(--bgOrangeColorSoft);
+	color: var(--txColor);
+}

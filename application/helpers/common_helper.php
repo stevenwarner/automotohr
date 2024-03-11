@@ -12097,6 +12097,26 @@ if (!function_exists('getUserFields')) {
 }
 
 //
+if (!function_exists('getUserFieldsForDb')) {
+    function getUserFieldsForDb(string $additionalFields = "")
+    {
+        $fields  = 'users.sid as userId,';
+        $fields .= 'users.first_name,';
+        $fields .= 'users.middle_name,';
+        $fields .= 'users.last_name,';
+        $fields .= 'users.access_level,';
+        $fields .= 'users.access_level_plus,';
+        $fields .= 'users.pay_plan_flag,';
+        $fields .= 'users.is_executive_admin,';
+        $fields .= 'users.timezone,';
+        $fields .= 'users.job_title,';
+        $fields .= 'users.profile_picture,';
+        //
+        return $fields.$additionalFields;
+    }
+}
+
+//
 if (!function_exists('')) {
     function getPDBTN($document, $cls = '', $type = '')
     {

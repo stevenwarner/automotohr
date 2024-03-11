@@ -302,6 +302,14 @@
                                                 </a>
                                             </li>
                                         <?php } ?>
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+                                            <!-- Attendance module settings -->
+                                            <li>
+                                                <a href="<?= base_url("attendance/settings"); ?>">
+                                                    Attendance Settings
+                                                </a>
+                                            </li>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>
