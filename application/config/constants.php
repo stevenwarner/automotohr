@@ -707,3 +707,7 @@ define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 435);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+
+// set the attendance email ids
+DEFINE("DAILY_LIMIT_BREACH_EMAIL_TO_EMPLOYERS", 438);

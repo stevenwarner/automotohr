@@ -3015,6 +3015,34 @@ if (!function_exists('getUserColumnById')) {
     }
 }
 
+if (!function_exists('getUserColumnsById')) {
+    /**
+     * Get the column from user
+     * The function will only return a single column and
+     * it will return empty in case no data is found.
+     * 
+     * @param int $id
+     * @param array $column Optional
+     * @return array
+     */
+    function getUserColumnsById(
+        int $id,
+        $column = "sid"
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        $record =
+            $CI->db
+            ->select($column)
+            ->where('sid', $id)
+            ->get('users')
+            ->row_array();
+        //
+        return $record ? $record : [];
+    }
+}
+
 
 if (!function_exists('checkAndSetEEOCForUser')) {
     /**

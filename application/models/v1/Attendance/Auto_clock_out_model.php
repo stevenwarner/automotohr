@@ -10,6 +10,12 @@
 class Auto_clock_out_model extends CI_Model
 {
     /**
+     * holds the date
+     * @var string
+     */
+    private $clockDate;
+
+    /**
      * main entry point
      */
     public function __construct()
@@ -39,12 +45,13 @@ class Auto_clock_out_model extends CI_Model
             return "No attendanceRecords found";
         }
         //
+        $this->clockDate = $date;
+        //
         foreach ($attendanceRecords as $v0) {
             // get the employee worked time
             $duration = $this->getAttendanceLoggedInDuration(
                 $v0["sid"]
             );
-            $this->clockDate = $date;
             //
             if ($duration >= $seconds) {
                 $this->clockOut(
@@ -159,7 +166,7 @@ class Auto_clock_out_model extends CI_Model
             }
         }
 
-        return $timeInMinutes;
+        return $timeInMinutes * 60;
     }
 
     /**

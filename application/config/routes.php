@@ -2252,3 +2252,4 @@ $route["documents/assign_group_document_to_employee"]["post"] = "Hr_documents_ma
  * CRON jobs
  */
 $route["cron/auto_clock_out/(:any)"]["get"] = "v1/Attendance/Crons/Cron_clock/main/$1/autoClockOut";
+$route["cron/daily_limit_breach_emails/(:any)"]["get"] = "v1/Attendance/Crons/Cron_clock/main/$1/dailyLimitBreachEmailToEmployers";

@@ -33,9 +33,11 @@ class Cron_clock extends CI_Controller
      * The CRON will auto clocks out employees
      * based on the company auto clock settings
      * @method autoClockOut
+     * @method dailyLimitBreachEmailToEmployers
      * @param string $verificationToken
      * @param string $event
      * autoClockOut
+     * dailyLimitBreachEmailToEmployers
      */
     public function main(
         string $verificationToken,
@@ -74,7 +76,7 @@ class Cron_clock extends CI_Controller
         );
         // check if auto clock needs to be applied
         if ($companySettings["settings_json"]["general"]["auto_clock_out"]["status"] == "0") {
-            _e("Auto clock out is off");
+            return _e("Auto clock out is off");
         }
         //
         $this->auto_clock_out_model->startProcess(
@@ -82,5 +84,30 @@ class Cron_clock extends CI_Controller
             (string)$companySettings["settings_json"]["general"]["auto_clock_out"]["value"],
             getSystemDate(DB_DATE)
         );
+    }
+
+    /**
+     * Send daily  limit breach email
+     * Send the daily time limit breach email to employers
+     * @param array $companySettings
+     */
+    private function dailyLimitBreachEmailToEmployers(array $companySettings)
+    {
+        // load clock out model
+        $this->load->model(
+            "v1/Attendance/Clock_notification_model",
+            "clock_notification_model"
+        );
+        // check if auto clock needs to be applied
+        if ($companySettings["settings_json"]["general"]["daily_limit"]["status"] == "0") {
+            return _e("Daily limit is off");
+        }
+        //
+        $this->clock_notification_model
+            ->checkAndSendDailyLimitBreachEmailToEmployers(
+                $companySettings["company_sid"],
+                (string)$companySettings["settings_json"]["general"]["daily_limit"]["value"],
+                getSystemDate(DB_DATE)
+            );
     }
 }
