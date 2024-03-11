@@ -79,8 +79,14 @@ class Clock_model extends Base_model
     ) {
         // set companyId
         $this->companyId = $companyId;
+        // load attendance settings model
+        $this->load->model(
+            "v1/Attendance/Clock_setting_model",
+            "clock_setting_model"
+        );
         // get company permissions
-        $companyPermissions = unserialize(getUserColumnById($companyId, "extra_info"));
+        $companyPermissions = $this->clock_setting_model
+            ->getColumn();
         // set employeeId
         $this->employeeId = $employeeId;
         //
@@ -128,7 +134,7 @@ class Clock_model extends Base_model
         // get the attendance state and time
         $record = $this->getAttendanceStateAndTime();
         //
-        if (!$companyPermissions['clock_enable_for_attendance']) {
+        if ($companyPermissions["controls"]['employee_can_clock_in'] == "0") {
             $clockArray["blocked"] = true;
         }
         // when no entry is found
@@ -1103,7 +1109,7 @@ class Clock_model extends Base_model
      * @param array $post
      * @return array
      */
-    private function clockOut(array $post, int $attendanceId)
+    public function clockOut(array $post, int $attendanceId)
     {
         // we need to confirm it first
         // when check out
@@ -2157,8 +2163,8 @@ class Clock_model extends Base_model
             $tmp['regular_time'] = $regularTime;
             //
             if ($employeeShifts[$v0['clocked_date']]) {
-                $shiftStart = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["start_time"];
-                $shiftEnd = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["end_time"];
+                $shiftStart = $v0['clocked_date'] . ' ' . $employeeShifts[$v0['clocked_date']]["start_time"];
+                $shiftEnd = $v0['clocked_date'] . ' ' . $employeeShifts[$v0['clocked_date']]["end_time"];
                 //
                 $d1Obj = new DateTime($shiftStart, new DateTimeZone("UTC"));
                 // convert d1 to UTC
@@ -2183,9 +2189,9 @@ class Clock_model extends Base_model
             $shifyDifference = '';
             //
             if ($tmp["difference_time"] < 0) {
-                $shifyDifference = '<span class="label label-danger"> -'.convertSecondsToTime(str_replace('-', '', $tmp["difference_time"])).' </span>';
+                $shifyDifference = '<span class="label label-danger"> -' . convertSecondsToTime(str_replace('-', '', $tmp["difference_time"])) . ' </span>';
             } else if ($tmp["difference_time"] > 0) {
-                $shifyDifference = '<span class="label label-warning"> +'.convertSecondsToTime($tmp["difference_time"]).'</span>';
+                $shifyDifference = '<span class="label label-warning"> +' . convertSecondsToTime($tmp["difference_time"]) . '</span>';
             }
             //
             $tmp["text"] = [
@@ -2249,11 +2255,11 @@ class Clock_model extends Base_model
         // apply seven consecutive day overtime
         // convert to text
         $totalDifference = '';
-        
+
         if ($returnArray["difference_time"] < 0) {
-            $totalDifference = '<span class="label label-danger"> -'.convertSecondsToTime($returnArray["difference_time"]).' </span>';
+            $totalDifference = '<span class="label label-danger"> -' . convertSecondsToTime($returnArray["difference_time"]) . ' </span>';
         } else if ($returnArray["difference_time"] > 0) {
-            $totalDifference = '<span class="label label-warning"> +'.convertSecondsToTime($returnArray["difference_time"]).'</span>';
+            $totalDifference = '<span class="label label-warning"> +' . convertSecondsToTime($returnArray["difference_time"]) . '</span>';
         }
         //
         $returnArray["text"] = [
@@ -2274,7 +2280,8 @@ class Clock_model extends Base_model
         return $returnArray;
     }
 
-    public function getClockedInEmployees ($companyId, $date, $employees) {
+    public function getClockedInEmployees($companyId, $date, $employees)
+    {
         //
         $this->db->select('
             sid,
@@ -2299,25 +2306,25 @@ class Clock_model extends Base_model
         if ($records) {
             foreach ($records as $row) {
                 $location = $this->db
-                ->select("
+                    ->select("
                     lat,
                     lng,
                     lat_2,
                     lng_2
                 ")
-                ->where("cl_attendance_sid", $row['sid'])
-                ->order_by("sid", "ASC")
-                ->get("cl_attendance_log")
-                ->row_array();
+                    ->where("cl_attendance_sid", $row['sid'])
+                    ->order_by("sid", "ASC")
+                    ->get("cl_attendance_log")
+                    ->row_array();
                 //
-                if(!empty($location['lat']) || !empty($location['lng'])){
+                if (!empty($location['lat']) || !empty($location['lng'])) {
                     //
                     $userInfo = get_employee_profile_info($row['employee_sid']);
                     //
                     $markers[] = [
                         'employeeId' => $row['employee_sid'],
-                        'lat' => $location['lat'], 
-                        'lng' => $location['lng'], 
+                        'lat' => $location['lat'],
+                        'lng' => $location['lng'],
                         'logo' => getImageURL($userInfo['profile_picture']),
                         'name' => remakeEmployeeName([
                             'first_name' => $userInfo['first_name'],
@@ -2328,16 +2335,17 @@ class Clock_model extends Base_model
                             'is_executive_admin' => $userInfo['is_executive_admin'],
                             'pay_plan_flag' => $userInfo['pay_plan_flag'],
                             'job_title' => $userInfo['job_title'],
-                        ]) 
+                        ])
                     ];
                 }
-            } 
-        } 
+            }
+        }
         //
-        return $markers; 
+        return $markers;
     }
 
-    public function getEmployeeLoginHistory ($employeeId, $date) {
+    public function getEmployeeLoginHistory($employeeId, $date)
+    {
         $record =
             $this->db
             ->select("
@@ -2353,11 +2361,11 @@ class Clock_model extends Base_model
         $history = [
             'logs' => '',
             'locations' => ''
-        ]; 
+        ];
         //    
         if ($record) {
             $history = $this->getTimeSheetHistory($record['sid']);
-        } 
+        }
         //
         return $history;
     }

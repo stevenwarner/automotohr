@@ -113,9 +113,15 @@ class Employee extends Base
                 $endDate
             );
         //
+        // load attendance settings model
+        $this->load->model(
+            "v1/Attendance/Clock_setting_model",
+            "clock_setting_model"
+        );
         // get company permissions
-        $companyPermissions = unserialize(getUserColumnById($this->loggedInCompany["sid"], "extra_info"));
-        $this->data["isEditAllowed"] = $companyPermissions["timesheet_enable_for_attendance"];
+        $this->data["isEditAllowed"] =
+            $this->clock_setting_model
+                ->getColumn()["controls"]["employee_can_manipulate_time_sheet"] == "1";
         // make the blue portal popup
         $this->data["loadView"] = true;
         $this->renderView("v1/attendance/my_timesheet");

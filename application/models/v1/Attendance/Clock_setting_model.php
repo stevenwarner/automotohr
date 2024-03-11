@@ -65,6 +65,28 @@ class Clock_setting_model extends Base_model
         return $returnArray;
     }
 
+    public function getColumn()
+    {
+        // check if settings exists
+        if (!$this->db->where(
+            "cl_attendance_settings.company_sid",
+            $this->loggedInCompanyId
+        )->count_all_results("cl_attendance_settings")) {
+            // add the setting to the database
+            $this->addDefaultSettings();
+        }
+        //
+        $record = $this->db
+            ->select("setting_json")
+            ->where(
+                "cl_attendance_settings.company_sid",
+                $this->loggedInCompanyId
+            )
+            ->get("cl_attendance_settings")
+            ->row_array();
+        return $record ? json_decode($record["setting_json"], true) : $this->getDefaultSettings();
+    }
+
     /**
      * Add the default settings to the table
      */
@@ -91,7 +113,7 @@ class Clock_setting_model extends Base_model
     /**
      * get the default settings
      */
-    private function getDefaultSettings(): array
+    public function getDefaultSettings(): array
     {
         // set settings array
         $settingsArray = [
@@ -102,33 +124,33 @@ class Clock_setting_model extends Base_model
         // set general settings
         $settingsArray["general"] = [
             "daily_limit" => [
-                "status" => 0,
-                "value" => 2
+                "status" => "0",
+                "value" => "2"
             ],
             "auto_clock_out" => [
-                "status" => 0,
-                "value" => 2
+                "status" => "0",
+                "value" => "2"
             ],
         ];
         // set controls settings
         $settingsArray["controls"] = [
-            "employee_can_clock_in" => 1,
-            "employee_can_manipulate_time_sheet" => 0,
+            "employee_can_clock_in" => "1",
+            "employee_can_manipulate_time_sheet" => "0",
         ];
         // set reminders settings
         $settingsArray["reminders"] = [
             "days" => ["mon", "tue", "wed", "thu", "fri"],
             "remind_employee_to_clock_in" => [
-                "status" => 0,
+                "status" => "0",
                 "value" => ""
             ],
             "remind_employee_to_clock_out" => [
-                "status" => 0,
+                "status" => "0",
                 "value" => ""
             ],
             "daily_limit" => [
-                "status" => 0,
-                "value" => 2
+                "status" => "0",
+                "value" => "2"
             ]
         ];
         return $settingsArray;

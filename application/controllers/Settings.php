@@ -327,8 +327,6 @@ class Settings extends Public_Controller
                 $data['d_license'] = 0;
                 $data['l_employment'] = 0;
                 $company['mtin'] = "";
-                $company['clock_enable_for_attendance'] = "";
-                $company['timesheet_enable_for_attendance'] = "";
                 $company['shift_reminder_email_for_next_day'] = 0;
                 $company['week_off_days'] = [];
             } else {
@@ -340,8 +338,6 @@ class Settings extends Public_Controller
                 $data['d_license'] = isset($serializedata['d_license']) ? $serializedata['d_license'] : 0;
                 $data['l_employment'] = isset($serializedata['l_employment']) ? $serializedata['l_employment'] : 0;
                 $company['mtin'] = isset($serializedata['mtin']) ? $serializedata['mtin'] : 0;
-                $company['clock_enable_for_attendance'] = isset($serializedata['clock_enable_for_attendance']) ? $serializedata['clock_enable_for_attendance'] : 0;
-                $company['timesheet_enable_for_attendance'] = isset($serializedata['timesheet_enable_for_attendance']) ? $serializedata['timesheet_enable_for_attendance'] : 0;
                 $company['shift_reminder_email_for_next_day'] = isset($serializedata['shift_reminder_email_for_next_day']) ? $serializedata['shift_reminder_email_for_next_day'] : 0;
                 $company['week_off_days'] = isset($serializedata['week_off_days']) ? $serializedata['week_off_days'] : [];
             }
@@ -418,12 +414,6 @@ class Settings extends Public_Controller
                     $company_extra_info["mtin"] = $post["mtin"];
                 }
 
-                if ($post["clock_enable_for_attendance"]) {
-                    $company_extra_info["clock_enable_for_attendance"] = $post["clock_enable_for_attendance"];
-                }
-                if ($post["timesheet_enable_for_attendance"]) {
-                    $company_extra_info["timesheet_enable_for_attendance"] = $post["timesheet_enable_for_attendance"];
-                }
                 if ($post["shift_reminder_email_for_next_day"]) {
                     $company_extra_info["shift_reminder_email_for_next_day"] = $post["shift_reminder_email_for_next_day"];
                 }
