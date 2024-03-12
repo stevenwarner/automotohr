@@ -269,7 +269,7 @@ class Dashboard extends CI_Controller
                     'subject' => $subject,
                     'email' => $to,
                     'message' => $body,
-                    'username' => $user_data['sid'],
+                    'username' => 0
                 );
                 $this->Users_model->save_email_logs($emailData);
             }
@@ -302,15 +302,47 @@ class Dashboard extends CI_Controller
             )
         );
 
+        $passwordRecoveryContent = getPageContent('executive_admin_password_recovery', false);
+
+        // meta titles
+        $data['limited_menu'] = true;
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js"
+        ];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/login',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            "v1/plugins/alertifyjs/css/alertify.min",
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, "executive_admin_forgot", true);
+        //
+        $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'v1/plugins/alertifyjs/alertify.min',
+            'js/jquery.validate.min',
+            'js/app_helper',
+            "v1/app/js/pages/schedule_demo"
+        ], $this->js, "executive_admin_forgot", true);
+
+
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $retrn = $this->Users_model->varification_user_key($user, $key);
             $data['page_title'] = "Change Password";
-            $this->load->view('main/header', $data);
-            $this->load->view('users/change_password');
-            $this->load->view('main/footer');
+            $data['passwordRecoveryContent'] = $passwordRecoveryContent;
+
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/change_password');
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');
