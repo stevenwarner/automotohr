@@ -52,7 +52,10 @@
                                         <?php $assigned_documents = array_reverse($documents_list);  ?>
                                         <?php foreach ($documents_list as $document) { ?>
                                             <?php if ($document['archive'] != 1 && $document['status'] != 0 && $document['assign_archive'] == 0) { ?>
-                                                <?php $isCompleted = isDocumentCompletedCheck($document, true); ?>
+                                                <?php
+                                                $isCompleted = isDocumentCompletedCheck($document, true);
+
+                                                ?>
                                                 <tr class="">
                                                     <td class="col-lg-3">
                                                         <?php
@@ -86,9 +89,27 @@
                                                         <?php echo reset_datetime(array('datetime' => $document['assigned_by_date'], '_this' => $this)); ?>
                                                     </td>
                                                     <td class="col-lg-1">
+
+                                                        <?php
+
+                                                        if ($document['fillable_documents_slug'] == 'employee-performance-evaluation') {
+                                                            $performance_document_json = json_decode($document['performance_document_json'], true);
+                                                            $performanceEvaluationSection4 = 0;
+                                                            if (
+                                                                $performance_document_json['section4']['data']['section4managerSignature']
+                                                                && $performance_document_json['section4']['data']['section4nextLevelSignature']
+                                                                && $performance_document_json['section4']['data']['section4hrSignature']
+                                                            ) {
+                                                                $performanceEvaluationSection4 = 1;
+                                                            }
+                                                        }
+                                                        ?>
                                                         <?php if (!empty($document['authorized_signature'])) { ?>
                                                             <img class="img-responsive text-center signature_status_bulb" title="Document Signed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                                        <?php } else { ?>
+                                                        <?php } else if ($document['fillable_documents_slug'] == 'employee-performance-evaluation' && $performanceEvaluationSection4 == 1) { ?>
+                                                            <img class="img-responsive text-center signature_status_bulb" title="Document Signed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+
+                                                        <?php  } else { ?>
                                                             <img class="img-responsive text-center signature_status_bulb" title="Document Not Signed" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
                                                         <?php } ?>
                                                     </td>
@@ -96,6 +117,10 @@
                                                     <td class="col-lg-2">
                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                         <?php $btn_text = empty($document['authorized_signature']) ?  'Sign Doc - Not Completed' : 'Sign Doc - Completed'; ?>
+
+                                                       <?php if ($document['fillable_documents_slug'] == 'employee-performance-evaluation' && $performanceEvaluationSection4 == 1) { 
+                                                       $btn_text = 'Sign Doc - Completed'; }?>
+
                                                         <?php $doc_type = $document['document_type'] == "offer_letter" ?  'o' : 's'; ?>
                                                         <a class="<?php echo $btn_show; ?>" href="<?php echo  base_url('view_assigned_authorized_document' . '/' . $doc_type . '/' . $document['sid']); ?>">
                                                             <?php echo $btn_text; ?>

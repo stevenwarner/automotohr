@@ -2177,16 +2177,21 @@ class Hr_documents_management extends Public_Controller
                                                 unset($section4Formdata['perform_action']);
                                                 unset($section4Formdata['document_sid']);
 
+
                                                 //
                                                 $section4data = [];
                                                 if(!$sectionsdata['section4']['data']['section4managerSignature']){
                                                     if($section4Formdata['section4managerSignature']!=''){
                                                        $section4data['section4managerSignature'] = $section4Formdata['section4managerSignature'];
                                                        $section4data['section4managerSignatureDate'] = date('Y-m-d H:i:s');
+                                                       $section4data['section4managerSignatureBy'] = $employer_sid;
+
                                                     }
                                                 }else{
                                                     $section4data['section4managerSignature'] = $sectionsdata['section4']['data']['section4managerSignature'];
                                                     $section4data['section4managerSignatureDate'] = $sectionsdata['section4']['data']['section4managerSignatureDate'];
+                                                    $section4data['section4managerSignatureBy'] = $sectionsdata['section4']['data']['section4managerSignatureBy'];
+
                                                     }
 
 
@@ -2194,26 +2199,36 @@ class Hr_documents_management extends Public_Controller
                                                     if($section4Formdata['section4nextLevelSignature']!=''){
                                                        $section4data['section4nextLevelSignature'] = $section4Formdata['section4nextLevelSignature'];
                                                        $section4data['section4nextLevelSignatureDate'] = date('Y-m-d H:i:s');
+                                                       $section4data['section4nextLevelSignatureBy'] = $employer_sid;
+
                                                     }
                                                 }else{
                                                     $section4data['section4nextLevelSignature'] = $sectionsdata['section4']['data']['section4nextLevelSignature'];
                                                     $section4data['section4nextLevelSignatureDate'] = $sectionsdata['section4']['data']['section4nextLevelSignatureDate'];
+                                                    $section4data['section4nextLevelSignatureBy'] = $sectionsdata['section4']['data']['section4nextLevelSignatureBy'];
+
                                                 }
 
                                                 if(!$sectionsdata['section4']['data']['section4hrSignature']){
                                                     if($section4Formdata['section4hrSignature']!=''){
                                                        $section4data['section4hrSignature'] = $section4Formdata['section4hrSignature'];
                                                        $section4data['section4hrSignatureDate'] = date('Y-m-d H:i:s');
+                                                       $section4data['section4hrSignatureBy'] = $employer_sid;
+
                                                     }
                                                 }else{
 
                                                     $section4data['section4hrSignature'] = $sectionsdata['section4']['data']['section4hrSignature'];
                                                     $section4data['section4hrSignatureDate'] = $sectionsdata['section4']['data']['section4hrSignatureDate'];
+                                                    $section4data['section4hrSignatureBy'] = $sectionsdata['section4']['data']['section4hrSignatureBy'];
+
                                                 }
 
                                                 if($sectionsdata['section4']['data']['section4employeeSignature']!=''){
                                                     $section4data['section4employeeSignature']=$sectionsdata['section4']['data']['section4employeeSignature'];
                                                     $section4data['section4employeeSignatureDate']=$sectionsdata['section4']['data']['section4employeeSignatureDate'];
+                                                    $section4data['section4employeeSignatureBy']=$sectionsdata['section4']['data']['section4employeeSignatureBy'];
+
                                                 }
 
                                                 $sectionsdata['section4']['data'] = $section4data;
@@ -6627,6 +6642,8 @@ class Hr_documents_management extends Public_Controller
                                     $signaturearray=[];
                                     $empsignaturearray['section4employeeSignature']=$section2Data['section4employeeSignature'];
                                     $empsignaturearray['section4employeeSignatureDate']=date('Y-m-d H:i:s');
+                                    $empsignaturearray['section4employeeSignatureBy']=$user_sid;
+
 
                                     $sectionsdata['section4']['data']=$empsignaturearray;
                                 }
@@ -11504,6 +11521,166 @@ class Hr_documents_management extends Public_Controller
                 $this->res['Response'] = 'Manual document update successfully.';
                 $this->resp();
                 break;
+
+                case "section4hrSignature":
+                    //
+                    $section4data=[];
+                    $document_sid=$post['document_sid'];
+                    $user_type=$post['user_type'];
+                    $user_sid=$post['user_sid'];
+                 
+                    $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+
+                    if($sectionsdata['section4']['data']['section4managerSignature']){
+                    $section4data['section4managerSignature'] = $sectionsdata['section4']['data']['section4managerSignature'];
+                    $section4data['section4managerSignatureDate'] = $sectionsdata['section4']['data']['section4managerSignatureDate'];
+                    $section4data['section4managerSignatureBy'] = $sectionsdata['section4']['data']['section4managerSignatureBy'];
+                    }
+
+                    if($sectionsdata['section4']['data']['section4nextLevelSignature']){
+                    $section4data['section4nextLevelSignature'] = $sectionsdata['section4']['data']['section4nextLevelSignature'];
+                    $section4data['section4nextLevelSignatureDate'] = $sectionsdata['section4']['data']['section4nextLevelSignatureDate'];
+                    $section4data['section4nextLevelSignatureBy'] = $sectionsdata['section4']['data']['section4nextLevelSignatureBy'];
+                    }
+
+                    if($sectionsdata['section4']['data']['section4employeeSignature']){
+                    $section4data['section4employeeSignature']=$sectionsdata['section4']['data']['section4employeeSignature'];
+                    $section4data['section4employeeSignatureDate']=$sectionsdata['section4']['data']['section4employeeSignatureDate'];
+                    $section4data['section4employeeSignatureBy']=$sectionsdata['section4']['data']['section4employeeSignatureBy'];
+                    }
+
+                    $section4data['section4hrSignature'] = $post['hrSignatrue'];
+                    $section4data['section4hrSignatureDate'] = date('Y-m-d H:i:s');
+                    $section4data['section4hrSignatureBy'] = $employer_sid;
+                  
+              
+                    $sectionsdata['section4']['data'] = $section4data;
+
+                    if($sectionsdata['section4']['data']['section4managerSignature']!='' && $sectionsdata['section4']['data']['section4nextLevelSignature']!='' && $sectionsdata['section4']['data']['section4hrSignature']!='' && $sectionsdata['section4']['data']['section4employeeSignature']!=''){
+                        $sectionsdata['section4']['completed_on'] = date('Y-m-d H:i:s');
+                        $sectionsdata['section4']['status']='completed';
+                    }else{
+                        $sectionsdata['section4']['completed_on']='d';
+                        $sectionsdata['section4']['status']='b';
+                    }
+
+                       $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+                        $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                    //
+
+
+                    $this->res['Status'] = TRUE;
+                    $this->res['Data'] = '';
+                    $this->res['Response'] = 'Proceed';
+                    $this->resp();
+                    break;
+
+                    case "section4managerSignature":
+                        //
+                        $section4data=[];
+                        $document_sid=$post['document_sid'];
+                        $user_type=$post['user_type'];
+                        $user_sid=$post['user_sid'];
+                     
+                        $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+    
+                        if($sectionsdata['section4']['data']['section4hrSignature']){
+                        $section4data['section4hrSignature'] = $sectionsdata['section4']['data']['section4hrSignature'];
+                        $section4data['section4hrSignatureDate'] = $sectionsdata['section4']['data']['section4hrSignatureDate'];
+                        $section4data['section4hrSignatureBy'] = $sectionsdata['section4']['data']['section4hrSignatureBy'];
+                        }
+    
+                        if($sectionsdata['section4']['data']['section4nextLevelSignature']){
+                        $section4data['section4nextLevelSignature'] = $sectionsdata['section4']['data']['section4nextLevelSignature'];
+                        $section4data['section4nextLevelSignatureDate'] = $sectionsdata['section4']['data']['section4nextLevelSignatureDate'];
+                        $section4data['section4nextLevelSignatureBy'] = $sectionsdata['section4']['data']['section4nextLevelSignatureBy'];
+                        }
+    
+                        if($sectionsdata['section4']['data']['section4employeeSignature']){
+                        $section4data['section4employeeSignature']=$sectionsdata['section4']['data']['section4employeeSignature'];
+                        $section4data['section4employeeSignatureDate']=$sectionsdata['section4']['data']['section4employeeSignatureDate'];
+                        $section4data['section4employeeSignatureBy']=$sectionsdata['section4']['data']['section4employeeSignatureBy'];
+                        }
+    
+                        
+                        $section4data['section4managerSignature'] = $post['managerSignatrue'];
+                        $section4data['section4managerSignatureDate'] = date('Y-m-d H:i:s');
+                        $section4data['section4managerSignatureBy'] = $employer_sid;
+                                        
+                        $sectionsdata['section4']['data'] = $section4data;
+    
+                        if($sectionsdata['section4']['data']['section4managerSignature']!='' && $sectionsdata['section4']['data']['section4nextLevelSignature']!='' && $sectionsdata['section4']['data']['section4hrSignature']!='' && $sectionsdata['section4']['data']['section4employeeSignature']!=''){
+                            $sectionsdata['section4']['completed_on'] = date('Y-m-d H:i:s');
+                            $sectionsdata['section4']['status']='completed';
+                        }else{
+                            $sectionsdata['section4']['completed_on']='d';
+                            $sectionsdata['section4']['status']='b';
+                        }
+    
+                           $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+                            $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                        //
+    
+    
+                        $this->res['Status'] = TRUE;
+                        $this->res['Data'] = '';
+                        $this->res['Response'] = 'Proceed';
+                        $this->resp();
+                        break;
+
+
+                        case "section4nextLevelSignature":
+                            //
+                            $section4data=[];
+                            $document_sid=$post['document_sid'];
+                            $user_type=$post['user_type'];
+                            $user_sid=$post['user_sid'];
+                         
+                            $sectionsdata = employeePerformanceDocSectionsData($document_sid);
+        
+                            if($sectionsdata['section4']['data']['section4hrSignature']){
+                            $section4data['section4hrSignature'] = $sectionsdata['section4']['data']['section4hrSignature'];
+                            $section4data['section4hrSignatureDate'] = $sectionsdata['section4']['data']['section4hrSignatureDate'];
+                            $section4data['section4hrSignatureBy'] = $sectionsdata['section4']['data']['section4hrSignatureBy'];
+                            }
+        
+                            if($sectionsdata['section4']['data']['section4managerSignature']){
+                            $section4data['section4managerSignature'] = $sectionsdata['section4']['data']['section4managerSignature'];
+                            $section4data['section4managerSignatureDate'] = $sectionsdata['section4']['data']['section4managerSignatureDate'];
+                            $section4data['section4managerSignatureBy'] = $sectionsdata['section4']['data']['section4managerSignatureBy'];
+                            }
+        
+                            if($sectionsdata['section4']['data']['section4employeeSignature']){
+                            $section4data['section4employeeSignature']=$sectionsdata['section4']['data']['section4employeeSignature'];
+                            $section4data['section4employeeSignatureDate']=$sectionsdata['section4']['data']['section4employeeSignatureDate'];
+                            $section4data['section4employeeSignatureBy']=$sectionsdata['section4']['data']['section4employeeSignatureBy'];
+                            }
+        
+                            
+                            $section4data['section4nextLevelSignature'] = $post['nextLevelSignatrue'];
+                            $section4data['section4nextLevelSignatureDate'] = date('Y-m-d H:i:s');
+                            $section4data['section4nextLevelSignatureBy'] = $employer_sid;
+                                            
+                            $sectionsdata['section4']['data'] = $section4data;
+        
+                            if($sectionsdata['section4']['data']['section4managerSignature']!='' && $sectionsdata['section4']['data']['section4nextLevelSignature']!='' && $sectionsdata['section4']['data']['section4hrSignature']!='' && $sectionsdata['section4']['data']['section4employeeSignature']!=''){
+                                $sectionsdata['section4']['completed_on'] = date('Y-m-d H:i:s');
+                                $sectionsdata['section4']['status']='completed';
+                            }else{
+                                $sectionsdata['section4']['completed_on']='d';
+                                $sectionsdata['section4']['status']='b';
+                            }
+        
+                               $data_to_update['performance_document_json'] =json_encode($sectionsdata);
+                                $this->hr_documents_management_model->update_generated_documents($document_sid, $user_sid, $user_type, $data_to_update);
+                            //
+        
+                            $this->res['Status'] = TRUE;
+                            $this->res['Data'] = '';
+                            $this->res['Response'] = 'Proceed';
+                            $this->resp();
+                            break;
+
         }
         //
         $this->resp();
@@ -12786,6 +12963,29 @@ class Hr_documents_management extends Public_Controller
                     ]
                 );
             }
+
+//
+
+   // Check if it's Authorize document
+
+   if ($post['fillable_documents_slug']=='employee-performance-evaluation') {
+    // Managers handling
+    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+        $post['managerList'],
+        $assignInsertId,
+        $post['CompanySid'],
+        $post['EmployerSid']
+    );
+    //
+    $this->hr_documents_management_model->change_document_approval_status(
+        $assignInsertId,
+        [
+            'managersList' => $post['managerList']
+        ]
+    );
+}
+
+
         }
 
         echo 'success';

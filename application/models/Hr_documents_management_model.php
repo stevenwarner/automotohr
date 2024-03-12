@@ -343,6 +343,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+
+        $this->db->or_where('documents_assigned.fillable_documents_slug','employee-performance-evaluation');
+
+
         $this->db->group_end();
         $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
 
@@ -350,6 +354,8 @@ class Hr_documents_management_model extends CI_Model
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
+       // $sldd = $this->db->last_query();
+      //   die($sldd);
         if (!empty($record_arr)) {
             $inactive_employee_sid = $ine ? $ine : $this->getAllCompanyInactiveEmployee($company_sid);
             //
@@ -379,6 +385,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+       
+        $this->db->or_where('documents_assigned.fillable_documents_slug','employee-performance-evaluation');
+
+       
         $this->db->group_end();
 
 
@@ -413,6 +423,7 @@ class Hr_documents_management_model extends CI_Model
                 } else if (in_array($aut_doc['user_sid'], $inactive_applicant_sid) && $aut_doc['user_type'] == 'applicant') {
                     unset($record_arr[$d_key]);
                 }
+
             }
             //
             return $record_arr;

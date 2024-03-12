@@ -52,12 +52,12 @@ if ($document['user_consent'] == 1) {
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 text-right">
 
                                 <?php if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') { ?>
-                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/') .'/'.$document['fillable_documents_slug']. '/' . $document['sid'] . '/submited/' . '/print'; ?>">Print</a>
-                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/') .'/'.$document['fillable_documents_slug']. '/' . $document['sid'] . '/submited/' . '/download'; ?>">Download</a>
-                                <?php }else{  ?>
-                                <a target="_blank" class="btn btn-info" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/' . $document_status . '/' . 'assigned_document/print'; ?>">Print</a>
-                                <a target="_blank" class="btn btn-info" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/' . $document_status . '/' . 'assigned_document/download'; ?>">Download</a>
-                                <?php }?>
+                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/') . '/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/' . '/print'; ?>">Print</a>
+                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('v1/fillable_documents/PrintPrevieFillable/') . '/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/' . '/download'; ?>">Download</a>
+                                <?php } else {  ?>
+                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/' . $document_status . '/' . 'assigned_document/print'; ?>">Print</a>
+                                    <a target="_blank" class="btn btn-info" href="<?php echo base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/' . $document_status . '/' . 'assigned_document/download'; ?>">Download</a>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>
@@ -82,8 +82,11 @@ if ($document['user_consent'] == 1) {
                                             <?php
 
                                             if ($document['fillable_documents_slug'] != null && $document['fillable_documents_slug'] != '') {
-
                                                 $previewDoc = '' . str_replace('-', '_', $document['fillable_documents_slug']);
+
+                                                if ($document['fillable_documents_slug'] == 'employee-performance-evaluation') {
+                                                    $previewDoc = "auth_" . $previewDoc;
+                                                }
 
                                                 $this->load->view('v1/fillable_documents/' . $previewDoc, $data);
                                             }  ?>

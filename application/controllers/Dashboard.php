@@ -510,18 +510,29 @@ class Dashboard extends Public_Controller
             $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            
+
             //
             $total_assigned_auth_doc_fillable_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_assigned_auth_doc =$total_assigned_auth_doc + $total_assigned_auth_doc_fillable_doc;
-                       
+            $total_assigned_auth_doc = $total_assigned_auth_doc + $total_assigned_auth_doc_fillable_doc;
+
             $total_pending_auth_doc_fillable_doc     = $this->dashboard_model->get_all_pending_auth_documents_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_pending_auth_doc=$total_pending_auth_doc+$total_pending_auth_doc_fillable_doc;
+            $total_pending_auth_doc = $total_pending_auth_doc + $total_pending_auth_doc_fillable_doc;
 
             $total_assigned_today_doc_fillable_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count_fillable_doc($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_assigned_today_doc= $total_assigned_today_doc+$total_assigned_today_doc_fillable_doc;
-            
-            //
+            $total_assigned_today_doc = $total_assigned_today_doc + $total_assigned_today_doc_fillable_doc;
+
+
+            // Performance Docs 
+            $total_assigned_auth_doc_fillable_doc_performance    = $this->dashboard_model->get_all_auth_documents_assigned_count_fillable_doc_performance($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_auth_doc = $total_assigned_auth_doc + $total_assigned_auth_doc_fillable_doc_performance;
+
+            $total_pending_auth_doc_fillable_doc_performance     = $this->dashboard_model->get_all_pending_auth_documents_count_fillable_doc_performance($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_pending_auth_doc = $total_pending_auth_doc + $total_pending_auth_doc_fillable_doc_performance;
+           
+            $total_assigned_today_doc_fillable_doc_performance   = $this->dashboard_model->get_all_auth_documents_assigned_today_count_fillable_doc_performance($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_today_doc = $total_assigned_today_doc + $total_assigned_today_doc_fillable_doc_performance;
+
+
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
             $data['AuthorizedDocuments']['Today'] = $total_assigned_today_doc;
@@ -1026,6 +1037,11 @@ class Dashboard extends Public_Controller
             $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+
+
+
+
+
 
             // Pending Employer Sections
             $data['PendingEmployerSection'] = [];
