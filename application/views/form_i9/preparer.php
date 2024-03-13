@@ -27,9 +27,9 @@ for ($i = 1; $i <= 4; $i++) : ?>
         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
             <div class="form-group">
                 <label>Today's Date (mm/dd/yyyy)
-                    &nbsp;<strong class="text-danger">*</strong>
+                    &nbsp;<strong class="text-danger">*</strong>  
                     &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_41_today_date"></i></label>
-                <input type="text" value="<?= $preparerArray[$i]['today_date'] ? $preparerArray[$i]['today_date'] : ''; ?>" name="section1_preparer_today_date_<?= $i; ?>" id="section1_preparer_today_date_<?= $i; ?>" class="form-control date_picker input-grey input-lg" readonly />
+                <input type="text" value="<?= $preparerArray[$i]['today_date'] ? formatDateToDB($preparerArray[$i]['today_date'], DB_DATE, 'm-d-Y') : ''; ?>" name="section1_preparer_today_date_<?= $i; ?>" id="section1_preparer_today_date_<?= $i; ?>" class="form-control date_picker input-grey input-lg" readonly />
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
