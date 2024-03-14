@@ -411,4 +411,28 @@ class Form_wi9_model extends CI_Model
             return array();
         }
     }
+
+    /**
+     * Check if I9 form is assigned
+     * to the user
+     *
+     * @version 1.0
+     *
+     * @param string $userType
+     * @param int $userId
+     * @return int
+     */
+    public function isI9FormAssigned(
+        $userType,
+        $userId
+    ): int {
+        //
+        return $this->db
+            ->where([
+                'user_sid' => $userId,
+                'user_type' => $userType,
+                'status' => 1
+            ])
+            ->count_all_results('applicant_i9form');
+    }
 }

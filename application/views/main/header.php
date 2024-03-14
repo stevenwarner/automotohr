@@ -299,6 +299,7 @@
                                                                                                                     $class == 'dashboard' ||
                                                                                                                     $class == 'time_off' ||
                                                                                                                     $class == 'job_listings' ||
+                                                                                                                    $class == 'i9' ||
                                                                                                                     $class == 'screening_questionnaires' ||
                                                                                                                     $class == 'settings' ||
                                                                                                                     $class == 'employee_login_text' ||

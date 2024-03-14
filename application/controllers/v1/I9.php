@@ -104,14 +104,14 @@ class I9 extends Public_Controller
         $data['PageScripts'] = [];
         //
         $data['title'] = 'Form i-9';
-        $data['pre_form'] = $data['form']; 
+        $data['pre_form'] = $data['form'];
         $data['section_access'] = "complete_pdf";
         //
         if ($action == "print") {
             $this->load->view('2022/federal_fillable/form_i9_print_new', $data);
         } else {
             $this->load->view('2022/federal_fillable/form_i9_download_new', $data);
-        }    
+        }
     }
 
     /**
@@ -163,7 +163,7 @@ class I9 extends Public_Controller
             [
                 'field' => 'section1_state',
                 'label' => 'State',
-                'rules' => $rules.'|max_length[3]|min_length[2]'
+                'rules' => $rules . '|max_length[3]|min_length[2]'
             ],
             [
                 'field' => 'section1_zip_code',
@@ -619,7 +619,7 @@ class I9 extends Public_Controller
 
                 $updateArray['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
                 $updateArray['section2_sig_emp_auth_rep'] = $this->input->post('section2_sig_emp_auth_rep', FALSE);
-                
+
                 $updateArray['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
                 $updateArray['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
                 $updateArray['section2_last_name_of_emp'] = $formpost['section2_last_name_of_emp'];
@@ -635,18 +635,18 @@ class I9 extends Public_Controller
                 // 
                 for ($i = 1; $i <= 3; $i++) {
                     $details[$i] = [
-                        'section3_rehire_date' => $formpost['section3_authorized_rehire_date_'.$i],
-                        'section3_last_name' => $formpost['section3_authorized_last_name_'.$i],
-                        'section3_first_name' => $formpost['section3_authorized_first_name_'.$i],
-                        'section3_middle_initial' => $formpost['section3_authorized_middle_initial_'.$i],
-                        'section3_document_title' => $formpost['section3_authorized_document_title_'.$i],
-                        'section3_document_number' => $formpost['section3_authorized_document_number_'.$i],
-                        'section3_expiration_date' => $formpost['section3_authorized_expiration_date_'.$i],
-                        'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_'.$i],
-                        'signature' => $this->input->post('section3_authorized_signature_'.$i, FALSE),
-                        'section3_signature_date' => !empty($formpost['section3_authorized_today_date_'.$i]) ? $formpost['section3_authorized_today_date_'.$i] : "",
-                        'section3_additional_information' => $formpost['section3_authorized_additional_information_'.$i],
-                        'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_'.$i]) ? 1 : 0,
+                        'section3_rehire_date' => $formpost['section3_authorized_rehire_date_' . $i],
+                        'section3_last_name' => $formpost['section3_authorized_last_name_' . $i],
+                        'section3_first_name' => $formpost['section3_authorized_first_name_' . $i],
+                        'section3_middle_initial' => $formpost['section3_authorized_middle_initial_' . $i],
+                        'section3_document_title' => $formpost['section3_authorized_document_title_' . $i],
+                        'section3_document_number' => $formpost['section3_authorized_document_number_' . $i],
+                        'section3_expiration_date' => $formpost['section3_authorized_expiration_date_' . $i],
+                        'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_' . $i],
+                        'signature' => $this->input->post('section3_authorized_signature_' . $i, FALSE),
+                        'section3_signature_date' => !empty($formpost['section3_authorized_today_date_' . $i]) ? $formpost['section3_authorized_today_date_' . $i] : "",
+                        'section3_additional_information' => $formpost['section3_authorized_additional_information_' . $i],
+                        'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_' . $i]) ? 1 : 0,
                     ];
                     //
                 }
@@ -689,10 +689,10 @@ class I9 extends Public_Controller
                 $updateArray['section1_today_date'] = empty($formpost['section1_today_date']) || $formpost['section1_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_today_date'])->format('Y-m-d H:i:s');
                 $updateArray['version'] = 2023;
             }
-            
 
-            
-            
+
+
+
             // Log i9 form
             $i9TrackerData = [];
             $i9TrackerData['data'] = $updateArray;
@@ -707,24 +707,23 @@ class I9 extends Public_Controller
             portalFormI9Tracker($employer_sid, "employee", $i9TrackerData);
 
             $this->db
-            ->where('sid', $formId)
-            ->update(
-                'applicant_i9form',
-                $updateArray
-            );
+                ->where('sid', $formId)
+                ->update(
+                    'applicant_i9form',
+                    $updateArray
+                );
             //
             $i9_sid = getVerificationDocumentSid($employer_sid, "employee", 'i9');
             keepTrackVerificationDocument($employer_sid, "employee", 'completed', $i9_sid, 'i9', 'Blue Panel');
             //
             $this->session->set_flashdata('message', '<strong>Success: </strong> I-9 Submitted Successfully!');
-            redirect(base_url('hr_documents_management/documents_assignment').'/'.$formInfo['user_type'].'/'.$formInfo['user_sid'], 'refresh');
-            
+            redirect(base_url('hr_documents_management/documents_assignment') . '/' . $formInfo['user_type'] . '/' . $formInfo['user_sid'], 'refresh');
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function getUserSection (string $userType, int $userId, string $formMode)
+    public function getUserSection(string $userType, int $userId, string $formMode)
     {
         // set empty data array
         $data = [];
@@ -789,15 +788,15 @@ class I9 extends Public_Controller
                 redirect("forms/i9/expired");
             }
             //
-            if ($formMode == "public_link" ) {
+            if ($formMode == "public_link") {
                 $this->load->view('main/public_header', $data);
             } else {
-                $this->load->view('onboarding/applicant_boarding_header', $data); 
+                $this->load->view('onboarding/applicant_boarding_header', $data);
             }
             //
             $this->load->view('v1/forms/i9/my');
             $this->load->view('onboarding/on_boarding_footer');
-            
+
             //
         } else {
             $this->load
@@ -807,8 +806,9 @@ class I9 extends Public_Controller
         }
     }
 
-    public function saveUserSection () {
-        
+    public function saveUserSection()
+    {
+
         // set rules
         $rules = 'required|trim|xss_clean';
         //
@@ -841,7 +841,7 @@ class I9 extends Public_Controller
             [
                 'field' => 'section1_state',
                 'label' => 'State',
-                'rules' => $rules.'|max_length[3]|min_length[2]'
+                'rules' => $rules . '|max_length[3]|min_length[2]'
             ],
             [
                 'field' => 'section1_zip_code',
@@ -1056,7 +1056,7 @@ class I9 extends Public_Controller
             } else {
                 $fromPage = "Onboarding Panel";
             }
-        }   
+        }
         // 
         keepTrackVerificationDocument($i9Form['user_sid'], $i9Form['user_type'], 'completed', $post['form_code'], 'i9', $fromPage);
         //
@@ -1071,10 +1071,246 @@ class I9 extends Public_Controller
         );
     }
 
-    public function publicLinkExpired () {
+    public function publicLinkExpired()
+    {
         //
         $this->load->view('public/documents/expired_public');
     }
-        
 
+    /**
+     * Modify I9 form
+     * Employers can modify the I9 form after
+     * the form is assigned to the user. This
+     * will only prefill/update the data without
+     * consent
+     * @param string $userType
+     * @param int $userId
+     * @version 1.0
+     */
+    public function employerModifyI9(
+        string $userType,
+        int $userId
+    ) {
+        // check if form is assigned or not
+        if (
+            !$this
+                ->i9_model
+                ->isI9FormAssigned(
+                    $userType,
+                    $userId
+                )
+        ) {
+            $this->session
+                ->set_flashdata(
+                    "message",
+                    "
+                <strong>Errors: </strong>
+                The I9 form is not assigned.
+            "
+                );
+            return redirect(
+                "hr_documents_management/documents_assignment/{$userType}/{$userId}"
+            );
+        }
+        // form is assigned
+        //
+        $data = [];
+       
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        // no need to check in this Module as Dashboard will be available to all
+        $company_sid = $data['session']['company_detail']['sid'];
+        $data['company_sid'] = $company_sid;
+        //
+        $user_info = array();
+        $company_name = $data['session']['company_detail']['CompanyName'];
+        $data['company_name'] = $company_name;
+        // load model
+        $this->load->model("hr_documents_management_model");
+        //
+        switch ($userType) {
+            case 'employee':
+                $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $userId);
+
+                if (empty($user_info)) {
+                    $this->session->set_flashdata('message', '<strong>Error:</strong> Employee Not Found!');
+                    redirect('employee_management', 'refresh');
+                }
+
+                $data = employee_right_nav($userId, $data);
+                $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($userId, 'employee'); // getting applicant ratings - getting average rating of applicant
+                $data['employer'] = $this->hr_documents_management_model->get_company_detail($userId);
+
+                $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $userId, $userType, 'single_download');
+                break;
+            case 'applicant':
+                $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $userId);
+
+                if (empty($user_info)) {
+                    $this->session->set_flashdata('message', '<strong>Error:</strong> Applicant Not Found!');
+                    redirect('application_tracking_system/active/all/all/all/all', 'refresh');
+                }
+
+                $data = applicant_right_nav($userId, 0);
+                $left_navigation = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
+                $applicant_info = $this->hr_documents_management_model->get_applicants_details($userId);
+
+                $data_employer = array(
+                    'sid' => $applicant_info['sid'],
+                    'first_name' => $applicant_info['first_name'],
+                    'last_name' => $applicant_info['last_name'],
+                    'email' => $applicant_info['email'],
+                    'Location_Address' => $applicant_info['address'],
+                    'Location_City' => $applicant_info['city'],
+                    'Location_Country' => $applicant_info['country'],
+                    'Location_State' => $applicant_info['state'],
+                    'Location_ZipCode' => $applicant_info['zipcode'],
+                    'PhoneNumber' => $applicant_info['phone_number'],
+                    'profile_picture' => $applicant_info['pictures'],
+                    'user_type' => ucwords($userType)
+                );
+
+                $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($userId, 'applicant'); //getting average rating of applicant
+                $data['employer'] = $data_employer;
+                $data['company_sid'] = $company_sid;
+                $data['employer_sid'] = $applicant_info['sid'];
+
+                $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $userId, $userType, 'single_download');
+                break;
+        }
+        // get the form
+        // get i9 form details
+        $data["i9Form"] = $this->i9_model->getI9Form(
+            $userId,
+            $userType,
+            'section1'
+        );
+        $data["userId"] = $userId;
+        $data["userType"] = $userType;
+        //
+        $data["left_navigation"] = $left_navigation;
+        // get states
+        $data['states'] = $this->db
+            ->select('state_code, state_name')
+            ->where('active', 1)
+            ->where('country_sid', USA_CODE)
+            ->get('states')
+            ->result_array();
+        // load page scripts
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/forms/i9/modify_i9_employer'
+        ];
+        $this->load
+            ->view('main/header', $data)
+            ->view('v1/forms/i9/modify')
+            // ->view('v1/forms/i9/my')
+            ->view('main/footer');
+    }
+
+
+    public function processEmployerModifyI9(
+        string $userType,
+        int $userId
+    ) {
+
+        // check session
+        if (!$this->session->userdata('logged_in')) {
+            return SendResponse(
+                401,
+                [
+                    'errors' => [
+                        'You are not authorize to make this request. Please, re-login and try again.'
+                    ]
+                ]
+            );
+        }
+        // get post
+        $post = $this->input->post(null, true);
+        //
+        $i9Form = $this
+            ->i9_model
+            ->getI9Form(
+                $userId,
+                $userType,
+                'section1'
+            );
+        //
+        if (!$i9Form) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => [
+                        'I9 form is either disabled or not valid.'
+                    ]
+                ]
+            );
+        }
+        // lets make update array
+        $updateArray = $post;
+        // lets convert dates
+        $updateArray['section1_date_of_birth'] = $updateArray['section1_date_of_birth']
+            ? formatDateToDB(
+                $updateArray['section1_date_of_birth'],
+                SITE_DATE,
+                DB_DATE
+            ) : null;
+        //
+        $updateArray['section1_today_date'] = $updateArray['section1_today_date']
+            ? formatDateToDB(
+                $updateArray['section1_today_date'],
+                SITE_DATE,
+                DB_DATE
+            ) : null;
+        //
+        $updateArray['alien_authorized_expiration_date'] = $updateArray['alien_authorized_expiration_date']
+            ? formatDateToDB(
+                $updateArray['alien_authorized_expiration_date'],
+                SITE_DATE,
+                DB_DATE
+            ) : null;
+        //
+        $updateArray['section1_alien_registration_number'] = serialize(
+            [
+                'section1_alien_registration_number_two' => $updateArray['section1_alien_registration_number_two'],
+                'section1_alien_registration_number_one' => $updateArray['section1_uscis_registration_number_one'],
+                'alien_authorized_expiration_date' => $updateArray['alien_authorized_expiration_date'],
+                'foreign_passport_number' => $updateArray['foreign_passport_number'],
+                'country_of_issuance' => $updateArray['country_of_issuance'],
+                'form_admission_number' => $updateArray['form_admission_number'],
+            ]
+        );
+        //remove items
+        unset(
+            $updateArray['section_1_other_last_names_used'],
+            $updateArray['section1_alien_registration_number_two'],
+            $updateArray['alien_authorized_expiration_date'],
+            $updateArray['section1_uscis_registration_number_one'],
+            $updateArray['foreign_passport_number'],
+            $updateArray['country_of_issuance'],
+            $updateArray['section1_signature'],
+            $updateArray['form_admission_number'],
+            $updateArray['section1_preparer'],
+        );
+        //
+        $updateArray['section1_other_last_names'] = $post['section_1_other_last_names_used'];
+        //
+        $updateArray['version'] = 2023;
+        //
+        $this->db
+            ->where('sid', $i9Form['sid'])
+            ->update(
+                'applicant_i9form',
+                $updateArray
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => true,
+                'message' => 'You have successfully updated the section 1 of I9 form .',
+            ]
+        );
+    }
 }

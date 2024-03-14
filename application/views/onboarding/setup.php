@@ -1366,6 +1366,7 @@ if ($user_type == 'applicant') {
                                                                                             <?php } else { ?>
                                                                                                 <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-warning">Re-Assign</a>
                                                                                             <?php }
+                                                                                            echo '<a href="' . base_url("forms/i9/modify/{$i9_form_data["user_type"]}/{$i9_form_data["user_sid"]}") . '" class="btn btn-orange" title="Modify I9">Modify I9</a>';
                                                                                             echo '<button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>';
                                                                                         } else { ?>
                                                                                             <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-success">Assign</a>

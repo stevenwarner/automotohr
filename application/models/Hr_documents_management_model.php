@@ -3187,7 +3187,7 @@ class Hr_documents_management_model extends CI_Model
         if ($archive_status !== null) {
             $this->db->where('archive', $archive_status);
         }
-        if ($pp_flag) {
+        if ($pp_flag && !isPayrollOrPlus(true)) {
             $this->db->where('documents_2_category.category_sid', PP_CATEGORY_SID);
             $this->db->join('documents_2_category', 'documents_2_category.document_sid = documents_management.sid', 'inner');
         } else {
