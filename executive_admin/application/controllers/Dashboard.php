@@ -318,19 +318,20 @@ class Dashboard extends CI_Controller
         ];
         //
         $data['appCSS'] = bundleCSS([
-            "v1/plugins/alertifyjs/css/alertify.min",
             'v1/app/css/theme',
             'v1/app/css/pages',
-        ], $this->css, "executive_admin_forgot", true);
+        ], $this->css, "executive_admin_forgot_password", true);
         //
         $data['appJs'] = bundleJs([
             'v1/app/js/jquery-1.11.3.min',
             'v1/plugins/bootstrap5/js/bootstrap.bundle',
-            'v1/plugins/alertifyjs/alertify.min',
             'js/jquery.validate.min',
-            'js/app_helper',
-            "v1/app/js/pages/schedule_demo"
-        ], $this->js, "executive_admin_forgot", true);
+            "js/additional-methods.min",
+        ], $this->js, "executive_admin_forgot_password_common", true);
+
+        $data['appJs'] .= bundleJs([
+            'v1/app/js/pages/executive_forgot_password',
+        ], $this->js, "executive_admin_forgot_password", true);
 
 
         $this->form_validation->set_rules($config);
@@ -338,11 +339,14 @@ class Dashboard extends CI_Controller
 
         if ($this->form_validation->run() == FALSE) {
             $retrn = $this->Users_model->varification_user_key($user, $key);
-            $data['page_title'] = "Change Password";
+            $data['meta'] = $passwordRecoveryContent["page"]["meta"];
             $data['passwordRecoveryContent'] = $passwordRecoveryContent;
+
+            $data["onlyJS"] = true;
 
             $this->load->view($this->header, $data);
             $this->load->view('v1/app/change_password');
+            $this->load->view($this->footer);
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');

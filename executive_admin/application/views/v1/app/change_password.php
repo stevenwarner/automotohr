@@ -27,7 +27,7 @@
                         <input name="retypepassword" id="retypepassword" value="" class="light-blue-border" placeholder="Retype New Password" type="password">
                     </div>
 
-                    <button class=" border-none password-recovery-submit" type="submit" onclick="validate_form()">
+                    <button class=" border-none password-recovery-submit" type="submit">
                         Submit
                     </button>
 
@@ -42,35 +42,3 @@
         </form>
     </div>
 </main>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
-<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
-<script type="text/javascript">
-    function validate_form() {
-
-        $("#change_password_form").validate({
-            ignore: ":hidden:not(select)",
-            rules: {
-                password: {
-                    required: true
-                },
-                retypepassword: {
-                    required: true,
-                    equalTo: "#password"
-                }
-            },
-            messages: {
-                password: {
-                    required: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Password is required</p>'
-                },
-                retypepassword: {
-                    required: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Confirm Password is required</p>',
-                    equalTo: '<p class="error_message"><i class="fa fa-exclamation-circle"></i>Confirm Password does not match</p>'
-                }
-            },
-            submitHandler: function(form) {
-                form.submit();
-            }
-        });
-    }
-</script>
