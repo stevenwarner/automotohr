@@ -79,7 +79,8 @@ for ($i = 1; $i <= 4; $i++) : ?>
                     &nbsp;<i class="fa fa-question-circle-o modalShow" src="section_41_state"></i></label>
                 <div class="select">
                     <select name="section1_preparer_state_<?= $i; ?>" id="section1_preparer_state_<?= $i; ?>" class="form-control input-grey input-lg">
-                        <?php
+                    <option class="input-grey" value="" ></option>
+                     <?php
                         foreach ($states as $state) {
                             echo '<option value="' . $state['state_code'] . '" ' . ($state['state_code'] == ($preparerArray[$i]['state'] ??  '') ? 'selected' : '') . '>' . $state['state_name'] . '</option>';
                         }

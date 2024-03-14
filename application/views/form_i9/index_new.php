@@ -711,6 +711,9 @@
                                                             <div class="select">
                                                                 <select class="form-control" name="section2_state"
                                                                         id="section2_state">
+
+                                                                        <option class="input-grey" value="" ></option>
+
                                                                     <?php foreach ($states as $state) {
                                                                         echo '<option value="' . $state['state_code'] . '"">' . $state['state_name'] . '</option>';
                                                                     } ?>
