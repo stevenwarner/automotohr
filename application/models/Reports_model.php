@@ -2571,6 +2571,7 @@ class Reports_model extends CI_Model
             ->from('users')
             ->where('users.terminated_status', 0)
             ->where('users.active', 1)
+            ->where('users.is_executive_admin', 0)
             ->where('users.parent_sid', $companyId);
 
         if ($employeeArray) :
