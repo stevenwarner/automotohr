@@ -97,7 +97,10 @@
                                                         <label>State <i class="fa fa-question-circle-o modalShow" src="section_1_state"></i></label>
                                                         <div class="select">
                                                             <select name="section1_state" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'disabled="disabled"';} ?>>
-                                                                <?php foreach($states as $state){
+                                                               
+                                                            <option value=""> </option>
+
+                                                               <?php foreach($states as $state){
                                                                     $select = sizeof($pre_form)>0 && $state['state_code'] == $pre_form['section1_state'] ? 'selected="selected"':"";
                                                                     echo '<option value="'.$state['state_code']. '"'. $select .'>'.$state['state_name'].'</option>';
                                                                 }?>

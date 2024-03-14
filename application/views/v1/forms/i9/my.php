@@ -160,6 +160,7 @@ $disabled = $form['user_consent'] == 1 ? 'disabled' : '';
                                     </label>
                                     <div class="select input-grey">
                                         <select name="section1_state" class="form-control input-lg input-grey section1_state" <?= $disabled; ?>>
+                                        
                                             <?php
                                             foreach ($states as $state) {
                                                 echo '<option class="input-grey" value="' . $state['state_code'] . '" ' . ($state['state_code'] === $form['section1_state'] ? 'selected' : '') . '>' . $state['state_name'] . '</option>';
