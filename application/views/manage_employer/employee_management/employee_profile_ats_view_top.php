@@ -35,7 +35,7 @@
                         <?php if (isset($employer['user_type']) && $employer['user_type'] == 'Applicant') { ?>
                             <input readonly="readonly" id="input-21b" value="<?php echo isset($applicant_average_rating) ? $applicant_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs" />
                         <?php } else { ?>
-                            <?php if ($this->session->userdata('logged_in')['employer_detail']['access_level_plus'] && !$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) { ?>
+                            <?php if ($this->session->userdata('logged_in')['employer_detail']['access_level_plus'] || $this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']) { ?>
                                 <a class="btn-employee-status btn-warning" href="<?php echo base_url('employee_status/' . $employer['sid']); ?>">Employee Status</a>
                             <?php } ?>
                         <?php } ?>
