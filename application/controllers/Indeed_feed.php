@@ -418,129 +418,137 @@ class Indeed_feed extends CI_Controller
                 ], false);
             }
 
-            $eeoc = [];
-            $jobQuestions = [];
+            // Indeed questionnaire
+            // $eeoc = [];
+            // $jobQuestions = [];
             //
             // when the answers are coming from Indeed
-            if (isset($indeedPost["questionsAndAnswers"]) || isset($indeedPost["screenerQuestionsAndAnswers"])) {
-                //
-                $questionsAndAnswers = isset($indeedPost["questionsAndAnswers"]) ? $indeedPost["questionsAndAnswers"]["questionsAndAnswers"] : $indeedPost["screenerQuestionsAndAnswers"]["questionsAndAnswers"];
-                //
-                $jobQuestions["job_sid"] = 0;
-                $jobQuestions["questionnaire_sid"] = 0;
-                $jobQuestions["action"] = "job_applicant";
-                $jobQuestions["q_name"] = "";
-                $jobQuestions["q_passing"] = '';
-                $jobQuestions["q_send_pass"] = 0;
-                $jobQuestions["q_pass_text"] = '';
-                $jobQuestions["q_send_fail"] = 0;
-                $jobQuestions["q_fail_text"] = '';
-                $jobQuestions["my_id"] = '';
-                $jobQuestions['all_questions_ids'] = [];
-                //
-                foreach ($questionsAndAnswers as $key => $questionAndAnswer) {
-                    if (isset($indeedPost["questionsAndAnswers"]) && in_array($questionAndAnswer['question']['id'], ['citizen','group','veteran','disability','gender'])) {
-                        //
-                        $index = '';
-                        switch ($questionAndAnswer['question']['id']) {
-                            //
-                            case 'citizen':
-                                $index = 'us_citizen';
-                            break;
-                            case 'group':
-                                $index = 'group_status';
-                            break;
-                            //
-                            case 'veteran':
-                                $index = 'veteran';
-                            break;
+            // Indeed questionnaire
+            // if (isset($indeedPost["questionsAndAnswers"]) || isset($indeedPost["screenerQuestionsAndAnswers"])) {
+            //     //
+            //     $questionsAndAnswers = isset($indeedPost["questionsAndAnswers"]) ? $indeedPost["questionsAndAnswers"]["questionsAndAnswers"] : $indeedPost["screenerQuestionsAndAnswers"]["questionsAndAnswers"];
+            //     //
+            //     $jobQuestions["job_sid"] = 0;
+            //     $jobQuestions["questionnaire_sid"] = 0;
+            //     $jobQuestions["action"] = "job_applicant";
+            //     $jobQuestions["q_name"] = "";
+            //     $jobQuestions["q_passing"] = '';
+            //     $jobQuestions["q_send_pass"] = 0;
+            //     $jobQuestions["q_pass_text"] = '';
+            //     $jobQuestions["q_send_fail"] = 0;
+            //     $jobQuestions["q_fail_text"] = '';
+            //     $jobQuestions["my_id"] = '';
+            //     $jobQuestions['all_questions_ids'] = [];
+            //     //
+            //     foreach ($questionsAndAnswers as $key => $questionAndAnswer) {
+            //         if (isset($indeedPost["questionsAndAnswers"]) && in_array($questionAndAnswer['question']['id'], ['citizen','group','veteran','disability','gender'])) {
+            //             //
+            //             $index = '';
+            //             switch ($questionAndAnswer['question']['id']) {
+            //                 //
+            //                 case 'citizen':
+            //                     $index = 'us_citizen';
+            //                 break;
+            //                 case 'group':
+            //                     $index = 'group_status';
+            //                 break;
+            //                 //
+            //                 case 'veteran':
+            //                     $index = 'veteran';
+            //                 break;
                 
-                            case 'disability':
-                                $index = 'disability';
-                            break;
+            //                 case 'disability':
+            //                     $index = 'disability';
+            //                 break;
 
-                            case 'gender':
-                                $index = 'gender';
-                            break;
-                        }
-                        $eeoc[$index] = $questionAndAnswer['answer']['value'];
-                        // $eeoc[$questionAndAnswer['question']['id']] = $questionAndAnswer['answer'];
-                    } else if (is_numeric($questionAndAnswer['question']['id'])) {
-                        //
-                        $jobQuestions['all_questions_ids'][] = $questionAndAnswer['question']['id'];
-                        //
-                        if ($jobQuestions["questionnaire_sid"] == 0) {
-                            $questionInfo = $this->all_feed_model->getJobQuestionnaireInfo($questionAndAnswer['question']['id']);
-                            $jobQuestions['q_name'] = $questionInfo['name'];
-                            $jobQuestions['questionnaire_sid'] = $questionInfo['sid'];
-                            $jobQuestions['my_id'] = 'q_question_'.$questionInfo['sid'];
-                        }
-                        //
-                        $questionType = $this->all_feed_model->getQuestionType($questionAndAnswer['question']['id']);
-                        //
-                        if ($questionType == "string") {
-                            $jobQuestions['caption'.$questionAndAnswer['question']['id']] = $questionAndAnswer['question']['question'];
-                            $jobQuestions['type'.$questionAndAnswer['question']['id']] = $questionType;
-                            $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = $questionAndAnswer['answer'];
-                            // 
-                        } else {
-                            //
-                            $jobQuestions['caption'.$questionAndAnswer['question']['id']] = $questionAndAnswer['question']['question'];
-                            $jobQuestions['type'.$questionAndAnswer['question']['id']] = $questionType;
-                            //
-                            if ($questionType == 'multilist') {
-                                $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = [];
-                            } else {
-                                $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = '';
-                            }
-                            //
-                            foreach ($questionAndAnswer['question']['options'] as $key => $option) {
-                                if ($questionType == 'multilist' && in_array($option['value'], array_column($questionAndAnswer['answer'], "value"))) {
-                                    $answerID = $this->all_feed_model->getQuestionAnswerId($questionAndAnswer['question']['id'], $option['value']);
-                                    $jobQuestions[$questionType.$questionAndAnswer['question']['id']][] = $option['label'].' @#$ '.$answerID;
-                                } else if ($questionType != 'multilist' && $option['value'] == $questionAndAnswer['answer']['value']) {
-                                    $answerID = $this->all_feed_model->getQuestionAnswerId($questionAndAnswer['question']['id'], $option['value']);
-                                    $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = $option['label'].' @#$ '.$answerID;
+            //                 case 'gender':
+            //                     $index = 'gender';
+            //                 break;
+            //             }
+            //             $eeoc[$index] = $questionAndAnswer['answer']['value'];
+            //             // $eeoc[$questionAndAnswer['question']['id']] = $questionAndAnswer['answer'];
+            //         } else if (is_numeric($questionAndAnswer['question']['id'])) {
+            //             //
+            //             $jobQuestions['all_questions_ids'][] = $questionAndAnswer['question']['id'];
+            //             //
+            //             if ($jobQuestions["questionnaire_sid"] == 0) {
+            //                 $questionInfo = $this->all_feed_model->getJobQuestionnaireInfo($questionAndAnswer['question']['id']);
+            //                 $jobQuestions['q_name'] = $questionInfo['name'];
+            //                 $jobQuestions['questionnaire_sid'] = $questionInfo['sid'];
+            //                 $jobQuestions['my_id'] = 'q_question_'.$questionInfo['sid'];
+            //             }
+            //             //
+            //             $questionType = $this->all_feed_model->getQuestionType($questionAndAnswer['question']['id']);
+            //             //
+            //             if ($questionType == "string") {
+            //                 $jobQuestions['caption'.$questionAndAnswer['question']['id']] = $questionAndAnswer['question']['question'];
+            //                 $jobQuestions['type'.$questionAndAnswer['question']['id']] = $questionType;
+            //                 $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = $questionAndAnswer['answer'];
+            //                 // 
+            //             } else {
+            //                 //
+            //                 $jobQuestions['caption'.$questionAndAnswer['question']['id']] = $questionAndAnswer['question']['question'];
+            //                 $jobQuestions['type'.$questionAndAnswer['question']['id']] = $questionType;
+            //                 //
+            //                 if ($questionType == 'multilist') {
+            //                     $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = [];
+            //                 } else {
+            //                     $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = '';
+            //                 }
+            //                 //
+            //                 foreach ($questionAndAnswer['question']['options'] as $key => $option) {
+            //                     if ($questionType == 'multilist' && in_array($option['value'], array_column($questionAndAnswer['answer'], "value"))) {
+            //                         $answerID = $this->all_feed_model->getQuestionAnswerId($questionAndAnswer['question']['id'], $option['value']);
+            //                         $jobQuestions[$questionType.$questionAndAnswer['question']['id']][] = $option['label'].' @#$ '.$answerID;
+            //                     } else if ($questionType != 'multilist' && $option['value'] == $questionAndAnswer['answer']['value']) {
+            //                         $answerID = $this->all_feed_model->getQuestionAnswerId($questionAndAnswer['question']['id'], $option['value']);
+            //                         $jobQuestions[$questionType.$questionAndAnswer['question']['id']] = $option['label'].' @#$ '.$answerID;
 
-                                }
-                            }
-                        }
+            //                     }
+            //                 }
+            //             }
                         
-                    }
-                }
-            }
+            //         }
+            //     }
+            // }
 
-            if (isset($indeedPost['demographicQuestionsAndAnswers'])) {
-                $index = '';
-                $value = '';
-                //
-                foreach ($indeedPost['demographicQuestionsAndAnswers']['questionsAndAnswers'] as $eeocQuestion) {
-                    //
-                    switch ($eeocQuestion['question']['id']) {
-                        //
-                        case 'citizen':
-                            $index = 'us_citizen';
-                        break;
-                        case 'group':
-                            $index = 'group_status';
-                        break;
-                        //
-                        case 'veteran':
-                            $index = 'veteran';
-                        break;
+            /**
+             * TODO:
+             * In case of Indeed resume apply
+             * we need to get the indexes and value formats
+             */
+            // Indeed questionnaire
+            // if (isset($indeedPost['demographicQuestionsAndAnswers'])) {
+            //     $index = '';
+            //     $value = '';
+            //     //
+            //     foreach ($indeedPost['demographicQuestionsAndAnswers']['questionsAndAnswers'] as $eeocQuestion) {
+            //         //
+            //         switch ($eeocQuestion['question']['id']) {
+            //             //
+            //             case 'citizen-eeo':
+            //                 $index = 'us_citizen';
+            //             break;
+            //             case 'group-eeo':
+            //                 $index = 'group_status';
+            //             break;
+            //             //
+            //             case 'veteran-eeo':
+            //                 $index = 'veteran';
+            //             break;
             
-                        case 'disability-eeo':
-                            $index = 'disability';
-                            $value = $questionAndAnswer['answer']['value'] == 1 ? "YES, I HAVE A DISABILITY" : "NO, I DON'T HAVE A DISABILITY";
-                        break;
+            //             case 'disability-eeo':
+            //                 $index = 'disability';
+            //                 $value = $questionAndAnswer['answer']['value'] == 1 ? "YES, I HAVE A DISABILITY" : "NO, I DON'T HAVE A DISABILITY";
+            //             break;
     
-                        case 'gender':
-                            $index = 'gender';
-                        break;
-                    }
-                    $eeoc[$index] = $value;
-                }
-            }   
+            //             case 'gender':
+            //                 $index = 'gender';
+            //             break;
+            //         }
+            //         $eeoc[$index] = $value;
+            //     }
+            // }
 
             //check if the user has already applied for this job
             $already_applied = $this->all_feed_model->check_job_applicant($job_sid, $applicant_email, $companyId);
@@ -568,7 +576,8 @@ class Indeed_feed extends CI_Controller
 
                 if ($final_check <= 0) {
 
-                    /*START START START*/https://www.youtube.com/shorts/o99t-97sD1o
+                    /*START START START*/
+                    // https://www.youtube.com/shorts/o99t-97sD1o
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
                     $job_added_successfully = $jobs_list_result[1];
@@ -585,13 +594,14 @@ class Indeed_feed extends CI_Controller
                     common_indeed_acknowledgement_email($acknowledgement_email_data);
                     // send email to 'new applicant notification' users *** START *** ////////
 
-                    if ($eeoc) {
-                        $eeoc['users_type'] = 'applicant';
-                        $eeoc['application_sid'] = $job_applications_sid;
-                        $eeoc['portal_applicant_jobs_list_sid'] = $portal_applicant_jobs_list_sid;
-                        //
-                        $this->all_feed_model->save_eeo_form($eeoc);
-                    }
+                    // Indeed questionnaire
+                    // if ($eeoc) {
+                    //     $eeoc['users_type'] = 'applicant';
+                    //     $eeoc['application_sid'] = $job_applications_sid;
+                    //     $eeoc['portal_applicant_jobs_list_sid'] = $portal_applicant_jobs_list_sid;
+                    //     //
+                    //     $this->all_feed_model->save_eeo_form($eeoc);
+                    // }
 
                     $company_sid = $companyId;
                     $message_hf = message_header_footer_domain($company_sid, $company_name);
@@ -657,23 +667,24 @@ class Indeed_feed extends CI_Controller
 
                         if ($questionnaire_status == 'found') {
                             // when the answers are coming from Indeed
-                            //
-                            if ($jobQuestions) {
+                            // // Indeed questionnaire
+                            // if ($jobQuestions) {
+                            if (false) {
                                 //
-                                $extraInfo = array (
-                                    "companyId" => $companyId,
-                                    "applicantId" => $job_applications_sid,
-                                    "applicantJobsListId" => $portal_applicant_jobs_list_sid,
-                                    "jobId" => $job_details['sid'],
-                                    "jobTitle" => $job_details['Title'],
-                                    "jobType" => $job_details['JobType'],
-                                    "companyName" => $data['job']['jobCompany'],
-                                );
-                                //
-                                $this->all_feed_model->processJobScreeningQuestionnaire(
-                                    $extraInfo,
-                                    $jobQuestions
-                                );
+                                // $extraInfo = array (
+                                //     "companyId" => $companyId,
+                                //     "applicantId" => $job_applications_sid,
+                                //     "applicantJobsListId" => $portal_applicant_jobs_list_sid,
+                                //     "jobId" => $job_details['sid'],
+                                //     "jobTitle" => $job_details['Title'],
+                                //     "jobType" => $job_details['JobType'],
+                                //     "companyName" => $data['job']['jobCompany'],
+                                // );
+                                // //
+                                // $this->all_feed_model->processJobScreeningQuestionnaire(
+                                //     $extraInfo,
+                                //     $jobQuestions
+                                // );
                                 //
                             } else {
                                 $email_template_information = $this->all_feed_model->get_email_template_data(SCREENING_QUESTIONNAIRE_FOR_JOB);
