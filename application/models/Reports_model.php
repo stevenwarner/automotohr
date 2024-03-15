@@ -2741,7 +2741,7 @@ class Reports_model extends CI_Model
         }
 
 
-        return $data ? $data : [];
+        return $data ? array_values($data) : [];
 
 
         //return $result ? $result->result_array() : [];
