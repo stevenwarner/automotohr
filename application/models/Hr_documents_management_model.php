@@ -10862,7 +10862,8 @@ class Hr_documents_management_model extends CI_Model
                 "portal_state_form.state_form_sid = state_forms.sid",
                 "inner"
             )
-            ->where("company_sid", $companyId);
+            ->where("company_sid", $companyId)
+            ->where("portal_state_form.user_consent", 0);
         //
         if (!in_array("all", $employeeIds)) {
             $this->db
