@@ -1619,7 +1619,7 @@ class Hr_documents_management_model extends CI_Model
             return array();
         }
     }
-    
+
     function get_w4_form($user_type, $user_sid)
     {
         $this->db->where('user_type', $user_type);
@@ -3721,7 +3721,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('documents_2_group');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
- 
+
         if (!empty($records_arr)) {
             foreach ($records_arr as $key => $document) {
                 if ($document['group_sid'] != $group_id) {
@@ -10566,7 +10566,7 @@ class Hr_documents_management_model extends CI_Model
             $returnArray['employee_section'] = true;
         }
         //
-        if($result["assigned_by"]) {
+        if ($result["assigned_by"]) {
             $returnArray["assigned_by"] = getUserNameBySID($result["assigned_by"]);
         }
         // set it to revoked
@@ -10862,7 +10862,12 @@ class Hr_documents_management_model extends CI_Model
                 "portal_state_form.state_form_sid = state_forms.sid",
                 "inner"
             )
-            ->where("company_sid", $companyId);
+            ->where("company_sid", $companyId)
+            //
+            ->where("user_consent!=", 1)
+            ->where("employer_consent!=", 1);
+
+
         //
         if (!in_array("all", $employeeIds)) {
             $this->db
