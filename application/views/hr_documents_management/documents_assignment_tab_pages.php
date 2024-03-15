@@ -843,9 +843,26 @@ $noActionRequiredDocumentsList = [];
                                                                                     <td class="col-lg-2">
                                                                                         <?php if ($document_all_permission) { ?>
                                                                                             <?php if (in_array($document['document_sid'], $signed_document_sids)) { ?>
-                                                                                                <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="submitted" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>" data-s3-name="<?php echo $document['uploaded_file']; ?>" <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                                    Preview Submitted
-                                                                                                </button>
+                                                                                                <?php if (!$document["signature_required"] && ($document["download_required"] || $document["acknowledgment_required"])) { ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" 
+                                                                                                    onclick="preview_latest_generic_function(this);" 
+                                                                                                    date-letter-type="uploaded" 
+                                                                                                    data-on-action="assigned" 
+                                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" 
+                                                                                                    data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
+                                                                                                        Preview Submitted
+                                                                                                    </button>
+                                                                                                <?php } else { ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" 
+                                                                                                    onclick="preview_latest_generic_function(this);" 
+                                                                                                    date-letter-type="uploaded" 
+                                                                                                    data-on-action="submitted" 
+                                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>" 
+                                                                                                    data-s3-name="<?php echo $document['uploaded_file']; ?>" 
+                                                                                                    <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
+                                                                                                        Preview Submitted
+                                                                                                    </button>
+                                                                                                <?php } ?>
                                                                                             <?php } ?>
                                                                                         <?php } ?>
 
@@ -1616,7 +1633,7 @@ $noActionRequiredDocumentsList = [];
                                                                             echo "<br>Assigned By: " . getUserNameBySID($i9_form['last_assign_by']);
                                                                         }
 
-                                                                        if ( $i9_form['section1_today_date'] != '') {
+                                                                        if ($i9_form['section1_today_date'] != '') {
                                                                             echo "<br>Completed: " . reset_datetime(array('datetime' => $i9_form['section1_today_date'], '_this' => $this));
                                                                         }
 
