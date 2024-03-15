@@ -2660,6 +2660,7 @@ class Reports_model extends CI_Model
                 } else {
                     //
                     if ($this->isDocumentArchived($val["document_sid"])) {
+                        unset($data[$key]); 
                         continue;
                     }
                     //
