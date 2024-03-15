@@ -2625,7 +2625,8 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_type', 'employee')
             ->where('documents_assigned.company_sid', $companyId)
             ->where('documents_assigned.user_sid', $employeeId)
-            ->where('documents_assigned.status', 1);
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.archive', 0);
         //
         $result = $this->db->get();
         //
