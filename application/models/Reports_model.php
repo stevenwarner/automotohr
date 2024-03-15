@@ -2659,6 +2659,10 @@ class Reports_model extends CI_Model
                     $data[$key]['completedStatus'] = 'No Action Required';
                 } else {
                     //
+                    if ($this->isDocumentArchived($val["document_sid"])) {
+                        continue;
+                    }
+                    //
                     if ($val['acknowledgment_required'] || $val['download_required'] || $val['signature_required'] || $is_magic_tag_exist) {
 
                         if ($val['acknowledgment_required'] == 1 && $val['download_required'] == 1 && $val['signature_required'] == 1) {
@@ -2895,5 +2899,13 @@ class Reports_model extends CI_Model
         $a->free_result();
         //
         return $b;
+    }
+
+    public function isDocumentArchived($documentId)
+    {
+        return $this->db
+            ->where("sid", $documentId)
+            ->where("archive", 1)
+            ->count_all_results("documents_management");
     }
 }
