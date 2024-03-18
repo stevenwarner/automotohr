@@ -7559,4 +7559,173 @@ class Timeoff_model extends CI_Model
             ->get('timeoff_policies')
             ->row_array();
     }
+
+    //
+    function checkEmployeeTimeoffRequestExist($employeeSid, $startDate, $endDate, $time)
+    {
+        //
+        $response = [
+            'message' => 'No timeoff already exist on same date.',
+            'code' => 1
+        ];
+        //
+        $records = $this->db
+        ->select("
+            request_from_date,
+            request_to_date,
+            status,
+            timeoff_days
+        ")
+            ->where("employee_sid", $employeeSid)
+            ->group_start()
+            ->group_start()
+            ->where('request_from_date <=', $startDate)
+            ->where('request_to_date >=', $startDate)
+            ->where('request_from_date <=', $endDate)
+            ->where('request_to_date >=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('request_from_date >=', $startDate)
+            ->where('request_to_date <=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('request_from_date <=', $endDate)
+            ->where('request_to_date >=', $startDate)
+            ->group_end()
+            ->group_end()
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return $response;
+        }
+        //
+        $conflictCount = 0;
+        $conflictStatus = 'pending';
+        $newMessage = '<strong>You have {{conflict_count}} conflicts with time off requests:</strong><br><br>';
+        $alreadyAppliedTime = [];
+        //
+        foreach ($records as $v0) {
+            //
+            $timeoffDays = json_decode($v0['timeoff_days'], true)['days'];
+            //
+            foreach ($timeoffDays as $v1) {
+                //
+                //
+                if (!isset($alreadyAppliedTime[$v1["date"]])) {
+                    $alreadyAppliedTime[$v1["date"]] = $v1["time"];
+                } else {
+                    $alreadyAppliedTime[$v1["date"]] = $alreadyAppliedTime[$v1["date"]] + $v1["time"];
+                }
+                
+                $requestDate = DateTime::createfromformat('m-d-Y', $v1["date"])->format('Y-m-d');
+                //
+                if ($requestDate >= $startDate && $requestDate <= $endDate) {
+                    //
+                    foreach ($time['days'] as $day) {
+                        //
+                        if ($day['date'] == $v1["date"]) {
+                            //
+                            if ($v1["time"] >= 480 || ($v1["time"]+$day['time']) > 480 || $alreadyAppliedTime[$v1["date"]] == 480) {
+                                //
+                                $conflictCount++; 
+                                //
+                                if ($v0['status'] == 'approved') {
+                                    $conflictStatus = 'approved';
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($alreadyAppliedTime[$v1["date"]] / 60).' hours (<span class="text-success"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                } else {
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($alreadyAppliedTime[$v1["date"]] / 60).' hours (<span class="text-warning"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                }
+                                //
+                            }
+                        }
+                    }
+                    
+                    
+                }
+            }
+            
+        }
+        //
+        if ($conflictCount > 0) {
+            //
+            if ($conflictStatus == 'approved'){
+                $newMessage = '<strong class="text-danger">You can not create this time off request due to following conflict(s).</strong><br><br>'.$newMessage;
+            } else {
+                $newMessage = $newMessage.'<br><br><b>Do you still want to continue?</b>';
+            }
+            //
+            $response = [
+                'message' => str_replace('{{conflict_count}}', $conflictCount, $newMessage),
+                'code' => 2,
+                'conflictStatus' => $conflictStatus
+            ];
+        }
+     
+        //
+        return $response;
+    }
+
+    //
+    function checkRequestAlreadyApproved ($requestId) {
+        //
+        $timeOff = $this->db
+        ->select("
+            employee_sid,
+            request_from_date,
+            request_to_date,
+            requested_time
+        ")
+        ->where("sid", $requestId)
+        ->get("timeoff_requests")
+        ->row_array();
+        //
+        $response = [
+            'message' => 'No timeoff approved on same date.',
+            'code' => 1
+        ];
+        //
+        $records = $this->db
+        ->select("
+            sid,
+            requested_time
+        ")
+            ->where("employee_sid", $timeOff['employee_sid'])
+            ->where('request_from_date', $timeOff['request_from_date'])
+            ->where('request_to_date', $timeOff['request_to_date'])
+            ->where('status', 'approved')
+            ->where('sid <>', $requestId)
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return $response;
+        }
+        //
+        $previousTime = 0;
+        //
+        if (count($records) > 1) {
+            foreach ($records as $request) {
+                $previousTime = $previousTime + $request['requested_time'];
+            }
+        } else {
+            $previousTime = $records[0]['requested_time'];
+        }
+        //
+        if ($previousTime < 480 && ($timeOff['requested_time'] + $previousTime) <= 480 ) {
+            return $response;
+        } else {
+            $info = $this->fetchRequestHistoryInfo($records[0]['sid']);
+            //
+            $response = [
+                'message' => 'Another time off request by <b>'.getUserNameBySID($timeOff['employee_sid']).'</b> for same date(s) already has been approved by <b>'.getUserNameBySID($info['employee_sid']).'</b>.',
+                'code' => 2
+            ];
+            //
+            return $response;
+        }
+    }
+
 }

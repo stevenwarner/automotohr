@@ -2409,7 +2409,23 @@ class Time_off extends Public_Controller
     public function requests_status($companyId, $request_sid, $request_type)
     {
         //
+        if ($request_type == "approve") {
+            //
+            $checkAlreadyApproved = $this->timeoff_model->checkRequestAlreadyApproved($request_sid);
+            //
+            if ($checkAlreadyApproved['code'] == 2) {
+                $result['Status'] = true;
+                $result['message'] = $checkAlreadyApproved['message'];
+                $result['code'] = $checkAlreadyApproved['code'];
+                //
+                header('Content-type: application/json');
+                echo json_encode($result);
+                exit(0);
+            }
+        }
+        //
         $request_info = $this->timeoff_model->fetchRequestHistoryInfo($request_sid);
+        //
         $result = array();
         //
         if (!empty($request_info) && $request_info['action'] == "update") {
@@ -2459,6 +2475,7 @@ class Time_off extends Public_Controller
 
                 $result['Status'] = true;
                 $result['message'] = $msg;
+                $result['code'] = 1;
             } else {
                 $result['Status'] = false;
                 $result['message'] = '';
@@ -3907,6 +3924,17 @@ class Time_off extends Public_Controller
                 $this->res['Data'] = $policies;
                 $this->resp();
                 break;
+                break;
+            
+            case "check_timeoff_request":
+                $request_from_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
+                $request_to_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
+                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date,$post['dateRows']);
+                //
+                $this->res['Response'] = $response;
+                $this->res['Status'] = TRUE;
+                $this->res['Code'] = 'SUCCESS';
+                $this->resp();
                 break;
 
                 // Create timeoff

@@ -119,6 +119,52 @@ $(function () {
             cOBJ.fromAdmin = 0;
         }
         //
+        $.post(
+			handlerURL,
+			Object.assign(
+				{
+					action: "check_timeoff_request",
+					companyId: companyId,
+					employerId: employerId,
+					employeeId: selectedEmployeeId,
+				},
+				cOBJ
+			),
+			(resp) => {
+                if (resp.Response.code == 1) {
+                    console.log("varified")
+                    saveTimeOffRequest(cOBJ);
+                }
+                //
+                if (resp.Response.code == 2) {
+                    if (resp.Response.conflictStatus == 'approved') {
+                        alertify.alert('Conflict!', resp.Response.message, () => { });
+                        return;
+                    } else {
+                        alertify.confirm(
+                            resp.Response.message,
+                            () => {
+                                console.log("confirm")
+                                saveTimeOffRequest(cOBJ);
+                            },
+                            () => {
+                                return;
+                            }
+                        ).set('labels', {
+                            ok: 'Yes',
+                            cancel: 'NO'
+                        }).set(
+                            'title', 'Conflict!'
+                        );
+                    }
+                }
+			}
+		);
+        //
+    });
+
+    function saveTimeOffRequest (cOBJ) {
+        //
         ml(true, currentLoader);
         //
         $.post(
@@ -146,7 +192,7 @@ $(function () {
                 return;
             }
         );
-    });
+    }
 
     // 
     $(document).on('click', '.jsCreateRequest', function (e) {
