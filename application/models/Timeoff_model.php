@@ -7605,13 +7605,14 @@ class Timeoff_model extends CI_Model
         $conflictStatus = 'pending';
         $newMessage = '<strong>You have {{conflict_count}} conflicts with time off requests:</strong><br><br>';
         $alreadyAppliedTime = [];
+        $shortLeaveStatus = false;
+        $shortLeaveText = '';
         //
         foreach ($records as $v0) {
             //
             $timeoffDays = json_decode($v0['timeoff_days'], true)['days'];
             //
             foreach ($timeoffDays as $v1) {
-                //
                 //
                 if (!isset($alreadyAppliedTime[$v1["date"]])) {
                     $alreadyAppliedTime[$v1["date"]] = $v1["time"];
@@ -7627,7 +7628,7 @@ class Timeoff_model extends CI_Model
                         //
                         if ($day['date'] == $v1["date"]) {
                             //
-                            if ($v1["time"] >= 480 || ($v1["time"]+$day['time']) > 480 || $alreadyAppliedTime[$v1["date"]] == 480) {
+                            if ($v1["time"] >= 480 || ($v1["time"]+$day['time']) > 480) {
                                 //
                                 $conflictCount++; 
                                 //
@@ -7638,14 +7639,29 @@ class Timeoff_model extends CI_Model
                                     $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($v1["time"] / 60).' hours (<span class="text-warning"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
                                 }
                                 //
+                            } else if ($v1['time'] < 480) {
+                                if ($v0['status'] == 'approved') {
+                                    $conflictStatus = 'approved';
+                                    $shortLeaveText .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($v1["time"] / 60).' hours (<span class="text-success"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                } else {
+                                    $shortLeaveText .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($v1["time"] / 60).' hours (<span class="text-warning"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                }
+                                //
+                                if($alreadyAppliedTime[$v1["date"]] >= 480) {
+                                    $conflictCount++;
+                                    $shortLeaveStatus = true;
+                                }
                             }
                         }
                     }
                     
                     
                 }
-            }
-            
+            } 
+        }
+        //
+        if ($shortLeaveStatus) {
+            $newMessage .= $shortLeaveText;
         }
         //
         if ($conflictCount > 0) {
