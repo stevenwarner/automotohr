@@ -119,7 +119,7 @@ if ($_ssv) {
                                 <div class="panel-body">
                                     <div class="jsNoteArea"></div>
                                     <div class="form-wrp">
-                                        <form method="POST" enctype="multipart/form-data" autocomplete="off">
+                                        <form method="POST" enctype="multipart/form-data" autocomplete="off" id="form_driver_license">
                                             <input type="hidden" id="perform_action" name="perform_action" value="update_drivers_license_information" />
                                             <input type="hidden" id="<?php echo $field_sid; ?>" name="<?php echo $field_sid; ?>" value="<?php echo $users_sid; ?>" />
 
@@ -175,7 +175,7 @@ if ($_ssv) {
                                                     <div class="form-group">
                                                         <?php $field_name = 'license_number' ?>
                                                         <?php $temp = isset($driv_license[$field_name]) && !empty($driv_license[$field_name]) ? $driv_license[$field_name] : ''; ?>
-                                                        <?php echo form_label('License Number', $field_name); ?>
+                                                        <?php echo form_label('License Number', $field_name); ?> <span class="required" aria-required="true">*</span>
                                                         <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="' . $field_name . '"'); ?>
                                                         <?php echo form_error($field_name); ?>
                                                     </div>
@@ -184,7 +184,7 @@ if ($_ssv) {
                                                     <div class="form-group">
                                                         <?php $field_name = 'license_issue_date' ?>
                                                         <?php $temp = isset($driv_license[$field_name]) && !empty($driv_license[$field_name]) ? $driv_license[$field_name] : ''; ?>
-                                                        <?php echo form_label('Issue Date', $field_name); ?>
+                                                        <?php echo form_label('Issue Date', $field_name); ?> <span class="required" aria-required="true">*</span>
                                                         <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control datepicker" id="dr_' . $field_name . '" readonly=""'); ?>
                                                         <?php echo form_error($field_name); ?>
                                                     </div>
@@ -195,7 +195,7 @@ if ($_ssv) {
                                                         <div class="form-group">
                                                             <?php $field_name = 'dob' ?>
                                                             <?php $temp = $dob; ?>
-                                                            <?php echo form_label('Date Of Birth', $field_name); ?>
+                                                            <?php echo form_label('Date Of Birth', $field_name); ?> <span class="required" aria-required="true">*</span>
                                                             <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control" id="' . $field_name . '" readonly=""'); ?>
                                                             <?php echo form_error($field_name); ?>
                                                         </div>
@@ -205,7 +205,7 @@ if ($_ssv) {
                                                     <div class="form-group">
                                                         <?php $field_name = 'license_expiration_date' ?>
                                                         <?php $temp = isset($driv_license[$field_name]) && !empty($driv_license[$field_name]) ? $driv_license[$field_name] : ''; ?>
-                                                        <?php echo form_label('Expiration Date', $field_name); ?>
+                                                        <?php echo form_label('Expiration Date', $field_name); ?> <span class="required" aria-required="true">*</span>
                                                         <?php echo form_input($field_name, set_value($field_name, $temp), 'class="form-control datepicker" id="dr_' . $field_name . '" readonly=""'); ?>
                                                         <?php echo form_error($field_name); ?>
                                                     </div>
@@ -262,7 +262,7 @@ if ($_ssv) {
                                                     <div class="btn-wrp full-width text-right">
                                                         <!--<a class="btn btn-black margin-right" href="<?php //echo $back_url; 
                                                                                                         ?>">cancel</a>-->
-                                                        <input class="btn btn-info" value="Update Driver License Info" type="submit">
+                                                        <input class="btn btn-info" value="Update Driver License Info" type="button" id="btn_update_driver_license">
                                                     </div>
                                                 </div>
                                             </div>
@@ -1399,5 +1399,29 @@ if ($_ssv) {
             $('#havedependantFormRow').hide();
             $('#donthavedependantFormRow').show();
         }
+    });
+
+
+    $("#btn_update_driver_license").click(function() {
+
+        if ($('#license_number').val().trim() == '') {
+            alertify.alert('License Number is Required.');
+            return false;
+        }
+        if ($('#dr_license_issue_date').val().trim() == '') {
+            alertify.alert('Issue Date is Required.');
+            return false;
+        }
+        if ($('#dob').val().trim() == '') {
+            alertify.alert('Date Of Birth is Required.');
+            return false;
+        }
+        if ($('#dr_license_expiration_date').val().trim() == '') {
+            alertify.alert('Expiration Date is Required.');
+            return false;
+        }
+
+        $("#form_driver_license").submit();
+
     });
 </script>
