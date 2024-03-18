@@ -2571,6 +2571,7 @@ class Reports_model extends CI_Model
             ->from('users')
             ->where('users.terminated_status', 0)
             ->where('users.active', 1)
+            ->where('users.is_executive_admin', 0)
             ->where('users.parent_sid', $companyId);
 
         if ($employeeArray) :
@@ -2624,7 +2625,8 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_type', 'employee')
             ->where('documents_assigned.company_sid', $companyId)
             ->where('documents_assigned.user_sid', $employeeId)
-            ->where('documents_assigned.status', 1);
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.archive', 0);
         //
         $result = $this->db->get();
         //
@@ -2656,6 +2658,11 @@ class Reports_model extends CI_Model
                     // continue;
                     $data[$key]['completedStatus'] = 'No Action Required';
                 } else {
+                    //
+                    if ($this->isDocumentArchived($val["document_sid"])) {
+                        unset($data[$key]); 
+                        continue;
+                    }
                     //
                     if ($val['acknowledgment_required'] || $val['download_required'] || $val['signature_required'] || $is_magic_tag_exist) {
 
@@ -2734,7 +2741,7 @@ class Reports_model extends CI_Model
         }
 
 
-        return $data ? $data : [];
+        return $data ? array_values($data) : [];
 
 
         //return $result ? $result->result_array() : [];
@@ -2893,5 +2900,13 @@ class Reports_model extends CI_Model
         $a->free_result();
         //
         return $b;
+    }
+
+    public function isDocumentArchived($documentId)
+    {
+        return $this->db
+            ->where("sid", $documentId)
+            ->where("archive", 1)
+            ->count_all_results("documents_management");
     }
 }

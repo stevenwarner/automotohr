@@ -1,3 +1,4 @@
+<?php if(!isset($onlyJS)) { ?>
 <?php $pageHeader = getPageContent('header', true)["page"]["sections"]["section_1"]; ?>
 <?php $pageFooter = getPageContent('footer', true)["page"]["sections"]; ?>
 <?php $salesSupportDetail = getPageContent('contact_us', false)["page"]["sections"]["section_0"]; ?>
@@ -211,6 +212,7 @@
     </div>
 </footer>
 <?php $this->load->view("v1/app/partials/schedule_demo_form_popup"); ?>
+<?php }?>
 </body>
 
 <?= $pageJs ? GetScripts($pageJs) : ''; ?>

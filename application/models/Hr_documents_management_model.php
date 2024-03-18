@@ -3187,7 +3187,7 @@ class Hr_documents_management_model extends CI_Model
         if ($archive_status !== null) {
             $this->db->where('archive', $archive_status);
         }
-        if ($pp_flag) {
+        if ($pp_flag && !isPayrollOrPlus(true)) {
             $this->db->where('documents_2_category.category_sid', PP_CATEGORY_SID);
             $this->db->join('documents_2_category', 'documents_2_category.document_sid = documents_management.sid', 'inner');
         } else {
@@ -10862,7 +10862,8 @@ class Hr_documents_management_model extends CI_Model
                 "portal_state_form.state_form_sid = state_forms.sid",
                 "inner"
             )
-            ->where("company_sid", $companyId);
+            ->where("company_sid", $companyId)
+            ->where("portal_state_form.user_consent", 0);
         //
         if (!in_array("all", $employeeIds)) {
             $this->db

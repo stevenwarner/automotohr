@@ -1099,17 +1099,17 @@ if (!function_exists('checkI9RecordWithProfile')) {
         //
         $address = trim($profileData['Location_Address'] . ' ' . $profileData['Location_Address_2']);
         //
-        $data['section1_last_name'] = $data['section1_last_name'] ?? $profileData['last_name'];
-        $data['section1_first_name'] = $data['section1_first_name'] ?? $profileData['first_name'];
-        $data['section1_middle_initial'] = $data['section1_middle_initial'] ?? $profileData['middle_name'];
-        $data['section1_address'] = $data['section1_address'] ?? $address;
-        $data['section1_city_town'] = $data['section1_city_town'] ?? $profileData['Location_City'];
+        $data['section1_last_name'] = $data['section1_last_name'] ? $data['section1_last_name'] : $profileData['last_name'];
+        $data['section1_first_name'] = $data['section1_first_name'] ? $data['section1_first_name'] : $profileData['first_name'];
+        $data['section1_middle_initial'] = $data['section1_middle_initial'] ? $data['section1_middle_initial'] : $profileData['middle_name'];
+        $data['section1_address'] = $data['section1_address'] ? $data['section1_address'] :  $address;
+        $data['section1_city_town'] = $data['section1_city_town'] ? $data['section1_city_town'] : $profileData['Location_City'];
         $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($profileData['Location_State'] ?? 0);
-        $data['section1_zip_code'] = $data['section1_zip_code'] ?? $profileData['Location_ZipCode'];
-        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ?? $profileData['dob'];
-        $data['section1_social_security_number'] = $data['section1_social_security_number'] ?? $profileData['ssn'];
-        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ?? $profileData['email'];
-        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ?? $profileData['PhoneNumber'];
+        $data['section1_zip_code'] = $data['section1_zip_code'] ? $data['section1_zip_code'] : $profileData['Location_ZipCode'];
+        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ? $data['section1_date_of_birth'] : $profileData['dob'];
+        $data['section1_social_security_number'] = $data['section1_social_security_number'] ? $data['section1_social_security_number'] :  $profileData['ssn'];
+        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ? $data['section1_emp_email_address'] : $profileData['email'];
+        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ? $data['section1_emp_telephone_number'] : $profileData['PhoneNumber'];
         $data['section1_today_date'] = $data['section1_today_date'] ?? getSystemDate(DB_DATE);
         //
         return $data;

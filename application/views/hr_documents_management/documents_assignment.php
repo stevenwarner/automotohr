@@ -298,6 +298,7 @@ $assignIdObj = $confidential_sids;
                                                                                 </form>
                                                                                 <button onclick="func_remove_i9();" class="btn btn-danger">Revoke</button>
                                                                                 <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
+                                                                                <a href="<?=base_url("forms/i9/modify/$user_type/$user_sid");?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
                                                                                 <?php if ($user_type == 'employee') { ?>
                                                                                     <a class="btn <?php echo $i9_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<?= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $i9_form['sid'] . "/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
