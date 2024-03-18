@@ -7633,9 +7633,9 @@ class Timeoff_model extends CI_Model
                                 //
                                 if ($v0['status'] == 'approved') {
                                     $conflictStatus = 'approved';
-                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($alreadyAppliedTime[$v1["date"]] / 60).' hours (<span class="text-success"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($v1["time"] / 60).' hours (<span class="text-success"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
                                 } else {
-                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($alreadyAppliedTime[$v1["date"]] / 60).' hours (<span class="text-warning"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE).' '.($v1["time"] / 60).' hours (<span class="text-warning"><b>'.strtoupper($v0['status']).'</b></span>)<br>';
                                 }
                                 //
                             }
