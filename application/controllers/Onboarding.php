@@ -5028,6 +5028,132 @@ class Onboarding extends CI_Controller
                 //
                 $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
                 //
+
+
+
+
+
+
+
+                $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
+
+                if (!empty($groups)) {
+                    foreach ($groups as $key => $group) {
+                        $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
+                        $groups[$key]['document_status'] = $document_status;
+                        $group_status = $group['status'];
+                        $group_sid = $group['sid'];
+                        $group_ids[] = $group_sid;
+                        $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
+                        $otherDocuments = getGroupOtherDocuments($group);
+                        $otherDocumentCount = count($otherDocuments);
+    
+                        if ($group_status) {
+                            $active_groups[] = array(
+                                'sid' => $group_sid,
+                                'name' => $group['name'],
+                                'sort_order' => $group['sort_order'],
+                                'description' => $group['description'],
+                                'created_date' => $group['created_date'],
+                                'w4' => $group['w4'],
+                                'w9' => $group['w9'],
+                                'i9' => $group['i9'],
+                                'eeoc' => $group['eeoc'],
+                                'direct_deposit' => $group['direct_deposit'],
+                                'drivers_license' => $group['drivers_license'],
+                                'occupational_license' => $group['occupational_license'],
+                                'emergency_contacts' => $group['emergency_contacts'],
+                                'dependents' => $group['dependents'],
+                                'documents_count' => count($group_documents) + $otherDocumentCount,
+                                'documents' => $group_documents,
+                                'other_documents' => $otherDocuments
+                            );
+                        } else {
+                            $in_active_groups[] = array(
+                                'sid' => $group_sid,
+                                'name' => $group['name'],
+                                'sort_order' => $group['sort_order'],
+                                'description' => $group['description'],
+                                'created_date' => $group['created_date'],
+                                'w4' => $group['w4'],
+                                'w9' => $group['w9'],
+                                'i9' => $group['i9'],
+                                'eeoc' => $group['eeoc'],
+                                'direct_deposit' => $group['direct_deposit'],
+                                'drivers_license' => $group['drivers_license'],
+                                'occupational_license' => $group['occupational_license'],
+                                'emergency_contacts' => $group['emergency_contacts'],
+                                'dependents' => $group['dependents'],
+                                'documents_count' => count($group_documents) + $otherDocumentCount,
+                                'documents' => $group_documents,
+                                'other_documents' => $otherDocuments
+                            );
+                        }
+                    }
+                }
+    
+                $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
+                $active_categories = [];
+    
+                if (!empty($categories)) {
+                    foreach ($categories as $key => $category) {
+                        $document_status = $this->hr_documents_management_model->is_document_assign_2_category($category['sid']);
+                        $categories[$key]['document_status'] = $document_status;
+                        $category_status = $category['status'];
+                        $category_sid = $category['sid'];
+                        $category_ids[] = $category_sid;
+                        $category_documents = $this->hr_documents_management_model->get_all_documents_in_category($category_sid, 0);
+    
+                        if ($category_status) {
+                            $active_categories[] = array(
+                                'sid' => $category_sid,
+                                'name' => $category['name'],
+                                'sort_order' => $category['sort_order'],
+                                'description' => $category['description'],
+                                'created_date' => $category['created_date'],
+                                'documents_count' => count($category_documents),
+                                'documents' => $category_documents
+                            );
+                        } else {
+                            $in_active_categories[] = array(
+                                'sid' => $category_sid,
+                                'name' => $category['name'],
+                                'sort_order' => $category['sort_order'],
+                                'description' => $category['description'],
+                                'created_date' => $category['created_date'],
+                                'documents_count' => count($category_documents),
+                                'documents' => $category_documents
+                            );
+                        }
+                    }
+                }
+    
+                if (!empty($group_ids)) {
+                    $group_docs = $this->hr_documents_management_model->get_distinct_group_docs($group_ids);
+                }
+    
+                if (!empty($group_docs)) { // document are assigned to any group.
+                    foreach ($group_docs as $group_doc) {
+                        $document_ids[] = $group_doc['document_sid'];
+                    }
+                }
+    
+                $uncategorized_documents = $this->hr_documents_management_model->get_uncategorized_docs($company_sid, $document_ids, 0, $pp_flag);
+                $access_level_manual_doc = $this->hr_documents_management_model->get_access_level_manual_doc($company_sid, $user_sid, $user_type, $pp_flag);
+                $data['uncategorized_documents'] = $uncategorized_documents;
+                $data['access_level_manual_doc'] = $access_level_manual_doc;
+                $data['active_groups'] = $active_groups;
+                $data['active_categories'] = $active_categories;
+                $data['in_active_groups'] = $in_active_groups;
+                $data['groups'] = $groups;
+
+
+
+
+
+
+
+
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
                 $this->load->view('main/footer');
