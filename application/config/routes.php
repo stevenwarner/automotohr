@@ -2252,3 +2252,10 @@ $route["forms/i9/modify/(:any)/(:num)"]["post"] = "v1/I9/processEmployerModifyI9
 // Indeed questionnaie route
 $route["indeed/(:any)/jobQuestions.json"]["get"] = "v1/Indeed/jobQuestions/$1";
 $route["indeed/authorize"]["get"] = "manage_admin/Job_feeds_management/generateIndeedToken";
+
+
+// Indeed disposition status map
+$route["manage_admin/indeed/disposition/status/map"]["get"] =
+  "manage_admin/Indeed_disposition_status_map/listing";
+  $route["manage_admin/indeed/disposition/status/map"]["post"] =
+  "manage_admin/Indeed_disposition_status_map/saveListing";

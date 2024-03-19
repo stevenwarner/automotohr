@@ -138,6 +138,168 @@ class Indeed_lib
     }
 
     /**
+     * get indeed disposition status list
+     *
+     * @return array
+     */
+    public function getIndeedDispositionStatusList(): array
+    {
+        // set the array
+        $dispositionStatusArray = [];
+        //
+        $dispositionStatusArray["NEW"] = [
+            "status" => "NEW",
+            "slug" => "NEW",
+            "description" => "Required. ATS received a new job application.",
+            "atsStatus" => [
+                "New",
+                "Applied",
+                "Received",
+                "New Candidate"
+            ],
+        ];
+        $dispositionStatusArray["REVIEW"] = [
+            "status" => "REVIEW",
+            "slug" => "REVIEW",
+            "description" => "Job application is under review.",
+            "atsStatus" => [
+                "In review",
+                "Review",
+                "Reviewing",
+            ],
+        ];
+        $dispositionStatusArray["LIKED"] = [
+            "status" => "LIKED",
+            "slug" => "LIKED",
+            "description" => "The recruiter liked, favorited, or shortlisted the job application.",
+            "atsStatus" => [
+                "Liked",
+                "Shortlist",
+                "Highlight",
+                "Favorited",
+            ],
+        ];
+        $dispositionStatusArray["CONTACTED"] = [
+            "status" => "CONTACTED",
+            "slug" => "CONTACTED",
+            "description" => "The candidate was contacted through phone or email. This status does not include rejections.",
+            "atsStatus" => [
+                "Contacted",
+                "Outreach",
+            ],
+        ];
+        $dispositionStatusArray["SCREEN"] = [
+            "status" => "SCREEN",
+            "slug" => "SCREEN",
+            "description" => "Pre-hire screening process. This could span multiple steps, such as phone screening or other screening method.",
+            "atsStatus" => [
+                "Phone screen",
+            ],
+        ];
+        $dispositionStatusArray["ASSESS_QUALIFICATIONS"] = [
+            "status" => "ASSESS QUALIFICATIONS",
+            "slug" => "ASSESS_QUALIFICATIONS",
+            "description" => "Pre-hire assessment process. Can include multiple steps, such as skills tests, take home assignments, and other methods.",
+            "atsStatus" => [
+                "Assessment",
+                "Project",
+                "Take home",
+            ],
+        ];
+        $dispositionStatusArray["INTERVIEW"] = [
+            "status" => "INTERVIEW",
+            "slug" => "INTERVIEW",
+            "description" => "Candidate is interviewing. Can span multiple interviews.",
+            "atsStatus" => [
+                "Interview",
+                "First round interview",
+                "Interview phase",
+            ],
+        ];
+        $dispositionStatusArray["OFFER_MADE"] = [
+            "status" => "OFFER MADE",
+            "slug" => "OFFER_MADE",
+            "description" => "Candidate received a job offer.",
+            "atsStatus" => [
+                "Offer",
+                "Offering",
+                "Offer initiated",
+            ],
+        ];
+        $dispositionStatusArray["BACKGROUND_CHECK"] = [
+            "status" => "BACKGROUND CHECK",
+            "slug" => "BACKGROUND_CHECK",
+            "description" => "A background check is in progress.",
+            "atsStatus" => [
+                "Background",
+            ],
+        ];
+        $dispositionStatusArray["VERIFY_ELIGIBILITY"] = [
+            "status" => "VERIFY ELIGIBILITY",
+            "slug" => "VERIFY_ELIGIBILITY",
+            "description" => "Pre-hire eligibility process. This could span multiple steps, including license verification, drug test, or other method.",
+            "atsStatus" => [
+                "References",
+                "Drug screen",
+                "License verification",
+            ],
+        ];
+        $dispositionStatusArray["HIRED"] = [
+            "status" => "HIRED",
+            "slug" => "HIRED",
+            "description" => "Required. The candidate accepted an offer of employment.",
+            "atsStatus" => [
+                "Hired",
+                "Placed",
+            ],
+        ];
+        $dispositionStatusArray["NOT_SELECTED"] = [
+            "status" => "NOT SELECTED",
+            "slug" => "NOT_SELECTED",
+            "description" => "Candidate was not selected for this job.",
+            "atsStatus" => [
+                "Rejected",
+                "Release",
+                "Unsuitable",
+                "Do not pursue",
+            ],
+        ];
+        $dispositionStatusArray["OFFER_DECLINED"] = [
+            "status" => "OFFER DECLINED",
+            "slug" => "OFFER_DECLINED",
+            "description" => "Candidate declined the job offer.",
+            "atsStatus" => [
+                "Declined",
+            ],
+        ];
+        $dispositionStatusArray["WITHDRAWN"] = [
+            "status" => "WITHDRAWN",
+            "slug" => "WITHDRAWN",
+            "description" => "The candidate withdrew the application.",
+            "atsStatus" => [
+                "Candidate withdrew",
+            ],
+        ];
+        $dispositionStatusArray["INCOMPLETE"] = [
+            "status" => "INCOMPLETE",
+            "slug" => "INCOMPLETE",
+            "description" => "Job application is incomplete.",
+            "atsStatus" => [
+                "Incomplete",
+                "Unfinished",
+            ],
+        ];
+        $dispositionStatusArray["UNABLE_TO_MAP"] = [
+            "status" => "UNABLE TO MAP",
+            "slug" => "UNABLE_TO_MAP",
+            "description" => "Use this status only when you cannot find a corresponding status.	",
+            "atsStatus" => [],
+        ];
+        // return the array
+        return $dispositionStatusArray;
+    }
+
+    /**
      * get the client id and secret
      */
     private function getClientIdAndSecret()

@@ -126,6 +126,7 @@ if (
     $this->uri->segment(2) == 'sms_enquiries' ||
     base_url(uri_string()) == site_url('manage_admin/email_enquiries') ||
     base_url(uri_string()) == site_url('manage_admin/sms_enquiries') ||
+    base_url(uri_string()) == site_url('manage_admin/indeed/disposition/status/map') ||
     $this->uri->segment(2) == 'notification_email_log' ||
     $this->uri->segment(2) == 'notification_email_log_view' ||
     base_url(uri_string()) == site_url('manage_admin/private_messages') ||
@@ -810,6 +811,13 @@ if (
                                     echo 'class="active"';
                                 }
                                 ?> href="<?php echo site_url('manage_admin/resources'); ?>">Resources</a>
+                        </div>
+                        <div class="menu-item">
+                            <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/indeed/disposition/status/map')) {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/indeed/disposition/status/map'); ?>">Indeed Disposition Status</a>
                         </div>
                     </div>
 
