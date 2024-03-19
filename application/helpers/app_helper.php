@@ -3389,3 +3389,177 @@ if (!function_exists("getTheWhereFromEmployeeStatus")) {
         return $whereArray;
     }
 }
+
+
+if (!function_exists("getIndeedMappedQuestionType")) {
+    /**
+     * get the Indeed mapped question type
+     *
+     * @param string $questionType
+     * @return string
+     */
+    function getIndeedMappedQuestionType(string $questionType): string
+    {
+        //
+        $questionType = strtolower($questionType);
+        // set the array
+        $indeedTypeArray = [
+            "string" => "text",
+            "boolean" => "select",
+            "multilist" => "multiselect",
+            "list" => "select",
+        ];
+        // return it
+        return $indeedTypeArray[$questionType];
+    }
+}
+
+if (!function_exists("getEEOCFormQuestions")) {
+    /**
+     * get EEOC form questions
+     *
+     * @return array
+     */
+    function getEEOCFormQuestions(array $fields): array
+    {
+        // set the questions
+        $questionsArray = [];
+        // set the question
+        $questionsArray[0] = [
+            "id" => "citizen",
+            "type" => "select",
+            "question" => "I am a U.S. citizen or permanent resident",
+            "options" => [
+                [
+                    "label" => "Yes",
+                    "value" => "Yes",
+                ],
+                [
+                    "label" => "No",
+                    "value" => "No",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[1] = [
+            "id" => "group",
+            "type" => "select",
+            "question" => "1. GROUP STATUS (PLEASE CHECK ONE)",
+            "options" => [
+                [
+                    "label" => "Hispanic or Latino - A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin regardless of race.",
+                    "value" => "Hispanic or Latino",
+                ],
+                [
+                    "label" => "White (Not Hispanic or Latino) - A person having origins in any of the original peoples of Europe, the Middle East or North Africa.",
+                    "value" => "White",
+                ],
+                [
+                    "label" => "Black or African American (Not Hispanic or Latino) - A person having origins in any of the black racial groups of Africa.",
+                    "value" => "Black or African American",
+                ],
+                [
+                    "label" => "Native Hawaiian or Other Pacific Islander (Not Hispanic or Latino) - A person having origins in any of the peoples of Hawaii, Guam, Samoa or other Pacific Islands.",
+                    "value" => "Native Hawaiian or Other Pacific Islander",
+                ],
+                [
+                    "label" => "Asian (Not Hispanic or Latino) - A person having origins in any of the original peoples of the Far East, Southeast Asia or the Indian Subcontinent, including, for example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand and Vietnam.",
+                    "value" => "Asian",
+                ],
+                [
+                    "label" => "American Indian or Alaska Native (Not Hispanic or Latino) - A person having origins in any of the original peoples of North and South America (including Central America) and who maintain tribal affiliation or community attachment.",
+                    "value" => "American Indian or Alaska Native",
+                ],
+                [
+                    "label" => "Two or More Races (Not Hispanic or Latino) - All persons who identify with more than one of the above five races.",
+                    "value" => "Two or More Races",
+                ],
+            ],
+            "required" => true
+        ];
+        // set the question
+        $questionsArray[2] = [
+            "id" => "veteran",
+            "type" => "select",
+            "question" => "2. VETERAN",
+            "options" => [
+                [
+                    "label" => "Disabled Veteran: A veteran of the U.S. military, ground, naval or air service who is entitled to compensation (or who but for the receipt of military retired pay would be entitled to compensation) under laws administered by the Secretary of Veterans Affairs; or a person who was discharged or released from active duty because of a service-connected disability.",
+                    "value" => "Disabled Veteran",
+                ],
+                [
+                    "label" => "Recently Separated Veteran: A \"recently separated veteran\" means any veteran during the three-year period beginning on the date of such veteran's discharge or release from active duty in the U.S. military, ground, naval, or air service.",
+                    "value" => "Recently Separated Veteran",
+                ],
+                [
+                    "label" => "Active Duty Wartime or Campaign Badge Veteran: An \"active duty wartime or campaign badge veteran\" means a veteran who served on active duty in the U.S. military, ground, naval or air service during a war, or in a campaign or expedition for which a campaign badge has been authorized under the laws administered by the Department of Defense.",
+                    "value" => "Active Duty Wartime or Campaign Badge Veteran",
+                ],
+                [
+                    "label" => "Armed Forces Service Medal Veteran: An \"Armed forces service medal veteran\" means a veteran who, while serving on active duty in the U.S. military, ground, naval or air service, participated in a United States military operation for which an Armed Forces service medal was awarded pursuant to Executive Order 12985.",
+                    "value" => "Armed Forces Service Medal Veteran",
+                ],
+                [
+                    "label" => "I Am Not a Protected Veteran",
+                    "value" => "I Am Not a Protected Veteran",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[3] = [
+            "id" => "disability",
+            "type" => "select",
+            "question" => "3. VOLUNTARY SELF-IDENTIFICATION OF DISABILITY",
+            "options" => [
+                [
+                    "label" => "YES, I HAVE A DISABILITY (or previously had a disability)",
+                    "value" => "YES, I HAVE A DISABILITY",
+                ],
+                [
+                    "label" => "NO, I DON'T HAVE A DISABILITY",
+                    "value" => "NO, I DON'T HAVE A DISABILITY",
+                ],
+                [
+                    "label" => "I DON'T WISH TO ANSWER",
+                    "value" => "I DON'T WISH TO ANSWER",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[4] = [
+            "id" => "gender",
+            "type" => "select",
+            "question" => "4. GENDER (PLEASE CHECK ONE)",
+            "options" => [
+                [
+                    "label" => "Male",
+                    "value" => "Male",
+                ],
+                [
+                    "label" => "Female",
+                    "value" => "Female",
+                ],
+                [
+                    "label" => "Other",
+                    "value" => "Other",
+                ],
+            ],
+        ];
+        // set the required
+        if ($fields["dl_citizen"]) {
+            $questionsArray[0]["required"] = true;
+        }
+        if ($fields["dl_vet"]) {
+            $questionsArray[2]["required"] = true;
+        }
+        if ($fields["dl_vol"]) {
+            $questionsArray[3]["required"] = true;
+        }
+        if ($fields["dl_gen"]) {
+            $questionsArray[4]["required"] = true;
+        }
+
+        //
+        return $questionsArray;
+    }
+}

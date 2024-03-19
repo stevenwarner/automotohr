@@ -2249,3 +2249,6 @@ $route["documents/assign_group_document_to_employee"]["post"] = "Hr_documents_ma
 // I9 form
 $route["forms/i9/modify/(:any)/(:num)"]["get"] = "v1/I9/employerModifyI9/$1/$2";
 $route["forms/i9/modify/(:any)/(:num)"]["post"] = "v1/I9/processEmployerModifyI9/$1/$2";
+// Indeed questionnaie route
+$route["indeed/(:any)/jobQuestions.json"]["get"] = "v1/Indeed/jobQuestions/$1";
+$route["indeed/authorize"]["get"] = "manage_admin/Job_feeds_management/generateIndeedToken";

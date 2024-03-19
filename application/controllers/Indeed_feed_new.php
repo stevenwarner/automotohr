@@ -173,6 +173,16 @@ class Indeed_feed_new extends CI_Controller
                     'CompanySubDomain' => $companyPortal['sub_domain']
                 );
 
+                //
+                $jobQuestionnaireUrl = "";
+                //
+                if ($job["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($job["user_sid"])) {
+                    $jobQuestionnaireUrl = "&indeed-apply-questions=";
+                    $jobQuestionnaireUrl .= urlencode(
+                        STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
+                    );
+                }
+
                 $rows .=  "
                     <job>
                     <title><![CDATA[" . $job['Title'] . "]]></title>
@@ -189,7 +199,7 @@ class Indeed_feed_new extends CI_Controller
                     <jobtype><![CDATA[" . $jobType . "]]></jobtype>
                     <category><![CDATA[" . $job_category . "]]></category>
                     <description><![CDATA[" . $jobDesc . "]]></description>
-                    <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($company_id, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required]]></indeed-apply-data>
+                    <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($company_id, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required{$jobQuestionnaireUrl}]]></indeed-apply-data>
                     </job>";
             }
         }
@@ -361,6 +371,15 @@ class Indeed_feed_new extends CI_Controller
                 $isSponsored = in_array($job['sid'], $jobIds) ? "yes" : "no";
                 $hasBudget = in_array($job['sid'], $jobIds) ? $budget[$job['sid']] : "0";
                 //
+                $jobQuestionnaireUrl = "";
+                //
+                if ($job["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($job["user_sid"])) {
+                    $jobQuestionnaireUrl = "&indeed-apply-questions=";
+                    $jobQuestionnaireUrl .= urlencode(
+                        STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
+                    );
+                }
+                //
                 $rows .= "
                     <job>
                         <title><![CDATA[" . $job['Title'] . "]]></title>
@@ -384,7 +403,7 @@ class Indeed_feed_new extends CI_Controller
                         <email><![CDATA[" . $contactEmail . "]]></email>
                         <phonenumber><![CDATA[" . $contactPhone . "]]></phonenumber>
                         <contact><![CDATA[" . $contactName . "]]></contact>
-                        <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required]]></indeed-apply-data>
+                        <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required{$jobQuestionnaireUrl}]]></indeed-apply-data>
                     </job>";
 
                 $totalJobsForFeed++;
@@ -519,6 +538,15 @@ class Indeed_feed_new extends CI_Controller
                 $isSponsored = in_array($job['sid'], $jobIds) ? "yes" : "no";
                 $hasBudget = in_array($job['sid'], $jobIds) ? $budget[$job['sid']] : "0";
                 //
+                $jobQuestionnaireUrl = "";
+                //
+                if ($job["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($job["user_sid"])) {
+                    $jobQuestionnaireUrl = "&indeed-apply-questions=";
+                    $jobQuestionnaireUrl .= urlencode(
+                        STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
+                    );
+                }
+                //
                 $rows .= "
                     <job>
                         <title><![CDATA[" . $job['Title'] . "]]></title>
@@ -542,7 +570,7 @@ class Indeed_feed_new extends CI_Controller
                         <email><![CDATA[" . $contactEmail . "]]></email>
                         <phonenumber><![CDATA[" . $contactPhone . "]]></phonenumber>
                         <contact><![CDATA[" . $contactName . "]]></contact>
-                        <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required]]></indeed-apply-data>
+                        <indeed-apply-data><![CDATA[indeed-apply-joburl=" . urlencode(STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uid) . "&indeed-apply-jobid=" . $uid . "&indeed-apply-jobtitle=" . urlencode(db_get_job_title($companySid, $job['Title'], $city, $state['state_name'], $country['country_code'])) . "&indeed-apply-jobcompanyname=" . urlencode($companyName) . "&indeed-apply-joblocation=" . urlencode($city . "," . $state['state_name'] . "," . $country['country_code']) . "&indeed-apply-apitoken=56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781&indeed-apply-posturl=" . urlencode(STORE_FULL_URL_SSL . "indeed_feed/indeedPostUrl") . "&indeed-apply-phone=required{$jobQuestionnaireUrl}]]></indeed-apply-data>
                     </job>";
 
                 $totalJobsForFeed++;
