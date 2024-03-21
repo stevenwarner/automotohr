@@ -4578,6 +4578,10 @@ class Onboarding extends CI_Controller
             $pp_flag = $data['session']['employer_detail']['pay_plan_flag'];
             $user_info = array();
 
+            //Removed pay plan 
+            $pp_flag = 0;
+            //
+
             switch ($user_type) {
                 case 'employee':
                     $data = employee_right_nav($user_sid);
