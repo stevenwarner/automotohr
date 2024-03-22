@@ -483,12 +483,11 @@ class Testing extends CI_Controller
         $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
         //
         foreach ($policies as $policy) {
-            $balanceInMinutes = getEmployeeManualBalance(
-                $employeeId,
+            $balanceInMinutes = $this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
                 $policy['sid'],
+                $employeeId,
                 $employeeAnniversaryDate['lastAnniversaryDate'],
-                $employeeAnniversaryDate['upcomingAnniversaryDate'],
-                0
+                $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
             //
             _e($balanceInMinutes,true);
