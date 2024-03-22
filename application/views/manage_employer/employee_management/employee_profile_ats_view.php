@@ -1,6 +1,4 @@
 <?php
-error_reporting(0);
-ini_set('display_errors', 1);
 $field_phone = 'PhoneNumber';
 $field_sphone = 'secondary_PhoneNumber';
 $field_ophone = 'other_PhoneNumber';
