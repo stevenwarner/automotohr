@@ -483,6 +483,7 @@ class Testing extends CI_Controller
         $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
         //
         foreach ($policies as $policy) {
+            _e($policy['title'],true);
             $balanceInMinutes = $this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
                 $policy['sid'],
                 $employeeId,
