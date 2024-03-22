@@ -476,8 +476,7 @@ class Testing extends CI_Controller
         $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
         //
         $todayDate = date('Y-m-d', strtotime('now'));
-        $todayDate = getFormatedDate($todayDate);
-
+        //
         $employeeAnniversaryDate = getEmployeeAnniversary($JoinedDate, $todayDate);
         _e($employeeAnniversaryDate,true);
         _e($JoinedDate,true,true);
