@@ -453,7 +453,7 @@ class Testing extends CI_Controller
         _e($eeo_form_info,true,true);
     }
 
-    public function checkTimeoff ($employeeId) {
+    public function checkTimeoff ($employeeId, $companyId) {
         $this->db->select('
             joined_at,
             registration_date,
@@ -478,6 +478,22 @@ class Testing extends CI_Controller
         $todayDate = date('Y-m-d', strtotime('now'));
         //
         $employeeAnniversaryDate = getEmployeeAnniversary($JoinedDate, $todayDate);
+
+        $this->load->model('timeoff_model');
+        $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
+        //
+        foreach ($policies as $policy) {
+            $balanceInMinutes = getEmployeeManualBalance(
+                $employeeId,
+                $policy['sid'],
+                $employeeAnniversaryDate['lastAnniversaryDate'],
+                $employeeAnniversaryDate['upcomingAnniversaryDate'],
+                0
+            );
+            //
+            _e($balanceInMinutes,true);
+        }
+        //
         _e($employeeAnniversaryDate,true);
         _e($JoinedDate,true,true);
     }
