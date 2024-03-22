@@ -1254,3 +1254,20 @@ $(function manageShifts() {
 		return html;
 	}
 });
+
+
+//
+$('.jsCalendarView').click(function(e) {
+    //
+	calendarUrl = "calendar/my_events/iframe";
+    e.preventDefault();
+    // 
+    Modal({
+        Id: 'calendarModal',
+        Title: 'Calendar',
+        Body: `<iframe src="${baseUrl(calendarUrl)}" width="100%" height="${$(window).height() - 90}"></iframe>`,
+        Loader: 'jsCalendarLoader'
+    }, () => {
+        ml(false, 'jsCalendarLoader')
+    });
+});

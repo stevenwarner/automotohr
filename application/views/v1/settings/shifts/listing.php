@@ -81,7 +81,13 @@ if ($filter["mode"] === "month") {
                                             <i class="fa fa-trash" aria-hidden="true"></i>
                                             Delete
                                         </button>
-                                    </div>
+
+                                        <button class="btn btn-orange jsCalendarView">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                            View Calendar
+                                        </button>
+
+                                </div>
                                     <div class="col-sm-4 text-center">
 
                                         <?php

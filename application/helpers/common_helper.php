@@ -5921,11 +5921,14 @@ if (!function_exists('get_calendar_event_color')) {
             'timeoff_pending' => '#7e7b7b',
             'goals' => '#fd7a2a',
             'holiday' => '#111111',
+            'shifts' => '#111111',
+
 
             'interview-voip' => '#FF0FFF',
             'call' => '#4B0082'
         );
         //
+        
         if ($interview_type === FALSE) return $event_color_array;
         return isset($event_color_array[$interview_type]) ? $event_color_array[$interview_type] : $event_color_array['notconfirmed'];
     }

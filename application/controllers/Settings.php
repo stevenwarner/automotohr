@@ -4203,7 +4203,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", true);
+        ], "public/v1/shifts/", "main", false);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
