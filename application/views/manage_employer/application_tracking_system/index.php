@@ -643,7 +643,7 @@
 
                                                 <!-- hassan working area-->
                                             </div>
-                                            <div class="candidate-status applicat-status-edit"><?= $employer_job["status"] ?>
+                                            <div class="candidate-status applicat-status-edit">
                                                 <div class="label-wrapper-outer">
                                                     <?php if ($have_status == false) { ?>
                                                         <?php if ($employer_job["status"] == 'Contacted') { ?>
