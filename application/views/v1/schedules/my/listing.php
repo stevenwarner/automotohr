@@ -22,7 +22,36 @@ if ($filter["mode"] === "month") {
     );
 }
 ?>
+<style>
+    .conflict-label {
+        border-radius: 0 !important;
+        font-size: 12px !important;
+        height: 23px !important;
+        padding: 8px 39px 2px !important;
+        right: -28px !important;
+        top: -9px !important;
+    }
 
+    .conflict-label i {
+        color: #cc0000;
+    }
+
+    .conflict-label {
+        /* background-color: #cc0000; */
+        color: #fff;
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 600;
+        padding: 10px 33px 2px 33px;
+        position: absolute;
+        right: -27px;
+        text-align: center;
+        text-transform: uppercase;
+        top: -7px;
+        width: 82px;
+        height: 30px;
+    }
+</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -183,20 +212,39 @@ if ($filter["mode"] === "month") {
                                                 $todaysDate = getSystemDate("Y-m-d");
                                                 foreach ($monthDates as $monthDate) { ?>
                                                     <?php $totalHoursInSeconds = 0; ?>
-                                                    <?php
-                                                    $employeeLeave = $leaves[$loggedInEmployee["sid"]][$monthDate];
+                                                    <?php 
+                                                        $employeeLeave = $leaves[$loggedInEmployee["sid"]][$monthDate];
 
-                                                    $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
+                                                        $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
                                                     ?>
                                                     <!-- column-->
                                                     <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
                                                         <div class="schedule-column-header text-center <?= $highlightStyle; ?>">
-                                                            <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
+                                                            <p>
+                                                                <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                             </p>
                                                         </div>
-                                                        <?php $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
+                                                        <?php 
+                                                            $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
+                                                            //
+                                                            $available = true;
+                                                            $conflict = false;
+                                                            $unavailableHighlightStyle = '';
+                                                            //
+                                                            if ($unavailability) {
+                                                                foreach ($unavailability[$loggedInEmployee["sid"]]['unavailableDates'] as $unavailable) {
+                                                                    if ($unavailable['date'] == $monthDate) {
+                                                                        $unavailableHighlightStyle = 'bg-danger';
+                                                                        $available = false;
+                                                                        //
+                                                                        if ($employeeShift) {
+                                                                            $conflict = true;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
                                                         ?>
-                                                        <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $highlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
+                                                        <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $available ? $highlightStyle : $unavailableHighlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
                                                             <?php if ($employeeLeave) { ?>
                                                                 <div class="schedule-dayoff text-primary text-small">
                                                                     <strong>
@@ -207,10 +255,14 @@ if ($filter["mode"] === "month") {
                                                                 $totalHoursInSeconds += $employeeShift["totalTime"];
                                                             ?>
                                                                 <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>">
+                                                                
                                                                     <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                         <span class="circle circle-orange"></span>
                                                                     <?php } ?>
                                                                     <p class="text-small">
+                                                                        <?php if ($conflict) { ?>
+                                                                            <span class="conflict-label"><i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i></span>
+                                                                        <?php } ?>
                                                                         <?= formatDateToDB(
                                                                             $employeeShift["start_time"],
                                                                             "H:i:s",

@@ -10,7 +10,7 @@ $(function myAvailability() {
 	const modalId = "jsModalPage";
 	const modalLoader = modalId + "Loader";
 	const modalBody = modalId + "Body";
-    
+
 	/**
 	 * capture the mark attendance event
 	 */
@@ -48,13 +48,13 @@ $(function myAvailability() {
 		//
 		var type = $(this).val();
 		//
-		if (type == 1) {
+		if (type == "daily") {
 			$(".jsDailyRepeat").removeClass("hidden");
-		} else if (type == 2) {
+		} else if (type == "weekly") {
 			$(".jsWeeklyRepeat").removeClass("hidden");
 			$(".jsWeeklySection").removeClass("hidden");
 			$(".jsWeeklyMonthlySectionSeparator").removeClass("hidden");
-		} else if (type == 3) {
+		} else if (type == "monthly") {
 			$(".jsMonthlyRepeat").removeClass("hidden");
 			$(".jsMonthlySection").removeClass("hidden");
 			$(".jsWeeklyMonthlySectionSeparator").removeClass("hidden");
@@ -91,7 +91,100 @@ $(function myAvailability() {
 	$(document).on("click", ".jsPageCreateUnavailabilityBtn", function (event) {
 		event.preventDefault();
 		//
-		alert("Please save unavilibility");
+		const errorArray = [];
+		var obj = {};
+		obj.date = $('.jsUnavailableDate').val();
+		obj.note = $('.jsNote').val();
+	
+		if($(".jsUnavailableAllDay").prop('checked') == true){
+			obj.allDay = 'yes';
+		} else {
+			obj.allDay = 'no';
+			obj.dailyTimes = [];
+			$('.jsHoursRow').map(function(i) {
+				//
+				var index = i+1;
+				//
+				startTime = $(this).closest("div").find(".jsStartTime").val();
+				endTime = $(this).closest("div").find(".jsEndTime").val();
+				//
+				if (!startTime) {
+					errorArray.push('At row '+(index)+' start time is missing.');
+				}
+				//
+				if (!endTime) {
+					errorArray.push('At row '+(index)+' end time is missing.');
+				}
+				//
+
+				obj.dailyTimes.push({
+					"startTime": startTime,
+					"emdTime": endTime
+				});
+			});
+		}
+
+		if($(".jsRepeat").prop('checked') == true){
+			obj.repeat = 'yes';
+			obj.repeatType = $('#jsRepeatType').val();
+			//
+			if (obj.repeatType == "daily") {
+				obj.daily = $('#jsEveryDaily').val();
+			} else if (obj.repeatType == "weekly") {
+				obj.weekly = $('#jsEveryWeekly').val();
+				obj.weekDays = [];
+				$('.jsUnavailableWeekDay:checkbox:checked').each(function(){
+					obj.weekDays.push($(this).val());
+				});
+				//
+				if (!obj.weekDays.length) {
+					errorArray.push('Week days is missing.');
+				}
+			} else if (obj.repeatType == "monthly") {
+				obj.monthly = $('#jsEveryMonthly').val();
+				obj.monthDays = $('#jsMonthlyFrequency').val();
+				//
+				if (!obj.monthDays.length) {
+					errorArray.push('Month days is missing.');
+				}
+			}
+			//
+			obj.occurrencesType = $("#jsOccurrencesType").val();
+			obj.occurrences = $("#jsOccurrences").val();
+			//
+			if (!obj.occurrences || obj.occurrences == 0) {
+				errorArray.push('Occurrences number is missing.');
+			}
+		} else {
+			obj.repeat = 'no';
+		}
+		//
+		if (errorArray.length) {
+			return alertify.alert(
+				"ERROR!",
+				getErrorsStringFromArray(errorArray),
+				CB
+			);
+		}
+		//
+		ml(true, modalLoader);
+		//		
+		XHR = $.ajax({
+			url: baseUrl("shifts/myUnavailability"),
+			method: "POST",
+			data: obj,
+			cache: false,
+		})
+			.done(function (resp) {
+				alertify.alert("SUCCESS!",resp.msg,function () {
+					window.location.reload();
+				})
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				XHR = null;
+				ml(false, modalLoader);
+			});
    	});
 
 	/**
@@ -108,35 +201,7 @@ $(function myAvailability() {
 				//
 				applyTimePicker();
 				applyDatePicker();
-
-				//
-				// validatorRef = $("#jsPageCreateSingleShiftForm").validate({
-				// 	rules: {
-				// 		shift_employee: { required: true },
-				// 		shift_date: { required: true },
-				// 		start_time: { required: true, timeIn12Format: true },
-				// 		end_time: { required: true, timeIn12Format: true },
-				// 	},
-				// 	errorPlacement: function (error, element) {
-				// 		if ($(element).parent().hasClass("input-group")) {
-				// 			$(element).parent().after(error);
-				// 		} else {
-				// 			$(element).after(error);
-				// 		}
-				// 	},
-				// 	submitHandler: function (form) {
-				// 		return processCallWithoutContentType(
-				// 			formArrayToObj($(form).serializeArray()),
-				// 			$(".jsPageCreateSingleShiftBtn"),
-				// 			"settings/shifts/single/create",
-				// 			function (resp) {
-				// 				_success(resp.msg, function () {
-				// 					window.location.reload();
-				// 				});
-				// 			}
-				// 		);
-				// 	},
-				// });
+				$(".multipleSelect").select2();
 			}
 		);
 	}
@@ -203,7 +268,7 @@ $(function myAvailability() {
         html += '	</div>';
 		html += '	<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">';
         html += '		<div class="form-group">';
-        html += '			<input type="text" class="form-control jsTimeField valid" name="start_time" placeholder="HH:MM" aria-invalid="false">';
+        html += '			<input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" aria-invalid="false">';
         html += '		</div>';
         html += '	</div>';
         html += '	<div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">';
@@ -211,7 +276,7 @@ $(function myAvailability() {
         html += '	</div>';
         html += '	<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">';
         html += '		<div class="form-group">';
-        html += '			<input type="text" class="form-control jsTimeField" name="end_time" placeholder="HH:MM">';
+        html += '			<input type="text" class="form-control jsTimeField jsEndTime" placeholder="HH:MM">';
         html += '		</div>';
         html += '	</div>';
         html += '	<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';

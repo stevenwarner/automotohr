@@ -1302,4 +1302,58 @@ class Shift_model extends CI_Model
         //
         return $convertToSeconds ? $duration : $duration / 60 / 60;
     }
+
+    public function saveUnavailableSlot ($ins) {
+        $this->db->insert("cl_unavailability_shifts", $ins);
+    }
+
+    /**
+     * get the shifts
+     *
+     * @param array $filter
+     * @param array $employeeIds
+     * @return array
+     */
+    public function getUnavailability(array $filter, array $employeeIds): array
+    {
+        //
+        if (empty($employeeIds)) {
+            $employeeIds = ['0'];
+        }
+
+        $this->db->select("employee_sid, date, note, time");
+        $this->db->where_in("employee_sid", $employeeIds);
+        $this->db->where("date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE));
+        $this->db->where("date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
+        //
+        $records = $this->db
+            ->get("cl_unavailability_shifts")
+            ->result_array();
+        //
+        if ($records) {
+            // extract employee ids
+            $employeeIds = array_column($records, "employee_sid");
+            //
+            $employees = [];
+            //
+            foreach ($records as $v0) {
+                //
+                if (!$employees[$v0["employee_sid"]]) {
+                    $employees[$v0["employee_sid"]] = [
+                        "unavailableDates" => [],
+                    ];
+                }
+                //
+                $employees[$v0["employee_sid"]]["unavailableDates"][] =  [
+                    "date" => $v0['date'],
+                    "note" => $v0['note'],
+                    "time" => !empty($v0['time']) ? unserialize($v0['time']) : '',
+                    "status" => !empty($v0['time']) ? 'Partial Day' : 'Full Day',
+                ];
+            }
+            $records = $employees;
+        }
+        //
+        return $records;
+    }
 }

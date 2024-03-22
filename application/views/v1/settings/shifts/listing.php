@@ -22,6 +22,37 @@ if ($filter["mode"] === "month") {
 }
 ?>
 
+<style>
+    .conflict-label {
+        border-radius: 0 !important;
+        font-size: 12px !important;
+        height: 23px !important;
+        padding: 8px 39px 2px !important;
+        right: -28px !important;
+        top: -9px !important;
+    }
+
+    .conflict-label i {
+        color: #cc0000;
+    }
+
+    .conflict-label {
+        /* background-color: #cc0000; */
+        color: #fff;
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 600;
+        padding: 10px 33px 2px 33px;
+        position: absolute;
+        right: -27px;
+        text-align: center;
+        text-transform: uppercase;
+        top: -7px;
+        width: 82px;
+        height: 30px;
+    }
+</style>
+
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -247,8 +278,25 @@ if ($filter["mode"] === "month") {
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                                     $bgColor = $shifts[$employee["userId"]]["jobColor"] ?? "";
+
+                                                                    $available = true;
+                                                                    $conflict = false;
+                                                                    $unavailableHighlightStyle = '';
+                                                                    //
+                                                                    if ($unavailability) {
+                                                                        foreach ($unavailability[$employee["userId"]]['unavailableDates'] as $unavailable) {
+                                                                            if ($unavailable['date'] == $monthDate) {
+                                                                                $unavailableHighlightStyle = 'bg-danger';
+                                                                                $available = false;
+                                                                                //
+                                                                                if ($employeeShift) {
+                                                                                    $conflict = true;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
                                                             ?>
-                                                                    <div class="schedule-column <?= $employeeLeave ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                                    <div class="schedule-column <?= $employeeLeave || !$available ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center <?= !$available ? $unavailableHighlightStyle : ''; ?>" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
                                                                         <?php if ($employeeLeave) { ?>
                                                                             <div class="schedule-dayoff text-primary text-small">
                                                                                 <strong>
@@ -263,6 +311,9 @@ if ($filter["mode"] === "month") {
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>
                                                                                 <p class="text-small">
+                                                                                    <?php if ($conflict) { ?>
+                                                                                        <span class="conflict-label"><i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i></span>
+                                                                                    <?php } ?>
                                                                                     <?= formatDateToDB(
                                                                                         $employeeShift["start_time"],
                                                                                         "H:i:s",
@@ -282,6 +333,7 @@ if ($filter["mode"] === "month") {
                                                                                 </button>
                                                                             </div>
                                                                         <?php } else { ?>
+
                                                                         <?php } ?>
                                                                     </div>
                                                             <?php

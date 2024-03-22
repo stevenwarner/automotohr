@@ -4157,6 +4157,13 @@ class Settings extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+        //
+        // get the unavailability
+        $data["unavailability"] = $this->shift_model->getUnavailability(
+            $data["filter"],
+            $employeeIds
+        );
+        // _e($data["unavailability"],true,true);
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves

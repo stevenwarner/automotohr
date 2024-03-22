@@ -38,7 +38,7 @@
                             </div>
                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
-                                    <input type="text" class="form-control jsTimeField valid" name="start_time" placeholder="HH:MM" aria-invalid="false">
+                                    <input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" aria-invalid="false">
                                 </div>
                             </div>
                             <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
-                                    <input type="text" class="form-control jsTimeField" name="end_time" placeholder="HH:MM">
+                                    <input type="text" class="form-control jsTimeField jsEndTime" placeholder="HH:MM">
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
@@ -67,7 +67,7 @@
                     <label class="text-medium">
                         Note
                     </label>
-                    <textarea name="notes" rows="5" class="form-control"></textarea>
+                    <textarea name="notes" rows="5" class="form-control jsNote"></textarea>
                 </div>
 
                 <!--  -->
@@ -95,10 +95,10 @@
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                 <div class="form-group">
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatType">
-                                            <option value="1">Daily</option>
-                                            <option value="2">Weekly</option>
-                                            <option value="3">Monthly</option>
+                                        <select class="form-control" id="jsRepeatType">
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly">Monthly</option>
                                         </select>
                                     </div>
                                 </div>
@@ -109,7 +109,7 @@
                                         <button class="btn btn-default" type="button">Every</button>
                                     </span>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatType">
+                                        <select class="form-control" name="type" id="jsEveryDaily">
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -133,7 +133,7 @@
                                         <button class="btn btn-default" type="button">Every</button>
                                     </span>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatType">
+                                        <select class="form-control" name="type" id="jsEveryWeekly">
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -155,7 +155,7 @@
                                         <button class="btn btn-default" type="button">Every</button>
                                     </span>
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatType">
+                                        <select class="form-control" name="type" id="jsEveryMonthly">
                                             <option value="1">1</option>
                                             <option value="2">2</option>
                                             <option value="3">3</option>
@@ -189,37 +189,37 @@
                             </div>
                             <div class="col-lg-11 col-md-11 col-xs-12 col-sm-11">
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="7" />
                                     Sunday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="1" checked />
                                     Monday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="2" checked />
                                     Tuesday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="3" checked />
                                     Wednesday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="4" checked />
                                     Thursday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="5" checked />
                                     Friday
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableAllDay" checked />
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="6" />
                                     Saturday
                                     <div class="control__indicator"></div>
                                 </label>
@@ -234,36 +234,36 @@
                             <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10">
                                 <div class="form-group">
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatType">
-                                            <option value="first_sunday">First Sunday</option>
-                                            <option value="first_monday">First Monday</option>
-                                            <option value="first_tuesday">First Tuesday</option>
-                                            <option value="first_wednesday">First Wednesday</option>
-                                            <option value="first_thursday">First Thursday</option>
-                                            <option value="first_friday">First Friday</option>
-                                            <option value="first_saturday">First Saturday</option>
-                                            <option value="second_sunday">Second Sunday</option>
-                                            <option value="second_monday">Second Monday</option>
-                                            <option value="second_tuesday">Second Tuesday</option>
-                                            <option value="second_wednesday">Second Wednesday</option>
-                                            <option value="second_thursday">Second Thursday</option>
-                                            <option value="second_friday">Second Friday</option>
-                                            <option value="second_saturday">Second Saturday</option>
-                                            <option value="third_sunday">Third Sunday</option>
-                                            <option value="third_monday">Third Monday</option>
-                                            <option value="third_tuesday">Third Tuesday</option>
-                                            <option value="third_wednesday">Third Wednesday</option>
-                                            <option value="third_thursday">Third Thursday</option>
-                                            <option value="third_friday">Third Friday</option>
-                                            <option value="third_saturday">Third Saturday</option>
-                                            <option value="last_sunday">Last Sunday</option>
-                                            <option value="last_monday">Last Monday</option>
-                                            <option value="last_tuesday">Last Tuesday</option>
-                                            <option value="last_wednesday">Last Wednesday</option>
-                                            <option value="last_thursday">Last Thursday</option>
-                                            <option value="last_friday">Last Friday</option>
-                                            <option value="last_saturday">Last Saturday</option>
-                                            <option value="end_of_month">End Of Month</option>
+                                        <select class="form-control multipleSelect" name="type[]" id="jsMonthlyFrequency" multiple>
+                                            <option value="First Sunday">First Sunday</option>
+                                            <option value="First Monday">First Monday</option>
+                                            <option value="First Tuesday">First Tuesday</option>
+                                            <option value="First Wednesday">First Wednesday</option>
+                                            <option value="First Thursday">First Thursday</option>
+                                            <option value="First Friday">First Friday</option>
+                                            <option value="First Saturday">First Saturday</option>
+                                            <option value="Second Sunday">Second Sunday</option>
+                                            <option value="Second Monday">Second Monday</option>
+                                            <option value="Second Tuesday">Second Tuesday</option>
+                                            <option value="Second Wednesday">Second Wednesday</option>
+                                            <option value="Second Thursday">Second Thursday</option>
+                                            <option value="Second Friday">Second Friday</option>
+                                            <option value="Second Saturday">Second Saturday</option>
+                                            <option value="Third Sunday">Third Sunday</option>
+                                            <option value="Third Monday">Third Monday</option>
+                                            <option value="Third Tuesday">Third Tuesday</option>
+                                            <option value="Third Wednesday">Third Wednesday</option>
+                                            <option value="Third Thursday">Third Thursday</option>
+                                            <option value="Third Friday">Third Friday</option>
+                                            <option value="Third Saturday">Third Saturday</option>
+                                            <option value="Last Sunday">Last Sunday</option>
+                                            <option value="Last Monday">Last Monday</option>
+                                            <option value="Last Tuesday">Last Tuesday</option>
+                                            <option value="Last Wednesday">Last Wednesday</option>
+                                            <option value="Last Thursday">Last Thursday</option>
+                                            <option value="Last Friday">Last Friday</option>
+                                            <option value="Last Saturday">Last Saturday</option>
+                                            <option value="Last Day">End Of Month</option>
                                             <option value="1">1st</option>
                                             <option value="2">2nd</option>
                                             <option value="3">3rd</option>
@@ -312,7 +312,7 @@
                             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                 <div class="form-group">
                                     <div class="hr-select-dropdown">
-                                        <select class="form-control" name="type" id="jsRepeatOccasion">
+                                        <select class="form-control" name="type" id="jsOccurrencesType">
                                             <option value="after">After</option>
                                             <option value="on">On</option>
                                         </select>
@@ -321,7 +321,7 @@
                             </div>
                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
                                 <div class="form-group">
-                                    <input type="number" class="form-control" id="jsRepeatOccasionNumber" value="">
+                                    <input type="number" class="form-control" id="jsOccurrences" value="1">
                                 </div>
                             </div>
                             <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">
