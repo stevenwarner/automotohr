@@ -62,7 +62,7 @@
         <div class="col-sm-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="pt0 pb0"><strong><?= ucwords($me['first_name'] . ' ' . $me['last_name']); ?></strong> merged at: <?= formatDateToDB($md['merge_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></strong>
+                    <h4 class="pt0 pb0"><strong><?= ucwords($me['first_name'] . ' ' . $me['last_name']); ?></strong> merged at: <?= formatDateToDB($md['merge_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                         <span class="pull-right">
                             <i class="fa fa-plus" aria-hidden="true" data-toggle="collapse" href="#collapseExample<?= $me['sid']; ?>" role="button" aria-expanded="false" aria-controls="collapseExample<?= $me['sid']; ?>"></i>
                         </span>
