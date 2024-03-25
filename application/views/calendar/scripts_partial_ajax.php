@@ -274,6 +274,87 @@ echo '</style>';
     }
 
 
+    //
+    function shiftsview(_this, event) {
+        //
+        if (event.type != 'shifts') return;
+        //
+        var body_title = "<strong>" + event.employee_name + "time-off</strong>";
+        var body_content = '';
+        var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?= AWS_S3_BUCKET_URL; ?>" + event.img;
+        var content_date = event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') + ' - ' + moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'));
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-4">';
+        body_content += '       <img src="' + img_path + '" style="max-width: 100%;" />';
+        body_content += '   </div>';
+        body_content += '   <div class="col-sm-8">';
+        body_content += '       <p>' + event.employee_name + '</p>';
+        body_content += '   </div>';
+        body_content += '</div>';
+        body_content += '<hr />';
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-12">';
+        //  body_content += '       <p><strong>Date:</strong>' + content_date + '</p>';
+        //  body_content += '       <p><strong>Time:</strong>' + event.timeoff_breakdown.text + '</p>';
+        //   if (event.approver != 2) {
+        //      body_content += '       <p><strong>Policy:</strong>' + event.policy + '</p>';
+        //      body_content += '       <p><strong>Status:</strong>' + event.timeoff_status + '</p>';
+        //      if (event.reason != '' && event.reason != null) {
+        //          body_content += '       <p><strong>Reason:</strong>' + event.reason + '</p>';
+        //   }
+        //    }
+        body_content += '   </div>';
+        body_content += '</div>';
+        //
+        $(_this).popover({
+            title: body_title,
+            placement: 'top',
+            trigger: 'hover',
+            html: true,
+            content: body_content,
+            container: 'body'
+        }).popover('show');
+        //    
+        // $(_this).popover({
+        //     title: `<strong>${event.employee_name} time-off</strong>`,
+        //     placement:'top',
+        //     trigger : 'hover',
+        //     html: true,
+        //     content: `
+        //         <div class="row">
+        //             <div class="col-sm-4">
+        //                 <img src="${event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : `<?= AWS_S3_BUCKET_URL; ?>${event.img}`}" style="max-width: 100%;" />
+        //             </div>
+        //             <div class="col-sm-8">
+        //                 <p>${event.employee_name}</p>
+        //                 <!-- <p title="Employee number">${event.employee_number}</p> -->
+        //             </div>
+        //         </div>
+        //         <hr />
+        //         <div class="row">
+        //             <div class="col-sm-12">
+        //             <p><strong>Date:</strong> ${event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYY-MM-DD').format('MMM DD YYYY, ddd')+' - '+moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'))}</p>
+        //             <p><strong>Time:</strong> ${event.timeoff_breakdown.text}</p>
+        //             ${
+        //                 event.approver == 2 ? '' :
+        //                 `
+        //                     <p><strong>Policy:</strong> ${event.policy}</p>
+        //                     <p><strong>Status:</strong> ${event.timeoff_status}</p>
+        //                     ${
+        //                     event.reason != '' && event.reason != null ? 
+        //                     `<p><strong>Reason:</strong> ${event.reason}</p>` :
+        //                     ''
+        //                 }
+        //                 `
+        //             }
+
+        //             </div>
+        //         </div>
+        //     `,
+        //     container:'body'
+        // }).popover('show');
+    }
+
     $(function() {
 
         var calendar_ref = $('#calendar');
@@ -707,14 +788,18 @@ echo '</style>';
             },
             // Triggers when an event is clicked
             eventClick: function(event) {
-                if (event.type != 'timeoff' && event.type != 'holidays' && event.type != 'goals')
+                if (event.type != 'timeoff' && event.type != 'holidays' && event.type != 'goals' && event.type != 'shifts')
                     edit_event(event);
                 else if (event.type == 'timeoff') timeoffview($(this), event);
                 else if (event.type == 'goals') goalsView($(this), event);
+                else if (event.type == 'shifts') shiftsview($(this), event);
+
             },
             eventMouseover: function(event, jsEvent, view) {
                 if (event.type == 'goals') {
                     goalsView($(this), event);
+                } else if (event.type == 'shifts') {
+                    shiftsview($(this), event);
                 } else {
                     timeoffview($(this), event);
                 }
@@ -754,6 +839,8 @@ echo '</style>';
                 //
                 if (event.type == 'goals' && ob['goals'] == 0) return false;
                 if (event.type == 'timeoff' && ob['timeoff'] == 0) return false;
+                if (event.type == 'shifts' && ob['shifts'] == 0) return false;
+
                 if (event.requests != 0) {
                     el.addClass("fc-event-blink");
                     if (blink_interval == null)
@@ -2484,6 +2571,7 @@ echo '</style>';
         var ob = {};
         ob['goals'] = 1;
         ob['timeoff'] = 1;
+        ob['shifts'] = 1;
 
         $('.jsCalendarTypes').click(function() {
             if ($(this).prop('checked') === true) {
@@ -5203,4 +5291,70 @@ echo '</style>';
     //         }
     //     }
     // }
+
+
+    //
+    function shiftsview(_this, event) {
+        //
+        var body_title = "<strong>" + event.title + "  Shift </strong>";
+        var body_content = '';
+        var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?= AWS_S3_BUCKET_URL; ?>" + event.img;
+        var content_date = event.from_date == event.to_date ? moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : (moment(event.from_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') + ' - ' + moment(event.to_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd'));
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-4">';
+        body_content += '       <img src="' + img_path + '" style="max-width: 100%;" />';
+        body_content += '   </div>';
+        body_content += '   <div class="col-sm-8">';
+        body_content += '       <p>' + event.title + '</p>';
+        body_content += '   </div>';
+        body_content += '</div>';
+        body_content += '<hr />';
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-12">';
+        body_content += '       <p><strong>Shift Timing: ' + (event.start_time ?
+            moment(event.start_time, "HH:mm").format("h:mm a") :
+            "") + " - " + (event.end_time ?
+            moment(event.end_time, "HH:mm").format("h:mm a") :
+            "") + '</strong></p>';
+
+        body_content += '   </div>';
+        body_content += '</div>';
+
+        // Breaks
+        if (event.breaks_count > 0) {
+            body_content += '<div class="row">';
+            body_content += '   <div class="col-sm-12">';
+            body_content += '       <p><strong>Total Braks : ' + (event.breaks_count ? event.breaks_count : "0") + '</strong></p>';
+            body_content += '   </div> </div>';
+        }
+
+        if (event.breaks_json.length > 0) {
+            $.each(JSON.parse(event.breaks_json), function(i, item) {
+                body_content += '<hr style="margin-top: 0px; margin-bottom: 7px;"/>';
+                body_content += '<div class="row">';
+                body_content += '   <div class="col-sm-12">';
+                body_content += '       <p><strong>Title : ' + (item.break ? item.break : "") + '</strong></p>';
+                body_content += '   </div>';
+                body_content += '   <div class="col-sm-12">';
+                body_content += '       <p><strong>Duration : ' + (item.duration ? item.duration : "") + ' mins</strong></p>';
+                body_content += '   </div>';
+                body_content += '   <div class="col-sm-12">';
+                body_content += '       <p><strong>Time : ' + item.start_time + " - " + item.end_time + '</strong></p>';
+                body_content += '   </div>';
+                body_content += '</div>';
+
+            });
+
+        }
+
+        $(_this).popover({
+            title: body_title,
+            placement: 'top',
+            trigger: 'hover',
+            html: true,
+            content: body_content,
+            container: 'body'
+        }).popover('show');
+
+    }
 </script>

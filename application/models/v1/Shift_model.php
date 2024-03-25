@@ -1302,4 +1302,61 @@ class Shift_model extends CI_Model
         //
         return $convertToSeconds ? $duration : $duration / 60 / 60;
     }
+
+
+    //
+    public function getShiftsForCalendar(
+
+        $company_id,
+        $employer_detail,
+        $calendarStartDate,
+        $calendarEndDate
+    ) {
+        //
+
+        $this->db
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,breaks_json,breaks_count");
+        //
+        $this->db
+            ->where("shift_date >= ", $calendarStartDate)
+            ->where("shift_date <= ", $calendarEndDate)
+            ->where("company_sid", $company_id);
+
+        if ($employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0) {
+            $this->db->where("employee_sid", $employer_detail['sid']);
+        }
+        //
+        $records = $this->db
+            ->get("cl_shifts")
+            ->result_array();
+        //
+        if ($records) {
+            foreach ($records as $key => $val) {
+                $a = $this->db
+                    ->select('
+                concat(first_name," ",last_name) as full_name,
+                profile_picture as img
+            ')
+                    ->from('users')
+                    ->where('sid', $val['employee_sid'])
+                    ->where('active', 1)
+                    ->where('terminated_status', 0)
+                    ->where('is_executive_admin', 0)
+                    ->limit(1)
+                    ->get();
+                $result = $a->row_array();
+
+                $records[$key]['title'] = $result['full_name'];
+                $records[$key]['start'] = $val['shift_date'];
+                $records[$key]['end'] = $val['shift_date'];
+                $records[$key]['color'] = '#af4200';
+                $records[$key]['status'] = '';
+                $records[$key]['img'] = $result['img'];
+                $records[$key]['requests'] = 0;
+                $records[$key]['type'] = 'shifts';
+            }
+        }
+
+        return $records;
+    }
 }

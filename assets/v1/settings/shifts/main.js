@@ -1257,6 +1257,7 @@ $(function manageShifts() {
 
 
 //
+/*
 $('.jsCalendarView').click(function(e) {
     //
 	calendarUrl = "calendar/my_events/iframe";
@@ -1270,4 +1271,4 @@ $('.jsCalendarView').click(function(e) {
     }, () => {
         ml(false, 'jsCalendarLoader')
     });
-});
+});*/
