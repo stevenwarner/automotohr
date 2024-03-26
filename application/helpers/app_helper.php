@@ -2145,7 +2145,7 @@ if (!function_exists("convertToHilited")) {
 }
 
 if (!function_exists("makeResourceView")) {
-    function makeResourceView($file)
+    function makeResourceView($file, $props = "")
     {
         // get the file extension
         $extension =
@@ -2154,7 +2154,7 @@ if (!function_exists("makeResourceView")) {
         if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
             return ' <video style="width: 100%"  src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
         } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" '.($props).'>';
         } else {
             return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
         }
