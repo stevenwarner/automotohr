@@ -520,6 +520,7 @@ class Testing extends CI_Controller
             foreach ($mergeEmployees as $md) {
                 
                 $secondary_data = unserialize($md['secondary_employee_profile_data']);
+
                 $newData = '';
                 //
                 if (!$secondary_data) {
@@ -542,7 +543,7 @@ class Testing extends CI_Controller
                     $effectedEmployeeCount++;
                     $this->db->where("sid", $md["sid"])
                         ->update("employee_merge_history", [
-                            "secondary_employee_sid" => $newData
+                            "secondary_employee_profile_data" => $newData
                         ]);
                 }
                 //
