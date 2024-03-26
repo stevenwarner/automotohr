@@ -500,6 +500,7 @@ class Testing extends CI_Controller
 
     function fixEmployeeMerge () {
         $this->db->select('
+            sid,
             primary_employee_sid,
             secondary_employee_sid,
             primary_employee_profile_data,
@@ -519,6 +520,7 @@ class Testing extends CI_Controller
             foreach ($mergeEmployees as $md) {
                 
                 $secondary_data = unserialize($md['secondary_employee_profile_data']);
+                $newData = '';
                 //
                 if (!$secondary_data) {
                     $this->db->select('*');
@@ -529,14 +531,22 @@ class Testing extends CI_Controller
                     $b->free_result();
                     //
                     if ($employeeData) {
-                        $employeeFound[] = $md['secondary_employee_sid'].' marge at '. $md['merge_at'];
-                    } else {
+                        $employeeFound[] = $md['secondary_employee_sid'];
+                        $newData = serialize($employeeData);
+                    } else {echo "kkk<br>";
+                        $employeeNotFound[] = $md['secondary_employee_sid'];
                         $split = explode('s:9:"documents"',$md['secondary_employee_profile_data']);
-                        _e(unserialize($split[0].'s:9:"documents";a:0:{}}'),true);
+                        $newData = $split[0].'s:9:"documents";a:0:{}}';
                     }
                     //
                     $effectedEmployeeCount++;
+                    $this->db->where("sid", $md["sid"])
+                        ->update("employee_merge_history", [
+                            "secondary_employee_sid" => $newData
+                        ]);
                 }
+                //
+
             }
         }
         //
