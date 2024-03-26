@@ -119,7 +119,7 @@
                                                                       <?php } ?>
                                                                   <?php } else { ?>
                                                                       <!-- assign here -->
-                                                                      <button class="btn btn-success btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Modify and Assign g</button>
+                                                                      <button class="btn btn-success btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Modify and Assign</button>
                                                                   <?php } ?>
                                                               <?php } ?>
                                                           </td>
