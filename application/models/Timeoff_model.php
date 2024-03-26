@@ -7770,16 +7770,7 @@ class Timeoff_model extends CI_Model
                 }
             }
             //
-            $where = [
-                'holiday_year' => date('Y', strtotime('-1 year'))
-            ];
-            //
-            $where['company_sid'] = $companyId;
-            // Get all companies
-            $holidays = $this->db
-                ->where($where)
-                ->get('timeoff_holidays')
-                ->result_array();
+            $holidays = $this->findAndGetCompanyHolidays($companyId);
             //
             $nf = [
                 'found' => 0,
@@ -7788,6 +7779,22 @@ class Timeoff_model extends CI_Model
             //
             if (empty($holidays)) {
                 // No holiday of companies are found
+                foreach ($publicHolidays as $pb) {
+                    $ins = [];
+                    //
+                    $ins['company_sid'] = $companyId;
+                    $ins['creator_sid'] = getCompanyAdminSid($companyId);
+                    $ins['holiday_year'] = $pb["holiday_year"];
+                    $ins['holiday_title'] = $pb["holiday_title"];
+                    $ins['from_date'] = $pb['from_date'];
+                    $ins['to_date'] = $pb['from_date'];
+                    $ins['event_link'] = $pb['event_link'];
+                    $ins['status'] = $pb["status"];
+                    $ins['is_public'] = 1;
+                    $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('timeoff_holidays', $ins);
+                }
             } else {
                 //
                 $year = date('Y', strtotime('now'));
@@ -7834,6 +7841,34 @@ class Timeoff_model extends CI_Model
             }
             //
         }
+    }
 
+    /**
+     * get the company holidays
+     *
+     * @param int $companyId
+     * @return array
+     */
+    private function findAndGetCompanyHolidays(int $companyId): array
+    {
+        // get last year of company
+        $record = $this->db
+            ->where("company_sid", $companyId)
+            ->order_by("holiday_year", "DESC")
+            ->limit(1)
+            ->get("timeoff_holidays")
+            ->row_array();
+        //
+        if (!$record) {
+            return [];
+        }
+        // Get all companies
+        return $this->db
+            ->where([
+                "company_sid" => $companyId,
+                "holiday_year" => $record["holiday_year"]
+            ])
+            ->get('timeoff_holidays')
+            ->result_array();
     }
 }
