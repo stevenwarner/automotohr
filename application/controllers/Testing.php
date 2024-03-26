@@ -517,6 +517,7 @@ class Testing extends CI_Controller
         //
         if ($mergeEmployees) {
             foreach ($mergeEmployees as $md) {
+                
                 $secondary_data = unserialize($md['secondary_employee_profile_data']);
                 //
                 if (!$secondary_data) {
@@ -534,12 +535,12 @@ class Testing extends CI_Controller
                     }
                     //
                     $effectedEmployeeCount++;
-                } 
+                }
             }
         }
         //
         _e($effectedEmployeeCount,true);
-        _e($employeeFound,true);
-        _e($employeeNotFound,true,true);
+        _e(json_encode($employeeFound),true);
+        _e(json_encode($employeeNotFound),true,true);
     }
 }    
