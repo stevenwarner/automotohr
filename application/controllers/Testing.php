@@ -503,7 +503,8 @@ class Testing extends CI_Controller
             primary_employee_sid,
             secondary_employee_sid,
             primary_employee_profile_data,
-            secondary_employee_profile_data
+            secondary_employee_profile_data,
+            merge_at
         ');
         //
         $a = $this->db->get('employee_merge_history');
@@ -527,9 +528,9 @@ class Testing extends CI_Controller
                     $b->free_result();
                     //
                     if ($employeeData) {
-                        $employeeFound[] = $md['secondary_employee_sid'];
+                        $employeeFound[] = $md['secondary_employee_sid'].' marge at '. $md['merge_at'];
                     } else {
-                        $employeeNotFound[] = $md['secondary_employee_sid'];
+                        $employeeNotFound[] = $md['secondary_employee_sid'].' marge at '. $md['merge_at'];
                     }
                     //
                     $effectedEmployeeCount++;
