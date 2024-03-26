@@ -1478,7 +1478,7 @@ if ($user_type == 'applicant') {
                                                             </div>
                                                             <div class="hr-innerpadding">
                                                                 <div class="table-responsive">
-                                                                    <table class="table table-bordered table-hover table-stripped">
+                                                                    <table class="table table-bordered table-hover table-stripped" style="display: none;">
                                                                         <thead>
                                                                             <tr>
                                                                                 <th class="col-lg-3">Group Name</th>
@@ -1506,6 +1506,8 @@ if ($user_type == 'applicant') {
                                                                             <?php } ?>
                                                                         </tbody>
                                                                     </table>
+
+                                                                    <?php $this->load->view('onboarding/groups_documents'); ?>
                                                                 </div>
                                                             </div>
                                                         </div>
