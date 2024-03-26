@@ -531,7 +531,8 @@ class Testing extends CI_Controller
                     if ($employeeData) {
                         $employeeFound[] = $md['secondary_employee_sid'].' marge at '. $md['merge_at'];
                     } else {
-                        $employeeNotFound[] = $md['secondary_employee_sid'].' marge at '. $md['merge_at'];
+                        $split = explode('s:9:"documents"',$md['secondary_employee_profile_data']);
+                        _e(unserialize($split[0].'s:9:"documents";a:0:{}}'),true);
                     }
                     //
                     $effectedEmployeeCount++;
