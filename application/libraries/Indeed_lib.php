@@ -345,10 +345,29 @@ class Indeed_lib
             $curl,
             $options
         );
+        // set log array
+        $log = [
+            "request_json" => json_encode([
+                "url" => $url,
+                "method" => $method,
+                "options" => $options,
+            ]),
+            "response_errors" => [],
+            "response_info" => [],
+            "response_json" => [],
+            "response_code" => 0,
+        ];
         //
         $returnArray["result"] = curl_exec($curl);
         $returnArray["info"] = curl_getinfo($curl);
         $returnArray["errors"] = curl_error($curl);
+        //
+        $log["response_info"] = json_encode($returnArray["info"]);
+        $log["response_errors"] = json_encode($returnArray["errors"]);
+        $log["response_code"] = $returnArray["info"]["http_code"];
+        $log["response_json"] = $returnArray["result"] ? $returnArray["result"] : json_encode([]);
+        //
+        $this->saveLog($log);
         //
         $returnArray["resultArray"] = json_decode(
             $returnArray["result"],
@@ -415,5 +434,22 @@ class Indeed_lib
         }
         //
         return $accessToken;
+    }
+
+    /**
+     * save the log
+     *
+     * @param array $log
+     */
+    private function saveLog(array $log)
+    {
+        //
+        $log["created_at"] = getSystemDate();
+        //
+        $this->ci->db
+            ->insert(
+                "automotohr_logs.indeed_api_logs",
+                $log
+            );
     }
 }
