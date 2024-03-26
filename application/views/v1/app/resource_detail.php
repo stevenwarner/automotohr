@@ -42,7 +42,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="blog-main-image">
-                    <?= makeResourceView($blog["resources"]); ?>
+                    <?= makeResourceView($blog["resources"], 'style="width: 100%; height: auto"'); ?>
 
                 </div>
             </div>
