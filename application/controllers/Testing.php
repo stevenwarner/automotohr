@@ -497,4 +497,48 @@ class Testing extends CI_Controller
         _e($employeeAnniversaryDate,true);
         _e($JoinedDate,true,true);
     }
+
+    function fixEmployeeMerge () {
+        $this->db->select('
+            primary_employee_sid,
+            secondary_employee_sid,
+            primary_employee_profile_data,
+            secondary_employee_profile_data
+        ');
+        //
+        $a = $this->db->get('employee_merge_history');
+        $mergeEmployees = $a->result_array();
+        $a->free_result();
+        //
+        $effectedEmployeeCount = 0;
+        $employeeFound = [];
+        $employeeNotFound = [];
+        //
+        if ($mergeEmployees) {
+            foreach ($mergeEmployees as $md) {
+                $secondary_data = unserialize($md['secondary_employee_profile_data']);
+                //
+                if (!$secondary_data) {
+                    $this->db->select('*');
+                    $this->db->where('sid', $md['secondary_employee_sid']);
+                    //
+                    $b = $this->db->get('deleted_users_by_merge');
+                    $employeeData = $b->row_array();
+                    $b->free_result();
+                    //
+                    if ($employeeData) {
+                        $employeeFound[] = $md['secondary_employee_sid'];
+                    } else {
+                        $employeeNotFound[] = $md['secondary_employee_sid'];
+                    }
+                    //
+                    $effectedEmployeeCount++;
+                } 
+            }
+        }
+        //
+        _e($effectedEmployeeCount,true);
+        _e($employeeFound,true);
+        _e($employeeNotFound,true,true);
+    }
 }    
