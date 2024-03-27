@@ -23,7 +23,12 @@ class Indeed extends CI_Controller
      */
     public function jobQuestions(string $jobId)
     {
+
+        $cashTime = 10; // In minutes
+        $this->output->cache($cashTime);
+
         // get the job id by uuid
+
         $feedData = $this->indeed_model->getJobIdByUid($jobId);
         // if there is a uuid
         if ($feedData) {
@@ -74,9 +79,11 @@ class Indeed extends CI_Controller
             ];
         }
         //
-        return SendResponse(
-            200,
-            $questionArray
-        );
+        $jsonData = json_encode($questionArray);
+
+        $data['jsonData'] = $jsonData;
+
+        $this->load->view('v1/indeed_job_json', $data);
+     
     }
 }
