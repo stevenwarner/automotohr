@@ -508,6 +508,12 @@ class Testing extends CI_Controller
             merge_at
         ');
         //
+        $this->db->group_start();
+        $this->db->where('secondary_employee_profile_data <>', NULL);
+        $this->db->or_where('secondary_employee_profile_data <>', '');
+        $this->db->or_where('secondary_employee_profile_data <>', 'a:0:{}');
+        $this->db->group_end();
+        //
         $a = $this->db->get('employee_merge_history');
         $mergeEmployees = $a->result_array();
         $a->free_result();
@@ -518,35 +524,50 @@ class Testing extends CI_Controller
         //
         if ($mergeEmployees) {
             foreach ($mergeEmployees as $md) {
-                
-                $secondary_data = unserialize($md['secondary_employee_profile_data']);
-
-                $newData = '';
                 //
-                if (!$secondary_data) {
-                    $this->db->select('*');
-                    $this->db->where('sid', $md['secondary_employee_sid']);
+                if (!empty($md['secondary_employee_profile_data']) && $md['secondary_employee_profile_data'] != 'a:0:{}') {
+                    $secondary_data = @unserialize($md['secondary_employee_profile_data']);
                     //
-                    $b = $this->db->get('deleted_users_by_merge');
-                    $employeeData = $b->row_array();
-                    $b->free_result();
-                    //
-                    if ($employeeData) {
-                        $employeeFound[] = $md['secondary_employee_sid'];
-                        $newData = serialize($employeeData);
-                    } else {echo "kkk<br>";
-                        $employeeNotFound[] = $md['secondary_employee_sid'];
-                        $split = explode('s:9:"documents"',$md['secondary_employee_profile_data']);
-                        $newData = $split[0].'s:9:"documents";a:0:{}}';
-                    }
-                    //
-                    $effectedEmployeeCount++;
-                    $this->db->where("sid", $md["sid"])
-                        ->update("employee_merge_history", [
-                            "secondary_employee_profile_data" => $newData
-                        ]);
+                    if ($secondary_data === false) {
+                        //
+                        $newData = '';
+                        //
+                       
+                        $this->db->select('*');
+                        $this->db->where('sid', $md['secondary_employee_sid']);
+                        //
+                        $b = $this->db->get('deleted_users_by_merge');
+                        $employeeData = $b->row_array();
+                        $b->free_result();
+                        //
+                        if ($employeeData) {
+                            $employeeFound[] = $md['secondary_employee_sid'];
+                            $newData = serialize($employeeData);
+                        } else {
+                            $employeeNotFound[] = $md['secondary_employee_sid'];
+                            $split = explode('s:9:"documents"',$md['secondary_employee_profile_data']);
+                            //
+                            $modifyData = @unserialize($split[0].'s:9:"documents";a:0:{}}');
+                            //
+                            if ($modifyData !== false) {
+                                $newData = $split[0].'s:9:"documents";a:0:{}}';
+                            } else {
+                                $split = explode('s:11:"e_signature";a:17:',$md['secondary_employee_profile_data']);
+                                $newData = $split[0].'s:11:"e_signature";a:0:{}s:4:"eeoc";a:0:{}s:5:"group";a:0:{}s:9:"documents";a:0:{}}';
+                            }
+                            // 
+                        }
+                        //
+                        $effectedEmployeeCount++;
+                        $this->db->where("sid", $md["sid"])
+                            ->update("employee_merge_history", [
+                                "secondary_employee_profile_data" => $newData
+                            ]);
+                        
+                        //
+                    } 
                 }
-                //
+               
 
             }
         }
