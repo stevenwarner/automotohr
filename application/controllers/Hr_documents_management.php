@@ -16747,6 +16747,19 @@ class Hr_documents_management extends Public_Controller
             $employeeId,
             $dataToUpdate
         );
+        if (checkIfAppIsEnabled(PAYROLL)) {
+            //
+            if ($stateFormId == 1) {
+                // load the w4 model
+                $this->load->model("v1/Payroll/W4_payroll_model", "w4_payroll_model");
+                //
+                $this->w4_payroll_model
+                ->pushMinnesotaStateFormOfEmployeeToGusto(
+                    $employeeId,
+                    $formId
+                );
+            }
+        }
         //
         $this->res['Status'] = TRUE;
         $this->res['Data'] = $documents;

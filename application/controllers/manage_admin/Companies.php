@@ -305,7 +305,7 @@ class Companies extends Admin_Controller
                 'user_shift_hours' => $this->input->post('shift_hours'),
                 'job_titles_template_group' => $this->input->post('job_titles_template_group'),
                 'company_status' => $this->input->post('company_status'),
-               
+
             );
             //
             if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
@@ -328,10 +328,10 @@ class Companies extends Admin_Controller
 
             // if the company is on payroll
             if (isCompanyOnBoard($company_sid)) {
-
+                // load the model
+                $this->load->model('v1/payroll_model');
+                //
                 if (!$this->db->where('company_sid', $company_sid)->count_all_results('gusto_companies_locations')) {
-                    // load the model
-                    $this->load->model('v1/payroll_model');
                     // get the company details
                     $response = $this->payroll_model->checkAndPushCompanyLocationToGusto($company_sid);
                     //
@@ -340,6 +340,14 @@ class Companies extends Admin_Controller
                     } else {
                         $this->payroll_model->handleInitialEmployeeOnboard($company_sid);
                     }
+                } else {
+                    // // update the location on Gusto
+                    // // get the company details
+                    // $response = $this->payroll_model->updateCompanyLocationToGusto($company_sid);
+                    // //
+                    // if ($response['errors']) {
+                    //     $this->session->set_flashdata('message', "Company is updated sucessfully. " . implode('<br />', $response['errors']));
+                    // }
                 }
             }
 

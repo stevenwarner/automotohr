@@ -1619,7 +1619,7 @@ class Hr_documents_management_model extends CI_Model
             return array();
         }
     }
-    
+
     function get_w4_form($user_type, $user_sid)
     {
         $this->db->where('user_type', $user_type);
@@ -3721,7 +3721,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('documents_2_group');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
- 
+
         if (!empty($records_arr)) {
             foreach ($records_arr as $key => $document) {
                 if ($document['group_sid'] != $group_id) {
@@ -10548,17 +10548,29 @@ class Hr_documents_management_model extends CI_Model
                 $updateArray["state"] = $companyData["Location_State"];
                 $updateArray["zip_code"] = $companyData["Location_ZipCode"];
                 //
+                $upd = [];
+                $upd["employer_json"] = json_encode($updateArray);
+
+                if (
+                    $updateArray["mn_tax_number"] &&
+                    $updateArray["first_name"] &&
+                    $updateArray["ssn"] &&
+                    $updateArray["street_1"] &&
+                    $updateArray["city"] &&
+                    $updateArray["state"] &&
+                    $updateArray["zip_code"]
+                ) {
+                    $upd["employer_consent"] = 1;
+                    $upd["employer_concent_at"] = getSystemDate();
+                    $result["employer_consent"] = 1;
+                    $result["employer_concent_at"] = getSystemDate();
+                }
+                //
                 $this->db
                     ->where("sid", $result["sid"])
-                    ->update("portal_state_form", [
-                        "employer_json" => json_encode($updateArray),
-                        "employer_consent" => 1,
-                        "employer_concent_at" => getSystemDate(),
-                    ]);
+                    ->update("portal_state_form", $upd);
                 //
                 $result["employer_json"] = json_encode($updateArray);
-                $result["employer_consent"] = 1;
-                $result["employer_concent_at"] = getSystemDate();
             }
         }
         //
@@ -10566,7 +10578,7 @@ class Hr_documents_management_model extends CI_Model
             $returnArray['employee_section'] = true;
         }
         //
-        if($result["assigned_by"]) {
+        if ($result["assigned_by"]) {
             $returnArray["assigned_by"] = getUserNameBySID($result["assigned_by"]);
         }
         // set it to revoked

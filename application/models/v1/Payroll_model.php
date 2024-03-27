@@ -929,6 +929,107 @@ class Payroll_model extends CI_Model
     }
 
     /**
+     * check and set the company location
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function updateCompanyLocationToGusto(int $companyId): array
+    {
+        $gustoLocation = $this->db
+            ->where('company_sid', $companyId)
+            ->get('gusto_companies_locations')
+            ->row_array();
+        //
+        if (!$gustoLocation || !$gustoLocation["gusto_uuid"]) {
+            return ["errors" => ["Gusto UUID is missing."]];
+        }
+
+        // get the company location
+        $location = $this->db
+            ->select('
+            users.Location_Address,
+            users.Location_City,
+            states.state_code,
+            users.Location_ZipCode,
+            users.PhoneNumber,
+            users.Location_Address_2,
+        ')
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->where(
+                'users.sid',
+                $companyId
+            )
+            ->get('users')
+            ->row_array();
+        //
+        $errorArray = [];
+        //
+        if (!$location['Location_Address']) {
+            $errorArray[] = '"Street 1" is required.';
+        }
+        //
+        if (!$location['Location_City']) {
+            $errorArray[] = '"City" is required.';
+        }
+        //
+        if (!$location['state_code']) {
+            $errorArray[] = '"State" is required.';
+        }
+        //
+        if (!$location['Location_ZipCode']) {
+            $errorArray[] = '"Zip" is required.';
+        }
+        //
+        if (!$location['PhoneNumber']) {
+            $errorArray[] = '"Phone Number" is required.';
+        }
+        //
+        if ($errorArray) {
+            return ['errors' => $errorArray];
+        }
+        // make request
+        $request = [];
+        $request['street_1'] = $location['Location_Address'];
+        $request['street_2'] = $location['Location_Address_2'];
+        $request['city'] = $location['Location_City'];
+        $request['state'] = $location['state_code'];
+        $request['zip'] = $location['Location_ZipCode'];
+        $request['country'] = "USA";
+        $request['version'] = $gustoLocation["gusto_version"];
+        $request['phone_number'] = phonenumber_format($location['PhoneNumber'], true);
+        //
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        $companyDetails["gusto_uuid"] = $gustoLocation["gusto_uuid"];
+        //
+        $gustoResponse = gustoCall(
+            'updateCompanyLocationOnGusto',
+            $companyDetails,
+            $request,
+            "PUT"
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        // check for errors
+        if ($errors) {
+            return $errors;
+        }
+        // insert
+        $this->db
+            ->where("company_sid", $companyId)
+            ->update('gusto_companies_locations', [
+                'gusto_uuid' => $gustoResponse['uuid'],
+                'gusto_version' => $gustoResponse['version'],
+                'is_active' => (int) $gustoResponse['active'],
+                'mailing_address' => (int) $gustoResponse['mailing_address'],
+                'filing_address' => (int) $gustoResponse['filing_address'],
+                'updated_at' => getSystemDate()
+            ]);
+        //
+        return $gustoResponse;
+    }
+
+    /**
      *
      */
     public function handleInitialEmployeeOnboard(int $companyId): bool
@@ -2556,8 +2657,8 @@ class Payroll_model extends CI_Model
                 $ins['updated_at'] = getSystemDate();
                 $this->db
                     ->where(['gusto_uuid' => $compensation['uuid']])
-                    ->update('gusto_employees_jobs_compensations', $ins);    
-            } else { 
+                    ->update('gusto_employees_jobs_compensations', $ins);
+            } else {
                 $ins['gusto_employees_jobs_sid'] = $gustoJob['sid'];
                 $ins['gusto_uuid'] = $compensation['uuid'];
                 $ins['created_at'] = getSystemDate();
