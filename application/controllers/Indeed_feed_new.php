@@ -375,12 +375,14 @@ class Indeed_feed_new extends CI_Controller
                 $jobQuestionnaireUrl = "";
                 //
                 if ($job["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($job["user_sid"])) {
+                    //
+                    $this->indeed_model->saveQuestionIntoFile($job['sid'], $job['user_sid'], true);
+                    //
                     $jobQuestionnaireUrl = "&indeed-apply-questions=";
                     $jobQuestionnaireUrl .= urlencode(
                         STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
                     );
                 }
-                $jobQuestionnaireUrl = "";
                 //
                 $rows .= "
                     <job>
@@ -543,12 +545,16 @@ class Indeed_feed_new extends CI_Controller
                 $jobQuestionnaireUrl = "";
                 //
                 if ($job["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($job["user_sid"])) {
+                    //
+                    $this->indeed_model->saveQuestionIntoFile($job['sid'], $job['user_sid'], true);
+                    //
                     $jobQuestionnaireUrl = "&indeed-apply-questions=";
                     $jobQuestionnaireUrl .= urlencode(
                         STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
                     );
                 }
-                $jobQuestionnaireUrl = "";
+                //
+
                 //
                 $rows .= "
                     <job>

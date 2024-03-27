@@ -566,9 +566,85 @@ class Indeed_model extends CI_Model
                 "NEW"
             );
         // when error occurred
-        if ($response["error"]){
+        if ($response["error"]) {
             return $response;
         }
         return true;
+    }
+
+    public function saveQuestionIntoFile($jobId, $companyId, $createFile = false)
+    {
+        //
+        $folder = ROOTPATH . '../protected_files/jobs/';
+        $fileName =  $jobId . '.json';
+        //
+        if ($createFile) {
+            // check and get demographic questions
+            $demographicQuestions = $this->indeed_model
+                ->getCompanyDemographicQuestions(
+                    $companyId
+                );
+            // get the job questionnaires
+            $screeningQuestionnaire = $this->indeed_model
+                ->getCandidateQuestionnaireByJobId($jobId);
+            // when no questionnaire is available
+            if (!$screeningQuestionnaire && !$demographicQuestions) {
+                //
+                return false;
+            }
+            //
+            if (!is_dir($folder)) {
+                mkdir($folder, 0777, true);
+            }
+            //
+            $handler = fopen($folder . $fileName, 'w');
+            //
+
+            // set the json
+            $questionArray = [
+                "schemaVersion" => "1.0",
+            ];
+            // check and set screening screeningQuestionnaire
+            if ($screeningQuestionnaire) {
+                $questionArray["screenerQuestions"] = [
+                    "questions" => $screeningQuestionnaire
+                ];
+            }
+            // check and set demographic questions
+            if ($demographicQuestions) {
+                $questionArray["demographicQuestions"] = [
+                    "questions" => $demographicQuestions
+                ];
+            }
+            //
+            //
+            fwrite($handler, json_encode($questionArray));
+            //
+            fclose($handler);
+            //
+            return true;
+        }
+        //
+        if (file_exists($folder . $fileName)) {
+            $fileData = json_decode(
+                loadFileData($folder . $fileName),
+                true
+            );
+            // $this->output->cache(1);
+            //
+            return SendResponse(
+                200,
+                $fileData
+            );
+        }
+        //
+        return SendResponse(
+            400,
+            [
+                "errors" => [
+                    "No screening or demographic questions found."
+                ]
+            ]
+        );
     }
 }

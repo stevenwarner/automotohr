@@ -37,46 +37,8 @@ class Indeed extends CI_Controller
                     "user_sid"
                 ]
             )["user_sid"];
-        // check and get demographic questions
-        $demographicQuestions = $this->indeed_model
-            ->getCompanyDemographicQuestions(
-                $companyId
-            );
-        // get the job questionnaires
-        $screeningQuestionnaire = $this->indeed_model
-            ->getCandidateQuestionnaireByJobId($jobId);
-        // when no questionnaire is available
-        if (!$screeningQuestionnaire && !$demographicQuestions) {
-            //
-            return SendResponse(
-                400,
-                [
-                    "errors" => [
-                        "No screening or demographic questions found."
-                    ]
-                ]
-            );
-        }
-        // set the json
-        $questionArray = [
-            "schemaVersion" => "1.0",
-        ];
-        // check and set screening screeningQuestionnaire
-        if ($screeningQuestionnaire) {
-            $questionArray["screenerQuestions"] = [
-                "questions" => $screeningQuestionnaire
-            ];
-        }
-        // check and set demographic questions
-        if ($demographicQuestions) {
-            $questionArray["demographicQuestions"] = [
-                "questions" => $demographicQuestions
-            ];
-        }
-        //
-        return SendResponse(
-            200,
-            $questionArray
-        );
+
+
+        $this->indeed_model->saveQuestionIntoFile($jobId, $companyId, false);     //    
     }
 }
