@@ -517,7 +517,6 @@ class Testing extends CI_Controller
         $a = $this->db->get('employee_merge_history');
         $mergeEmployees = $a->result_array();
         $a->free_result();
-        _e($this->db->last_query(),true,true);
         //
         $effectedEmployeeCount = 0;
         $employeeFound = [];
