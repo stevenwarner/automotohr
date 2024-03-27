@@ -2476,7 +2476,7 @@ class Hr_documents_management_model extends CI_Model
                     'ID' => 0,
                     'Title' => $form["title"],
                     'Type' => 'State Form',
-                    'AssignedOn' => $form["created_at"],
+                    'AssignedOn' => formatDateToDB($form["created_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME),
                     'Days' => $days,
                     'AssignedBy' => ""
                 );
