@@ -37,8 +37,12 @@ class Indeed extends CI_Controller
                     "user_sid"
                 ]
             )["user_sid"];
-
-
-        $this->indeed_model->saveQuestionIntoFile($jobId, $companyId, false);     //    
+        // get the questionnaires
+        $this->indeed_model
+            ->saveQuestionIntoFile(
+                $jobId,
+                $companyId,
+                false
+            );
     }
 }

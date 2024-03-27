@@ -572,12 +572,24 @@ class Indeed_model extends CI_Model
         return true;
     }
 
-    public function saveQuestionIntoFile($jobId, $companyId, $createFile = false)
-    {
-        //
+    /**
+     * save and retrieve questionnaires against job
+     *
+     * @param int $jobId
+     * @param int $companyId
+     * @param bool $createFile
+     * Optional: Default is false
+     */
+    public function saveQuestionIntoFile(
+        $jobId,
+        $companyId,
+        $createFile = false
+    ) {
+        // set the folder path
         $folder = ROOTPATH . '../protected_files/jobs/';
+        // set the file name
         $fileName =  $jobId . '.json';
-        //
+        // create the file
         if ($createFile) {
             // check and get demographic questions
             $demographicQuestions = $this->indeed_model
@@ -592,14 +604,13 @@ class Indeed_model extends CI_Model
                 //
                 return false;
             }
-            //
+            // check and create the folder
             if (!is_dir($folder)) {
                 mkdir($folder, 0777, true);
             }
-            //
+            // create the file
+            // if file already exists it overwrites
             $handler = fopen($folder . $fileName, 'w');
-            //
-
             // set the json
             $questionArray = [
                 "schemaVersion" => "1.0",
@@ -616,35 +627,36 @@ class Indeed_model extends CI_Model
                     "questions" => $demographicQuestions
                 ];
             }
-            //
-            //
+            // write the file data
             fwrite($handler, json_encode($questionArray));
-            //
+            // close the file stream
             fclose($handler);
             //
             return true;
         }
-        //
-        if (file_exists($folder . $fileName)) {
-            $fileData = json_decode(
-                loadFileData($folder . $fileName),
-                true
-            );
-            // $this->output->cache(1);
-            //
+        // retrieve file
+        // check if the requested file exists
+        if (!file_exists($folder . $fileName)) {
+            // send the response to indeed
+            // in case no questions were found
             return SendResponse(
-                200,
-                $fileData
+                400,
+                [
+                    "errors" => [
+                        "No screening or demographic questions found."
+                    ]
+                ]
             );
         }
-        //
-        return SendResponse(
-            400,
-            [
-                "errors" => [
-                    "No screening or demographic questions found."
-                ]
-            ]
+        // get the file data
+        $fileData = json_decode(
+            loadFileData($folder . $fileName),
+            true
+        );
+        // send the response to Indeed
+        SendResponse(
+            200,
+            $fileData
         );
     }
 }
