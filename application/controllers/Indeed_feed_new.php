@@ -182,6 +182,7 @@ class Indeed_feed_new extends CI_Controller
                         STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
                     );
                 }
+                $jobQuestionnaireUrl = "";
 
                 $rows .=  "
                     <job>
@@ -379,6 +380,7 @@ class Indeed_feed_new extends CI_Controller
                         STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
                     );
                 }
+                $jobQuestionnaireUrl = "";
                 //
                 $rows .= "
                     <job>
@@ -546,6 +548,7 @@ class Indeed_feed_new extends CI_Controller
                         STORE_FULL_URL_SSL . "indeed/$uid/jobQuestions.json"
                     );
                 }
+                $jobQuestionnaireUrl = "";
                 //
                 $rows .= "
                     <job>
