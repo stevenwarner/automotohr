@@ -346,7 +346,7 @@ class Testing extends CI_Controller
                         ->getPreviousPlicyTitle(
                             $request['company_sid'],
                             $request['timeoff_policy_sid']
-                        );    
+                        );
 
                     // Get Policy Id
                     $newPolicyId = $this->timeoff_model
@@ -354,26 +354,26 @@ class Testing extends CI_Controller
                             $results[0]['to_company_sid'],
                             $policyData['title']
                         );
-                        
+
                     if (empty($newPolicyId)) {
                         $policyDetails =
-                                $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
-                            //
-                            unset($policyDetails['sid']);
-                            //
-                            $policyDetails['company_sid'] = $results[0]['to_company_sid'];
-                            $policyDetails['creator_sid'] = $adminId;
-                            $policyDetails['type_sid'] = $this->timeoff_model
-                                ->checkAndAddType(
-                                    $policyDetails['type_sid'],
-                                    $results[0]['to_company_sid']
-                                );
-                            $policyDetails['is_entitled_employee'] = 1;
-                            $policyDetails['assigned_employees'] = $employeeSid;
+                            $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
+                        //
+                        unset($policyDetails['sid']);
+                        //
+                        $policyDetails['company_sid'] = $results[0]['to_company_sid'];
+                        $policyDetails['creator_sid'] = $adminId;
+                        $policyDetails['type_sid'] = $this->timeoff_model
+                            ->checkAndAddType(
+                                $policyDetails['type_sid'],
+                                $results[0]['to_company_sid']
+                            );
+                        $policyDetails['is_entitled_employee'] = 1;
+                        $policyDetails['assigned_employees'] = $employeeSid;
 
-                            // insert the policy
-                            $this->db->insert('timeoff_policies', $policyDetails);
-                            $newPolicyId['sid'] = $this->db->insert_id();
+                        // insert the policy
+                        $this->db->insert('timeoff_policies', $policyDetails);
+                        $newPolicyId['sid'] = $this->db->insert_id();
                     }
 
                     //
@@ -448,12 +448,14 @@ class Testing extends CI_Controller
     }
 
 
-    public function eeoc ($employeeID) {
+    public function eeoc($employeeID)
+    {
         $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employeeID, "employee");
-        _e($eeo_form_info,true,true);
+        _e($eeo_form_info, true, true);
     }
 
-    public function checkTimeoff ($employeeId, $companyId) {
+    public function checkTimeoff($employeeId, $companyId)
+    {
         $this->db->select('
             joined_at,
             registration_date,
@@ -483,7 +485,7 @@ class Testing extends CI_Controller
         $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
         //
         foreach ($policies as $policy) {
-            _e($this->db->last_query(),true);
+            _e($this->db->last_query(), true);
             $balanceInMinutes = $this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
                 $policy['sid'],
                 $employeeId,
@@ -491,14 +493,15 @@ class Testing extends CI_Controller
                 $employeeAnniversaryDate['upcomingAnniversaryDate']
             );
             //
-            _e($balanceInMinutes,true);
+            _e($balanceInMinutes, true);
         }
         //
-        _e($employeeAnniversaryDate,true);
-        _e($JoinedDate,true,true);
+        _e($employeeAnniversaryDate, true);
+        _e($JoinedDate, true, true);
     }
 
-    function fixEmployeeMerge () {
+    function fixEmployeeMerge()
+    {
         $this->db->select('
             sid,
             primary_employee_sid,
@@ -518,7 +521,7 @@ class Testing extends CI_Controller
         //
         if ($mergeEmployees) {
             foreach ($mergeEmployees as $md) {
-                
+
                 $secondary_data = unserialize($md['secondary_employee_profile_data']);
 
                 $newData = '';
@@ -534,10 +537,11 @@ class Testing extends CI_Controller
                     if ($employeeData) {
                         $employeeFound[] = $md['secondary_employee_sid'];
                         $newData = serialize($employeeData);
-                    } else {echo "kkk<br>";
+                    } else {
+                        echo "kkk<br>";
                         $employeeNotFound[] = $md['secondary_employee_sid'];
-                        $split = explode('s:9:"documents"',$md['secondary_employee_profile_data']);
-                        $newData = $split[0].'s:9:"documents";a:0:{}}';
+                        $split = explode('s:9:"documents"', $md['secondary_employee_profile_data']);
+                        $newData = $split[0] . 's:9:"documents";a:0:{}}';
                     }
                     //
                     $effectedEmployeeCount++;
@@ -551,8 +555,37 @@ class Testing extends CI_Controller
             }
         }
         //
-        _e($effectedEmployeeCount,true);
-        _e(json_encode($employeeFound),true);
-        _e(json_encode($employeeNotFound),true,true);
+        _e($effectedEmployeeCount, true);
+        _e(json_encode($employeeFound), true);
+        _e(json_encode($employeeNotFound), true, true);
     }
-}    
+
+
+    //
+    public function printUrl()
+    {
+
+        $current_timestamp = strtotime("now");
+        $urlLink = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $urldata = [];
+        $headers=getallheaders();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $urldata['Url'] = $urlLink;
+            $urldata['type'] = 'POST';
+            $urldata['timeStamp'] =  $current_timestamp ;
+            $urldata['requestHeaders'] = $headers;
+            $urldata['postData'] = $_POST;
+        } else {
+            $urldata['Url'] = $urlLink;
+            $urldata['timeStamp'] =  $current_timestamp ;
+            $urldata['requestHeaders'] = $headers;
+            $urldata['type'] = 'GET';
+        }
+
+        $urldata = json_encode($urldata);
+
+        sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'Url Hit Info ', $urldata, '');
+        echo 'Email Sent Sucessfully';
+    }
+}
