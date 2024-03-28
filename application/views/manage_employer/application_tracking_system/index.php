@@ -1948,7 +1948,7 @@
             $('#resume_modal_footer').append(request_message);
             $('#resume_modal_title').html(document_title);
             $('#show_applicant_resume').modal('show');
-            loadIframe(iframe_url, '#preview_iframe', true);
+            // loadIframe(iframe_url, '#preview_iframe', true);
 
             if (isPDF) {
                 //
