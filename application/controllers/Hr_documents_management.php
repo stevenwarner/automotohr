@@ -67,7 +67,7 @@ class Hr_documents_management extends Public_Controller
             if ($this->form_validation->run() == false) {
                 if (!empty($groups)) {
 
-                  //  _e($groups,true,true);
+                    //  _e($groups,true,true);
                     foreach ($groups as $key => $group) {
                         $group_status = $group['status'];
                         $group_sid = $group['sid'];
@@ -93,7 +93,6 @@ class Hr_documents_management extends Public_Controller
                                 'documents' => $group_documents,
                                 'other_documents' => $otherDocuments
                             );
-
                         } else {
                             $in_active_groups[] = array(
                                 'sid' => $group_sid,
@@ -3388,16 +3387,23 @@ class Hr_documents_management extends Public_Controller
                 $assign_on = date("Y-m-d", strtotime($w4_form['sent_date']));
                 $compare_date = date("Y-m-d", strtotime('2020-01-06'));
                 //
+
                 $this->checkAndSetEmployerSection(
                     $w4_form,
                     $user_type,
                     $user_sid
                 );
+
+
                 $data['popup_emp_name'] = $w4_form['emp_name'];
                 $data['popup_emp_address'] = $w4_form['emp_address'];
 
-                if (isset($w4_form) && !empty($w4_form['first_date_of_employment']) && $w4_form['first_date_of_employment'] != '0000-00-00 00:00:00') {
-                    $sign_date = date("m-d-Y", strtotime($w4_form['first_date_of_employment']));
+                if (isset($w4_form) && !empty($w4_form['first_date_of_employment']) && $w4_form['first_date_of_employment'] != '0000-00-00 00:00:00' && $w4_form['first_date_of_employment'] != '' && $w4_form['first_date_of_employment'] != null) {
+                    if (preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $w4_form['first_date_of_employment'])) {
+                       $sign_date = $w4_form['first_date_of_employment'];
+                    } else {
+                        $sign_date = date("m-d-Y", strtotime($w4_form['first_date_of_employment']));
+                    }
                 }
 
                 $data['popup_first_date_of_employment']     = $sign_date;
@@ -16754,10 +16760,10 @@ class Hr_documents_management extends Public_Controller
                 $this->load->model("v1/Payroll/W4_payroll_model", "w4_payroll_model");
                 //
                 $this->w4_payroll_model
-                ->pushMinnesotaStateFormOfEmployeeToGusto(
-                    $employeeId,
-                    $formId
-                );
+                    ->pushMinnesotaStateFormOfEmployeeToGusto(
+                        $employeeId,
+                        $formId
+                    );
             }
         }
         //
