@@ -1931,6 +1931,8 @@
             }
 
             if (pdf) {
+                resume_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+
                 $.ajax({
                         url: "<?= base_url("Testing/getFileBase64"); ?>",
                         method: "POST",
@@ -1940,6 +1942,7 @@
                     })
                     .done(function(resp) {
                         iframe_url = "data:application/pdf;base64," + resp
+                        $("#resume_iframe").attr("src", iframe_url);
                     })
             }
 

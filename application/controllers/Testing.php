@@ -581,9 +581,7 @@ class Testing extends CI_Controller
     public function getFileBase64()
     {
         $filename = $this->input->post("filename");
-       
-        return SendResponse(200, [
-            "base_64" => base64_encode(getFileData(AWS_S3_BUCKET_URL . $filename))
-        ]);
+
+        echo base64_encode(getFileData(AWS_S3_BUCKET_URL . $filename));
     }
 }
