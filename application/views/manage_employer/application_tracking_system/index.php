@@ -1571,11 +1571,10 @@
             var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
             chart.draw(data, options);
         }
-        //
+
         google.load("visualization", "1", {
             packages: ["corechart"]
         });
-        //
         google.setOnLoadCallback(drawChart);
 
         function drawChart() {
@@ -1907,7 +1906,7 @@
                     document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Edocx&wdAccPdf=0';
                     break;
                 case 'pdf':
-                    iframe_url = document_preview_url;
+                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
                 default:
