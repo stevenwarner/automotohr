@@ -1935,7 +1935,7 @@
                         url: "<?= base_url("Testing/getFileBase64"); ?>",
                         method: "POST",
                         data: {
-                            filename: "Schmeka-Banks-k9JS5i.pdf"
+                            filename: $(source).attr('data-fullname')
                         }
                     })
                     .done(function(resp) {
