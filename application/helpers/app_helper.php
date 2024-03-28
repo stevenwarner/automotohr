@@ -2154,7 +2154,7 @@ if (!function_exists("makeResourceView")) {
         if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
             return ' <video style="width: 100%"  src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
         } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" '.($props).'>';
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" ' . ($props) . '>';
         } else {
             return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
         }
@@ -3561,5 +3561,32 @@ if (!function_exists("getEEOCFormQuestions")) {
 
         //
         return $questionsArray;
+    }
+}
+
+if (!function_exists("cleanTerminatedEmployees")) {
+    function cleanTerminatedEmployees(&$employeeArray): bool
+    {
+        if (!$employeeArray) {
+            return false;
+        }
+        //
+        $ci = &get_instance();
+        //
+        foreach ($employeeArray as $index => $value) {
+            $record =
+                $ci->db
+                ->select("employee_status")
+                ->where("employee_sid", $value["sid"])
+                ->order_by("sid", "DESC")
+                ->limit(1)
+                ->get("terminated_employees")
+                ->row_array();
+            //
+            if ($record && in_array($record["employee_status"], [1])) {
+                unset($employeeArray[$index]);
+            }
+        }
+        return true;
     }
 }

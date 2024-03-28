@@ -5645,6 +5645,8 @@ class Hr_documents_management_model extends CI_Model
         $b = $a->result_array();
         $a = $a->free_result();
         //
+        cleanTerminatedEmployees($b);
+        //
         return $b;
     }
 
