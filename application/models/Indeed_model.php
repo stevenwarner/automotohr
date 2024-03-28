@@ -616,7 +616,7 @@ class Indeed_model extends CI_Model
                 "schemaVersion" => "1.0",
             ];
             // check and set screening screeningQuestionnaire
-            if ($screeningQuestionnaire) {
+            if ($screeningQuestionnaire && !$this->checkQuestionAreValidForIndeed($screeningQuestionnaire)) {
                 $questionArray["screenerQuestions"] = [
                     "questions" => $screeningQuestionnaire
                 ];
@@ -658,5 +658,42 @@ class Indeed_model extends CI_Model
             200,
             $fileData
         );
+    }
+
+    /**
+     * 
+     */
+    private function checkQuestionAreValidForIndeed($screeningQuestionnaire)
+    {
+        //
+        $result = false;
+        //
+        if ($screeningQuestionnaire) {
+            //
+            foreach ($screeningQuestionnaire as $question) {
+                //
+                if ($question['options']) {
+                    //
+                    $answers = [];
+                    $break = 'no';
+                    //
+                    foreach ($question['options'] as $option) {
+                        if (in_array($option['value'], $answers)) {
+                            $result = true;
+                            $break = 'yes';
+                            break;
+                        }
+                        //
+                        $answers[] = $option['value'];
+                    }
+                    //
+                    if ($break == 'yes') {
+                        break;
+                    }
+                }
+            }
+        }
+        //
+        return $result;
     }
 }
