@@ -329,10 +329,14 @@ class Payroll_model extends CI_Model
         $tmp = [];
         //
         foreach ($records as $employee) {
+            //
             $tmp[$employee['userId']] = [
                 'name' => remakeEmployeeName($employee),
                 'is_onboard' => $employee['is_onboarded'],
                 'id' => $employee['userId'],
+                "paymentMethodIsDirectDeposit" => $this->checkIfEmployeePMIsDD(
+                    $employee["userId"]
+                )
             ];
         }
         //
@@ -6476,5 +6480,16 @@ class Payroll_model extends CI_Model
         }
 
         return true;
+    }
+
+    private function checkIfEmployeePMIsDD(int $employeeId): int
+    {
+        // check if the employees payment method is Direct deposit
+        return $this->db
+            ->where([
+                "employee_sid" => $employeeId,
+                "type" => "Direct Deposit"
+            ])
+            ->count_all_results("gusto_employees_payment_method");
     }
 }

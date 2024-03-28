@@ -59,6 +59,12 @@
                                                 <?php
                                                 $cl = $payrollEmployee['is_onboard'] ? 'success' : 'warning';
                                                 $text = $payrollEmployee['is_onboard'] ? 'COMPLETED' : 'INPROGRESS';
+
+                                                if ($payrollEmployee["is_onboard"] && $payrollEmployee["paymentMethodIsDirectDeposit"] == 0)
+                                                {
+                                                    $cl = "warning";
+                                                    $text = "INPROGRESS";
+                                                }
                                                 ?>
                                                 <tr data-id="<?= $payrollEmployee['id']; ?>" data-employee="<?= $payrollEmployee['name']; ?>">
                                                     <td class="vam">
@@ -81,7 +87,7 @@
                                                             <i class="fa fa-eye csF16" aria-hidden="true"></i>&nbsp;
                                                             <span>Garnishments</span>
                                                         </button>
-                                                        <?php if ($cl === 'warning') : ?>
+                                                        <?php if ($payrollEmployee["is_onboard"] == 0) : ?>
                                                             <button class="btn btn-danger csF16 jsPayrollEmployeeDelete">
                                                                 <i class="fa fa-times-circle csF16" aria-hidden="true"></i>&nbsp;
                                                                 <span>Delete</span>
