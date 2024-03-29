@@ -217,8 +217,6 @@ class Indeed_feed extends CI_Controller
             $this->addReport('Indeed', $data['applicant']['email']);
             sleep(rand(1, 3));
 
-
-
             $job_sid = $data['job']['jobId'];
 
             if (!is_numeric($job_sid)) {
@@ -554,6 +552,12 @@ class Indeed_feed extends CI_Controller
                     // https://www.youtube.com/shorts/o99t-97sD1o
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
+                    //
+                    $this->indeed_model->pushTheApplicantStatus(
+                        "NEW",
+                        $portal_applicant_jobs_list_sid
+                    );
+                    //
                     $job_added_successfully = $jobs_list_result[1];
                     $acknowledgement_email_data['company_name'] = $company_name;
                     $acknowledgement_email_data['sid'] = $job_applications_sid;
