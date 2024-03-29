@@ -75,37 +75,13 @@ class Indeed_lib
         string $atsId,
         string $status
     ) {
-        // create the request
-        $request = '
-        {
-            dispositionStatus: ' . ($status) . ',
-            rawDispositionStatus: ' . (ucfirst($status)) . ',
-            rawDispositionDetails: "",
-            identifiedBy: [
-                indeedApplyID: ' . ($atsId) . ',
-            ],
-            atsName: "AutomotoHR",
-            statusChangeDateTime: ' . (getSystemDateInUTC("c")) . ',
-        }
-        ';
         //
-        $requestWrap = 'mutation {
-            partnerDisposition {
-                send(input: {
-                dispositions: [' . (json_encode($request)) . '],
-                }) {
-                numberGoodDispositions
-                failedDispositions {
-                    identifiedBy {
-                    indeedApplyID
-                    }
-                    rationale
-                }
-                }
-            }
-        };';
+        $dateTime =
+            getSystemDateInUTC("Y-m-d\TH:i:s.") . substr(getSystemDateInUTC("u"), 0, 3) . 'Z';
+        //
+        $requestWrap = '{"query":"mutation {\\n\\tpartnerDisposition {\\n\\t\\tsend(\\n\\t\\t\\tinput: {\\n\\t\\t\\t\\tdispositions: [\\n\\t\\t\\t\\t\\t{\\n\\t\\t\\t\\t\\t\\tdispositionStatus: ' . ($status) . '\\n\\t\\t\\t\\t\\t\\trawDispositionStatus: \\"' . ($status) . '\\"\\n\\t\\t\\t\\t\\t\\trawDispositionDetails: \\"\\"\\n\\t\\t\\t\\t\\t\\tidentifiedBy: {\\n\\t\\t\\t\\t\\t\\t\\tindeedApplyID: \\"' . ($atsId) . '\\"\\n\\t\\t\\t\\t\\t\\t}\\n\\t\\t\\t\\t\\t\\tatsName: \\"AutomotoHR\\"\\n\\t\\t\\t\\t\\t\\tstatusChangeDateTime: \\"' . ($dateTime) . '\\"\\n\\t\\t\\t\\t\\t}\\n\\t\\t\\t\\t],\\n\\t\\t\\t}\\n\\t\\t) {\\n\\t\\t\\tnumberGoodDispositions\\n\\t\\t\\tfailedDispositions {\\n\\t\\t\\t\\tidentifiedBy {\\n\\t\\t\\t\\t\\tindeedApplyID\\n\\t\\t\\t\\t}\\n\\t\\t\\t\\trationale\\n\\t\\t\\t}\\n\\t\\t}\\n\\t}\\n}\\n","variables":{}}';
 
-        // get the acccess token
+        // get the access token
         $accessToken = $this->getAccessToken();
         // when no access token found
         if (!$accessToken) {
@@ -121,20 +97,32 @@ class Indeed_lib
             "Accept: application/json",
             "Authorization: Bearer {$accessToken}"
         ];
-        _e($options, true, true);
         // make the call
         $response = $this->makeCall(
             "https://apis.indeed.com/graphql",
             "POST",
             $options
         );
-        _e($response, true, true);
-        // when error occured
+        // when error occurred
         if ($response["errors"]) {
+            // check for auth error
+            if ($response["resultArray"]["errors"][0]["extensions"]["code"] == "UNAUTHENTICATED") {
+                // regenerate the token
+                $this->generateAccessToken();
+                // recall
+                return $this->sendDispositionCall(
+                    $atsId,
+                    $status
+                );
+            }
             return ["error" => $response["errors"]];
         }
-
-        _e($response, true, true);
+        // check for errors
+        if ($response["resultArray"]["data"]["partnerDisposition"]["send"]["failedDispositions"]) {
+            return ["error" => "Failed to update status on Indeed."];
+        }
+        //
+        return ["success" => "Status updated on Indeed."];
     }
 
     /**
@@ -357,10 +345,29 @@ class Indeed_lib
             $curl,
             $options
         );
+        // set log array
+        $log = [
+            "request_json" => json_encode([
+                "url" => $url,
+                "method" => $method,
+                "options" => $options,
+            ]),
+            "response_errors" => [],
+            "response_info" => [],
+            "response_json" => [],
+            "response_code" => 0,
+        ];
         //
         $returnArray["result"] = curl_exec($curl);
         $returnArray["info"] = curl_getinfo($curl);
         $returnArray["errors"] = curl_error($curl);
+        //
+        $log["response_info"] = json_encode($returnArray["info"]);
+        $log["response_errors"] = json_encode($returnArray["errors"]);
+        $log["response_code"] = $returnArray["info"]["http_code"];
+        $log["response_json"] = $returnArray["result"] ? $returnArray["result"] : json_encode([]);
+        //
+        $this->saveLog($log);
         //
         $returnArray["resultArray"] = json_decode(
             $returnArray["result"],
@@ -369,6 +376,10 @@ class Indeed_lib
         //
         if ($returnArray["info"]["http_code"] !== 200) {
             $returnArray["errors"] = "Error occurred with status code: " . $returnArray["info"]["http_code"];
+        } else {
+            if ($returnArray["resultArray"]["errors"]) {
+                $returnArray["errors"] = $returnArray["resultArray"]["errors"];
+            }
         }
         //
         return $returnArray;
@@ -423,5 +434,22 @@ class Indeed_lib
         }
         //
         return $accessToken;
+    }
+
+    /**
+     * save the log
+     *
+     * @param array $log
+     */
+    private function saveLog(array $log)
+    {
+        //
+        $log["created_at"] = getSystemDate();
+        //
+        $this->ci->db
+            ->insert(
+                "automotohr_logs.indeed_api_logs",
+                $log
+            );
     }
 }
