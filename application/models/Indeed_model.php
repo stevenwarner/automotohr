@@ -549,7 +549,6 @@ class Indeed_model extends CI_Model
                 "error" => "Indeed ATS id not found."
             ];
         }
-        return;
         // get the indeed ats id
         $indeedAtsId = $this->db
             ->select("indeed_ats_sid")
@@ -569,7 +568,7 @@ class Indeed_model extends CI_Model
         if ($response["error"]) {
             return $response;
         }
-        return true;
+        return $response;
     }
 
     /**

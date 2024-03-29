@@ -108,10 +108,10 @@
 
                                 <div class="btn-group pull-right notify-me">
                                     <button type="button" data-toggle="dropdown" aria-expanded="false" class="notification-bell">
-                                        <i class="fa fa-bell <?php if ($header_notifications['awaiting_response'] > 0 || $header_notifications['feedback_required'] > 0 || $header_notifications['pending_jobs_to_feed'] > 0) {
+                                        <i class="fa fa-bell <?php if ($header_notifications['awaiting_response'] > 0 || $header_notifications['feedback_required'] > 0 || $header_notifications['pending_jobs_to_feed'] > 0 || $header_notifications['indeed_pending_status'] > 0) {
                                                                     echo 'faa-shake animated';
                                                                 } ?>"></i>
-                                        <span class="notification-count <?php if ($header_notifications['awaiting_response'] > 0 || $header_notifications['feedback_required'] > 0 || $header_notifications['pending_jobs_to_feed'] > 0 || sizeof($header_notifications['affiliations']) > 0 || $header_notifications['unpaid_commissions_count'] > 0 || $header_notifications['end_user_license_signed'] > 0 || $header_notifications['client_refer_by_affiliate'] > 0 || $header_notifications['form_document_credit_card_authorization'] > 0 || sizeof($header_notifications['form_affiliate_end_user_license_agreement']) > 0 || $header_notifications['private_messages'] > 0 || $header_notifications['pending_incidents'] > 0) {
+                                        <span class="notification-count <?php if ($header_notifications['awaiting_response'] > 0 || $header_notifications['feedback_required'] > 0 || $header_notifications['pending_jobs_to_feed'] > 0 || sizeof($header_notifications['affiliations']) > 0 || $header_notifications['unpaid_commissions_count'] > 0 || $header_notifications['end_user_license_signed'] > 0 || $header_notifications['client_refer_by_affiliate'] > 0 || $header_notifications['form_document_credit_card_authorization'] > 0 || sizeof($header_notifications['form_affiliate_end_user_license_agreement']) > 0 || $header_notifications['private_messages'] > 0 || $header_notifications['pending_incidents'] > 0 || $header_notifications['indeed_pending_status'] > 0) {
                                                                             echo 'count-increament';
                                                                         } ?>">
                                             <?php
@@ -176,6 +176,10 @@
                                             }
 
                                             if (isset($header_notifications['profile_date_change']) && $header_notifications['profile_date_change'] > 0) {
+                                                $notifications_count++;
+                                            }
+
+                                            if (isset($header_notifications['indeed_pending_status']) && $header_notifications['indeed_pending_status'] > 0) {
                                                 $notifications_count++;
                                             }
 
@@ -299,6 +303,14 @@
                                             <li>
                                                 <a href="<?php echo base_url('employee_profile_data_report'); ?>">
                                                     <span class="pull-left"><?php echo $header_notifications['profile_date_change']; ?> Employee Profile Change (Today)</span>
+                                                    <span class="pull-right"><i class="fa fa-eye"></i></span>
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                        <?php if ($header_notifications['indeed_pending_status'] > 0) { ?>
+                                            <li>
+                                                <a href="<?php echo base_url('manage_admin/indeed/disposition/status/map'); ?>">
+                                                    <span class="pull-left">Pending Indeed Disposition Status</span>
                                                     <span class="pull-right"><i class="fa fa-eye"></i></span>
                                                 </a>
                                             </li>

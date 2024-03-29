@@ -5341,6 +5341,24 @@ if (!function_exists('get_admin_notifications')) {
         // $CI->db->where('expire_month', $current_month + 1);
         // $CI->db->where('expire_year', $current_year);
         $data['cc_expiring'] = $CI->db->count_all_results();
+        //
+        $totalStatus = $CI->db
+            ->select(' 
+                COUNT(
+                    DISTINCT(LOWER(REGEXP_REPLACE(name, "[^a-zA-Z]", "")))
+                ) as count
+            ')
+            ->get('application_status')
+            ->row_array()['count'];
+        //
+        $mapStatus = $CI->db
+            ->select(' 
+                COUNT(*) as count
+            ')
+            ->get('indeed_disposition_status_map')
+            ->row_array()['count'];    
+        //
+        $data['indeed_pending_status'] = $totalStatus - $mapStatus;
         return $data;
     }
 }
