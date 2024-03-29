@@ -998,9 +998,11 @@ class Cron_common extends CI_Controller
             $ua = getUserFieldsFromEmployeeStatus($record);
             // check if record is corrupted
             if (
-                $ua["active"] != $employee["active"] ||
-                $ua["terminated_status"] != $employee["terminated_status"] ||
-                $ua["general_status"] != $employee["general_status"]
+                array_key_exists("active", $ua) && (
+                    $ua["active"] != $employee["active"] ||
+                    $ua["terminated_status"] != $employee["terminated_status"] ||
+                    $ua["general_status"] != $employee["general_status"]
+                )
             ) {
                 $holder["effected"][] = [
                     "original" => $employee,
