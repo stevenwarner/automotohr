@@ -158,7 +158,7 @@ class Documents_management_model extends CI_Model
         // load payroll model
         $this->load->model('v1/Payroll_model', 'payroll_model');
         //
-        return $this->payroll_model->signEmployeeForm($userId, $form['gusto_uuid']);
+        // return $this->payroll_model->signEmployeeForm($userId, $form['gusto_uuid']);
     }
 
     /**
