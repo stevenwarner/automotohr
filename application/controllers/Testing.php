@@ -580,8 +580,40 @@ class Testing extends CI_Controller
 
     public function getFileBase64()
     {
-        $filename = $this->input->post("filename");
+        $this->copyObject($this->input->post("fileName"));
+        echo 'success';
+    }
 
-        echo base64_encode(getFileData(AWS_S3_BUCKET_URL . $filename));
+    /**
+     * 
+     */
+    public function copyObject($fileName)
+    {
+        // load the AWS library
+        $this->load->library(
+            "Aws_lib",
+            '',
+            "aws_lib"
+        );
+
+        $meta = [
+            "ContentType" => "application/pdf",
+            "ContentDisposition" => "inline",
+            "logicByM" => "1"
+        ];
+
+        $options = [
+            'Bucket'     => AWS_S3_BUCKET_NAME,
+            'CopySource' => urlencode(AWS_S3_BUCKET_NAME . '/' . $fileName), // Source object
+            'Key'        => $fileName, // Destination object
+            'Metadata' => $meta,
+            "MetadataDirective" => "REPLACE",
+            "ContentType" => "application/pdf",
+            'ACL'        => 'public-read', // Optional: specify the ACL (access control list)
+        ];
+        //
+        $this->aws_lib->copyObject($options);
+
+        return $fileName;
     }
 }

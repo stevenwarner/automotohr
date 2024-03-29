@@ -384,9 +384,9 @@
                                         if (check_access_permissions_for_view($security_details, 'send_bulk_email')) { ?>
                                             <li><a href="javascript:void(0);" class="btn btn-success" id="send_bulk_email">Send Bulk Email</a></li>
                                         <?php } ?>
-                                        <?php if (check_access_permissions_for_view($security_details, 'send_still_interested_email')) {?>   
-                                        <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
-                                        <?php } ?>   
+                                        <?php if (check_access_permissions_for_view($security_details, 'send_still_interested_email')) { ?>
+                                            <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
+                                        <?php } ?>
                                         <!--                                        <li><a href="javascript:void(0);" class="btn btn-primary" id="send_candidate_email">Send Candidate Notification</a></li>-->
                                     </ul>
                                 </div>
@@ -1895,6 +1895,8 @@
         var requested_job_sid = $(source).attr('data-requested-job-sid');
         var requested_job_type = $(source).attr('data-requested-job-type');
 
+        let isPDF = false;
+
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
                 case 'doc':
@@ -1906,10 +1908,12 @@
                     document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Edocx&wdAccPdf=0';
                     break;
                 case 'pdf':
+                    isPDF = true;
                     iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
                 default:
+                    isPDF = true;
                     iframe_url = 'https://docs.google.com/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname') + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname');
             }
@@ -1926,15 +1930,35 @@
                 request_message = '<p class="text-left">The last resume request was sent on <strong> ' + request_time + ' </strong></p>';
             }
 
+            if (isPDF) {
+                resume_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                iframe_url = $(source).attr('data-fullname');
+
+                $.ajax({
+                        url: "<?= base_url("Testing/getFileBase64"); ?>",
+                        method: "POST",
+                        data: {
+                            fileName: iframe_url
+                        }
+                    })
+                    .done(function() {
+                        $(".jsCustomPreview").attr("src", "https://automotohrattachments.s3.amazonaws.com/" + iframe_url);
+                    })
+            }
+
             $('#resume_modal_body').html(resume_content);
-            $("#resume_iframe").attr("src", iframe_url);
+            if (!isPDF) {
+                $("#resume_iframe").attr("src", iframe_url);
+            }
             $('#resume_modal_footer').html(footer_download_content);
             $('#resume_modal_footer').append(footer_print_content);
             $('#resume_modal_footer').append(footer_send_resume);
             $('#resume_modal_footer').append(request_message);
             $('#resume_modal_title').html(document_title);
             $('#show_applicant_resume').modal('show');
-            loadIframe(iframe_url, '#preview_iframe', true);
+            if (!isPDF) {
+                loadIframe(iframe_url, '#preview_iframe', true);
+            }
         } else {
 
             var request_message = '';
