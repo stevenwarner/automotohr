@@ -3590,3 +3590,51 @@ if (!function_exists("cleanTerminatedEmployees")) {
         return true;
     }
 }
+
+if (!function_exists("getUserFieldsFromEmployeeStatus")) {
+    /**
+     * get the employee update array from employee status
+     *
+     * @param array $employeeStatus
+     * @return array
+     */
+    function getUserFieldsFromEmployeeStatus(array $employeeStatus): array
+    {
+        // set update array
+        $updateArray = [];
+        // set termination default to 0
+        $updateArray['terminated_status'] = 0;
+        // in case of terminated
+        if ($employeeStatus["employee_status"] == 1) {
+            $updateArray['active'] = 0;
+            $updateArray['general_status'] = 'terminated';
+            $updateArray['terminated_status'] = 1;
+        } else {
+            //
+            if ($employeeStatus["employee_status"] == 5) {
+                $updateArray['active'] = 1;
+                $updateArray['general_status'] = 'active';
+            } elseif ($employeeStatus["employee_status"] == 6) {
+                $updateArray['active'] = 0;
+                $updateArray['general_status'] = 'inactive';
+            } elseif ($employeeStatus["employee_status"] == 7) {
+                $updateArray['general_status'] = 'leave';
+            } elseif ($employeeStatus["employee_status"] == 4) {
+                $updateArray['general_status'] = 'suspended';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 3) {
+                $updateArray['general_status'] = 'deceased';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 2) {
+                $updateArray['general_status'] = 'retired';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 8) {
+                $updateArray['active'] = 1;
+                $updateArray['general_status'] = 'rehired';
+                $updateArray['rehire_date'] = $employeeStatus['status_change_date'];
+            }
+        }
+        //
+        return $updateArray;
+    }
+}

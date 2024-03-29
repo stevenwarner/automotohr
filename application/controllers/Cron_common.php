@@ -952,4 +952,73 @@ class Cron_common extends CI_Controller
         $this->load->model('timeoff_model');
         $this->timeoff_model->getPublicHolidays();
     }
+
+    public function correctEmployeeStatus()
+    {
+        // get all employees
+        $employees = $this->db
+            ->select("
+                sid,
+                terminated_status,
+                active,
+                general_status
+            ")
+            ->where("parent_sid <>", "0")
+            ->get("users")
+            ->result_array();
+        //
+        if (!$employees) {
+            exit("No employees found.");
+        }
+        //
+        $holder = [
+            "total" => count($employees),
+            "effected" => [],
+            "skipped" => 0,
+        ];
+        //
+        foreach ($employees as $employee) {
+            // get the records
+            $record = $this->db
+                ->select('
+                    employee_status,
+                    status_change_date
+                ')
+                ->where('employee_sid', $employee["sid"])
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get("terminated_employees")
+                ->row_array();
+
+            if (!$record) {
+                $holder["skipped"]++;
+                continue;
+            }
+            //
+            $ua = getUserFieldsFromEmployeeStatus($record);
+            // check if record is corrupted
+            if (
+                $ua["active"] != $employee["active"] ||
+                $ua["terminated_status"] != $employee["terminated_status"] ||
+                $ua["general_status"] != $employee["general_status"]
+            ) {
+                $holder["effected"][] = [
+                    "original" => $employee,
+                    "parsed" => $ua,
+                ];
+
+                // $this->db
+                //     ->where("sid", $employee["sid"])
+                //     ->update(
+                //         "users",
+                //         [
+                //             "active" => $ua["active"],
+                //             "terminated_status" => $ua["terminated_status"],
+                //             "general_status" => $ua["general_status"],
+                //         ]
+                //     );
+            }
+        }
+        _e($holder, true, true);
+    }
 }
