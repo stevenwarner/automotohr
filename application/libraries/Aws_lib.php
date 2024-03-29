@@ -84,6 +84,17 @@ class Aws_lib
         return $result;
     }
 
+    /**
+     * Uploads object(file or folder) to s3
+     * @param $options
+     * @return \Aws\Result|\Guzzle\Service\Resource\Model
+     */
+    public function copy_object($options)
+    {
+        $result = $this->s3->copyObject($options);
+        return $result;
+    }
+
     public function delete_object($bucket, $keyname, $objectType)
     {
         if ($objectType == "file") {
