@@ -464,7 +464,7 @@ if (!function_exists('createPartnerCompany')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -488,7 +488,7 @@ if (!function_exists('createCompanyWebHook')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -510,7 +510,7 @@ if (!function_exists('getWebHooks')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -533,7 +533,7 @@ if (!function_exists('deleteWebHook')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -556,7 +556,7 @@ if (!function_exists('requestVerificationToken')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -580,7 +580,7 @@ if (!function_exists('callWebHook')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->PRODUCTION->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -601,7 +601,7 @@ if (!function_exists('getAdminsFromGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -652,7 +652,7 @@ if (!function_exists('createAdminOnGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -703,7 +703,7 @@ if (!function_exists('agreeToServiceAgreementFromGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -758,7 +758,7 @@ if (!function_exists('gustoCall')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         //
         $curlOptions = [

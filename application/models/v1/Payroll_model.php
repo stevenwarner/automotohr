@@ -5814,7 +5814,7 @@ class Payroll_model extends CI_Model
                     $employeeTerminateData["run_termination_payroll"] = '';
                     //
                     $response = createAnEmployeeTerminationOnGusto($employeeTerminateData, $companyDetails, $gustoEmployeeUUID, [
-                        'X-Gusto-API-Version: 2023-04-01'
+                        'X-Gusto-API-Version: 2024-03-01'
                     ]);
                     //
                     $this->updateEmployeeStatus($statusInfo['sid'], $response);
@@ -5829,7 +5829,7 @@ class Payroll_model extends CI_Model
                     $employeeRehireData["work_location_uuid"] = $gustoEmployeeWorkLocationId;
                     //
                     $response = createAnEmployeeRehireOnGusto($employeeRehireData, $companyDetails, $gustoEmployeeUUID, [
-                        'X-Gusto-API-Version: 2023-04-01'
+                        'X-Gusto-API-Version: 2024-03-01'
                     ]);
                     //
                     $this->updateEmployeeStatus($statusInfo['sid'], $response);
@@ -5863,7 +5863,7 @@ class Payroll_model extends CI_Model
                 $employeeTerminateData["run_termination_payroll"] = '';
                 //
                 $response = updateAnEmployeeTerminationOnGusto($employeeTerminateData, $companyDetails, $gustoEmployeeUUID, [
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 $this->updateEmployeeStatus($employeeData['sid'], $response);
@@ -5879,7 +5879,7 @@ class Payroll_model extends CI_Model
                 $employeeRehireData["work_location_uuid"] = $gustoEmployeeWorkLocationId;
                 //
                 $response = updateAnEmployeeRehireOnGusto($employeeRehireData, $companyDetails, $gustoEmployeeUUID, [
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 $this->updateEmployeeStatus($employeeData['sid'], $response);
