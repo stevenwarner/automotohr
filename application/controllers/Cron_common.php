@@ -1000,8 +1000,7 @@ class Cron_common extends CI_Controller
             if (
                 array_key_exists("active", $ua) && (
                     $ua["active"] != $employee["active"] ||
-                    $ua["terminated_status"] != $employee["terminated_status"] ||
-                    $ua["general_status"] != $employee["general_status"]
+                    $ua["terminated_status"] != $employee["terminated_status"]
                 )
             ) {
                 $holder["effected"][] = [
@@ -1009,18 +1008,24 @@ class Cron_common extends CI_Controller
                     "parsed" => $ua,
                 ];
 
-                // $this->db
-                //     ->where("sid", $employee["sid"])
-                //     ->update(
-                //         "users",
-                //         [
-                //             "active" => $ua["active"],
-                //             "terminated_status" => $ua["terminated_status"],
-                //             "general_status" => $ua["general_status"],
-                //         ]
-                //     );
+                $this->db
+                    ->where("sid", $employee["sid"])
+                    ->update(
+                        "users",
+                        [
+                            "active" => $ua["active"],
+                            "terminated_status" => $ua["terminated_status"],
+                        ]
+                    );
             }
         }
+        sendMail(
+            FROM_EMAIL_NOTIFICATIONS,
+            "mubashar.ahmed@egeninext.com",
+            "Employee status sync at " . getSystemDate(),
+            @json_encode($holder),
+            "AutomotoHR CRON"
+        );
         _e($holder, true, true);
     }
 }
