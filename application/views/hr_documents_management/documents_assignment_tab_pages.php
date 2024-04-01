@@ -2231,7 +2231,7 @@ $noActionRequiredDocumentsList = [];
 
                                                                     </td>
                                                                     <td width="50%" style="font-size: 14px;">
-                                                                        <input class="invoice-fields short_textbox" type="text" value="<?= $formInputData['empManager'] ? $formInputData['short_textbox_3'] : '' ?>" name="empManager" id="empManager" data-type='text' autocomplete="off" />
+                                                                        <input class="invoice-fields short_textbox" type="text" value="<?php echo $userPrefillInfo['empSupervisor']; ?>" name="empManager" id="empManager" data-type='text' autocomplete="off" />
                                                                         <label id="empManagerError" class="error"></label>
                                                                     </td>
                                                                 </tr>
@@ -2245,12 +2245,12 @@ $noActionRequiredDocumentsList = [];
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="50%" style="font-size: 14px;">
-                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_4'] ? $formInputData['short_textbox_4'] : '' ?>" name="empHireDate" id="empHireDate" data-type='text' autocomplete="off" />
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?php echo $userPrefillInfo['empJoinedAt']; ?>" name="empHireDate" id="empHireDate" data-type='text' autocomplete="off" readonly/>
                                                                         <label id="empHireDateError" class="error"></label>
 
                                                                     </td>
                                                                     <td width="50%" style="font-size: 14px;">
-                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_5'] ? $formInputData['short_textbox_5'] : '' ?>" name="empStartDate" id="empStartDate" data-type='text' autocomplete="off" />
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?php echo $userPrefillInfo['empJoinedAt']; ?>" name="empStartDate" id="empStartDate" data-type='text' autocomplete="off" readonly />
                                                                         <label id="empStartDateError" class="error"></label>
 
                                                                     </td>
@@ -2265,12 +2265,12 @@ $noActionRequiredDocumentsList = [];
                                                                 </tr>
                                                                 <tr>
                                                                     <td width="50%" style="font-size: 14px;">
-                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>" name="reviewPeriodStart" id="reviewPeriodStart" data-type='text' autocomplete="off" />
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_6'] ? $formInputData['short_textbox_6'] : '' ?>" name="reviewPeriodStart" id="reviewPeriodStart" data-type='text' autocomplete="off" readonly/>
                                                                         <label id="reviewPeriodStartError" class="error"></label>
 
                                                                     </td>
                                                                     <td width="50%" style="font-size: 14px;">
-                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="reviewPeriodEnd" id="reviewPeriodEnd" data-type='text' autocomplete="off" />
+                                                                        <input class="invoice-fields short_textbox date_picker2" type="text" value="<?= $formInputData['short_textbox_7'] ? $formInputData['short_textbox_7'] : '' ?>" name="reviewPeriodEnd" id="reviewPeriodEnd" data-type='text' autocomplete="off" readonly />
                                                                         <label id="reviewPeriodEndError" class="error"></label>
                                                                     </td>
                                                                 </tr>
@@ -2314,14 +2314,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="knowledgeBelow" id="knowledgeBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio"  name="knowledgeBelow" id="knowledgeBelow" value="knowledgeBelow" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="knowledgeSufficient" id="knowledgeSufficient" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="knowledgeBelow" id="knowledgeSufficient" value="knowledgeSufficient">
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="knowledgeExceptionally" id="knowledgeExceptionally" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="knowledgeBelow" id="knowledgeExceptionally" value="knowledgeSufficient">
                                                                     </td>
                                                                 </tr>
 
@@ -2376,15 +2376,15 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="outputBelow" id="outputBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="outputBelow" id="outputBelow" value="outputBelow" checked>
 
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="outputMeets" id="outputMeets" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="outputBelow" id="outputMeets" value="outputMeets">
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="outputConsistently" id="outputConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="outputBelow" id="outputConsistently" value="outputConsistently">
                                                                     </td>
                                                                 </tr>
 
@@ -2433,14 +2433,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="qualityBelow" id="qualityBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="qualityBelow" id="qualityBelow" value="qualityBelow" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="qualityMeets" id="qualityMeets" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="qualityBelow" id="qualityMeets" value="qualityMeets" >
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="qualityConsistently" id="qualityConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="qualityBelow" id="qualityConsistently" value="qualityConsistently">
                                                                     </td>
                                                                 </tr>
 
@@ -2489,14 +2489,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeFrequently" id="employeeFrequently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequently" id="employeeFrequently" value="employeeFrequently" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeAdequately" id="employeeAdequately" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequently" id="employeeAdequately" value="employeeAdequately">
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeConsistently" id="employeeConsistently" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequently" id="employeeConsistently" value="employeeConsistently">
                                                                     </td>
                                                                 </tr>
 
@@ -2547,14 +2547,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="missionBelow" id="missionBelow" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="missionBelow" id="missionBelow" value="missionBelow" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="missionHigh" id="missionHigh" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="missionBelow" id="missionHigh" value="missionHigh" >
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="missionExceptional" id="missionExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="missionBelow" id="missionExceptional" value="missionExceptional" >
                                                                     </td>
                                                                 </tr>
 
@@ -2602,14 +2602,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeLate" id="employeeLate" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeLate" id="employeeLate" value="employeeLate" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeAdequatelyAttends" id="employeeAdequatelyAttends" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeLate" id="employeeAdequatelyAttends" value="employeeAdequatelyAttends" >
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeOnTime" id="employeeOnTime" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeLate" id="employeeOnTime" value="employeeOnTime">
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -2655,14 +2655,14 @@ $noActionRequiredDocumentsList = [];
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeFrequentlyCoached" id="employeeFrequentlyCoached" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequentlyCoached" id="employeeFrequentlyCoached" value="employeeFrequentlyCoached" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeAdequatelyAdheres" id="employeeAdequatelyAdheres" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequentlyCoached" id="employeeAdequatelyAdheres" value="employeeAdequatelyAdheres">
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeConsistentlyExceptional" id="employeeConsistentlyExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeFrequentlyCoached" id="employeeConsistentlyExceptional" value="employeeConsistentlyExceptional">
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -2711,14 +2711,14 @@ $noActionRequiredDocumentsList = [];
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeOutlinedAbove" id="employeeOutlinedAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeOutlinedAbove" id="employeeOutlinedAbove" value="employeeOutlinedAbove" checked>
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeOutlinedStandardAbove" id="employeeOutlinedStandardAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeOutlinedAbove" id="employeeOutlinedStandardAbove" value="employeeOutlinedStandardAbove" >
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeeOutlinedStandard" id="employeeOutlinedStandard" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeeOutlinedAbove" id="employeeOutlinedStandard" value="employeeOutlinedStandard">
                                                                     </td>
                                                                 </tr>
 
@@ -2770,14 +2770,14 @@ $noActionRequiredDocumentsList = [];
 
                                                                 <tr>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeePerformanceOutlinedAbove" id="employeePerformanceOutlinedAbove" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeePerformanceOutlinedAbove" id="employeePerformanceOutlinedAbove" value="employeePerformanceOutlinedAbove" checked >
                                                                     </td>
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeePerformanceOutlinedStandard" id="employeePerformanceOutlinedStandard" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeePerformanceOutlinedAbove" id="employeePerformanceOutlinedStandard" value="employeePerformanceOutlinedStandard">
                                                                     </td>
 
                                                                     <td style="font-size: 14px;">
-                                                                        <input type="checkbox" name="employeePerformanceOutlinedExceptional" id="employeePerformanceOutlinedExceptional" value="1" class="counseling user_checkbox" data-type='checkbox'>
+                                                                        <input type="radio" name="employeePerformanceOutlinedAbove" id="employeePerformanceOutlinedExceptional" value="employeePerformanceOutlinedExceptional">
                                                                     </td>
                                                                 </tr>
 
@@ -2872,10 +2872,8 @@ $noActionRequiredDocumentsList = [];
 
                                     <tr>
                                         <td width="50%" style="border-top:0px;">
-                                            <strong style="font-size: 14px;">
-                                                Additional Comments, Feedback - Employee Comments:</strong> <br>
-                                            <textarea id="section3EmployeeComment" name="section3EmployeeComment" class="invoice-fields auto-height long_textbox" rows="6" data-type='textarea' readonly></textarea>
-                                            <div id='long_textbox_13_id_sec'></div>
+                                        <input type="hidden" name="section3EmployeeComment" id="section3EmployeeComment" >
+                                        
                                         </td>
                                     </tr>
 
@@ -3005,18 +3003,18 @@ $noActionRequiredDocumentsList = [];
                                     <tr>
                                         <td style="border-top:0px;">
                                             <label> Employees Current Pay Rate: </label>
-                                            <input type="text" class="form-control" name="section5currentRate" id='section5currentRate' autocomplete="off" />
+                                            <input type="number" class="form-control" name="section5currentRate" id='section5currentRate' autocomplete="off" min="0" value="0" step="any"/>
                                         </td>
 
                                         <td style="border-top:0px;">
                                             <label> Recommended Pay Increase: </label>
-                                            <input type="text" class="form-control" name="section5recommendedIncrease" id='section5recommendedIncrease' autocomplete="off" />
+                                            <input type="number" class="form-control" name="section5recommendedIncrease" id='section5recommendedIncrease' autocomplete="off"  min="0" value="0" step="any"/>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <label> Approved Amount: </label>
-                                            <input type="text" class="form-control" name="section5approvedAmount" id='section5approvedAmount' autocomplete="off" />
+                                            <input type="number" class="form-control" name="section5approvedAmount" id='section5approvedAmount' autocomplete="off" min="0" value="0" step="any"/>
                                         </td>
 
                                         <td>
@@ -3031,7 +3029,7 @@ $noActionRequiredDocumentsList = [];
                                     <tr>
                                         <td>
                                             <label> Effective Date of Increase: </label>
-                                            <input type="text" class="form-control date_picker2" name="section5IncreaseEffectiveDate" id='section5IncreaseEffectiveDate' autocomplete="off" />
+                                            <input type="text" class="form-control date_picker2" name="section5IncreaseEffectiveDate" id='section5IncreaseEffectiveDate' autocomplete="off" readonly />
                                         </td>
 
                                         <td></td>

@@ -80,7 +80,7 @@ class Fillable_documents extends Public_Controller
     }
 
     //
-    public function PrintPrevieFillable($cocumentSlug, $documentId, $original, $printDownload)
+    public function PrintPrevieFillable($cocumentSlug, $documentId, $original, $printDownload, $panel = 'green')
     {
         //
         $data['formInputData'] = '';
@@ -90,14 +90,16 @@ class Fillable_documents extends Public_Controller
             $data['formInputData'] = json_decode(unserialize($document['form_input_data']), true);
         }
 
-        if($cocumentSlug='employee-performance-evaluation'){
+        if ($cocumentSlug == 'employee-performance-evaluation' && $original == 'submited' ) {
             $data['sectionsdata'] = employeePerformanceDocSectionsData($documentId);
         }
-        
+                
 
         $previewDoc = 'print_' . str_replace('-', '_', $cocumentSlug);
         $data['printDownload'] = $printDownload;
         $data['documentName'] = str_replace('-', '_', $cocumentSlug);
+
+        $data['panel'] = $panel;
 
         $this->load->view('v1/fillable_documents/' . $previewDoc, $data);
     }
@@ -110,7 +112,7 @@ class Fillable_documents extends Public_Controller
         $data['document'] = $document;
         $data['formInputData'] = json_decode(unserialize($document['form_input_data']), true);
 
-        if($cocumentSlug='employee-performance-evaluation'){
+        if ($cocumentSlug = 'employee-performance-evaluation') {
             $data['sectionsdata'] = employeePerformanceDocSectionsData($documentId);
         }
 

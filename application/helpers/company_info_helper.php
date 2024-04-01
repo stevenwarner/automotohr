@@ -3211,7 +3211,7 @@ if (!function_exists('get_employee_profile_info_detail')) {
 
         if ($userType == 'employee') {
 
-            $CI->db->select('users.first_name,users.last_name,users.job_title,users.employee_number,users.Location_Address,departments_management.name as departmentname,departments_management.supervisor');
+            $CI->db->select('users.first_name,users.last_name,users.job_title,users.employee_number,users.Location_Address,users.joined_at,departments_management.name as departmentname,departments_management.supervisor');
             $CI->db->join('departments_management', 'users.department_sid = departments_management.sid', 'left');
             $CI->db->where('users.sid', $emp_id);
 
@@ -3223,6 +3223,8 @@ if (!function_exists('get_employee_profile_info_detail')) {
                 $userPrefillData['empPhoneNumber'] = $dataArray['PhoneNumber'];
                 $userPrefillData['empLocationAddress'] = $dataArray['Location_Address'];
                 $userPrefillData['empDepartment'] = $dataArray['departmentname'];
+                $userPrefillData['empJoinedAt'] = $dataArray['joined_at'] != '' ? formatDateToDB($dataArray['joined_at'], 'Y-m-d', 'm-d-Y') : '';
+
                 $userPrefillData['empSupervisor'] = '';
                 if (!empty($dataArray['supervisor'])) {
                     $supervisoAaray = explode(',', $dataArray['supervisor']);

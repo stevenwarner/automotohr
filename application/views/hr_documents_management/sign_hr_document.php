@@ -2,8 +2,25 @@
 <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
 
 <?php
-//_e($document, true);
-// _e(json_decode($form_input_data, true), true); 
+
+if ($document['fillable_documents_slug'] == 'employee-performance-evaluation') {
+
+    if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
+        $printURL =  base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/print/blue');
+        $downloadURL = base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/submited/download/blue');
+    } else {
+        $printURL =  base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/print');
+        $downloadURL = base_url('v1/fillable_documents/PrintPrevieFillable/' . $document['fillable_documents_slug'] . '/' . $document['sid'] . '/original/download');
+    }
+
+    //
+    $pdBtn['pw']  = '<a href="' . ($printURL) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px;color: #fff;" target="_blank">Print</a>';
+    //
+    $pdBtn['dw'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
+}
+?>
+
+<?php
 if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-form' || $document['fillable_documents_slug'] == 'notice-of-separation') {
     $save_offer_letter_type = 'consent_only';
 }
@@ -100,9 +117,7 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
                                                 //
 
                                                 $doc = str_replace('-', '_', $document['fillable_documents_slug']);
-
                                                 ?>
-
 
                                                 <?php $this->load->view('v1/fillable_documents/' . $doc, $document); ?>
 
@@ -1433,11 +1448,11 @@ if ($document['fillable_documents_slug'] == 'written-employee-counseling-report-
             validationError = true;
         }
 
-        
+
         //
         let section4employeeSignature = $('#draw_upload_img').attr('src');
         $('#section4employeeSignature').val(section4employeeSignature);
-        
+
         return validationError;
 
     }

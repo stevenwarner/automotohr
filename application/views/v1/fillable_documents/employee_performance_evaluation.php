@@ -47,33 +47,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
         <div style="text-align: left; padding-right: 20px; padding-left: 15px;">
             <h3>Eemployee Performance Evaluation </h3>
-            <strong> How to complete the Employee Performance Evaluation Process:
-                <p> <br><strong style="font-size: 16px;"> Section 1: </strong> This section will be completed by the immediate Manager of the employee. The Manager will complete this section ahead of the scheduled performance evaluation meeting with the employee.
-                    <br> <em style="color: #ea0000;"> The manager must send their completed portion of the performance evaluation to human resources for review PRIOR to the meeting with the employee. Once HR has reviewed the Performance Evaluation and has sent this back to you, you can then meet with the employee.</em>
-            </strong><br>
-            </p>
 
-            <strong><br><strong style="font-size: 16px;"> Section 2: </strong>
-                The Manager will send Section 2 to the employee ahead of the scheduled performance evaluation meeting. The employee will complete this section on their own and hold onto this until their scheduled performance evaluation meeting with their manager.
-            </strong><br>
-
-            <strong><br><strong style="font-size: 16px;"> Section 3: </strong>
-                The Manager will schedule the performance evaluation meeting with the employee. The Manager and the employee will complete section 3 together by providing any additional commitments, goals, and feedback.
-            </strong><br>
-
-            <strong><br><strong style="font-size: 16px;"> Section 4: </strong>
-                Once the Manager and the employee have met and completed the performance evaluation process, they will both sign the completed form
-            </strong><br>
-
-            <strong><br><strong style="font-size: 16px;"> Section 5: </strong>
-                The Manager may make a recommendation for salary changes. The form will then be sent to Human Resources for final approval and a review of the salary recommendation will be sent to the Director. The performance evaluation then becomes part of the employee’s personnel file.
-            </strong><br>
-
-            <strong><br><strong style="font-size: 16px;"> Tips: </strong>
-                The employee should have the Manager’s undivided attention during the performance evaluation meeting. The Manager should articulate the employee’s strengths and, if there are any improvement opportunities, the Manager should propose suggestions on how the employee can improve. During the dialog with the employee, the Manager will review the employee’s feedback on the form they filled out and that of the Manager. <br>
-                This performance evaluation discussion is intended to be a constructive exchange relative to the individual's past performance, improvement opportunities, and future expectations. It offers a chance for the employee to improve in areas that are needed. The dialogue should be a two-way conversation between the employee and the Manager.
-
-            </strong><br>
         </div>
 
     </div>
@@ -84,595 +58,602 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
 
         <!-- Section1 Start -->
         <?php if ($sectionsdata['section1']['status'] == 'completed') { ?>
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse">
-                    <tbody>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;"><br><br>
-                                <strong style="font-size: 14px;">Manager Section 1: Employee Year in Review Evaluation
-                                </strong>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee Name</strong>
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Job Title</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['empName'] ? $sectionsdata['section1']['data']['empName'] : ''; ?>
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-
-                                                <?php echo $sectionsdata['section1']['data']['empJobTitle'] ? $sectionsdata['section1']['data']['empJobTitle'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Department</strong>
-
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Manager</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['empDepartment'] ? $sectionsdata['section1']['data']['empDepartment'] : ''; ?>
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['empManager'] ? $sectionsdata['section1']['data']['empManager'] : ''; ?>
-
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Hire Date with DeFOUW Automotive</strong>
-
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Start Date in Current Position</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['empHireDate'] ? $sectionsdata['section1']['data']['empHireDate'] : ''; ?>
-
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['empStartDate'] ? $sectionsdata['section1']['data']['empStartDate'] : ''; ?>
-
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Review Period Start/strong>
-
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong> Review Period End</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['reviewPeriodStart'] ? $sectionsdata['section1']['data']['reviewPeriodStart'] : ''; ?>
-                                            </td>
-                                            <td width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <?php echo $sectionsdata['section1']['data']['reviewPeriodEnd'] ? $sectionsdata['section1']['data']['reviewPeriodEnd'] : ''; ?>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Rate the employee in each area below. Comments are required for each section. </strong><br>
-                                <strong style="font-size: 14px;"> POSITION KNOWLEDGE: </strong> To what level is this employee knowledgeable of the job duties of the position to include methods, procedures, standard practices, and techniques? This may have been acquired through formal training, education and/or experience.
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Knowledge is below the minimum requirements of the position. Improvement is mandatory. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Knowledge is sufficient to perform the requirements of the position.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is exceptionally well informed and competent in all aspects of the position..</strong>
-                                            </td>
-
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeBelow'] == '1' ? 'checked' : '' ?> disabled>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeSufficient'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeExceptionally'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong> <br>
-                                                <?php echo $sectionsdata['section1']['data']['knowledgeComment'] ? $sectionsdata['section1']['data']['knowledgeComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s position knowledge be improved?. <?= $formInputData['short_textbox_9'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quantity of work produced.
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Output is below that required of the position. Improvement is mandatory. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Output meets that required of the position.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Output consistently exceeds that required of the position.</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputBelow'] == '1' ? 'checked' : '' ?> disabled>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputMeets'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputConsistently'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong> <br>
-                                                <?php echo $sectionsdata['section1']['data']['outputComment'] ? $sectionsdata['section1']['data']['outputComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_11'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quality of work produced in accordance with requirements for accuracy, completeness, and attention to detail.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Quality of work is frequently below position requirements. Improvement is mandatory. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Quality of work meets position requirements.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Quality of work consistently exceeds position requirements.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityMeets'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityConsistently'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong>
-                                                <?php echo $sectionsdata['section1']['data']['qualityComment'] ? $sectionsdata['section1']['data']['qualityComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_13'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> INTERPERSONAL RELATIONS: </strong> o what level does this individual demonstrate cooperative behavior and contribute to a supportive work environment?.
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is frequently non-supportive. Improvement is mandatory. </strong>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately contributes to supportive environment.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee consistently contributes to supportive work environment.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequately'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistently'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong>
-                                                <?php echo $sectionsdata['section1']['data']['employeeComment'] ? $sectionsdata['section1']['data']['employeeComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Level of mission focus is often below the required/acceptable standard. Improvement is mandatory. </strong>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately contributes to high quality mission.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee consistently demonstrates exceptional commitment to the mission.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionBelow'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionHigh'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionExceptional'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong> <br>
-                                                <?php echo $sectionsdata['section1']['data']['missionComment'] ? $sectionsdata['section1']['data']['missionComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s customer service skills/delivery be improved?. <?= $formInputData['short_textbox_17'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> DEPENDABILITY: </strong> To what level is the employee dependable; How often does the employee show up to work on time and complete their scheduled shifts? Can the employee be counted on to complete tasks and meet deadlines consistently?
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is late, absent, misses deadlines. Improvement is mandatory. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately attends work, rarely misses or late, meets deadlines.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee consistently on time, at work and completes deadlines ahead of schedule.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeLate'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAttends'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOnTime'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong><br>
-                                                <?php echo $sectionsdata['section1']['data']['employeeTimeComment'] ? $sectionsdata['section1']['data']['employeeTimeComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s dependability be improved?. <?= $formInputData['short_textbox_19'] ? $formInputData['short_textbox_19'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> ADHERENCE TO POLICY & PROCEDURE: </strong> To what level does the employee adhere to standard operating policies and procedures?
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is frequently coached on standard operating policies and procedures. Improvement is mandatory. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately adheres to standard operating policies and procedures with few reminders.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is consistently exceptional in following standard operating policies and procedures..</strong>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAdheres'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistentlyExceptional'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong><br>
-                                                <?php echo $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] ? $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">How may the employee’s adherence to policy and procedure be improved?. <?= $formInputData['short_textbox_21'] ? $formInputData['short_textbox_21'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_22'] ? $formInputData['short_textbox_22'] : '' ?>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
-
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately meets standard as outlined above.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is consistently exceptional in meeting performance standard.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandardAbove'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandard'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong>
-                                                <?php echo $sectionsdata['section1']['data']['employeeOutlinedComment'] ? $sectionsdata['section1']['data']['employeeOutlinedComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <section class="pdf-cover-page">
-                <table class="table table-border-collapse" style="margin-top: -10px;">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
-                                <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_25'] ? $formInputData['short_textbox_25'] : '' ?>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <table class="table" style="border: 1px solid;   border-collapse: collapse;">
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee adequately meets standard as outlined above.</strong>
-                                            </td>
-
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <strong> Employee is consistently exceptional in meeting performance standard.</strong>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedStandard'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                            <td style="border: 1px solid; font-size: 14px;">
-                                                <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedExceptional'] == '1' ? 'checked' : '' ?> disabled>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Comment:</strong><br>
-                                                <?php echo $sectionsdata['section1']['data']['employeePerformanceComment'] ? $sectionsdata['section1']['data']['employeePerformanceComment'] : ''; ?>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>How may employee’s performance in meeting this standard be improved?</strong> <?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
-                                                <strong>Managers Additional Comments for the Review Period: </strong><br><br>
-                                                <?php echo $sectionsdata['section1']['data']['managersAdditionalComments'] ? $sectionsdata['section1']['data']['managersAdditionalComments'] : ''; ?>
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+
+            <div id="div_section1" style="display: none;">
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse">
+                        <tbody>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;"><br><br>
+                                    <strong style="font-size: 14px;">Manager Section 1: Employee Year in Review Evaluation
+                                    </strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee Name</strong>
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Job Title</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['empName'] ? $sectionsdata['section1']['data']['empName'] : ''; ?>
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+
+                                                    <?php echo $sectionsdata['section1']['data']['empJobTitle'] ? $sectionsdata['section1']['data']['empJobTitle'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Department</strong>
+
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Manager</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['empDepartment'] ? $sectionsdata['section1']['data']['empDepartment'] : ''; ?>
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['empManager'] ? $sectionsdata['section1']['data']['empManager'] : ''; ?>
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Hire Date with DeFOUW Automotive</strong>
+
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Start Date in Current Position</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['empHireDate'] ? $sectionsdata['section1']['data']['empHireDate'] : ''; ?>
+
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['empStartDate'] ? $sectionsdata['section1']['data']['empStartDate'] : ''; ?>
+
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Review Period Start/strong>
+
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Review Period End</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['reviewPeriodStart'] ? $sectionsdata['section1']['data']['reviewPeriodStart'] : ''; ?>
+                                                </td>
+                                                <td width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <?php echo $sectionsdata['section1']['data']['reviewPeriodEnd'] ? $sectionsdata['section1']['data']['reviewPeriodEnd'] : ''; ?>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Rate the employee in each area below. Comments are required for each section. </strong><br>
+                                    <strong style="font-size: 14px;"> POSITION KNOWLEDGE: </strong> To what level is this employee knowledgeable of the job duties of the position to include methods, procedures, standard practices, and techniques? This may have been acquired through formal training, education and/or experience.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Knowledge is below the minimum requirements of the position. Improvement is mandatory. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Knowledge is sufficient to perform the requirements of the position.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is exceptionally well informed and competent in all aspects of the position..</strong>
+                                                </td>
+
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeBelow' ? 'checked' : '' ?> disabled>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeSufficient' ? 'checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeSufficient' ? 'checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong> <br>
+                                                    <?php echo $sectionsdata['section1']['data']['knowledgeComment'] ? $sectionsdata['section1']['data']['knowledgeComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s position knowledge be improved?. <?= $formInputData['short_textbox_9'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quantity of work produced.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Output is below that required of the position. Improvement is mandatory. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Output meets that required of the position.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Output consistently exceeds that required of the position.</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="outputBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputBelow' ? 'checked' : '' ?> disabled>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="outputBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputMeets' ? 'checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="outputBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputConsistently' ? 'checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong> <br>
+                                                    <?php echo $sectionsdata['section1']['data']['outputComment'] ? $sectionsdata['section1']['data']['outputComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_11'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> QUANTITY OF WORK: </strong> Evaluate the quality of work produced in accordance with requirements for accuracy, completeness, and attention to detail.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Quality of work is frequently below position requirements. Improvement is mandatory. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Quality of work meets position requirements.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Quality of work consistently exceeds position requirements.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityBelow' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityMeets' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityConsistently' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong>
+                                                    <?php echo $sectionsdata['section1']['data']['qualityComment'] ? $sectionsdata['section1']['data']['qualityComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s quantity of work be improved?. <?= $formInputData['short_textbox_13'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> INTERPERSONAL RELATIONS: </strong> o what level does this individual demonstrate cooperative behavior and contribute to a supportive work environment?.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is frequently non-supportive. Improvement is mandatory. </strong>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately contributes to supportive environment.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee consistently contributes to supportive work environment.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequently" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeFrequently' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequently" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeAdequately' ? ' checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequently" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeConsistently' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong>
+                                                    <?php echo $sectionsdata['section1']['data']['employeeComment'] ? $sectionsdata['section1']['data']['employeeComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s interpersonal relations be improved?. <?= $formInputData['short_textbox_15'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> Mission: </strong> To what level does the employees work support the Mission of the organization; To what level does the employee make themselves available to respond to needs of others both internally and externally?
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Level of mission focus is often below the required/acceptable standard. Improvement is mandatory. </strong>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately contributes to high quality mission.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee consistently demonstrates exceptional commitment to the mission.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="missionBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionBelow' ? ' checked ' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="missionBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionHigh' ? ' checked ' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="missionBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionExceptional' ? ' checked ' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong> <br>
+                                                    <?php echo $sectionsdata['section1']['data']['missionComment'] ? $sectionsdata['section1']['data']['missionComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s customer service skills/delivery be improved?. <?= $formInputData['short_textbox_17'] ? $formInputData['short_textbox_9'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> DEPENDABILITY: </strong> To what level is the employee dependable; How often does the employee show up to work on time and complete their scheduled shifts? Can the employee be counted on to complete tasks and meet deadlines consistently?
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is late, absent, misses deadlines. Improvement is mandatory. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately attends work, rarely misses or late, meets deadlines.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee consistently on time, at work and completes deadlines ahead of schedule.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeLate" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeLate' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeLate" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeAdequatelyAttends' ? ' checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeLate" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeOnTime' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong><br>
+                                                    <?php echo $sectionsdata['section1']['data']['employeeTimeComment'] ? $sectionsdata['section1']['data']['employeeTimeComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s dependability be improved?. <?= $formInputData['short_textbox_19'] ? $formInputData['short_textbox_19'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> ADHERENCE TO POLICY & PROCEDURE: </strong> To what level does the employee adhere to standard operating policies and procedures?
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is frequently coached on standard operating policies and procedures. Improvement is mandatory. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately adheres to standard operating policies and procedures with few reminders.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is consistently exceptional in following standard operating policies and procedures..</strong>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeFrequentlyCoached' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeAdequatelyAdheres' ? ' checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeConsistentlyExceptional' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong><br>
+                                                    <?php echo $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] ? $sectionsdata['section1']['data']['employeeFrequentlyCoachedComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">How may the employee’s adherence to policy and procedure be improved?. <?= $formInputData['short_textbox_21'] ? $formInputData['short_textbox_21'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_22'] ? $formInputData['short_textbox_22'] : '' ?>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
+
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately meets standard as outlined above.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is consistently exceptional in meeting performance standard.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedAbove' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedStandardAbove' ? ' checked' : '' ?> disabled>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedStandard' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong>
+                                                    <?php echo $sectionsdata['section1']['data']['employeeOutlinedComment'] ? $sectionsdata['section1']['data']['employeeOutlinedComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="pdf-cover-page">
+                    <table class="table table-border-collapse" style="margin-top: -10px;">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;"> How may employee’s performance in meeting this standard be improved? <?= $formInputData['short_textbox_24'] ? $formInputData['short_textbox_24'] : '' ?> </strong><br>
+                                    <strong style="font-size: 14px;"> OTHER: </strong> <?= $formInputData['short_textbox_25'] ? $formInputData['short_textbox_25'] : '' ?>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <table class="table" style="border: 1px solid;   border-collapse: collapse;">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee frequently falls below acceptable standard as outlined above. </strong>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee adequately meets standard as outlined above.</strong>
+                                                </td>
+
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <strong> Employee is consistently exceptional in meeting performance standard.</strong>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedAbove' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedStandard' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                                <td style="border: 1px solid; font-size: 14px;">
+                                                    <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedExceptional' ? ' checked' : '' ?> disabled>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Comment:</strong><br>
+                                                    <?php echo $sectionsdata['section1']['data']['employeePerformanceComment'] ? $sectionsdata['section1']['data']['employeePerformanceComment'] : ''; ?>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>How may employee’s performance in meeting this standard be improved?</strong> <?= $formInputData['short_textbox_27'] ? $formInputData['short_textbox_27'] : '' ?>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="3" width="50%" style="border: 1px solid; font-size: 14px;">
+                                                    <strong>Managers Additional Comments for the Review Period: </strong><br><br>
+                                                    <?php echo $sectionsdata['section1']['data']['managersAdditionalComments'] ? $sectionsdata['section1']['data']['managersAdditionalComments'] : ''; ?>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+            </div>
+
+
         <?php } ?>
         <!-- -- Section1 End --  -->
 
@@ -987,7 +968,7 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
                         </td>
                     </tr>
 
-                    <tr>
+                    <tr id="fbManagerComment" style="display: none;">
                         <td width="50%" style="border-top:0px;">
                             <strong style="font-size: 14px;">
                                 Additional Comments, Feedback - Managers Comments: <br>
@@ -1013,7 +994,6 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
         </section>
         <?php //} 
         ?>
-
 
         <!-- Section 4 Start -->
         <?php if ($sectionsdata['section2']['status'] == 'completed' && $sectionsdata['section3']['status'] == 'completed') {
@@ -1112,59 +1092,60 @@ $sectionsdata = employeePerformanceDocSectionsData($document['sid']);
         <!-- section 4 End -->
         <!-- Section 5 Start -->
         <?php if ($sectionsdata['section5']['status'] == 'completed') { ?>
-            <section class="pdf-cover-page">
+            <div id="divSection5" style="display: none;">
+                <section class="pdf-cover-page">
 
-                <table class="table table-border-collapse">
-                    <tbody>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">
-                                    Section 5: Salary Recommendation </strong>
-                            </td>
-                        </tr>
+                    <table class="table table-border-collapse">
+                        <tbody>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">
+                                        Section 5: Salary Recommendation </strong>
+                                </td>
+                            </tr>
 
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
-                                <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5currentRate'] ? $sectionsdata['section5']['data']['section5currentRate'] : ''; ?>" data-type='text' autocomplete="off" readonly />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
-                                <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5recommendedIncrease'] ? $sectionsdata['section5']['data']['section5recommendedIncrease'] : ''; ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" readonly />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Approved Amount:</strong>
-                                <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedAmount'] ? $sectionsdata['section5']['data']['section5approvedAmount'] : ''; ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" readonly />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Approved By:</strong>
-                                <img style="max-height: 75px" alt="" class="authorized_signature_img_1" src="<?php echo $sectionsdata['section5']['data']['section5approvedBySignature'] ? $sectionsdata['section5']['data']['section5approvedBySignature'] : ''; ?>">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Approved Date:</strong>
-                                <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" readonly />
-                            </td>
-                        </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Employees Current Pay Rate: </strong>
+                                    <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5currentRate'] ? $sectionsdata['section5']['data']['section5currentRate'] : ''; ?>" data-type='text' autocomplete="off" readonly />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Recommended Pay Increase: </strong>
+                                    <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5recommendedIncrease'] ? $sectionsdata['section5']['data']['section5recommendedIncrease'] : ''; ?>" name="short_textbox_55" id="short_textbox_55_id" data-type='text' autocomplete="off" readonly />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Approved Amount:</strong>
+                                    <input class="invoice-fields short_textbox  " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedAmount'] ? $sectionsdata['section5']['data']['section5approvedAmount'] : ''; ?>" name="short_textbox_56" id="short_textbox_56_id" data-type='text' autocomplete="off" readonly />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Approved By:</strong>
+                                    <img style="max-height: 75px" alt="" class="authorized_signature_img_1" src="<?php echo $sectionsdata['section5']['data']['section5approvedBySignature'] ? $sectionsdata['section5']['data']['section5approvedBySignature'] : ''; ?>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Approved Date:</strong>
+                                    <input class="invoice-fields short_textbox " type="text" value="<?php echo $sectionsdata['section5']['data']['section5approvedBySignatureDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5approvedBySignatureDate'], DB_DATE_WITH_TIME, SITE_DATE) : ''; ?>" name="short_textbox_58" id="short_textbox_58_id" data-type='text' autocomplete="off" readonly />
+                                </td>
+                            </tr>
 
-                        <tr>
-                            <td width="50%" style="border-top:0px;">
-                                <strong style="font-size: 14px;">Effective Date of Increase:</strong>
-                                <input class="invoice-fields short_textbox" type="text" value="<?php echo $sectionsdata['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" readonly />
-                            </td>
-                        </tr>
+                            <tr>
+                                <td width="50%" style="border-top:0px;">
+                                    <strong style="font-size: 14px;">Effective Date of Increase:</strong>
+                                    <input class="invoice-fields short_textbox" type="text" value="<?php echo $sectionsdata['section5']['data']['section5IncreaseEffectiveDate'] ? formatDateToDB($sectionsdata['section5']['data']['section5IncreaseEffectiveDate'], DB_DATE, SITE_DATE) : ''; ?>" name="short_textbox_59" id="short_textbox_59_id" data-type='text' autocomplete="off" readonly />
+                                </td>
+                            </tr>
 
-                    </tbody>
-                </table>
-            </section>
-
+                        </tbody>
+                    </table>
+                </section>
+            </div>
         <?php } ?>
         <!-- Section 5 Edn -->
 

@@ -1,5 +1,4 @@
 <html>
-
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
@@ -138,37 +137,15 @@
                 <tbody>
                     <tr>
                         <td>
-                            <strong style="font-size: 20px;">Eemployee Performance Evaluation </strong><br><br>
-                            <strong style="font-size: 10px;"> How to complete the Employee Performance Evaluation Process:
-                                <br><strong style="font-size: 14px;"> Section 1: </strong> This section will be completed by the immediate Manager of the employee. The Manager will complete this section ahead of the scheduled performance evaluation meeting with the employee.
-                                <br> <em style="color: #ea0000;"> The manager must send their completed portion of the performance evaluation to human resources for review PRIOR to the meeting with the employee. Once HR has reviewed the Performance Evaluation and has sent this back to you, you can then meet with the employee.</em></strong><br>
-
-                            <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Section 2: </strong>
-                                The Manager will send Section 2 to the employee ahead of the scheduled performance evaluation meeting. The employee will complete this section on their own and hold onto this until their scheduled performance evaluation meeting with their manager.
-                            </strong><br>
-
-                            <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Section 3: </strong>
-                                The Manager will schedule the performance evaluation meeting with the employee. The Manager and the employee will complete section 3 together by providing any additional commitments, goals, and feedback.
-                            </strong><br>
-
-                            <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Section 4: </strong>
-                                Once the Manager and the employee have met and completed the performance evaluation process, they will both sign the completed form
-                            </strong><br>
-
-                            <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Section 5: </strong>
-                                The Manager may make a recommendation for salary changes. The form will then be sent to Human Resources for final approval and a review of the salary recommendation will be sent to the Director. The performance evaluation then becomes part of the employee’s personnel file.
-                            </strong><br>
-
-                            <strong style="font-size: 10px;"><br><strong style="font-size: 14px;"> Tips: </strong>
-                                The employee should have the Manager’s undivided attention during the performance evaluation meeting. The Manager should articulate the employee’s strengths and, if there are any improvement opportunities, the Manager should propose suggestions on how the employee can improve. During the dialog with the employee, the Manager will review the employee’s feedback on the form they filled out and that of the Manager. <br>
-                                This performance evaluation discussion is intended to be a constructive exchange relative to the individual's past performance, improvement opportunities, and future expectations. It offers a chance for the employee to improve in areas that are needed. The dialogue should be a two-way conversation between the employee and the Manager.
-
-                            </strong><br>
+                            <strong style="font-size: 20px;">Eemployee Performance Evaluation<br><br>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </section>
+
+
+        <?php if($panel!='blue'){?>
 
         <section class="pdf-cover-page">
             <table class="table table-border-collapse">
@@ -289,14 +266,14 @@
                                     </tr>
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeBelow'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeBelow' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeSufficient'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value=""   <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeSufficient' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['knowledgeExceptionally'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="knowledgeBelow" id="checkbox_0_id" value="" <?= $sectionsdata['section1']['data']['knowledgeBelow'] == 'knowledgeExceptionally' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
                                     <tr>
@@ -341,14 +318,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputBelow'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="outputBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputBelow' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputMeets'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="outputBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputMeets' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['outputConsistently'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="outputBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['outputBelow'] == 'outputConsistently' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -398,14 +375,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityBelow' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityMeets'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityMeets' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityConsistently'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="qualityBelow" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['qualityBelow'] == 'qualityConsistently' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -451,14 +428,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequently'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequently" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeFrequently' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequately'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequently" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeAdequately' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistently'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequently" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeFrequently'] == 'employeeConsistently' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
                                     <tr>
@@ -503,14 +480,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionBelow'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="missionBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionBelow' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionHigh'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="missionBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionHigh' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['missionExceptional'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="missionBelow" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['missionBelow'] == 'missionExceptional' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -557,14 +534,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeLate'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeLate" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeLate' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAttends'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeLate" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeAdequatelyAttends' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOnTime'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeLate" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeLate'] == 'employeeOnTime' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -611,14 +588,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeFrequentlyCoached' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeAdequatelyAdheres'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeAdequatelyAdheres' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeConsistentlyExceptional'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeFrequentlyCoached" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeFrequentlyCoached'] == 'employeeConsistentlyExceptional' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -664,13 +641,13 @@
                                     </tr>
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedAbove' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandardAbove'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedStandardAbove' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeeOutlinedStandard'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeeOutlinedAbove" id="checkbox_0_id" value=""  <?= $sectionsdata['section1']['data']['employeeOutlinedAbove'] == 'employeeOutlinedStandard' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
                                     <tr>
@@ -715,14 +692,14 @@
 
                                     <tr>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedAbove' ? 'checked' : '' ?>>
                                         </td>
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedStandard'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedStandard' ? 'checked' : '' ?>>
                                         </td>
 
                                         <td style="border: 1px solid; font-size: 14px;">
-                                            <input type="checkbox" name="checkbox_0" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedExceptional'] == '1' ? 'checked' : '' ?>>
+                                            <input type="radio" name="employeePerformanceOutlinedAbove" id="checkbox_0_id" value="" class="counseling user_checkbox" data-type='checkbox' <?= $sectionsdata['section1']['data']['employeePerformanceOutlinedAbove'] == 'employeePerformanceOutlinedExceptional' ? 'checked' : '' ?>>
                                         </td>
                                     </tr>
 
@@ -754,6 +731,7 @@
                 </tbody>
             </table>
         </section>
+<?php }?>
 
         <section class="pdf-cover-page">
             <table class="table table-border-collapse">
@@ -1046,6 +1024,8 @@
                                 Section 3: The Year in Review </strong><br>
                         </td>
                     </tr>
+
+                    <?php if($panel!='blue'){?>
                     <tr>
                         <td width="50%" style="border-top:0px;">
                             <strong style="font-size: 14px;">
@@ -1054,6 +1034,7 @@
                             </strong>
                         </td>
                     </tr>
+                    <?php }?>
 
                     <tr>
                         <td width="50%" style="border-top:0px;">
@@ -1141,7 +1122,7 @@
                 </tbody>
             </table>
         </section>
-
+        <?php if($panel!='blue'){?>
         <section class="pdf-cover-page">
 
             <table class="table table-border-collapse">
@@ -1197,6 +1178,7 @@
                 </tbody>
             </table>
         </section>
+        <?php }?>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
