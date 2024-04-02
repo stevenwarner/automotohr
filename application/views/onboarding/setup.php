@@ -3834,3 +3834,33 @@ if ($user_type == 'applicant') {
     </div>
 </div>
 <!-- Preview Latest Document Modal Modal End -->
+
+<script>
+    $(function() {
+        $(".jsRevokeDocumentFromOnboarding").click(function(event) {
+            //
+            event.preventDefault();
+            let formValues = $(this).data();
+            alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to revoke this document?',
+                function() {
+                    $.ajax({
+                        'url': '<?php echo current_url(); ?>',
+                        'type': 'POST',
+                        'data': {
+                            'perform_action': 'remove_document',
+                            'document_sid': formValues.id,
+                            'document_type': formValues.type
+                        },
+                        success: function(data) {
+                            window.location.reload();
+                        }
+                    });
+                },
+                function() {
+                    alertify.error('Canceled!');
+                });
+        })
+    })
+</script>

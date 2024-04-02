@@ -104,13 +104,17 @@
                                                                   <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
 
                                                                       <?php if (in_array($document['sid'], $assigned_sids)) { ?>
-                                                                          <!-- revoke here  -->
-                                                                          <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                              <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
-                                                                              <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
-                                                                              <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                          </form>
-                                                                          <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                          <?php if ($this->uri->segment(1) === "onboarding") : ?>
+                                                                              <button class="btn btn-danger btn-block btn-sm jsRevokeDocumentFromOnboarding" data-id="<?= $document['sid'] ?>" data-type="<?= $document['document_type'] ?>" data-action="remove_document">Revoke</button>
+                                                                          <?php else : ?>
+                                                                              <!-- revoke here  -->
+                                                                              <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                  <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
+                                                                                  <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
+                                                                                  <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                              </form>
+                                                                              <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                          <?php endif; ?>
                                                                       <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                           <button class="btn blue-button btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Completed and Reassign</button>
                                                                       <?php } else { // re-assign here 
@@ -228,65 +232,65 @@
 
 
       function func_reassign_document_group(group_sid, user_type, user_sid, group_name) {
-        
-        var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
-        alertify.confirm(
-            'Confirm Document Group Reassign?',
-            'Are you sure you want to reassign <strong><i>' + group_name + '</i></strong> group to <strong><i>' + user_name + '</i></strong> ?',
-            function() {
-                var myurl = "<?php echo base_url('hr_documents_management/ajax_reassign_document_group'); ?>" + '/' + group_sid + "/" + user_type + "/" + user_sid;
 
-                $.ajax({
-                    type: "GET",
-                    url: myurl,
-                    async: false,
-                    success: function(data) {
-                        alertify.alert('SUCCESS!', "Group Reassigned Successfully", function() {
-                          window.location.reload();
-                        });
-                    },
-                    error: function(data) {
+          var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
+          alertify.confirm(
+              'Confirm Document Group Reassign?',
+              'Are you sure you want to reassign <strong><i>' + group_name + '</i></strong> group to <strong><i>' + user_name + '</i></strong> ?',
+              function() {
+                  var myurl = "<?php echo base_url('hr_documents_management/ajax_reassign_document_group'); ?>" + '/' + group_sid + "/" + user_type + "/" + user_sid;
 
-                    }
-                });
-            },
-            function() {
-                alertify.alert("Warning", 'Cancelled!');
-            }).set('labels', {
-            ok: 'Yes',
-            cancel: 'No'
-        });
-    }
+                  $.ajax({
+                      type: "GET",
+                      url: myurl,
+                      async: false,
+                      success: function(data) {
+                          alertify.alert('SUCCESS!', "Group Reassigned Successfully", function() {
+                              window.location.reload();
+                          });
+                      },
+                      error: function(data) {
+
+                      }
+                  });
+              },
+              function() {
+                  alertify.alert("Warning", 'Cancelled!');
+              }).set('labels', {
+              ok: 'Yes',
+              cancel: 'No'
+          });
+      }
 
 
 
-    function func_revoke_document_group(group_sid, user_type, user_sid, group_name) {
-        var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
-        alertify.confirm(
-            'Confirm Document Group Revoke?',
-            'Are you sure you want to revoke <strong><i>' + group_name + '</i></strong> group ?',
-            function() {
-                var myurl = "<?php echo base_url('hr_documents_management/ajax_revoke_document_group'); ?>" + '/' + group_sid + "/" + user_type + "/" + user_sid;
+      function func_revoke_document_group(group_sid, user_type, user_sid, group_name) {
+          var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
+          alertify.confirm(
+              'Confirm Document Group Revoke?',
+              'Are you sure you want to revoke <strong><i>' + group_name + '</i></strong> group ?',
+              function() {
+                  var myurl = "<?php echo base_url('hr_documents_management/ajax_revoke_document_group'); ?>" + '/' + group_sid + "/" + user_type + "/" + user_sid;
 
-                $.ajax({
-                    type: "GET",
-                    url: myurl,
-                    async: false,
-                    success: function(data) {
-                        alertify.alert('SUCCESS!', "Group Revoked Successfully", function() {
-                            window.location.reload();
-                        });
-                    },
-                    error: function(data) {
+                  $.ajax({
+                      type: "GET",
+                      url: myurl,
+                      async: false,
+                      success: function(data) {
+                          alertify.alert('SUCCESS!', "Group Revoked Successfully", function() {
+                              window.location.reload();
+                          });
+                      },
+                      error: function(data) {
 
-                    }
-                });
-            },
-            function() {
-                alertify.alert("Warning", 'Cancelled!');
-            }).set('labels', {
-            ok: 'Yes',
-            cancel: 'No'
-        });
-    }
+                      }
+                  });
+              },
+              function() {
+                  alertify.alert("Warning", 'Cancelled!');
+              }).set('labels', {
+              ok: 'Yes',
+              cancel: 'No'
+          });
+      }
   </script>
