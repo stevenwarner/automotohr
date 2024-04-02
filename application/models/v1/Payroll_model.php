@@ -5197,7 +5197,7 @@ class Payroll_model extends CI_Model
      * @param int    $employeeId
      * @param string $gustoUUID
      */
-    public function handleRateUpdate(
+    public function signEmployeeForm(
         int $employeeId,
         string $gustoUUID
     ): array {

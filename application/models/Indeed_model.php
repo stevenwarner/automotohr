@@ -540,6 +540,7 @@ class Indeed_model extends CI_Model
         string $status,
         int $applicantListId
     ) {
+        return ["success" => true];
         // check if an applicant has Indeed ATS Id
         if (!$this->db
             ->where("sid", $applicantListId)
