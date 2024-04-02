@@ -44,10 +44,7 @@
 
                               <?php if ($action_btn_flag == true) { ?>
                                   <?php if (in_array($active_group['sid'], $assigned_groups)) { ?>
-                                      <!-- <button
-                                                                                        class="btn btn-success btn-xs pull-right">
-                                                                                        Document Group Assigned
-                                                                                    </button> -->
+                                   
                                       <?php $group_status = get_user_assign_group_status($active_group['sid'], $user_type, $user_sid); ?>
 
                                       <?php if ($group_status == 1) { ?>
@@ -105,12 +102,7 @@
 
                                                                       <?php if (in_array($document['sid'], $assigned_sids)) { ?>
                                                                           <!-- revoke here  -->
-                                                                          <form id="form_remove_document_<?php echo $document['document_type']; ?>_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                              <input type="hidden" id="perform_action" name="perform_action" value="remove_document" />
-                                                                              <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
-                                                                              <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                          </form>
-                                                                          <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+                                                                          <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm" type="button">Revoke</button>
                                                                       <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                           <button class="btn blue-button btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Completed and Reassign</button>
                                                                       <?php } else { // re-assign here 

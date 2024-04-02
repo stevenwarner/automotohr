@@ -2984,6 +2984,7 @@ if ($user_type == 'applicant') {
                             $('#revoke_generated_doc_' + document_sid).hide();
                             $('#assign_generated_doc_' + document_sid).show();
                         }
+                        window.location.reload();
                     }
                 });
             },
