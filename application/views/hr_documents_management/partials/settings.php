@@ -16,8 +16,9 @@ $id_checkbox = isset($id_checkbox) ? $id_checkbox : 'setting_is_confidential';
             </div>
 
             <div class="col-sm-12 confidentialSelectedEmployeesdiv" style="margin-top: 20px;" id="confidentialSelectedEmployeesdiv">
-            <hr> <p class="text-danger"><strong><em>Selected employees will have visibility to this document.<em></strong></p>    
-            <label>Employee(s) 
+                <hr>
+                <p class="text-danger"><strong><em>Selected employees will have visibility to this document.</em></strong></p>
+                <label>Employee(s)
                 </label>
 
                 <?php
