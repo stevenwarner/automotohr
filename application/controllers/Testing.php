@@ -616,4 +616,23 @@ class Testing extends CI_Controller
 
         return $fileName;
     }
+
+    public function addNewEmployeesIntoCompany ($companyId) {
+        // Load the fake employee library
+        $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
+        //
+        $employees = 
+            $this
+            ->fakeEmployees
+            ->init(5);
+        //
+        foreach($employees as $employee){
+            $employee['parent_sid'] = $companyId;
+            $employee['active'] = 1;
+            //
+            $this->db->insert('users', $employee);
+        }
+        //
+        _e("employee add successfully");
+    }    
 }

@@ -90,7 +90,7 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         $response = addAdminToGusto($adminArray, $companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {
@@ -145,7 +145,7 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         $response = getSignatoriesFromGusto($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -209,7 +209,7 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         $response = addSignatoryToGusto($signatoryArray, $companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {
@@ -285,7 +285,7 @@ class Gusto_payroll_model extends CI_Model
         //
 
         $response = updateSignatoryToGusto($signatoryArray, $signatoryUUID, $companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
 
         //
@@ -345,7 +345,7 @@ class Gusto_payroll_model extends CI_Model
 
         //
         $response = deleteSignatoryToGusto($signatoryUUID, $companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         $this->db->where('sid', $signatoryId)->update('payroll_signatories', ['is_deleted' => 1]);
@@ -538,7 +538,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getSignatoriesFromGusto($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -607,7 +607,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyFederalTax($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -658,7 +658,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyIndustry($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -704,7 +704,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyTaxLiabilities($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -753,7 +753,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyPaymentConfig($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -799,7 +799,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = GetCompletedProcessedPayrolls('', $companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
@@ -852,7 +852,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getCompanyBankAccountsFromGusto($companyDetails, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         $errors = hasGustoErrors($response);
@@ -1120,7 +1120,7 @@ class Gusto_payroll_model extends CI_Model
             $employeeDetails['self_onboarding'] = false;
             //
             $response = createAnEmployeeOnGusto($employeeDetails, $companyDetails, [
-                'X-Gusto-API-Version: 2023-03-01'
+                'X-Gusto-API-Version: 2024-03-01'
             ]);
             //
             if (!isset($response['errors']) && $response) {
@@ -1198,7 +1198,7 @@ class Gusto_payroll_model extends CI_Model
             $employeeDetails['ssn'] = $employeeProfile['ssn'];
             //
             $response = updateAnEmployeeOnGusto($employeeDetails, $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-                'X-Gusto-API-Version: 2023-03-01'
+                'X-Gusto-API-Version: 2024-03-01'
             ]);
             //
             if (!isset($response['errors']) && $response) {
@@ -1240,7 +1240,7 @@ class Gusto_payroll_model extends CI_Model
             if ($employeeAddress['status']) {
                 //
                 $response = updateAnEmployeeAddressOnGusto($employeeAddress['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-                    'X-Gusto-API-Version: 2023-03-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 if (!isset($response['errors']) && $response) {
@@ -1352,7 +1352,7 @@ class Gusto_payroll_model extends CI_Model
             if ($employeeJobDetail['status']) {
                 //
                 $response = createEmployeeJobDetail($employeeJobDetail['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-                    'X-Gusto-API-Version: 2023-03-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 if (!isset($response['errors']) && $response) {
@@ -1501,7 +1501,7 @@ class Gusto_payroll_model extends CI_Model
             if ($employeeBankDetail['status']) {
                 //
                 $response = createEmployeeBankDetail($employeeBankDetail['data'], $companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-                    'X-Gusto-API-Version: 2023-03-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 if (!isset($response['errors']) && $response) {
@@ -1620,7 +1620,7 @@ class Gusto_payroll_model extends CI_Model
             if ($employeeProfile['payment_method']) {
                 //
                 $response = getOnboardingEmployeePaymentMethod($companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-                    'X-Gusto-API-Version: 2023-03-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 ]);
                 //
                 if (!isset($response['errors']) && $response) {
@@ -1711,7 +1711,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = updateOnboardingEmployeePaymentMethod($data, $companyDetails, $employeeUUID, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         $data_to_update = [];
@@ -1740,7 +1740,7 @@ class Gusto_payroll_model extends CI_Model
     {
         //
         $response = getEmployeeOnbordingStatus($companyDetails, $gustoEmployeeInfo['payroll_employee_uuid'], [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (!isset($response['errors']) && $response) {
