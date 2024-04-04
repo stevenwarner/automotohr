@@ -650,19 +650,19 @@ class Dashboard extends Public_Controller
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
-            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard', false);
+            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard', true);
             $bundleJS = bundleJs([
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
-            ], 'public/v1/js/', 'dashboard', false);
+            ], 'public/v1/js/', 'dashboard', true);
 
             // check and add payroll scripts
             if (checkIfAppIsEnabled(PAYROLL)) {
                 if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', false);
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
                 }
                 if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', false);
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', true);
                 }
 
                 // for payroll
