@@ -696,4 +696,252 @@ class Indeed_model extends CI_Model
         //
         return $result;
     }
+
+    /**
+     * add the job onto the queue
+     *
+     * @param int $jobId
+     * @param int $companyId
+     * @param string $jobApprovalStatus
+     * @param bool $byPassApprovalStatus Optional - Default is 'false'
+     * @return array
+     */
+    public function addJobToQueue(
+        int $jobId,
+        int $companyId,
+        string $jobApprovalStatus,
+        bool $byPassApprovalStatus = false
+    ): array {
+        //
+        // check if job is allowed to be added to queue
+        if (!$byPassApprovalStatus && $this->getJobApprovalStatus($companyId) && $jobApprovalStatus != 'approved') {
+            return ["errors" => [
+                "The job is not approved."
+            ]];
+        }
+        // set current date and time
+        $dateWithTime = getSystemDate();
+        // add the job to the queue
+        $this->db
+            ->insert(
+                "indeed_job_queue",
+                [
+                    "job_sid" => $jobId,
+                    "log_sid" => null,
+                    "is_processed" => 0,
+                    "is_expired" => 0,
+                    "has_errors" => 0,
+                    "processed_at" => null,
+                    "created_at" => $dateWithTime,
+                    "updated_at" => $dateWithTime,
+                ]
+            );
+        // increase the counter
+        $this->db->query("
+            UPDATE `indeed_job_queue_count`
+            SET `total_unprocessed_jobs` = `total_unprocessed_jobs` + 1
+            WHERE `sid` = 1;
+        ");
+
+        return [
+            "success" => "The job is successfully added to the queue."
+        ];
+    }
+
+    /**
+     * update the job onto the queue
+     *
+     * @param int $jobId
+     * @param int $companyId
+     * @param string $jobApprovalStatus
+     * @return array
+     */
+    public function updateJobToQueue(
+        int $jobId,
+        int $companyId,
+        string $jobApprovalStatus
+    ): array {
+        // check if job is allowed to be added to queue
+        if ($this->getJobApprovalStatus($companyId) && $jobApprovalStatus != 'approved') {
+            return ["errors" => [
+                "The job is not approved."
+            ]];
+        }
+        // set current date and time
+        $dateWithTime = getSystemDate();
+        // check if job already exists
+        if (
+            !$this->db
+                ->where("job_sid", $jobId)
+                ->count_all_results("indeed_job_queue")
+        ) {
+            // add when the job was not found
+            return $this->addJobToQueue($jobId, $companyId, $jobApprovalStatus, true);
+        }
+        // check if the job is processed
+        if ($this->db
+            ->where("is_processed", 1)
+            ->where("job_sid", $jobId)
+            ->count_all_results("indeed_job_queue")
+        ) {
+            // move the record to history
+            $this->db->query("
+                INSERT INTO `indeed_job_queue_history`
+                (`job_sid`,
+                `log_sid`,
+                `is_processed`,
+                `is_expired`,
+                `has_errors`,
+                `processed_at`,
+                `created_at`,
+                `updated_at`)
+                SELECT `job_sid`,
+                `log_sid`,
+                `is_processed`,
+                `is_expired`,
+                `has_errors`,
+                `processed_at`,
+                `created_at`,
+                `updated_at`
+                FROM
+                `indeed_job_queue`
+            ");
+            // update the record
+            $this->db
+                ->where("job_sid", $jobId)
+                ->update(
+                    "indeed_job_queue",
+                    [
+                        "log_sid" => null,
+                        "is_processed" => 0,
+                        "is_expired" => 0,
+                        "has_errors" => 0,
+                        "processed_at" => null,
+                        "updated_at" => $dateWithTime,
+                    ]
+                );
+            // manage the counter
+            $this->db->query("
+                UPDATE `indeed_job_queue_count`
+                SET `total_unprocessed_jobs` = `total_unprocessed_jobs` + 1
+                WHERE `sid` = 1;
+            ");
+            $this->db->query("
+                UPDATE `indeed_job_queue_count`
+                SET `total_processed_jobs` = `total_processed_jobs` - 1
+                WHERE `sid` = 1;
+            ");
+            //
+            return [
+                "success" => "The job is successfully updated to the queue."
+            ];
+        }
+        //
+        return [
+            "success" => "The job was already ready to be processed."
+        ];
+    }
+
+    /**
+     * expires the job in queue
+     *
+     * @param int $jobId
+     * @return array
+     */
+    public function expireJobToQueue(
+        int $jobId
+    ): array {
+        // check if job already exists
+        if (
+            $this->db
+            ->where("job_sid", $jobId)
+            ->where("is_expired <>", 1)
+            ->count_all_results("indeed_job_queue")
+        ) {
+            // set update array
+            $updateArray = [];
+            $updateArray["is_expired"] = 1;
+            $updateArray["is_processed"] = 0;
+            $updateArray["processed_at"] = null;
+            //
+            $isProcessed = 0;
+            // check wether it was processed or not
+            if ($this->db
+                ->where("job_sid", $jobId)
+                ->where("is_processed", 1)
+                ->count_all_results("indeed_job_queue")
+            ) {
+                $isProcessed = 1;
+                // move the record to history
+                $this->db->query("
+                    INSERT INTO `indeed_job_queue_history`
+                    (`job_sid`,
+                    `log_sid`,
+                    `is_processed`,
+                    `is_expired`,
+                    `has_errors`,
+                    `processed_at`,
+                    `created_at`,
+                    `updated_at`)
+                    SELECT `job_sid`,
+                    `log_sid`,
+                    `is_processed`,
+                    `is_expired`,
+                    `has_errors`,
+                    `processed_at`,
+                    `created_at`,
+                    `updated_at`
+                    FROM
+                    `indeed_job_queue`
+                ");
+            }
+            // mark the job expired
+            $this->db
+                ->where("job_sid", $jobId)
+                ->update(
+                    "indeed_job_queue",
+                    $updateArray
+                );
+            // increase the expire counter
+            $this->db->query("
+                UPDATE `indeed_job_queue_count`
+                SET `total_expired_jobs` = `total_expired_jobs` + 1
+                WHERE `sid` = 1;
+            ");
+            //
+            if ($isProcessed) {
+                $this->db->query("
+                    UPDATE `indeed_job_queue_count`
+                    SET `total_processed_jobs` = `total_processed_jobs` - 1
+                    WHERE `sid` = 1;
+                ");
+                $this->db->query("
+                    UPDATE `indeed_job_queue_count`
+                    SET `total_unprocessed_jobs` = `total_unprocessed_jobs` + 1
+                    WHERE `sid` = 1;
+                ");
+            }
+            //
+            return [
+                "success" => "The job is added to be expired."
+            ];
+        }
+        return [
+            "success" => "The job was either already expired / not added yet."
+        ];
+    }
+
+    /**
+     * Get company job approval rights status
+     *
+     * @param  int $companySid
+     * @return bool
+     */
+    public function getJobApprovalStatus(int $companyId): bool
+    {
+        return $this->db
+            ->where('has_job_approval_rights', 1)
+            ->where('sid', $companyId)
+            ->count_all_results('users');
+    }
 }
