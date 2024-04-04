@@ -422,6 +422,8 @@ class Job_listings extends Public_Controller
                         if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
                             $listing_data['ppj_activation_date']                = $approval_status_change_datetime;
                         }
+                    } else {
+                        $listing_data['approval_status']                    = 'pending';
                     }
                 }
 
@@ -433,6 +435,15 @@ class Job_listings extends Public_Controller
                 }
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
+                if ($listing_data["organic_feed"] == 1) {
+                    // load the indeed model
+                    $this->load->model("Indeed_model", "indeed_model");
+                    $this->indeed_model->addJobToQueue(
+                        $jobId,
+                        $company_id,
+                        $listing_data["approval_status"]
+                    );
+                }
                 //send new created job to remarket
                 $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
 
@@ -1393,6 +1404,15 @@ class Job_listings extends Public_Controller
                     }
 
                     $this->dashboard_model->update_listing($formpost['sid'], $listing_data); //Now call dashboard_model function to insert data in DB
+                    if ($listing_data["organic_feed"] == 1) {
+                        // load the indeed model
+                        $this->load->model("Indeed_model", "indeed_model");
+                        $this->indeed_model->updateJobToQueue(
+                            $formpost['sid'],
+                            $company_id,
+                            $listing_data["approval_status"]
+                        );
+                    }
 
                     if ($formpost['listing_status']) {
                         if ($per_job_listing_charge == 1 && $data['sponsor_radio'] == 'no' && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it')) {
@@ -1821,10 +1841,21 @@ class Job_listings extends Public_Controller
                             if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
                                 $listing_data['ppj_activation_date']            = $approval_status_change_datetime;
                             }
+                        } else {
+                            $listing_data['approval_status']                    = 'pending';
                         }
                     }
 
                     $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
+                    if ($listing_data["organic_feed"] == 1) {
+                        // load the indeed model
+                        $this->load->model("Indeed_model", "indeed_model");
+                        $this->indeed_model->addJobToQueue(
+                            $jobId,
+                            $company_id,
+                            $listing_data["approval_status"]
+                        );
+                    }
                     //send new cloned job to remarket
                     $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
 
