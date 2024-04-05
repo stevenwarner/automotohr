@@ -616,4 +616,33 @@ class Testing extends CI_Controller
 
         return $fileName;
     }
+
+    public function test2()
+    {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        
+        //
+        $data['title'] = "My Course(s) | " . STORE_NAME;
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = 0;
+        $data['page'] = "my_courses";
+        $data['viewMode'] = "my";
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['type'] = "self";
+    
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('Testing')
+            ->view('main/footer');
+    }
 }
