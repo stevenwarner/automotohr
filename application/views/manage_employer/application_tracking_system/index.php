@@ -1935,7 +1935,7 @@
                 iframe_url = $(source).attr('data-fullname');
 
                 $.ajax({
-                        url: "<?= base_url("Testing/getFileBase64"); ?>",
+                        url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
                         method: "POST",
                         data: {
                             fileName: iframe_url
@@ -2032,6 +2032,9 @@
         var footer_content = '';
         var iframe_url = '';
 
+        //
+        let isPDF = false;
+
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
                 case 'doc':
@@ -2049,6 +2052,12 @@
                     //console.log('in images check');
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     break;
+
+                case 'pdf':
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
+                    break;
                 default:
                     //console.log('in google docs check');
                     //using google docs
@@ -2065,12 +2074,31 @@
             footer_content = '';
         }
 
+
+        //
+        if (isPDF) {
+            resume_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+            iframe_url = $(source).attr('data-file-name');
+            $.ajax({
+                    url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                    method: "POST",
+                    data: {
+                        fileName: iframe_url
+                    }
+                })
+                .done(function() {
+                    $(".jsCustomPreview").attr("src", "https://automotohrattachments.s3.amazonaws.com/" + iframe_url);
+                })
+        }
+
+
         $('#document_modal_body').html(modal_content);
         $('#document_modal_footer').html(footer_content);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
         $('#document_modal').on("shown.bs.modal", function() {
             if (iframe_url != '') {
+
                 $('#preview_iframe').attr('src', iframe_url);
                 //document.getElementById('preview_iframe').contentWindow.location.reload();
             }
