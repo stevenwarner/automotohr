@@ -267,7 +267,7 @@ class Company_model extends CI_Model
 
         if ($contact_name != null && $contact_name != 'all') {
             $this->db->group_start();
-            $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%' or table_one.nick_name LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%')  ");
+            $this->db->where("(replace(lower(concat(table_one.first_name,'',table_one.last_name)),' ','') LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%' or table_one.nick_name LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%')  ");
             $this->db->group_end();
         }
 
