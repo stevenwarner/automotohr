@@ -2006,7 +2006,7 @@ class Gusto_payroll_model extends CI_Model
                 // create request
                 $request = [];
                 $request['title'] = $post['title'];
-                $request['location_uuid'] = $gustoEmployeeWorkLocation;
+                // $request['location_uuid'] = $gustoEmployeeWorkLocation; // The location_uuid parameter is deprecated.
                 $request['hire_date'] = $employeeStartDate;
                 // create job on Gusto
                 $response = createEmployeeJobOnGusto(

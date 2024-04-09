@@ -1194,7 +1194,7 @@ class Payroll_model extends CI_Model
         // sync employee bank accounts
         $this->syncEmployeePaymentMethod($employeeId);
         // sync employee work locations
-        $this->syncEmployeeWorkAddresses($employeeId);
+        $this->syncEmployeeWorkAddresses($employeeId, []);
         // get employee address
         $employee = $this->getEmployeeHomeAddress($employeeId);
         //
@@ -1746,6 +1746,17 @@ class Payroll_model extends CI_Model
      */
     public function syncEmployeePaymentMethod(int $employeeId): array
     {
+        // let's check the employee
+        $gustoEmployee = $this->db
+            ->select('gusto_uuid, gusto_version')
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
+        // check and create
+        if (!$gustoEmployee) {
+            return [];
+        }
+        //
         // get employee payment method
         $paymentMethod = $this->db
             ->select('payment_method')
@@ -1930,8 +1941,9 @@ class Payroll_model extends CI_Model
      * sync employee work addresses
      *
      * @param int   $employeeId
+     * @param array   $info
      */
-    public function syncEmployeeWorkAddresses(int $employeeId): array
+    public function syncEmployeeWorkAddresses(int $employeeId, array $info): array
     {
         // get gusto employee details
         $gustoEmployee = $this
@@ -1959,6 +1971,68 @@ class Payroll_model extends CI_Model
         }
         //
         if (!$gustoResponse) {
+            //
+            if ($info) {
+                $locationUUID = $info['location_uuid'];
+                $effectiveDate = $info['start_date'];
+            } else {
+                $locations = $this->payroll_model->getCompanyLocations(
+                    $gustoEmployee['company_sid']
+                );
+                //
+                $personalDetails = $this->payroll_model->getEmployeePersonalDetailsForGusto(
+                    $employeeId
+                );
+                //
+                $locationUUID = $locations[0]['gusto_uuid'];
+                $effectiveDate = formatDateToDB(
+                    $personalDetails['start_date'],
+                    SITE_DATE,
+                    DB_DATE
+                );
+            }
+            //
+            if ($locationUUID && $effectiveDate) {
+                // make request
+                $request = [];
+                $request['location_uuid'] = $locationUUID;
+                $request['effective_date'] = $effectiveDate;
+                //                           
+                // response
+                $gustoResponse = gustoCall(
+                    'createEmployeeWorkAddress',
+                    $companyDetails,
+                    $request,
+                    'POST'
+                );
+                //
+                $errors = hasGustoErrors($gustoResponse);
+                //
+                if ($errors) {
+                    return $errors;
+                }
+                //
+                $ins = [];
+
+                $ins['employee_sid'] = $employeeId;
+                $ins['gusto_location_uuid'] = $gustoResponse['location_uuid'];
+                $ins['gusto_version'] = $gustoResponse['version'];
+                $ins['effective_date'] = $gustoResponse['effective_date'];
+                $ins['active'] = $gustoResponse['active'];
+                $ins['street_1'] = $gustoResponse['street_1'];
+                $ins['street_2'] = $gustoResponse['street_2'];
+                $ins['city'] = $gustoResponse['city'];
+                $ins['state'] = $gustoResponse['state'];
+                $ins['zip'] = $gustoResponse['zip'];
+                $ins['country'] = $gustoResponse['country'];
+                $ins['gusto_uuid'] = $gustoResponse['uuid'];
+                $ins['updated_at'] = getSystemDate();
+                $ins['created_at'] = getSystemDate();
+                // insert
+                $this->db->insert('gusto_companies_employees_work_addresses', $ins);
+                //
+            }
+            //
             return ['success' => true];
         }
         //
@@ -2060,7 +2134,7 @@ class Payroll_model extends CI_Model
         // create request
         $request = [];
         $request['title'] = $jobTitle;
-        $request['location_uuid'] = $location['gusto_uuid'];
+        // $request['location_uuid'] = $location['gusto_uuid']; // The location_uuid parameter is deprecated
         $request['hire_date'] = $joiningDate;
         // make call
         $gustoResponse = gustoCall(
@@ -2553,6 +2627,9 @@ class Payroll_model extends CI_Model
                     'company_sid',
                 ]
             );
+        //
+        // sync employee work locations
+        $this->syncEmployeeWorkAddresses($employeeId, $data);
         // get the job
         $gustoJob = $this->db
             ->select('sid, title, gusto_uuid, gusto_location_uuid, hire_date, gusto_version')

@@ -213,12 +213,13 @@ if (!function_exists('hasGustoErrors')) {
      * @return array
      */
     function hasGustoErrors($response)
-    {
+    {  
         // set errors array
         $errors = [
             'errors' => []
         ];
         // if it's a single error
+        //
         if (isset($response['message'])) {
             $errors['errors'][] = $response['message'];
         } elseif (isset($response['error'])) {
@@ -226,9 +227,13 @@ if (!function_exists('hasGustoErrors')) {
         } elseif (isset($response['errors']['invalid_grant'])) {
             $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
         } elseif (isset($response['errors'])) {
+            // _e($response['errors'],true,true);
             foreach ($response['errors'] as $err) {
                 //
-                if (isset($err['errors'])) {
+                
+                if (isset($err['error_key']) && $err['error_key'] == "states") {
+                    return getStateErrorList($err['errors']);
+                } elseif (isset($err['errors'])) {
                     foreach ($err['errors'] as $err0) {
                         $errors['errors'][] = $err0['message'];
                     }
@@ -247,6 +252,38 @@ if (!function_exists('hasGustoErrors')) {
         return $errors['errors'] ? $errors : [];
     }
 }
+
+if (!function_exists('getStateErrorList')) {
+    /**
+     * Parse Gusto errors
+     *
+     * Convert Gusto errors to AutomotoHR errors
+     * for handling errors
+     *
+     * @param mixed $response
+     * @return array
+     */
+    function getStateErrorList($response)
+    {
+        // set errors array
+        $errors = [
+            'errors' => []
+        ];
+        //
+        foreach ($response as $err) {
+            if ($err['error_key'] == 'questions') {
+                //
+                foreach ($err['errors'] as $err0) {
+                    foreach ($err0['errors'] as $err1) {
+                        $errors['errors'][] = $err1['message'];
+                    }
+                }
+            }
+        }
+        //
+        return $errors;
+    }
+}    
 
 if (!function_exists('getUrl')) {
     /**
@@ -308,6 +345,7 @@ if (!function_exists('getUrl')) {
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";
         // flow urls
         $urls['updateEmployeePersonalDetails'] = "v1/employees/$key1";
+        $urls['createEmployeeWorkAddress'] = "v1/employees/$key1/work_addresses";
         $urls['getEmployeeWorkAddress'] = "v1/employees/$key1/work_addresses";
         $urls['updateEmployeeWorkAddress'] = "v1/work_addresses/$key1";
         $urls['updateEmployeeJob'] = "v1/jobs/$key1";
@@ -600,7 +638,6 @@ if (!function_exists('agreeToServiceAgreementFromGusto')) {
                 CURLOPT_HTTPHEADER => $callHeaders
             ]
         );
-        _e($response,true);
         // auth failed needs to generate new tokens
         if (isset($response['errors']['auth'])) {
             // generate new access token

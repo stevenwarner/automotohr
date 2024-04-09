@@ -806,7 +806,7 @@ class Payroll_onboard extends CI_Controller
         //
         $request = [];
         $request['title'] = $ed['job_title'] ? $ed['job_title'] : 'Automotive';
-        $request['location_id'] = $ed['work_address_sid'];
+        // $request['location_id'] = $ed['work_address_sid'];  // The location_uuid parameter is deprecated.
         $request['hire_date'] = $hire_date;
         // Get company details
         $company_details = $this->pm->GetPayrollCompany($companyId);
