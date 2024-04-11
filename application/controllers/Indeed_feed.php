@@ -553,10 +553,11 @@ class Indeed_feed extends CI_Controller
                     $jobs_list_result = $this->all_feed_model->add_applicant_job_details($insert_job_list);
                     $portal_applicant_jobs_list_sid = $jobs_list_result[0];
                     //
-                    $this->indeed_model->pushTheApplicantStatus(
-                        "NEW",
-                        $portal_applicant_jobs_list_sid
-                    );
+                    // Comment below line because this function exit the process  and now allow to send emails on 11 Apr 2024;
+                    // $this->indeed_model->pushTheApplicantStatus(
+                    //     "NEW",
+                    //     $portal_applicant_jobs_list_sid
+                    // );
                     //
                     $job_added_successfully = $jobs_list_result[1];
                     $acknowledgement_email_data['company_name'] = $company_name;
