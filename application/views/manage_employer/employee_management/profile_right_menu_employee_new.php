@@ -819,7 +819,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                 if ($cover_type == 'png' || $cover_type == 'jpg' || $cover_type == 'jpe' || $cover_type == 'jpeg' || $cover_type == 'gif') {  ?>
                     <img src="<?php echo AWS_S3_BUCKET_URL . $cover_letter_title; ?>" style="width:600px; height:500px;" />
-                <?php } else { ?>
+                <?php } elseif ($cover_type == 'pdf') {
+
+                    $pdfSrc = copyObjectAWS($cover_letter_title);
+
+                    $pdfSrcPAth="https://docs.google.com/gview?url=https://automotohrattachments.s3.amazonaws.com/".$pdfSrc."&embedded=true";
+                ?>
+                    <iframe src="<?=$pdfSrcPAth;?>" id="preview_iframe" class="uploaded-file-preview " style="width:100%; height:500px;" frameborder="0"></iframe>
+
+                <?php    } else { ?>
                     <iframe class="uploaded-file-preview" src="https://docs.google.com/gview?url=<?= $employer["cover_link"] ?>&embedded=true" style="width:600px; height:500px;" frameborder="0"></iframe>
                 <?php }
             } else { ?>
@@ -1002,12 +1010,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
             var file_extension = file_s3_name.substr(file_s3_name.lastIndexOf('.') + 1, file_s3_name.length);
             var document_file_name = file_s3_name.substr(0, file_s3_name.lastIndexOf('.'));
             var document_extension = file_extension.toLowerCase();
-
+            let isPDF = false;
 
             switch (file_extension.toLowerCase()) {
                 case 'pdf':
-                    preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
+              
+                    isPDF = true;
+                    preview_iframe_url = 'https://docs.google.com/viewer?url=' + file_s3_path + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
+
                     break;
                 case 'csv':
                     preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
@@ -1058,9 +1069,23 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
             document_download_url = '<?php echo base_url("hr_documents_management/download_upload_document"); ?>' + '/' + file_s3_name;
 
+            //
+            if (isPDF) {
+                $.ajax({
+                        url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                        method: "POST",
+                        data: {
+                            fileName: file_s3_name
+                        }
+                    })
+                    .done(function() {
+                        preview_iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + file_s3_name;
+                    })
+            }
 
 
             if (preview_document == 1) {
+
                 model_contant = $("<iframe />")
                     .attr("id", "resume_document_iframe")
                     .attr("class", "uploaded-file-preview")

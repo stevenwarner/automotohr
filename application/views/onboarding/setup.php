@@ -2462,6 +2462,8 @@ if ($user_type == 'applicant') {
             document_title = 'Company Document';
         }
 
+
+        let isPDF = false
         if (letter_type == 'uploaded') {
             var document_iframe_url = '';
             var document_sid = $(source).attr('data-doc-sid');
@@ -2475,6 +2477,7 @@ if ($user_type == 'applicant') {
 
             switch (file_extension.toLowerCase()) {
                 case 'pdf':
+                    isPDF = true
                     document_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
@@ -2522,6 +2525,20 @@ if ($user_type == 'applicant') {
                 default: //using google docs
                     document_iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     break;
+            }
+
+            if (isPDF) {
+                iframe_url = $(source).attr('data-s3-name');
+                $.ajax({
+                        url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                        method: "POST",
+                        data: {
+                            fileName: iframe_url
+                        }
+                    })
+                    .done(function() {})
+
+                    document_iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
             }
 
             document_download_url = '<?php echo base_url("hr_documents_management/download_upload_document"); ?>' + '/' + file_s3_name;

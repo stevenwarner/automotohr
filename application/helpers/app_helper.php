@@ -3638,3 +3638,45 @@ if (!function_exists("getUserFieldsFromEmployeeStatus")) {
         return $updateArray;
     }
 }
+
+
+
+//
+if (!function_exists("copyObjectAWS")) {
+    function copyObjectAWS($fileName)
+    {
+
+        if ($fileName == 'test_file_01.pdf' || $fileName == '' || $fileName == null) {
+            return $fileName;
+        }
+
+        $ci = &get_instance();
+
+        // load the AWS library
+        $ci->load->library(
+            "Aws_lib",
+            '',
+            "aws_lib"
+        );
+
+        $meta = [
+            "ContentType" => "application/pdf",
+            "ContentDisposition" => "inline",
+            "logicByM" => "1"
+        ];
+
+        $options = [
+            'Bucket'     => AWS_S3_BUCKET_NAME,
+            'CopySource' => urlencode(AWS_S3_BUCKET_NAME . '/' . $fileName), // Source object
+            'Key'        => $fileName, // Destination object
+            'Metadata' => $meta,
+            "MetadataDirective" => "REPLACE",
+            "ContentType" => "application/pdf",
+            'ACL'        => 'public-read', // Optional: specify the ACL (access control list)
+        ];
+        //
+        $ci->aws_lib->copyObject($options);
+
+        return $fileName;
+    }
+}

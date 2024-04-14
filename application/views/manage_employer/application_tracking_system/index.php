@@ -2077,7 +2077,7 @@
 
         //
         if (isPDF) {
-            resume_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+            modal_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
             iframe_url = $(source).attr('data-file-name');
             $.ajax({
                     url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",

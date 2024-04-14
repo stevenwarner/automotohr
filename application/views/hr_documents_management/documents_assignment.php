@@ -298,7 +298,7 @@ $assignIdObj = $confidential_sids;
                                                                                 </form>
                                                                                 <button onclick="func_remove_i9();" class="btn btn-danger">Revoke</button>
                                                                                 <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
-                                                                                <a href="<?=base_url("forms/i9/modify/$user_type/$user_sid");?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
+                                                                                <a href="<?= base_url("forms/i9/modify/$user_type/$user_sid"); ?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
                                                                                 <?php if ($user_type == 'employee') { ?>
                                                                                     <a class="btn <?php echo $i9_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<?= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $i9_form['sid'] . "/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
@@ -3088,9 +3088,11 @@ if ($user_type == 'employee') {
             var document_file_name = file_s3_name.substr(0, file_s3_name.lastIndexOf('.'));
             var document_extension = file_extension.toLowerCase();
 
+            let isPDF = false;
 
             switch (file_extension.toLowerCase()) {
                 case 'pdf':
+                    isPDF = true;
                     preview_iframe_url = 'https://docs.google.com/gview?url=' + file_s3_path + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
@@ -3142,6 +3144,22 @@ if ($user_type == 'employee') {
             }
 
             document_download_url = '<?php echo base_url("hr_documents_management/download_upload_document"); ?>' + '/' + file_s3_name;
+
+            //
+            if (isPDF) {
+                iframe_url = $(source).attr('data-s3-name');
+                $.ajax({
+                        url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                        method: "POST",
+                        data: {
+                            fileName: iframe_url
+                        }
+                    })
+                    .done(function() {})
+
+                preview_iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
+            }
+
 
             $('#show_latest_preview_document_modal').modal('show');
             $("#latest_document_modal_title").html(document_title);
@@ -4457,6 +4475,9 @@ if ($user_type == 'employee') {
         var footer_content = '';
         var iframe_url = '';
 
+        let isPDF = false;
+
+
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
                 case 'doc':
@@ -4480,6 +4501,11 @@ if ($user_type == 'employee') {
                 case 'GIF':
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management/print_generated_and_offer_later/original/generated'); ?>' + '/' + document_sid + '" class="btn btn-success">Print</a>';
+                    break;
+                case 'pdf':
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
                 default: //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
@@ -4506,6 +4532,22 @@ if ($user_type == 'employee') {
                 var download_url = obj.download_url;
                 footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
                 footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
+
+
+                if (isPDF) {
+                    modal_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    iframe_url = $(source).attr('data-file-name');
+                    $.ajax({
+                            url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                            method: "POST",
+                            data: {
+                                fileName: iframe_url
+                            }
+                        })
+                        .done(function() {})
+
+                    iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
+                }
 
                 $('#document_modal_body').html(modal_content);
                 $('#document_modal_footer').html(footer_content);

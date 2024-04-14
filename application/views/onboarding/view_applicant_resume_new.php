@@ -100,7 +100,10 @@ if ($this->session->userdata('logged_in')) {
                                                                             $resume_extension   = pathinfo($resume_url)['extension'];
 
                                                                             if (in_array($resume_extension, ['pdf', 'csv'])) { 
-                                                                                $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $resume_url . '&embedded=true';
+
+                                                                                 $pdfSrc = copyObjectAWS($resume_url);
+
+                                                                                $iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $pdfSrc . '&embedded=true';
                                                                                 $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$resume_name.'.pdf';
                                                                             } else if (in_array($resume_extension, ['doc', 'docx'])) {
                                                                                 $iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $resume_url);

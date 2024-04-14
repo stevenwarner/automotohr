@@ -28,7 +28,7 @@
                                         <a href="<?php echo base_url('hr_documents_management/generate_new_document'); ?>" class="btn btn-success">Generate <i class="fa fa-file" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document') && checkIfAppIsEnabled('hybrid_document')) { ?>
-                                    <a href="<?php echo base_url('hr_documents_management/hybrid_document/add'); ?>" class="btn btn-success">Add Document <i class="fa fa-file" aria-hidden="true"></i></a>
+                                        <a href="<?php echo base_url('hr_documents_management/hybrid_document/add'); ?>" class="btn btn-success">Add Document <i class="fa fa-file" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>
                                         <a href="<?php echo base_url('hr_documents_management/generate_new_offer_letter'); ?>" class="btn btn-success">Generate Offer <i class="fa fa-envelope" aria-hidden="true"></i></a>
@@ -44,16 +44,16 @@
                         </div>
                         <div class="col-md-12">
                             <div class="hr-document-list">
-                        <?php   if (!empty($active_groups)) {
+                                <?php if (!empty($active_groups)) {
                                     foreach ($active_groups as $active_group) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="panel panel-default ems-documents">
                                                     <div class="panel-heading">
                                                         <h4 class="panel-title">
-                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $active_group['sid']; ?>" >
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $active_group['sid']; ?>">
                                                                 <span class="glyphicon glyphicon-plus"></span>
-                        <?php                                   echo $active_group['name']; ?>
+                                                                <?php echo $active_group['name']; ?>
                                                                 <div class="btn btn-xs btn-success">Active Group</div>
                                                                 <div class="pull-right total-records"><b><?php echo 'Total: ' . $active_group['documents_count']; ?></b></div>
                                                             </a>
@@ -70,43 +70,34 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                        <?php                                       if ($active_group['documents_count'] > 0) {
+                                                                    <?php if ($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
                                                                                 <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
                                                                                 <td class="col-xs-2">
-                        <?php                                                       if ($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                    <?php if ($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                         echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
                                                                                     } else {
                                                                                         echo 'N/A';
                                                                                     } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                        <?php                                                       if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
+                                                                                    <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
                                                                                         <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
-                        <?php                                                       } ?>
+                                                                                    <?php                                                       } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if($document['document_type'] == 'hybrid_document') { ?>
-                                                                                        <button 
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                            class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
+                                                                                    <?php if ($document['document_type'] == 'hybrid_document') { ?>
+                                                                                        <button data-id="<?= $document['sid']; ?>" class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                                     <?php } else if ($document['document_type'] == 'uploaded') {
                                                                                         $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
                                                                                         $document_file = pathinfo($document_filename);
                                                                                         $name = explode(".", $document_filename);
                                                                                         $url_segment_original = $name[0]; ?>
-                                                                                        <button class="btn btn-info btn-sm btn-block"
-                                                                                                onclick="fLaunchModal(this);"
-                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                                data-print-url="<?php echo $url_segment_original; ?>"
-                                                                                                data-document-sid="<?php echo $document['sid']; ?>"
-                                                                                                data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
-                                                                                                data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
-                        <?php                                                           } else { ?>
-                                                                                            <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
-                        <?php                                                           } ?>
+                                                                                        <button class="btn btn-info btn-sm btn-block" onclick="fLaunchModal(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                                    <?php                                                           } else { ?>
+                                                                                        <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
+                                                                                    <?php                                                           } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
                                                                                     <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -117,12 +108,12 @@
                                                                                     <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
                                                                                 </td>
                                                                             </tr>
-                        <?php                                           }
+                                                                        <?php                                           }
                                                                     } else { ?>
                                                                         <tr>
                                                                             <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
                                                                         </tr>
-                        <?php                                       } ?>
+                                                                    <?php                                       } ?>
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -130,7 +121,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                        <?php       }
+                                    <?php       }
                                 }
 
                                 if (!empty($in_active_groups)) {
@@ -140,9 +131,9 @@
                                                 <div class="panel panel-default ems-documents">
                                                     <div class="panel-heading">
                                                         <h4 class="panel-title">
-                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $active_group['sid']; ?>" >
+                                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_<?php echo $active_group['sid']; ?>">
                                                                 <span class="glyphicon glyphicon-plus"></span>
-                        <?php                                   echo $active_group['name']; ?>
+                                                                <?php echo $active_group['name']; ?>
                                                                 <div class="btn btn-xs btn-danger">Inactive Group</div>
                                                                 <div class="pull-right total-records"><b><?php echo 'Total: ' . $active_group['documents_count']; ?></b></div>
                                                             </a>
@@ -159,44 +150,35 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                        <?php                                       if ($active_group['documents_count'] > 0) {
+                                                                    <?php if ($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
                                                                                 <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
                                                                                 <td class="col-xs-2">
-                        <?php                                                       if ($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                    <?php if ($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                         echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
                                                                                     } else {
                                                                                         echo 'N/A';
                                                                                     } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                        <?php                                                       if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
+                                                                                    <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
                                                                                         <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
-                        <?php                                                       } ?>
+                                                                                    <?php                                                       } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if($document['document_type'] == 'hybrid_document') { ?>
-                                                                                        <button 
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                            class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
+                                                                                    <?php if ($document['document_type'] == 'hybrid_document') { ?>
+                                                                                        <button data-id="<?= $document['sid']; ?>" class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                                     <?php } else if ($document['document_type'] == 'uploaded') {
                                                                                         $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
                                                                                         $document_file = pathinfo($document_filename);
                                                                                         $name = explode(".", $document_filename);
                                                                                         $url_segment_original = $name[0]; ?>
 
-                                                                                        <button class="btn btn-info btn-sm btn-block"
-                                                                                                onclick="fLaunchModal(this);"
-                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                                data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                                data-print-url="<?php echo $url_segment_original; ?>"
-                                                                                                data-document-sid="<?php echo $document['sid']; ?>"
-                                                                                                data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
-                                                                                                data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
-                        <?php                                                       } else { ?>
+                                                                                        <button class="btn btn-info btn-sm btn-block" onclick="fLaunchModal(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                                    <?php                                                       } else { ?>
                                                                                         <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
-                        <?php                                                       } ?>
+                                                                                    <?php                                                       } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
                                                                                     <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -207,12 +189,12 @@
                                                                                     <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
                                                                                 </td>
                                                                             </tr>
-                        <?php                                           }
+                                                                        <?php                                           }
                                                                     } else { ?>
                                                                         <tr>
                                                                             <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
                                                                         </tr>
-                        <?php                                       } ?>
+                                                                    <?php                                       } ?>
                                                                 </tbody>
                                                             </table>
                                                         </div>
@@ -220,9 +202,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                        <?php       }
+                                <?php       }
                                 } ?>
-                                
+
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="panel panel-default ems-documents">
@@ -230,9 +212,9 @@
                                                 <h4 class="panel-title">
                                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncategorized_documents">
                                                         <span class="glyphicon glyphicon-plus"></span>
-                                                        Uncategorized Documents 
+                                                        Uncategorized Documents
                                                         <div class="btn btn-xs btn-info">Uncategorized</div>
-                                                        <div class="pull-right total-records"><b><?php echo 'Total: '.count($uncategorized_documents);?></b></div>
+                                                        <div class="pull-right total-records"><b><?php echo 'Total: ' . count($uncategorized_documents); ?></b></div>
                                                     </a>
                                                 </h4>
                                             </div>
@@ -247,41 +229,32 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                    <?php                   if(count($uncategorized_documents) > 0) {
+                                                            <?php if (count($uncategorized_documents) > 0) {
                                                                 foreach ($uncategorized_documents as $document) { ?>
                                                                     <tr>
                                                                         <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
                                                                         <td class="col-xs-2">
-                                                                            <?php                                                       if ($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                            <?php if ($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                 echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
                                                                             } else {
                                                                                 echo 'N/A';
                                                                             } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php                                                       if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
+                                                                            <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
                                                                                 <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
                                                                             <?php                                                       } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php if($document['document_type'] == 'hybrid_document') { ?>
-                                                                                        <button 
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                            class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
-                                                                                    <?php } else if ($document['document_type'] == 'uploaded') {
+                                                                            <?php if ($document['document_type'] == 'hybrid_document') { ?>
+                                                                                <button data-id="<?= $document['sid']; ?>" class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
+                                                                            <?php } else if ($document['document_type'] == 'uploaded') {
                                                                                 $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
                                                                                 $document_file = pathinfo($document_filename);
                                                                                 $name = explode(".", $document_filename);
                                                                                 $url_segment_original = $name[0]; ?>
 
-                                                                                <button class="btn btn-info btn-sm btn-block"
-                                                                                        onclick="fLaunchModal(this);"
-                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                        data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                        data-print-url="<?php echo $url_segment_original; ?>"
-                                                                                        data-document-sid="<?php echo $document['sid']; ?>"
-                                                                                        data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
-                                                                                        data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                                <button class="btn btn-info btn-sm btn-block" onclick="fLaunchModal(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
                                                                             <?php                                                       } else { ?>
                                                                                 <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
                                                                             <?php                                                       } ?>
@@ -295,12 +268,12 @@
                                                                             <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
                                                                         </td>
                                                                     </tr>
-                                                <?php           }
+                                                                <?php           }
                                                             } else { ?>
                                                                 <tr>
                                                                     <td colspan="7" class="col-lg-12 text-center"><b>No Documents Found!</b></td>
                                                                 </tr>
-                                                <?php       } ?>
+                                                            <?php       } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -315,7 +288,7 @@
                                                 <h4 class="panel-title">
                                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseoffer_letters">
                                                         <span class="glyphicon glyphicon-plus"></span>
-                        <?php                           echo 'Offer Letter / Pay Plan'; ?>
+                                                        <?php echo 'Offer Letter / Pay Plan'; ?>
                                                         <div class="btn btn-xs btn-warning">Offer Letter / Pay Plan</div>
                                                         <div class="pull-right total-records"><b><?php echo 'Total: ' . count($offer_letters); ?></b></div>
                                                     </a>
@@ -331,14 +304,14 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                        <?php                           if (!empty($offer_letters)) {
-                                                            foreach ($offer_letters as $offer_letter) { ?>
+                                                            <?php if (!empty($offer_letters)) {
+                                                                foreach ($offer_letters as $offer_letter) { ?>
                                                                     <tr>
                                                                         <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?></td>
                                                                         <td class="col-xs-1">
-                        <?php                                               if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>
+                                                                            <?php if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>
                                                                                 <a href="<?php echo base_url('hr_documents_management/edit_offer_letter/' . $offer_letter['sid']); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
-                        <?php                                               } ?>
+                                                                            <?php                                               } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
                                                                             <button onclick="func_get_generated_document_preview(<?php echo $offer_letter['sid']; ?>, 'offer', '<?php echo addslashes($offer_letter['letter_name']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
@@ -351,12 +324,12 @@
                                                                             </form>
                                                                         </td>
                                                                     </tr>
-                        <?php                               }
-                                                        } else { ?>
+                                                                <?php                               }
+                                                            } else { ?>
                                                                 <tr>
                                                                     <td colspan="7" class="col-lg-12 text-center"><b>No Offer Letters Found!</b></td>
                                                                 </tr>
-                        <?php                           } ?>
+                                                            <?php                           } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -366,10 +339,10 @@
                                         <div class="panel panel-default">
                                             <div class="panel-heading">
                                                 <h4 class="panel-title">
-                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_all_archived_documents" >
+                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_all_archived_documents">
                                                         <span class="glyphicon glyphicon-plus"></span>
                                                         All Archived Documents
-                                                        <div class="pull-right total-records"><strong><?php echo 'Total: '.count($all_documents); ?></strong></div>
+                                                        <div class="pull-right total-records"><strong><?php echo 'Total: ' . count($all_documents); ?></strong></div>
                                                     </a>
                                                 </h4>
                                             </div>
@@ -385,67 +358,58 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <?php 
-                                                                if(!empty($all_documents)):
-                                                                    foreach($all_documents as $document):
-                                                                        ?>
-                                                                        <tr>
-                                                                            <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
-                                                                            <td class="col-xs-2">
-                                                                                <?php                                                       if ($document['date_created'] != NULL || $document['date_created'] != '') {
-                                                                                    echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
-                                                                                } else {
-                                                                                    echo 'N/A';
-                                                                                } ?>
-                                                                            </td>
-                                                                            <td class="col-xs-1">
-                                                                                <?php                                                       if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
-                                                                                    <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
-                                                                                <?php                                                       } ?>
-                                                                            </td>
-                                                                            <td class="col-xs-1">
-                                                                                <?php if($document['document_type'] == 'hybrid_document') { ?>
-                                                                                            <button 
-                                                                                                data-id="<?=$document['sid'];?>"
-                                                                                                class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
-                                                                                        <?php } else if ($document['document_type'] == 'uploaded') {
-                                                                                    $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
-                                                                                    $document_file = pathinfo($document_filename);
-                                                                                    $name = explode(".", $document_filename);
-                                                                                    $url_segment_original = $name[0]; ?>
-
-                                                                                    <button class="btn btn-info btn-sm btn-block"
-                                                                                            onclick="fLaunchModal(this);"
-                                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                            data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>"
-                                                                                            data-print-url="<?php echo $url_segment_original; ?>"
-                                                                                            data-document-sid="<?php echo $document['sid']; ?>"
-                                                                                            data-file-name="<?php echo $document['uploaded_document_original_name']; ?>"
-                                                                                            data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
-                                                                                <?php                                                       } else { ?>
-                                                                                    <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
-                                                                                <?php                                                       } ?>
-                                                                            </td>
-                                                                            <td class="col-xs-1">
-                                                                                <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="activate_uploaded_document" />
-                                                                                    <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type'] ?>" />
-                                                                                    <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                </form>
-                                                                                <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <?php
-                                                                    endforeach;
-                                                                else:
-                                                                    ?>
+                                                            <?php
+                                                            if (!empty($all_documents)) :
+                                                                foreach ($all_documents as $document) :
+                                                            ?>
                                                                     <tr>
-                                                                        <td colspan="4">
-                                                                            <p class="alert alert-info text-center">No archived documents found.</p>
+                                                                        <td class="col-xs-7"><?php echo $document['document_title']; ?></td>
+                                                                        <td class="col-xs-2">
+                                                                            <?php if ($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                                echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this));
+                                                                            } else {
+                                                                                echo 'N/A';
+                                                                            } ?>
+                                                                        </td>
+                                                                        <td class="col-xs-1">
+                                                                            <?php if (check_access_permissions_for_view($security_details, 'add_edit_upload_generate_document')) { ?>
+                                                                                <a href="<?php echo base_url('hr_documents_management/edit_hr_document/' . $document['sid'] . '/archive'); ?>" class="btn btn-success btn-sm btn-block">Edit Info</a>
+                                                                            <?php                                                       } ?>
+                                                                        </td>
+                                                                        <td class="col-xs-1">
+                                                                            <?php if ($document['document_type'] == 'hybrid_document') { ?>
+                                                                                <button data-id="<?= $document['sid']; ?>" class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
+                                                                            <?php } else if ($document['document_type'] == 'uploaded') {
+                                                                                $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
+                                                                                $document_file = pathinfo($document_filename);
+                                                                                $name = explode(".", $document_filename);
+                                                                                $url_segment_original = $name[0]; ?>
+
+                                                                                <button class="btn btn-info btn-sm btn-block" onclick="fLaunchModal(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">Preview</button>
+                                                                            <?php                                                       } else { ?>
+                                                                                <button onclick="func_get_generated_document_preview(<?php echo $document['sid']; ?>, 'generated', '<?php echo addslashes($document['document_title']); ?>');" class="btn btn-info btn-sm btn-block">Preview</button>
+                                                                            <?php                                                       } ?>
+                                                                        </td>
+                                                                        <td class="col-xs-1">
+                                                                            <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
+                                                                                <input type="hidden" id="perform_action" name="perform_action" value="activate_uploaded_document" />
+                                                                                <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type'] ?>" />
+                                                                                <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
+                                                                            </form>
+                                                                            <button class="btn btn-default btn-sm btn-block" onclick="func_unarchive_uploaded_document(<?php echo $document['sid']; ?>)">Activate</button>
                                                                         </td>
                                                                     </tr>
-                                                                    <?php
-                                                                endif;
+                                                                <?php
+                                                                endforeach;
+                                                            else :
+                                                                ?>
+                                                                <tr>
+                                                                    <td colspan="4">
+                                                                        <p class="alert alert-info text-center">No archived documents found.</p>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php
+                                                            endif;
                                                             ?>
                                                         </tbody>
                                                     </table>
@@ -466,38 +430,38 @@
 <script>
     function func_un_archive_offer_letter(offer_letter_sid) {
         alertify.confirm(
-                'Are you sure?',
-                'Are you sure you want to un-archive this offer letter?',
-                function () {
-                    $('#form_un_archive_offer_letter_' + offer_letter_sid).submit();
-                },
-                function () {
-                    alertify.error('Cancelled!');
-                });
+            'Are you sure?',
+            'Are you sure you want to un-archive this offer letter?',
+            function() {
+                $('#form_un_archive_offer_letter_' + offer_letter_sid).submit();
+            },
+            function() {
+                alertify.error('Cancelled!');
+            });
     }
 
     function func_unarchive_offer_letter(offer_letter_sid) {
         alertify.confirm(
-                'Are you sure?',
-                'Are you sure you want to archive this offer letter?',
-                function () {
-                    $('#form_archive_offer_letter_' + offer_letter_sid).submit();
-                },
-                function () {
-                    alertify.error('Cancelled!');
-                });
+            'Are you sure?',
+            'Are you sure you want to archive this offer letter?',
+            function() {
+                $('#form_archive_offer_letter_' + offer_letter_sid).submit();
+            },
+            function() {
+                alertify.error('Cancelled!');
+            });
     }
 
     function func_unarchive_generated_document(document_sid) {
         alertify.confirm(
-                'Are you sure?',
-                'Are you sure you want to un-archive this document?',
-                function () {
-                    $('#form_unarchive_generated_document_' + document_sid).submit();
-                },
-                function () {
-                    alertify.error('Cancelled!');
-                });
+            'Are you sure?',
+            'Are you sure you want to un-archive this document?',
+            function() {
+                $('#form_unarchive_generated_document_' + document_sid).submit();
+            },
+            function() {
+                alertify.error('Cancelled!');
+            });
     }
 
     function func_get_generated_document_preview(document_sid, doc_flag = 'generated', doc_title = 'Preview Generated Document') {
@@ -513,7 +477,7 @@
             }
         });
 
-        my_request.done(function (response) {
+        my_request.done(function(response) {
             $('#popupmodalbody').html(response);
             $('#popupmodallabel').html(doc_title);
             $('#popupmodal .modal-dialog').css('width', '60%');
@@ -530,6 +494,8 @@
         var modal_content = '';
         var footer_content = '';
         var iframe_url = '';
+
+        let isPDF = false;
 
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
@@ -551,7 +517,14 @@
                 case 'PNG':
                 case 'GIF':
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
-                default : //using google docs
+                    break;
+                case 'pdf':
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
+                    break;
+
+                default: //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
                     break;
@@ -563,45 +536,62 @@
             footer_content = '';
         }
 
+
+        if (isPDF) {
+            modal_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+            iframe_url = $(source).attr('data-file-name');
+            $.ajax({
+                    url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                    method: "POST",
+                    data: {
+                        fileName: iframe_url
+                    }
+                })
+                .done(function() {})
+
+            iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
+        }
+
+
         $('#document_modal_body').html(modal_content);
         $('#document_modal_footer').html(footer_content);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#document_modal').on("shown.bs.modal", function() {
 
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);
                 //
-                loadIframe( iframe_url, '#preview_iframe', true );
+                loadIframe(iframe_url, '#preview_iframe', true);
             }
         });
     }
 
     function func_unarchive_uploaded_document(document_sid) {
         alertify.confirm(
-                'Are you sure?',
-                'Are you sure you want to activate this document?',
-                function () {
-                    $('#form_archive_hr_document_' + document_sid).submit();
-                },
-                function () {
-                    alertify.error('Cancelled!');
-                });
+            'Are you sure?',
+            'Are you sure you want to activate this document?',
+            function() {
+                $('#form_archive_hr_document_' + document_sid).submit();
+            },
+            function() {
+                alertify.error('Cancelled!');
+            });
     }
 
-    $(function () {
+    $(function() {
         $("#settings-tabs").tabs();
         $("#home-accordion").accordion({
             collapsible: true
         });
 
-        $('#file_image').on('change', function () {
+        $('#file_image').on('change', function() {
             $('#image').val('');
         });
 
         $(".tab_content").hide();
         $(".tab_content:first").show();
-        $("ul.tabs li").click(function () {
+        $("ul.tabs li").click(function() {
             $("ul.tabs li").removeClass("active");
             $(this).addClass("active");
             $(".tab_content").hide();
@@ -609,9 +599,9 @@
             $("#" + activeTab).fadeIn();
         });
 
-        $('.collapse').on('shown.bs.collapse', function () {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });

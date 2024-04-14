@@ -84,10 +84,10 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                 </thead>
                                                                 <tbody>
 
-                                                                    <?php if ($active_group['other_documents']) {?>
+                                                                    <?php if ($active_group['other_documents']) { ?>
                                                                         <?php foreach ($active_group['other_documents'] as $otherDocument) : ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $otherDocument?></td>
+                                                                                <td class="col-xs-6"><?php echo $otherDocument ?></td>
                                                                                 <td class="col-xs-2"> </td>
                                                                                 <td class="col-xs-1"></td>
                                                                                 <td class="col-xs-1"></td>
@@ -1633,6 +1633,9 @@ $requiredMessage = 'This document is required to complete the process.';
         var footer_content = '';
         var iframe_url = '';
 
+        isPDF = false;
+
+
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
                 case 'doc':
@@ -1657,6 +1660,12 @@ $requiredMessage = 'This document is required to complete the process.';
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management/print_generated_and_offer_later/original/generated'); ?>' + '/' + document_sid + '" class="btn btn-success">Print</a>';
                     break;
+
+                case 'pdf':
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
+
+                    break;
                 default: //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
@@ -1667,6 +1676,7 @@ $requiredMessage = 'This document is required to complete the process.';
             modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
             footer_content = '';
         }
+
 
         $.ajax({
             'url': '<?php echo base_url('hr_documents_management/get_print_url'); ?>',
@@ -1683,11 +1693,31 @@ $requiredMessage = 'This document is required to complete the process.';
                 footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
                 footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
 
+                if (isPDF) {
+                    modal_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    iframe_url = $(source).attr('data-file-name');
+                    $.ajax({
+                            url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                            method: "POST",
+                            data: {
+                                fileName: iframe_url
+                            }
+                        })
+                        .done(function() {})
+
+                    if (isPDF) {
+                        iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
+                    }
+
+                }
+
                 $('#document_modal_body').html(modal_content);
                 $('#document_modal_footer').html(footer_content);
                 $('#document_modal_footer').append(footer_print_btn);
                 $('#document_modal_title').html(document_title);
                 $('#document_modal').modal("toggle");
+
+
                 $('#document_modal').on("shown.bs.modal", function() {
 
                     if (iframe_url != '') {
@@ -1710,6 +1740,7 @@ $requiredMessage = 'This document is required to complete the process.';
         var modal_content = '';
         var footer_content = '';
         var iframe_url = '';
+        isPDF = false;
 
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
@@ -1735,6 +1766,11 @@ $requiredMessage = 'This document is required to complete the process.';
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     footer_print_btn = '<a target="_blank" href="<?php echo base_url('hr_documents_management/print_generated_and_offer_later/original/generated'); ?>' + '/' + document_sid + '" class="btn btn-success">Print</a>';
                     break;
+                case 'pdf':
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
+
+                    break;
                 default: //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     modal_content = '<iframe src="' + iframe_url + '" id="preview_iframe" class="uploaded-file-preview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
@@ -1745,6 +1781,7 @@ $requiredMessage = 'This document is required to complete the process.';
             modal_content = '<h5>No ' + document_title + ' Uploaded.</h5>';
             footer_content = '';
         }
+
 
         $.ajax({
             'url': '<?php echo base_url('hr_documents_management/get_print_url'); ?>',
@@ -1760,6 +1797,23 @@ $requiredMessage = 'This document is required to complete the process.';
                 var download_url = obj.download_url;
                 footer_content = '<a target="_blank" class="btn btn-success" href="' + download_url + '">Download</a>';
                 footer_print_btn = '<a target="_blank" class="btn btn-success" href="' + print_url + '" >Print</a>';
+                //
+                if (isPDF) {
+                    modal_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                    iframe_url = $(source).attr('data-file-name');
+                    $.ajax({
+                            url: "<?= base_url("v1/Aws_pdf/getFileBase64"); ?>",
+                            method: "POST",
+                            data: {
+                                fileName: iframe_url
+                            }
+                        })
+                        .done(function() {
+                        })
+
+                        iframe_url = "https://automotohrattachments.s3.amazonaws.com/" + iframe_url;
+                }
+
 
                 $('#document_modal_body').html(modal_content);
                 $('#document_modal_footer').html(footer_print_btn);
