@@ -7619,8 +7619,9 @@ class Timeoff_model extends CI_Model
                 } else {
                     $alreadyAppliedTime[$v1["date"]] = $alreadyAppliedTime[$v1["date"]] + $v1["time"];
                 }
-
-                $requestDate = DateTime::createfromformat('m-d-Y', $v1["date"])->format('Y-m-d');
+                //
+                // $requestDate = DateTime::createfromformat('m-d-Y', $v1["date"])->format('Y-m-d');
+                $requestDate = checkAndFixDateFormat($v1["date"],'Y-m-d');
                 //
                 if ($requestDate >= $startDate && $requestDate <= $endDate) {
                     //

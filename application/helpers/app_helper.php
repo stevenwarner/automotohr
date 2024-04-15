@@ -3638,3 +3638,37 @@ if (!function_exists("getUserFieldsFromEmployeeStatus")) {
         return $updateArray;
     }
 }
+
+if (!function_exists('checkAndFixDateFormat')) {
+    /**
+     * Check the date format to 
+     * avoid 500
+     * 
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkAndFixDateFormat($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        //
+        $oldFormat = '';
+        // Check for valid syntax
+        if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm-d-Y';
+        } else if (preg_match('/[0-9]{2}/[0-9]{2}/[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm/d/Y';
+        } else if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y-m-d';
+        } else if (preg_match('/[0-9]{4}/[0-9]{2}/[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y/m/d';
+        } else {
+            return $dateIn;
+        }
+        //
+        return formatDateToDB($dateIn, $oldFormat, $format);
+    }
+}
