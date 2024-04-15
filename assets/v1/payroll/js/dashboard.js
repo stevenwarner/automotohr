@@ -107,14 +107,10 @@ $(function dashboard() {
 				);
 			})
 			.fail(function (response) {
+				console.log(response.responseJSON.errors)
 				return alertify.alert(
 					"Error!",
-					getErrorsStringFromArray(
-						(
-							response.responseJSON ||
-							JSON.parse(response.responseText)
-						).errors
-					)
+					response.responseJSON.errors
 				);
 			})
 			.always(function () {
