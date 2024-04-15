@@ -616,43 +616,4 @@ class Testing extends CI_Controller
 
         return $fileName;
     }
-
-    public function timeoffTest () {
-        $this->load->model('timeoff_model');
-        $time = array(
-            "totalTime" => 2400,
-            "days" => Array
-                (
-                    [
-                        "date" => '04-01-2024',
-                        "time" => 480
-                    ],
-                    [
-                            "date" => '04-02-2024',
-                            "time" => 480
-                    ],
-                    [
-                            "date" => '04-03-2024',
-                            "time" => 480
-                    ],
-                    [
-                            "date" => '04-04-2024',
-                            "time" => 480
-                    ],
-                    [
-                            "date" => '04-05-2024',
-                            "time" => 480
-                    ]
-        
-                ),
-        
-            "error" => false
-            );
-
-        $request_from_date = '2024-04-01';
-        $request_to_date = '2024-04-05';
-        $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist('15714', $request_from_date, $request_to_date, $time);
-        //
-        _e($response,true,true);
-    }
 }
