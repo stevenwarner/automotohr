@@ -3638,3 +3638,53 @@ if (!function_exists("getUserFieldsFromEmployeeStatus")) {
         return $updateArray;
     }
 }
+
+
+//
+if (!function_exists("magicCodeCorrection")) {
+
+    function magicCodeCorrection($string)
+    {
+
+        if (empty($string)) {
+            return $string;
+        }
+
+        $string = html_entity_decode($string);
+
+        //
+        preg_match_all("/{(.*?){(.*?)}(.*?)}/", $string, $matches);
+        foreach ($matches[0] as $val) {
+
+            $replacedArray[$val] =  strip_tags(html_entity_decode(preg_replace('/\s+/', '', str_replace('&nbsp;', '', $val)))); //strip_tags(html_entity_decode($val)) ;
+            $string = str_replace($val, $replacedArray[$val], $string);
+        }
+
+        return $string;
+    }
+}
+
+
+//
+if (!function_exists("updateDocumentCorrectionDesc")) {
+
+    function updateDocumentCorrectionDesc($string, $sid, $parentDocSid = 0)
+    {
+
+        $CI = &get_instance();
+
+        //
+        if ($parentDocSid != 0) {
+            $updateArray['document_description'] = $string;
+            $CI->db
+                ->where("sid", $parentDocSid)
+                ->update('documents_management', $updateArray);
+        }
+
+        $updateArray['document_description'] = $string;
+
+        $CI->db
+            ->where("sid", $sid)
+            ->update('documents_assigned', $updateArray);
+    }
+}
