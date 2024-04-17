@@ -3642,49 +3642,64 @@ if (!function_exists("getUserFieldsFromEmployeeStatus")) {
 
 //
 if (!function_exists("magicCodeCorrection")) {
-
-    function magicCodeCorrection($string)
+    /**
+     * corrects the in-format magic codes
+     *
+     * @param string $description
+     * @return string
+     */
+    function magicCodeCorrection(string $description): string
     {
-
-        if (empty($string)) {
-            return $string;
+        if (!$description) {
+            return $description;
         }
-
-        $string = html_entity_decode($string);
-
-        //
-        preg_match_all("/{(.*?){(.*?)}(.*?)}/", $string, $matches);
-        foreach ($matches[0] as $val) {
-
-            $replacedArray[$val] =  strip_tags(html_entity_decode(preg_replace('/\s+/', '', str_replace('&nbsp;', '', $val)))); //strip_tags(html_entity_decode($val)) ;
-            $string = str_replace($val, $replacedArray[$val], $string);
+        // convert the html entities so browser
+        // don't convert them
+        $description = htmlentities($description);
+        // find all magic codes
+        preg_match_all("/{(.*?){(.*?)}(.*?)}/", $description, $matches, PREG_SET_ORDER);
+        // set replacement array
+        $keyPair = [];
+        // iterate the array
+        foreach ($matches as $v) {
+            //
+            $keyPair[$v[0]] = "{{" . (trim($v[2])) . "}}";
         }
-
-        return $string;
+        // replace the string
+        return html_entity_decode(
+            str_replace(
+                array_keys($keyPair),
+                $keyPair,
+                $description
+            )
+        );
     }
 }
 
-
-//
 if (!function_exists("updateDocumentCorrectionDesc")) {
-
-    function updateDocumentCorrectionDesc($string, $sid, $parentDocSid = 0)
-    {
-
+    /**
+     * update the document description with corrected string
+     *
+     * @param string $description
+     * @param int    $assignedDocumentSid
+     * @param int    $parentDocumentId Optional
+     */
+    function updateDocumentCorrectionDesc(
+        string $description,
+        int $assignedDocumentSid,
+        int $parentDocumentId = 0
+    ) {
+        // get the CI instance
         $CI = &get_instance();
-
-        //
-        if ($parentDocSid != 0) {
-            $updateArray['document_description'] = $string;
-            $CI->db
-                ->where("sid", $parentDocSid)
-                ->update('documents_management', $updateArray);
-        }
-
-        $updateArray['document_description'] = $string;
-
+        // update the assigned table
         $CI->db
-            ->where("sid", $sid)
-            ->update('documents_assigned', $updateArray);
+            ->where("sid", $assignedDocumentSid)
+            ->update(
+                "documents_assigned",
+                [
+                    "document_description" => $description,
+                    "is_fixed" => 1
+                ]
+            );
     }
 }
