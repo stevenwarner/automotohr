@@ -1386,9 +1386,14 @@ class Hr_documents_management extends Public_Controller
 
                         $document_name = $this->input->post('document_title');
                         $document_description = $this->input->post('document_description');
+
+                        $document_description = magicCodeCorrection($document_description);
+
                         $video_required = $this->input->post('video_source');
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
+
+
                         $data_to_update = array();
                         $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_update['visible_to_document_center'] = 0;
