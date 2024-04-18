@@ -11756,5 +11756,6 @@ class Hr_documents_management_model extends CI_Model
             }
         }
         //
+        return true;
     }
 }
