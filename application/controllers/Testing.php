@@ -616,10 +616,4 @@ class Testing extends CI_Controller
 
         return $fileName;
     }
-
-    public function historyMove () {
-        $this->load->model('hr_documents_management_model');
-        //
-        $this->hr_documents_management_model->moveDocumentsHistory(174, 17164);
-    }
 }
