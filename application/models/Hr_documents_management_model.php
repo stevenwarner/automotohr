@@ -11732,6 +11732,7 @@ class Hr_documents_management_model extends CI_Model
                 //
                 $this->db->select('sid');
                 $this->db->where('document_sid', $record['document_sid']);
+                $this->db->where('document_type', $record['document_type']);
                 $this->db->where('user_sid', $employeeId);
                 $this->db->where('user_type', 'employee');
                 $record_obj = $this->db->get('documents_assigned');
@@ -11747,7 +11748,7 @@ class Hr_documents_management_model extends CI_Model
                 $record['user_type'] = 'employee';
                 //
                 $this->db->insert('documents_assigned_history', $record);
-                
+                //
             }
         }
         //
