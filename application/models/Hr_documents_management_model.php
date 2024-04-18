@@ -11756,6 +11756,5 @@ class Hr_documents_management_model extends CI_Model
             }
         }
         //
-        _e("Move employee old document history",true);
     }
 }
