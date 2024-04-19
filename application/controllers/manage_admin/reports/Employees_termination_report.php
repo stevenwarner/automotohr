@@ -181,8 +181,8 @@ class Employees_termination_report extends Admin_Controller {
                     $input['company_name'] = getCompanyNameBySid($terminatedEmployee['parent_sid']);
                     $input['job_title'] = $terminatedEmployee['job_title'];
                     $input['department'] = getDepartmentNameBySID($terminatedEmployee['department_sid']);
-                    $input['hire_date'] = $hireDate;
-                    $input['last_day_worked'] = $terminatedEmployee['termination_date'];
+                    $input['hire_date'] = formatDateToDB($hireDate, DB_DATE, SITE_DATE);
+                    $input['last_day_worked'] = formatDateToDB($terminatedEmployee['termination_date'], DB_DATE, SITE_DATE);
                     $input['termination_reason'] = $terminatedReason;
                     fputcsv($output, $input);
                 }

@@ -3786,8 +3786,8 @@ class Reports extends Public_Controller
                         $input['employee_id'] = "AHR-".$terminatedEmployee['sid'];
                         $input['job_title'] = $terminatedEmployee['job_title'];
                         $input['department'] = getDepartmentNameBySID($terminatedEmployee['department_sid']);
-                        $input['hire_date'] = $hireDate;
-                        $input['last_day_worked'] = $terminatedEmployee['termination_date'];
+                        $input['hire_date'] = formatDateToDB($hireDate, DB_DATE, SITE_DATE);
+                        $input['last_day_worked'] = formatDateToDB($terminatedEmployee['termination_date'], DB_DATE, SITE_DATE);
                         $input['termination_reason'] = $terminatedReason;
                         fputcsv($output, $input);
                     }
