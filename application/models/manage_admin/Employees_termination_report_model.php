@@ -27,7 +27,6 @@ class Employees_termination_report_model extends CI_Model {
         $this->db->select('users.is_executive_admin');
         $this->db->select('users.pay_plan_flag');
         $this->db->select('users.job_title');
-        $this->db->select('users.registration_date');
         $this->db->select('users.joined_at');
         $this->db->select('users.rehire_date');
         $this->db->select('users.department_sid');
