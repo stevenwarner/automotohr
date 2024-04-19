@@ -94,7 +94,7 @@ class Employees_termination_report extends Admin_Controller {
 
         $this->pagination->initialize($config);
         $this->data["links"] = $this->pagination->create_links();
-        $total_records = $this->data['products_count'];
+        $total_records = $this->data['terminatedEmployeesCount'];
 
         $this->data['current_page'] = $page_number;
         $this->data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
@@ -111,7 +111,7 @@ class Employees_termination_report extends Admin_Controller {
                 header('Content-Disposition: attachment; filename=employee_terminated_report.csv');
                 $output = fopen('php://output', 'w');
 
-                fputcsv($output, array('Name', 'Employee ID', 'Job Title', 'Department', 'Hire Date', 'Last Day Worked', 'Termination Reason'));
+                fputcsv($output, array('Name', 'Employee ID', 'Company Name', 'Job Title', 'Department', 'Hire Date', 'Last Day Worked', 'Termination Reason'));
 
                 foreach($allTerminatedEmployees as $terminatedEmployee){
                     //
@@ -178,6 +178,7 @@ class Employees_termination_report extends Admin_Controller {
                     $input = array();
                     $input['employee_name'] = $employeeName;
                     $input['employee_id'] = "AHR-".$terminatedEmployee['sid'];
+                    $input['company_name'] = getCompanyNameBySid($terminatedEmployee['parent_sid']);
                     $input['job_title'] = $terminatedEmployee['job_title'];
                     $input['department'] = getDepartmentNameBySID($terminatedEmployee['department_sid']);
                     $input['hire_date'] = $hireDate;

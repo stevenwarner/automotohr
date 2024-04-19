@@ -34,14 +34,13 @@ class Employees_termination_report_model extends CI_Model {
         //
         $this->db->join('users', 'users.sid = terminated_employees.employee_sid', 'left');
         $this->db->where('terminated_employees.employee_status', 1);
-        $this->db->where_in('users.parent_sid', $company_sids);
         //
         if($between != '' && $between != NULL){
             $this->db->where($between);
         }
         //
         if (!empty($company_sids)) {
-            $this->db->where_in('users.parent_sid', $company_sids);
+            $this->db->where('users.parent_sid', $company_sids);
         } 
         //
         if($limit != null){
