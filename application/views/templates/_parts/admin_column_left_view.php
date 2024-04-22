@@ -222,7 +222,8 @@ if (
     $this->uri->segment(3) == 'applicant_origination_statistics' ||
     $this->uri->segment(3) == 'accurate_background' ||
     $this->uri->segment(3) == 'invoice_item_usage' ||
-    $this->uri->segment(3) == 'complynet_report'
+    $this->uri->segment(3) == 'complynet_report' ||
+    $this->uri->segment(3) == 'employees_termination_report'
 ) {
     $reports_menu = true;
 } else if (
@@ -999,7 +1000,7 @@ if (
                 </li>
             <?php } ?>
 
-            <?php $functions_names = array('job_products_report', 'applicants_report', 'applicant_status_report', 'applicant_offers_report', 'applicants_referrals_report', 'jobs_per_month_report', 'interviews_report', 'applicants_between_period_report', 'time_to_fill_job_report', 'job_categories_report', 'new_hires_report', 'new_hires_onboarding_report', 'job_views_report', 'advanced_jobs_report'); ?>
+            <?php $functions_names = array('job_products_report', 'applicants_report', 'applicant_status_report', 'applicant_offers_report', 'applicants_referrals_report', 'jobs_per_month_report', 'interviews_report', 'applicants_between_period_report', 'time_to_fill_job_report', 'job_categories_report', 'new_hires_report', 'new_hires_onboarding_report', 'job_views_report', 'advanced_jobs_report', 'employees_termination_report'); ?>
             <!--            --><?php //$functions_names = array('job_products_report', 'applicants_report', 'applicant_status_report', 'applicant_offers_report', 'applicants_referrals_report', 'jobs_per_month_report', 'interviews_report', 'applicants_between_period_report', 'time_to_fill_job_report', 'time_to_hire_job_report', 'job_categories_report', 'new_hires_report', 'new_hires_onboarding_report', 'job_views_report', 'advanced_jobs_report'); 
                                 ?>
             <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
@@ -1216,6 +1217,13 @@ if (
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/complynet_report')) !== false || ($this->uri->segment(3) == 'complynet_report')) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('manage_admin/reports/complynet_report'); ?>">ComplyNet Report</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'employees_termination_report')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/employees_termination_report')) !== false || ($this->uri->segment(3) == 'employees_termination_report')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/reports/employees_termination_report'); ?>">Employees Termination Report</a>
                             </div>
                         <?php } ?>
 

@@ -3621,4 +3621,188 @@ class Reports extends Public_Controller
         $this->load->view('reports/employee_assigned_documents');
         $this->load->view('main/footer');
     }
+
+    public function employeeTerminationReport($start_date = 'all', $end_date = 'all', $page_number = 1)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'reports');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['title'] = 'Advanced Hr Reports - Employees Termination Reports';
+            //
+            $start_date = urldecode($start_date);
+            $end_date = urldecode($end_date);
+            //
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d');
+            } else {
+                $start_date_applied = date('Y-m-d 00:00:00');
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d');
+            } else {
+                $end_date_applied = date('Y-m-d');
+            }
+            //
+            $between = '';
+            //
+            if ($start_date_applied != NULL && $end_date_applied != NULL) {
+                $between = "terminated_employees.termination_date between '" . $start_date_applied . "' and '" . $end_date_applied . "'";
+            }
+            //
+            $data["flag"] = true;
+            
+            //
+            $data['terminatedEmployeesCount'] = sizeof($this->reports_model->getTerminatedEmployees($company_sid, $between, null, null));
+            /** pagination * */
+            $this->load->library('pagination');
+            $records_per_page = PAGINATION_RECORDS_PER_PAGE;
+            $my_offset = 0;
+            //
+            if($page_number > 1){
+                $my_offset = ($page_number - 1) * $records_per_page;
+            }
+            //
+            $baseUrl = base_url('manage_admin/reports/employees_termination_report') . '/'. urlencode($start_date) . '/' . urlencode($end_date);
+            //
+            $uri_segment = 6;
+            $config = array();
+            $config["base_url"] = $baseUrl;
+            $config["total_rows"] = $data['terminatedEmployeesCount'];
+            $config["per_page"] = $records_per_page;
+            $config["uri_segment"] = $uri_segment;
+            $choice = $config["total_rows"] / $config["per_page"];
+            $config["num_links"] = ceil($choice);
+            $config["use_page_numbers"] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '&laquo; First';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = 'Last &raquo;';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
+
+            $this->pagination->initialize($config);
+            $data['page_links'] = $this->pagination->create_links();
+            $total_records = $data['terminatedEmployeesCount'];
+
+            $data['current_page'] = $page_number;
+            $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
+            $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
+        
+            $data['terminatedEmployees'] = $this->reports_model->getTerminatedEmployees($company_sid, $between, $records_per_page, $my_offset);
+            $allTerminatedEmployees = $this->reports_model->getTerminatedEmployees($company_sid, $between, null, null);
+
+            if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
+                if(isset($allTerminatedEmployees) && sizeof($allTerminatedEmployees) > 0){
+                    $filename = str_replace(' ', '_',$data['session']['employer_detail']['CompanyName']).'_employee_terminated_report.csv';
+                    header('Content-Type: text/csv; charset=utf-8');
+                    header('Content-Disposition: attachment; filename='.$filename);
+                    $output = fopen('php://output', 'w');
+
+                    fputcsv($output, array('Name', 'Employee ID', 'Job Title', 'Department', 'Hire Date', 'Last Day Worked', 'Termination Reason'));
+
+                    foreach($allTerminatedEmployees as $terminatedEmployee){
+                        //
+                        $employeeName = remakeEmployeeName([
+                            'first_name' => $terminatedEmployee['first_name'],
+                            'last_name' => $terminatedEmployee['last_name'],
+                            'access_level' => $terminatedEmployee['access_level'],
+                            'timezone' => isset($terminatedEmployee['timezone']) ? $terminatedEmployee['timezone'] : '',
+                            'access_level_plus' => $terminatedEmployee['access_level_plus'],
+                            'is_executive_admin' => $terminatedEmployee['is_executive_admin'],
+                            'pay_plan_flag' => $terminatedEmployee['pay_plan_flag'],
+                            'job_title' => $terminatedEmployee['job_title'],
+                        ]); 
+                        //
+                        $hireDate = get_employee_latest_joined_date(
+                            $terminatedEmployee['registration_date'],
+                            $terminatedEmployee['joined_at'],
+                            $terminatedEmployee['rehire_date'],
+                            false
+                        );
+                        //
+                        $reason = $terminatedEmployee['termination_reason'];
+                        //
+                        if ($reason == 1) {
+                            $terminatedReason = 'Resignation';
+                        } else if ($reason == 2) {
+                            $terminatedReason = 'Fired';
+                        } else if ($reason == 3) {
+                            $terminatedReason = 'Tenure Completed';
+                        } else if ($reason == 4) {
+                            $terminatedReason = 'Personal';
+                        } else if ($reason == 5) {
+                            $terminatedReason = 'Personal';
+                        } else if ($reason == 6) {
+                            $terminatedReason = 'Problem with Supervisor';
+                        } else if ($reason == 7) {
+                            $terminatedReason = 'Relocation';
+                        } else if ($reason == 8) {
+                            $terminatedReason = 'Work Schedule';
+                        } else if ($reason == 9) {
+                            $terminatedReason = 'Retirement';
+                        } else if ($reason == 10) {
+                            $terminatedReason = 'Return to School';
+                        } else if ($reason == 11) {
+                            $terminatedReason = 'Pay';
+                        } else if ($reason == 12) {
+                            $terminatedReason = 'Without Notice/Reason';
+                        } else if ($reason == 13) {
+                            $terminatedReason = 'Involuntary';
+                        } else if ($reason == 14) {
+                            $terminatedReason = 'Violating Company Policy';
+                        } else if ($reason == 15) {
+                            $terminatedReason = 'Attendance Issues';
+                        } else if ($reason == 16) {
+                            $terminatedReason = 'Performance';
+                        } else if ($reason == 17) {
+                            $terminatedReason = 'Workforce Reduction';
+                        } elseif ($reason == 18) {
+                            $terminatedReason = 'Store Closure';
+                        } else {
+                            $terminatedReason = 'N/A';
+                        }
+                        //
+                        $input = array();
+                        $input['employee_name'] = $employeeName;
+                        $input['employee_id'] = "AHR-".$terminatedEmployee['sid'];
+                        $input['job_title'] = $terminatedEmployee['job_title'];
+                        $input['department'] = getDepartmentNameBySID($terminatedEmployee['department_sid']);
+                        $input['hire_date'] = formatDateToDB($hireDate, DB_DATE, SITE_DATE);
+                        $input['last_day_worked'] = formatDateToDB($terminatedEmployee['termination_date'], DB_DATE, SITE_DATE);
+                        $input['termination_reason'] = $terminatedReason;
+                        fputcsv($output, $input);
+                    }
+                    fclose($output);
+                    exit;
+                } else {
+                    $this->session->set_flashdata('message', 'No data found.');
+                }
+            }
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('reports/employees_termination_report');
+            $this->load->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
 }

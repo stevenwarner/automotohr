@@ -2257,5 +2257,10 @@ $route["indeed/authorize"]["get"] = "manage_admin/Job_feeds_management/generateI
 // Indeed disposition status map
 $route["manage_admin/indeed/disposition/status/map"]["get"] =
   "manage_admin/Indeed_disposition_status_map/listing";
-  $route["manage_admin/indeed/disposition/status/map"]["post"] =
+$route["manage_admin/indeed/disposition/status/map"]["post"] =
   "manage_admin/Indeed_disposition_status_map/saveListing";
+
+//Manage Admin Employees Termination Report
+$route['manage_admin/reports/employees_termination_report/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1';
+$route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1/$2/$3';
+$route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1/$2/$3/$4';

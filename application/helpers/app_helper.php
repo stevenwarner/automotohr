@@ -3638,3 +3638,101 @@ if (!function_exists("getUserFieldsFromEmployeeStatus")) {
         return $updateArray;
     }
 }
+
+if (!function_exists('checkAndFixDateFormat')) {
+    /**
+     * Check the date format to
+     * avoid 500
+     *
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkAndFixDateFormat($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        //
+        $oldFormat = '';
+        // Check for valid syntax
+        if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm-d-Y';
+        } else if (preg_match('/[0-9]{2}/[0-9]{2}/[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm/d/Y';
+        } else if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y-m-d';
+        } else if (preg_match('/[0-9]{4}/[0-9]{2}/[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y/m/d';
+        } else {
+            return $dateIn;
+        }
+        //
+        return formatDateToDB($dateIn, $oldFormat, $format);
+    }
+}
+
+//
+if (!function_exists("magicCodeCorrection")) {
+    /**
+     * corrects the in-format magic codes
+     *
+     * @param string $description
+     * @return string
+     */
+    function magicCodeCorrection(string $description): string
+    {
+        if (!$description) {
+            return $description;
+        }
+        // convert the html entities so browser
+        // don't convert them
+        $description = htmlentities($description);
+        // find all magic codes
+        preg_match_all("/{(.*?){(.*?)}(.*?)}/", $description, $matches, PREG_SET_ORDER);
+        // set replacement array
+        $keyPair = [];
+        // iterate the array
+        foreach ($matches as $v) {
+            //
+            $keyPair[$v[0]] = "{{" . (trim($v[2])) . "}}";
+        }
+        // replace the string
+        return html_entity_decode(
+            str_replace(
+                array_keys($keyPair),
+                $keyPair,
+                $description
+            )
+        );
+    }
+}
+
+if (!function_exists("updateDocumentCorrectionDesc")) {
+    /**
+     * update the document description with corrected string
+     *
+     * @param string $description
+     * @param int    $assignedDocumentSid
+     * @param int    $parentDocumentId Optional
+     */
+    function updateDocumentCorrectionDesc(
+        string $description,
+        int $assignedDocumentSid,
+        int $parentDocumentId = 0
+    ) {
+        // get the CI instance
+        $CI = &get_instance();
+        // update the assigned table
+        $CI->db
+            ->where("sid", $assignedDocumentSid)
+            ->update(
+                "documents_assigned",
+                [
+                    "document_description" => $description,
+                    "is_fixed" => 1
+                ]
+            );
+    }
+}

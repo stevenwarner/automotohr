@@ -1386,9 +1386,14 @@ class Hr_documents_management extends Public_Controller
 
                         $document_name = $this->input->post('document_title');
                         $document_description = $this->input->post('document_description');
+
+                        $document_description = magicCodeCorrection($document_description);
+
                         $video_required = $this->input->post('video_source');
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
+
+
                         $data_to_update = array();
                         $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_update['visible_to_document_center'] = 0;
@@ -3400,7 +3405,7 @@ class Hr_documents_management extends Public_Controller
 
                 if (isset($w4_form) && !empty($w4_form['first_date_of_employment']) && $w4_form['first_date_of_employment'] != '0000-00-00 00:00:00' && $w4_form['first_date_of_employment'] != '' && $w4_form['first_date_of_employment'] != null) {
                     if (preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $w4_form['first_date_of_employment'])) {
-                       $sign_date = $w4_form['first_date_of_employment'];
+                        $sign_date = $w4_form['first_date_of_employment'];
                     } else {
                         $sign_date = date("m-d-Y", strtotime($w4_form['first_date_of_employment']));
                     }
@@ -3749,9 +3754,23 @@ class Hr_documents_management extends Public_Controller
                             //$magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                             $magic_codes = array('{{signature}}', '{{inital}}');
 
+
+
+                            //
+                            $documentBodyOld = $document_body;
+                            $document_body = magicCodeCorrection($document_body);
+
+
+                            if ($documentBodyOld != $document_body) {
+
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                            }
+
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
+
                                 $is_magic_tag_exist = 1;
                             }
+
 
                             if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
 
@@ -5613,6 +5632,16 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             $magic_codes = array('{{signature}}', '{{inital}}');
 
+                           //
+                            $documentBodyOld = $document_body;
+                            $document_body = magicCodeCorrection($document_body);
+
+                            if ($documentBodyOld != $document_body) {
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                            }
+
+
+
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                 $is_magic_tag_exist = 1;
                             }
@@ -7149,6 +7178,15 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                             $magic_codes = array('{{signature}}', '{{inital}}');
+                             
+                               //
+                               $documentBodyOld = $document_body;
+                               $document_body = magicCodeCorrection($document_body);
+   
+                               if ($documentBodyOld != $document_body) {
+                                   updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                               }
+
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                 $is_magic_tag_exist = 1;
@@ -12121,8 +12159,6 @@ class Hr_documents_management extends Public_Controller
         //
         $assigner_firstname = '';
         $assigner_lastname = '';
-
-
         //
         if (!empty($document)) {
             $post['sendEmail'] = $document['sendEmail'];
@@ -12149,6 +12185,13 @@ class Hr_documents_management extends Public_Controller
         } else {
             $post = $this->input->post(NULL, TRUE);
             $desc = $this->input->post('desc');
+
+            //
+            $oldDesc = $desc;
+
+            $desc = magicCodeCorrection($desc);
+
+
             $assigner_firstname = $this->session->userData('logged_in')['employer_detail']['first_name'];
             $assigner_lastname = $this->session->userData('logged_in')['employer_detail']['last_name'];
         }
@@ -12652,6 +12695,9 @@ class Hr_documents_management extends Public_Controller
         $post = $this->input->post(NULL, TRUE);
         //
         $desc = $this->input->post('desc');
+
+        $desc = magicCodeCorrection($desc);
+
         //
         $assignInsertId = $post['documentSid'];
         //

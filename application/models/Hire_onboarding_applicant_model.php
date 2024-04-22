@@ -1145,7 +1145,11 @@ class Hire_onboarding_applicant_model extends CI_Model
                     }
                 }
             }
-
+            //
+            $this->load->model('hr_documents_management_model');
+            //
+            $this->hr_documents_management_model->moveDocumentsHistory($sid, $hired_sid);
+            //
             return $records_arr;
         } else {
             return 0;
@@ -1280,6 +1284,10 @@ class Hire_onboarding_applicant_model extends CI_Model
 
                 //
                 $return_array['documents'] = $records_arr;
+                //
+                $this->load->model('hr_documents_management_model');
+                //
+                $this->hr_documents_management_model->moveDocumentsHistory($sid, $hired_sid);
             }
         }
         //

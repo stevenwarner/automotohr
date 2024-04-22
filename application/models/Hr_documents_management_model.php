@@ -11714,4 +11714,44 @@ class Hr_documents_management_model extends CI_Model
         $result = $this->db->get('users')->result_array();
         return $result;
     }
+
+    public function moveDocumentsHistory ($applicantId, $employeeId) {
+        //
+        //General Documents
+        $this->db->select('*');
+        $this->db->where('user_sid', $applicantId);
+        $this->db->where('user_type', 'applicant');
+        $this->db->where('document_sid <>', 0);
+        $records_obj = $this->db->get('documents_assigned_history');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if (!empty($records_arr)) {
+           //
+            foreach ($records_arr as $record) {
+                //
+                $this->db->select('sid');
+                $this->db->where('document_sid', $record['document_sid']);
+                $this->db->where('document_type', $record['document_type']);
+                $this->db->where('user_sid', $employeeId);
+                $this->db->where('user_type', 'employee');
+                $record_obj = $this->db->get('documents_assigned');
+                $record_arr = $record_obj->row_array();
+                $record_obj->free_result();
+                $return_data = array();
+                //
+                $newDocumentId = $record_arr['sid'];
+                //
+                unset($record['sid']);
+                $record['doc_sid'] = $newDocumentId;
+                $record['user_sid'] = $employeeId;
+                $record['user_type'] = 'employee';
+                //
+                $this->db->insert('documents_assigned_history', $record);
+                //
+            }
+        }
+        //
+        return true;
+    }
 }

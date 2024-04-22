@@ -172,12 +172,9 @@ if ($user_type == 'applicant') {
                                     <?php if ($user_type == 'applicant') { ?>
                                         <li><a href="#send_email_to_applicant">Send On-Boarding E-Mail</a></li>
                                     <?php } ?>
-
-
-
                                 </ul>
-                                <div>
 
+                                <div>
                                     <div id="getting_started" class="getting-started">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -446,7 +443,6 @@ if ($user_type == 'applicant') {
                                             </div>
                                     </div>
 
-
                                     <div id="department_teams" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
@@ -460,7 +456,6 @@ if ($user_type == 'applicant') {
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <div id="office_locations" class="office-locations">
                                         <div class="row">
@@ -3839,3 +3834,33 @@ if ($user_type == 'applicant') {
     </div>
 </div>
 <!-- Preview Latest Document Modal Modal End -->
+
+<script>
+    $(function() {
+        $(".jsRevokeDocumentFromOnboarding").click(function(event) {
+            //
+            event.preventDefault();
+            let formValues = $(this).data();
+            alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to revoke this document?',
+                function() {
+                    $.ajax({
+                        'url': '<?php echo current_url(); ?>',
+                        'type': 'POST',
+                        'data': {
+                            'perform_action': 'remove_document',
+                            'document_sid': formValues.id,
+                            'document_type': formValues.type
+                        },
+                        success: function(data) {
+                            window.location.reload();
+                        }
+                    });
+                },
+                function() {
+                    alertify.error('Canceled!');
+                });
+        })
+    })
+</script>
