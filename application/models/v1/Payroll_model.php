@@ -6605,7 +6605,7 @@ class Payroll_model extends CI_Model
         $ins['name'] = $gustoResponse['name'];
         $ins['gusto_uuid'] = $gustoResponse['uuid'];
         $ins['fields_json'] = $data['fields_json'];
-        $ins['is_default'] = 0;
+        $ins['is_default'] = 1;
         $ins['updated_at'] = $ins['created_at'] = getSystemDate();
         $ins['company_sid'] = $companyId;
         $this->db->insert('gusto_companies_earning_types', $ins);
