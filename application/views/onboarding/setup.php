@@ -1429,7 +1429,7 @@ if ($user_type == 'applicant') {
                                                                                                             <i class="fa fa-times-circle" aria-hidden="true"></i>
                                                                                                             Opt-out
                                                                                                         </button>
-                                                                                                    <?php } ?>
+                                                                                                        <a class="btn btn-success" href="<?php echo base_url('EEOC/' . $user_type . '/' . $user_sid); ?>">View EEOC Form</a>                     <?php } ?>
                                                                                                 <?php } else { ?>
                                                                                                     <button onclick="func_assign_EEOC();" type="button" class="btn btn-warning">Re-Assign</button>
                                                                                                 <?php } ?>

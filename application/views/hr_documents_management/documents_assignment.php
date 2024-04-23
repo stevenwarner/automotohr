@@ -424,8 +424,8 @@ $assignIdObj = $confidential_sids;
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
                                                                                 </form>
                                                                                 <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
-                                                                                <?php if ($user_type == 'employee' && !$eeo_form_info["is_opt_out"]) { ?>
-                                                                                    <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
+                                                                                <?php if (!$eeo_form_info["is_opt_out"]) { ?>
+                                                                                    <a class="btn btn-success" href="<?php echo base_url('EEOC/'.$user_type.'/' . $user_sid); ?>">View EEOC Form</a>
                                                                                     <?php if ($eeo_form_info['is_expired'] == 1) { ?>
                                                                                         <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print/' . $user_sid . '/' . $user_type); ?>">Print</a>
                                                                                         <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download/' . $user_sid . '/' . $user_type); ?>">Download</a>
