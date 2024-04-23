@@ -1381,6 +1381,9 @@ if ($user_type == 'applicant') {
                                                                                         <td class="col-lg-2">
                                                                                             EEOC FORM
                                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . (empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on') . '.gif'); ?>">
+                                                                                            <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+                                                                                                <p>The user has Opt-out on <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?></p>
+                                                                                            <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-1 text-center">
                                                                                             <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -1422,6 +1425,10 @@ if ($user_type == 'applicant') {
                                                                                                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                                                                                             Send Email Notification
                                                                                                         </a>
+                                                                                                        <button class="btn btn-orange jsEEOCOptOut" data-id="<?= $eeo_form_info["sid"]; ?>" title="You will be opt-out of the EEOC form.">
+                                                                                                            <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                                                                            Opt-out
+                                                                                                        </button>
                                                                                                     <?php } ?>
                                                                                                 <?php } else { ?>
                                                                                                     <button onclick="func_assign_EEOC();" type="button" class="btn btn-warning">Re-Assign</button>
@@ -3862,5 +3869,40 @@ if ($user_type == 'applicant') {
                     alertify.error('Canceled!');
                 });
         })
+    })
+</script>
+
+<script>
+    $(function() {
+        let eeoId;
+        $(".jsEEOCOptOut").click(function(event) {
+            event.preventDefault();
+            eeoId = $(this).data("id");
+            _confirm(
+                "Do you really want to 'Opt-out' of the EEOC form?",
+                startOptOutProcess
+            );
+        });
+
+        function startOptOutProcess() {
+            const _hook = callButtonHook(
+                $(".jsEEOCOptOut"),
+                true
+            );
+            $.ajax({
+                    url: baseUrl("eeoc/" + (eeoId) + "/opt_out"),
+                    method: "PUT",
+                })
+                .always(function() {
+                    callButtonHook(_hook, false)
+                })
+                .fail(handleErrorResponse)
+                .success(function(resp) {
+                    _success(
+                        resp.message,
+                        window.location.refresh
+                    )
+                });
+        }
     })
 </script>

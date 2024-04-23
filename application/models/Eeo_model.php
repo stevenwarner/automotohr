@@ -427,4 +427,65 @@ class eeo_model extends CI_Model
     }
 
 
+    function getEEOCEmployeesByFilter(
+        $keyword, 
+        $opt_status, 
+        $start_date, 
+        $end_date, 
+        $company_id, 
+        $records_per_page = null, 
+        $my_offset = 0, 
+        $count_only = false, 
+        $type
+    )
+    {  
+        //
+        $where = [
+            "users.parent_sid" => $company_id,
+            "portal_eeo_form.users_type" => "employee",
+            // "portal_eeo_form.last_completed_on >=" => $start_date,
+            // "portal_eeo_form.last_completed_on <=" => $end_date,
+        ];
+
+        if ($opt_status === "opt_in"){
+            $where["portal_eeo_form.is_opt_out is null"] = null;
+        } elseif($opt_status === "opt_out") {
+            $where["portal_eeo_form.is_opt_out is not null"] = null;
+        }
+        
+        if ($type === "active") {
+            $where["users.active"] = 1;
+            $where["users.terminated_status"] = 0;
+        } elseif ($type === "inactive") {
+            $where["users.active"] = 0;
+        }
+        //
+        $records = $this
+        ->db
+        ->select("
+            portal_eeo_form.*,
+            users.gender as gen,
+            ".(getUserFields())."
+        ")
+        ->where($where)
+        ->join("users", "users.sid = portal_eeo_form.application_sid", "inner")
+        ->get("portal_eeo_form")
+        ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        
+        foreach($records as $k => $v) {
+            $records[$k]["gender"] = ucfirst($v["gender"] ? $v["gender"] : $v["gen"]);
+            $records[$k]["eeo_form"] = $v["is_opt_out"] ? "No" : "Yes";
+            $records[$k]["applicant_type"] = "Employee";
+            
+        }
+
+        return $records;
+        
+    }
+
+
 }

@@ -1706,6 +1706,7 @@ class Hr_documents_management_model extends CI_Model
         $updateArray['last_assigned_by'] = 0;
         $updateArray['last_sent_at'] = NULL;
         $updateArray['last_completed_on'] = NULL;
+        $updateArray['is_opt_out'] = NULL;
         //
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
@@ -1717,6 +1718,7 @@ class Hr_documents_management_model extends CI_Model
         $updateArray = [];
         $updateArray['status'] = 1;
         $updateArray['is_latest'] = 1;
+        $updateArray['is_opt_out'] = null;
         $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
         //
@@ -7981,6 +7983,7 @@ class Hr_documents_management_model extends CI_Model
             $data_to_update['status'] = 1;
             $data_to_update['is_latest'] = 1;
             $data_to_update['is_expired'] = 0;
+            $data_to_update['is_opt_out'] = null;
             $data_to_update['last_completed_on'] = null;
             $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));

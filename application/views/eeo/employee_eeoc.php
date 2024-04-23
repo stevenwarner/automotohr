@@ -13,25 +13,44 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
 
 <body>
     <div class="container">
-        <?php if ($eeo_form_info['status'] == 1) { ?>
-            <div>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="margin-top: 14px;">
-                        <?php if ($eeo_form_info["is_expired"] == 1) { ?>
-                            <a target="_blank" href="<?php echo $download_url; ?>" class="btn blue-button" title="Download EEOC Form" placement="top">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                                Download PDF
-                            </a>
-                            <a target="_blank" href="<?php echo $print_url; ?>" class="btn blue-button" title="Print EEOC Form" placement="top">
-                                <i class="fa fa-print" aria-hidden="true"></i>
-                                Print PDF
-                            </a>
-                        <?php } ?>
-                    </div>
+        <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <br>
+                    <p class="alert alert-info text-center">
+                        You have Opt-out from the EEOC.
+                    </p>
                 </div>
-                <hr>
-                <?php $this->load->view('eeo/eeoc_new_form_ems', ['eeocFormOptions' => $eeocFormOptions]); ?>
             </div>
+        <?php } else { ?>
+            <?php if ($eeo_form_info['status'] == 1) { ?>
+                <div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="margin-top: 14px;">
+                            <?php if ($eeo_form_info["is_expired"] == 1) { ?>
+                                <a target="_blank" href="<?php echo $download_url; ?>" class="btn blue-button" title="Download EEOC Form" placement="top">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                    Download PDF
+                                </a>
+                                <a target="_blank" href="<?php echo $print_url; ?>" class="btn blue-button" title="Print EEOC Form" placement="top">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Print PDF
+                                </a>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-right">
+                            <button class="btn btn-orange jsEEOCOptOut" title="You will be opt-out of the EEOC form.">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                Opt-out
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <?php $this->load->view('eeo/eeoc_new_form_ems', ['eeocFormOptions' => $eeocFormOptions]); ?>
+                </div>
+            <?php } ?>
         <?php } ?>
     </div>
 </body>
@@ -86,13 +105,13 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                 }
                 //
                 if (errorArray.length) {
-					//
-					return alertify.alert(
-						"ERROR!",
-						getErrorsStringFromArray(errorArray),
-						CB
-					);
-				}
+                    //
+                    return alertify.alert(
+                        "ERROR!",
+                        getErrorsStringFromArray(errorArray),
+                        CB
+                    );
+                }
                 //
                 $.post(
                     "<?= base_url("eeoc_form_submit"); ?>",
@@ -109,6 +128,36 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                     alertify.alert('Success!', 'You have successfully submitted the EEOC form.');
                 });
             });
+
+
+            $(".jsEEOCOptOut").click(function(event) {
+                event.preventDefault();
+                _confirm(
+                    "Do you really want to 'Opt-out' of the EEOC form?",
+                    startOptOutProcess
+                );
+            });
+
+            function startOptOutProcess() {
+                const _hook = callButtonHook(
+                    $(".jsEEOCOptOut"),
+                    true
+                );
+                $.ajax({
+                        url: baseUrl("eeoc/<?= $eeo_form_info["sid"]; ?>/opt_out"),
+                        method: "PUT",
+                    })
+                    .always(function() {
+                        callButtonHook(_hook, false)
+                    })
+                    .fail(handleErrorResponse)
+                    .success(function(resp) {
+                        _success(
+                            resp.message,
+                            window.location.refresh
+                        )
+                    });
+            }
 
             if (typeof getErrorsStringFromArray === "undefined") {
                 /**

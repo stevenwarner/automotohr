@@ -298,7 +298,7 @@ $assignIdObj = $confidential_sids;
                                                                                 </form>
                                                                                 <button onclick="func_remove_i9();" class="btn btn-danger">Revoke</button>
                                                                                 <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
-                                                                                <a href="<?=base_url("forms/i9/modify/$user_type/$user_sid");?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
+                                                                                <a href="<?= base_url("forms/i9/modify/$user_type/$user_sid"); ?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
                                                                                 <?php if ($user_type == 'employee') { ?>
                                                                                     <a class="btn <?php echo $i9_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<?= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $i9_form['sid'] . "/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
@@ -379,6 +379,9 @@ $assignIdObj = $confidential_sids;
                                                                         <?php if ($eeo_form_info && $eeo_form_info["status" == 1]) { ?>
                                                                             Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
                                                                         <?php } ?>
+                                                                        <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+                                                                            The user has Opt-out on <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
+                                                                        <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -421,7 +424,7 @@ $assignIdObj = $confidential_sids;
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
                                                                                 </form>
                                                                                 <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
-                                                                                <?php if ($user_type == 'employee') { ?>
+                                                                                <?php if ($user_type == 'employee' && !$eeo_form_info["is_opt_out"]) { ?>
                                                                                     <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
                                                                                     <?php if ($eeo_form_info['is_expired'] == 1) { ?>
                                                                                         <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print/' . $user_sid . '/' . $user_type); ?>">Print</a>
@@ -433,6 +436,10 @@ $assignIdObj = $confidential_sids;
                                                                                         <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                                                                         Send Email Notification
                                                                                     </a>
+                                                                                    <button class="btn btn-orange jsEEOCOptOut" data-id="<?= $eeo_form_info["sid"]; ?>" title="You will be opt-out of the EEOC form.">
+                                                                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                                                        Opt-out
+                                                                                    </button>
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
                                                                                 <form id="form_assign_EEOC" enctype="multipart/form-data" method="post">
@@ -5687,3 +5694,39 @@ $this->load->view('hr_documents_management/scripts/index', [
         }
     })
 </script> -->
+
+
+<script>
+    $(function() {
+        let eeoId;
+        $(".jsEEOCOptOut").click(function(event) {
+            event.preventDefault();
+            eeoId = $(this).data("id");
+            _confirm(
+                "Do you really want to 'Opt-out' of the EEOC form?",
+                startOptOutProcess
+            );
+        });
+
+        function startOptOutProcess() {
+            const _hook = callButtonHook(
+                $(".jsEEOCOptOut"),
+                true
+            );
+            $.ajax({
+                    url: baseUrl("eeoc/" + (eeoId) + "/opt_out"),
+                    method: "PUT",
+                })
+                .always(function() {
+                    callButtonHook(_hook, false)
+                })
+                .fail(handleErrorResponse)
+                .success(function(resp) {
+                    _success(
+                        resp.message,
+                        window.location.refresh
+                    )
+                });
+        }
+    })
+</script>

@@ -58,11 +58,9 @@
                                                     <label for="enddate">Opt Type</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="opt_type1" id="opt_type1">
-                                                            <!-- <option value="all" <?php //echo $opt_type == 'all' ? 'selected="selected"' : "" 
-                                                                                        ?>>All</option>-->
-                                                            <option value="completed" <?php echo $opt_type == 'completed' ? 'selected="selected"' : "" ?>>Completed</option>
-                                                            <!---<option value="notcompleted" <?php //echo $opt_type == 'notcompleted' ? 'selected="selected"' : "" 
-                                                                                                ?>>Not completed</option>-->
+                                                            <option value="all" <?php echo $opt_type == 'all' ? 'selected="selected"' : ""; ?>>All</option>
+                                                            <option value="opt_in" <?php echo $opt_type == 'opt_in' ? 'selected="selected"' : ""; ?>>Opt In</option>
+                                                            <option value="opt_out" <?php echo $opt_type == 'opt_out' ? 'selected="selected"' : ""; ?>>Opt-out</option>
                                                         </select>
                                                     </div>
                                                 </div>

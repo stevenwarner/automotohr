@@ -2264,3 +2264,6 @@ $route["manage_admin/indeed/disposition/status/map"]["post"] =
 $route['manage_admin/reports/employees_termination_report/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1';
 $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1/$2/$3';
 $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1/$2/$3/$4';
+
+
+$route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
