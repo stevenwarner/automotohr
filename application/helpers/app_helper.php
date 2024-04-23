@@ -3736,3 +3736,43 @@ if (!function_exists("updateDocumentCorrectionDesc")) {
             );
     }
 }
+
+if (!function_exists("checkAndGetDocumentDescription"))
+{
+    function checkAndGetDocumentDescription(
+        int $documentId,
+        string $description,
+        bool $encode = false
+    ):string
+    {
+        // get CI instance
+        $CI =& get_instance();
+        // check if fillable document
+        if(
+            $CI
+            ->db
+            ->where([
+                "sid" => $documentId,
+                "fillable_document_slug IS NOT NULL" => null
+            ])
+            ->count_all_results("documents_management")
+        ){
+            return $encode ? htmlentities(
+                $description
+            ) : $description;
+        }
+        // get the document content and 
+        $record = $CI
+            ->db
+            ->select("document_description")
+            ->where([
+                "sid" => $documentId
+            ])
+            ->get("documents_management")
+            ->row_array();
+        //
+        return $encode ? htmlentities(
+                $record["document_description"]
+            ) : $record["document_description"];
+    }
+}

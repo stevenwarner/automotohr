@@ -162,8 +162,6 @@ if (!function_exists('get_form_view')) {
 if (!function_exists('replace_tags_for_document')) {
     function replace_tags_for_document($company_sid, $user_sid = null, $user_type = null, $document_body, $document_sid = 0, $authorized_signature = 0, $signature_base64 = false, $forDownload = false, $autofill = 0)
     {
-
-
         $CI = &get_instance();
 
         //Get Company Info
@@ -301,7 +299,10 @@ if (!function_exists('replace_tags_for_document')) {
             'inital',
             'sign_date',
             'text',
-            'checkbox'
+            'checkbox',
+            'supervisor',
+            'department',
+            'last_day_of_work',
         );
 
         $date = date('M d Y');
@@ -521,6 +522,45 @@ if (!function_exists('replace_tags_for_document')) {
         $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
         $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name, $my_return);
         $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
+        // Fillable documents
+        $supervisor = "";
+        $department = "";
+        if (strtolower($user_type) == 'employee' && $user_sid != null) {
+            // load the model
+            $CI->load->model(
+                "Hr_documents_management_model",
+                "hr_documents_management_model"
+            );
+            // get the supervisor with department
+            $response = $CI
+                ->hr_documents_management_model
+                ->getEmployeeSupervisorAndDepartment($user_sid);
+            if ($response) {
+                if ($response["supervisor"]) {
+                    $supervisor = explode(",", $response["supervisor"]);
+                    $supervisor = $supervisor[0];
+                    $supervisor = getUserNameBySID($supervisor, false);
+                    $supervisor = $supervisor[0]["first_name"].' '.$supervisor[0]["last_name"];
+                }
+
+                if ($response["name"]) {
+                    $department = $response["name"];
+                }
+            }
+        }
+        // notice of separation
+        $my_return = str_replace('{{employee_name}}', '<input type="text" class="form-control input-grey gray-background js_employee_name" name="employee_name" value="' . ($user_info["first_name"].' '.$user_info["last_name"]) . '" />', $my_return);
+        $my_return = str_replace('{{employee_job_title}}', '<input type="text" class="form-control input-grey gray-background js_employee_job_title" name="employee_job_title" value="' . ($user_info["job_title"]) . '" />', $my_return);
+        
+        $my_return = str_replace('{{supervisor}}', '<input type="text" class="form-control input-grey gray-background js_supervisor" name="supervisor" value="' . ($supervisor) . '" />', $my_return);
+        $my_return = str_replace('{{department}}', '<input type="text" class="form-control input-grey gray-background js_department" name="department" value="' . ($department) . '" />', $my_return);
+        $my_return = str_replace('{{last_day_of_work}}', '<input type="text" class="jsDatePicker form-control input-grey gray-background js_last_work_date" name="last_work_date" readonly />', $my_return);
+        $my_return = str_replace('{{reason_to_leave_company}}', '<textarea rows="5" class="form-control input-grey gray-background js_reason_to_leave_company" name="reason_to_leave_company"></textarea>', $my_return);
+        $my_return = str_replace('{{forwarding_information}}', '<textarea rows="5" class="form-control input-grey gray-background js_forwarding_information" name="forwarding_information"></textarea>', $my_return);
+        // notice of termination
+        $my_return = str_replace('{{is_termination_voluntary}}', '<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="yes"/> Yes<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="no"/> No', $my_return);
+        $my_return = str_replace('{{property_returned}}', '<br /><input type="radio" name="property_returned" class="js_property_returned" value="yes"/> Yes<br /><input type="radio" name="property_returned" class="js_property_returned" value="no"/> No', $my_return);
+        $my_return = str_replace('{{reemploying}}', '<br /><input type="radio" name="reemploying" class="js_reemploying" value="yes"/> Yes<br /><input type="radio" name="reemploying" class="js_reemploying" value="no"/> No', $my_return);
 
         return $my_return;
     }

@@ -400,6 +400,13 @@
 <script src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 <script>
     $(document).ready(function() {
+
+        //
+        $(".js_last_work_date").datepicker({
+            format: "MM/DD/YYYY",
+            changeYear: true,
+            changeMonth: true
+        })
         //
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
@@ -417,8 +424,31 @@
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
 
+            console.log(form_input_data)
+
             $.each(form_input_data, function(key, input_value) {
-                if (input_value[0] == 'signature_person_name') {
+                // for fillables
+                if (input_value[0] === "supervisor") {
+                    $("input.js_supervisor").val(input_value[1]);
+                } else if (input_value[0] === "department") {
+                    $("input.js_department").val(input_value[1]);
+                } else if (input_value[0] === "last_work_date") {
+                    $("input.js_last_work_date").val(input_value[1]);
+                } else if (input_value[0] === "reason_to_leave_company") {
+                    $("textarea.js_reason_to_leave_company").val(input_value[1]);
+                } else if (input_value[0] === "forwarding_information") {
+                    $("textarea.js_forwarding_information").val(input_value[1]);
+                } else if (input_value[0] === "employee_name") {
+                    $("input.js_employee_name").val(input_value[1]);
+                } else if (input_value[0] === "employee_job_title") {
+                    $("input.js_employee_job_title").val(input_value[1]);
+                } else if (input_value[0] === "is_termination_voluntary") {
+                    $('input.js_is_termination_voluntary[value="' + (input_value[1]) + '"]').prop("checked", true);
+                } else if (input_value[0] === "property_returned") {
+                    $('input.js_property_returned[value="' + (input_value[1]) + '"]').prop("checked", true);
+                } else if (input_value[0] === "reemploying") {
+                    $('input.js_reemploying[value="' + (input_value[1]) + '"]').prop("checked", true);
+                } else if (input_value[0] == 'signature_person_name') {
                     var input_field_id = input_value[0];
                     var input_field_val = input_value[1];
                     $('#' + input_field_id).val(input_field_val);
@@ -791,8 +821,54 @@
                 $('#save_signature_date').val('no');
             }
 
-            if (is_sign == 'true' && is_init == 'true' && is_date == 'true') {
+            let manualRequired = false;
+
+            if ($('input.js_supervisor').length && !$('input.js_supervisor').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_department').length && !$('input.js_department').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_last_work_date').length && !$('input.js_last_work_date').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_reason_to_leave_company').length && !$('textarea.js_reason_to_leave_company').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_forwarding_information').length && !$('textarea.js_forwarding_information').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_employee_name').length && !$('textarea.js_employee_name').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.employee_job_title').length && !$('textarea.employee_job_title').val()) {
+                manualRequired = true;
+            }
+
+            if (is_sign == 'true' && is_init == 'true' && is_date == 'true' && !manualRequired) {
                 var input_values_obj = {};
+
+                if ($('input.js_employee_name').length) {
+                    input_values_obj["employee_name"] = $('input.js_employee_name').val();
+                }
+                if ($('input.js_employee_job_title').length) {
+                    input_values_obj["employee_job_title"] = $('input.js_employee_job_title').val();
+                }
+                if ($('input.js_supervisor').length) {
+                    input_values_obj["supervisor"] = $('input.js_supervisor').val();
+                }
+                if ($('input.js_department').length) {
+                    input_values_obj["department"] = $('input.js_department').val();
+                }
+                if ($('input.js_last_work_date').length) {
+                    input_values_obj["last_work_date"] = $('input.js_last_work_date').val();
+                }
+                if ($('textarea.js_reason_to_leave_company').length) {
+                    input_values_obj["reason_to_leave_company"] = $('textarea.js_reason_to_leave_company').val();
+                }
+                if ($('textarea.js_forwarding_information').length) {
+                    input_values_obj["forwarding_information"] = $('textarea.js_forwarding_information').val();
+                }
 
                 $('input.short_textbox').map(function() {
                     input_values_obj[this.name] = this.value;
@@ -875,6 +951,34 @@
                     signature_Initial: is_init,
                     signature_Date: is_date
                 };
+                //
+                if ($('input.js_employee_name').length) {
+                    validation["Your Name"] = $('input.js_employee_name').val() || "false"
+                }
+                //
+                if ($('input.employee_job_title').length) {
+                    validation["Job Title"] = $('input.employee_job_title').val() || "false"
+                }
+                //
+                if ($('input.js_supervisor').length) {
+                    validation["Supervisor"] = $('input.js_supervisor').val() || "false"
+                }
+                //
+                if ($('input.js_department').length) {
+                    validation["Department"] = $('input.js_department').val() || "false"
+                }
+                //
+                if ($('input.js_last_work_date').length) {
+                    validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
+                }
+                //
+                if ($('textarea.js_reason_to_leave_company').length) {
+                    validation["Reason to the company"] = $('textarea.js_reason_to_leave_company').val() || "false"
+                }
+                //
+                if ($('textarea.js_forwarding_information').length) {
+                    validation["Forwarding information"] = $('textarea.js_forwarding_information').val() || "false"
+                }
 
                 for (var key in validation) {
                     if (validation[key] == 'false') {
@@ -888,6 +992,52 @@
 
     function func_save_document_only() {
         if ($('#user_consent_form').valid()) {
+
+            let validation = {};
+
+            //
+            if ($('input.js_employee_name').length) {
+                validation["Your Name"] = $('input.js_employee_name').val() || "false"
+            }
+            //
+            if ($('input.js_employee_job_title').length) {
+                validation["Job Title"] = $('input.js_employee_job_title').val() || "false"
+            }
+            //
+            if ($('input.js_supervisor').length) {
+                validation["Supervisor"] = $('input.js_supervisor').val() || "false"
+            }
+            //
+            if ($('input.js_last_work_date').length) {
+                validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
+            }
+            //
+            if ($('input.js_is_termination_voluntary').length) {
+                validation["Voluntary Termination"] = $('input.js_is_termination_voluntary:checked').val() || "false"
+            }
+            //
+            if ($('input.js_property_returned').length) {
+                validation["Property returned"] = $('input.js_property_returned:checked').val() || "false"
+            }
+            //
+            if ($('input.js_reemploying').length) {
+                validation["Re-employing"] = $('input.js_reemploying:checked').val() || "false"
+            }
+
+            let hasErrors = false;
+
+            for (var key in validation) {
+                if (validation[key] == 'false') {
+                    hasErrors = true;
+                    var type = key.replace("_", " ");
+                    alertify.error('Please provide ' + type);
+                }
+            }
+
+            if (hasErrors) {
+                return;
+            }
+
             alertify.confirm(
                 'Are you Sure?',
                 'Are you sure you want to Save this Document?',
@@ -908,6 +1058,28 @@
                         .done(function(pdfdata) {
 
                             var input_values_obj = {};
+
+                            if ($('input.js_employee_name').length) {
+                                input_values_obj["employee_name"] = $('input.js_employee_name').val();
+                            }
+                            if ($('input.js_employee_job_title').length) {
+                                input_values_obj["employee_job_title"] = $('input.js_employee_job_title').val();
+                            }
+                            if ($('input.js_supervisor').length) {
+                                input_values_obj["supervisor"] = $('input.js_supervisor').val();
+                            }
+                            if ($('input.js_last_work_date').length) {
+                                input_values_obj["last_work_date"] = $('input.js_last_work_date').val();
+                            }
+                            if ($('input.js_is_termination_voluntary').length) {
+                                input_values_obj["is_termination_voluntary"] = $('input.js_is_termination_voluntary:checked').val();
+                            }
+                            if ($('input.js_property_returned').length) {
+                                input_values_obj["property_returned"] = $('input.js_property_returned:checked').val();
+                            }
+                            if ($('input.js_reemploying').length) {
+                                input_values_obj["reemploying"] = $('input.js_reemploying:checked').val();
+                            }
 
                             $('input.short_textbox').map(function() {
                                 input_values_obj[this.name] = this.value;

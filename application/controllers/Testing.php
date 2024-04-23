@@ -1025,4 +1025,12 @@ class Testing extends CI_Controller
         // _e(json_decode($json,true),true); 
         _e($customEarning,true,true);   
     }
+
+    public function test2()
+    {
+        $this->load->model("v1/Fillable_documents_model", "fillable_documents_model");
+        $this->fillable_documents_model->checkAndAddFillableDocuments(21);
+
+        // $this->load->view("v1/documents/fillable/oral_employee_counselling_report_form");
+    }
 }

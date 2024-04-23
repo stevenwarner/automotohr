@@ -126,7 +126,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -159,7 +159,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if (true) { ?>
+                                                                                    <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                         <!-- Convert document to Pay Plan -->
                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                                     <?php } ?>
@@ -235,7 +235,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php  } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -266,7 +266,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if (true) { ?>
+                                                                                    <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                         <!-- Convert document to Pay Plan -->
                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                                     <?php } ?>
@@ -340,7 +340,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -371,7 +371,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php if (true) { ?>
+                                                                            <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                 <!-- Convert document to Pay Plan -->
                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                             <?php } ?>
@@ -530,7 +530,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -563,7 +563,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php if (true) { ?>
+                                                                            <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                 <!-- Convert document to Pay Plan -->
                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                             <?php } ?>
@@ -1438,6 +1438,7 @@ $requiredMessage = 'This document is required to complete the process.';
         $('.js-assign-type[value="employee"]').prop('checked', true);
         $('.js-notification-email-gen[value="yes"]').prop('checked', true);
 
+        var isFillable = $(source).attr('data-fillable');
         var document_title = $(source).attr('data-title');
         var document_description = $(source).attr('data-description');
         var document_type = $(source).attr('data-document-type');
@@ -1447,11 +1448,18 @@ $requiredMessage = 'This document is required to complete the process.';
         var button_title = 'Bulk Assign This Document';
         $('#document_sid_for_validation').val(document_sid);
 
-        console.log(document_description)
-
         $('#model_generated_doc').modal('toggle');
         //        $('#gen-doc-title').val(document_title);
-        CKEDITOR.instances.gen_doc_description.setData(document_description);
+        if (isFillable) {
+            CKEDITOR.instances.gen_doc_description.destroy()
+            $("#gen_doc_description").val(document_description)
+            $("#gen_doc_description").hide()
+            $("#gen_doc_description").after(`<div id="jsFillableView">${document_description}</div>`)
+        } else {
+            $("#gen_doc_description").show()
+            $("#jsFillableView").remove()
+            CKEDITOR.instances.gen_doc_description.setData(document_description);
+        }
         //        $('#gen-doc-description').html(document_description);
         $('#gen-doc-type').val(document_type);
         $('#gen-doc-sid').val(document_sid);
