@@ -199,6 +199,14 @@ class Hr_documents_management extends Public_Controller
                             );
                         }
 
+                        //
+                        $documentDescription = 
+                        checkAndGetDocumentDescription(
+                            $document_sid,
+                            $this->input->post('document_description'),
+                            true
+                        );
+
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
                             :  $this->input->post('notification_email', true);
@@ -230,7 +238,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['document_extension'] = $document['uploaded_document_extension'];
                                 $data_to_update['document_s3_name'] = $document['uploaded_document_s3_name'];
                                 $data_to_update['document_title'] = $document['document_title'];
-                                $data_to_update['document_description'] = htmlentities($this->input->post('document_description'));
+                                $data_to_update['document_description'] = $documentDescription;
                                 $data_to_update['acknowledged'] = NULL;
                                 $data_to_update['acknowledged_date'] = NULL;
                                 $data_to_update['downloaded'] = NULL;
@@ -250,6 +258,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['signature_required'] = $document['signature_required'];
                                 $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
                                 $data_to_update['is_required'] = $document['is_required'];
+                                $data_to_update['fillable_document_slug'] = $document['fillable_document_slug'];
                                 //
                                 addColumnsForDocumentAssigned($data_to_update, $document);
                                 $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
@@ -268,11 +277,12 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['document_extension'] = $document['uploaded_document_extension'];
                                 $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                                 $data_to_insert['document_title'] = $document['document_title'];
-                                $data_to_insert['document_description'] = htmlentities($this->input->post('document_description'));
+                                $data_to_insert['document_description'] = $documentDescription;
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                                 $data_to_insert['is_required'] = $document['is_required'];
+                                $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
                                 //
                                 $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
@@ -1338,8 +1348,8 @@ class Hr_documents_management extends Public_Controller
             $data['pre_assigned_groups'] = $pre_assigned_groups;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
+            $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $sid);
             if ($this->form_validation->run() == false) {
-                $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $sid);
                 // print_r($document_info);
                 //
                 if (!empty($document_info)) {
@@ -1392,6 +1402,11 @@ class Hr_documents_management extends Public_Controller
                         $video_required = $this->input->post('video_source');
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
+
+                        if($document_info["fillable_document_slug"]) {
+                            $document_name = $document_info["document_title"];
+                            $document_description = $document_info["document_description"];
+                        }
 
 
                         $data_to_update = array();
@@ -9808,6 +9823,10 @@ class Hr_documents_management extends Public_Controller
             $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
             $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
 
+            $document["signature"] = $signature_bas64_image;
+            $document["sign_date"] = $sign_date;
+            $document["authorized_signature"] = $authorized_signature_image;
+            $document["authorized_signature_date"] = $authorized_signature_date;
             $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
@@ -9865,6 +9884,10 @@ class Hr_documents_management extends Public_Controller
             $data['document_path'] = base_url("hr_documents_management/download_upload_document") . '/' . $document_path;
             $data['perform_action'] = "download";
             $data['is_hybrid'] = "yes";
+        }
+
+        if ($document["fillable_document_slug"]) {
+            return $this->load->view("v1/documents/fillable/print_{$document["fillable_document_slug"]}", $data);
         }
 
         $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
@@ -14739,6 +14762,7 @@ class Hr_documents_management extends Public_Controller
             $new_documents_assigned_data['isdoctolibrary'] = $documents_assigned_data['isdoctolibrary'];
             $new_documents_assigned_data['visible_to_document_center'] = 0;
             $new_documents_assigned_data['is_confidential'] = $documents_assigned_data['is_confidential'];
+            $new_documents_assigned_data['fillable_document_slug'] = $documents_assigned_data['fillable_document_slug'];
 
 
 

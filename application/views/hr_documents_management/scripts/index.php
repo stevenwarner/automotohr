@@ -269,6 +269,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_descpt;
 			//
 			selectedTemplate = d;
+			console.log(d)
 			//
 			atarget = $(this).closest('td');
 			//
@@ -282,7 +283,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += '<hr />';
 			//
 			// Check if the document type
-			console.log(getUploadContent());
 			if (do_upload) rows += getUploadContent();
 			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
 			<?php if (ASSIGNEDOCIMPL) { ?>
@@ -326,11 +326,22 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows,
 				'<button class="btn btn-success js-modify-assign-submit-btn">Assign This Document</button>',
 				'modify-assign-document-modal',
-				do_descpt ? ['js-modify-assign-document-description'] : [],
+				do_descpt && !d.fillable_document_slug ? ['js-modify-assign-document-description'] : [],
 				do_descpt ? ['#js-modify-assign-document-signers'] : [],
 				function() {
+
 					//
-					do_descpt ? CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description) : '';
+					if (do_descpt) {
+						if (!d.fillable_document_slug) {
+							$("#js-modify-assign-document-description").show();
+							$("#jsFillableView").remove()
+							CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description);
+						} else {
+							$("#js-modify-assign-document-description").hide();
+							$("#js-modify-assign-document-description").after(`<div id="jsFillableView">${d.document_description}</div>`);
+						}
+					}
+					//
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
@@ -466,7 +477,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
-				obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				if(selectedTemplate.fillable_document_slug) {
+					obj.desc = selectedTemplate.document_description;
+				} else {
+					obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				}
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document') {
 				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
@@ -629,11 +644,20 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows,
 				'<button class="btn btn-success js-modify-assigned-submit-btn">Update</button>',
 				'modify-assigned-document-modal',
-				do_descpt ? ['js-modify-assigned-document-description'] : [],
+				do_descpt && !d.fillable_document_slug ? ['js-modify-assigned-document-description'] : [],
 				select2s,
 				function() {
 					//
-					do_descpt ? CKEDITOR.instances['js-modify-assigned-document-description'].setData(d.document_description) : '';
+					if (do_descpt) {
+						if (!d.fillable_document_slug) {
+							$("#js-modify-assigned-document-description").show();
+							$("#jsFillableView").remove()
+							CKEDITOR.instances['js-modify-assigned-document-description'].setData(d.document_description);
+						} else {
+							$("#js-modify-assigned-document-description").hide();
+							$("#js-modify-assigned-document-description").after(`<div id="jsFillableView">${d.document_description}</div>`);
+						}
+					}
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
@@ -744,11 +768,17 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			// obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
 			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'generated')
-				obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				if (selectedTemplate.fillable_document_slug) {
+					obj.desc = selectedTemplate.document_description;
+				} else {
+					obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				}
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'uploaded') {
 				obj.file = file.name === undefined ? selectedTemplate.document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.document_original_name;
 			}
+
+			
 			//
 			obj.isSignature = obj.isSignature === undefined ? 0 : obj.isSignature;
 			obj.managerList = obj.managerList === undefined ? null : obj.managerList;

@@ -616,4 +616,13 @@ class Testing extends CI_Controller
 
         return $fileName;
     }
+
+
+    public function test2()
+    {
+        $this->load->model("v1/Fillable_documents_model", "fillable_documents_model");
+        $this->fillable_documents_model->checkAndAddFillableDocuments(21);
+
+        // $this->load->view("v1/documents/fillable/oral_employee_counselling_report_form");
+    }
 }

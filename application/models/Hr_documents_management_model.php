@@ -11715,7 +11715,8 @@ class Hr_documents_management_model extends CI_Model
         return $result;
     }
 
-    public function moveDocumentsHistory ($applicantId, $employeeId) {
+    public function moveDocumentsHistory($applicantId, $employeeId)
+    {
         //
         //General Documents
         $this->db->select('*');
@@ -11727,7 +11728,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj->free_result();
         //
         if (!empty($records_arr)) {
-           //
+            //
             foreach ($records_arr as $record) {
                 //
                 $this->db->select('sid');
@@ -11753,5 +11754,28 @@ class Hr_documents_management_model extends CI_Model
         }
         //
         return true;
+    }
+
+    public function getEmployeeSupervisorAndDepartment(
+        int $employeeId
+    ): array {
+        return $this
+            ->db
+            ->select("
+            departments_management.supervisor,
+            departments_management.name
+        ")
+            ->from("departments_employee_2_team")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_employee_2_team.department_sid",
+            )
+            ->where([
+                "departments_employee_2_team.employee_sid" => $employeeId,
+                "departments_management.is_deleted" => 0,
+                "departments_management.status" => 1,
+            ])
+            ->get()
+            ->row_array();
     }
 }
