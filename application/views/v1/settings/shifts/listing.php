@@ -48,6 +48,7 @@ if ($filter["mode"] === "month") {
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                                 &nbsp;Manage Shift Templates
                             </a>
+                         
                         </div>
                     </div>
                     <br />
@@ -117,6 +118,9 @@ if ($filter["mode"] === "month") {
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
                                         </button>
+
+
+
                                     </div>
                                 </div>
 
@@ -228,7 +232,7 @@ if ($filter["mode"] === "month") {
                                                 <div class="schedule-row-container">
                                                     <?php foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
-                                                        
+
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
 
@@ -258,7 +262,7 @@ if ($filter["mode"] === "month") {
                                                                         <?php } elseif ($employeeShift) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
-                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor;?>" title="<?=$employee["job_title"];?>" placement="top">
+                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
                                                                                 <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>

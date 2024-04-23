@@ -1,11 +1,13 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-ini_set("memory_limit","512M");
+defined('BASEPATH') or exit('No direct script access allowed');
+ini_set("memory_limit", "512M");
 
-class Notifications extends Public_Controller {
+class Notifications extends Public_Controller
+{
     private $res;
     //
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         //
         $this->res = array(
@@ -19,7 +21,8 @@ class Notifications extends Public_Controller {
     }
 
 
-    public function get_notifications() {
+    public function get_notifications()
+    {
         //
         $ses = $this->session->userdata('logged_in');
         //
@@ -28,7 +31,7 @@ class Notifications extends Public_Controller {
         $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
         $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
         //
-        
+
         $EmsStatus = getCompanyEmsStatusBySid($ses['company_detail']['sid'], false);
 
 
@@ -47,7 +50,7 @@ class Notifications extends Public_Controller {
             $review = $this->pmm->getMyReviewCounts($ses['company_detail']['sid'], $ses['employer_detail']['sid']);
             $total_goals = count($this->pmm->getMyGoals($ses['employer_detail']['sid']));
             //
-            if($total_goals){
+            if ($total_goals) {
                 $data[] = [
                     'count' => $total_goals,
                     'link' => base_url('performance-management/goals'),
@@ -55,16 +58,16 @@ class Notifications extends Public_Controller {
                 ];
             }
             //
-            if($review['Total']){
+            if ($review['Total']) {
                 $data[] = [
                     'count' => $review['Total'],
                     'link' => base_url('performance-management/reviews/all'),
                     'title' => 'Pending Reviews'
                 ];
             }
-            
+
             //
-            if($review['Feedbacks']){
+            if ($review['Feedbacks']) {
                 $data[] = [
                     'count' => $review['Feedbacks'],
                     'link' => base_url('performance-management/reviews'),
@@ -73,7 +76,7 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        if($EmsStatus==1 && ($ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus'])){
+        if ($EmsStatus == 1 && ($ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus'])) {
             //
             $total = 0;
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
@@ -81,7 +84,7 @@ class Notifications extends Public_Controller {
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
             $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
             //
-            if($total != 0){
+            if ($total != 0) {
                 $data[] = [
                     'count' => $total,
                     'link' => base_url('hr_documents_management/company_varification_document'),
@@ -95,14 +98,14 @@ class Notifications extends Public_Controller {
             $this->load->model('Attendance_model', 'atm');
             //
             $overtimeEmployees = $this->atm->GetEmployeeWithOverTime(
-                $ses['company_detail']['sid'], 
-                date('Y-m-d', strtotime('now')), 
+                $ses['company_detail']['sid'],
+                date('Y-m-d', strtotime('now')),
                 date('Y-m-d', strtotime('now')),
                 [],
                 'sid, employee_sid'
             );
             // //
-            if($overtimeEmployees){
+            if ($overtimeEmployees) {
                 $data[] = [
                     'count' => count($overtimeEmployees),
                     'link' => base_url('attendance/overtime'),
@@ -111,11 +114,11 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        
-        if($EmsStatus==1){
+
+        if ($EmsStatus == 1) {
             $total_document_approval = count($this->notification_model->getMyApprovalDocuments($ses['employer_detail']['sid']));
             //
-            if($total_document_approval){
+            if ($total_document_approval) {
                 $data[] = [
                     'count' => $total_document_approval,
                     'link' => base_url('hr_documents_management/approval_documents'),
@@ -127,10 +130,10 @@ class Notifications extends Public_Controller {
         //
         $this->load->model('v1/course_model');
         $pendingTrainings =
-                $this->course_model->getEmployeePendingCourseCount(
-                    $ses['company_detail']['sid'],
-                    $ses['employer_detail']['sid']
-                );
+            $this->course_model->getEmployeePendingCourseCount(
+                $ses['company_detail']['sid'],
+                $ses['employer_detail']['sid']
+            );
         //
         if ($pendingTrainings > 0) {
             $data[] = [
@@ -138,10 +141,23 @@ class Notifications extends Public_Controller {
                 'link' => base_url('lms/courses/my'),
                 'title' => 'Pending Courses'
             ];
-        }        
+        }
 
         //
-        if(!sizeof($data)){
+        $this->load->model("v1/Shift_model", "shift_model");
+        $awatingShiftsRequests = $this->shift_model->getAwatinSwapShiftsByUserId($ses['employer_detail']['sid']);
+
+        if ($awatingShiftsRequests > 0) {
+            $data[] = [
+                'count' => $awatingShiftsRequests,
+                'link' => base_url('shifts/mytrade'),
+                'title' => 'Shifts Swap Requests'
+            ];
+        }
+
+
+        //
+        if (!sizeof($data)) {
             $this->res['Response'] = 'No notifications found.';
             $this->resp();
         }
@@ -153,10 +169,10 @@ class Notifications extends Public_Controller {
     }
 
 
-    private function resp(){
+    private function resp()
+    {
         header('Content-Type: application/json');
         echo json_encode($this->res);
         exit(0);
     }
-
 }

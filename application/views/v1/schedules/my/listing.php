@@ -44,6 +44,15 @@ if ($filter["mode"] === "month") {
                                 &nbsp;My Team Shifts
                             </a>
 
+                            <a href="<?= base_url("shifts/trade"); ?>" class="btn btn-orange">
+                                <i class="fa fa-exchange" aria-hidden="true"></i>
+                                &nbsp;Swap Shifts
+                            </a>
+
+                            <a href="<?= base_url("shifts/mytrade"); ?>" class="btn btn-orange">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                &nbsp;Shifts Swap Requests
+                            </a>
                         </div>
                     </div>
                     <br />

@@ -1036,6 +1036,28 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
 
+
+
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('shifts/mytrade'); ?>">
+                                        <div class="link-box bg-redish full-width bg-orange">
+                                            <h2>Shifts Swap Requests</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date" style="margin-top: -30px;;">
+                                                <span><?= $awatingShiftRequests ?? 0; ?><sub>Requests</sub></span>
+
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Show Requests</h3>
+                                                <span>&nbsp;</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+
                         <?php endif; ?>
 
                     </div>

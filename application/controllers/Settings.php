@@ -4364,10 +4364,17 @@ class Settings extends Public_Controller
      */
     public function getPageBySlug(string $slug, int $pageId)
     {
+
+        //
+        if ($_GET['shiftsIds']) {
+            $pageId = $_GET['shiftsIds'];
+        }
+
         // check and generate error for session
         checkAndGetSession();
         // convert the slug to function
         $func = "page" . preg_replace("/\s/i", "", ucwords(preg_replace("/[^a-z]/i", " ", $slug)));
+
         // get the data
         $this->$func(
             $slug,
@@ -4713,7 +4720,6 @@ class Settings extends Public_Controller
         if ($pageId) {
             // load schedule model
             $this->load->model("v1/Shift_template_model", "shift_template_model");
-
             //
             $data["record"] = $this->shift_template_model
                 ->getSingle(
@@ -4811,7 +4817,6 @@ class Settings extends Public_Controller
         //
         $data["templates"] = $this->shift_template_model->get($session["company_detail"]["sid"]);
         $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
-
         //
         return SendResponse(200, [
             "view" => $this->load->view("v1/settings/shifts/partials/apply_shift_templates", $data, true),
@@ -4875,7 +4880,6 @@ class Settings extends Public_Controller
             $shiftId
         );
 
-
         // alert($shiftId);
         if (empty($data["shift"])) {
             return SendResponse(400, [
@@ -4909,7 +4913,6 @@ class Settings extends Public_Controller
     }
 
 
-
     //
     private function pageCreateMultiShift(string $pageSlug, int $employeeId): array
     {
@@ -4919,7 +4922,6 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_template_model", "shift_template_model");
         $this->load->model("v1/Shift_model", "shift_model");
         //
-
         $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
 
         // load break model
@@ -4940,7 +4942,6 @@ class Settings extends Public_Controller
     }
 
 
-
     //
     private function pageDeleteMultiShift(string $pageSlug, int $employeeId): array
     {
@@ -4950,7 +4951,6 @@ class Settings extends Public_Controller
         $this->load->model("v1/Shift_template_model", "shift_template_model");
         $this->load->model("v1/Shift_model", "shift_model");
         //
-
         $data["employees"] = $this->shift_model->getCompanyEmployees($session["company_detail"]["sid"]);
 
         // load break model
@@ -4971,7 +4971,7 @@ class Settings extends Public_Controller
     }
 
 
-
+    //
     private function pageCopyShift(string $pageSlug, int $employeeId): array
     {
 
@@ -5063,8 +5063,7 @@ class Settings extends Public_Controller
             );
     }
 
-
-
+    //
     public function processCopyMulitProcess()
     {
         // check and generate error for session
@@ -5092,7 +5091,6 @@ class Settings extends Public_Controller
                 $post
             );
     }
-
 
 
     //
@@ -5437,17 +5435,14 @@ class Settings extends Public_Controller
         $data["filter_jobtitle"] =
             explode(",", $jobTitle);
 
-
         $data["filterStartDate"] = $filterStartDate;
         $data["filterEndDate"] = $filterEndDate;
-
 
         // get off and holidays
         $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
             $loggedInCompany["sid"],
             $data["filter"]
         );
-
 
         $data['title'] = "My Scheduling | " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
@@ -5459,18 +5454,16 @@ class Settings extends Public_Controller
         $data['load_view'] = 1;
         $data['type'] = "self";
 
-
-
         $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard', true);
 
         $data['appCSS'] = $bundleCSS;
+      
         /*
         $bundleJS = bundleJs([
             'v1/plugins/ms_modal/main',
             'js/app_helper',
         ], 'public/v1/js/', 'dashboard', true);
-*/
-
+      */
 
         // set common files bundle
         $data["pageCSS"] = [
@@ -5490,13 +5483,11 @@ class Settings extends Public_Controller
             "v1/plugins/ms_modal/main"
         ];
 
-
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/ems_main"
         ], "public/v1/shifts/", "ems_main", true);
         //
-
 
         $this->load->view('main/header_2022', $data);
         $this->load->view('v1/settings/shifts/my_listing');
@@ -5685,5 +5676,248 @@ class Settings extends Public_Controller
         $this->load->view('main/header_2022', $data);
         $this->load->view('v1/settings/shifts/subordinate_listing');
         $this->load->view('main/footer');
+    }
+
+
+    //
+    public function shiftsTrade()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+
+        $data = [];
+        $data["title"] = "Trade Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/trade"
+        ], "public/v1/shifts/", "trade", false);
+        //
+
+        $weekStartDate = formatDateToDB(getSystemDate(SITE_DATE), SITE_DATE);
+        $weekEndDate = formatDateToDB(date('Y-m-d', strtotime($weekStartDate . ' + 7 days')), 'Y-m-d', SITE_DATE);
+        $weekStartDate = formatDateToDB($weekStartDate, 'Y-m-d', SITE_DATE);
+
+        $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
+        // get todays date
+        $data["filter"] = [
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange
+        ];
+
+        //  
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["employeeShifts"] = $this->shift_model->getEmployeeShifts($data["filter"], $loggedInEmployee['sid']);
+
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/trade');
+        $this->load->view('main/footer');
+    }
+
+
+    //
+    private function pageTradeShift(string $pageSlug, $shiftsIds): array
+    {
+
+        //
+        $shiftsIdsArray = explode(',', $shiftsIds);
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $shiftsData = $this->shift_model->getShiftsByShiftId($shiftsIdsArray);
+        $shiftsDate = array_column($shiftsData, 'shift_date');
+
+        $employeesOnLeave = $this->shift_model->getEmployeesOnLeave($shiftsDate, $session["company_detail"]["sid"]);
+
+        $data["employeesOnLeave"] = array_column($employeesOnLeave, 'employee_sid');
+        $data["employees"] = $this->shift_model->getCompanyEmployeesForShiftSwap($session["company_detail"]["sid"], $session["employer_detail"]["sid"]);
+
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/trade_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
+    //
+    public function processTradeShifts()
+    {
+        $session = checkAndGetSession();
+        $post = $this->input->post(null, true);
+        $shiftIds = explode(',', $post['shiftids']);
+        $toEmployeeSid = $post['employeeid'];
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shiftsData"] = $this->shift_model->getShiftsByShiftId($shiftIds);
+        //
+        foreach ($data["shiftsData"] as $rowShifts) {
+            $data_insert_request = [];
+            $data_insert_request['shift_sid'] = $rowShifts['sid'];
+            $data_insert_request['to_employee_sid'] = $toEmployeeSid;
+            $data_insert_request['from_employee_sid'] = $rowShifts['employee_sid'];
+            $data_insert_request['created_at'] = getSystemDate();
+            $data_insert_request['updated_at'] = getSystemDate();
+
+            $this->shift_model->addShiftsTradeRequest($rowShifts['sid'], $data_insert_request);
+        }
+
+        return SendResponse(200, [
+            "msg" => "You have successfully request to swap shift."
+        ]);
+    }
+
+
+    //
+    public function processTradeShiftsCancel()
+    {
+        $session = checkAndGetSession();
+        $post = $this->input->post(null, true);
+        $shiftIds = explode(',', $post['shiftids']);
+
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        //
+        $data_update_request = [];
+        $shiftIds = $shiftIds;
+        $data_update_request['request_status'] = 'canceled';
+        $data_update_request['updated_at'] = getSystemDate();
+        $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
+
+        return SendResponse(200, [
+            "msg" => "You have successfully canceled Request."
+        ]);
+    }
+
+    //
+    public function MyshiftsTrade()
+    {
+        // check if plus or don't have access to the module
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+
+        $data = [];
+        $data["title"] = "Trade Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/trade"
+        ], "public/v1/shifts/", "trade", false);
+        //
+
+        $weekStartDate = formatDateToDB(date('m-01-Y'), 'm-d-Y', SITE_DATE);
+        $weekEndDate = formatDateToDB(date('m-t-Y'), 'm-d-Y', SITE_DATE);
+
+        $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
+        // get todays date
+        $data["filter"] = [
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange
+        ];
+
+        //  
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["employeeShifts"] = $this->shift_model->getMySwapShifts($data["filter"], $loggedInEmployee['sid']);
+
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/my_trade');
+        $this->load->view('main/footer');
+    }
+
+    //
+    public function processMyShiftsChangeStatus()
+    {
+        $session = checkAndGetSession();
+        $post = $this->input->post(null, true);
+        $shiftIds = explode(',', $post['shiftids']);
+        $shiftStatus = $post['shiftstatus'];
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        //
+        $data_update_request = [];
+        $shiftIds = $shiftIds;
+        $data_update_request['request_status'] = $shiftStatus;
+        $data_update_request['updated_at'] = getSystemDate();
+        $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
+
+        return SendResponse(200, [
+            "msg" => "You have successfully " . $shiftStatus . " Request."
+        ]);
     }
 }

@@ -127,4 +127,158 @@ class Employee_shifts extends Public_Controller
         $this->load->view('v1/schedules/my/listing');
         $this->load->view('main/footer');
     }
+
+
+    //
+    public function shiftsTrade()
+    {
+
+        // check if plus or don't have access to the module
+        if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+            return redirect("dashboard");
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // set default data
+        $data = [];
+        $data["title"] = "Swap Shifts | " . (STORE_NAME);
+        $data["sanitizedView"] = true;
+        $data["loggedInEmployee"] = $loggedInEmployee;
+        $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+        $data["session"] = $this->session->userdata("logged_in");
+        $data['employee'] = $loggedInEmployee;
+        //
+
+        $data["company_sid"] =  $loggedInCompany["sid"];
+        $data["loadView"] = true;
+        $data["sanitizedView"] = true;
+
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+
+            getPlugin("alertify", "css"),
+            "v1/plugins/ms_modal/main"
+        ];
+        $data["pageJs"] = [
+            getPlugin("alertify", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("additionalMethods", "js"),
+
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+
+            "v1/plugins/ms_modal/main"
+        ];
+        // set bundle
+        $data["appJs"] = bundleJs([
+            "v1/settings/shifts/trade"
+        ], "public/v1/shifts/", "trade", false);
+        //
+
+        $weekStartDate = formatDateToDB(getSystemDate(SITE_DATE), SITE_DATE);
+        $weekEndDate = formatDateToDB(date('Y-m-d', strtotime($weekStartDate . ' + 7 days')), 'Y-m-d', SITE_DATE);
+        $weekStartDate = formatDateToDB($weekStartDate, 'Y-m-d', SITE_DATE);
+
+        $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+
+        //
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
+        // get todays date
+        $data["filter"] = [
+            "startDate" => $startDate,
+            "endDate" => $endDate,
+            "dateRange" => $dateRange
+        ];
+
+        //  
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["employeeShifts"] = $this->shift_model->getEmployeeShifts($data["filter"], $loggedInEmployee['sid']);
+
+        $this->load->view('main/header', $data);
+        $this->load->view('v1/settings/shifts/trade');
+        $this->load->view('main/footer');
+    }
+
+
+       //
+       public function MyshiftsTrade()
+       {
+           // check if plus or don't have access to the module
+           if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+               $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
+               return redirect("dashboard");
+           }
+           // check and get the sessions
+           $loggedInEmployee = checkAndGetSession("employer_detail");
+           $loggedInCompany = checkAndGetSession("company_detail");
+           // set default data
+   
+           $data = [];
+           $data["title"] = "Trade Shifts | " . (STORE_NAME);
+           $data["sanitizedView"] = true;
+           $data["loggedInEmployee"] = $loggedInEmployee;
+           $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
+           $data["session"] = $this->session->userdata("logged_in");
+
+           $data["company_sid"] =  $loggedInCompany["sid"];
+           $data["loadView"] = true;
+           $data["sanitizedView"] = true;
+   
+           $data["pageCSS"] = [
+               getPlugin("timepicker", "css"),
+               getPlugin("daterangepicker", "css"),
+   
+               getPlugin("alertify", "css"),
+               "v1/plugins/ms_modal/main"
+           ];
+           $data["pageJs"] = [
+               getPlugin("alertify", "js"),
+               getPlugin("validator", "js"),
+               getPlugin("additionalMethods", "js"),
+   
+               getPlugin("timepicker", "js"),
+               getPlugin("daterangepicker", "js"),
+   
+               "v1/plugins/ms_modal/main"
+           ];
+           // set bundle
+           $data["appJs"] = bundleJs([
+               "v1/settings/shifts/trade"
+           ], "public/v1/shifts/", "trade", false);
+           //
+          
+           $weekStartDate = formatDateToDB(date('m-01-Y'), 'm-d-Y', SITE_DATE);
+           $weekEndDate = formatDateToDB(date('m-t-Y'), 'm-d-Y', SITE_DATE);
+   
+           $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
+           $dateRange = $this->input->get("date_range") ?? $defaultRange;
+   
+           //
+           $tmp = explode("-", $dateRange);
+           $startDate = trim($tmp[0]);
+           $endDate = trim($tmp[1]);
+           // get todays date
+           $data["filter"] = [
+               "startDate" => $startDate,
+               "endDate" => $endDate,
+               "dateRange" => $dateRange
+           ];
+   
+           //  
+           $this->load->model("v1/Shift_model", "shift_model");
+   
+           $data["employeeShifts"] = $this->shift_model->getMySwapShifts($data["filter"], $loggedInEmployee['sid']);
+   
+           $this->load->view('main/header', $data);
+           $this->load->view('v1/settings/shifts/my_trade');
+           $this->load->view('main/footer');
+       }
+   
 }

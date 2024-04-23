@@ -701,6 +701,9 @@ class Dashboard extends Public_Controller
                     true
                 );
 
+                //
+                $data["awatingShiftRequests"] = $this->shift_model->getAwatinSwapShiftsByUserId($employer_id);
+                
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');

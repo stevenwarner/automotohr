@@ -2257,5 +2257,18 @@ $route["indeed/authorize"]["get"] = "manage_admin/Job_feeds_management/generateI
 // Indeed disposition status map
 $route["manage_admin/indeed/disposition/status/map"]["get"] =
   "manage_admin/Indeed_disposition_status_map/listing";
-  $route["manage_admin/indeed/disposition/status/map"]["post"] =
+$route["manage_admin/indeed/disposition/status/map"]["post"] =
   "manage_admin/Indeed_disposition_status_map/saveListing";
+
+//Shifts Trade
+$route["settings/shifts/trade"]["get"] = "Settings/shiftsTrade";
+$route["settings/shifts/tradeshifts"]["post"] = "Settings/processTradeShifts";
+$route["settings/shifts/tradeshiftscancel"]["post"] = "Settings/processTradeShiftsCancel";
+
+$route["settings/shifts/mytrade"]["get"] = "Settings/myShiftsTrade";
+$route["settings/shifts/my_trade_change_status"]["post"] = "Settings/processMyShiftsChangeStatus";
+
+//
+$route["shifts/trade"]["get"] = "v1/Shifts/Employee_shifts/shiftsTrade";
+$route["shifts/mytrade"]["get"] = "v1/Shifts/Employee_shifts/myShiftsTrade";
+$route["settings/page/(:any)/(:num)/(:any)"]["get"] = "Settings/getPageBySlug/$1/$2/$3";
