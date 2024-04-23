@@ -1505,6 +1505,12 @@ class Hire_onboarding_applicant_model extends CI_Model
         if (!empty($record_arr)) {
             $eeocOldSid = $record_arr[0]['sid'];
 
+            if (!$record_arr[0]["us_citizen"]) {
+                $record_arr[0]["is_opt_out"] = 1;
+                $record_arr[0]["last_completed_on"] = getSystemDate();
+                $record_arr[0]["is_expired"] = 1;
+            }
+
             unset($record_arr[0]['sid']);
             $record_arr[0]['users_type'] = 'employee';
             $record_arr[0]['application_sid'] = $new_employee_id;
