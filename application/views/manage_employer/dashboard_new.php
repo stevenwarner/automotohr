@@ -1010,6 +1010,8 @@
                                     <?php } ?>
 
                                     <!-- Incident Reporting -->
+
+                                    <?php if (checkIfAppIsEnabled('incidents')) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -1027,6 +1029,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
+
+
                                     <?php if ($isLMSModuleEnabled) : ?>
                                         <!--  -->
                                         <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
