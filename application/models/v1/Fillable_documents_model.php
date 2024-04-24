@@ -70,6 +70,7 @@ class Fillable_documents_model extends CI_Model
                         "date_created" => $dateTime,
                         "onboarding" => 0,
                         "signature_required" => 1,
+                        "isdoctolibrary" => 1,
                         "is_required" => 1,
                     ]
                 );

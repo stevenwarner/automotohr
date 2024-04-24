@@ -182,6 +182,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -4762,6 +4763,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
 
                             //
@@ -5239,6 +5241,7 @@ class Onboarding extends CI_Controller
                             $data_to_update['signature_base64'] = NULL;
                             $data_to_update['signature_initial'] = NULL;
                             $data_to_update['is_required'] = $document['is_required'];
+                            $data_to_update['fillable_document_slug'] = $document['fillable_document_slug'];
                             $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
                         } else {
                             $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
@@ -5257,6 +5260,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $this->input->post('document_description');
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
 
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);

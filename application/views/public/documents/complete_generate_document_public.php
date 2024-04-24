@@ -98,6 +98,19 @@
     //
     <?php if ($document['signature_required'] == 1) { ?> requiredC = true;
     <?php } ?>
+       //
+    $(".js_last_work_date").datepicker({
+        format: "MM/DD/YYYY",
+        changeYear: true,
+        changeMonth: true
+    });
+
+    //
+    $(".js_date_of_occurrence").datepicker({
+        format: "MM/DD/YYYY",
+        changeYear: true,
+        changeMonth: true
+    });
     //
     $('.date_picker2').datepicker({
         dateFormat: 'mm-dd-yy',
@@ -133,8 +146,136 @@
                 $('#save_signature_date').val('no');
             }
 
-            if (is_sign == 'true' && is_init == 'true' && is_date == 'true') {
+            let manualRequired = false;
+
+            if ($('input.js_employee_name').length && !$('input.js_employee_name').val()) {
+                manualRequired = true;
+            }
+            if ($('input.employee_job_title').length && !$('input.employee_job_title').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_supervisor').length && !$('input.js_supervisor').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_department').length && !$('input.js_department').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_last_work_date').length && !$('input.js_last_work_date').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_reason_to_leave_company').length && !$('textarea.js_reason_to_leave_company').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_forwarding_information').length && !$('textarea.js_forwarding_information').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_date_of_occurrence').length && !$('input.js_date_of_occurrence').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_summary_of_violation').length && !$('textarea.js_summary_of_violation').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_summary_of_corrective_plan').length && !$('textarea.js_summary_of_corrective_plan').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_follow_up_dates').length && !$('textarea.js_follow_up_dates').val()) {
+                manualRequired = true;
+            }
+
+            if ($('[name="counselling_form_fields[]"]').length) {
+                let selectedCounselling = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                    return $(this).val()
+                }).get()
+
+                if (!selectedCounselling.length) {
+                    manualRequired = true;
+                } else if ($.inArray("Other", selectedCounselling) !== -1 && !$(".js_counselling_form_fields_textarea").val()) {
+                    manualRequired = true;
+                }
+            }
+
+            if ($('textarea.js_q1').length && !$('textarea.js_q1').val()) {
+                manualRequired = true;
+            }
+            if ($('input.js_employee_number').length && !$('input.js_employee_number').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_q2').length && !$('textarea.js_q2').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_q3').length && !$('textarea.js_q3').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_q4').length && !$('textarea.js_q4').val()) {
+                manualRequired = true;
+            }
+            if ($('textarea.js_q5').length && !$('textarea.js_q5').val()) {
+                manualRequired = true;
+            }
+
+            if (is_sign == 'true' && is_init == 'true' && is_date == 'true' && !manualRequired) {
                 var input_values_obj = {};
+                 if ($('input.js_employee_name').length) {
+                    input_values_obj["employee_name"] = $('input.js_employee_name').val();
+                }
+                if ($('input.js_employee_job_title').length) {
+                    input_values_obj["employee_job_title"] = $('input.js_employee_job_title').val();
+                }
+                if ($('input.js_supervisor').length) {
+                    input_values_obj["supervisor"] = $('input.js_supervisor').val();
+                }
+                if ($('input.js_department').length) {
+                    input_values_obj["department"] = $('input.js_department').val();
+                }
+                if ($('input.js_last_work_date').length) {
+                    input_values_obj["last_work_date"] = $('input.js_last_work_date').val();
+                }
+                if ($('textarea.js_reason_to_leave_company').length) {
+                    input_values_obj["reason_to_leave_company"] = $('textarea.js_reason_to_leave_company').val();
+                }
+                if ($('textarea.js_forwarding_information').length) {
+                    input_values_obj["forwarding_information"] = $('textarea.js_forwarding_information').val();
+                }
+                if ($('input.js_date_of_occurrence').length) {
+                    input_values_obj["date_of_occurrence"] = $('input.js_date_of_occurrence').val();
+                }
+                if ($('textarea.js_summary_of_violation').length) {
+                    input_values_obj["summary_of_violation"] = $('textarea.js_summary_of_violation').val();
+                }
+                if ($('textarea.js_summary_of_corrective_plan').length) {
+                    input_values_obj["summary_of_corrective_plan"] = $('textarea.js_summary_of_corrective_plan').val();
+                }
+                if ($('textarea.js_follow_up_dates').length) {
+                    input_values_obj["follow_up_dates"] = $('textarea.js_follow_up_dates').val();
+                }
+                if ($('[name="counselling_form_fields[]"]').length) {
+                    input_values_obj["counselling_form_fields"] = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                        return $(this).val()
+                    }).get()
+
+                    if ($.inArray("Other", input_values_obj["counselling_form_fields"]) !== -1) {
+                        input_values_obj["counselling_form_fields_textarea"] = $(".js_counselling_form_fields_textarea").val()
+                    }
+                }
+
+                if ($('input.js_employee_number').length) {
+                    input_values_obj["employee_number"] = $('input.js_employee_number').val();
+                }
+                if ($('textarea.js_q1').length) {
+                    input_values_obj["q1"] = $('textarea.js_q1').val();
+                }
+                if ($('textarea.js_q2').length) {
+                    input_values_obj["q2"] = $('textarea.js_q2').val();
+                }
+                if ($('textarea.js_q3').length) {
+                    input_values_obj["q3"] = $('textarea.js_q3').val();
+                }
+                if ($('textarea.js_q4').length) {
+                    input_values_obj["q4"] = $('textarea.js_q4').val();
+                }
+                if ($('textarea.js_q5').length) {
+                    input_values_obj["q5"] = $('textarea.js_q5').val();
+                }
 
                 $('#jstopdf2 input.short_textbox').map(function() {
                     input_values_obj[this.name] = this.value;
@@ -217,6 +358,80 @@
                     signature_Date: is_date
                 };
 
+                //
+                if ($('input.js_employee_name').length) {
+                    validation["Your Name"] = $('input.js_employee_name').val() || "false"
+                }
+                //
+                if ($('input.employee_job_title').length) {
+                    validation["Job Title"] = $('input.employee_job_title').val() || "false"
+                }
+                //
+                if ($('input.js_supervisor').length) {
+                    validation["Supervisor"] = $('input.js_supervisor').val() || "false"
+                }
+                //
+                if ($('input.js_department').length) {
+                    validation["Department"] = $('input.js_department').val() || "false"
+                }
+                //
+                if ($('input.js_last_work_date').length) {
+                    validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
+                }
+                //
+                if ($('textarea.js_reason_to_leave_company').length) {
+                    validation["Reason to the company"] = $('textarea.js_reason_to_leave_company').val() || "false"
+                }
+                //
+                if ($('textarea.js_forwarding_information').length) {
+                    validation["Forwarding information"] = $('textarea.js_forwarding_information').val() || "false"
+                }
+
+
+                if ($('input.js_date_of_occurrence').length) {
+                    validation["Date Of Occurence"] = $('input.js_date_of_occurrence').val() || "false"
+                }
+                if ($('textarea.js_summary_of_violation').length) {
+                    validation["Summary Of Voilation"] = $('textarea.js_summary_of_violation').val() || "false"
+                }
+                if ($('textarea.js_summary_of_corrective_plan').length) {
+                    validation["Summary Of Corrective Plan"] = $('textarea.js_summary_of_corrective_plan').val() || "false"
+                }
+                if ($('textarea.js_follow_up_dates').length) {
+                    validation["Follow Up Dates"] = $('textarea.js_follow_up_dates').val() || "false"
+                }
+
+                if ($('[name="counselling_form_fields[]"]').length) {
+                    let selectedCounselling = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                        return $(this).val()
+                    }).get()
+
+                    if (!selectedCounselling.length) {
+                        validation["Counselling Form Fields"] = "false"
+                    } else if ($.inArray("Other", selectedCounselling) !== -1 && !$(".js_counselling_form_fields_textarea").val()) {
+                        validation["Counselling Form Fields Other"] = "false"
+                    }
+                }
+
+                if ($('input.js_employee_number').length) {
+                    validation["Employee number"] = $('input.js_employee_number').val() || "false"
+                }
+                if ($('textarea.js_q1').length) {
+                    validation["Description of problem"] = $('textarea.js_q1').val() || "false"
+                }
+                if ($('textarea.js_q2').length) {
+                    validation["Description of performance"] = $('textarea.js_q2').val() || "false"
+                }
+                if ($('textarea.js_q3').length) {
+                    validation["Description of consequences for not meeting expectations"] = $('textarea.js_q3').val() || "false"
+                }
+                if ($('textarea.js_q4').length) {
+                    validation["Dates and descriptions of prior discissions or warnings formal or informal"] = $('textarea.js_q4').val() || "false"
+                }
+                if ($('textarea.js_q5').length) {
+                    validation["Other information you would like to provide"] = $('textarea.js_q5').val() || "false"
+                }
+
                 for (var key in validation) {
                     if (validation[key] == 'false') {
                         var type = key.replace("_", " ");
@@ -229,7 +444,191 @@
     //
     function func_save_document_only() {
         if ($('#user_consent_form').valid()) {
+            let hasErrors = false;
+
+            var validation = {};
+
+                //
+                if ($('input.js_employee_name').length) {
+                    validation["Your Name"] = $('input.js_employee_name').val() || "false"
+                }
+                //
+                if ($('input.employee_job_title').length) {
+                    validation["Job Title"] = $('input.employee_job_title').val() || "false"
+                }
+                //
+                if ($('input.js_supervisor').length) {
+                    validation["Supervisor"] = $('input.js_supervisor').val() || "false"
+                }
+                //
+                if ($('input.js_department').length) {
+                    validation["Department"] = $('input.js_department').val() || "false"
+                }
+                //
+                if ($('input.js_last_work_date').length) {
+                    validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
+                }
+                //
+                if ($('textarea.js_reason_to_leave_company').length) {
+                    validation["Reason to the company"] = $('textarea.js_reason_to_leave_company').val() || "false"
+                }
+                //
+                if ($('textarea.js_forwarding_information').length) {
+                    validation["Forwarding information"] = $('textarea.js_forwarding_information').val() || "false"
+                }
+
+
+                if ($('input.js_date_of_occurrence').length) {
+                    validation["Date Of Occurence"] = $('input.js_date_of_occurrence').val() || "false"
+                }
+                if ($('textarea.js_summary_of_violation').length) {
+                    validation["Summary Of Voilation"] = $('textarea.js_summary_of_violation').val() || "false"
+                }
+                if ($('textarea.js_summary_of_corrective_plan').length) {
+                    validation["Summary Of Corrective Plan"] = $('textarea.js_summary_of_corrective_plan').val() || "false"
+                }
+                if ($('textarea.js_follow_up_dates').length) {
+                    validation["Follow Up Dates"] = $('textarea.js_follow_up_dates').val() || "false"
+                }
+
+                if ($('[name="counselling_form_fields[]"]').length) {
+                    let selectedCounselling = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                        return $(this).val()
+                    }).get()
+
+                    if (!selectedCounselling.length) {
+                        validation["Counselling Form Fields"] = "false"
+                    } else if ($.inArray("Other", selectedCounselling) !== -1 && !$(".js_counselling_form_fields_textarea").val()) {
+                        validation["Counselling Form Fields Other"] = "false"
+                    }
+                }
+
+                if ($('input.js_employee_number').length) {
+                    validation["Employee number"] = $('input.js_employee_number').val() || "false"
+                }
+                if ($('textarea.js_q1').length) {
+                    validation["Description of problem"] = $('textarea.js_q1').val() || "false"
+                }
+                if ($('textarea.js_q2').length) {
+                    validation["Description of performance"] = $('textarea.js_q2').val() || "false"
+                }
+                if ($('textarea.js_q3').length) {
+                    validation["Description of consequences for not meeting expectations"] = $('textarea.js_q3').val() || "false"
+                }
+                if ($('textarea.js_q4').length) {
+                    validation["Dates and descriptions of prior discissions or warnings formal or informal"] = $('textarea.js_q4').val() || "false"
+                }
+                if ($('textarea.js_q5').length) {
+                    validation["Other information you would like to provide"] = $('textarea.js_q5').val() || "false"
+                }
+
+                //
+            if ($('input.js_is_termination_voluntary').length) {
+                validation["Voluntary Termination"] = $('input.js_is_termination_voluntary:checked').val() || "false"
+            }
+            //
+            if ($('input.js_property_returned').length) {
+                validation["Property returned"] = $('input.js_property_returned:checked').val() || "false"
+            }
+            //
+            if ($('input.js_reemploying').length) {
+                validation["Re-employing"] = $('input.js_reemploying:checked').val() || "false"
+            }
+
+                for (var key in validation) {
+                    if (validation[key] == 'false') {
+                        hasErrors = true;
+                        var type = key.replace("_", " ");
+                        alertify.error('Please provide ' + type);
+                    }
+                }
+                if (hasErrors) {
+                    return false;
+                }
             var input_values_obj = {};
+            if ($('input.js_employee_name').length) {
+                                input_values_obj["employee_name"] = $('input.js_employee_name').val();
+                            }
+                            if ($('input.js_employee_job_title').length) {
+                                input_values_obj["employee_job_title"] = $('input.js_employee_job_title').val();
+                            }
+                            if ($('input.js_supervisor').length) {
+                                input_values_obj["supervisor"] = $('input.js_supervisor').val();
+                            }
+                            if ($('input.js_department').length) {
+                                input_values_obj["department"] = $('input.js_department').val();
+                            }
+                            if ($('input.js_last_work_date').length) {
+                                input_values_obj["last_work_date"] = $('input.js_last_work_date').val();
+                            }
+                            if ($('textarea.js_reason_to_leave_company').length) {
+                                input_values_obj["reason_to_leave_company"] = $('textarea.js_reason_to_leave_company').val();
+                            }
+                            if ($('textarea.js_forwarding_information').length) {
+                                input_values_obj["forwarding_information"] = $('textarea.js_forwarding_information').val();
+                            }
+                            if ($('input.js_date_of_occurrence').length) {
+                                input_values_obj["date_of_occurrence"] = $('input.js_date_of_occurrence').val();
+                            }
+                            if ($('textarea.js_summary_of_violation').length) {
+                                input_values_obj["summary_of_violation"] = $('textarea.js_summary_of_violation').val();
+                            }
+                            if ($('textarea.js_summary_of_corrective_plan').length) {
+                                input_values_obj["summary_of_corrective_plan"] = $('textarea.js_summary_of_corrective_plan').val();
+                            }
+                            if ($('textarea.js_follow_up_dates').length) {
+                                input_values_obj["follow_up_dates"] = $('textarea.js_follow_up_dates').val();
+                            }
+                            if ($('[name="counselling_form_fields[]"]').length) {
+                                input_values_obj["counselling_form_fields"] = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                                    return $(this).val()
+                                }).get()
+
+                                if ($.inArray("Other", input_values_obj["counselling_form_fields"]) !== -1) {
+                                    input_values_obj["counselling_form_fields_textarea"] = $(".js_counselling_form_fields_textarea").val()
+                                }
+                            }
+
+                            if ($('input.js_employee_number').length) {
+                                input_values_obj["employee_number"] = $('input.js_employee_number').val();
+                            }
+                            if ($('textarea.js_q1').length) {
+                                input_values_obj["q1"] = $('textarea.js_q1').val();
+                            }
+                            if ($('textarea.js_q2').length) {
+                                input_values_obj["q2"] = $('textarea.js_q2').val();
+                            }
+                            if ($('textarea.js_q3').length) {
+                                input_values_obj["q3"] = $('textarea.js_q3').val();
+                            }
+                            if ($('textarea.js_q4').length) {
+                                input_values_obj["q4"] = $('textarea.js_q4').val();
+                            }
+                            if ($('textarea.js_q5').length) {
+                                input_values_obj["q5"] = $('textarea.js_q5').val();
+                            }
+
+                            if ($('input.js_employee_name').length) {
+                                input_values_obj["employee_name"] = $('input.js_employee_name').val();
+                            }
+                            if ($('input.js_employee_job_title').length) {
+                                input_values_obj["employee_job_title"] = $('input.js_employee_job_title').val();
+                            }
+                            if ($('input.js_supervisor').length) {
+                                input_values_obj["supervisor"] = $('input.js_supervisor').val();
+                            }
+                            if ($('input.js_last_work_date').length) {
+                                input_values_obj["last_work_date"] = $('input.js_last_work_date').val();
+                            }
+                            if ($('input.js_is_termination_voluntary').length) {
+                                input_values_obj["is_termination_voluntary"] = $('input.js_is_termination_voluntary:checked').val();
+                            }
+                            if ($('input.js_property_returned').length) {
+                                input_values_obj["property_returned"] = $('input.js_property_returned:checked').val();
+                            }
+                            if ($('input.js_reemploying').length) {
+                                input_values_obj["reemploying"] = $('input.js_reemploying:checked').val();
+                            }
 
             $('#jstopdf2 input.short_textbox').map(function() {
                 input_values_obj[this.name] = this.value;

@@ -3237,7 +3237,55 @@ if ($user_type == 'employee') {
                             }
 
                             $.each(form_input_data, function(key, input_value) {
-                                if (input_value[0] == 'signature_person_name') {
+                                // for fillables
+                                if (input_value[0] === "supervisor") {
+                                    $("input.js_supervisor").val(input_value[1]);
+                                } else if (input_value[0] === "department") {
+                                    $("input.js_department").val(input_value[1]);
+                                } else if (input_value[0] === "last_work_date") {
+                                    $("input.js_last_work_date").val(input_value[1]);
+                                } else if (input_value[0] === "reason_to_leave_company") {
+                                    $("textarea.js_reason_to_leave_company").val(input_value[1]);
+                                } else if (input_value[0] === "forwarding_information") {
+                                    $("textarea.js_forwarding_information").val(input_value[1]);
+                                } else if (input_value[0] === "employee_name") {
+                                    $("input.js_employee_name").val(input_value[1]);
+                                } else if (input_value[0] === "employee_job_title") {
+                                    $("input.js_employee_job_title").val(input_value[1]);
+                                } else if (input_value[0] === "is_termination_voluntary") {
+                                    $('input.js_is_termination_voluntary[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "property_returned") {
+                                    $('input.js_property_returned[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "reemploying") {
+                                    $('input.js_reemploying[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "date_of_occurrence") {
+                                    $("input.js_date_of_occurrence").val(input_value[1]);
+                                } else if (input_value[0] === "summary_of_violation") {
+                                    $("textarea.js_summary_of_violation").val(input_value[1]);
+                                } else if (input_value[0] === "summary_of_corrective_plan") {
+                                    $("textarea.js_summary_of_corrective_plan").val(input_value[1]);
+                                }  else if (input_value[0] === "follow_up_dates") {
+                                    $("textarea.js_follow_up_dates").val(input_value[1]);
+                                }  else if (input_value[0] === "counselling_form_fields_textarea") {
+                                    $("textarea.js_counselling_form_fields_textarea").removeClass("hidden");
+                                    $("textarea.js_counselling_form_fields_textarea").val(input_value[1]);
+                                }  else if (input_value[0] === "counselling_form_fields") {
+                                    input_value[1].map(function(v){
+                                        $('input.js_counselling_form_fields[value="'+(v)+'"]').prop("checked", true);
+                                    });
+                                } else if (input_value[0] === "q1") {
+                                    $("textarea.js_q1").val(input_value[1]);
+                                } else if (input_value[0] === "employee_number") {
+                                    $("input.js_employee_number").val(input_value[1]);
+                                } else if (input_value[0] === "q2") {
+                                    $("textarea.js_q2").val(input_value[1]);
+                                } else if (input_value[0] === "q3") {
+                                    $("textarea.js_q3").val(input_value[1]);
+                                } else if (input_value[0] === "q4") {
+                                    $("textarea.js_q4").val(input_value[1]);
+                                } else if (input_value[0] === "q5") {
+                                    $("textarea.js_q5").val(input_value[1]);
+                                } else if (input_value[0] == 'signature_person_name') {
                                     var input_field_id = input_value[0];
                                     var input_field_val = input_value[1];
                                     $('#' + input_field_id).val(input_field_val);

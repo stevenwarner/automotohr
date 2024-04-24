@@ -53,7 +53,7 @@
                                                     <?php $field_id = 'document_description'; ?>
                                                     <?php $save_value = isset($document_info[$field_id]) ? html_entity_decode($document_info[$field_id]) : ''; ?>
                                                     <?php echo form_label('Document Content<span class="staric">*</span>', $field_id); ?>
-                                                    <?php $this->load->view("v1/documents/fillable/{$document_info["fillable_document_slug"]}");?>
+                                                    <?php $this->load->view("v1/documents/fillable/{$document_info["fillable_document_slug"]}_preview");?>
                                                     <?php echo form_textarea($field_id, set_value($field_id, $save_value, false), ' class="hidden" id="' . $field_id . '"'); ?>
                                                 </div>
                                             </div>

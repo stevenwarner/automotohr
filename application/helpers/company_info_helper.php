@@ -550,17 +550,44 @@ if (!function_exists('replace_tags_for_document')) {
         }
         // notice of separation
         $my_return = str_replace('{{employee_name}}', '<input type="text" class="form-control input-grey gray-background js_employee_name" name="employee_name" value="' . ($user_info["first_name"].' '.$user_info["last_name"]) . '" />', $my_return);
+
         $my_return = str_replace('{{employee_job_title}}', '<input type="text" class="form-control input-grey gray-background js_employee_job_title" name="employee_job_title" value="' . ($user_info["job_title"]) . '" />', $my_return);
         
         $my_return = str_replace('{{supervisor}}', '<input type="text" class="form-control input-grey gray-background js_supervisor" name="supervisor" value="' . ($supervisor) . '" />', $my_return);
+
         $my_return = str_replace('{{department}}', '<input type="text" class="form-control input-grey gray-background js_department" name="department" value="' . ($department) . '" />', $my_return);
+
         $my_return = str_replace('{{last_day_of_work}}', '<input type="text" class="jsDatePicker form-control input-grey gray-background js_last_work_date" name="last_work_date" readonly />', $my_return);
+
         $my_return = str_replace('{{reason_to_leave_company}}', '<textarea rows="5" class="form-control input-grey gray-background js_reason_to_leave_company" name="reason_to_leave_company"></textarea>', $my_return);
+
         $my_return = str_replace('{{forwarding_information}}', '<textarea rows="5" class="form-control input-grey gray-background js_forwarding_information" name="forwarding_information"></textarea>', $my_return);
+        
         // notice of termination
         $my_return = str_replace('{{is_termination_voluntary}}', '<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="yes"/> Yes<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="no"/> No', $my_return);
         $my_return = str_replace('{{property_returned}}', '<br /><input type="radio" name="property_returned" class="js_property_returned" value="yes"/> Yes<br /><input type="radio" name="property_returned" class="js_property_returned" value="no"/> No', $my_return);
         $my_return = str_replace('{{reemploying}}', '<br /><input type="radio" name="reemploying" class="js_reemploying" value="yes"/> Yes<br /><input type="radio" name="reemploying" class="js_reemploying" value="no"/> No', $my_return);
+        // oral employee counselling report form
+        $my_return = str_replace('{{date_of_occurrence}}', '<input type="text" class="jsDatePicker form-control input-grey gray-background js_date_of_occurrence" name="date_of_occurrence" readonly />', $my_return);
+        $my_return = str_replace('{{summary_of_violation}}', '<textarea rows="5" class="form-control input-grey gray-background js_summary_of_violation" name="summary_of_violation"></textarea>', $my_return);
+        $my_return = str_replace('{{summary_of_corrective_plan}}', '<textarea rows="5" class="form-control input-grey gray-background js_summary_of_corrective_plan" name="summary_of_corrective_plan"></textarea>', $my_return);
+        $my_return = str_replace('{{follow_up_dates}}', '<textarea rows="5" class="form-control input-grey gray-background js_follow_up_dates" name="follow_up_dates"></textarea>', $my_return);
+        $my_return = str_replace('{{counselling_form_fields}}', $CI->load->view("v1/documents/fillable/partials/oral_employee_counselling_report_form_fields", [], true), $my_return);
+
+        //
+        $my_return = str_replace('{{employee_number}}', '<input type="text" class=" form-control input-grey gray-background js_employee_number" name="employee_number" />', $my_return);
+
+        $my_return = str_replace('{{q1}}', '<textarea rows="5" class="form-control input-grey gray-background js_q1" name="q1"></textarea>', $my_return);
+        
+
+        $my_return = str_replace('{{q2}}', '<textarea rows="5" class="form-control input-grey gray-background js_q2" name="q2"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q3}}', '<textarea rows="5" class="form-control input-grey gray-background js_q3" name="q3"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q4}}', '<textarea rows="5" class="form-control input-grey gray-background js_q4" name="q4"></textarea>', $my_return);
+        
+        $my_return = str_replace('{{q5}}', '<textarea rows="5" class="form-control input-grey gray-background js_q5" name="q5"></textarea>', $my_return);
+
 
         return $my_return;
     }

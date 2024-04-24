@@ -18,7 +18,7 @@ class Lb_fillable_documents
             ->addDocumentToList("notice of termination of employment")
             ->addDocumentToList("oral employee counselling report form")
             // ->addDocumentToList("status and payroll change")
-            // ->addDocumentToList("written disciplinary action form")
+            ->addDocumentToList("written disciplinary action form")
             ;
     }
 

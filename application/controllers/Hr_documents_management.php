@@ -2174,6 +2174,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['signature_required'] = $document['signature_required'];
                                 $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
                                 $data_to_update['is_required'] = $document['is_required'];
+                                $data_to_update['fillable_document_slug'] = $document['fillable_document_slug'];
                                 // $data_to_update['is_pending'] = 1;
 
                                 $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
@@ -2199,6 +2200,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                                 $data_to_insert['is_required'] = $document['is_required'];
+                                $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             }
@@ -3498,6 +3500,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -3709,6 +3712,7 @@ class Hr_documents_management extends Public_Controller
             $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
             $documents_management_sids = $payroll_sids['documents_management_sids'];
             $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+
             //        
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
@@ -5526,6 +5530,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -7907,6 +7912,11 @@ class Hr_documents_management extends Public_Controller
                     $data['document'] = $document;
                 }
 
+                if ($document["fillable_document_slug"]) {
+                    $postfix = $type === "original" ? "print_assigned" : "print";
+                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);    
+                }
+
                 $this->load->view('hr_documents_management/print_generated_document', $data);
             } else if ($document['document_type'] == 'uploaded') {
                 if ($type == 'original') {
@@ -9887,7 +9897,8 @@ class Hr_documents_management extends Public_Controller
         }
 
         if ($document["fillable_document_slug"]) {
-            return $this->load->view("v1/documents/fillable/print_{$document["fillable_document_slug"]}", $data);
+            $postfix = $request_type == "assigned" ? "print_assigned" : "print";
+            return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);
         }
 
         $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
@@ -10644,7 +10655,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['document_title'] = $document['document_title'];
                         $data_to_insert['document_description'] = htmlentities($this->input->post('description'));
                         $data_to_insert['is_required'] = $document['is_required'];
-
+                        $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                         //
                         $data_to_insert['isdoctohandbook'] = $document['isdoctohandbook'];
 
@@ -12266,6 +12277,10 @@ class Hr_documents_management extends Public_Controller
         } else {
             //
 
+            $a['fillable_document_slug'] = $this->hr_documents_management_model->getMainDocumentField(
+                $post['documentSid'],
+                "fillable_document_slug"
+            );
             $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
             $a['is_required'] = $post['isRequired'];
             $a['is_signature_required'] = $post['isSignatureRequired'];
