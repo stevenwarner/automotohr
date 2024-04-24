@@ -443,16 +443,20 @@ class eeo_model extends CI_Model
         $where = [
             "users.parent_sid" => $company_id,
             "portal_eeo_form.users_type" => "employee",
+            "portal_eeo_form.status" => 1,
             // "portal_eeo_form.last_completed_on >=" => $start_date,
             // "portal_eeo_form.last_completed_on <=" => $end_date,
         ];
 
         if ($opt_status === "opt_in"){
             $where["portal_eeo_form.is_opt_out is null"] = null;
+            $where["portal_eeo_form.is_expired"] = 0;
         } elseif($opt_status === "opt_out") {
             $where["portal_eeo_form.is_opt_out is not null"] = null;
-        }
-        
+        } elseif ($opt_status === "opt_in_completed") {
+            $where["portal_eeo_form.is_opt_out is null"] = null;
+            $where["portal_eeo_form.is_expired"] = 1;
+        }        
         if ($type === "active") {
             $where["users.active"] = 1;
             $where["users.terminated_status"] = 0;

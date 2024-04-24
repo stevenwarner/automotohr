@@ -59,8 +59,9 @@
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="opt_type1" id="opt_type1">
                                                             <option value="all" <?php echo $opt_type == 'all' ? 'selected="selected"' : ""; ?>>All</option>
-                                                            <option value="opt_in" <?php echo $opt_type == 'opt_in' ? 'selected="selected"' : ""; ?>>Opt In</option>
-                                                            <option value="opt_out" <?php echo $opt_type == 'opt_out' ? 'selected="selected"' : ""; ?>>Opt-out</option>
+                                                            <option value="opt_in" <?php echo $opt_type == 'opt_in' ? 'selected="selected"' : ""; ?>>Opt In & Not Completed</option>
+                                                            <option value="opt_in_completed" <?php echo $opt_type == 'opt_in_completed' ? 'selected="selected"' : ""; ?>>Opt In & Completed</option>
+                                                            <option value="opt_out" <?php echo $opt_type == 'opt_out' ? 'selected="selected"' : ""; ?>>Opt Out</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -274,9 +275,10 @@
                                         <tr>
                                             <th>Date</th>
                                             <th>Name</th>
-                                            <th>Opt Status</th>
+                                            <th>Opt<br />Status</th>
+                                            <th>Completion<br /> Status</th>
                                             <th>
-                                                EEO Information
+                                                EEO<br />Information
                                             </th>
                                         </tr>
                                     </thead>
@@ -307,6 +309,13 @@
                                                             <span class="text-danger">Opted Out</span>
                                                         <?php } else if ($opt_status == null) { ?>
                                                             <span class="">Not Available</span>
+                                                        <?php } ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php if ($item["is_expired"] == 1) { ?>
+                                                            <span class="text-success">COMPLETED</span>
+                                                        <?php } else {?>
+                                                            <span class="text-warning">PENDING</span>
                                                         <?php } ?>
                                                     </td>
                                                     <td>
