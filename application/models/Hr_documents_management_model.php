@@ -1359,6 +1359,24 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    public function getMainDocumentField(
+        int $documentId,
+        string $column
+    )
+    {
+        $record = $this
+        ->db
+        ->select($column)
+        ->where("sid", $documentId)
+        ->get("documents_management")
+        ->row_array();
+        //
+        if (!$record) {
+            return null;
+        }
+        return $record[$column];
+    }
+
     function insert_documents_assignment_record($data_to_insert)
     {
         $this->db->insert('documents_assigned', $data_to_insert);
@@ -11411,6 +11429,7 @@ class Hr_documents_management_model extends CI_Model
                         $data_to_insert['download_required'] = $document['download_required'];
                         $data_to_insert['is_confidential'] = $document['is_confidential'];
                         $data_to_insert['is_required'] = $document['is_required'];
+                        $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                         //
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                         //
@@ -11718,7 +11737,8 @@ class Hr_documents_management_model extends CI_Model
         return $result;
     }
 
-    public function moveDocumentsHistory ($applicantId, $employeeId) {
+    public function moveDocumentsHistory($applicantId, $employeeId)
+    {
         //
         //General Documents
         $this->db->select('*');
@@ -11730,7 +11750,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj->free_result();
         //
         if (!empty($records_arr)) {
-           //
+            //
             foreach ($records_arr as $record) {
                 //
                 $this->db->select('sid');
@@ -11756,5 +11776,28 @@ class Hr_documents_management_model extends CI_Model
         }
         //
         return true;
+    }
+
+    public function getEmployeeSupervisorAndDepartment(
+        int $employeeId
+    ): array {
+        return $this
+            ->db
+            ->select("
+            departments_management.supervisor,
+            departments_management.name
+        ")
+            ->from("departments_employee_2_team")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_employee_2_team.department_sid",
+            )
+            ->where([
+                "departments_employee_2_team.employee_sid" => $employeeId,
+                "departments_management.is_deleted" => 0,
+                "departments_management.status" => 1,
+            ])
+            ->get()
+            ->row_array();
     }
 }

@@ -282,7 +282,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += '<hr />';
 			//
 			// Check if the document type
-			console.log(getUploadContent());
 			if (do_upload) rows += getUploadContent();
 			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
 			<?php if (ASSIGNEDOCIMPL) { ?>
@@ -326,11 +325,22 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows,
 				'<button class="btn btn-success js-modify-assign-submit-btn">Assign This Document</button>',
 				'modify-assign-document-modal',
-				do_descpt ? ['js-modify-assign-document-description'] : [],
+				do_descpt && !d.fillable_document_slug ? ['js-modify-assign-document-description'] : [],
 				do_descpt ? ['#js-modify-assign-document-signers'] : [],
 				function() {
+
 					//
-					do_descpt ? CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description) : '';
+					if (do_descpt) {
+						if (!d.fillable_document_slug) {
+							$("#js-modify-assign-document-description").show();
+							$("#jsFillableView").remove()
+							CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description);
+						} else {
+							$("#js-modify-assign-document-description").hide();
+							$("#js-modify-assign-document-description").after(`<div id="jsFillableView">${makeTheFillableView(d.document_description)}</div>`);
+						}
+					}
+					//
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
@@ -466,7 +476,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
-				obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				if(selectedTemplate.fillable_document_slug) {
+					obj.desc = selectedTemplate.document_description;
+				} else {
+					obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+				}
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document') {
 				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
@@ -557,6 +571,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			//
 
+			console.log(d)
+
 			selectedTemplate = d;
 
 			//
@@ -629,11 +645,20 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows,
 				'<button class="btn btn-success js-modify-assigned-submit-btn">Update</button>',
 				'modify-assigned-document-modal',
-				do_descpt ? ['js-modify-assigned-document-description'] : [],
+				do_descpt && !d.fillable_document_slug ? ['js-modify-assigned-document-description'] : [],
 				select2s,
 				function() {
 					//
-					do_descpt ? CKEDITOR.instances['js-modify-assigned-document-description'].setData(d.document_description) : '';
+					if (do_descpt) {
+						if (!d.fillable_document_slug) {
+							$("#js-modify-assigned-document-description").show();
+							$("#jsFillableView").remove()
+							CKEDITOR.instances['js-modify-assigned-document-description'].setData(d.document_description);
+						} else {
+							$("#js-modify-assigned-document-description").hide();
+							$("#js-modify-assigned-document-description").after(`<div id="jsFillableView">${makeTheFillableView(d.document_description)}</div>`);
+						}
+					}
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
@@ -744,11 +769,17 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			// obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
 			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'generated')
-				obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				if (selectedTemplate.fillable_document_slug) {
+					obj.desc = selectedTemplate.document_description;
+				} else {
+					obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+				}
 			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'uploaded') {
 				obj.file = file.name === undefined ? selectedTemplate.document_s3_name : file;
 				obj.fileOrigName = selectedTemplate.document_original_name;
 			}
+
+			
 			//
 			obj.isSignature = obj.isSignature === undefined ? 0 : obj.isSignature;
 			obj.managerList = obj.managerList === undefined ? null : obj.managerList;
@@ -2678,3 +2709,142 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		height: auto !important;
 	}
 </style>
+
+
+<script>
+    function makeTheFillableView(description)
+    {
+
+        const inputReplace = "---------------";
+        const textAreaReplace = "<p>--------------------------------------------------</p>";
+        const dateReplace = "--/--/----";
+        const radioReplace = `
+            <br />
+            <input type="radio" disabled /> Yes
+            <br />
+            <input type="radio" disabled /> No
+        `;
+        const checkboxReplace = `
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Absence" />
+                        Absence
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Harassment" />
+                        Harassment
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Tardiness" />
+                        Tardiness
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Dishonesty" />
+                        Dishonesty
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Violation of company policies and/or procedures" />
+                        Violation of company policies and/or procedures
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Violation of safety rules" />
+                        Violation of safety rules
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Horseplay" />
+                        Horseplay
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Leaving work without authorization" />
+                        Leaving work without authorization
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Smoking in unauthorized areas" />
+                        Smoking in unauthorized areas
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Unsatisfactory job performance" />
+                        Unsatisfactory job performance
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Failure to follow instructions" />
+                        Failure to follow instructions
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Insubordination" />
+                        Insubordination
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Unauthorized use of equipment, materials" />
+                        Unauthorized use of equipment, materials
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Falsification of records" />
+                        Falsification of records
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Other" />
+                        Other:
+                        <textarea rows="5" class="form-control input-grey gray-background hidden js_counselling_form_fields_textarea" name="counselling_form_fields_textarea"></textarea>
+                    </td>
+                </tr>
+            </table>
+        `;
+        // inputs
+        description = description.replace("{{employee_name}}", inputReplace);
+        description = description.replace("{{supervisor}}", inputReplace);
+        description = description.replace("{{department}}", inputReplace);
+        description = description.replace("{{employee_job_title}}", inputReplace);
+        description = description.replace("{{signature}}", inputReplace);
+        description = description.replace("{{signature_print_name}}", inputReplace);
+        description = description.replace("{{authorized_signature}}", inputReplace);
+        description = description.replace("{{employee_number}}", inputReplace);
+        // textarea
+        description = description.replace("{{reason_to_leave_company}}", textAreaReplace);
+        description = description.replace("{{forwarding_information}}", textAreaReplace);
+        description = description.replace("{{forwarding_information}}", textAreaReplace);
+        description = description.replace("{{property_returned}}", textAreaReplace);
+        description = description.replace("{{reemploying}}", textAreaReplace);
+        description = description.replace("{{summary_of_violation}}", textAreaReplace);
+        description = description.replace("{{summary_of_corrective_plan}}", textAreaReplace);
+        description = description.replace("{{follow_up_dates}}", textAreaReplace);
+        description = description.replace("{{q1}}", textAreaReplace);
+        description = description.replace("{{q2}}", textAreaReplace);
+        description = description.replace("{{q3}}", textAreaReplace);
+        description = description.replace("{{q4}}", textAreaReplace);
+        description = description.replace("{{q5}}", textAreaReplace);
+        // dates
+        description = description.replace("{{last_day_of_work}}", dateReplace);
+        description = description.replace("{{sign_date}}", dateReplace);
+        description = description.replace("{{authorized_signature_date}}", dateReplace);
+        description = description.replace("{{date_of_occurrence}}", dateReplace);
+        // radios
+        description = description.replace("{{is_termination_voluntary}}", radioReplace);
+        // checkboxes
+        description = description.replace("{{counselling_form_fields}}", checkboxReplace);
+        
+        return description;
+    }
+</script>
