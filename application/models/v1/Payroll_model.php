@@ -1228,6 +1228,8 @@ class Payroll_model extends CI_Model
         // get the company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         $companyDetails['company_sid'] = $companyId;
+        //let's sync company work address 25/04/2024
+        $this->updateCompanyLocationToGusto($companyId);
         // let's sync the company federal tax
         $this->syncCompanyFederalTaxWithGusto($companyDetails);
         // let's sync the company industry
