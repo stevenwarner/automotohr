@@ -14,7 +14,7 @@ $(function dashboard() {
 	let XHR2 = null;
 	let XHR3 = null;
 	// holds company id
-	const companyId = getSegment(2);
+	const companyId = getSegment(3);
 	/**
 	 * capture the view admin event
 	 */
