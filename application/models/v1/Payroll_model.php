@@ -6602,12 +6602,13 @@ class Payroll_model extends CI_Model
         }
         //
         $ins = [];
+        $ins['is_default'] = 1;
         $ins['name'] = $gustoResponse['name'];
         $ins['gusto_uuid'] = $gustoResponse['uuid'];
         $ins['fields_json'] = $data['fields_json'];
-        $ins['is_default'] = 1;
         $ins['updated_at'] = $ins['created_at'] = getSystemDate();
         $ins['company_sid'] = $companyId;
+        //
         $this->db->insert('gusto_companies_earning_types', $ins);
         //
         return true;
@@ -6774,7 +6775,7 @@ class Payroll_model extends CI_Model
         //
         $this->db->select('name');
         $this->db->where('company_sid', $companyId);
-        $this->db->where('is_default', 1);
+        // $this->db->where('is_default', 1);
         $result = $this->db->get("gusto_companies_earning_types")->result_array();
 
         if ($result) {
