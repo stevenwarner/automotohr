@@ -358,7 +358,11 @@ class Payrolls extends Admin_Controller
     {
         $this->payroll_model->loadPayrollHelper($companyId);
         //
-        return $this->payroll_model->syncCompanyWithGusto(
+        // return $this->payroll_model->syncCompanyWithGusto(
+        //     $companyId
+        // );
+        //
+        return $this->payroll_model->addCompanySyncRequestInQueue(
             $companyId
         );
     }

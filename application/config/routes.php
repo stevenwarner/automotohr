@@ -1792,6 +1792,8 @@ $route['payrolls/settings']['get'] = 'v1/Payroll/settings';
 $route['payrolls/settings']['post'] = 'v1/Payroll/updateSettings';
 // sync with Gusto
 $route['payrolls/company/sync']['get'] = 'v1/Payroll/syncCompanyWithGusto';
+// company sync progress
+$route['payrolls/company/get_company_sync_progress']['get'] = 'v1/Payroll/getCompanySyncProgress';
 // verify company bank account
 // only on demo mode
 $route['payrolls/company/bank/verify']['get'] = 'v1/Payroll/verifyCompanyBankAccount';
@@ -2267,3 +2269,4 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 
 
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
+$route["sync_company_with_gusto"] = "v1/crons/Payroll_sync_company_cron/syncCompanyInfoWithGusto";

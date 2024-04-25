@@ -1218,13 +1218,103 @@ class Payroll_model extends CI_Model
     }
 
     /**
+    * sync company with Gusto
+    *
+    * @param int $companyId
+    * @return array
+    */
+    public function addCompanySyncRequestInQueue(int $companyId): array
+    { 
+        // insert
+        $this->db
+            ->insert('gusto_company_sync_log', [
+                'company_sid' => $companyId,
+                'created_at' => getSystemDate(),
+                'updated_at' => getSystemDate(),
+            ]);
+        //   
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
+        ); 
+    }
+
+    /**
+    * sync company with Gusto
+    *
+    * @param int $companyId
+    * @return array
+    */
+    public function getCompanySyncRequestProgress(int $companyId): array
+    { 
+        $status = 'completed';
+        $message = '';
+        // insert
+        $progressInfo = $this->db
+            ->select('level, error, message')
+            ->where([
+                'company_sid' => $companyId,
+                'status' => 1,
+                'is_completed' => 0,
+                'is_processing' => 1
+            ])
+            ->get('gusto_company_sync_log')
+            ->row_array();
+        //
+        if ($progressInfo) {
+            if (!empty($progressInfo['error'])) {
+                $status = 'error';
+                $response['message'] = $progressInfo['error'];
+            } else {
+                //
+                $status = 'processing';
+                //
+                if (!empty($progressInfo['message'])) {
+                    $message = $progressInfo['message'];
+                } else {
+                    $message = 'Please wait while we process your request.';
+                }
+            }
+        }   
+        //   
+        return SendResponse(
+            200,
+            [
+                'success' => true,
+                'status' => $status,
+                'message' => $message
+            ]
+        ); 
+    }
+
+    /**
+    * Get pending company sync data
+    *
+    * @return array
+    */
+    public function getPendingSyncCompanyRequest(): array
+    { 
+        return $this->db
+            ->select('company_sid')
+            ->where([
+                'status' => 1,
+                'is_completed' => 0,
+                'is_processing' => 0
+            ])
+            ->get('gusto_company_sync_log')
+            ->row_array();
+    }
+
+    /**
      * sync company with Gusto
      *
      * @param int $companyId
      * @return array
      */
     public function syncCompanyWithGusto(int $companyId): array
-    {
+    {   
         // get the company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         $companyDetails['company_sid'] = $companyId;
@@ -1260,6 +1350,7 @@ class Payroll_model extends CI_Model
      */
     private function syncCompanyFederalTaxWithGusto(array $companyDetails): array
     {
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'pending_request','federal_tax');
         // get the federal tax
         $gustoResponse = gustoCall(
             'getFederalTax',

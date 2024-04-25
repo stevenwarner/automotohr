@@ -7,6 +7,9 @@
  * @version 1.0
  */
 $(function dashboard() {
+	$(document).ready(function () {
+		updateCompanySyncProgress();
+	});
 	/**
 	 * set XHR request holder
 	 */
@@ -53,17 +56,19 @@ $(function dashboard() {
 		}
 		//
 		$(".jsSyncCompanyData span").html("Syncing...");
+		ml(true, "jsDashboard");
 		//
 		XHR = $.ajax({
 			url: baseUrl("payrolls/company/sync"),
 			method: "GET",
 		})
 			.success(function () {
-				return alertify.alert(
-					"Success!",
-					"Company is synced with Gusto",
-					CB
-				);
+				updateCompanySyncProgress()
+				// return alertify.alert(
+				// 	"Success!",
+				// 	"Company is synced with Gusto",
+				// 	CB
+				// );
 			})
 			.fail(function (response) {
 				return alertify.alert(
@@ -82,6 +87,52 @@ $(function dashboard() {
 				$(".jsSyncCompanyData span").html("Sync");
 			});
 	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	function updateCompanySyncProgress() {
+		//
+		if (XHR !== null) {
+			return false;
+		}
+		//
+		ml(true, "jsDashboard");
+		//
+		XHR = $.ajax({
+			url: baseUrl("payrolls/company/get_company_sync_progress"),
+			method: "GET",
+		})
+			.success(function (resp) {
+				if (resp.status == 'completed') {
+					ml(false, "jsDashboard");
+				} else if (resp.status == 'error') {
+					return alertify.alert(
+						"Error!",
+						resp.message
+					);
+				} else if (resp.status == 'processing') {
+					$('.jsIPLoaderText').text(resp.message);
+					//
+					setTimeout(() => {
+						updateCompanySyncProgress();
+					}, 4000);
+				}
+				
+			})
+			.fail(function (response) {
+				return alertify.alert(
+					"Error!",
+					"Something went wrong."
+				);
+			})
+			.always(function () {
+				XHR = null;
+			});
+	}
+
+
 
 	/**
 	 *

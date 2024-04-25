@@ -33,7 +33,7 @@ class Payroll extends CI_Controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
         //
-        $this->createMinifyFiles = true;
+        $this->createMinifyFiles = false;
     }
 
     public function dashboard()
@@ -769,10 +769,29 @@ class Payroll extends CI_Controller
         // check for session out
         $this->checkSessionStatus($session);
         //
-        return $this->payroll_model->syncCompanyWithGusto(
+        // return $this->payroll_model->syncCompanyWithGusto(
+        //     $session['company_detail']['sid']
+        // );
+        //
+        return $this->payroll_model->addCompanySyncRequestInQueue(
             $session['company_detail']['sid']
         );
     }
+
+    public function getCompanySyncProgress () {
+        // check for linked company
+        $this->checkForLinkedCompany(true);
+        // get the session
+        $session = checkUserSession(false);
+        // check for session out
+        $this->checkSessionStatus($session);
+        //
+        return $this->payroll_model->getCompanySyncRequestProgress(
+            $session['company_detail']['sid']
+        );
+    }
+
+
 
     /**
      * Verify bank account
