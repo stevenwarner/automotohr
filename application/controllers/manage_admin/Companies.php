@@ -556,6 +556,13 @@ class Companies extends Admin_Controller
             $result = $this->users_model->insert($company_data, $employer_data, $employer_portal_data);
 
             if (!empty($result)) {
+                // load the fillable document library
+                $this->load->model("v1/Fillable_documents_model", "fillable_documents_model");
+                $this
+                    ->fillable_documents_model
+                    ->checkAndAddFillableDocuments(
+                        $result['company_id']
+                    );
                 // Also pushes the location to onboarding configuration
                 $this->users_model->fixOnboardingAddress($result['company_id'], 0);
                 //making sub domain
