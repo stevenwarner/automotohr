@@ -6889,4 +6889,26 @@ class Payroll_model extends CI_Model
         //
         return true;
     }
+
+    private function updateSyncCompanyProgress ($companyId, $oldStatus, $newStatus) {
+        return $this->db
+            ->select('company_sid')
+            ->where([
+                'status' => 1,
+                'is_completed' => 0,
+                'company_sid' => $companyId
+            ])
+            ->get('gusto_company_sync_log')
+            ->row_array();
+
+            $this->db
+            ->where([
+                'status' => 1,
+                'is_completed' => 0,
+                'company_sid' => $companyId
+            ])
+            ->update('gusto_company_sync_log', [
+                'is_' => implode(',', $employees)
+            ]);
+    }
 }
