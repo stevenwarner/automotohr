@@ -77,4 +77,62 @@ class Fillable_documents_model extends CI_Model
         }
         return ["message" => "Inserted the fillable documents."];
     }
+
+    /**
+     * Check and assign documents
+     *
+     */
+    public function checkAndAddFillableDocumentsToAllCompanies()
+    {
+        // get the companies
+        $companies = $this->db
+            ->select("sid")
+            ->where("parent_sid", 0)
+            ->get("users")
+            ->result_array();
+        //
+        if (!$companies) {
+            exit("No companies.");
+        }
+        // get the documents list
+        $documents = $this->lb_fillable_documents->getDocumentsList();
+        // current date time
+        $dateTime = getSystemDate();
+        //
+        foreach ($companies as $company) {
+            $companyId = $company["sid"];
+            // get the admin id
+            $companyAdminId = getCompanyAdminSid($companyId);
+            //
+            foreach ($documents as $v0) {
+                // check if current document already exists
+                if ($this->db
+                    ->where("company_sid", $companyId)
+                    ->where("fillable_document_slug", $v0["slug"])
+                    ->count_all_results("documents_management")
+                ) {
+                    continue;
+                }
+                // add to the table
+                $this->db
+                    ->insert(
+                        "documents_management",
+                        [
+                            "company_sid" => $companyId,
+                            "fillable_document_slug" => $v0["slug"],
+                            "employer_sid" => $companyAdminId,
+                            "document_title" => $v0["name"],
+                            "document_description" => $v0["description"],
+                            "document_type" => "generated",
+                            "date_created" => $dateTime,
+                            "onboarding" => 0,
+                            "signature_required" => 1,
+                            "isdoctolibrary" => 0,
+                            "is_required" => 1,
+                        ]
+                    );
+            }
+        }
+        exit("All done,");
+    }
 }
