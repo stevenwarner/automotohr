@@ -709,3 +709,6 @@ define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+define('SHIFTS_SWAP_ADMIN_APPROVED_REJECTED', 445); 
+define('SHIFTS_SWAP_AWAITING_CONFIRMATION', 446); 

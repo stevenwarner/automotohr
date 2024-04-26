@@ -2272,3 +2272,11 @@ $route["settings/shifts/my_trade_change_status"]["post"] = "Settings/processMySh
 $route["shifts/trade"]["get"] = "v1/Shifts/Employee_shifts/shiftsTrade";
 $route["shifts/mytrade"]["get"] = "v1/Shifts/Employee_shifts/myShiftsTrade";
 $route["settings/page/(:any)/(:num)/(:any)"]["get"] = "Settings/getPageBySlug/$1/$2/$3";
+$route['settings/handler'] = 'Settings/handler';
+
+$route["settings/shifts/tradeshiftsapprove"]["post"] = "Settings/processTradeShiftsApprove";
+$route["settings/shifts/tradeshiftsreject"]["post"] = "Settings/processTradeShiftsReject";
+
+$route['swap_shift_confirm/(:any)/(:any)/(:any)'] = 'v1/Shifts/Employee_shifts/swapShiftConfirm/$1/$2/$3';
+
+

@@ -129,7 +129,9 @@
                                                             <?php echo formatDateToDB($rowShift["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($rowShift["end_time"], "H:i:s", "h:i a"); ?>
                                                         </td>
                                                         <td style="vertical-align: middle;">
-                                                            <?php echo $rowShift["request_status"] != '' ? ucwords($rowShift["request_status"]) : ' - '; ?>
+                                                            <?php echo $rowShift["request_status"] != '' ? ucwords($rowShift["request_status"]) : ' - '; ?> <br>
+                                                            <?php echo $rowShift['updated_at'] != '' ? date_with_time($rowShift['updated_at']) : ''; ?>
+
                                                         </td>
                                                         <td style="vertical-align: middle;">
                                                             <?php echo $rowShift['created_at'] != '' ? date_with_time($rowShift['created_at']) : ' - '; ?>

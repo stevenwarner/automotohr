@@ -56,7 +56,7 @@ $(function shiftsTrade() {
 		$(".my_checkbox:checked").each(function () {
 
 			status = $(this).data('status');
-			if (status == '' || status == 'rejected' || status == 'canceled' ) {
+			if (status == '' || status == 'rejected' || status == 'cancelled') {
 				shiftsArrayIds.push($(this).val());
 			}
 
@@ -397,6 +397,194 @@ $(function shiftsTrade() {
 	});
 
 
+	//
+	$(document).on("click", '.jsApproveTradeShift', function (event) {
+
+		// prevent the event from happening
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		let shiftId = $(this).data('shiftid');
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to Approve shifts request?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				shiftsArrayIds.push(shiftId);
+				formObj.append("shiftids", shiftsArrayIds);
+				// 
+
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/tradeshiftsapprove",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+	//
+	$(document).on("click", '.jsAdminApproveTradeShifts', function (event) {
+
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		$(".my_checkbox:checked").each(function () {
+			shiftsArrayIds.push($(this).val());
+		});
+
+
+		if (shiftsArrayIds.length > 0) {
+
+			alertify.confirm(
+				'Are You Sure?',
+				'Are you sure want to Approve shifts request?',
+				function () {
+					//
+					const formObj = new FormData();
+					// set the file object
+					formObj.append("shiftids", shiftsArrayIds);
+					// 
+
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/tradeshiftsapprove",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+				},
+				function () {
+
+				}
+			)
+
+		} else {
+			alertify.alert('Error! Not selected', 'Please Select at-least one shift ');
+		}
+
+	});
+
+
+
+	//
+	$(document).on("click", '.jsAdminRejectTradeShift', function (event) {
+
+		// prevent the event from happening
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		let shiftId = $(this).data('shiftid');
+
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to Reject shifts request?',
+			function () {
+				//
+				const formObj = new FormData();
+				// set the file object
+				shiftsArrayIds.push(shiftId);
+				formObj.append("shiftids", shiftsArrayIds);
+				// 
+
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/tradeshiftsreject",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			function () {
+
+			}
+		)
+	});
+
+
+	//
+	$(".jsAdminRejectTradeShifts").click(function (event) {
+
+		event.preventDefault();
+
+		let shiftsArrayIds = [];
+		$(".my_checkbox:checked").each(function () {
+			shiftsArrayIds.push($(this).val());
+		});
+
+		//
+		if (shiftsArrayIds.length > 0) {
+			alertify.confirm(
+				'Are You Sure?',
+				'Are you sure want to Reject shifts request?',
+				function () {
+					//
+					const formObj = new FormData();
+					// set the file object
+					formObj.append("shiftids", shiftsArrayIds);
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/tradeshiftsreject",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+				},
+				function () {
+
+				}
+			)
+		} else {
+
+			alertify.alert('Error! Not selected', 'Please Select at-least one shift ');
+		}
+
+	});
+
+
+
+	//
+	$("#jsApplyFilter").click(function (event) {
+
+		event.preventDefault();
+
+		//
+		callOBJ.Requests.Main.type = $(".csActiveTab").find("a").data('key');
+		callOBJ.Requests.Main.filter.dateRange = $(".jsDateRangePicker").val();
+
+		//
+		fetchTradeRequests();
+
+	});
+
+
+
 	/**
 	 * process the call
 	 * @param {object} formObj
@@ -468,8 +656,8 @@ $(function shiftsTrade() {
 	 */
 	function fetchPage(pageSlug, pageId, cb) {
 
-	     params = "params?shiftsIds=" + shiftsIds;
-	
+		params = "params?shiftsIds=" + shiftsIds;
+
 		if (shiftsIds != '') {
 			callUrl = baseUrl("settings/page/" + pageSlug + "/" + pageId + "/" + params);
 		} else {
@@ -497,5 +685,153 @@ $(function shiftsTrade() {
 				cb(resp);
 			});
 	}
+
+
+
+	// Tabs
+
+	let callOBJ = {
+		Requests: {
+			Main: {
+				action: 'get_requests',
+				type: 'all',
+				filter: {
+					dateRange: ''
+				}
+			}
+		},
+
+	},
+		xhr = null;
+	//
+
+	let handlerURL = baseUrl("settings/handler");
+	//
+	$('.jsReportTab').click(function (e) {
+		//
+		e.preventDefault();
+		//
+		callOBJ.Requests.Main.type = $(this).data('key');
+		callOBJ.Requests.Main.filter.dateRange = $(".jsDateRangePicker").val();
+
+		//
+		//
+		$(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+		$(this).parent().addClass("active").addClass('csActiveTab');
+		//
+		fetchTradeRequests();
+	});
+	//
+	$('.jsReportTab[data-key="all"]').trigger('click');
+
+
+	// Fetch Trades
+	function fetchTradeRequests() {
+
+		//
+		if (xhr != null) return;
+		//
+		ml(true, 'requests');
+		//
+		$('.js-error-row').remove();
+		//
+		xhr = $.post(handlerURL, callOBJ.Requests.Main, function (resp) {
+			//
+			xhr = null;
+			//
+			if (resp.Redirect === true) {
+				alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+					window.location.reload();
+				});
+				return;
+			}
+			//
+			if (resp.Status === false && callOBJ.Balances.Main.page == 1) {
+				alert('asdasdasd');
+				$('.js-ip-pagination').html('');
+				$('#js-data-area').html(`<tr class="js-error-row"><td colspan="${$('.js-table-head').find('th').length}"><p class="alert alert-info text-center">${resp.Response}</p></td></tr>`);
+				//
+				ml(false, 'requests');
+				//
+				return;
+			}
+			//
+			if (resp.Status === false) {
+				//
+				$('.js-ip-pagination').html('');
+				//
+				ml(false, 'requests');
+				//
+				return;
+			}
+			//
+			setTable(resp);
+		});
+	}
+
+
+	//
+	function setTable(resp) {
+		//
+		let rows = '';
+		//
+		if (resp.Data.length == 0) {
+			$('#js-data-area').html(`<tr><td colspan="6"><p class="alert alert-info text-center">No Request found.</p></td></tr>`);
+			ml(false, 'requests');
+			return;
+		}
+		//
+		$.each(resp.Data, function (i, v) {
+			//
+			rows += `<tr>`;
+			rows += `<td>`;
+			if ((`${v.request_status}`) != "Approved" && (`${v.request_status}`) != "Admin Rejected") {
+				rows += `<label class="control control--checkbox">`;
+				rows += `<input type="checkbox" name="checkit[]" value="${v.shift_sid}" class="my_checkbox" data-status="" >`;
+				rows += `<div class="control__indicator"></div>`;
+				rows += `</label>`;
+			}
+			rows += `</td>`;
+
+			rows += `<td style="vertical-align: middle;">${v.shift_date} ` + "<br>" + ` ${v.start_time}`;
+			rows += `</td>`;
+			rows += `<td style="vertical-align: middle;">${v.request_status == "Admin Rejected" ? "Rejected" : v.request_status}` + "<br>" + ` ${v.updated_at}`;
+			rows += `</td>`;
+			rows += `<td style="vertical-align: middle;">${v.created_at}`;
+			rows += `</td>`;
+			rows += `<td style="vertical-align: middle;">${v.from_employee}`;
+
+			rows += `</td>`;
+			rows += `<td style="vertical-align: middle;">${v.to_employee}`;
+			rows += `</td>`;
+
+			rows += `<td>`;
+			rows += `<div class="col-sm-12 text-right">`;
+
+			if ((`${v.request_status}`) != "Approved" && (`${v.request_status}`) != "Admin Rejected") {
+
+				rows += `<button class="btn btn-red jsAdminRejectTradeShift" data-shiftid="${v.shift_sid}">Reject`;
+				rows += `</button>`;
+
+				rows += `<button class="btn btn-orange jsApproveTradeShift" data-shiftid="${v.shift_sid}">Approve`;
+				rows += `</button>`;
+			}
+
+			rows += `</div>`;
+			rows += `</td>`;
+			rows += `</tr>`;
+
+
+		});
+
+		//
+		$('#js-data-area').html(rows);
+
+		//
+
+		//
+		ml(false, 'requests');
+	}
+
 
 });
