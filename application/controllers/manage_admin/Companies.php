@@ -1414,6 +1414,8 @@ class Companies extends Admin_Controller
             $this->data['page_title'] = 'Manage Company Dashboard';
             $company_info = $this->company_model->get_company_details($company_sid);
 
+            $company_info['incidents'] = checkIfAppIsEnabled('incidents');
+
             if (sizeof($company_info) < 1) {
                 $this->session->set_flashdata('message', 'Company not found!');
                 redirect('manage_admin/companies/', 'refresh');
@@ -1510,6 +1512,7 @@ class Companies extends Admin_Controller
                 $this->data['company_portal_email_templates'] = $company_portal_email_templates;
                 $this->data['automotive_groups'] = $this->company_model->get_groups_by_company($company_sid);
                 //            $this->data['company_card'] = $company_card;
+
 
                 //
                 $this->data['CompanyIndeedDetails'] = $this->company_model->GetCompanyIndeedDetails($company_sid);
@@ -3474,5 +3477,32 @@ class Companies extends Admin_Controller
         $this->data['company_sid'] = $companyId;
         //
         $this->render('manage_admin/company/company_secure_documents');
+    }
+
+
+
+    //
+    function change_incident_status()
+    {
+        $sid = $this->input->post("sid");
+        $status = $this->input->post("status");
+        if ($status) {
+            $data = array('is_active' => 0);
+            $return_data = array(
+                'btnValue' => 'Disable',
+                'label'     => 'Enabled',
+                'value'     =>  1
+            );
+        } else {
+            $data = array('is_active' => 1);
+            $return_data = array(
+                'btnValue' => 'Enable',
+                'label'     => 'Disabled',
+                'value'     =>  0
+            );
+        }
+        $this->company_model->update_incident_status($sid, $data);
+
+        print_r(json_encode($return_data));
     }
 }
