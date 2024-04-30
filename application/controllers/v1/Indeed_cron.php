@@ -66,9 +66,9 @@ class Indeed_cron extends CI_Controller
                 continue;
             }
             //
-            $contactName = $jobDetails['ContactName'];
-            $contactPhone = $jobDetails['PhoneNumber'];
-            $contactEmail = $jobDetails['email'];
+            $contactName = $jobDetails['contact_name'];
+            $contactPhone = $jobDetails['contact_phone'];
+            $contactEmail = $jobDetails['contact_email'];
             // Check for company indeed details
             $indeedDetails = $companyIndeedContactDetails[$companyId] ??
                 $this->indeed_model->GetCompanyIndeedDetails($companyId, $jobId);
@@ -285,6 +285,9 @@ class Indeed_cron extends CI_Controller
         GRAPHQL;
         // replace variables
         $query = str_replace("\jobs", $jobs, $query);
+
+
+        _e($query, true, true);
 
         // load library
         $this->load->library(

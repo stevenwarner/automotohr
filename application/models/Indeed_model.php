@@ -944,4 +944,84 @@ class Indeed_model extends CI_Model
             ->where('sid', $companyId)
             ->count_all_results('users');
     }
+
+    /**
+     * check if already something running
+     *
+     * @return int
+     */
+    public function checkQueue(): int
+    {
+        return $this
+            ->db
+            ->where([
+                "is_processing" => 1
+            ])
+            ->count_all_results(
+                "indeed_job_queue"
+            );
+    }
+
+    /**
+     * check if already something running
+     *
+     * @param int $numberOfJobs
+     * @return array
+     */
+    public function getQueueJobs(
+        int $numberOfJobs = 1
+    ): array {
+        return $this
+            ->db
+            ->where([
+                "is_processing" => 0,
+                "is_processed" => 0,
+            ])
+            ->order_by("sid", "ASC")
+            ->limit($numberOfJobs)
+            ->get(
+                "indeed_job_queue"
+            )
+            ->result_array();
+    }
+
+    /**
+     * get the job details
+     *
+     * @param int $jobId
+     * @return array
+     */
+    public function getJobDetailsForIndeed(
+        int $jobId
+    ): array {
+        return $this
+            ->db
+            ->select([
+                "portal_job_listings.user_sid",
+                "portal_job_listings.activation_date",
+                "portal_job_listings.JobDescription",
+                "portal_job_listings.JobRequirements",
+                "portal_job_listings.Location_Country",
+                "portal_job_listings.Location_State",
+                "portal_job_listings.Location_City",
+                "portal_job_listings.Location_ZipCode",
+                "portal_job_listings.Salary",
+                "portal_job_listings.JobType",
+                "portal_job_listings.JobCategory",
+                "portal_job_listings.questionnaire_sid",
+                "portal_job_listings.Title",
+                "company_indeed_details.contact_name",
+                "company_indeed_details.contact_email",
+                "company_indeed_details.contact_phone",
+            ])
+            ->join(
+                "company_indeed_details",
+                "company_indeed_details.company_sid = portal_job_listings.user_sid",
+                "left"
+            )
+            ->where("portal_job_listings.sid", $jobId)
+            ->limit(1)
+            ->get("portal_job_listings")
+            ->row_array();
+    }
 }
