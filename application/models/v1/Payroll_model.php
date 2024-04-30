@@ -1266,7 +1266,7 @@ class Payroll_model extends CI_Model
         if ($progressInfo) {
             if (!empty($progressInfo['error'])) {
                 $status = 'error';
-                $response['message'] = $progressInfo['error'];
+                $message = $progressInfo['error'];
             } else {
                 //
                 $status = 'processing';
@@ -1360,6 +1360,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyDetails['company_sid'],'pending_request','federal_tax', $errors);
             return $errors;
         }
         //
@@ -1394,7 +1395,8 @@ class Payroll_model extends CI_Model
      * federal tax sync
      */
     private function syncCompanyIndustryWithGusto(array $companyDetails): array
-    {
+    {   
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'federal_tax','industry_info');
         // get the federal tax
         $gustoResponse = gustoCall(
             'getIndustry',
@@ -1404,6 +1406,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyDetails['company_sid'],'federal_tax','industry_info', $errors);
             return $errors;
         }
         //
@@ -1435,6 +1438,7 @@ class Payroll_model extends CI_Model
      */
     private function syncCompanyBankAccountsWithGusto(array $companyDetails): array
     {
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'industry_info', 'bank_account');
         // get the federal tax
         $gustoResponse = gustoCall(
             'getBankAccounts',
@@ -1444,6 +1448,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyDetails['company_sid'],'industry_info', 'bank_account', $errors);
             return $errors;
         }
         //
@@ -1485,6 +1490,7 @@ class Payroll_model extends CI_Model
      */
     private function syncCompanyPayScheduleWithGusto(array $companyDetails): array
     {
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'bank_account','pay_schedule');
         // get the federal tax
         $gustoResponse = gustoCall(
             'getPaySchedules',
@@ -1494,6 +1500,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyDetails['company_sid'],'bank_account','pay_schedule', $errors);
             return $errors;
         }
         //
@@ -1535,6 +1542,7 @@ class Payroll_model extends CI_Model
      */
     private function syncCompanyPaymentConfigWithGusto(array $companyDetails): array
     {
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'pay_schedule','payment_configuration');
         // get the federal tax
         $gustoResponse = gustoCall(
             'getPaymentConfig',
@@ -1544,6 +1552,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyDetails['company_sid'],'pay_schedule','payment_configuration', $errors);
             return $errors;
         }
         //
@@ -4618,6 +4627,8 @@ class Payroll_model extends CI_Model
         int $companyId,
         bool $return = false
     ): array {
+        //
+        $this->updateSyncCompanyProgress($companyId,'payment_configuration','earning_type');
         // get company details
         $companyDetails = $this->getCompanyDetailsForGusto($companyId);
         // response
@@ -4631,6 +4642,7 @@ class Payroll_model extends CI_Model
         $errors = hasGustoErrors($gustoResponse);
         //
         if ($errors) {
+            $this->updateSyncCompanyProgress($companyId,'payment_configuration','earning_type', $errors);
             return $errors;
         }
         // for default
@@ -5019,6 +5031,7 @@ class Payroll_model extends CI_Model
     public function createCompanyEarningTypes(
         int $companyId
     ): array {
+        $this->updateSyncCompanyProgress($companyDetails['company_sid'],'payment_configuration','earning_type');
         // check if already exists
         if ($this->db->where([
             "name" => "Paid Time Off",
@@ -6887,28 +6900,54 @@ class Payroll_model extends CI_Model
             }
         }
         //
+        $this->updateSyncCompanyProgress($companyId,'earning_type','completed');
         return true;
     }
 
-    private function updateSyncCompanyProgress ($companyId, $oldStatus, $newStatus) {
-        return $this->db
-            ->select('company_sid')
+    private function updateSyncCompanyProgress ($companyId, $oldStatus, $newStatus, $error = []) {
+        //
+        $dataToUpdate = [];
+        //
+        if ($error) {
+            $dataToUpdate['error'] = $error;
+            $dataToUpdate['is_completed'] = 1;
+        } else {
+            //
+            switch ($oldStatus) {
+                case 'pending_request':
+                    $dataToUpdate['is_processing'] = 1;
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company federal tax.';
+                    break;
+                case 'federal_tax':
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company industry info.';
+                    break;
+                case 'industry_info':
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company bank account.';
+                    break;
+                case 'bank_account':
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company pay schedule.';
+                    break;
+                case 'pay_schedule':
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company payment configuration.';
+                    break;
+                case 'payment_configuration':
+                    $dataToUpdate['message'] = 'Please wait while we are syncing company earning Type.';
+                    break; 
+                case 'earning_type':
+                    $dataToUpdate['message'] = 'Company sync process is completed successfully';
+                    $dataToUpdate['is_completed'] = 1;
+                    break;    
+            }
+        }
+        //
+        $dataToUpdate['level'] = $newStatus;
+        //
+        $this->db
             ->where([
                 'status' => 1,
                 'is_completed' => 0,
                 'company_sid' => $companyId
             ])
-            ->get('gusto_company_sync_log')
-            ->row_array();
-
-            $this->db
-            ->where([
-                'status' => 1,
-                'is_completed' => 0,
-                'company_sid' => $companyId
-            ])
-            ->update('gusto_company_sync_log', [
-                'is_' => implode(',', $employees)
-            ]);
+            ->update('gusto_company_sync_log', $dataToUpdate);
     }
 }
