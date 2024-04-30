@@ -558,7 +558,7 @@
                                                                         </span>
                                                                     </div>
                                                                 </li>
-                                                                
+
                                                                 <li>
                                                                     <label>Payroll Credit Card Authorization</label>
                                                                     <div class="text text-center">
@@ -683,17 +683,35 @@
                                                 <article class="information-box">
                                                     <header class="hr-box-header">
                                                         Manage Incident Reporting
+                                                        <a href="<?php echo base_url('manage_admin/companies/manage_incident_configuration/' . $company_sid); ?>" class="site-btn pull-right">Manage Configuration</a>
+
                                                     </header>
+
                                                     <div class="table-outer">
                                                         <div class="info-row">
                                                             <ul>
+                                                                <?php if ($company_info['incidents']) {
+                                                                    $status = 'Enabled';
+                                                                    $btn_value = 'Disable';
+                                                                } else {
+                                                                    $status = 'Disabled';
+                                                                    $btn_value = 'Enable';
+                                                                } ?>
+                                                                <li class="<?php echo ($company_info['incidents'] == 1 ? 'inclueded-state' : 'exclueded-state'); ?>">
+                                                                    <label>Status</label>
+                                                                    <div style="<?php echo ($company_info['incidents'] ? 'color:green;' : 'color:red;'); ?>" class="text" id="status-label">
+                                                                        <?php echo $status; ?>
+                                                                    </div>
+                                                                </li>
                                                                 <li>
                                                                     <div class="text">
-                                                                        <a href="<?php echo base_url('manage_admin/companies/manage_incident_configuration/' . $company_sid); ?>" class="site-btn pull-right">Manage Configuration</a>
+                                                                        <a href="javascript:;" id="change-incident" data-status="<?= $company_info['incidents'] ?>" data-attr="<?= $company_info['sid'] ?>" class="site-btn pull-right"><?= $btn_value ?></a>
                                                                     </div>
                                                                 </li>
                                                             </ul>
                                                         </div>
+
+
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
                                                 <!-- Contact Info for company article -->
@@ -1396,7 +1414,7 @@
                                                             <?php if ($v['module_name'] == "Learning Management System") { ?>
                                                                 <a href="<?php echo base_url('sa/lms/courses/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
                                                             <?php } ?>
-                                                             <?php if ($v['module_name'] == "Payroll") { ?>
+                                                            <?php if ($v['module_name'] == "Payroll") { ?>
                                                                 <a href="<?php echo base_url('sa/payrolls/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
                                                             <?php } ?>
                                                         </header>
@@ -2028,6 +2046,37 @@
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
         }
+    });
+
+
+    //
+    $(document).on('click', '#change-incident', function() {
+        var status = $('#change-incident').attr('data-status');
+        var id = $('#change-incident').attr('data-attr');
+        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html(),
+            function() {
+                $.ajax({
+                    url: "<?= base_url() ?>manage_admin/companies/change_incident_status",
+                    type: 'POST',
+                    data: {
+                        status: status,
+                        sid: id
+                    },
+                    success: function(data) {
+                        alertify.success('Incident Reporting Status has been Activated.');
+                        data = JSON.parse(data);
+                        if (status == 0) {
+                            window.location.href = '<?php echo base_url('setup_default_config') . '/' ?>' + id;
+                        } else {
+                            window.location.href = '<?php echo current_url() ?>';
+                        }
+                    },
+                    error: function() {}
+                });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     });
 </script>
 

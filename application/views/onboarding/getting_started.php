@@ -505,33 +505,41 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </a>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                            <div class="widget-box">
-                                <a href="<?php echo base_url('incident_reporting_system'); ?>">
-                                    <div class="link-box bg-cyan full-width">
-                                        <h2>Incidents</h2>
-                                        <!--                                            <ul class="cs-jam-ul" style="position: relative; z-index: 99;">-->
-                                        <!--                                                <li>Assigned Incidents: -->
-                                        <? //= $incidents_count;
-                                        ?>
-                                        <!-- Pending </li>-->
-                                        <!--                                            </ul>-->
-                                        <div class="text-center" style="position: relative; z-index: 99;">
-                                            <span style="color: white"> Assigned Incidents</span>
-                                        </div>
-                                        <div class="current-date" style="position: relative; z-index: 99;">
-                                            <span><?php echo $incidents_count; ?><sub>Pending</sub></span>
-                                        </div>
-                                        <div class="status-panel">
-                                            <h3>Incident Reporting</h3>
-                                            <span>Report an Incident</span>
-                                            <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
+
+
+
+                        <?php if (checkIfAppIsEnabled('incidents')) { ?>
+
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('incident_reporting_system'); ?>">
+                                        <div class="link-box bg-cyan full-width">
+                                            <h2>Incidents</h2>
+                                            <!--                                            <ul class="cs-jam-ul" style="position: relative; z-index: 99;">-->
+                                            <!--                                                <li>Assigned Incidents: -->
+                                            <? //= $incidents_count;
                                             ?>
+                                            <!-- Pending </li>-->
+                                            <!--                                            </ul>-->
+                                            <div class="text-center" style="position: relative; z-index: 99;">
+                                                <span style="color: white"> Assigned Incidents</span>
+                                            </div>
+                                            <div class="current-date" style="position: relative; z-index: 99;">
+                                                <span><?php echo $incidents_count; ?><sub>Pending</sub></span>
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Incident Reporting</h3>
+                                                <span>Report an Incident</span>
+                                                <?php //echo $complete_steps['documents'] > 0 ? '<span>completed</span>' : '<span>skipped</span>'
+                                                ?>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        <?php } ?>
+
+
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('my_learning_center'); ?>">

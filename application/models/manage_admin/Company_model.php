@@ -3402,8 +3402,17 @@ class Company_model extends CI_Model
         return $this->db->count_all_results();
     }
 
-    public function deleteEmployeeStatus ($sid) {
-        $this->db->where('sid',$sid);
+    public function deleteEmployeeStatus($sid)
+    {
+        $this->db->where('sid', $sid);
         $this->db->delete('terminated_employees');
+    }
+
+    //
+    function update_incident_status($sid, $data)
+    {
+        $this->db->where('company_sid', $sid);
+        $this->db->where('module_sid', '13');
+        $this->db->update('company_modules', $data);
     }
 }
