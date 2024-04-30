@@ -185,6 +185,10 @@ class Onboarding extends CI_Controller
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+
+                            keepTrackVerificationDocument($applicant_sid, 'applicant', 'assigne', $assign_group_document['document_sid'], 'assigned', 'Onboarding Blue Setup Group');
+
+
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                                 $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
@@ -4768,6 +4772,10 @@ class Onboarding extends CI_Controller
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+
+                            //
+                            keepTrackVerificationDocument($user_sid, $user_type, 'assigne', $assign_group_document['document_sid'], 'assigned', 'Onboarding Green Setup Group');
+                           
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                                 $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);

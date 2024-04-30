@@ -64,6 +64,10 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
+
+
+
+
             if ($this->form_validation->run() == false) {
                 if (!empty($groups)) {
 
@@ -167,6 +171,7 @@ class Hr_documents_management extends Public_Controller
                         redirect('hr_documents_management', 'refresh');
                         break;
                     case 'assign_document':
+
                         $document_type = $this->input->post('document_type');
                         $document_sid = $this->input->post('document_sid');
                         $select_employees = $this->input->post('employees');
@@ -291,6 +296,10 @@ class Hr_documents_management extends Public_Controller
                                 addColumnsForDocumentAssigned($data_to_insert, $document);
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+
+                               //
+                                keepTrackVerificationDocument($emp, $user_type, 'assigne', $document_sid, 'assigned', 'EMS Bluk');
+                                
                             }
 
                             //
@@ -2276,6 +2285,8 @@ class Hr_documents_management extends Public_Controller
                             redirect('hr_documents_management/documents_assignment' . '/' . $user_type . '/' . $user_sid . '/' . $jobs_listing, 'refresh');
                             break;
                         case 'remove_document':
+
+
                             $document_type = $this->input->post('document_type');
                             $document_sid = $this->input->post('document_sid');
                             //
@@ -2283,6 +2294,7 @@ class Hr_documents_management extends Public_Controller
                                 $document_sid,
                                 $user_sid
                             );
+
                             //
                             $assignInsertId = $assigned['sid'];
                             //
@@ -2298,6 +2310,12 @@ class Hr_documents_management extends Public_Controller
                             $data['status'] = 0;
                             // $data['is_pending'] = 1;
                             $this->hr_documents_management_model->assign_revoke_assigned_documents($document_sid, $document_type, $user_sid, $user_type, $data);
+                           
+                           
+                            //
+                            keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $document_sid, 'assigned', 'Document Center');
+
+                            
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             if ($user_type == 'employee') {
@@ -5533,6 +5551,12 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                           
+                           
+                            //
+                            keepTrackVerificationDocument($employer_sid, 'employee', 'assigne', $assign_group_document['document_sid'], 'assigned', 'Blue Panel My Documents Group');
+
+                           
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                                 $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
@@ -10988,6 +11012,7 @@ class Hr_documents_management extends Public_Controller
                     }
                 }
                 //
+
                 $this->res['Status'] = TRUE;
                 $this->res['Date'] = date('Y-m-d H:i:s', strtotime('now'));
                 $this->res['Response'] = 'You have successfully assigned ' . (ucwords(str_replace('_', ' ', $post['documentType']))) . ' document.';
@@ -12182,7 +12207,7 @@ class Hr_documents_management extends Public_Controller
      */
     function assign_document($document = array())
     {
-        //
+        
         //
         $r = [
             'Status' => FALSE,
@@ -12193,6 +12218,7 @@ class Hr_documents_management extends Public_Controller
         //
         $assigner_firstname = '';
         $assigner_lastname = '';
+
         //
         if (!empty($document)) {
             $post['sendEmail'] = $document['sendEmail'];
@@ -12350,6 +12376,7 @@ class Hr_documents_management extends Public_Controller
         //
 
         if ($assignInsertId == null)
+           
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
@@ -12493,6 +12520,9 @@ class Hr_documents_management extends Public_Controller
                 );
             }
         }
+
+        //
+        keepTrackVerificationDocument($post['EmployeeSid'], $post['Type'], 'assign', $post['documentSid'], 'assigned', 'Document Center');
 
         echo 'success';
     }
@@ -12947,6 +12977,7 @@ class Hr_documents_management extends Public_Controller
     //
     function revoke_document()
     {
+
         $assigned = $this->hr_documents_management_model->getAssignedDocumentByIdAndEmployeeId(
             $this->input->post('sid', true),
             $this->input->post('employeeSid', true)
@@ -12960,6 +12991,7 @@ class Hr_documents_management extends Public_Controller
         $h = $assigned;
         $h['doc_sid'] = $assignInsertId;
         //
+
         $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
         //
         $this->hr_documents_management_model->revokeDocument(
@@ -12969,6 +13001,9 @@ class Hr_documents_management extends Public_Controller
                 'status' => '0'
             ]
         );
+
+        keepTrackVerificationDocument($h['user_sid'], $h['user_type'], 'revoke', $h['document_sid'], 'assigned', 'Onboarding Setup');
+
         //
         echo 'success';
     }

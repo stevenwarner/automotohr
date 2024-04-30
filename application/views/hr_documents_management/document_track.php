@@ -8,7 +8,7 @@
                     Fillable Verification Actions History
                 </h4>
             </div>
-            <div class="modal-body"> 
+            <div class="modal-body">
                 <div class="table-responsive full-width">
                     <table class="table table-plane table-striped">
                         <caption></caption>
@@ -31,16 +31,21 @@
 <!-- Preview Latest Document Modal Modal End -->
 
 <script type="text/javascript">
-    function show_document_track (type, sid) {
+    function show_document_track(type, sid) {
         //
         $('#fillable_history_track_modal tbody').html('<tr><td colspan="12"><p class="alert alert-info text-center">Please wait while we fetch the document trail.</p></td></tr>');
         //
-        $.get("<?=base_url('eeoc/get_trail');?>/"+(sid)+"/"+(type)+"")
-        .success(function(resp){
-            //
-            $('#fillable_history_track_modal tbody').html(resp);
-        })
-        .error();
+        $.get("<?= base_url('eeoc/get_trail'); ?>/" + (sid) + "/" + (type) + "")
+            .success(function(resp) {
+                //
+                if (type == 'assigned') {
+                    $('#fillable_history_track_modal .modal-title').html("Assigned Verification Actions History");
+                }
+
+                $('#fillable_history_track_modal tbody').html(resp);
+
+            })
+            .error();
         //
         $('#fillable_history_track_modal').modal('show');
     }

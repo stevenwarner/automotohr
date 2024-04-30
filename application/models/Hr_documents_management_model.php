@@ -1362,14 +1362,13 @@ class Hr_documents_management_model extends CI_Model
     public function getMainDocumentField(
         int $documentId,
         string $column
-    )
-    {
+    ) {
         $record = $this
-        ->db
-        ->select($column)
-        ->where("sid", $documentId)
-        ->get("documents_management")
-        ->row_array();
+            ->db
+            ->select($column)
+            ->where("sid", $documentId)
+            ->get("documents_management")
+            ->row_array();
         //
         if (!$record) {
             return null;
@@ -11432,6 +11431,11 @@ class Hr_documents_management_model extends CI_Model
                         $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                         //
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+
+                        //
+                        keepTrackVerificationDocument($userId, $userType, 'assigne', $assign_group_document['document_sid'], 'assigned', 'Blue Panel Group');
+
+
                         //
                         if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                             $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);

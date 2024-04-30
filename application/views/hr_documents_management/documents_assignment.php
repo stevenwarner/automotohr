@@ -624,6 +624,9 @@ $assignIdObj = $confidential_sids;
                                                                                                     <?php } else { ?>
                                                                                                         <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
                                                                                                     <?php } ?>
+
+                                                                                                    <button onclick="show_document_track('assigned', <?= $document['sid']; ?>);" class="btn btn-success btn-block btn-sm" title="View action trail for assigned" placement="top">View Trail</button>
+
                                                                                                 </td>
                                                                                                 <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                                     <td class="col-lg-1">
@@ -766,6 +769,8 @@ $assignIdObj = $confidential_sids;
                                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
                                                                                                     <?php } else { ?>
                                                                                                         <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+                                                                                                        <button onclick="show_document_track('assigned', <?= $document['sid']; ?>);" class="btn btn-success btn-block btn-sm" title="View action trail for assigned" placement="top">View Trail</button>
+
                                                                                                     <?php } ?>
                                                                                                 </td>
                                                                                                 <?php if ($document['document_type'] == 'hybrid_document') { ?>
@@ -906,7 +911,10 @@ $assignIdObj = $confidential_sids;
                                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="view_original_uploaded_doc(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-print-url="<?php echo $url_segment_original; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_document_s3_name']; ?>" data-document-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['uploaded_document_original_name']; ?>" data-document-title="<?php echo $document['uploaded_document_original_name']; ?>">View Doc</button>
                                                                                             <?php } else { ?>
                                                                                                 <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
+
                                                                                             <?php } ?>
+                                                                                            <button onclick="show_document_track('assigned', <?= $document['sid']; ?>);" class="btn btn-success btn-block btn-sm" title="View action trail for assigned" placement="top">View Trail</button>
+
                                                                                         </td>
 
                                                                                         <?php if ($document['document_type'] == 'hybrid_document') { ?>
@@ -1606,12 +1614,17 @@ $assignIdObj = $confidential_sids;
                                                                                                             ?>
                                                                                                                 <button class="btn btn-success btn-sm btn-block js-modify-assign-document-btn" data-id="<?= $document['sid']; ?>">Modify and Assign</button>
                                                                                                             <?php } ?>
+
+
+
                                                                                                         <?php } ?>
                                                                                                     </td>
                                                                                                 <?php } ?>
                                                                                             <?php } ?>
                                                                                         <?php } ?>
                                                                                         <td>
+
+
                                                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
                                                                                                 <button data-id="<?= $document['sid']; ?>" data-from="company" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
                                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
@@ -1625,6 +1638,8 @@ $assignIdObj = $confidential_sids;
                                                                                             <?php } else { ?>
                                                                                                 <button onclick="view_original_generated_document(<?php echo $document['sid']; ?>, 'generated', 'original');" class="btn btn-success btn-sm btn-block">View Doc</button>
                                                                                             <?php } ?>
+                                                                                            <button onclick="show_document_track('assigned', <?= $document['sid']; ?>);" class="btn btn-success btn-block btn-sm" title="View action trail for assigned" placement="top">View Trail</button>
+
                                                                                         </td>
                                                                                         <?php if ($document['document_type'] == 'hybrid_document') { ?>
                                                                                         <?php } else if ($document['document_type'] == 'uploaded') { ?>

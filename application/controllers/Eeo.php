@@ -1006,6 +1006,9 @@ class Eeo extends Public_Controller
             } else if ($track['document_type'] == "i9") {
                 $html .= '                I9 Fillable';
             }
+            else if ($track['document_type'] == "assigned") {
+                $html .= '                Assigned';
+            }
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
             if ($track['user_type'] === 'applicant') {
