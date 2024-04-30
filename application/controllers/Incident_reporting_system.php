@@ -9,6 +9,10 @@ class Incident_reporting_system extends Public_Controller
         $this->load->library("pagination");
         $this->load->model('incident_reporting_model');
         $this->load->model('notification_emails_model');
+        //
+        if (!checkIfAppIsEnabled('incidents')) {
+            redirect(base_url('dashboard'), "refresh");
+        }
     }
 
     public function index()
