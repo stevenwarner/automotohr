@@ -523,6 +523,15 @@ class Merge_employees_model extends CI_Model
                     $secondary_doc['user_sid'] = $primary_employee_sid;
                     $secondary_doc['user_type'] = 'employee';
                     $this->db->insert('documents_assigned', $secondary_doc);
+
+                    // Update Document Trail
+                    $data_to_update = [];
+                    $data_to_update['location'] = 'Merge Employee';
+
+                    $this->db->where('user_sid', $secondary_employee_sid);
+                    $this->db->where('document_sid', $secondary_doc['document_sid']);
+                    $this->db->where('user_type', 'employee');
+                    $this->db->update('verification_documents_track', $data_to_update);
                 }
                 //
                 $return_array['documents'] = $secondary_general_docs;
@@ -547,7 +556,17 @@ class Merge_employees_model extends CI_Model
                         $secondary_doc['user_sid'] = $primary_employee_sid;
                         $secondary_doc['user_type'] = 'employee';
                         $this->db->insert('documents_assigned', $secondary_doc);
-                        print_r($secondary_doc);
+
+                        // Update Document Trail
+                        $data_to_update = [];
+                        $data_to_update['location'] = 'Merge Employee';
+
+                        $this->db->where('user_sid', $secondary_employee_sid);
+                        $this->db->where('document_sid', $secondary_doc['document_sid']);
+                        $this->db->where('user_type', 'employee');
+                        $this->db->update('verification_documents_track', $data_to_update);
+
+                        //  print_r($secondary_doc);
                     }
                 }
                 //

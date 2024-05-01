@@ -205,12 +205,12 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         //
-                        $documentDescription = 
-                        checkAndGetDocumentDescription(
-                            $document_sid,
-                            $this->input->post('document_description'),
-                            true
-                        );
+                        $documentDescription =
+                            checkAndGetDocumentDescription(
+                                $document_sid,
+                                $this->input->post('document_description'),
+                                true
+                            );
 
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
@@ -297,9 +297,8 @@ class Hr_documents_management extends Public_Controller
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
 
-                               //
+                                //
                                 keepTrackVerificationDocument($emp, $user_type, 'assigne', $document_sid, 'assigned', 'EMS Bluk');
-                                
                             }
 
                             //
@@ -1412,7 +1411,7 @@ class Hr_documents_management extends Public_Controller
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
 
-                        if($document_info["fillable_document_slug"]) {
+                        if ($document_info["fillable_document_slug"]) {
                             $document_name = $document_info["document_title"];
                             $document_description = $document_info["document_description"];
                         }
@@ -2310,12 +2309,12 @@ class Hr_documents_management extends Public_Controller
                             $data['status'] = 0;
                             // $data['is_pending'] = 1;
                             $this->hr_documents_management_model->assign_revoke_assigned_documents($document_sid, $document_type, $user_sid, $user_type, $data);
-                           
-                           
+
+
                             //
                             keepTrackVerificationDocument($user_sid, $user_type, 'revoke', $document_sid, 'assigned', 'Document Center');
 
-                            
+
                             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
 
                             if ($user_type == 'employee') {
@@ -3800,7 +3799,7 @@ class Hr_documents_management extends Public_Controller
 
                             if ($documentBodyOld != $document_body) {
 
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -5551,12 +5550,12 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
-                           
-                           
+
+
                             //
                             keepTrackVerificationDocument($employer_sid, 'employee', 'assigne', $assign_group_document['document_sid'], 'assigned', 'Blue Panel My Documents Group');
 
-                           
+
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                                 $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
@@ -5676,12 +5675,12 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             $magic_codes = array('{{signature}}', '{{inital}}');
 
-                           //
+                            //
                             $documentBodyOld = $document_body;
                             $document_body = magicCodeCorrection($document_body);
 
                             if ($documentBodyOld != $document_body) {
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
 
@@ -6344,8 +6343,10 @@ class Hr_documents_management extends Public_Controller
                         $user_sid = $this->input->post('user_sid');
                         // $document_sid = $this->input->post('document_sid');
 
+                        $documentSid = 0;
                         if ($doc == 'o') {
                             $document_info = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
+                            $documentSid = $document_info['document_sid'];
 
                             if (!empty($document_info) && ($document_info['acknowledgment_required'] == 1 && $document_info['download_required'] == 1)) {
                                 if ($document_info['downloaded'] == 1) {
@@ -6428,6 +6429,8 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
                             }
+
+                            keepTrackVerificationDocument($user_sid, $user_type, 'completed', $documentSid, 'assigned', 'Blue Panel');
                         }
 
                         $this->session->set_flashdata('message', '<strong>Success</strong> Document Acknowledged!');
@@ -6447,8 +6450,14 @@ class Hr_documents_management extends Public_Controller
                             $uploaded_file = $aws_file_name;
                         }
 
+                        $documentSid = 0;
+
                         if (!empty($uploaded_file)) {
                             if ($doc == 'o') {
+
+                                $document_info = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
+                                $documentSid = $document_info['document_sid'];
+
                                 $data_to_update = array();
                                 $data_to_update['uploaded'] = 1;
                                 $data_to_update['uploaded_date'] = date('Y-m-d H:i:s');
@@ -6508,6 +6517,8 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
                             }
+
+                            keepTrackVerificationDocument($user_sid, $user_type, 'completed', $documentSid, 'assigned', 'Blue Panel');
                         }
 
                         redirect('hr_documents_management/sign_hr_document/' . $doc . '/' . $document_sid, 'refresh');
@@ -6567,7 +6578,14 @@ class Hr_documents_management extends Public_Controller
                         //
                         checkAndInsertCompletedDocument($cpArray);
 
+
+
                         if ($isCompleted) {
+
+
+                            $document_info = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid);
+                            $documentSid = $document_info['document_sid'];
+
                             $this->check_complete_document_send_email($company_sid, $employer_sid);
                             if ($is_authorized_document == 'yes') {
 
@@ -6582,6 +6600,8 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
                             }
+
+                            keepTrackVerificationDocument($user_sid, $user_type, 'completed', $documentSid, 'assigned', 'Blue Panel');
                         }
 
                         if ($user_type == 'employee') {
@@ -7222,14 +7242,14 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                             $magic_codes = array('{{signature}}', '{{inital}}');
-                             
-                               //
-                               $documentBodyOld = $document_body;
-                               $document_body = magicCodeCorrection($document_body);
-   
-                               if ($documentBodyOld != $document_body) {
-                                   updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
-                               }
+
+                            //
+                            $documentBodyOld = $document_body;
+                            $document_body = magicCodeCorrection($document_body);
+
+                            if ($documentBodyOld != $document_body) {
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
+                            }
 
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -7938,7 +7958,7 @@ class Hr_documents_management extends Public_Controller
 
                 if ($document["fillable_document_slug"]) {
                     $postfix = $type === "original" ? "print_assigned" : "print";
-                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);    
+                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);
                 }
 
                 $this->load->view('hr_documents_management/print_generated_document', $data);
@@ -12207,7 +12227,7 @@ class Hr_documents_management extends Public_Controller
      */
     function assign_document($document = array())
     {
-        
+
         //
         $r = [
             'Status' => FALSE,
@@ -12376,7 +12396,7 @@ class Hr_documents_management extends Public_Controller
         //
 
         if ($assignInsertId == null)
-           
+
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
