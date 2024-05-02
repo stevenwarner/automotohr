@@ -926,4 +926,12 @@ if ($_ssv) {
 
         }
     }
+
+    //
+    let countryId = $("#country").val();
+    let stateId = $("#state").val();
+
+    if (countryId !== '' && stateId == '') {
+        $("#country").trigger('change');
+    }
 </script>
