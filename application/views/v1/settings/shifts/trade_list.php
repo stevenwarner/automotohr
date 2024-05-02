@@ -79,17 +79,17 @@
                                 <div class="pto-tabs col-lg-12">
                                     <ul class="nav nav-tabs nav_report_status">
                                         <li class="active-tab active">
-                                            <a href="javascript:void(0)" data-key="all" class="jsReportTab">All</a>
+                                            <a href="javascript:void(0)" data-key="all" class="jsReportTab">All <br><span id="jsAllRequests"></span></a>
                                         </li>
 
                                         <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="awaiting confirmation" class="jsReportTab">Pending</a>
+                                            <a href="javascript:void(0)" data-key="awaiting confirmation" class="jsReportTab">Pending <br><span id="jsPendingRequests"></span></a>
                                         </li>
                                         <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="approved" class="jsReportTab">Approved</a>
+                                            <a href="javascript:void(0)" data-key="approved" class="jsReportTab">Approved <br><span id="jsApprovedRequests"></span></a>
                                         </li>
                                         <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="admin rejected" class="jsReportTab">Rejected</a>
+                                            <a href="javascript:void(0)" data-key="admin rejected" class="jsReportTab">Rejected <br><span id="jsRejectedRequests"></span></a>
                                         </li>
                                     </ul>
                                 </div>

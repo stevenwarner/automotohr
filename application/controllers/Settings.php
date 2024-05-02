@@ -5723,7 +5723,7 @@ class Settings extends Public_Controller
         //
 
         $weekStartDate = formatDateToDB(getSystemDate(SITE_DATE), SITE_DATE);
-        $weekEndDate = formatDateToDB(date('Y-m-d', strtotime($weekStartDate . ' + 7 days')), 'Y-m-d', SITE_DATE);
+        $weekEndDate = formatDateToDB(date('Y-m-d', strtotime($weekStartDate . ' + 1 month')), 'Y-m-d', SITE_DATE);
         $weekStartDate = formatDateToDB($weekStartDate, 'Y-m-d', SITE_DATE);
 
         $defaultRange = $weekStartDate . ' - ' . $weekEndDate;
@@ -6063,6 +6063,34 @@ class Settings extends Public_Controller
             case "get_requests":
                 //
                 $data = $this->shift_model->getSwapShiftsRequest($post);
+
+
+                $post['type'] = 'all';
+
+                $allData = $this->shift_model->getSwapShiftsRequest($post);
+
+                $allRequests = 0;
+                $pendingRequests = 0;
+                $approvedRequests = 0;
+                $rejectedRequests = 0;
+                foreach ($allData as $row) {
+                    if ($row['request_status'] == 'Awaiting Confirmation') {
+                        $pendingRequests++;
+                    } else if ($row['request_status'] == 'Approved') {
+                        $approvedRequests++;
+                    } else if ($row['request_status'] == 'Admin Rejected') {
+                        $rejectedRequests++;
+                    }
+                    $allRequests++;
+                }
+
+
+                $this->res['allRequests'] = $allRequests;
+                $this->res['pendingRequests'] = $pendingRequests;
+                $this->res['rejectedRequests'] = $rejectedRequests;
+                $this->res['approvedRequests'] = $approvedRequests;
+
+
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;
@@ -6270,10 +6298,9 @@ class Settings extends Public_Controller
             return $emailTemplateBody;
         }
 
-        $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . $replacementArray['to_employee_sid'] . '/reject' . '" target="_blank">Reject</a>';
+        $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/reject' . '" target="_blank">Reject</a>';
         //
         $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/confirm' . '" target="_blank">Confirm</a>';
-
 
         $emailTemplateBody = str_replace('{{employee_name}}', $employeeName, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_date}}', $replacementArray['shift_date'], $emailTemplateBody);
