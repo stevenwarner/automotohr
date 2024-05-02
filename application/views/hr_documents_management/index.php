@@ -2031,6 +2031,9 @@ $requiredMessage = 'This document is required to complete the process.';
             <br />
             <input type="radio" disabled /> No
         `;
+        const actualCheckBoxReplace = `
+            <input type="checkbox" disabled /> 
+        `;
         const checkboxReplace = `
             <table>
                 <tr>
@@ -2119,6 +2122,94 @@ $requiredMessage = 'This document is required to complete the process.';
                 </tr>
             </table>
         `;
+
+        const inputGroupReplace = `
+            <div class="input-group">
+                <div class="input-group-addon">$</div>
+                <input type="text" class="form-control" />
+            </div>
+        `;
+
+        const statusTableReplace = `
+        <table>
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Seniority increase" />
+                    Seniority increase
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Retirement" />
+                    Retirement
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Layoff" />
+                    Layoff
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Contract change" />
+                    Contract change
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Resignation" />
+                    Resignation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Discharge" />
+                    Discharge
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-evaluation" />
+                    Re-evaluation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Demotion" />
+                    Demotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Leave of absence" />
+                    Leave of absence
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Transfer" />
+                    Transfer
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Promotion" />
+                    Promotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Merit Increase" />
+                    Merit Increase
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Probation period end" />
+                    Probation period end
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-hired" />
+                    Re-hired
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Hired" />
+                    Hired
+                </td>
+            </tr>
+
+        </table>
+        `;
         // inputs
         description = description.replace("{{employee_name}}", inputReplace);
         description = description.replace("{{supervisor}}", inputReplace);
@@ -2151,6 +2242,17 @@ $requiredMessage = 'This document is required to complete the process.';
         description = description.replace("{{is_termination_voluntary}}", radioReplace);
         // checkboxes
         description = description.replace("{{counselling_form_fields}}", checkboxReplace);
+
+        description = description.replace("{{fillable_rate}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_job}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_department}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_location}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_shift}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_other}}", actualCheckBoxReplace)
+
+        description = description.replace("{{fillable_from_rate}}", inputGroupReplace)
+        description = description.replace("{{fillable_to_rate}}", inputGroupReplace)
+        description = description.replace("{{fillable_all_reasons}}", statusTableReplace)
         
         return description;
     }

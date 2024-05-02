@@ -61,23 +61,15 @@
 <!--  -->
 <p>
     <strong>
-        Your Job Title:
+        Rate:
     </strong>
     <span>
-        {{employee_job_title}}
+        {{fillable_rate}}
     </span>
     <br />
-</p>
-
-
-
-<!--  -->
-<p>
-    <strong>
-        Please fully explain the reasons you are leaving the company:
-    </strong>
     <span>
-        {{reason_to_leave_company}}
+        From: {{fillable_from_rate}} <br />
+        To: {{fillable_to_rate}}
     </span>
     <br />
 </p>
@@ -85,10 +77,10 @@
 <!--  -->
 <p>
     <strong>
-        Forwarding information: Please include your full address:
+        Job:
     </strong>
     <span>
-        {{forwarding_information}}
+        {{fillable_job}}
     </span>
     <br />
 </p>
@@ -96,10 +88,10 @@
 <!--  -->
 <p>
     <strong>
-        Employee Signature:
+        Dept:
     </strong>
     <span>
-        {{signature}}
+        {{fillable_department}}
     </span>
     <br />
 </p>
@@ -107,10 +99,10 @@
 <!--  -->
 <p>
     <strong>
-        Employees Printed Name:
+        Location:
     </strong>
     <span>
-        {{signature_print_name}}
+        {{fillable_location}}
     </span>
     <br />
 </p>
@@ -118,31 +110,33 @@
 <!--  -->
 <p>
     <strong>
-        Date:
+        Shift:
     </strong>
     <span>
-        {{sign_date}}
+        {{fillable_shift}}
     </span>
     <br />
 </p>
 
 <!--  -->
 <p>
-    <br />
     <strong>
-        Authorize Signature:
+        Other:
     </strong>
     <span>
-        {{authorized_signature}}
+        {{fillable_other}}
     </span>
     <br />
 </p>
+
+
 <p>
     <strong>
-        Authorize Sign Date:
+        Indicate All Reasons for Changes below:
     </strong>
-    <span>
-        {{authorized_signature_date}}
-    </span>
-    <br />
+</p>
+<br />
+
+<p>
+    {{fillable_all_reasons}}
 </p>

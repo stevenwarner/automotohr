@@ -579,7 +579,6 @@ if (!function_exists('replace_tags_for_document')) {
 
         $my_return = str_replace('{{q1}}', '<textarea rows="5" class="form-control input-grey gray-background js_q1" name="q1"></textarea>', $my_return);
         
-
         $my_return = str_replace('{{q2}}', '<textarea rows="5" class="form-control input-grey gray-background js_q2" name="q2"></textarea>', $my_return);
 
         $my_return = str_replace('{{q3}}', '<textarea rows="5" class="form-control input-grey gray-background js_q3" name="q3"></textarea>', $my_return);
@@ -588,6 +587,17 @@ if (!function_exists('replace_tags_for_document')) {
         
         $my_return = str_replace('{{q5}}', '<textarea rows="5" class="form-control input-grey gray-background js_q5" name="q5"></textarea>', $my_return);
 
+        // status and payroll
+        $my_return = str_replace('{{fillable_rate}}', '<input type="checkbox" name="fillable_rate" class="js_fillable_rate" />', $my_return);
+        $my_return = str_replace('{{fillable_from_rate}}', '<div class="input-group"><div class="input-group-addon">$</div><input type="number" class="form-control input-grey gray-background js_fillable_from_rate" name="fillable_from_rate" /></div>', $my_return);
+        $my_return = str_replace('{{fillable_to_rate}}', '<div class="input-group"><div class="input-group-addon">$</div><input type="number" class="form-control input-grey gray-background js_fillable_to_rate" name="fillable_to_rate" /></div>', $my_return);
+
+        $my_return = str_replace('{{fillable_job}}', '<input type="checkbox" name="fillable_job" class="js_fillable_job" />', $my_return);
+        $my_return = str_replace('{{fillable_department}}', '<input type="checkbox" name="fillable_department" class="js_fillable_department" />', $my_return);
+        $my_return = str_replace('{{fillable_location}}', '<input type="checkbox" name="fillable_location" class="js_fillable_location" />', $my_return);
+        $my_return = str_replace('{{fillable_shift}}', '<input type="checkbox" name="fillable_shift" class="js_fillable_shift" />', $my_return);
+        $my_return = str_replace('{{fillable_other}}', '<input type="checkbox" name="fillable_other" class="js_fillable_other" />', $my_return);
+        $my_return = str_replace('{{fillable_all_reasons}}', $CI->load->view("v1/documents/fillable/partials/status_and_payroll_change_form_fields", [], true), $my_return);
 
         return $my_return;
     }

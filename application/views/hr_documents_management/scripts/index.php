@@ -290,7 +290,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'], true); ?>`;
 			//
 			rows += getEmailContent();
 			rows += getRequiredRow();
@@ -406,9 +406,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
 					//
 
-					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
+					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
 					//
-					if(d.confidential_employees){
+					if (d.confidential_employees) {
 						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 
@@ -419,27 +421,27 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowAND',
-			            containerIdx: '.jsApproverFlowContainerAND',
-			            addEmployeeIdx: '.jsAddDocumentApproversAND',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
-			            approverNoteIdx: '.jsApproversNoteAND',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowAND',
+						containerIdx: '.jsApproverFlowContainerAND',
+						addEmployeeIdx: '.jsAddDocumentApproversAND',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
+						approverNoteIdx: '.jsApproversNoteAND',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
-			        //
+					//
+					$("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
+					//
 					$('.jsModifyModalLoader').fadeOut(300);
 					//
 					$('#modify_assign_document').mFileUploader({
@@ -476,7 +478,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
-				if(selectedTemplate.fillable_document_slug) {
+				if (selectedTemplate.fillable_document_slug) {
 					obj.desc = selectedTemplate.document_description;
 				} else {
 					obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
@@ -495,15 +497,15 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.confidentialSelectedEmployees = '';
 			//
 			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
-          	//
-          	// approver flow
+			//
+			// approver flow
 			var approverInfo = $('#jsModifyAndAssignNewDocument').documentApprovalFlow('get');
 			$('#jsModifyAndAssignNewDocument').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -555,7 +557,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_upload,
 				do_descpt;
 			//
-			if(!Object.keys(d).length){
+			if (!Object.keys(d).length) {
 				d = getAssignedDocument(
 					$(this).data('id'),
 					"noActionDocuments"
@@ -565,7 +567,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					return alertify.alert(
 						"Error!",
 						"You don't have permission to this document.",
-						function(){}
+						function() {}
 					)
 				}
 			}
@@ -597,7 +599,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows += getApproversManager();
 			}
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'], true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -673,27 +675,27 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					//
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowMAD',
-			            containerIdx: '.jsApproverFlowContainerMAD',
-			            addEmployeeIdx: '.jsAddDocumentApproversMAD',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
-			            approverNoteIdx: '.jsApproversNoteMAD',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: d.sid
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowMAD',
+						containerIdx: '.jsApproverFlowContainerMAD',
+						addEmployeeIdx: '.jsAddDocumentApproversMAD',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
+						approverNoteIdx: '.jsApproversNoteMAD',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: d.sid
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
-			        //
+					//
+					$("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
+					//
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
 					//
 					if (do_descpt) {
@@ -722,9 +724,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					});
 					//
 					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
-					$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
+					$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
 					//
-					if(d.confidential_employees){
+					if (d.confidential_employees) {
 						$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 					//
@@ -779,7 +783,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				obj.fileOrigName = selectedTemplate.document_original_name;
 			}
 
-			
+
 			//
 			obj.isSignature = obj.isSignature === undefined ? 0 : obj.isSignature;
 			obj.managerList = obj.managerList === undefined ? null : obj.managerList;
@@ -797,14 +801,14 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
 			//
-          	// approver flow
+			// approver flow
 			var approverInfo = $('#jsModifyAssignedDocument').documentApprovalFlow('get');
 			$('#jsModifyAssignedDocument').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -870,7 +874,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'] ,true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'], true); ?>`;
 
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']], TRUE); ?>`;
 
@@ -939,26 +943,26 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					//
 					// Approver  Flow
 					var approverPrefill = {};
-			        var approverSection = approverSection = {
-			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
-			            containerIdx: '.jsApproverFlowContainerAOL',
-			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-			            approverNoteIdx: '.jsApproversNoteAOL',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        };
-			        //
-			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+					var approverSection = approverSection = {
+						appCheckboxIdx: '.jsHasApprovalFlowAOL',
+						containerIdx: '.jsApproverFlowContainerAOL',
+						addEmployeeIdx: '.jsAddDocumentApproversAOL',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+						approverNoteIdx: '.jsApproversNoteAOL',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					};
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						approverPrefill.isChecked = true;
-		                approverPrefill.approverNote = d.document_approval_note;
-		                approverPrefill.approversList = d.document_approval_employees.split(','); 
-		                //
-		                approverSection.prefill = approverPrefill;
+						approverPrefill.approverNote = d.document_approval_note;
+						approverPrefill.approversList = d.document_approval_employees.split(',');
+						//
+						approverSection.prefill = approverPrefill;
 					}
-			        //
-			        $("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
+					//
+					$("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
 					//
 					if (d.is_available_for_na) {
 						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
@@ -996,7 +1000,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('.jsSelectedEmployee').select2();
 					//
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
-					
+
 				}
 			);
 		}
@@ -1041,10 +1045,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			var approverInfo = $('#jsModifyAndAssignOfferLetter').documentApprovalFlow('get');
 			$('#jsModifyAndAssignOfferLetter').documentApprovalFlow('clear');
 			//
-          	obj.has_approval_flow = "off";
-          	obj.approvers_note = "";
-          	obj.approvers_list = "";
-          	//
+			obj.has_approval_flow = "off";
+			obj.approvers_note = "";
+			obj.approvers_list = "";
+			//
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -1673,15 +1677,15 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$("#js-popup #confidentialSelectedEmployees").select2();
 
 					$("#jsAddSpecificOfferLetter").documentApprovalFlow({
-			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
-			            containerIdx: '.jsApproverFlowContainerAOL',
-			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-			            approverNoteIdx: '.jsApproversNoteAOL',
-			            employeesList: <?= json_encode($employeesList); ?>,
-			            documentId: 0
-			        });
+						appCheckboxIdx: '.jsHasApprovalFlowAOL',
+						containerIdx: '.jsApproverFlowContainerAOL',
+						addEmployeeIdx: '.jsAddDocumentApproversAOL',
+						intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+						extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+						approverNoteIdx: '.jsApproversNoteAOL',
+						employeesList: <?= json_encode($employeesList); ?>,
+						documentId: 0
+					});
 				}
 			);
 			//
@@ -1757,12 +1761,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				approvers_list: ''
 			};
 			var approverInfo = $("#jsAddSpecificOfferLetter").documentApprovalFlow("get");
-	        //
-	        if (approverInfo.isChecked === true) {
-	        	o.has_approval_flow = 'on';
+			//
+			if (approverInfo.isChecked === true) {
+				o.has_approval_flow = 'on';
 				o.approvers_note = approverInfo.approverNote;
 				o.approvers_list = approverInfo.approversList.toString();
-	        }
+			}
 			//
 			if (o.type == 'template') {
 				o.type = selectedTemplate.letter_type;
@@ -2096,9 +2100,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		//
 		function UseTemplate(e) {
 			var l = getOfferLetter($(this).val());
-			if (Object.keys(l).length !== 0) 
-			//
-			selectedTemplate = l;
+			if (Object.keys(l).length !== 0)
+				//
+				selectedTemplate = l;
 			$('#remove_image').hide(0);
 			$('#remove_image').parent().find('.cs-error').css('padding-left', '5px');
 			//
@@ -2169,31 +2173,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			//
 			var approverPrefill = {};
-            var approverSection = {
-                    appCheckboxIdx: '.jsHasApprovalFlowAOL',
-		            containerIdx: '.jsApproverFlowContainerAOL',
-		            addEmployeeIdx: '.jsAddDocumentApproversAOL',
-		            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
-		            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
-		            approverNoteIdx: '.jsApproversNoteAOL',
-                    employeesList: <?= json_encode($employeesList); ?>,
-                    documentId: 0
-                };
+			var approverSection = {
+				appCheckboxIdx: '.jsHasApprovalFlowAOL',
+				containerIdx: '.jsApproverFlowContainerAOL',
+				addEmployeeIdx: '.jsAddDocumentApproversAOL',
+				intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+				extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+				approverNoteIdx: '.jsApproversNoteAOL',
+				employeesList: <?= json_encode($employeesList); ?>,
+				documentId: 0
+			};
 
 
 			// Approval flow 
 			if (l.has_approval_flow == 1) {
 				approverPrefill.isChecked = true;
-                approverPrefill.approverNote = l.document_approval_note;
-                approverPrefill.approversList = l.document_approval_employees.split(','); 
-                //
-                approverSection.prefill = approverPrefill;
+				approverPrefill.approverNote = l.document_approval_note;
+				approverPrefill.approversList = l.document_approval_employees.split(',');
+				//
+				approverSection.prefill = approverPrefill;
 			} else {
 				approverPrefill.isChecked = false;
-                approverPrefill.approverNote = "";
-                approverPrefill.approversList = ''; 
-                //
-                approverSection.prefill = approverPrefill;
+				approverPrefill.approverNote = "";
+				approverPrefill.approversList = '';
+				//
+				approverSection.prefill = approverPrefill;
 			}
 			//
 			// $("#jsOfferLetterModal").documentApprovalFlow(approverSection);
@@ -2712,19 +2716,21 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 
 <script>
-    function makeTheFillableView(description)
-    {
+	function makeTheFillableView(description) {
 
-        const inputReplace = "---------------";
-        const textAreaReplace = "<p>--------------------------------------------------</p>";
-        const dateReplace = "--/--/----";
-        const radioReplace = `
+		const inputReplace = "---------------";
+		const textAreaReplace = "<p>--------------------------------------------------</p>";
+		const dateReplace = "--/--/----";
+		const radioReplace = `
             <br />
             <input type="radio" disabled /> Yes
             <br />
             <input type="radio" disabled /> No
         `;
-        const checkboxReplace = `
+		const actualCheckBoxReplace = `
+            <input type="checkbox" disabled /> 
+        `;
+		const checkboxReplace = `
             <table>
                 <tr>
                     <td>
@@ -2812,39 +2818,138 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
                 </tr>
             </table>
         `;
-        // inputs
-        description = description.replace("{{employee_name}}", inputReplace);
-        description = description.replace("{{supervisor}}", inputReplace);
-        description = description.replace("{{department}}", inputReplace);
-        description = description.replace("{{employee_job_title}}", inputReplace);
-        description = description.replace("{{signature}}", inputReplace);
-        description = description.replace("{{signature_print_name}}", inputReplace);
-        description = description.replace("{{authorized_signature}}", inputReplace);
-        description = description.replace("{{employee_number}}", inputReplace);
-        // textarea
-        description = description.replace("{{reason_to_leave_company}}", textAreaReplace);
-        description = description.replace("{{forwarding_information}}", textAreaReplace);
-        description = description.replace("{{forwarding_information}}", textAreaReplace);
-        description = description.replace("{{property_returned}}", textAreaReplace);
-        description = description.replace("{{reemploying}}", textAreaReplace);
-        description = description.replace("{{summary_of_violation}}", textAreaReplace);
-        description = description.replace("{{summary_of_corrective_plan}}", textAreaReplace);
-        description = description.replace("{{follow_up_dates}}", textAreaReplace);
-        description = description.replace("{{q1}}", textAreaReplace);
-        description = description.replace("{{q2}}", textAreaReplace);
-        description = description.replace("{{q3}}", textAreaReplace);
-        description = description.replace("{{q4}}", textAreaReplace);
-        description = description.replace("{{q5}}", textAreaReplace);
-        // dates
-        description = description.replace("{{last_day_of_work}}", dateReplace);
-        description = description.replace("{{sign_date}}", dateReplace);
-        description = description.replace("{{authorized_signature_date}}", dateReplace);
-        description = description.replace("{{date_of_occurrence}}", dateReplace);
-        // radios
-        description = description.replace("{{is_termination_voluntary}}", radioReplace);
-        // checkboxes
-        description = description.replace("{{counselling_form_fields}}", checkboxReplace);
-        
-        return description;
-    }
+
+		const inputGroupReplace = `
+            <div class="input-group">
+                <div class="input-group-addon">$</div>
+                <input type="text" class="form-control" />
+            </div>
+        `;
+
+		const statusTableReplace = `
+        <table>
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Seniority increase" />
+                    Seniority increase
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Retirement" />
+                    Retirement
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Layoff" />
+                    Layoff
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Contract change" />
+                    Contract change
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Resignation" />
+                    Resignation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Discharge" />
+                    Discharge
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-evaluation" />
+                    Re-evaluation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Demotion" />
+                    Demotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Leave of absence" />
+                    Leave of absence
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Transfer" />
+                    Transfer
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Promotion" />
+                    Promotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Merit Increase" />
+                    Merit Increase
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Probation period end" />
+                    Probation period end
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-hired" />
+                    Re-hired
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Hired" />
+                    Hired
+                </td>
+            </tr>
+
+        </table>
+        `;
+		// inputs
+		description = description.replace("{{employee_name}}", inputReplace);
+		description = description.replace("{{supervisor}}", inputReplace);
+		description = description.replace("{{department}}", inputReplace);
+		description = description.replace("{{employee_job_title}}", inputReplace);
+		description = description.replace("{{signature}}", inputReplace);
+		description = description.replace("{{signature_print_name}}", inputReplace);
+		description = description.replace("{{authorized_signature}}", inputReplace);
+		description = description.replace("{{employee_number}}", inputReplace);
+		// textarea
+		description = description.replace("{{reason_to_leave_company}}", textAreaReplace);
+		description = description.replace("{{forwarding_information}}", textAreaReplace);
+		description = description.replace("{{forwarding_information}}", textAreaReplace);
+		description = description.replace("{{property_returned}}", textAreaReplace);
+		description = description.replace("{{reemploying}}", textAreaReplace);
+		description = description.replace("{{summary_of_violation}}", textAreaReplace);
+		description = description.replace("{{summary_of_corrective_plan}}", textAreaReplace);
+		description = description.replace("{{follow_up_dates}}", textAreaReplace);
+		description = description.replace("{{q1}}", textAreaReplace);
+		description = description.replace("{{q2}}", textAreaReplace);
+		description = description.replace("{{q3}}", textAreaReplace);
+		description = description.replace("{{q4}}", textAreaReplace);
+		description = description.replace("{{q5}}", textAreaReplace);
+		// dates
+		description = description.replace("{{last_day_of_work}}", dateReplace);
+		description = description.replace("{{sign_date}}", dateReplace);
+		description = description.replace("{{authorized_signature_date}}", dateReplace);
+		description = description.replace("{{date_of_occurrence}}", dateReplace);
+		// radios
+		description = description.replace("{{is_termination_voluntary}}", radioReplace);
+		// checkboxes
+		description = description.replace("{{counselling_form_fields}}", checkboxReplace);
+
+		description = description.replace("{{fillable_rate}}", actualCheckBoxReplace)
+		description = description.replace("{{fillable_job}}", actualCheckBoxReplace)
+		description = description.replace("{{fillable_department}}", actualCheckBoxReplace)
+		description = description.replace("{{fillable_location}}", actualCheckBoxReplace)
+		description = description.replace("{{fillable_shift}}", actualCheckBoxReplace)
+		description = description.replace("{{fillable_other}}", actualCheckBoxReplace)
+
+		description = description.replace("{{fillable_from_rate}}", inputGroupReplace)
+		description = description.replace("{{fillable_to_rate}}", inputGroupReplace)
+		description = description.replace("{{fillable_all_reasons}}", statusTableReplace)
+
+		return description;
+	}
 </script>

@@ -418,6 +418,26 @@
                     $("textarea.js_q4").val(input_value[1]);
                 } else if (input_value[0] === "q5") {
                     $("textarea.js_q5").val(input_value[1]);
+                } else if (input_value[0] === "fillable_rate") {
+                    $('input.js_fillable_rate').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_job") {
+                    $('input.js_fillable_job').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_department") {
+                    $('input.js_fillable_department').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_location") {
+                    $('input.js_fillable_location').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_shift") {
+                    $('input.js_fillable_shift').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_other") {
+                    $('input.js_fillable_other').prop("checked", input_value[1] === "yes" ? true : false);
+                } else if (input_value[0] === "fillable_all_reasons") {
+                    input_value[1].map(function(v) {
+                        $('input.js_fillable_all_reasons[value="' + (v) + '"]').prop("checked", true);
+                    });
+                } else if (input_value[0] === "fillable_from_rate") {
+                    $("input.js_fillable_from_rate").val(input_value[1]);
+                } else if (input_value[0] === "fillable_to_rate") {
+                    $("input.js_fillable_to_rate").val(input_value[1]);
                 } else if (input_value[0] == 'signature_person_name') {
                     var input_field_id = input_value[0];
                     var input_field_val = input_value[1];
@@ -803,6 +823,34 @@
                 manualRequired = true;
             }
 
+            // status and payroll
+
+            if ($('[name="fillable_all_reasons[]"]').length) {
+                let allReasons = $('[name="fillable_all_reasons[]"]:checked').map(function() {
+                    return $(this).val()
+                }).get()
+
+                if (!allReasons.length) {
+                    manualRequired = true;
+                }
+            }
+
+            //
+            if (
+                $('input.js_fillable_rate').length &&
+                $('input.js_fillable_rate').prop("checked")
+            ) {
+
+                if ($('input.js_fillable_from_rate').length &&
+                    !$('input.js_fillable_from_rate').val()) {
+                    manualRequired = true;
+                }
+                if ($('input.js_fillable_to_rate').length &&
+                    !$('input.js_fillable_to_rate').val()) {
+                    manualRequired = true;
+                }
+            }
+
             if (is_sign == 'true' && is_init == 'true' && is_date == 'true' && !manualRequired) {
                 var input_values_obj = {};
 
@@ -866,6 +914,38 @@
                 }
                 if ($('textarea.js_q5').length) {
                     input_values_obj["q5"] = $('textarea.js_q5').val();
+                }
+
+                // status and payroll
+                if ($('input.js_fillable_rate').length) {
+                    input_values_obj["fillable_rate"] = $('input.js_fillable_rate').prop("checked") ? "yes" : "no";
+                    if ($('input.js_fillable_from_rate').length) {
+                        input_values_obj["fillable_from_rate"] = $('input.js_fillable_from_rate').val();
+                    }
+                    if ($('input.js_fillable_to_rate').length) {
+                        input_values_obj["fillable_to_rate"] = $('input.js_fillable_to_rate').val();
+                    }
+                }
+                if ($('input.js_fillable_job').length) {
+                    input_values_obj["fillable_job"] = $('input.js_fillable_job').prop("checked") ? "yes" : "no";
+                }
+                if ($('input.js_fillable_department').length) {
+                    input_values_obj["fillable_department"] = $('input.js_fillable_department').prop("checked") ? "yes" : "no";
+                }
+                if ($('input.js_fillable_location').length) {
+                    input_values_obj["fillable_location"] = $('input.js_fillable_location').prop("checked") ? "yes" : "no";
+                }
+                if ($('input.js_fillable_shift').length) {
+                    input_values_obj["fillable_shift"] = $('input.js_fillable_shift').prop("checked") ? "yes" : "no";
+                }
+                if ($('input.js_fillable_other').length) {
+                    input_values_obj["fillable_other"] = $('input.js_fillable_other').prop("checked") ? "yes" : "no";
+                }
+
+                if ($('[name="fillable_all_reasons[]"]').length) {
+                    input_values_obj["fillable_all_reasons"] = $('[name="fillable_all_reasons[]"]:checked').map(function() {
+                        return $(this).val()
+                    }).get()
                 }
 
                 $('input.short_textbox').map(function() {
@@ -1028,6 +1108,30 @@
                     validation["Other information you would like to provide"] = $('textarea.js_q5').val() || "false"
                 }
 
+                if (
+                    $('input.js_fillable_rate').length &&
+                    $('input.js_fillable_rate').prop("checked")
+                ) {
+                    if ($('input.js_fillable_from_rate').length) {
+                        validation["From rate"] =
+                            $('input.js_fillable_from_rate').val() || "false";
+                    }
+                    if ($('input.js_fillable_to_rate').length) {
+                        validation["To rate"] =
+                            $('input.js_fillable_to_rate').val() || "false";
+                    }
+                }
+
+                if ($('[name="fillable_all_reasons[]"]').length) {
+                    let selectedCounselling = $('[name="fillable_all_reasons[]"]:checked').map(function() {
+                        return $(this).val()
+                    }).get()
+
+                    if (!selectedCounselling.length) {
+                        validation["Reasons for change"] = "false"
+                    }
+                }
+
                 for (var key in validation) {
                     if (validation[key] == 'false') {
                         var type = key.replace("_", " ");
@@ -1045,81 +1149,81 @@
 
             var validation = {};
 
-                //
-                if ($('input.js_employee_name').length) {
-                    validation["Your Name"] = $('input.js_employee_name').val() || "false"
-                }
-                //
-                if ($('input.employee_job_title').length) {
-                    validation["Job Title"] = $('input.employee_job_title').val() || "false"
-                }
-                //
-                if ($('input.js_supervisor').length) {
-                    validation["Supervisor"] = $('input.js_supervisor').val() || "false"
-                }
-                //
-                if ($('input.js_department').length) {
-                    validation["Department"] = $('input.js_department').val() || "false"
-                }
-                //
-                if ($('input.js_last_work_date').length) {
-                    validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
-                }
-                //
-                if ($('textarea.js_reason_to_leave_company').length) {
-                    validation["Reason to the company"] = $('textarea.js_reason_to_leave_company').val() || "false"
-                }
-                //
-                if ($('textarea.js_forwarding_information').length) {
-                    validation["Forwarding information"] = $('textarea.js_forwarding_information').val() || "false"
-                }
+            //
+            if ($('input.js_employee_name').length) {
+                validation["Your Name"] = $('input.js_employee_name').val() || "false"
+            }
+            //
+            if ($('input.employee_job_title').length) {
+                validation["Job Title"] = $('input.employee_job_title').val() || "false"
+            }
+            //
+            if ($('input.js_supervisor').length) {
+                validation["Supervisor"] = $('input.js_supervisor').val() || "false"
+            }
+            //
+            if ($('input.js_department').length) {
+                validation["Department"] = $('input.js_department').val() || "false"
+            }
+            //
+            if ($('input.js_last_work_date').length) {
+                validation["Last Work Date"] = $('input.js_last_work_date').val() || "false"
+            }
+            //
+            if ($('textarea.js_reason_to_leave_company').length) {
+                validation["Reason to the company"] = $('textarea.js_reason_to_leave_company').val() || "false"
+            }
+            //
+            if ($('textarea.js_forwarding_information').length) {
+                validation["Forwarding information"] = $('textarea.js_forwarding_information').val() || "false"
+            }
 
 
-                if ($('input.js_date_of_occurrence').length) {
-                    validation["Date Of Occurence"] = $('input.js_date_of_occurrence').val() || "false"
-                }
-                if ($('textarea.js_summary_of_violation').length) {
-                    validation["Summary Of Voilation"] = $('textarea.js_summary_of_violation').val() || "false"
-                }
-                if ($('textarea.js_summary_of_corrective_plan').length) {
-                    validation["Summary Of Corrective Plan"] = $('textarea.js_summary_of_corrective_plan').val() || "false"
-                }
-                if ($('textarea.js_follow_up_dates').length) {
-                    validation["Follow Up Dates"] = $('textarea.js_follow_up_dates').val() || "false"
-                }
+            if ($('input.js_date_of_occurrence').length) {
+                validation["Date Of Occurence"] = $('input.js_date_of_occurrence').val() || "false"
+            }
+            if ($('textarea.js_summary_of_violation').length) {
+                validation["Summary Of Voilation"] = $('textarea.js_summary_of_violation').val() || "false"
+            }
+            if ($('textarea.js_summary_of_corrective_plan').length) {
+                validation["Summary Of Corrective Plan"] = $('textarea.js_summary_of_corrective_plan').val() || "false"
+            }
+            if ($('textarea.js_follow_up_dates').length) {
+                validation["Follow Up Dates"] = $('textarea.js_follow_up_dates').val() || "false"
+            }
 
-                if ($('[name="counselling_form_fields[]"]').length) {
-                    let selectedCounselling = $('[name="counselling_form_fields[]"]:checked').map(function() {
-                        return $(this).val()
-                    }).get()
+            if ($('[name="counselling_form_fields[]"]').length) {
+                let selectedCounselling = $('[name="counselling_form_fields[]"]:checked').map(function() {
+                    return $(this).val()
+                }).get()
 
-                    if (!selectedCounselling.length) {
-                        validation["Counselling Form Fields"] = "false"
-                    } else if ($.inArray("Other", selectedCounselling) !== -1 && !$(".js_counselling_form_fields_textarea").val()) {
-                        validation["Counselling Form Fields Other"] = "false"
-                    }
+                if (!selectedCounselling.length) {
+                    validation["Counselling Form Fields"] = "false"
+                } else if ($.inArray("Other", selectedCounselling) !== -1 && !$(".js_counselling_form_fields_textarea").val()) {
+                    validation["Counselling Form Fields Other"] = "false"
                 }
+            }
 
-                if ($('input.js_employee_number').length) {
-                    validation["Employee number"] = $('input.js_employee_number').val() || "false"
-                }
-                if ($('textarea.js_q1').length) {
-                    validation["Description of problem"] = $('textarea.js_q1').val() || "false"
-                }
-                if ($('textarea.js_q2').length) {
-                    validation["Description of performance"] = $('textarea.js_q2').val() || "false"
-                }
-                if ($('textarea.js_q3').length) {
-                    validation["Description of consequences for not meeting expectations"] = $('textarea.js_q3').val() || "false"
-                }
-                if ($('textarea.js_q4').length) {
-                    validation["Dates and descriptions of prior discissions or warnings formal or informal"] = $('textarea.js_q4').val() || "false"
-                }
-                if ($('textarea.js_q5').length) {
-                    validation["Other information you would like to provide"] = $('textarea.js_q5').val() || "false"
-                }
+            if ($('input.js_employee_number').length) {
+                validation["Employee number"] = $('input.js_employee_number').val() || "false"
+            }
+            if ($('textarea.js_q1').length) {
+                validation["Description of problem"] = $('textarea.js_q1').val() || "false"
+            }
+            if ($('textarea.js_q2').length) {
+                validation["Description of performance"] = $('textarea.js_q2').val() || "false"
+            }
+            if ($('textarea.js_q3').length) {
+                validation["Description of consequences for not meeting expectations"] = $('textarea.js_q3').val() || "false"
+            }
+            if ($('textarea.js_q4').length) {
+                validation["Dates and descriptions of prior discissions or warnings formal or informal"] = $('textarea.js_q4').val() || "false"
+            }
+            if ($('textarea.js_q5').length) {
+                validation["Other information you would like to provide"] = $('textarea.js_q5').val() || "false"
+            }
 
-                //
+            //
             if ($('input.js_is_termination_voluntary').length) {
                 validation["Voluntary Termination"] = $('input.js_is_termination_voluntary:checked').val() || "false"
             }
@@ -1132,16 +1236,41 @@
                 validation["Re-employing"] = $('input.js_reemploying:checked').val() || "false"
             }
 
-                for (var key in validation) {
-                    if (validation[key] == 'false') {
-                        hasError = true;
-                        var type = key.replace("_", " ");
-                        alertify.error('Please provide ' + type);
-                    }
+            if (
+                $('input.js_fillable_rate').length &&
+                $('input.js_fillable_rate').prop("checked")
+            ) {
+                if ($('input.js_fillable_from_rate').length) {
+                    validation["From rate"] =
+                        $('input.js_fillable_from_rate').val() || "false";
                 }
-                if (hasError) {
-                    return false;
+                if ($('input.js_fillable_to_rate').length) {
+                    validation["To rate"] =
+                        $('input.js_fillable_to_rate').val() || "false";
                 }
+            }
+
+            if ($('[name="fillable_all_reasons[]"]').length) {
+                let selectedCounselling = $('[name="fillable_all_reasons[]"]:checked').map(function() {
+                    return $(this).val()
+                }).get()
+
+                if (!selectedCounselling.length) {
+                    validation["Reasons for change"] = "false"
+                }
+            }
+
+
+            for (var key in validation) {
+                if (validation[key] == 'false') {
+                    hasError = true;
+                    var type = key.replace("_", " ");
+                    alertify.error('Please provide ' + type);
+                }
+            }
+            if (hasError) {
+                return false;
+            }
 
             alertify.confirm(
                 'Are you Sure?',
@@ -1162,6 +1291,37 @@
                         })
                         .done(function(pdfdata) {
                             var input_values_obj = {};
+                            // status and payroll
+                            if ($('input.js_fillable_rate').length) {
+                                input_values_obj["fillable_rate"] = $('input.js_fillable_rate').prop("checked") ? "yes" : "no";
+                                if ($('input.js_fillable_from_rate').length) {
+                                    input_values_obj["fillable_from_rate"] = $('input.js_fillable_from_rate').val();
+                                }
+                                if ($('input.js_fillable_to_rate').length) {
+                                    input_values_obj["fillable_to_rate"] = $('input.js_fillable_to_rate').val();
+                                }
+                            }
+                            if ($('input.js_fillable_job').length) {
+                                input_values_obj["fillable_job"] = $('input.js_fillable_job').prop("checked") ? "yes" : "no";
+                            }
+                            if ($('input.js_fillable_department').length) {
+                                input_values_obj["fillable_department"] = $('input.js_fillable_department').prop("checked") ? "yes" : "no";
+                            }
+                            if ($('input.js_fillable_location').length) {
+                                input_values_obj["fillable_location"] = $('input.js_fillable_location').prop("checked") ? "yes" : "no";
+                            }
+                            if ($('input.js_fillable_shift').length) {
+                                input_values_obj["fillable_shift"] = $('input.js_fillable_shift').prop("checked") ? "yes" : "no";
+                            }
+                            if ($('input.js_fillable_other').length) {
+                                input_values_obj["fillable_other"] = $('input.js_fillable_other').prop("checked") ? "yes" : "no";
+                            }
+
+                            if ($('[name="fillable_all_reasons[]"]').length) {
+                                input_values_obj["fillable_all_reasons"] = $('[name="fillable_all_reasons[]"]:checked').map(function() {
+                                    return $(this).val()
+                                }).get()
+                            }
                             if ($('input.js_employee_name').length) {
                                 input_values_obj["employee_name"] = $('input.js_employee_name').val();
                             }
