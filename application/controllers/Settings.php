@@ -93,7 +93,7 @@ class Settings extends Public_Controller
                 if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
                     $data['PageScripts'][] = 'v1/payroll/js/agreement';
                 }
-                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
                     $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
                 }
             }

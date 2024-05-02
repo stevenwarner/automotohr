@@ -661,12 +661,12 @@ class Dashboard extends Public_Controller
                 if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
                 }
-                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', true);
                 }
 
                 // for payroll
-                if (isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+                if (isCompanyLinkedWithGusto($company_id) && isEmployeeOnPayroll($employer_id)) {
                     // load up the model
                     $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
                     //
@@ -1134,7 +1134,7 @@ class Dashboard extends Public_Controller
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
             // for payroll
-            if (checkIfAppIsEnabled(PAYROLL) && isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+            if (checkIfAppIsEnabled(PAYROLL) && isCompanyLinkedWithGusto($company_id) && isEmployeeOnPayroll($employer_id)) {
                 // load up the model
                 $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
                 //

@@ -664,14 +664,14 @@ if (!function_exists('portalFormI9Tracker')) {
     }
 }
 
-if (!function_exists('isCompanyOnBoard')) {
+if (!function_exists('isCompanyLinkedWithGusto')) {
     /**
      * Check company already onboard
      *
      * @param int $companyId
      * @return bool
      */
-    function isCompanyOnBoard(int $companyId): bool
+    function isCompanyLinkedWithGusto(int $companyId): bool
     {
         //
         return (bool)get_instance()->db

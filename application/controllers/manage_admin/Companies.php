@@ -327,7 +327,7 @@ class Companies extends Admin_Controller
             // $this->company_model->sync_company_details_to_remarket($company_details);
 
             // if the company is on payroll
-            if (isCompanyOnBoard($company_sid)) {
+            if (isCompanyLinkedWithGusto($company_sid)) {
                 // load the model
                 $this->load->model('v1/payroll_model');
                 //
