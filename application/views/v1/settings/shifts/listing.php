@@ -20,6 +20,24 @@ if ($filter["mode"] === "month") {
         DB_DATE
     );
 }
+
+
+$todayDate = date('Y-m-d');
+$publishShiftIds = [];
+
+foreach ($monthDates as $monthDate) {
+
+    if ($employees) {
+        foreach ($employees as $employee) {
+            $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
+
+            if (!empty($employeeShift) && $employeeShift['is_published'] == 0) {
+                array_push($publishShiftIds, $employeeShift['sid']);
+            }
+        }
+    }
+}
+
 ?>
 
 <div class="main-content">
@@ -109,6 +127,13 @@ if ($filter["mode"] === "month") {
                                     </div>
 
                                     <div class="col-sm-4 text-right">
+                                        <?php if (count($publishShiftIds) > 0) { ?>
+                                            <button class="btn btn-orange jsPublishMultiShiftBtn" data-type="month" data-ids="<?= implode(',', $publishShiftIds) ?>">
+                                                <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
+                                                Publish shifts (<?php echo count($publishShiftIds); ?>)
+                                            </button>
+                                        <?php } ?>
+
                                         <button class="btn btn-orange jsEmployeeShiftsCopy" data-type="month">
                                             <i class="fa fa-exchange" aria-hidden="true"></i>
                                             Copy shifts
@@ -228,7 +253,7 @@ if ($filter["mode"] === "month") {
                                                 <div class="schedule-row-container">
                                                     <?php foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
-                                                        
+
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
 
@@ -258,7 +283,7 @@ if ($filter["mode"] === "month") {
                                                                         <?php } elseif ($employeeShift) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
-                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor;?>" title="<?=$employee["job_title"];?>" placement="top">
+                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <? echo $employeeShift["is_published"] == 0 ? DB_UNPUBLISHED_SHIFTS : $bgColor; ?> ; color: <? echo $employeeShift["is_published"] == 0 ? FONT_COLOR_UNPUBLISHED_SHIFTS : ''; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
                                                                                 <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>
@@ -321,6 +346,10 @@ if ($filter["mode"] === "month") {
         </div>
     </div>
 </div>
+
+
+
+
 <script>
     let filterTeam = '<?php echo $filter_team; ?>'
     let filterEmployees = '<?php echo $filter_employees; ?>'

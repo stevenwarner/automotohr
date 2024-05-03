@@ -26,6 +26,12 @@ $(function manageShifts() {
 	//
 	const mode = getSearchParam("mode") || "month";
 
+
+	//
+	let publishUbpublishSingleShiftId = '';
+	let publishUbpublishSingleShiftstatus = '';
+
+
 	// apply date picker
 	$(".jsWeekDaySelect").daterangepicker({
 		opens: "center",
@@ -1253,4 +1259,234 @@ $(function manageShifts() {
 		//
 		return html;
 	}
+
+
+
+	/**
+	 * Publish Single Shift
+	 */
+	$(document).on("click", ".jsPublishSingleShiftBtn,.jsUnpublishSingleShiftBtn", function (event) {
+		event.preventDefault();
+		//
+
+		publishUbpublishSingleShiftId = $(this).data("id");
+		publishUbpublishSingleShiftstatus = $(this).data("publish");
+
+		let msg = '';
+		if (publishUbpublishSingleShiftstatus == 1) {
+			msg = " Unpublish ";
+		} else {
+			msg = " Publish ";
+		}
+
+
+		let publishBox = '';
+		publishBox += '<div class="panel-footer text-right" style="margin-top: 20px;">';
+		publishBox += '<button class="btn btn-orange jsPublishSingleShiftBtnOk" type="button" data-sendemail="0">';
+		publishBox += '		&nbsp;' + msg;
+		publishBox += '</button>';
+		publishBox += '	<button class="btn btn-orange jsUnpublishSingleShiftBtnOkEmail" type="button" style="margin-right: 5px;;" data-sendemail="1">';
+		publishBox += '		&nbsp; ' + msg + ' and send Email';
+		publishBox += '	</button>';
+
+		publishBox += '<button class="btn btn-black jsModalCancel2" type="button">';
+		publishBox += '	<i class="fa fa-times-circle" aria-hidden="true"></i>';
+		publishBox += '		&nbsp;Cancel';
+		publishBox += '	</button>';
+		publishBox += '</div>';
+
+		alertify.genericDialog || alertify.dialog('genericDialog', function () {
+			return {
+				main: function (content) {
+					this.setContent(content);
+				},
+
+				setup: function () {
+					return {
+						focus: {
+							element: function () {
+								return this.elements.body.querySelector(this.get('selector'));
+							},
+							select: true
+						},
+						options: {
+							basic: false,
+							maximizable: false,
+							resizable: false,
+							padding: false,
+							title: '&nbsp;',
+
+						}
+					};
+				},
+				settings: {
+					selector: undefined
+
+
+				}
+			};
+		});
+
+		//
+		alertify.genericDialog(publishBox);
+
+	});
+
+
+	//
+	$(document).on("click", ".jsPublishSingleShiftBtnOk,.jsUnpublishSingleShiftBtnOkEmail", function (event) {
+		event.preventDefault();
+		//
+
+		let msg = '';
+		let sendEmail = $(this).data("sendemail");
+
+		if (publishUbpublishSingleShiftstatus == 1) {
+			publishUbpublishSingleShiftstatus = 0;
+			msg = " Unpublish ";
+		} else {
+			publishUbpublishSingleShiftstatus = 1;
+			msg = " Publish ";
+		}
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to ' + msg + ' the shift?',
+			function () {
+				//
+				const formObj = new FormData();
+
+				formObj.append("shiftId", publishUbpublishSingleShiftId);
+				formObj.append("publichStatus", publishUbpublishSingleShiftstatus);
+				formObj.append("sendEmail", sendEmail);
+
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/singleshift/public-status",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+
+			},
+			function () {
+
+			}
+		)
+
+	});
+
+
+	//
+	$(document).on("click", ".jsModalCancel2", function (event) {
+		alertify.genericDialog().close();
+	});
+
+
+
+	/**
+	 * Publish Multi Shift
+	 */
+	$(document).on("click", ".jsPublishMultiShiftBtn", function (event) {
+		event.preventDefault();
+		//
+		publishUbpublishSingleShiftId = $(this).data("ids");
+
+		let publishBox = '';
+		publishBox += '<div class="panel-footer text-right" style="margin-top: 20px;">';
+		publishBox += '<button class="btn btn-orange jsPublishMultiShiftBtnOk" type="button" data-sendemail="0">';
+		publishBox += '		&nbsp; Publish';
+		publishBox += '</button>';
+		publishBox += '	<button class="btn btn-orange jsUnpublishMultiShiftBtnOkEmail" type="button" style="margin-right: 5px;;" data-sendemail="1">';
+		publishBox += '		&nbsp; Publish  and send Email';
+		publishBox += '	</button>';
+
+		publishBox += '<button class="btn btn-black jsModalCancel2" type="button">';
+		publishBox += '	<i class="fa fa-times-circle" aria-hidden="true"></i>';
+		publishBox += '		&nbsp;Cancel';
+		publishBox += '	</button>';
+
+		publishBox += '</div>';
+
+		alertify.genericDialog || alertify.dialog('genericDialog', function () {
+			return {
+				main: function (content) {
+					this.setContent(content);
+				},
+
+				setup: function () {
+					return {
+						focus: {
+							element: function () {
+								return this.elements.body.querySelector(this.get('selector'));
+							},
+							select: true
+						},
+						options: {
+							basic: false,
+							maximizable: false,
+							resizable: false,
+							padding: false,
+							title:'&nbsp;'
+						}
+					};
+				},
+				settings: {
+					selector: undefined
+
+
+				}
+			};
+		});
+
+		//
+		alertify.genericDialog(publishBox);
+
+	});
+
+	//
+	$(document).on("click", ".jsPublishMultiShiftBtnOk,.jsUnpublishMultiShiftBtnOkEmail", function (event) {
+		event.preventDefault();
+		//
+		let sendEmail = $(this).data("sendemail");
+
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to publish  shifts?',
+			function () {
+				//
+				const formObj = new FormData();
+
+				formObj.append("shiftIds", publishUbpublishSingleShiftId);
+				formObj.append("publichStatus", 1);
+				formObj.append("sendEmail", sendEmail);
+
+				// 
+				processCallWithoutContentType(
+					formObj,
+					'',
+					"settings/shifts/multishift/public-status",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+
+
+			},
+			function () {
+
+			}
+		)
+
+	});
+
+
 });
