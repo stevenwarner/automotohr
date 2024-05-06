@@ -145,12 +145,12 @@
                                                         <td>
                                                             <div class="col-sm-12 text-right">
 
-                                                                <?php if ($rowShift["request_status"] != '' && $rowShift["request_status"] != 'approved' && $rowShift["request_status"] != 'canceled') { ?>
+                                                                <?php if ($rowShift["request_status"] != '' && $rowShift["request_status"] != 'approved' && $rowShift["request_status"] != 'cancelled') { ?>
                                                                     <button class="btn btn-red jsCancelTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
                                                                         Cancel
                                                                     </button>
                                                                 <?php } ?>
-                                                                <?php if ($rowShift["request_status"] == '' || $rowShift["request_status"] == 'canceled' || $rowShift["request_status"] == 'rejected') { ?>
+                                                                <?php if ($rowShift["request_status"] == '' || $rowShift["request_status"] == 'cancelled' || $rowShift["request_status"] == 'rejected') { ?>
                                                                     <button class="btn btn-orange jsTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
                                                                         Swap
                                                                     </button>

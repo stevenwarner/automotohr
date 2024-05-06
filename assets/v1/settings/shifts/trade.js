@@ -767,6 +767,7 @@ $(function shiftsTrade() {
 			//
 			setTable(resp);
 		});
+
 	}
 
 
@@ -781,6 +782,12 @@ $(function shiftsTrade() {
 			return;
 		}
 		//
+
+		$("#jsAllRequests").html('(' + resp.allRequests + ')');
+		$("#jsPendingRequests").html('(' + resp.pendingRequests + ')');
+		$("#jsApprovedRequests").html('(' + resp.approvedRequests + ')');
+		$("#jsRejectedRequests").html('(' + resp.rejectedRequests + ')');
+
 		$.each(resp.Data, function (i, v) {
 			//
 			rows += `<tr>`;
