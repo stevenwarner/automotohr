@@ -211,6 +211,48 @@ class User_model extends CI_Model
             $newData['Relationship'] = $post['Relationship'];
             $newData['priority'] = $post['priority'];
         }
+
+
+        // W4
+        if ($documentType == 'w4') {
+            //
+            $newData['first_name'] = $post['w4_first_name'];
+            $newData['middle_name'] = $post['w4_middle_name'];
+            $newData['last_name'] = $post['w4_last_name'];
+            $newData['ss_number'] = $post['ss_number'];
+            $newData['home_address'] = $post['home_address'];
+            $newData['city'] = $post['city'];
+            $newData['zip'] = $post['zip'];
+            //
+
+            $difference = $this->findDifference($oldData, $newData);
+            //
+            if ($difference['changed'] > 0) {
+
+                if ($difference['data']['middle_name']['new']) {
+                    $data['middle_name'] = $difference['data']['middle_name']['new'];
+                }
+                if ($difference['data']['ss_number']['new']) {
+                    $data['ssn'] = $difference['data']['ss_number']['new'];
+                }
+                if ($difference['data']['ss_number']['new']) {
+                    $data['Location_address'] = $difference['data']['home_address']['new'];
+                }
+
+                if ($difference['data']['zip']['new']) {
+                    $data['Location_ZipCode'] = $difference['data']['zip']['new'];
+                }
+                if ($difference['data']['city']['new']) {
+                    $data['Location_City'] = $difference['data']['city']['new'];
+                }
+
+                $this->db
+                    ->where('sid', $employeeId)
+                    ->update('users', $data);
+            }
+        }
+
+
         //
         $difference = $this->findDifference($oldData, $newData);
         //
@@ -745,11 +787,50 @@ class User_model extends CI_Model
                         ->where('sid', $val['parent_sid'])
                         ->get('users')
                         ->row_array();
-                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'] ;
+                    $changedData[$key]['CompanyName'] = $companyName['CompanyName'];
                 }
             }
         }
 
         return  $changedData;
+    }
+
+
+
+    //
+    public function getW4(
+        $userId,
+        $userType = 'employee'
+    ) {
+        //
+        $record = $this->db
+            ->select('first_name, middle_name,last_name,ss_number,home_address,city,state,zip')
+            ->where([
+                'employer_sid' => $userId,
+                'user_type' => $userType
+            ])
+            ->get('form_w4_original')
+            ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['first_name'] = '';
+            $tmp['middle_name'] = '';
+            $tmp['last_name'] = '';
+            $tmp['ss_number'] = '';
+            $tmp['home_address'] = '';
+            $tmp['city'] = '';
+            $tmp['state'] = '';
+            $tmp['zip'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = $record;
+        //
+        unset($record);
+        //
+        return $tmp;
     }
 }

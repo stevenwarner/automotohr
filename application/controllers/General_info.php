@@ -220,6 +220,7 @@ class General_info extends Public_Controller
 
                         $serial_form = array();
                         $serial_form['full_employment_application'] = serialize($full_emp_form);
+                       
                         $this->general_info_model->update_user($employee_sid, $serial_form);
 
                         //

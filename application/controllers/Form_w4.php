@@ -228,6 +228,8 @@ class Form_w4 extends Public_Controller
                 $this->load->view('main/footer');
             } else {
 
+
+             
                 $first_name = $this->input->post('w4_first_name');
                 $middle_name = $this->input->post('w4_middle_name');
                 $last_name = $this->input->post('w4_last_name');
@@ -388,12 +390,26 @@ class Form_w4 extends Public_Controller
                     $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
                 }
                 //
+
+                 //
+                 $this->load->model('2022/User_model', 'em');
+
+                 $this->em->handleGeneralDocumentChange(
+                     'w4',
+                     $this->input->post(null, true),
+                     '',
+                     $this->input->post('user_sid'),
+                     $this->session->userdata('logged_in')['employer_detail']['sid']
+                 );
+
+
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);
+          
                 //
                 $w4_sid = getVerificationDocumentSid($employer_sid, $type, 'w4');
                 keepTrackVerificationDocument($employer_sid, $type, 'completed', $w4_sid, 'w4', 'Blue Panel');
                 //
-                if ($type != 'applicant' && $this->input->post('user_consent') == 1) {
+                if ($type != 'applicant' && $this->input->post('user_consent') == 1) { 
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,

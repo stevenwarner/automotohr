@@ -55,12 +55,13 @@ class Employee extends CI_Controller
             formatDateToDB($startDate, SITE_DATE, DB_DATE),
             formatDateToDB($endDate, SITE_DATE, DB_DATE)
         );
-        
+
         //
+
         $this->load
-        ->view('main/header_2022', $data)
-        ->view('2022/employee/profile_change_report')
-        ->view('main/footer_2022');
+            ->view('main/header_2022', $data)
+            ->view('2022/employee/profile_change_report')
+            ->view('main/footer_2022');
     }
 
 
