@@ -2267,3 +2267,15 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 
 
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
+
+/**
+ * Fillable performance document
+ */
+$route["fillable/epe/(:num)/get"]["get"] =
+  "v1/Employee_performance_evaluation/getEmployeeDocument/$1";
+
+$route["fillable/epe/(:num)"]["post"] =
+  "v1/Employee_performance_evaluation/handleDocumentAssignment/$1";
+
+$route["fillable/epe/(:num)/section/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/loadSection/$1/$2";

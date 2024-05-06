@@ -709,3 +709,5 @@ define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+define('EMPLOYEE_PERFORMANCE_EVALUATION_MODULE', 'employeeperformanceevaluation');
