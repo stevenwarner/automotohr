@@ -25,21 +25,6 @@ class Base_payroll_model extends CI_Model
     }
 
     /**
-     * load the company helper
-     *
-     * @param int $companyId
-     * @return void
-     */
-    protected function loadPayrollHelper(int $companyId)
-    {
-        // load the payroll helper
-        $this->load->helper('v1/payroll' . ($this->db->where([
-            "company_sid" => $companyId,
-            "stage" => "production"
-        ])->count_all_results("gusto_companies_mode") ? "_production" : "") . '_helper');
-    }
-
-    /**
      * Get gusto company details for gusto
      *
      * @param int   $companyId
@@ -47,8 +32,11 @@ class Base_payroll_model extends CI_Model
      * @param bool  $include Optional
      * @return array
      */
-    protected function getGustoLinkedCompanyDetails(int $companyId, array $extra = [], bool $include = true): array
-    {
+    protected function getGustoLinkedCompanyDetails(
+        int $companyId,
+        array $extra = [],
+        bool $include = true
+    ): array {
         //
         $columns = $include ? array_merge([
             'gusto_uuid',
@@ -62,5 +50,22 @@ class Base_payroll_model extends CI_Model
             ->where('company_sid', $companyId)
             ->get('gusto_companies')
             ->row_array();
+    }
+
+    /**
+     * loads the Gusto library
+     *
+     * @param int $companyId
+     */
+    protected function initialize(int $companyId)
+    {
+        // load library
+        $this
+            ->load
+            ->library(
+                "Lb_gusto",
+                ["companyId" => $companyId],
+                "lb_gusto"
+            );
     }
 }

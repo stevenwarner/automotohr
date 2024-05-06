@@ -96,10 +96,10 @@ class Company_payroll_model extends Base_payroll_model
      */
     public function startCreatePartnerCompany(int $companyId, array $employees): array
     {
+        // load the library
+        $this->initialize($companyId);
         // set default return array
         $returnArray = ['success' => true];
-        // lets load the library
-        $this->loadPayrollHelper($companyId);
         // check if company is already onboard
         if (!$this->checkIfCompanyAlreadyPartnered($companyId)) {
             // company needs to be created first
@@ -109,12 +109,12 @@ class Company_payroll_model extends Base_payroll_model
                 return $response;
             }
         }
-        // // saves the employees list
-        // $this->db
-        //     ->where('company_sid', $companyId)
-        //     ->update('gusto_companies', [
-        //         'employee_ids' => implode(',', $employees)
-        //     ]);
+        // saves the employees list
+        $this->db
+            ->where('company_sid', $companyId)
+            ->update('gusto_companies', [
+                'employee_ids' => implode(',', $employees)
+            ]);
         // get the gusto company details
         $this->getGustoLinkedCompanyDetails(
             $companyId,
@@ -123,11 +123,8 @@ class Company_payroll_model extends Base_payroll_model
             ]
         );
         // check and add company checklist
-        // $this->checkAndSetChecklist();
-        // push the company admin to payroll
-        $this->startCompanyToGustoSync();
-
-        die("sdas");
+        $this->checkAndSetChecklist();
+        //
         return $returnArray;
     }
 
@@ -179,65 +176,75 @@ class Company_payroll_model extends Base_payroll_model
      *
      * @param int $companyId
      */
-    // public function signCompanyAgreement(int $companyId): array
-    // {
-    //     // set the sanitized post
-    //     $post = $this->input->post(null, true);
-    //     //
-    //     $errors = [];
-    //     // validation
-    //     if (!$post['email']) {
-    //         $errors[] = '"Email" is required.';
-    //     }
-    //     if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
-    //         $errors[] = '"Email" is invalid.';
-    //     }
-    //     if (!$post['userReference']) {
-    //         $errors[] = '"System User Reference" is required.';
-    //     }
-    //     //
-    //     if ($errors) {
-    //         return SendResponse(400, ['errors' => $errors]);
-    //     }
-    //     //
-    //     $companyDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['employee_ids']);
-    //     //
-    //     $request = [];
-    //     $request['ip_address'] = getUserIP();
-    //     $request['external_user_id'] = $post['userReference'];
-    //     $request['email'] = $post['email'];
-    //     //
-    //     $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
-    //     //
-    //     $errors = hasGustoErrors($gustoResponse);
-    //     //
-    //     if ($errors) {
-    //         return SendResponse(400, $errors);
-    //     }
-    //     //
-    //     $this->db->where('company_sid', $companyId)
-    //         ->update('gusto_companies', [
-    //             'is_ts_accepted' => 1,
-    //             'ts_email' => $request['email'],
-    //             'ts_ip' => $request['ip_address'],
-    //             'ts_user_sid' => $request['external_user_id'],
-    //         ]);
-    //     // let's push the saved data
-    //     // location
-    //     $this->payroll_model->checkAndPushCompanyLocationToGusto($companyId);
-    //     //
-    //     if ($companyDetails['employee_ids']) {
-    //         // get the employee list
-    //         $ids = explode(',', $companyDetails['employee_ids']);
-    //         //
-    //         foreach ($ids as $employeeId) {
-    //             // selected employees
-    //             $this->payroll_model->onboardEmployee($employeeId, $companyId);
-    //         }
-    //     }
-    //     //
-    //     return SendResponse(200, ['success' => true]);
-    // }
+    public function signCompanyAgreement(
+        int $companyId,
+        array $data
+    ): array {
+        //
+        $this->initialize($companyId);
+        // get the gusto company details
+        $this->getGustoLinkedCompanyDetails(
+            $companyId,
+            [
+                "company_sid"
+            ]
+        );
+        // set the request
+        $request = [];
+        $request['ip_address'] = getUserIP();
+        $request['external_user_id'] = $data['userReference'];
+        $request['email'] = $data['email'];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "agreement",
+                $this->gustoCompany,
+                $request,
+                "POST"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $this->db->where('company_sid', $companyId)
+            ->update('gusto_companies', [
+                'is_ts_accepted' => 1,
+                'ts_email' => $request['email'],
+                'ts_ip' => $request['ip_address'],
+                'ts_user_sid' => $request['external_user_id'],
+                "latest_terms_accepted" => $response["latest_terms_accepted"]
+            ]);
+
+        //
+        $this->updateCompanyChecklist("agreement_count");
+
+        return ["success" => true];
+    }
+
+    /**
+     * add the sync job to queue
+     *
+     * @param int $companyId
+     */
+    public function addSyncJobToQueue(int $companyId)
+    {
+        $this
+            ->db
+            ->insert(
+                "payrolls.gusto_sync_queue",
+                [
+                    "company_sid" => $companyId,
+                    "created_at" => getSystemDate(),
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+    }
 
 
     /**
@@ -335,9 +342,15 @@ class Company_payroll_model extends Base_payroll_model
         $request['company']['trade_name'] = $companyDetails['CompanyName'];
         $request['company']['ein'] = $companyDetails['ssn'];
         //
-        $response = createPartnerCompany($request);
+        $response = $this
+            ->lb_gusto
+            ->createPartnerCompanyOnGusto(
+                $request
+            );
         // // set errors
-        $errors = hasGustoErrors($response);
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
         //
         if ($errors) {
             // Error took place
@@ -412,9 +425,9 @@ class Company_payroll_model extends Base_payroll_model
                     `payrolls`.`gusto_company_checklist`
                 SET
                     `{$column}` = {$column} + 1,
-                    `updated_at` = "{$systemDateTime}"
+                    `updated_at` = '{$systemDateTime}'
                 WHERE
-                    `company_sid` = ".($this->gustoCompany["company_sid"])."");
+                    `company_sid` = " . ($this->gustoCompany["company_sid"]) . "");
     }
 
     // ------------------------------------------------------
@@ -429,10 +442,13 @@ class Company_payroll_model extends Base_payroll_model
         // set the default array
         $megaResponse = [];
         // sync the admins
-        $this->syncAdmins();
-
+        // $this->syncAdmins();
         // sync the company address
-        $this->syncCompanyAddress();
+        // $this->syncCompanyAddress();
+        // sync earning types
+        // $this->syncEarningTypes();
+        // sync payment configs
+        // $this->syncPaymentConfig();
 
 
         _e($megaResponse, true, true);
@@ -537,12 +553,14 @@ class Company_payroll_model extends Base_payroll_model
                     "email" => $v["email_address"],
                 ];
                 // make the call
-                $response = gustoCall(
-                    "create_admin",
-                    $this->gustoCompany,
-                    $request,
-                    "POST"
-                );
+                $response = $this
+                    ->lb_gusto
+                    ->gustoCall(
+                        "admins",
+                        $this->gustoCompany,
+                        $request,
+                        "POST"
+                    );
                 //
                 if ($response["uuid"]) {
                     // update the main table
@@ -571,14 +589,18 @@ class Company_payroll_model extends Base_payroll_model
     private function gustoToCompanyAdmins()
     {
         // make the call
-        $response = gustoCall(
-            "create_admin",
-            $this->gustoCompany,
-            [],
-            "GET"
-        );
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "admins",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
         //
-        $errors = hasGustoErrors($response);
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
         //
         if (!$errors && $response) {
             foreach ($response as $v) {
@@ -625,13 +647,13 @@ class Company_payroll_model extends Base_payroll_model
             $this->storeToGustoCompanyAddress();
         }
         // sync the address
+        $this->gustoToStoreAddress();
     }
 
     /**
      * sync company address
+     * store to Gusto
      *
-     * @method checkAndSetPrimaryAdmin
-     * @method storeToGustoAdmins
      * @return array
      */
     private function storeToGustoCompanyAddress()
@@ -689,14 +711,18 @@ class Company_payroll_model extends Base_payroll_model
         $request['filing_address'] = true;
         $request['phone_number'] = phonenumber_format($location['PhoneNumber'], true);
         //
-        $gustoResponse = gustoCall(
-            'createCompanyLocationOnGusto',
-            $this->gustoCompany,
-            $request,
-            "POST"
-        );
+        $gustoResponse = $this
+            ->lb_gusto
+            ->gustoCall(
+                'company_locations',
+                $this->gustoCompany,
+                $request,
+                "POST"
+            );
         //
-        $errors = hasGustoErrors($gustoResponse);
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($gustoResponse);
         // check for errors
         if ($errors) {
             return $errors;
@@ -715,5 +741,293 @@ class Company_payroll_model extends Base_payroll_model
             ]);
         //
         return $gustoResponse;
+    }
+
+    /**
+     * sync company address
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreAddress()
+    {
+        //
+        $gustoResponse = $this
+            ->lb_gusto
+            ->gustoCall(
+                'company_locations',
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($gustoResponse);
+        // check for errors
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if ($gustoResponse) {
+            foreach ($gustoResponse as $v0) {
+                if (
+                    $this
+                    ->db
+                    ->where([
+                        "company_sid" => $this->gustoCompany["company_sid"],
+                        "gusto_uuid" => $v0['uuid']
+                    ])
+                    ->count_all_results("gusto_companies_locations")
+                ) {
+                    $this
+                        ->db
+                        ->update(
+                            "gusto_companies_locations",
+                            [
+                                'gusto_version' => $v0['version'],
+                                'is_active' => (int) $v0['active'],
+                                'mailing_address' => (int) $v0['mailing_address'],
+                                'filing_address' => (int) $v0['filing_address'],
+                                'updated_at' => getSystemDate()
+                            ]
+                        );
+                } else {
+                    // insert
+                    $this->db
+                        ->insert('gusto_companies_locations', [
+                            'company_sid' => $this->gustoCompany["company_sid"],
+                            'gusto_uuid' => $v0['uuid'],
+                            'gusto_version' => $v0['version'],
+                            'is_active' => (int) $v0['active'],
+                            'mailing_address' => (int) $v0['mailing_address'],
+                            'filing_address' => (int) $v0['filing_address'],
+                            'created_at' => getSystemDate(),
+                            'updated_at' => getSystemDate()
+                        ]);
+                }
+            }
+            //
+            $this->updateCompanyChecklist("location_count");
+        }
+        //
+        return $gustoResponse;
+    }
+
+    // ------------------------------------------------------
+    // Sync Company Earning Types
+    // ------------------------------------------------------
+
+    /**
+     * sync company earning types
+     *
+     * @method storeToGustoCompanyAddress
+     * @method storeToGustoAdmins
+     * @return array
+     */
+    private function syncEarningTypes()
+    {
+        $this->storeToGustoEarningTypes();
+        $this->gustoToStoreEarningTypes();
+    }
+
+    /**
+     * sync company earning types
+     * store to Gusto
+     *
+     * @return array
+     */
+    private function storeToGustoEarningTypes()
+    {
+        // get the earning types
+        $earningTypes = $this
+            ->lb_gusto
+            ->getEarningTypes();
+        //
+        foreach ($earningTypes as $v0) {
+            // check if earning type is already created
+            if (
+                !$this
+                    ->db
+                    ->where([
+                        "company_sid" => $this->gustoCompany["company_sid"],
+                        "name" => $v0["name"]
+                    ])
+                    ->count_all_results("gusto_companies_earning_types")
+            ) {
+                //
+                $this->createCompanyEarningTypeToGusto([
+                    "name" => $v0["name"],
+                    "fields_json" => $v0["fields_json"],
+                ]);
+            }
+        }
+        //
+        $this->updateCompanyChecklist("earning_types_count");
+    }
+
+    /**
+     * sync company earning types
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreEarningTypes()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "earning_types",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return ["errors" => ['No earning types found.']];
+        }
+        // Gusto provided
+        if ($response["default"]) {
+            //
+            foreach ($response["default"] as $v0) {
+                // check if earning type is already created
+                if (
+                    $this
+                    ->db
+                    ->where([
+                        "company_sid" => $this->gustoCompany["company_sid"],
+                        "name" => $v0["name"]
+                    ])
+                    ->count_all_results("gusto_companies_earning_types")
+                ) {
+                    //
+                    $upd = [];
+                    $upd['gusto_uuid'] = $v0['uuid'];
+                    $upd['is_active'] = $v0['active'];
+                    $upd['updated_at'] = getSystemDate();
+                    //
+                    $this
+                        ->db
+                        ->where([
+                            "company_sid" => $this->gustoCompany["company_sid"],
+                            "name" => $v0["name"]
+                        ])
+                        ->update(
+                            'gusto_companies_earning_types',
+                            $upd
+                        );
+                } else {
+                    //
+                    $ins = [];
+                    $ins['is_default'] = 0;
+                    $ins['name'] = $v0['name'];
+                    $ins['gusto_uuid'] = $v0['uuid'];
+                    $ins['is_active'] = $v0['active'];
+                    $ins['fields_json'] = json_encode([]);
+                    $ins['updated_at'] = $ins['created_at'] = getSystemDate();
+                    $ins['company_sid'] = $this->gustoCompany["company_sid"];
+                    //
+                    $this->db->insert('gusto_companies_earning_types', $ins);
+                }
+            }
+        }
+
+        // Store provided
+        if ($response["custom"]) {
+            //
+            foreach ($response["custom"] as $v0) {
+                // check if earning type is already created
+                if (
+                    $this
+                    ->db
+                    ->where([
+                        "company_sid" => $this->gustoCompany["company_sid"],
+                        "name" => $v0["name"]
+                    ])
+                    ->count_all_results("gusto_companies_earning_types")
+                ) {
+                    //
+                    $upd = [];
+                    $upd['gusto_uuid'] = $v0['uuid'];
+                    $upd['is_active'] = $v0['active'];
+                    $upd['updated_at'] = getSystemDate();
+                    //
+                    $this
+                        ->db
+                        ->where([
+                            "company_sid" => $this->gustoCompany["company_sid"],
+                            "name" => $v0["name"]
+                        ])
+                        ->update(
+                            'gusto_companies_earning_types',
+                            $upd
+                        );
+                } else {
+                    //
+                    $ins = [];
+                    $ins['is_default'] = 0;
+                    $ins['name'] = $v0['name'];
+                    $ins['gusto_uuid'] = $v0['uuid'];
+                    $ins['is_active'] = $v0['active'];
+                    $ins['fields_json'] = json_encode([]);
+                    $ins['updated_at'] = $ins['created_at'] = getSystemDate();
+                    $ins['company_sid'] = $this->gustoCompany["company_sid"];
+                    //
+                    $this->db->insert('gusto_companies_earning_types', $ins);
+                }
+            }
+        }
+    }
+
+    /**
+     * add company earning types
+     *
+     * @param array $data
+     * @return bool
+     */
+    private function createCompanyEarningTypeToGusto(
+        array $data
+    ): array {
+        // response
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                'earning_types',
+                $this->gustoCompany,
+                [
+                    'name' => $data['name']
+                ],
+                'POST'
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        $ins = [];
+        $ins['is_default'] = 1;
+        $ins['name'] = $response['name'];
+        $ins['gusto_uuid'] = $response['uuid'];
+        $ins['is_active'] = $response['active'];
+        $ins['fields_json'] = $data['fields_json'];
+        $ins['updated_at'] = $ins['created_at'] = getSystemDate();
+        $ins['company_sid'] = $this->gustoCompany["company_sid"];
+        //
+        $this->db->insert('gusto_companies_earning_types', $ins);
+        //
+        return $response;
     }
 }

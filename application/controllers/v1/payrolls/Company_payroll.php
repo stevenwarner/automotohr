@@ -59,7 +59,8 @@ class Company_payroll extends CI_Controller
             ->company_payroll_model
             ->startCreatePartnerCompany(
                 $companyId,
-                $this->input->post("employees", true)
+                [68, 69]
+                // $this->input->post("employees", true)
             );
         //
         if (isset($response['errors'])) {
@@ -144,43 +145,25 @@ class Company_payroll extends CI_Controller
         if ($errors) {
             return SendResponse(400, ['errors' => $errors]);
         }
+
+        $response = $this
+            ->company_payroll_model
+            ->signCompanyAgreement(
+                $companyId,
+                $post
+            );
+
         //
-        $companyDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['employee_ids']);
-        //
-        $request = [];
-        $request['ip_address'] = getUserIP();
-        $request['external_user_id'] = $post['userReference'];
-        $request['email'] = $post['email'];
-        //
-        $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
-        //
-        $errors = hasGustoErrors($gustoResponse);
-        //
-        if ($errors) {
+        if ($response["errors"]) {
             return SendResponse(400, $errors);
         }
+        // add the job to the queue
+        $this
+            ->company_payroll_model
+            ->addSyncJobToQueue(
+                $companyId
+            );
         //
-        $this->db->where('company_sid', $companyId)
-            ->update('gusto_companies', [
-                'is_ts_accepted' => 1,
-                'ts_email' => $request['email'],
-                'ts_ip' => $request['ip_address'],
-                'ts_user_sid' => $request['external_user_id'],
-            ]);
-        // let's push the saved data
-        // location
-        $this->payroll_model->checkAndPushCompanyLocationToGusto($companyId);
-        //
-        if ($companyDetails['employee_ids']) {
-            // get the employee list
-            $ids = explode(',', $companyDetails['employee_ids']);
-            //
-            foreach ($ids as $employeeId) {
-                // selected employees
-                $this->payroll_model->onboardEmployee($employeeId, $companyId);
-            }
-        }
-        //
-        return SendResponse(200, ['success' => true]);
+        return SendResponse(200, $response);
     }
 }
