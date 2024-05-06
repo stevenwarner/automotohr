@@ -108,11 +108,17 @@ class Subordinate_shifts extends Public_Controller
         $data["teams"] = $mySubOrdinatesWithDepartmentAndTeamsWithoutFilter["teams"];
         $data["employees"] = $mySubOrdinatesWithDepartmentAndTeamsWithoutFilter["employees"];
 
-        // get the employee details
-        $data["subordinateEmployees"] = $this->shift_model->getEmployeeDetailsByIds(
-            $data["employees"],
-            $this->loggedInCompany["sid"]
-        );
+        if ($data["employees"]) {
+            // get the employee details
+            $data["subordinateEmployees"] = $this->shift_model->getEmployeeDetailsByIds(
+                $data["employees"],
+                $this->loggedInCompany["sid"]
+            );
+        } else {
+            // get the employee details
+            $data["subordinateEmployees"] = [];
+        }  
+        
 
         $employeeIds = $mySubOrdinatesWithDepartmentAndTeams["employees"];
         // get the shifts
