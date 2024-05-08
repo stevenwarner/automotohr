@@ -2891,7 +2891,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
                             }
 
-                            if (isset($_POST['doc_sign_date']) && $_POST['doc_assign_date'] != '') { //check if document has sign date
+                            if (isset($_POST['doc_sign_date']) && $_POST['doc_sign_date'] != '') { //check if document has sign date
                                 $data_to_insert['signature_timestamp'] = DateTime::createFromFormat('m-d-Y', $_POST['doc_sign_date'])->format('Y-m-d');
                             }
 
