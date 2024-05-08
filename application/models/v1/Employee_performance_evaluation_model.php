@@ -274,4 +274,86 @@ class Employee_performance_evaluation_model extends CI_Model
         //
         return $this->db->insert_id() ? true : false;
     }
+
+    /**
+     * Get desire document section data
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeeDocumentSection (
+        $employeeId,
+        $section
+    ): array
+    {
+        return $this
+        ->db
+        ->select($section)
+        ->where("employee_sid",$employeeId)
+        ->limit(1)
+        ->get(
+            "employee_performance_evaluation_document"
+        )
+        ->row_array();
+    }
+
+    public function saveEmployeeDocumentSection ($employeeId, $data) {
+        $this->db
+        ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                [
+                    "section_1_json" => json_encode($data)
+                ]
+            );
+    }
+
+    /**
+     * Check Employee complete its section 2
+     *
+     * @param int $employeeId
+     * @return bool
+     */
+    public function checkEmployeeUncompletedDocument ($employeeId): bool
+    {
+        $record = $this
+        ->db
+        ->select("section_2_json")
+        ->where("employee_sid", $employeeId)
+        ->where( "status", 1)
+        ->limit(1)
+        ->get(
+            "employee_performance_evaluation_document"
+        )
+        ->row_array();
+        //
+        if ($record['section_2_json']) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    /**
+     * Check Employee complete its section 2
+     *
+     * @param int $employeeId
+     * @return bool
+     */
+    public function checkEmployeeAssignPerformanceDocument ($employeeId): bool
+    {
+        //
+        if (
+            $this
+            ->db
+            ->where("employee_sid", $employeeId)
+            ->count_all_results(
+                "employee_performance_evaluation_document"
+            )
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

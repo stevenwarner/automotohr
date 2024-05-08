@@ -5959,7 +5959,24 @@ class Hr_documents_management extends Public_Controller
                 $data['session']['company_detail']['sid'],
                 'completed'
             );
+            //
+            $this
+            ->load
+            ->model(
+                "v1/Employee_performance_evaluation_model",
+                "employee_performance_evaluation_model"
+            );
 
+            $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+                $data['session']['employer_detail']['sid']
+            );
+
+            if ($data['assignPerformanceDocument']) {
+                $data['pendingPerformanceSection'] = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                    $data['session']['employer_detail']['sid']
+                );
+                //
+            }
 
             $data['load_view'] = check_blue_panel_status(false, 'self');
             $data['employee'] = $data['session']['employer_detail'];

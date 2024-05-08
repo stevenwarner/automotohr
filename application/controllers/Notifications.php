@@ -146,6 +146,25 @@ class Notifications extends Public_Controller {
             $this->resp();
         }
         //
+        $this
+        ->load
+        ->model(
+            "v1/Employee_performance_evaluation_model",
+            "employee_performance_evaluation_model"
+        );
+        $pendingPerformanceSection =
+                $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                    $ses['employer_detail']['sid']
+                );
+        //
+        if ($pendingPerformanceSection) {
+            $data[] = [
+                'count' => 1,
+                'link' => base_url('hr_documents_management/my_documents'),
+                'title' => 'Pending Performance Evaluation'
+            ];
+        }        
+        //
         $this->res['Status'] = TRUE;
         $this->res['Data'] = $data;
         $this->res['Response'] = 'Proceed.';

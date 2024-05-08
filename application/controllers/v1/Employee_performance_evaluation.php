@@ -118,6 +118,31 @@ class Employee_performance_evaluation extends CI_Controller
         // check for protected route
         $this->protectedRoute();
         //
+        $data = [];
+        //
+        if($section == "one") {
+            $sectionData = $this
+                ->employee_performance_evaluation_model
+                ->getEmployeeDocumentSection(
+                    $employeeId,
+                    'section_1_json'
+                );
+            //
+            if ($sectionData['section_1_json']) {
+                $data['section_1'] = json_decode($sectionData['section_1_json'], true)['data'];
+            } else {
+                //
+                $data['section_1']['epe_employee_name'] = getUserNameBySID($employeeId);
+                $data['section_1']['epe_job_title'] = $this->loggedInEmployeeSession['job_title'];
+                $data['section_1']['epe_department'] = getDepartmentNameBySID($employeeId);
+                $data['section_1']['epe_manager'] = $this->loggedInEmployeeSession['first_name'].' '.$this->loggedInEmployeeSession['last_name'];
+                $data['section_1']['epe_hire_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
+                $data['section_1']['epe_start_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
+                $data['section_1']['epe_review_start'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
+                $data['section_1']['epe_review_end'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
+            }
+        }  
+        //
         return SendResponse(
             200,
             [
@@ -125,7 +150,7 @@ class Employee_performance_evaluation extends CI_Controller
                     ->load
                     ->view(
                         "employee_performance_evaluation/sections/{$section}",
-                        [],
+                        $data,
                         true
                     )
             ]
@@ -151,5 +176,45 @@ class Employee_performance_evaluation extends CI_Controller
         // $this->data['security_details'] = db_get_access_level_details(
         //     $this->loggedInEmployeeSession['sid']
         // );
+    }
+
+    /**
+     * load section
+     *
+     * @param int $employeeId
+     * @param string $section
+     * @return json
+     */
+    public function saveSectionData(
+        int $employeeId,
+        string $section
+    ) {
+        // check for protected route
+        $this->protectedRoute();
+        //
+        $data = [];
+        $message = '';
+        //
+        if($section == "one") {
+            $this->employee_performance_evaluation_model
+                ->saveEmployeeDocumentSection(
+                    $employeeId,
+                    [
+                        "data" => $_POST,
+                        "completed_at" => date('Y-m-d'),
+                        "completed_by" => $this->loggedInEmployeeSession["sid"]
+                    ]
+                );
+            //
+            $message = 'Section one save successfully.';
+        }  
+        //
+        return SendResponse(
+            200,
+            [
+                "success" => true,
+                "message" => $message
+            ]
+        );
     }
 }

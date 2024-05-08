@@ -32,6 +32,59 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-default hr-documents-tab-content">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle open_not_completed_performance_doc" data-toggle="collapse" data-parent="#accordion" href="#jsPerformanceNotCompletedDocuments">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Performance Documents
+                        <div class="pull-right total-records"><b>Total: 1</b></div>
+                    </a>
+
+                </h4>
+            </div>
+
+            <div id="jsPerformanceNotCompletedDocuments" class="panel-collapse collapse in">
+                <div class="table-responsive">
+                    <table class="table table-plane cs-w4-table">
+                        <thead>
+                            <tr>
+                                <th class="col-lg-8 hidden-xs">Document Name</th>
+                                <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                <th class="col-xs-4 text-center hidden-xs" colspan="2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jsEPEBody"></tbody>
+                        <tbody>
+                            <tr>
+                                <td class="">
+                                    <?php
+                                    echo ucwords(str_replace('_', ' ', $v['document_type'])) . '';
+                                    if ($v['is_required'] == 1) {
+                                        echo ' <i class="fa fa-asterisk text-danger"></i>';
+                                    }
+                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
+                                    ?>
+                                    <div class="hidden-sm hidden-lg hidden-md">
+                                        <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
+                                    </div>
+                                </td>
+                                <td class="hidden-xs text-center">
+                                    <?= $printBTN; ?>
+                                    <?= $downloadBTN; ?>
+                                    <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <script>
     $(function EmployeePerformanceEvaluationDocument() {
@@ -78,7 +131,7 @@
             row += '<tr>';
             row += '    <td>';
             row += '        <strong>';
-            row += 'Employee Performance Evaluation';
+            row += '            Employee Performance Evaluation<i class="fa fa-asterisk text-danger"></i>';
             row += '        </strong>';
             row += '    </td>';
             // when not assigned

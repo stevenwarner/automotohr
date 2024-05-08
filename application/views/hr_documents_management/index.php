@@ -54,6 +54,11 @@ $requiredMessage = 'This document is required to complete the process.';
                             </div>
                             <hr />
                         </div>
+
+                        <?php if (isPayrollOrPlus()) { ?>
+                            <?php $this->load->view('employee_performance_evaluation/group'); ?>
+                        <?php } ?>
+
                         <!--start-->
                         <div class="col-md-12">
                             <div class="hr-document-list">
