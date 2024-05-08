@@ -38,6 +38,7 @@ $(function () {
         rows += '    <li role="presentation"><a href="#occupationalLicense" id="occupationalLicenseHead" aria-controls="occupationalLicense" role="tab" data-toggle="tab">Occupational License <span></span></a></li>';
         rows += '    <li role="presentation"><a href="#dependent" id="dependentHead" aria-controls="dependent" role="tab" data-toggle="tab">Dependents <span></span></a></li>';
         rows += '    <li role="presentation"><a href="#emergencyContact" id="emergencyContactHead" aria-controls="emergencyContact" role="tab" data-toggle="tab">Emergency Contacts <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#w4" id="w4Head" aria-controls="w4" role="tab" data-toggle="tab">W4 <span></span></a></li>';
         rows += '  </ul>';
         rows += '  <!-- Tab panes -->';
         rows += '  <div class="tab-content">';
@@ -47,6 +48,7 @@ $(function () {
         rows += '    <div role="tabpanel" class="tab-pane" id="occupationalLicense"></div>';
         rows += '    <div role="tabpanel" class="tab-pane" id="dependent"></div>';
         rows += '    <div role="tabpanel" class="tab-pane" id="emergencyContact"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="w4"></div>';
         rows += '  </div>';
         rows += '</div>';
         //
@@ -66,7 +68,8 @@ $(function () {
             driversLicense: '',
             occupationalLicense: '',
             dependent: '',
-            emergencyContact: ''
+            emergencyContact: '',
+            w4: ''
         };
         //
         //
