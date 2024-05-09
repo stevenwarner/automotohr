@@ -933,6 +933,11 @@ class Calendar extends Public_Controller {
         $events = array_merge(!is_array($events) ? array() : $events ,$publicHolidays);
         $return_array['Redirect'] = FALSE;
         //
+
+
+
+
+        
         if(!$events) {
             $return_array['Response'] = 'No events found';
             $this->response($return_array);

@@ -31,6 +31,9 @@ $(function manageShifts() {
 	let publishUbpublishSingleShiftId = '';
 	let publishUbpublishSingleShiftstatus = '';
 
+	let allShiftsId = '';
+
+
 
 	// apply date picker
 	$(".jsWeekDaySelect").daterangepicker({
@@ -1271,64 +1274,7 @@ $(function manageShifts() {
 
 		publishUbpublishSingleShiftId = $(this).data("id");
 		publishUbpublishSingleShiftstatus = $(this).data("publish");
-
-		let msg = '';
-		if (publishUbpublishSingleShiftstatus == 1) {
-			msg = " Unpublish ";
-		} else {
-			msg = " Publish ";
-		}
-
-
-		let publishBox = '';
-		publishBox += '<div class="panel-footer text-right" style="margin-top: 20px;">';
-		publishBox += '<button class="btn btn-orange jsPublishSingleShiftBtnOk" type="button" data-sendemail="0">';
-		publishBox += '		&nbsp;' + msg;
-		publishBox += '</button>';
-		publishBox += '	<button class="btn btn-orange jsUnpublishSingleShiftBtnOkEmail" type="button" style="margin-right: 5px;;" data-sendemail="1">';
-		publishBox += '		&nbsp; ' + msg + ' and send Email';
-		publishBox += '	</button>';
-
-		publishBox += '<button class="btn btn-black jsModalCancel2" type="button">';
-		publishBox += '	<i class="fa fa-times-circle" aria-hidden="true"></i>';
-		publishBox += '		&nbsp;Cancel';
-		publishBox += '	</button>';
-		publishBox += '</div>';
-
-		alertify.genericDialog || alertify.dialog('genericDialog', function () {
-			return {
-				main: function (content) {
-					this.setContent(content);
-				},
-
-				setup: function () {
-					return {
-						focus: {
-							element: function () {
-								return this.elements.body.querySelector(this.get('selector'));
-							},
-							select: true
-						},
-						options: {
-							basic: false,
-							maximizable: false,
-							resizable: false,
-							padding: false,
-							title: '&nbsp;',
-
-						}
-					};
-				},
-				settings: {
-					selector: undefined
-
-
-				}
-			};
-		});
-
-		//
-		alertify.genericDialog(publishBox);
+		showConfirmSingleShift();
 
 	});
 
@@ -1336,6 +1282,7 @@ $(function manageShifts() {
 	//
 	$(document).on("click", ".jsPublishSingleShiftBtnOk,.jsUnpublishSingleShiftBtnOkEmail", function (event) {
 		event.preventDefault();
+
 		//
 
 		let msg = '';
@@ -1396,97 +1343,273 @@ $(function manageShifts() {
 		event.preventDefault();
 		//
 		publishUbpublishSingleShiftId = $(this).data("ids");
-
-		let publishBox = '';
-		publishBox += '<div class="panel-footer text-right" style="margin-top: 20px;">';
-		publishBox += '<button class="btn btn-orange jsPublishMultiShiftBtnOk" type="button" data-sendemail="0">';
-		publishBox += '		&nbsp; Publish';
-		publishBox += '</button>';
-		publishBox += '	<button class="btn btn-orange jsUnpublishMultiShiftBtnOkEmail" type="button" style="margin-right: 5px;;" data-sendemail="1">';
-		publishBox += '		&nbsp; Publish  and send Email';
-		publishBox += '	</button>';
-
-		publishBox += '<button class="btn btn-black jsModalCancel2" type="button">';
-		publishBox += '	<i class="fa fa-times-circle" aria-hidden="true"></i>';
-		publishBox += '		&nbsp;Cancel';
-		publishBox += '	</button>';
-
-		publishBox += '</div>';
-
-		alertify.genericDialog || alertify.dialog('genericDialog', function () {
-			return {
-				main: function (content) {
-					this.setContent(content);
-				},
-
-				setup: function () {
-					return {
-						focus: {
-							element: function () {
-								return this.elements.body.querySelector(this.get('selector'));
-							},
-							select: true
-						},
-						options: {
-							basic: false,
-							maximizable: false,
-							resizable: false,
-							padding: false,
-							title:'&nbsp;'
-						}
-					};
-				},
-				settings: {
-					selector: undefined
-
-
-				}
-			};
-		});
-
-		//
-		alertify.genericDialog(publishBox);
-
+		allShiftsId = $(this).data("shiftsids");
+		showConfirm();
 	});
+
+
 
 	//
-	$(document).on("click", ".jsPublishMultiShiftBtnOk,.jsUnpublishMultiShiftBtnOkEmail", function (event) {
-		event.preventDefault();
-		//
-		let sendEmail = $(this).data("sendemail");
-
-		alertify.confirm(
-			'Are You Sure?',
-			'Are you sure want to publish  shifts?',
-			function () {
-				//
-				const formObj = new FormData();
-
-				formObj.append("shiftIds", publishUbpublishSingleShiftId);
-				formObj.append("publichStatus", 1);
-				formObj.append("sendEmail", sendEmail);
-
-				// 
-				processCallWithoutContentType(
-					formObj,
-					'',
-					"settings/shifts/multishift/public-status",
-					function (resp) {
-						// show the message
-						_success(resp.msg, function () {
-							window.location.reload();
-						});
-					}
-				);
-
-
+	alertify.dialog('publishShift', function () {
+		var settings;
+		return {
+			setup: function () {
+				var settings = alertify.confirm().settings;
+				for (var prop in settings)
+					this.settings[prop] = settings[prop];
+				var setup = alertify.confirm().setup();
+				setup.buttons.push({
+					text: 'Publish & Send Emails',
+					key: 67 /*c*/,
+					scope: 'auxiliary',
+					className: 'ajs-ok'
+				});
+				return setup;
 			},
-			function () {
-
+			settings: {
+				onPublishAndSendEmails: null
+			},
+			callback: function (closeEvent) {
+				if (closeEvent.index == 2) {
+					if (typeof this.get('onPublishAndSendEmails') === 'function') {
+						returnValue = this.get('onPublishAndSendEmails').call(this, closeEvent);
+						if (typeof returnValue !== 'undefined') {
+							closeEvent.cancel = !returnValue;
+						}
+					}
+				} else {
+					alertify.confirm().callback.call(this, closeEvent);
+				}
 			}
-		)
+		};
+	}, false, 'confirm');
 
-	});
+	/// invoke the custom dialog
+	function showConfirm() {
+
+		alertify
+			.publishShift().setHeader('Confirmation');
+
+		alertify
+			.publishShift('Are you sure want to publish  shifts?')
+			.set({
+				'onok': function () {
+
+					const formObj = new FormData();
+
+					formObj.append("shiftIds", publishUbpublishSingleShiftId);
+					formObj.append("publichStatus", 1);
+					formObj.append("sendEmail", 0);
+					// 
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/multishift/public-status",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+
+				},
+				'onPublishAndSendEmails': function () {
+					publishShiftsEmailOption();
+				},
+				'oncancel': function () {
+				},
+				'labels': {
+					'ok': 'Publish',
+				}
+				
+			});
+	}
+
+
+	//
+	function publishShiftsEmailOption() {
+		showShiftEmailOption();
+	}
+
+	//
+	alertify.dialog('ShiftEmailOption', function () {
+		var settings;
+
+	}, false, 'confirm');
+
+
+	function showShiftEmailOption() {
+
+		let publishBox = '';
+
+		publishBox += ' <div class="hr-fields-wrap">';
+		publishBox += ' <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+		publishBox += '<label class="control control--radio " style="margin-left: -20px;">Send Email To Effected Employees<input type="radio" name="shifts_email_selection" class="shiftemailselection" value="effected" checked>';
+		publishBox += '    <div class="control__indicator"></div>';
+		publishBox += '   </label>';
+		publishBox += '</div>';
+
+		publishBox += ' <div class="hr-fields-wrap">';
+		publishBox += ' <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+		publishBox += '<label class="control control--radio " style="margin-left: -20px;">Send Email To All Employees<input type="radio" name="shifts_email_selection" class="shiftemailselection" value="all">';
+		publishBox += '    <div class="control__indicator"></div>';
+		publishBox += '   </label>';
+		publishBox += '</div>';
+		publishBox += '<br> ';
+		publishBox += '  </div>';
+		publishBox += ' <br>';
+
+		alertify
+			.ShiftEmailOption(publishBox)
+			.set({
+				'onok': function () {
+
+					let sendShiftsEmailOption = $("input[name='shifts_email_selection']:checked").val();
+
+					const formObj = new FormData();
+
+					formObj.append("shiftIds", publishUbpublishSingleShiftId);
+					formObj.append("publichStatus", 1);
+					formObj.append("sendEmail", 1);
+					formObj.append("sendShiftsEmailOption", sendShiftsEmailOption);
+					formObj.append("allShiftsId", allShiftsId);
+
+					// 
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/multishift/public-status",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+
+				},
+				'oncancel': function () {
+				},
+				'labels': {
+					'ok': 'Send',
+				}
+			});
+	}
+
+
+
+	//
+	alertify.dialog('publishSingleShift', function () {
+		var settings;
+		
+		return {
+			setup: function () {
+				var settings = alertify.confirm().settings;
+				for (var prop in settings)
+					this.settings[prop] = settings[prop];
+				var setup = alertify.confirm().setup();
+
+				setup.buttons.push({
+					text: 'Publish & Send Email',
+					key: 67 /*c*/,
+					scope: 'auxiliary',
+					className: 'ajs-ok',
+				});
+
+				return setup;
+			},
+			settings: {
+				onPublishAndSendEmails: null			
+			},
+			callback: function (closeEvent) {
+				if (closeEvent.index == 2) {
+					if (typeof this.get('onPublishAndSendEmails') === 'function') {
+						returnValue = this.get('onPublishAndSendEmails').call(this, closeEvent);
+						if (typeof returnValue !== 'undefined') {
+							closeEvent.cancel = !returnValue;
+						}
+					}
+				} else {
+					alertify.confirm().callback.call(this, closeEvent);
+				}
+			}
+		};
+	}, false, 'confirm');
+
+	/// invoke the custom dialog
+	function showConfirmSingleShift() {
+
+		let msg = '';
+
+		if (publishUbpublishSingleShiftstatus == 1) {
+			publishUbpublishSingleShiftstatus = 0;
+			msg = " Unpublish ";
+		} else {
+			publishUbpublishSingleShiftstatus = 1;
+			msg = " Publish ";
+		}
+
+		alertify
+		.publishSingleShift().setHeader('Confirmation');
+
+
+		
+		alertify
+		.publishSingleShift().set('labels', {ok:msg, PublishAndSendEmails:msg});
+	
+		alertify
+			.publishSingleShift('Are you sure want to ' + msg + '  this shift?')
+			.set({
+				'onok': function () {
+
+					const formObj = new FormData();
+
+					formObj.append("shiftId", publishUbpublishSingleShiftId);
+					formObj.append("publichStatus", publishUbpublishSingleShiftstatus);
+					formObj.append("sendEmail", 0);
+					// 
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/singleshift/public-status",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+
+				},
+				'onPublishAndSendEmails': function () {
+
+					const formObj = new FormData();
+
+					formObj.append("shiftId", publishUbpublishSingleShiftId);
+					formObj.append("publichStatus", publishUbpublishSingleShiftstatus);
+					formObj.append("sendEmail", 1);
+					// 
+					processCallWithoutContentType(
+						formObj,
+						'',
+						"settings/shifts/singleshift/public-status",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+				},
+				'oncancel': function () {
+				},
+				'labels': {
+					//'ok': 'Publish',
+
+				}
+			});
+	}
 
 
 });

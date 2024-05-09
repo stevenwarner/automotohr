@@ -24,6 +24,7 @@ if ($filter["mode"] === "month") {
 
 $todayDate = date('Y-m-d');
 $publishShiftIds = [];
+$allShiftsIds = [];
 
 foreach ($monthDates as $monthDate) {
 
@@ -33,6 +34,10 @@ foreach ($monthDates as $monthDate) {
 
             if (!empty($employeeShift) && $employeeShift['is_published'] == 0) {
                 array_push($publishShiftIds, $employeeShift['sid']);
+            }
+
+            if (!empty($employeeShift)) {
+                array_push($allShiftsIds, $employeeShift['sid']);
             }
         }
     }
@@ -128,7 +133,7 @@ foreach ($monthDates as $monthDate) {
 
                                     <div class="col-sm-4 text-right">
                                         <?php if (count($publishShiftIds) > 0) { ?>
-                                            <button class="btn btn-orange jsPublishMultiShiftBtn" data-type="month" data-ids="<?= implode(',', $publishShiftIds) ?>">
+                                            <button class="btn btn-orange jsPublishMultiShiftBtn" data-type="month" data-ids="<?= implode(',', $publishShiftIds) ?>" data-shiftsids="<?= implode(',', $allShiftsIds) ?>">
                                                 <i class="fa fa-arrow-circle-up" aria-hidden="true"></i>
                                                 Publish shifts (<?php echo count($publishShiftIds); ?>)
                                             </button>

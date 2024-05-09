@@ -359,7 +359,7 @@ class Shift_model extends CI_Model
      * @param array $employeeIds
      * @return array
      */
-    public function getShifts(array $filter, array $employeeIds): array
+    public function getShifts(array $filter, array $employeeIds, $publishedOnly = false): array
     {
         //
         if (empty($employeeIds)) {
@@ -387,6 +387,10 @@ class Shift_model extends CI_Model
                 ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
         }
         //
+        if ($publishedOnly == true) {
+            $this->db->where("cl_shifts.is_published", 1);
+        }
+
         $records = $this->db
             ->get("cl_shifts")
             ->result_array();
@@ -1035,6 +1039,8 @@ class Shift_model extends CI_Model
             ->where('employee_sid', $employeeId)
             ->where('shift_date >= ', $startDate)
             ->where('shift_date <= ', $endDate)
+            ->where('is_published', 1)
+
             ->count_all_results('cl_shifts');
     }
 
@@ -1333,7 +1339,6 @@ class Shift_model extends CI_Model
         $this->db->where('company_sid',  $companyId);
         $this->db->where_in('sid',  $shiftIds);
         $this->db->update('cl_shifts', $data);
-      
     }
 
 

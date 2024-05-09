@@ -695,6 +695,7 @@ class Dashboard extends Public_Controller
                     getSystemDate("Y-m-01"),
                     getSystemDate("Y-m-t")
                 );
+                
             $data["mySubordinatesCount"] = $this->shift_model
                 ->getMySubordinates(
                     $employer_id,

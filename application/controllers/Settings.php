@@ -4203,7 +4203,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", true);
+        ], "public/v1/shifts/", "main", false);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -5728,14 +5728,21 @@ class Settings extends Public_Controller
             $toName = '';
             $toEmail = '';
 
+            $shiftDetails = '<table>';
+            $shiftDetails .= "<tr> <td><strong>Shift Date</strong></td><td><strong>Shift Start Time</<strong></td><td><strong>Shift End Time</strong></td> </tr>";
+
             foreach ($shiftsData as $row) {
-                $shiftDetails .= "Shift Date: " . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "<br>";
-                $shiftDetails .= "Shift Start Time: " . $row["start_time"] . "<br>";
-                $shiftDetails .= "Shift End Time: " . $row["end_time"] . "<br>";
+                $shiftDetails .= "<tr>";
+
+                $shiftDetails .= "<td>" . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "</td>";
+                $shiftDetails .= "<td> " . $row["start_time"] . "</td>";
+                $shiftDetails .= "<td> " . $row["end_time"] . "</td>";
                 $toName = $row["first_name"] . ' ' . $row["last_name"];
                 $toEmail = $row["email"];
+                $shiftDetails .= "</tr>";
             }
 
+            $shiftDetails .= "</table> ";
 
             $loggedInEmployee = checkAndGetSession("employer_detail");
 
@@ -5755,7 +5762,7 @@ class Settings extends Public_Controller
             if (!empty($replacement_array)) {
                 foreach ($replacement_array as $key => $value) {
                     $emailTemplateBody = str_replace('{{' . $key . '}}', ucwords($value), $emailTemplateBody);
-                    $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
+                    $emailTemplateSubject = str_replace('{{' . $key . '}}', strtoupper($value), $emailTemplateSubject);
                     $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
                 }
             }
@@ -5815,7 +5822,13 @@ class Settings extends Public_Controller
 
             $loggedInEmployee = checkAndGetSession("employer_detail");
 
-            $shiftids = explode(',', $post['shiftIds']);
+            if (isset($post['sendShiftsEmailOption']) && $post['sendShiftsEmailOption'] == 'all') {
+                $shiftids = explode(',', $post['allShiftsId']);
+            } else {
+                $shiftids = explode(',', $post['shiftIds']);
+            }
+
+
             $shiftPublishStatus = '';
             if ($post['publichStatus'] == 0) {
                 $shiftPublishStatus = 'Unpublished';
@@ -5826,7 +5839,6 @@ class Settings extends Public_Controller
             $message_hf = message_header_footer($loggedInCompany["sid"], $loggedInCompany['CompanyName']);
 
             $shiftsData = $this->shift_model->getShiftsById($loggedInCompany["sid"], $shiftids);
-
 
             $empdata = [];
 
@@ -5839,17 +5851,26 @@ class Settings extends Public_Controller
 
                 $empName = '';
                 $empEmail = '';
-                $shiftDetails = '';
+                $shiftDetails = '<table>';
+
+                $shiftDetails .= "<tr> <td><strong>Shift Date</strong></td><td><strong>Shift Start Time</<strong></td><td><strong>Shift End Time</strong></td> </tr>";
 
                 foreach ($empRow as $empShift) {
 
                     $empName = $empShift['first_name'] . ' ' . $empShift['last_name'];
                     $empEmail = $empShift['email'];
 
-                    $shiftDetails .= "Shift Date: " . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "<br>";
-                    $shiftDetails .= "Shift Start Time: " . $row["start_time"] . "<br>";
-                    $shiftDetails .= "Shift End Time: " . $row["end_time"] . "<br><hr>";
+                    $shiftDetails .= "<tr>";
+                    $shiftDetails .= "<td> " . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "</td>";
+                    $shiftDetails .= "<td>" . $row["start_time"] . "</td>";
+                    $shiftDetails .= "<td>" . $row["end_time"] . "</td>";
+
+                    $shiftDetails .= "</tr>";
                 }
+
+                $shiftDetails .= "</table> ";
+
+
 
                 $emailTemplateData = get_email_template(SHIFTS_PUBLISH_CONFIRMATION);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -5867,7 +5888,7 @@ class Settings extends Public_Controller
                 if (!empty($replacement_array)) {
                     foreach ($replacement_array as $key => $value) {
                         $emailTemplateBody = str_replace('{{' . $key . '}}', ucwords($value), $emailTemplateBody);
-                        $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
+                        $emailTemplateSubject = str_replace('{{' . $key . '}}', strtoupper($value), $emailTemplateSubject);
                         $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
                     }
                 }
