@@ -120,7 +120,7 @@ class Employee_performance_evaluation extends CI_Controller
         //
         $data = [];
         //
-        if($section == "one") {
+        if ($section == "one") {
             $sectionData = $this
                 ->employee_performance_evaluation_model
                 ->getEmployeeDocumentSection(
@@ -141,7 +141,24 @@ class Employee_performance_evaluation extends CI_Controller
                 $data['section_1']['epe_review_start'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
                 $data['section_1']['epe_review_end'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
             }
-        }  
+        } else if ($section == "two") {
+            $sectionData = $this
+                ->employee_performance_evaluation_model
+                ->getEmployeeDocumentSection(
+                    $employeeId,
+                    'section_2_json'
+                );
+            //
+            if ($sectionData['section_2_json']) {
+                $data['section_2'] = json_decode($sectionData['section_2_json'], true)['data'];
+                $data['section_2_status'] = 'completed';
+            } else {
+                $data['section_2'] = [];
+                $data['section_2_status'] = 'uncompleted';
+            }
+            //
+            $data['companyName'] = $this->loggedInCompanySession['CompanyName'];
+        }   
         //
         return SendResponse(
             200,
@@ -192,12 +209,11 @@ class Employee_performance_evaluation extends CI_Controller
         // check for protected route
         $this->protectedRoute();
         //
-        $data = [];
         $message = '';
         //
         if($section == "one") {
             $this->employee_performance_evaluation_model
-                ->saveEmployeeDocumentSection(
+                ->saveEmployeeDocumentSectionOne(
                     $employeeId,
                     [
                         "data" => $_POST,
@@ -207,7 +223,19 @@ class Employee_performance_evaluation extends CI_Controller
                 );
             //
             $message = 'Section one save successfully.';
-        }  
+        } else if ($section == "two") {
+            $this->employee_performance_evaluation_model
+                ->saveEmployeeDocumentSectionTwo(
+                    $employeeId,
+                    [
+                        "data" => $_POST,
+                        "completed_at" => date('Y-m-d'),
+                        "completed_by" => $this->loggedInEmployeeSession["sid"]
+                    ]
+                );
+            //
+            $message = 'Data save successfully.';
+        }
         //
         return SendResponse(
             200,
@@ -216,5 +244,52 @@ class Employee_performance_evaluation extends CI_Controller
                 "message" => $message
             ]
         );
+    }
+
+    /**
+     * print and download
+     *
+     * @param int $employeeId
+     * @param string $userType
+     * @param string $action
+     *
+     */
+    public function handleDocumentAction (
+        $employeeId,
+        $userType,
+        $action
+    ) {
+        // check for protected route
+        $this->protectedRoute();
+        //
+        $page = '';
+        $data = [];
+        $data['action'] = $action;
+        //
+        if ($userType == "employee") {
+            $sectionData = $this
+                ->employee_performance_evaluation_model
+                ->getEmployeeDocumentSection(
+                    $employeeId,
+                    'section_2_json',
+                    'section_3_json'
+                );
+            //
+            if ($sectionData['section_2_json']) {
+                $data['section_2'] = json_decode($sectionData['section_2_json'], true)['data'];
+            } else {
+                $data['section_2'] = [];
+            }  
+            //
+            if ($sectionData['section_3_json']) {
+                $data['section_3'] = json_decode($sectionData['section_3_json'], true)['data'];
+            } else {
+                $data['section_3'] = [];
+            } 
+            //
+            $page = "pd_employee_section";
+        }
+        //
+        $this->load->view('employee_performance_evaluation/'.$page,$data);
     }
 }

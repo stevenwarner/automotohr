@@ -519,66 +519,11 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                     </div>
                 <?php } ?>
 
-                <!-- Performance Documents -->
-                <?php if ($assignPerformanceDocument) { ?>
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="panel panel-default hr-documents-tab-content">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a class="accordion-toggle open_not_completed_performance_doc" data-toggle="collapse" data-parent="#accordion" href="#jsPerformanceNotCompletedDocuments">
-                                            <span class="glyphicon glyphicon-plus"></span>
-                                            Performance Documents
-                                            <div class="pull-right total-records"><b>Total: 1</b></div>
-                                        </a>
-
-                                    </h4>
-                                </div>
-
-                                <div id="jsPerformanceNotCompletedDocuments" class="panel-collapse collapse in">
-                                    <div class="table-responsive">
-                                        <table class="table table-plane cs-w4-table">
-                                            <thead>
-                                                <tr>
-                                                    <th class="col-lg-8 hidden-xs">Document Name</th>
-                                                    <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
-                                                    <th class="col-xs-4 text-center hidden-xs" colspan="2">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php foreach ($NotCompletedGeneralDocuments as $v) {
-                                                    $docURL = base_url('general_info/' . ($v['document_type']) . '');
-                                                    $printBTN = '<a href="' . (base_url('hr_documents_management/gpd/print/' . ($v['document_type']) . '/' . ($user_type) . '/' . ($user_sid) . '')) . '" target="_blank" class="btn btn-info btn-orange" style="margin-right: 5px;">Print</a>';
-                                                    $downloadBTN = '<a href="' . (base_url('hr_documents_management/gpd/print/' . ($v['document_type']) . '/' . ($user_type) . '/' . ($user_sid) . '')) . '" target="_blank" class="btn btn-info btn-black">Download</a>';
-                                                ?>
-                                                    <tr>
-                                                        <td class="">
-                                                            <?php
-                                                            echo ucwords(str_replace('_', ' ', $v['document_type'])) . '';
-                                                            if ($v['is_required'] == 1) {
-                                                                echo ' <i class="fa fa-asterisk text-danger"></i>';
-                                                            }
-                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
-                                                            ?>
-                                                            <div class="hidden-sm hidden-lg hidden-md">
-                                                                <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
-                                                            </div>
-                                                        </td>
-                                                        <td class="hidden-xs text-center">
-                                                            <?= $printBTN; ?>
-                                                            <?= $downloadBTN; ?>
-                                                            <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Performance Documents Start -->
+                <?php if ($assignPerformanceDocument && $pendingPerformanceSection) { ?>
+                    <?php $this->load->view('employee_performance_evaluation/document_center_blue'); ?>
                 <?php } ?>
+                <!-- Performance Documents End -->
             </div>
             <!-- Not Completed Document End -->
 
@@ -1138,6 +1083,12 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                     <?php } ?>
 
                     <?php $this->load->view("hr_documents_management/partials/tabs/my_completed_state_forms"); ?>
+
+                    <!-- Performance Documents Start -->
+                    <?php if ($assignPerformanceDocument && !$pendingPerformanceSection) { ?>
+                        <?php $this->load->view('employee_performance_evaluation/document_center_blue'); ?>
+                    <?php } ?>
+                    <!-- Performance Documents End -->
                 </div>
             </div>
             <!-- Completed Document End -->

@@ -2282,3 +2282,6 @@ $route["fillable/epe/(:num)/section/(:any)"]["get"] =
 
 $route["fillable/epe/(:num)/save_section/(:any)"]["post"] =
   "v1/Employee_performance_evaluation/saveSectionData/$1/$2";  
+
+$route["fillable/epe/(:num)/(:any)/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/handleDocumentAction/$1/$2/$3";  

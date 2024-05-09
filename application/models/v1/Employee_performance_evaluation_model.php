@@ -297,13 +297,24 @@ class Employee_performance_evaluation_model extends CI_Model
         ->row_array();
     }
 
-    public function saveEmployeeDocumentSection ($employeeId, $data) {
+    public function saveEmployeeDocumentSectionOne ($employeeId, $data) {
         $this->db
         ->where("employee_sid", $employeeId)
             ->update(
                 "employee_performance_evaluation_document",
                 [
                     "section_1_json" => json_encode($data)
+                ]
+            );
+    }
+
+    public function saveEmployeeDocumentSectionTwo ($employeeId, $data) {
+        $this->db
+        ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                [
+                    "section_2_json" => json_encode($data)
                 ]
             );
     }

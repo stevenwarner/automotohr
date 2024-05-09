@@ -1,38 +1,4 @@
 <div class="row">
-    <div class="col-sm-12">
-        <div class="panel panel-default" style="position: relative;">
-            <div class="panel-heading">
-                <strong>
-                    Employee Performance Evaluation
-                </strong>
-            </div>
-            <div class="panel-body" style="min-height: 200px;">
-                <!-- Loader -->
-                <div class="cs-inner-loader jsEPELoader">
-                    <i class="fa fa-spinner fa-spin fa-2x"></i>
-                </div>
-                <!-- Data -->
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Document Name</th>
-                                <th class="text-center">Assigned On</th>
-                                <th class="text-center">Completion Status</th>
-                                <th class="text-center">Is Required?</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <!--  -->
-                        <tbody id="jsEPEBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
     <div class="col-xs-12">
         <div class="panel panel-default hr-documents-tab-content">
             <div class="panel-heading">
@@ -57,27 +23,6 @@
                             </tr>
                         </thead>
                         <tbody id="jsEPEBody"></tbody>
-                        <tbody>
-                            <tr>
-                                <td class="">
-                                    <?php
-                                    echo ucwords(str_replace('_', ' ', $v['document_type'])) . '';
-                                    if ($v['is_required'] == 1) {
-                                        echo ' <i class="fa fa-asterisk text-danger"></i>';
-                                    }
-                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
-                                    ?>
-                                    <div class="hidden-sm hidden-lg hidden-md">
-                                        <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
-                                    </div>
-                                </td>
-                                <td class="hidden-xs text-center">
-                                    <?= $printBTN; ?>
-                                    <?= $downloadBTN; ?>
-                                    <a href="<?php echo $docURL; ?>" class="btn btn-info">View Sign</a>
-                                </td>
-                            </tr>
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -96,9 +41,37 @@
         $(document).on("click", ".jsReAssignEPE", handleReAssignProcess);
 
         // Sections
-        $(document).on("click", ".jsEPESectionOne", handleSectionOneProcess);
-        $(document).on("click", ".jsSaveSectionOne", handleSectionOneSave);
+        $(document).on("click", ".jsEPESectionTwo", handleSectionOneProcess);
+        $(document).on("click", ".jsSaveSectionTwo", handleSectionOneSave);
 
+        $(document).on("click", ".jsEPEActionButton", function() {
+            var action = $(this).data("key");
+            
+        });
+
+        $(document).on("keyup", ".jsOpportunities", function() {
+            var name = $(this).data("key");
+            if ($(this).val().length == 1) {
+                // 
+                $("."+name).rules("add", {
+                    required: true
+                }); 
+            } else if ($(this).val().length == 0) {
+                $("."+name).rules("remove");
+            }
+        });
+
+        $(document).on("keyup", ".jsGoal", function() {
+            var name = $(this).data("key");
+            if ($(this).val().length == 1) {
+                // 
+                $("."+name).rules("add", {
+                    required: true
+                }); 
+            } else if ($(this).val().length == 0) {
+                $("."+name).rules("remove");
+            }
+        });
 
         /**
          * get the form
@@ -131,128 +104,19 @@
             row += '<tr>';
             row += '    <td>';
             row += '        <strong>';
-            row += '            Employee Performance Evaluation<i class="fa fa-asterisk text-danger"></i>';
+            row += '            Performance Evaluation';
+            row += '            <i class="fa fa-asterisk text-danger"></i>';
+            row += '            <br>';
+            row += '            Assigned On: ' + (moment(data.assigned_on).format("MMM Do YYYY, ddd H:m:s"));
             row += '        </strong>';
             row += '    </td>';
-            // when not assigned
-            if (data.status === "not_assigned") {
-                // not assigned
-                row += '    <td class="text-center">';
-                row += '<i class="fa fa-times fa-2x text-danger"></i>';
-                row += '    </td>';
-                // not completed
-                row += '    <td class="text-center">';
-                row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/off.gif" title="Not Completed" />';
-                row += '    </td>';
-                // is required
-                row += '    <td class="text-center">';
-                row += '        <label class="control control--checkbox">';
-                row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
-                row += '            <div class="control__indicator"></div>';
-                row += '        </label>';
-                row += '    </td>';
-                // assign action
-                row += '    <td class="text-center">';
-                row += '        <button class="btn btn-success jsAssignEPE jsEPEBtn">Assign</button>';
-                row += '    </td>';
-                row += '</tr>';
-            } else if (data.status === "assigned") {
-                row += '    <td class="text-center">';
-                row += '        <i class="fa fa-check fa-2x text-success"></i>';
-                row += '        <p>';
-                row += '            <strong>';
-                row += '                Assigned by: ' + data.assigned_by;
-                row += '            </strong>';
-                row += '        </p>';
-                row += '        <p>';
-                row += '            <strong>';
-                row += '                Assigned On: ' + (moment(data.assigned_on).format("MMM Do YYYY, ddd H:m:s"));
-                row += '            </strong>';
-                row += '        </p>';
-                row += '    </td>';
-                // not completed
-                row += '    <td class="text-center">';
-                row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/' + (data.completed_on ? "on" : "off") + '.gif" title="Not Completed" />';
-                row += '    </td>';
-                // is required
-                row += '    <td class="text-center">';
-                row += '        <label class="control control--checkbox">';
-                row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
-                row += '            <div class="control__indicator"></div>';
-                row += '        </label>';
-                row += '    </td>';
-                // assign action
-                row += '    <td class="text-center">';
-                row += '        <button class="btn btn-danger jsRevokeEPE jsEPEBtn">Revoke</button>';
-                // check for sections
-                if (!data.sections[1].status) {
-                    row += '        <button class="btn btn-success jsEPESectionOne">Complete Section 1</button>';
-                }
-                row += '    </td>';
-                row += '</tr>';
-            } else if (data.status === "revoked") {
-                row += '    <td class="text-center">';
-                row += '        <i class="fa fa-times fa-2x text-danger"></i>';
-                row += '    </td>';
-                // not completed
-                row += '    <td class="text-center">';
-                row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/off.gif" title="Not Completed" />';
-                row += '    </td>';
-                // is required
-                row += '    <td class="text-center">';
-                row += '        <label class="control control--checkbox">';
-                row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
-                row += '            <div class="control__indicator"></div>';
-                row += '        </label>';
-                row += '    </td>';
-                // assign action
-                row += '    <td class="text-center">';
-                row += '        <button class="btn btn-warning jsReAssignEPE jsEPEBtn">Re-assign</button>';
-                row += '    </td>';
-                row += '</tr>';
-            }
+            row += '    <td class="text-center">';
+            row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/print")+'" class="btn btn-info btn-orange">Print</a>';
+            row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/download")+'" class="btn btn-info btn-black">Download</a>';
+            row += '        <button class="btn btn-info jsEPESectionTwo">View Sign</button>';
+            row += '    </td>';
+            row += '</tr>';
 
-            // handle section status
-            if (data.status === "assigned") {
-                row += '<tr>';
-                row += '<td colspan="5">';
-                row += '    <table class="table table-bordered">';
-                row += '        <thead>';
-                row += '            <tr>';
-                row += '                <td>Section</td>';
-                row += '                <td class="text-center">Completion<br/>Status</td>';
-                row += '                <td class="text-center">Completed<br/>By</td>';
-                row += '                <td class="text-center">Completed<br/>On</td>';
-                row += '            </tr>';
-                row += '        </thead>';
-                row += '        </tbody>';
-                $.each(data.sections, function(i, section) {
-                    row += '            <tr>';
-                    row += '                <td>Section ' + (i) + '</td>';
-                    row += '                <td class="text-center">';
-                    row += '                    <img src="<?= base_url('assets/manage_admin/images'); ?>/' + (section.status ? "on" : "off") + '.gif" />';
-                    row += '                </td>';
-                    row += '                <td class="text-center">';
-                    row += '                     <p>';
-                    row += '                        <strong>';
-                    row += section.completed_by ? section.completed_by : "-";
-                    row += '                        </strong>';
-                    row += '                    </p>';
-                    row += '                </td>';
-                    row += '                <td class="text-center">';
-                    row += '                     <p>';
-                    row += '                        <strong>';
-                    row += section.completed_on ? moment(section.completed_on).format("MMM Do YYYY, ddd H:m:s") : "-";
-                    row += '                        </strong>';
-                    row += '                    </p>';
-                    row += '                </td>';
-                    row += '            </tr>';
-                });
-                row += '        </tbody>';
-                row += '    </table>';
-                row += '</td>';
-                row += '</tr>';
-            }
 
             $("#jsEPEBody").html(row);
             $('.jsEPELoader').hide();
@@ -357,17 +221,10 @@
             Modal({
                 Id: "jsSectionOneEPEModal",
                 Loader: "jsSectionOneEPEModalLoader",
-                Title: "Employee Performance Evaluation - Section One",
+                Title: "Employee Performance Evaluation - Section Two",
                 Body: '<div id="jsSectionOneEPEModalBody"></div>'
             }, function() {
-                loadSection("one")
-                // setInterval(
-                //     function() {
-                //         loadSection("one")
-                //     },
-                //     3000
-                // );
-
+                loadSection("two");
             })
         }
 
@@ -397,12 +254,7 @@
                 .done(function(response) {
                     $("#jsSectionOneEPEModalBody").html(response.view);
                     //
-                    $(".jsDatePicker").datepicker({
-                        dateFormat: 'mm-dd-yy',
-                        changeMonth: true,
-                        changeYear: true,
-                        yearRange: "<?php echo DOB_LIMIT; ?>",
-                    });
+                    handleSectionOneSave();
                 });
 
         }
@@ -413,130 +265,46 @@
          * save the section one
          *
          */
-        function handleSectionOneSave () {
+        function handleSectionOneSave() {
 
             $("#jsSectionOneForm").validate({
-                rules :{
-                    "epe_employee_name" : {
-                        required : true
+                rules: {
+                    "review_period_radio": {
+                        required: true
                     },
-                    "epe_job_title" : {
-                        required : true
+                    "equipment_resources_radio": {
+                        required: true
                     },
-                    "epe_department" : {
-                        required : true
+                    "additional_support": {
+                        required: true
                     },
-                    "epe_manager" : {
-                        required : true
+                    "additional_comment": {
+                        required: true
                     },
-                    "epe_hire_date" : {
-                        required : true
+                    "accomplishment_1": {
+                        required: true
                     },
-                    "epe_start_date" : {
-                        required : true
+                    "accomplishment_comment_1": {
+                        required: true
                     },
-                    "epe_review_start" : {
-                        required : true
+                    "opportunities_1": {
+                        required: true
                     },
-                    "epe_review_end" : {
-                        required : true
+                    "opportunities_comment_1": {
+                        required: true
                     },
-                    "epe_review_end" : {
-                        required : true
+                    "goal_1": {
+                        required: true
                     },
-                    "position_knowledgeable_radio": {
-                        required : true
-                    },
-                    "position_knowledgeable_comments": {
-                        required : true
-                    },
-                    "position_improved": {
-                        required : true
-                    },
-                    "position_improved_radio": {
-                        required : true
-                    },
-                    "position_improved_comment": {
-                        required : true
-                    },
-                    "quantity_improved": {
-                        required : true
-                    },
-                    "quantity_improved_radio": {
-                        required : true
-                    },
-                    "quantity_improved_comment": {
-                        required : true
-                    },
-                    "quality_improved": {
-                        required : true
-                    },
-                    "quality_improved_radio": {
-                        required : true
-                    },
-                    "quality_improved_comment": {
-                        required : true
-                    },
-                    "relations_improved": {
-                        required : true
-                    },
-                    "relations_improved_radio": {
-                        required : true
-                    },
-                    "relations_improved_comment": {
-                        required : true
-                    },
-                    "skill_improved": {
-                        required : true
-                    },
-                    "skill_improved_radio": {
-                        required : true
-                    },
-                    "skill_improved_comment": {
-                        required : true
-                    },
-                    "dependability_improved": {
-                        required : true
-                    },
-                    "dependability_improved_radio": {
-                        required : true
-                    },
-                    "dependability_improved_comment": {
-                        required : true
-                    },
-                    "policy_procedure_improved": {
-                        required : true
-                    },
-                    "policy_procedure_improved_other": {
-                        required : true
-                    },
-                    "policy_procedure_improved_radio": {
-                        required : true
-                    },
-                    "policy_procedure_improved_comment": {
-                        required : true
-                    },
-                    "standard_improved": {
-                        required : true
-                    },
-                    "standard_improved_other": {
-                        required : true
-                    },
-                    "standard_improved_radio": {
-                        required : true
-                    },
-                    "standard_improved_comment": {
-                        required : true
-                    },
-                    "managers_additional_comment": {
-                        required : true
+                    "goal_comment_1": {
+                        required: true
                     },
                 },
-                submitHandler: function (form) {
+                submitHandler: function(form) {
                     //
                     XHR = $
                         .ajax({
-                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/one"),
+                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/two"),
                             method: "POST",
                             data: $(form).serialize()
                         })
@@ -552,7 +320,6 @@
                 }
             });
         }
-        // handleSectionOneProcess("asdas");
         //
         getEPE();
     });
