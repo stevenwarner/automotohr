@@ -707,14 +707,18 @@ echo '</style>';
             },
             // Triggers when an event is clicked
             eventClick: function(event) {
-                if (event.type != 'timeoff' && event.type != 'holidays' && event.type != 'goals')
+                if (event.type != 'timeoff' && event.type != 'holidays' && event.type != 'goals' && event.type != 'shifts')
                     edit_event(event);
                 else if (event.type == 'timeoff') timeoffview($(this), event);
                 else if (event.type == 'goals') goalsView($(this), event);
+                else if (event.type == 'shifts') shiftsview($(this), event);
+
             },
             eventMouseover: function(event, jsEvent, view) {
                 if (event.type == 'goals') {
                     goalsView($(this), event);
+                } else if (event.type == 'shifts') {
+                    shiftsview($(this), event);
                 } else {
                     timeoffview($(this), event);
                 }
@@ -754,6 +758,8 @@ echo '</style>';
                 //
                 if (event.type == 'goals' && ob['goals'] == 0) return false;
                 if (event.type == 'timeoff' && ob['timeoff'] == 0) return false;
+                if (event.type == 'shifts' && ob['shifts'] == 0) return false;
+
                 if (event.requests != 0) {
                     el.addClass("fc-event-blink");
                     if (blink_interval == null)
@@ -2484,6 +2490,8 @@ echo '</style>';
         var ob = {};
         ob['goals'] = 1;
         ob['timeoff'] = 1;
+        ob['shifts'] = 1;
+
 
         $('.jsCalendarTypes').click(function() {
             if ($(this).prop('checked') === true) {
@@ -5148,6 +5156,65 @@ echo '</style>';
             window.open(url);
         }
     }
+
+
+
+    //
+    function shiftsview(_this, event) {
+        //
+        if (event.type != 'shifts') return;
+        //
+        var body_title = "<strong>" + event.title + "</strong>";
+        var body_content = '';
+        var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?= AWS_S3_BUCKET_URL; ?>" + event.img;
+
+        let shiftDate = event.shift_date ? moment(event.shift_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : "";
+
+        let startTime = moment(event.start_time, "HH:mm").format("h:mm a");
+
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-4">';
+        body_content += '       <img src="' + img_path + '" style="max-width: 100%;" />';
+        body_content += '   </div>';
+
+        body_content += '   <div class="col-sm-8"><strong>';
+        body_content += '       <p>' + shiftDate + '</p>';
+        body_content += '   </strong></div>';
+
+        body_content += '   <div class="col-sm-8"><strong>';
+        body_content += '       <p>Start Time : ' + moment(event.start_time, "HH:mm").format("h:mm a") + '</p>';
+        body_content += '       <p>End Time: ' + moment(event.end_time, "HH:mm").format("h:mm a") + '</p>';
+        body_content += '  </strong> </div>';
+
+        body_content += '</div>';
+        body_content += '<hr />';
+        body_content += '<div class="row">';
+        body_content += '   <div class="col-sm-12">';
+
+        body_content += '   </div>';
+        body_content += '</div>';
+        //
+        $(_this).popover({
+            title: body_title,
+            placement: 'top',
+            trigger: 'hover',
+            html: true,
+            content: body_content,
+            container: 'body'
+        }).popover('show');
+        //    
+
+    }
+
+    //
+    $(document).on('click', '.js-pagination-shift', function(event) {
+        event.preventDefault();
+        func_show_loader();
+        current_page = $(this).data('page');
+        fetch_event_status_history();
+    });
+
+
 
     // Format Phone Number
     // @param phone_number

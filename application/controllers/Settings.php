@@ -5734,9 +5734,17 @@ class Settings extends Public_Controller
             foreach ($shiftsData as $row) {
                 $shiftDetails .= "<tr>";
 
-                $shiftDetails .= "<td>" . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "</td>";
-                $shiftDetails .= "<td> " . $row["start_time"] . "</td>";
-                $shiftDetails .= "<td> " . $row["end_time"] . "</td>";
+                $shiftDetails .= "<td>" . date_with_time($row['shift_date']) . "</td>";
+                $shiftDetails .= "<td> " . formatDateToDB(
+                    $row["start_time"],
+                    'h:i:s',
+                    'h:i A'
+                ) . "</td>";
+                $shiftDetails .= "<td> " . formatDateToDB(
+                    $row["end_time"],
+                    'h:i:s',
+                    'h:i A'
+                ) . "</td>";
                 $toName = $row["first_name"] . ' ' . $row["last_name"];
                 $toEmail = $row["email"];
                 $shiftDetails .= "</tr>";
@@ -5847,6 +5855,7 @@ class Settings extends Public_Controller
                 $empdata[$row['employee_sid']][] = $row;
             }
 
+            //
             foreach ($empdata as $empRow) {
 
                 $empName = '';
@@ -5861,16 +5870,18 @@ class Settings extends Public_Controller
                     $empEmail = $empShift['email'];
 
                     $shiftDetails .= "<tr>";
-                    $shiftDetails .= "<td> " . formatDateToDB($row['shift_date'], DB_DATE, SITE_DATE) . "</td>";
-                    $shiftDetails .= "<td>" . $row["start_time"] . "</td>";
-                    $shiftDetails .= "<td>" . $row["end_time"] . "</td>";
+                    $shiftDetails .= "<td> " . date_with_time($empShift['shift_date']) . "</td>";
+
+                    $shiftDetails .= "<td>" .
+                        $empShift['start_time'] . "</td>";
+
+                    $shiftDetails .= "<td>" .
+                        $empShift["end_time"] . "</td>";
 
                     $shiftDetails .= "</tr>";
                 }
 
                 $shiftDetails .= "</table> ";
-
-
 
                 $emailTemplateData = get_email_template(SHIFTS_PUBLISH_CONFIRMATION);
                 $emailTemplateBody = $emailTemplateData['text'];
@@ -5897,7 +5908,6 @@ class Settings extends Public_Controller
                 $body = $message_hf['header']
                     . $emailTemplateBody
                     . $message_hf['footer'];
-
 
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
