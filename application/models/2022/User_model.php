@@ -212,7 +212,6 @@ class User_model extends CI_Model
             $newData['priority'] = $post['priority'];
         }
 
-
         // W4
         if ($documentType == 'w4') {
             //
@@ -244,6 +243,167 @@ class User_model extends CI_Model
                 }
                 if ($difference['data']['city']['new']) {
                     $data['Location_City'] = $difference['data']['city']['new'];
+                }
+
+                $this->db
+                    ->where('sid', $employeeId)
+                    ->update('users', $data);
+            }
+        }
+
+        // W9
+        if ($documentType == 'w9') {
+            //
+            $newData['w9_address'] = $post['w9_address'];
+            $newData['w9_social_security_number'] = $post['w9_social_security_number'];
+            //
+            $difference = $this->findDifference($oldData, $newData);
+            //
+            if ($difference['changed'] > 0) {
+
+                if ($difference['data']['w9_social_security_number']['new']) {
+                    $data['ssn'] = $difference['data']['w9_social_security_number']['new'];
+                }
+
+                if ($difference['data']['w9_address']['new']) {
+                    $data['Location_address'] = $difference['data']['w9_address']['new'];
+                }
+
+                $this->db
+                    ->where('sid', $employeeId)
+                    ->update('users', $data);
+            }
+        }
+
+
+        // I9
+        if ($documentType == 'i9') {
+            //
+            $newData['section1_last_name'] = $post['section1_last_name'];
+            $newData['section1_first_name'] = $post['section1_first_name'];
+            $newData['section1_middle_initial'] = $post['section1_middle_initial'];
+            $newData['section1_address'] = $post['section1_address'];
+            $newData['section1_city_town'] = $post['section1_city_town'];
+            $newData['section1_zip_code'] = $post['section1_zip_code'];
+            $newData['section1_social_security_number'] = $post['section1_social_security_number'];
+            $newData['section1_emp_email_address'] = $post['section1_emp_email_address'];
+            $newData['section1_emp_telephone_number'] = $post['section1_emp_telephone_number'];
+            $newData['section1_date_of_birth'] = !empty($post['section1_date_of_birth']) ?
+                formatDateToDB($post['section1_date_of_birth'], SITE_DATE, DB_DATE) . ' 00:00:00'
+                : '';
+            $difference = $this->findDifference($oldData, $newData);
+            //
+            if ($difference['changed'] > 0) {
+
+                if ($difference['data']['section1_last_name']['new']) {
+                    $data['last_name'] = $difference['data']['section1_last_name']['new'];
+                }
+                if ($difference['data']['section1_first_name']['new']) {
+                    $data['first_name'] = $difference['data']['section1_first_name']['new'];
+                }
+                if ($difference['data']['section1_middle_initial']['new']) {
+                    $data['middle_name'] = $difference['data']['section1_middle_initial']['new'];
+                }
+                if ($difference['data']['section1_address']['new']) {
+                    $data['Location_Address'] = $difference['data']['section1_address']['new'];
+                }
+                if ($difference['data']['section1_city_town']['new']) {
+                    $data['Location_City'] = $difference['data']['section1_city_town']['new'];
+                }
+                if ($difference['data']['section1_date_of_birth']['new']) {
+                    $data['dob'] = $difference['data']['section1_date_of_birth']['new'];
+                }
+                if ($difference['data']['section1_social_security_number']['new']) {
+                    $data['ssn'] = $difference['data']['section1_social_security_number']['new'];
+                }
+                if ($difference['data']['section1_emp_email_address']['new']) {
+                    $data['email'] = $difference['data']['section1_emp_email_address']['new'];
+                }
+                if ($difference['data']['section1_emp_telephone_number']['new']) {
+                    $data['PhoneNumber'] = $difference['data']['section1_emp_telephone_number']['new'];
+                }
+
+                $this->db
+                    ->where('sid', $employeeId)
+                    ->update('users', $data);
+            }
+        }
+
+        // I9
+        if ($documentType == 'eeoc') {
+            //
+            $newData['gender'] = $post['gender'];
+
+            $difference = $this->findDifference($oldData, $newData);
+            //
+            if ($difference['changed'] > 0) {
+
+                $data = [];
+                if ($difference['data']['gender']['new'] && $difference['data']['gender']['old'] != '') {
+                    $data['gender'] = strtolower($difference['data']['gender']['new']);
+                }
+
+                //
+                if (!empty($data)) {
+                    $this->db
+                        ->where('sid', $employeeId)
+                        ->update('users', $data);
+                }
+            }
+        }
+
+
+
+
+        // Full Employment Applicagtion
+        if ($documentType == 'fullemploymentapplication') {
+
+            //
+            $newData['first_name'] = $post['first_name'];
+            $newData['last_name'] = $post['last_name'];
+            $newData['email'] = $post['email'];
+            $newData['Location_Address'] = $post['Location_Address'];
+            $newData['Location_City'] = $post['Location_City'];
+            $newData['Location_ZipCode'] = $post['Location_ZipCode'];
+            $newData['dob'] = $post['dob'];
+            $newData['middle_name'] = $post['middle_name'];
+            $newData['ssn'] = $post['ssn'];
+
+            $difference = $this->findDifference($oldData, $newData);
+            //
+            if ($difference['changed'] > 0) {
+
+                if ($difference['data']['first_name']['new']) {
+                    $data['first_name'] = $difference['data']['first_name']['new'];
+                }
+                if ($difference['data']['last_name']['new']) {
+                    $data['last_name'] = $difference['data']['last_name']['new'];
+                }
+                if ($difference['data']['email']['new']) {
+                    $data['email'] = $difference['data']['email']['new'];
+                }
+
+                if ($difference['data']['Location_Address']['new']) {
+                    $data['Location_Address'] = $difference['data']['Location_Address']['new'];
+                }
+                if ($difference['data']['Location_City']['new']) {
+                    $data['Location_City'] = $difference['data']['Location_City']['new'];
+                }
+
+                if ($difference['data']['Location_ZipCode']['new']) {
+                    $data['Location_ZipCode'] = $difference['data']['Location_ZipCode']['new'];
+                }
+
+                if ($difference['data']['dob']['new']) {
+                    $data['dob'] = $difference['data']['dob']['new'];
+                }
+
+                if ($difference['data']['middle_name']['new']) {
+                    $data['middle_name'] = $difference['data']['middle_name']['new'];
+                }
+
+                if ($difference['data']['ssn']['new']) {
+                    $data['ssn'] = $difference['data']['ssn']['new'];
                 }
 
                 $this->db
@@ -832,5 +992,188 @@ class User_model extends CI_Model
         unset($record);
         //
         return $tmp;
+    }
+
+
+    //
+    public function getW9(
+        $userId,
+        $userType = 'employee'
+    ) {
+        //
+        $record = $this->db
+            ->select('w9_social_security_number,w9_address')
+            ->where([
+                'employee_sid' => $userId,
+                'user_type' => $userType
+            ])
+            ->get('applicant_w9form')
+            ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['w9_social_security_number'] = '';
+            $tmp['w9_address'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = $record;
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+
+
+    public function getI9(
+        $userSid,
+        $userType = 'employee'
+    ) {
+        //
+        $record = $this->db
+            ->select('section1_last_name,section1_first_name,section1_middle_initial,section1_address,section1_city_town,section1_zip_code,section1_date_of_birth,section1_social_security_number,section1_emp_email_address,section1_emp_telephone_number')
+            ->where([
+                'user_sid' => $userSid
+            ])
+            ->get('applicant_i9form')
+            ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['section1_last_name'] = '';
+            $tmp['section1_first_name'] = '';
+            $tmp['section1_middle_initial'] = '';
+            $tmp['section1_address'] = '';
+            $tmp['section1_city_town'] = '';
+            $tmp['section1_zip_code'] = '';
+            $tmp['section1_date_of_birth'] = '';
+            $tmp['section1_social_security_number'] = '';
+            $tmp['section1_emp_email_address'] = '';
+            $tmp['section1_emp_telephone_number'] = '';
+
+            //
+            return $tmp;
+        }
+        //
+        $tmp = $record;
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+
+    //
+    public function getEEOC(
+        $userSid,
+        $userType = 'employee'
+    ) {
+        //
+        $record = $this->db
+            ->select('gender')
+            ->where([
+                'application_sid' => $userSid,
+                'users_type' => $userType
+            ])
+            ->get('portal_eeo_form')
+            ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['gender'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = $record;
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+    //
+    public function getFULLEMPLOYMENTAPPLICATION(
+        $userSid,
+        $userType = 'employee'
+    ) {
+        //
+        $record = $this->db
+            ->select('first_name,last_name,email,Location_Address,Location_City,Location_State,Location_Country,Location_ZipCode,PhoneNumber,ssn,middle_name')
+            ->where('sid', $userSid)
+            ->get('users')
+            ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['first_name'] = '';
+            $tmp['last_name'] = '';
+            $tmp['email'] = '';
+            $tmp['Location_Address'] = '';
+            $tmp['Location_City'] = '';
+            $tmp['Location_State'] = '';
+            $tmp['Location_Country'] = '';
+            $tmp['Location_ZipCode'] = '';
+            $tmp['PhoneNumber'] = '';
+            $tmp['middle_name'] = '';
+            $tmp['ssn'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = $record;
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+
+    //
+    public function geti9employeeId($formId)
+    {
+
+        $record = $this->db
+            ->select('user_sid')
+            ->where([
+                'sid' => $formId,
+                'user_type' => 'employee',
+            ])
+            ->get('applicant_i9form')
+            ->row_array();
+
+        return $record['user_sid'];
+    }
+
+    //
+    public function geteeocemployeeId($formId)
+    {
+        $record = $this->db
+            ->select('application_sid')
+            ->where([
+                'sid' => $formId,
+                'users_type' => 'employee',
+            ])
+            ->get('portal_eeo_form')
+            ->row_array();
+
+        return $record['application_sid'];
+    }
+
+    public function getemployeeDataById($employeeId)
+    {
+        $record = $this->db
+            ->select('gender')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+
+        return $record;
     }
 }

@@ -358,6 +358,21 @@ class I9 extends Public_Controller
         //
         $updateArray['section1_preparer_json'] = json_encode($translatorArray);
         unset($updateArray['form_mode']);
+
+        $this->load->model('2022/User_model', 'em');
+        //
+        $user_sid = 0;
+        $user_sid = $this->em->geti9employeeId($this->input->post('form_code'));
+        if ($user_sid != 0) {
+            $this->em->handleGeneralDocumentChange(
+                'i9',
+                $this->input->post(null, true),
+                '',
+                $user_sid,
+                $this->session->userdata('logged_in')['employer_detail']['sid']
+            );
+        }
+
         //
         $this->db
             ->where('sid', $post['form_code'])
@@ -1115,7 +1130,7 @@ class I9 extends Public_Controller
         // form is assigned
         //
         $data = [];
-       
+
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         // no need to check in this Module as Dashboard will be available to all

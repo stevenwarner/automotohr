@@ -267,6 +267,17 @@ class Form_w9 extends Public_Controller
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['employee_sid'] = $employer_sid;
                 //
+
+                $this->load->model('2022/User_model', 'em');
+
+                $this->em->handleGeneralDocumentChange(
+                    'w9',
+                    $this->input->post(null, true),
+                    '',
+                    $this->input->post('user_sid'),
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
+
                 $this->form_wi9_model->update_form('w9', $type, $employer_sid, $data_to_update);
                 //
                 $w9_sid = getVerificationDocumentSid ($employer_sid, $type, 'w9');

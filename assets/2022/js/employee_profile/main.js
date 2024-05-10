@@ -39,6 +39,10 @@ $(function () {
         rows += '    <li role="presentation"><a href="#dependent" id="dependentHead" aria-controls="dependent" role="tab" data-toggle="tab">Dependents <span></span></a></li>';
         rows += '    <li role="presentation"><a href="#emergencyContact" id="emergencyContactHead" aria-controls="emergencyContact" role="tab" data-toggle="tab">Emergency Contacts <span></span></a></li>';
         rows += '    <li role="presentation"><a href="#w4" id="w4Head" aria-controls="w4" role="tab" data-toggle="tab">W4 <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#w9" id="w9Head" aria-controls="w9" role="tab" data-toggle="tab">W9 <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#i9" id="ai9Head" aria-controls="i9" role="tab" data-toggle="tab">I9 <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#eeoc" id="eeocHead" aria-controls="eeoc" role="tab" data-toggle="tab">EEOC <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#fullemploymentapplication" id="fullEmploymentApplicationHead" aria-controls="fullemploymentapplication" role="tab" data-toggle="tab">Full Employment Application <span></span></a></li>';
 
         rows += '  </ul>';
         rows += '  <!-- Tab panes -->';
@@ -50,6 +54,10 @@ $(function () {
         rows += '    <div role="tabpanel" class="tab-pane" id="dependent"></div>';
         rows += '    <div role="tabpanel" class="tab-pane" id="emergencyContact"></div>';
         rows += '    <div role="tabpanel" class="tab-pane" id="w4"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="w9"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="i9"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="eeoc"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="fullemploymentapplication"></div>';
 
         rows += '  </div>';
         rows += '</div>';
@@ -71,7 +79,12 @@ $(function () {
             occupationalLicense: '',
             dependent: '',
             emergencyContact: '',
-            w4:''
+            w4: '',
+            w9: '',
+            i9: '',
+            eeoc: '',
+            fullemploymentapplication: ''
+
         };
         //
         //
@@ -146,12 +159,16 @@ $(function () {
 
                     if (index == 'PhoneNumber') {
                         innerRows += '<td><strong> PRIMARY NUMBER </strong></td>';
+                    } else if (index == 'w9_address') {
+                        innerRows += '<td><strong> Address </strong></td>';
+                    } else if (index == 'w9_social_security_number') {
+                        innerRows += '<td><strong>SOCIAL SECURITY NUMBER </strong></td>';
                     } else {
                         innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
                     }
                 }
 
-               
+
                 //
                 if (index == 'action') {
                     innerRows += '       <td class="danger text-center" colspan="2">Deleted</td>';

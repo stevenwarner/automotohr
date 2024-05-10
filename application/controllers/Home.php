@@ -2177,6 +2177,29 @@ class Home extends CI_Controller
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
         }
+
+        //
+        $this->load->model('2022/User_model', 'em');
+
+        $user_sid = 0;
+        $user_sid = $this->em->geteeocemployeeId($this->input->post('id'));
+
+        if ($user_sid != 0) {
+            $employeeData = $this->em->getemployeeDataById($user_sid);
+
+            if ($employeeData['gender'] != strtolower($this->input->post('gender'))) {
+
+                $this->em->handleGeneralDocumentChange(
+                    'eeoc',
+                    $this->input->post(null, true),
+                    '',
+                    $user_sid,
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
+            }
+        }
+
+
         // update against all versions
         $this->db->where([
             'application_sid' => $document['application_sid'],

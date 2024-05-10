@@ -457,7 +457,7 @@ class Form_full_employment_application extends CI_Controller
                     $full_employment_application = array();
                     $driving_no = '';
                     $driving_exp = '';
-                    //
+
                     // remove staric from user info add on 09/02/2022
                     //
                     foreach ($formpost as $f_key => $f_value) {
@@ -577,11 +577,24 @@ class Form_full_employment_application extends CI_Controller
                     if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
                         $dataToUpdate['ssn'] = $formpost['TextBoxSSN'];
                     }
+                    
                     //
+                    $this->load->model('2022/User_model', 'em');
+
+                    $this->em->handleGeneralDocumentChange(
+                        'fullemploymentapplication',
+                        $dataToUpdate,
+                        '',
+                        $user_sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+
                     //  $this->form_full_employment_application_model->update_applicant($user_sid, $data);
                     $this->form_full_employment_application_model->update_form_details($company_sid, $user_sid, $user_type, $dataToUpdate);
                     $this->form_full_employment_application_model->update_form_status($verification_key, 'signed');
                     $this->documents_model->insert_document_ip_tracking_record($company_sid, $user_sid, getUserIP(), 'full_employment_application', 'signed', $_SERVER['HTTP_USER_AGENT'], $user_sid, $user_type);
+
+
 
                     if ($applicant_notifications_status == 1) {
 
