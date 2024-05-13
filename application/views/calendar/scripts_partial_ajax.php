@@ -783,6 +783,9 @@ echo '</style>';
                     el.addClass("fc-event-cc-goals");
                     el.addClass("cs-event-btn-goals");
                 }
+                if (event.type == 'shifts') {
+                    el.prop("style", "background-color: "+(event.color)+"; color: black");
+                }
                 // Category effect
                 el.addClass("fc-event-cc-" + event.category + "");
                 //Set border style
@@ -2464,7 +2467,6 @@ echo '</style>';
             // set current date
             calendar_OBJ.current.date_str = moment(e.intervalStart, site_date_format).format(site2_date_format);
             calendar_OBJ.current.date_array = calendar_OBJ.current.date_str.split('-');
-            console.log()
             // Check for incoming 
             if (i_triggered === true) {
                 calendar_ref.fullCalendar('gotoDate', i_event_array.event_date);
@@ -5166,7 +5168,7 @@ echo '</style>';
         //
         var body_title = "<strong>" + event.title + "</strong>";
         var body_content = '';
-        var img_path = event.img == '' || event.img == null ? 'https://www.automotohr.com/assets/images/img-applicant.jpg' : "<?= AWS_S3_BUCKET_URL; ?>" + event.img;
+        var img_path = event.img;
 
         let shiftDate = event.shift_date ? moment(event.shift_date, 'YYYY-MM-DD').format('MMM DD YYYY, ddd') : "";
 

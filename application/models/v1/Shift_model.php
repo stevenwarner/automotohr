@@ -1381,18 +1381,25 @@ class Shift_model extends CI_Model
         $calendarEndDate
     ) {
         //
-
         $this->db
-            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,breaks_json,breaks_count");
+            ->select("
+            sid,
+            employee_sid,
+            shift_date,
+            start_time,
+            end_time,
+            job_sites,
+            breaks_json,
+            breaks_count
+        ");
         //
         $this->db
             ->where("shift_date >= ", $calendarStartDate)
             ->where("shift_date <= ", $calendarEndDate)
             ->where("is_published", 1)
             ->where("company_sid", $company_id);
-
-
-        if ($employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0) {
+        //
+        if (!isPayrollOrPlus()) {
             $this->db->where("employee_sid", $employer_detail['sid']);
         }
         //
@@ -1401,38 +1408,44 @@ class Shift_model extends CI_Model
             ->result_array();
         //
         if ($records) {
+            //
+            $jobColors = $this->getEmployeesJobColor(
+                array_column(
+                    $records,
+                    "employee_sid"
+                )
+            );
+
             foreach ($records as $key => $val) {
-                $a = $this->db
-                    ->select('
-                concat(first_name," ",last_name) as full_name,
-                profile_picture as img,sid
-            ')
+                $result = $this->db
+                    ->select(getUserFields())
                     ->from('users')
                     ->where('sid', $val['employee_sid'])
                     ->where('active', 1)
                     ->where('terminated_status', 0)
-                    ->where('parent_sid', $company_id)
                     ->where('is_executive_admin', 0)
+                    ->where('parent_sid', $company_id)
                     ->limit(1)
-                    ->get();
-                $result = $a->row_array();
+                    ->get()
+                    ->row_array();
+                
+                if (!$result) {
+                    unset($records[$key]);
+                    continue;
+                }
 
-                $records[$key]['title'] = $result['full_name'];
+                $records[$key]['title'] = remakeEmployeeName($result);
                 $records[$key]['start'] = $val['shift_date'];
                 $records[$key]['end'] = $val['shift_date'];
-                $records[$key]['color'] = '#af4200';
+                $records[$key]['color'] =  $jobColors[$result["userId"]] ?? '#af4200';
                 $records[$key]['status'] = '';
-                $records[$key]['img'] = $result['img'];
+                $records[$key]['img'] = getImageURL(
+                    $result["image"]
+                );
                 $records[$key]['requests'] = 0;
                 $records[$key]['type'] = 'shifts';
-
-                //
-                if($val['employee_sid']!=$result['sid']){
-                    unset($records[$key]);
-                }
             }
         }
-
         return $records;
     }
 }
