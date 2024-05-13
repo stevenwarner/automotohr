@@ -16,6 +16,12 @@ class Base_payroll_model extends CI_Model
     protected $gustoCompany;
 
     /**
+     * holds the gusto employee
+     * @var array
+     */
+    protected $gustoEmployee;
+
+    /**
      * Inherit the parent class methods on call
      */
     public function __construct()
@@ -67,5 +73,96 @@ class Base_payroll_model extends CI_Model
                 ["companyId" => $companyId],
                 "lb_gusto"
             );
+    }
+
+    /**
+     * check and set company onboard checklist
+     *
+     * @return void
+     */
+    protected function updateCompanyChecklist(
+        string $column,
+        bool $replace = false
+    ) {
+        // set the system date time
+        $systemDateTime = getSystemDate();
+        //
+        if ($replace) {
+            $this
+                ->db
+                ->where(
+                    "company_sid",
+                    $this->gustoCompany["company_sid"]
+                )
+                ->update(
+                    "payrolls.gusto_company_checklist",
+                    [
+                        "updated_at" => $systemDateTime,
+                        "{$column}" => 1
+                    ]
+                );
+        } else {
+            // insert the row
+            $this
+                ->db
+                ->query("
+                    UPDATE 
+                        `payrolls`.`gusto_company_checklist`
+                    SET
+                        `{$column}` = {$column} + 1,
+                        `updated_at` = '{$systemDateTime}'
+                    WHERE
+                        `company_sid` = " . ($this->gustoCompany["company_sid"]) . "");
+        }
+    }
+
+    /**
+     * check and set employee onboard checklist
+     *
+     * @return void
+     */
+    protected function updateEmployeeChecklist(
+        string $column
+    ) {
+        $this
+            ->db
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->update(
+                "gusto_companies_employees",
+                [
+                    "updated_at" => getSystemDate(),
+                    "{$column}" => 1
+                ]
+            );
+    }
+
+    /**
+     * Get gusto employee details for gusto
+     *
+     * @param int   $employeeId
+     * @param array $extra Optional
+     * @param bool  $include Optional
+     * @return array
+     */
+    protected function getGustoLinkedEmployeeDetails(
+        int $employeeId,
+        array $extra = [],
+        bool $include = true
+    ): array {
+        //
+        $columns = $include ? array_merge([
+            'gusto_uuid',
+            'gusto_version',
+        ], $extra) : $extra;
+        //
+        return $this->gustoEmployee =
+            $this->db
+            ->select($columns)
+            ->where('employee_sid', $employeeId)
+            ->get('gusto_companies_employees')
+            ->row_array();
     }
 }

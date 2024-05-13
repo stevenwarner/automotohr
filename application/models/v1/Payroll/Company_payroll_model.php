@@ -408,53 +408,30 @@ class Company_payroll_model extends Base_payroll_model
         }
     }
 
-    /**
-     * check and set company onboard checklist
-     *
-     * @return void
-     */
-    private function updateCompanyChecklist(string $column)
-    {
-        // set the system date time
-        $systemDateTime = getSystemDate();
-        // insert the row
-        $this
-            ->db
-            ->query("
-                UPDATE 
-                    `payrolls`.`gusto_company_checklist`
-                SET
-                    `{$column}` = {$column} + 1,
-                    `updated_at` = '{$systemDateTime}'
-                WHERE
-                    `company_sid` = " . ($this->gustoCompany["company_sid"]) . "");
-    }
 
     // ------------------------------------------------------
     // Company Sync
     // ------------------------------------------------------
-
     /**
-     * start the company sync process
+     * set company details
+     * 
+     * @param int $companyId
      */
-    private function startCompanyToGustoSync(): array
-    {
-        // set the default array
-        $megaResponse = [];
-        // sync the admins
-        // $this->syncAdmins();
-        // sync the company address
-        // $this->syncCompanyAddress();
-        // sync earning types
-        // $this->syncEarningTypes();
-        // sync payment configs
-        // $this->syncPaymentConfig();
-
-
-        _e($megaResponse, true, true);
+    public function setCompanyDetails(
+        int $companyId
+    ) {
         //
-        return $megaResponse;
+        $this
+            ->getGustoLinkedCompanyDetails(
+                $companyId,
+                [
+                    "company_sid"
+                ]
+            );
+        //
+        $this->initialize($companyId);
     }
+
 
     // ------------------------------------------------------
     // Sync Admins
@@ -468,7 +445,7 @@ class Company_payroll_model extends Base_payroll_model
      * @method gustoToCompanyAdmins
      * @return array
      */
-    private function syncAdmins()
+    public function syncAdmins()
     {
         // check and add primary admin to company
         $this->checkAndSetPrimaryAdmin();
@@ -634,7 +611,7 @@ class Company_payroll_model extends Base_payroll_model
      * @method storeToGustoAdmins
      * @return array
      */
-    private function syncCompanyAddress()
+    public function syncCompanyAddress()
     {
         // check if company address is added or not
         if (
@@ -821,11 +798,11 @@ class Company_payroll_model extends Base_payroll_model
     /**
      * sync company earning types
      *
-     * @method storeToGustoCompanyAddress
-     * @method storeToGustoAdmins
+     * @method storeToGustoEarningTypes
+     * @method gustoToStoreEarningTypes
      * @return array
      */
-    private function syncEarningTypes()
+    public function syncEarningTypes()
     {
         $this->storeToGustoEarningTypes();
         $this->gustoToStoreEarningTypes();
@@ -1029,5 +1006,256 @@ class Company_payroll_model extends Base_payroll_model
         $this->db->insert('gusto_companies_earning_types', $ins);
         //
         return $response;
+    }
+
+
+    // ------------------------------------------------------
+    // Sync Company Payment Config
+    // ------------------------------------------------------
+    /**
+     * sync company payment config
+     *
+     * @method gustoToStorePaymentConfig
+     * @method storeToGustoPaymentConfig
+     * @return array
+     */
+    public function syncPaymentConfig()
+    {
+        $this->storeToGustoPaymentConfig();
+        $this->gustoToStorePaymentConfig();
+    }
+
+    /**
+     * sync company earning types
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStorePaymentConfig()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "payment_configs",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return ["errors" => ['No payment config found.']];
+        }
+        //
+        $data = [
+            "fast_payment_limit" => $response["fast_payment_limit"],
+            "payment_speed" => $response["payment_speed"],
+            "updated_at" => getSystemDate()
+        ];
+        // check if already added
+        if (
+            !$this
+                ->db
+                ->where([
+                    "company_sid" => $this->gustoCompany["company_sid"],
+                ])
+                ->count_all_results(
+                    "companies_payment_configs"
+                )
+        ) {
+            //
+            $data["company_sid"] = $this->gustoCompany["company_sid"];
+            $data["partner_uuid"] = $response["partner_uuid"];
+            $data["created_at"] = $data["updated_at"];
+            // insert
+            $this
+                ->db
+                ->insert(
+                    "companies_payment_configs",
+                    $data
+                );
+        } else {
+            // update
+            $this
+                ->db
+                ->where([
+                    "company_sid" => $this->gustoCompany["company_sid"],
+                ])
+                ->update(
+                    "companies_payment_configs",
+                    $data
+                );
+        }
+    }
+
+    /**
+     * sync company earning types
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function storeToGustoPaymentConfig()
+    {
+        // set request
+        $request = [
+            "payment_speed" => "1-day"
+        ];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "payment_configs",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return ["errors" => ['No payment config found.']];
+        }
+        //
+        $data = [
+            "fast_payment_limit" => $response["fast_payment_limit"],
+            "payment_speed" => $response["payment_speed"],
+            "updated_at" => getSystemDate()
+        ];
+        //
+        $data["company_sid"] = $this->gustoCompany["company_sid"];
+        $data["partner_uuid"] = $response["partner_uuid"];
+        $data["created_at"] = $data["updated_at"];
+        // insert
+        $this
+            ->db
+            ->insert(
+                "companies_payment_configs",
+                $data
+            );
+    }
+
+    // ------------------------------------------------------
+    // Sync Company Federal Tax Details
+    // ------------------------------------------------------
+    /**
+     * sync company federal tax
+     *
+     * @method storeToGustoCompanyAddress
+     * @method storeToGustoAdmins
+     * @return array
+     */
+    public function syncFederalTax()
+    {
+        $this->gustoToStoreFederalTax();
+    }
+
+    /**
+     * sync company earning types
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreFederalTax()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "federal_tax_details",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return ["errors" => ['No payment config found.']];
+        }
+        //
+        $data = [
+            "gusto_version" => $response["version"],
+            "tax_payer_type" => $response["tax_payer_type"],
+            "taxable_as_scorp" => $response["taxable_as_scorp"],
+            "filing_form" => $response["filing_form"],
+            "has_ein" => $response["has_ein"],
+            "ein_verified" => $response["ein_verified"],
+            "effective_date" => $response["effective_date"],
+            "deposit_schedule" => $response["deposit_schedule"],
+            "legal_name" => $response["legal_name"],
+            "updated_at" => getSystemDate()
+        ];
+        // check if already exists
+        if (
+            $this
+            ->db
+            ->where("company_sid", $this->gustoCompany["company_sid"])
+            ->count_all_results("companies_federal_tax")
+        ) {
+            // update
+            // insert
+            $this
+                ->db
+                ->where(
+                    "company_sid",
+                    $this->gustoCompany["company_sid"]
+                )
+                ->update(
+                    "companies_federal_tax",
+                    $data
+                );
+        } else {
+            // insert
+            $data["company_sid"] = $this->gustoCompany["company_sid"];
+            $data["created_at"] = $data["updated_at"];
+            // insert
+            $this
+                ->db
+                ->insert(
+                    "companies_federal_tax",
+                    $data
+                );
+        }
+    }
+
+    /**
+     * test
+     *
+     * @return array
+     */
+    public function test(string $event)
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                $event,
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+
+
+        _e($response, true, true);
     }
 }

@@ -504,8 +504,6 @@ class Lb_gusto
      */
     private function refreshToken(array $request)
     {
-        // load the credentials
-        $this->setCredentials();
         //
         $body = [];
         $body['client_id'] = $this->credentials["client_id"];
@@ -514,8 +512,8 @@ class Lb_gusto
         $body['refresh_token'] = $request['refresh_token'];
         $body['grant_type'] = 'refresh_token';
         //
-        return makeCall(
-            getUrl('refreshToken', ''),
+        return $this->makeCall(
+            $this->getUrl('refreshToken', ''),
             [
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => json_encode($body),
@@ -562,6 +560,56 @@ class Lb_gusto
         // locations
         $urls["company_locations"] =
             "v1/companies/{$key}/locations";
+        // payment_configs
+        $urls["payment_configs"] =
+            "v1/companies/{$key}/payment_configs";
+        // federal_tax_details
+        $urls["federal_tax_details"] =
+            "v1/companies/{$key}/federal_tax_details";
+        // industry_selection
+        $urls["industry_selection"] =
+            "v1/companies/{$key}/industry_selection";
+        // forms
+        $urls["forms"] =
+            "v1/companies/{$key}/forms";
+        // company_benefits
+        $urls["company_benefits"] =
+            "v1/companies/{$key}/company_benefits";
+        // bank_accounts
+        $urls["bank_accounts"] =
+            "v1/companies/{$key}/bank_accounts";
+        // departments
+        $urls["departments"] =
+            "v1/companies/{$key}/departments";
+        // custom_fields
+        $urls["custom_fields"] =
+            "v1/companies/{$key}/custom_fields";
+        // employees
+        $urls["employees"] =
+            "v1/companies/{$key}/employees";
+
+
+        // Employees
+        // work_addresses
+        $urls["work_addresses"] =
+            "v1/employees/{$key1}/work_addresses";
+        // home_addresses
+        $urls["home_addresses"] =
+            "v1/employees/{$key1}/home_addresses";
+        // jobs
+        $urls["jobs"] =
+            "v1/employees/{$key1}/jobs";
+        // compensations
+        $urls["compensations"] =
+            "v1/jobs/{$key1}/compensations";
+        // terminations
+        $urls["terminations"] =
+            "v1/employees/{$key1}/terminations";
+        // rehire
+        $urls["rehire"] =
+            "v1/employees/{$key1}/rehire";
+
+
 
         // Payrolls
         $urls["earning_types"] =
