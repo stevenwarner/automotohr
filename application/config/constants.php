@@ -709,3 +709,11 @@ define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+//set Published Shifts BG Collor
+define("DB_UNPUBLISHED_SHIFTS", "#df8279");
+define("FONT_COLOR_UNPUBLISHED_SHIFTS", "#ffffff");
+
+//
+define("SHIFTS_PUBLISH_CONFIRMATION", 447);
+

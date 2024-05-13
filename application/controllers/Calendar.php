@@ -1,12 +1,14 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-ini_set("memory_limit","512M");
+defined('BASEPATH') or exit('No direct script access allowed');
+ini_set("memory_limit", "512M");
 
-class Calendar extends Public_Controller {
+class Calendar extends Public_Controller
+{
     private $limit;
     private $list_size;
     //
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->config('calendar_config');
         //
@@ -15,6 +17,8 @@ class Calendar extends Public_Controller {
         $this->load->model('calendar_model');
         $this->load->model('employee_model');
         $this->load->model('timeoff_model');
+        $this->load->model("v1/Shift_model", "shift_model");
+
         require_once(APPPATH . 'libraries/aws/aws.php');
     }
 
@@ -26,10 +30,11 @@ class Calendar extends Public_Controller {
      *
      * @return Void
      */
-    public function my_events($event_sid = false) {
+    public function my_events($event_sid = false)
+    {
         //
-        if($this->call_old_event() ){
-        // if($this->call_old_event() && get_employer_access_level($this->session->userdata('logged_in')['employer_detail']['sid']) != 'Employee'){
+        if ($this->call_old_event()) {
+            // if($this->call_old_event() && get_employer_access_level($this->session->userdata('logged_in')['employer_detail']['sid']) != 'Employee'){
             $this->my_events_new($event_sid);
             return false;
         }
@@ -37,7 +42,8 @@ class Calendar extends Public_Controller {
         $this->my_events_old();
     }
 
-    public function tasks() {
+    public function tasks()
+    {
         if ($this->input->server('REQUEST_METHOD') == 'GET') {
             redirect('calendar/my_events', 'refresh');
         }
@@ -51,16 +57,19 @@ class Calendar extends Public_Controller {
             $action = $this->input->post('action'); //Check Which Action to Perform
 
             // added on: 27-03-2019
-            if($action != 'save_event'){
+            if ($action != 'save_event') {
                 // check if event exists in db
                 $result = $this->db
-                ->select('sid')
-                ->where('sid', $this->input->post('event_id') ? $this->input->post('event_id') : ($this->input->post('sid') ? $this->input->post('sid') : $this->input->post('event_sid')))
-                ->get('portal_schedule_event');
+                    ->select('sid')
+                    ->where('sid', $this->input->post('event_id') ? $this->input->post('event_id') : ($this->input->post('sid') ? $this->input->post('sid') : $this->input->post('event_sid')))
+                    ->get('portal_schedule_event');
                 $result_arr = $result->row_array();
                 $result = $result->free_result();
 
-                if(!sizeof($result_arr)){ echo 'Unable to update/delete event as Event already Deleted'; return false;}
+                if (!sizeof($result_arr)) {
+                    echo 'Unable to update/delete event as Event already Deleted';
+                    return false;
+                }
             }
 
             switch ($action) { //Unified Tasks for Save Update
@@ -69,7 +78,7 @@ class Calendar extends Public_Controller {
                 case 'drop_update_event':
                     $event_sid = 0;
                     $eventaddpost = $_POST;
-                   // echo '<pre>'; print_r($eventaddpost); exit;
+                    // echo '<pre>'; print_r($eventaddpost); exit;
                     $event_data = array();
                     // avaid null value to database
                     $event_data['interviewer_show_email'] = '';
@@ -119,7 +128,8 @@ class Calendar extends Public_Controller {
                     break;
                 case 'save_event':
                     foreach ($eventaddpost as $key => $value) {
-                        if ($key != 'action' &&
+                        if (
+                            $key != 'action' &&
                             $key != 'date' &&
                             $key != 'applicant_sid' &&
                             $key != 'redirect_to' &&
@@ -128,7 +138,8 @@ class Calendar extends Public_Controller {
                             $key != 'show_email' &&
                             $key != 'address_type' &&
                             $key != 'employee_sid' &&
-                            $key != 'external_participants') { // exclude these values from array
+                            $key != 'external_participants'
+                        ) { // exclude these values from array
                             if (is_array($value)) {
                                 $value = implode(',', $value);
                             }
@@ -167,9 +178,9 @@ class Calendar extends Public_Controller {
                             $message = 'Event Added successfully, scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y');
                             $event_sid = $this->db->insert_id();
                             $message = 'Event Added successfully, scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y');
-                            if($this->call_old_event()){
-                                if($this->input->is_ajax_request()){
-                                    $message = array('Message'=>'Event Added successfully, scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y'), 'EventId' => $last_id);
+                            if ($this->call_old_event()) {
+                                if ($this->input->is_ajax_request()) {
+                                    $message = array('Message' => 'Event Added successfully, scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y'), 'EventId' => $last_id);
                                 }
                             }
                         } else {
@@ -183,7 +194,8 @@ class Calendar extends Public_Controller {
                 case 'update_event':
                 case 'drop_update_event':
                     foreach ($eventaddpost as $key => $value) {
-                        if ($key != 'action' &&
+                        if (
+                            $key != 'action' &&
                             $key != 'date' &&
                             $key != 'sid' &&
                             $key != 'redirect_to' &&
@@ -238,8 +250,8 @@ class Calendar extends Public_Controller {
 
                     // Check for date and reminder flag
                     // and set sent flag to 0
-                    if(!$this->call_old_event()){
-                        if( $event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true) ) $event_data['sent_flag'] = 0;
+                    if (!$this->call_old_event()) {
+                        if ($event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true)) $event_data['sent_flag'] = 0;
                     }
 
                     if ($this->calendar_model->update_event($event_sid, $event_data)) {
@@ -255,8 +267,8 @@ class Calendar extends Public_Controller {
                     $this->calendar_model->deleteEvent($event_id);
                     $message = 'Event Successfully Deleted!';
                     break;
-                // added on: 02-04-2019
-                // handle drag & resize
+                    // added on: 02-04-2019
+                    // handle drag & resize
                 case 'drag_update_event':
                     $this->calendar_model->update_event_by_id(
                         $this->input->post('sid'),
@@ -268,7 +280,7 @@ class Calendar extends Public_Controller {
                     $message = "Event updated successfully!.";
                     // set event_id for ICS
                     $event_sid = $this->input->post('sid');
-                break;
+                    break;
             }
 
             // echo $message;
@@ -276,7 +288,7 @@ class Calendar extends Public_Controller {
             // added on: 02-04-2019
             // don't delete the participents
             // for drag and resize events
-            if( $action != 'drag_update_event' ){
+            if ($action != 'drag_update_event') {
 
                 $redirect_to = $this->input->post('redirect_to');
 
@@ -358,18 +370,18 @@ class Calendar extends Public_Controller {
                         $applicant_job_list_sid = $user_info['job_applications'][0]['sid'];
                         $applicant_jobs_list = $event_details['applicant_jobs_list'];
 
-                        if($applicant_jobs_list != '' && $applicant_jobs_list != null) {
+                        if ($applicant_jobs_list != '' && $applicant_jobs_list != null) {
                             $applicant_jobs_array = explode(',', $applicant_jobs_list);
                         }
 
                         $user_tile .= '<p><b>Job(s) Applied:</b></p>';
                         $user_tile .= '<ol>';
 
-                        if(!empty($applicant_jobs_array)) {
+                        if (!empty($applicant_jobs_array)) {
                             foreach ($user_info['job_applications'] as $job_application) {
                                 $applicant_sid = $job_application['sid'];
 
-                                if(in_array($applicant_sid, $applicant_jobs_array)) {
+                                if (in_array($applicant_sid, $applicant_jobs_array)) {
                                     $job_title = !empty($job_application['job_title']) ? $job_application['job_title'] : '';
                                     $desired_job_title = !empty($job_application['desired_job_title']) ? $job_application['desired_job_title'] : '';
 
@@ -384,13 +396,12 @@ class Calendar extends Public_Controller {
                                     $user_tile .= '<li>' . $title . '</li>';
                                     $applicant_job_list_sid = $job_application['sid'];
                                 }
-
                             }
                         } else {
                             $job_application = $user_info['job_applications'];
                             $job_application_last_index = count($job_application) - 1;
 
-                            for ($i = 0; $i<count($job_application); $i++) {
+                            for ($i = 0; $i < count($job_application); $i++) {
                                 $applicant_sid = $job_application[$i]['sid'];
 
                                 $job_title = !empty($job_application[$i]['job_title']) ? $job_application[$i]['job_title'] : '';
@@ -406,7 +417,6 @@ class Calendar extends Public_Controller {
 
                                 $user_tile .= '<li>' . $title . '</li>';
                                 $applicant_job_list_sid = $job_application[$job_application_last_index]['sid'];
-
                             }
                         }
 
@@ -564,7 +574,7 @@ class Calendar extends Public_Controller {
 
 
                 if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip') {
-                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=".GOOGLE_API_KEY."&markers=color:blue|label:|" . urlencode($event_details['address']);
+                    $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
                     $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($event_details['address']) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
                     $email_message .= '<p><b>Address:</b> ' . $event_details['address'] . ' </p>';
                     $email_message .= '<p> ' . $map_anchor . ' </p>';
@@ -622,10 +632,11 @@ class Calendar extends Public_Controller {
                         break;
                 }
             } else {
-                if($this->call_old_event()){
-                    if(is_array($message)){
+                if ($this->call_old_event()) {
+                    if (is_array($message)) {
                         header('Content-Type: application/json');
-                        echo json_encode($message); exit(0);
+                        echo json_encode($message);
+                        exit(0);
                     }
                 }
                 echo $message;
@@ -634,14 +645,15 @@ class Calendar extends Public_Controller {
         }
     }
 
-    public function deleteEvent() {
+    public function deleteEvent()
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // get input id
         $event_id = $this->input->get('sid');
         $event_category = $this->calendar_model->get_event_column_by_event_id($event_id, 'category');
         // Check for training session
-        if($event_category == 'training-session'){
+        if ($event_category == 'training-session') {
             $learning_center_training_sessions = $this->calendar_model->get_event_column_by_event_id($event_id, 'learning_center_training_sessions');
             $this->calendar_model->delete_training_session(
                 $learning_center_training_sessions
@@ -651,20 +663,24 @@ class Calendar extends Public_Controller {
         echo 'Event Deleted';
     }
 
-    private function log_and_send_email_with_attachment($from, $to, $subject, $body, $senderName, $file_path) {
+    private function log_and_send_email_with_attachment($from, $to, $subject, $body, $senderName, $file_path)
+    {
         // edited on: 27-03-2019
-        $emailData = array( 'date' => date('Y-m-d H:i:s'),
-                        'subject' => $subject,
-                        'email' => $to,
-                        'message' => $body,
-                        'username' => $senderName);
+        $emailData = array(
+            'date' => date('Y-m-d H:i:s'),
+            'subject' => $subject,
+            'email' => $to,
+            'message' => $body,
+            'username' => $senderName
+        );
         save_email_log_common($emailData);
         if (base_url() != STAGING_SERVER_URL) {
             sendMailWithAttachmentRealPath($from, $to, $subject, $body, $senderName, $file_path);
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -672,13 +688,12 @@ class Calendar extends Public_Controller {
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required');
             $view_data = array();
             $view_data['company_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-            if(!empty($data['session']['employer_detail']['timezone']))
+            if (!empty($data['session']['employer_detail']['timezone']))
                 $view_data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
             else
                 $view_data['employer_timezone'] = $view_data['company_timezone'];
 
             if ($this->form_validation->run() == false) {
-
             } else {
                 $perform_action = $this->input->post('perform_action');
 
@@ -704,7 +719,7 @@ class Calendar extends Public_Controller {
                             $users_type = $event['users_type'];
                             $applicant_jobs = array();
 
-                            if($users_type == 'applicant') {
+                            if ($users_type == 'applicant') {
                                 $app_sid = $event['applicant_job_sid'];
                                 $applicant_jobs = $this->calendar_model->get_all_applicant_jobs($app_sid, $event['companys_sid']);
                             }
@@ -725,7 +740,7 @@ class Calendar extends Public_Controller {
                         $employees = $this->calendar_model->getCompanyAccounts($company_sid);
                         $view_data['employees'] = $employees;
                         $view_data['employer_id'] = $user_sid;
-                        $this->load->view('calendar/'.($this->call_old_event() ? 'list_events_partial_ajax' : 'list_events_partial'), $view_data);
+                        $this->load->view('calendar/' . ($this->call_old_event() ? 'list_events_partial_ajax' : 'list_events_partial'), $view_data);
                         break;
                     case 'get_event_external_participants':
                         $event_sid = $this->input->post('event_sid');
@@ -738,25 +753,26 @@ class Calendar extends Public_Controller {
         }
     }
 
-    public function event_reminder_cron($vf_key = null){
-        if($vf_key != 'dwwbtQzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk5HV7ZNCbu2ZfkjFVLHWINnM5uzMkUfIiINdZ19NJj') return false;
+    public function event_reminder_cron($vf_key = null)
+    {
+        if ($vf_key != 'dwwbtQzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk5HV7ZNCbu2ZfkjFVLHWINnM5uzMkUfIiINdZ19NJj') return false;
         // $start = microtime(true);
 
         $today_events = $this->calendar_model->fetch_all_today_events();
-        if(!$today_events) return false;
+        if (!$today_events) return false;
         // echo '<pre>';
         // echo microtime(true) - $start.'<br />';
-        foreach($today_events as $event){
-            if($event['event_status'] == 'cancelled') continue;
-           // echo date('H:i', strtotime('+'.$event['duration'].' minutes', strtotime(date('H:i')))) . ' ' . $event['duration'] . ' ' . date('H:i') . ' ';
-           // echo date('H:i ', strtotime($event['eventstarttime'])) . '<br>';
+        foreach ($today_events as $event) {
+            if ($event['event_status'] == 'cancelled') continue;
+            // echo date('H:i', strtotime('+'.$event['duration'].' minutes', strtotime(date('H:i')))) . ' ' . $event['duration'] . ' ' . date('H:i') . ' ';
+            // echo date('H:i ', strtotime($event['eventstarttime'])) . '<br>';
             //date_default_timezone_set('America/Los_Angeles');
-            $cur_time_duration = date('H:i', strtotime('+'.$event['duration'].' minutes', strtotime(date('H:i'))));
+            $cur_time_duration = date('H:i', strtotime('+' . $event['duration'] . ' minutes', strtotime(date('H:i'))));
             $event_start_time = date('H:i', strtotime($event['eventstarttime']));
             // echo '<br>'.$cur_time_duration . ' ' . date('H:i') . ' ';
             // echo $event_start_time. '<br>';
 
-            if(strtotime($cur_time_duration) == strtotime($event_start_time)){
+            if (strtotime($cur_time_duration) == strtotime($event_start_time)) {
                 // Updated on: 23-04-2019
                 // Fetch interviews, non-employee interviewers, applicant || employee
                 // data
@@ -767,7 +783,7 @@ class Calendar extends Public_Controller {
                     $event['applicant_job_sid']
                 );
                 //
-                if(!sizeof($email_list)) continue;
+                if (!sizeof($email_list)) continue;
                 //
                 ics_files(
                     $event['sid'],
@@ -780,7 +796,7 @@ class Calendar extends Public_Controller {
                     'notifications@automotohr.com',
                     'dev@automotohr.com',
                     'Auto Calendar Event Reminder executed',
-                    'it is auto executed at '.date('Y-m-d H:i:s').'/n<br>Reminder sent to: '.$event['applicant_email'],
+                    'it is auto executed at ' . date('Y-m-d H:i:s') . '/n<br>Reminder sent to: ' . $event['applicant_email'],
                     'AutomotoHR',
                     'dev@automotohr.com'
                 );
@@ -857,9 +873,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_events(){
+    function get_events()
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -885,7 +902,7 @@ class Calendar extends Public_Controller {
             $access_level
         );
         $pto_user_access = get_pto_user_access($company_id, $employer_id);
-        if(checkIfAppIsEnabled('timeoff')) { 
+        if (checkIfAppIsEnabled('timeoff')) {
             $timeoffs = $this->timeoff_model->getIncomingRequestByPermForCalendar(
                 $this->input->post('type'),
                 $this->input->post('year'),
@@ -901,9 +918,22 @@ class Calendar extends Public_Controller {
                 $this->input->post('start_date'),
                 $this->input->post('end_date')
             );
-            $events = array_merge(!is_array($events) ? array() : $events ,$timeoffs);
+            $events = array_merge(!is_array($events) ? array() : $events, $timeoffs);
         }
-        if(checkIfAppIsEnabled('performance_management')) { 
+
+        //
+        $shifts = $this->shift_model->getShiftsForCalendar(
+            $company_id,
+            $data['session']['employer_detail'],
+            $this->input->post('start_date'),
+            $this->input->post('end_date')
+        );
+
+        $events = array_merge(!is_array($events) ? array() : $events, $shifts);
+
+
+
+        if (checkIfAppIsEnabled('performance_management')) {
             $this->load->model('performance_management_model', 'pmm');
             // $goals = $this->pmm->getGoalsByPerm(
             //     $this->input->post('type'),
@@ -930,10 +960,15 @@ class Calendar extends Public_Controller {
             $this->input->post('week_end'),
             $company_id
         );
-        $events = array_merge(!is_array($events) ? array() : $events ,$publicHolidays);
+        $events = array_merge(!is_array($events) ? array() : $events, $publicHolidays);
         $return_array['Redirect'] = FALSE;
         //
-        if(!$events) {
+
+
+
+
+
+        if (!$events) {
             $return_array['Response'] = 'No events found';
             $this->response($return_array);
         }
@@ -953,9 +988,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_address(){
+    function get_address()
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -969,7 +1005,7 @@ class Calendar extends Public_Controller {
         $return_array['Redirect'] = FALSE;
         //
         $address = $this->calendar_model->fetch_company_addresses($company_id);
-        if(!$address){
+        if (!$address) {
             $return_array['Response'] = 'no addresses found.';
             $this->response($return_array);
         }
@@ -990,9 +1026,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_applicants($query){
+    function get_applicants($query)
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -1012,7 +1049,7 @@ class Calendar extends Public_Controller {
         // foreach($applicants as $key => $applicant){
         //     $applicants[$key]['value'] = $applicant['value']. " (".$company_timezone.")";
         // }
-        $this->response( $applicants );
+        $this->response($applicants);
     }
 
     /**
@@ -1024,9 +1061,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_employees($query){
+    function get_employees($query)
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -1052,9 +1090,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_interviewers($query){
+    function get_interviewers($query)
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -1079,9 +1118,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_employers(){
+    function get_employers()
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -1095,7 +1135,7 @@ class Calendar extends Public_Controller {
         $return_array['Redirect'] = FALSE;
         // fetch company employers
         $employers = $this->calendar_model->get_company_accounts($company_id);
-        if(!$employers){
+        if (!$employers) {
             $return_array['Response'] = 'no employers found.';
             $this->response($return_array);
         }
@@ -1115,9 +1155,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_event_detail($event_id){
+    function get_event_detail($event_id)
+    {
         // check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // check if request method is not GET
@@ -1131,17 +1172,17 @@ class Calendar extends Public_Controller {
         $employer_id = $data['session']['employer_detail']['sid'];
         $access_level = strtolower(get_employer_access_level($employer_id));
         // check for view type
-        $event = $this->calendar_model->get_event_detail( $event_id );
+        $event = $this->calendar_model->get_event_detail($event_id);
         $company_timezone = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
 
-        foreach($event['interviewers_details'] as $key => $interviewer){
+        foreach ($event['interviewers_details'] as $key => $interviewer) {
             $timezone = !empty($interviewer['timezone']) ? $interviewer['timezone'] : $company_timezone;
-            $event['interviewers_details'][$key]['value'] = $interviewer['full_name'] . " (".$timezone.") (".$interviewer['employee_type'].")" ;
+            $event['interviewers_details'][$key]['value'] = $interviewer['full_name'] . " (" . $timezone . ") (" . $interviewer['employee_type'] . ")";
         }
         //
         $return_array['Redirect'] = FALSE;
         //
-        if(!$event) {
+        if (!$event) {
             $return_array['Response'] = 'No event found';
             $this->response($return_array);
         }
@@ -1159,7 +1200,8 @@ class Calendar extends Public_Controller {
      * tobo deleted
      *
      */
-    private function my_events_old() {
+    private function my_events_old()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1187,28 +1229,28 @@ class Calendar extends Public_Controller {
             $data['addresses'] = $addresses;
             $data['applicants'] = $this->calendar_model->get_applicants($company_id); //checking access level to show all events ends
             $data['applicant_jobs'] = $this->calendar_model->get_all_company_applicants($company_id);
-           // $result = $this->calendar_model->get_applicant_jobs('68062');
-           // echo '<pre>'; print_r($result); echo '</pre>';
+            // $result = $this->calendar_model->get_applicant_jobs('68062');
+            // echo '<pre>'; print_r($result); echo '</pre>';
             $data['employer_id'] = $employer_id;
             $data['company_accounts'] = $this->calendar_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
             $data['employee'] = $data['session']['employer_detail'];
             $load_view = false;
-           // echo '<pre>';
-           // print_r($data['events']);
-           // $interviewers_name = '';
-           // foreach ($events as $event) {
-           //     $interviewers = explode(',', $event['interviewer']);
-           //     if (sizeof($interviewers) > 0) {
-           //         foreach ($interviewers as $interviewer) {
-           //             $key = array_search($interviewer, array_column($data['company_accounts'], 'sid'));
-           //             $viewer_data = $data['company_accounts'][$key];
-           //             $interviewers_name = $interviewers_name . $viewer_data['first_name'] .' '. $viewer_data['last_name'];
-           //         }
-           //     }
-           // }
-           // echo $interviewers_name;
-           // die();
-            if(strtolower($access_level) == 'employee') {
+            // echo '<pre>';
+            // print_r($data['events']);
+            // $interviewers_name = '';
+            // foreach ($events as $event) {
+            //     $interviewers = explode(',', $event['interviewer']);
+            //     if (sizeof($interviewers) > 0) {
+            //         foreach ($interviewers as $interviewer) {
+            //             $key = array_search($interviewer, array_column($data['company_accounts'], 'sid'));
+            //             $viewer_data = $data['company_accounts'][$key];
+            //             $interviewers_name = $interviewers_name . $viewer_data['first_name'] .' '. $viewer_data['last_name'];
+            //         }
+            //     }
+            // }
+            // echo $interviewers_name;
+            // die();
+            if (strtolower($access_level) == 'employee') {
                 $load_view                                                      = check_blue_panel_status(false, 'self');
             }
 
@@ -1225,7 +1267,7 @@ class Calendar extends Public_Controller {
             $data['load_view'] = $load_view;
             $this->load->view('main/header', $data);
             $this->load->view('calendar/my_events_new');
-           // $this->load->view('onboarding/calendar');
+            // $this->load->view('onboarding/calendar');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
@@ -1241,7 +1283,8 @@ class Calendar extends Public_Controller {
      * @return Void
      *
      */
-    private function my_events_new($event_token){
+    private function my_events_new($event_token)
+    {
         // Check for login session
         if (!$this->session->userdata('logged_in')) redirect(base_url('login'), "refresh");
         //3497
@@ -1249,21 +1292,21 @@ class Calendar extends Public_Controller {
         // Set default array
         $data['show_event'] = array();
         // Check for event sid
-        if($event_token){
+        if ($event_token) {
             // Load encrypt class
             $this->load->library('encrypt');
             // Decode event_token
-            $event_token = $this->encrypt->decode(str_replace( '$eb$eb$', '/', $event_token));
+            $event_token = $this->encrypt->decode(str_replace('$eb$eb$', '/', $event_token));
             // Explode event token
             $event_token_array = explode(':', $event_token);
             // Check for sid and company id
-            if(is_array($event_token_array) && isset($event_token_array[0], $event_token_array[1])){
+            if (is_array($event_token_array) && isset($event_token_array[0], $event_token_array[1])) {
                 // Set event sid and company id
                 $event_sid = trim($event_token_array[0]);
                 $company_id = trim($event_token_array[1]);
                 // Fetch the event date
                 $event_date = $this->calendar_model->get_event_column_by_event_id($event_sid, 'date', array('companys_sid' => $company_id));
-                if($event_date) $data['show_event'] = array('event_sid' => $event_sid, 'event_date' => $event_date);
+                if ($event_date) $data['show_event'] = array('event_sid' => $event_sid, 'event_date' => $event_date);
             }
         }
         //
@@ -1283,16 +1326,15 @@ class Calendar extends Public_Controller {
         $employees = $this->calendar_model->get_company_accounts($company_id); //fetching list of all sub-accounts
 
         $data['company_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-        if(empty($data['employer_timezone']))
+        if (empty($data['employer_timezone']))
             $data['employer_timezone'] = $data['company_timezone'];
 
-        foreach($employees as $key => $employee)
-        {
+        foreach ($employees as $key => $employee) {
             $employees[$key]['full_name'] = remakeEmployeeName($employee);
         }
         $data['employees'] = $data['interviewers'] = $employees;
         //
-        if(strtolower($access_level) == 'employee') $load_view = check_blue_panel_status(false, 'self');
+        if (strtolower($access_level) == 'employee') $load_view = check_blue_panel_status(false, 'self');
 
         // TODO
         // For on-boarding event
@@ -1300,8 +1342,8 @@ class Calendar extends Public_Controller {
         $data['load_view'] = $load_view;
 
         $this->load->view('main/header', $data)
-        ->view('calendar/my_events_new_ajax')
-        ->view('main/footer');
+            ->view('calendar/my_events_new_ajax')
+            ->view('main/footer');
     }
 
     /**
@@ -1309,14 +1351,17 @@ class Calendar extends Public_Controller {
      *
      * @return Bool
      */
-    private function call_old_event(){
+    private function call_old_event()
+    {
         $calendar_opt = $this->config->item('calendar_opt');
-        if($calendar_opt['show_new_calendar_to_all'])
+        if ($calendar_opt['show_new_calendar_to_all'])
             return true;
-        if(
+        if (
             ($calendar_opt['old_event_check'] && !$calendar_opt['ids_check'] && in_array($this->input->ip_address(), $calendar_opt['remote_ips'])) ||
             ($calendar_opt['old_event_check'] && $calendar_opt['ids_check'] && in_array($this->session->userdata('logged_in')['company_detail']['sid'], $calendar_opt['allowed_ids']))
-        ){ return true; }
+        ) {
+            return true;
+        }
 
         return false;
     }
@@ -1328,15 +1373,16 @@ class Calendar extends Public_Controller {
      * @param $print Bool Optional
      * @param $die Bool Optional
      */
-    private function _e($e, $print = FALSE, $die = FAlSE){
+    private function _e($e, $print = FALSE, $die = FAlSE)
+    {
         echo '<pre>';
-        if($print) echo '<br />*****************************<br />';
-        if(is_array($e)) print_r($e);
-        else if(is_object($e)) var_dump($e);
-        else echo($e);
-        if($print) echo '<br />*****************************<br />';
+        if ($print) echo '<br />*****************************<br />';
+        if (is_array($e)) print_r($e);
+        else if (is_object($e)) var_dump($e);
+        else echo ($e);
+        if ($print) echo '<br />*****************************<br />';
         echo '</pre>';
-        if($die) exit(0);
+        if ($die) exit(0);
     }
 
     /**
@@ -1344,9 +1390,11 @@ class Calendar extends Public_Controller {
      *
      * @param $array Array
      */
-    private function response($array){
+    private function response($array)
+    {
         header('Content-Type: application/json');
-        echo json_encode($array); exit(0);
+        echo json_encode($array);
+        exit(0);
     }
 
     /**
@@ -1358,7 +1406,8 @@ class Calendar extends Public_Controller {
      *
      * @return JSON
      */
-    function event_handler() {
+    function event_handler()
+    {
         // Check if direct access made
         if ($this->input->server('REQUEST_METHOD') == 'GET') redirect('calendar/my_events', 'refresh');
         // Set default array
@@ -1384,22 +1433,22 @@ class Calendar extends Public_Controller {
 
 
         // Send reminder emails
-        if($action == 'send_reminder_emails') {
+        if ($action == 'send_reminder_emails') {
             ics_files($this->input->post('event_id'), $company_id, $company_info, $action, $this->input->post('emails'));
             // $this->send_reminder_emails($res, $company_info);
             exit(0);
         }
 
         // Check if event is already deleted
-        if($action != 'save_event' && $action != 'save_personal_event'){
+        if ($action != 'save_event' && $action != 'save_personal_event') {
             $result = $this->db
-            ->select('sid')
-            ->where('sid', $this->input->post('event_id') ? $this->input->post('event_id') : $this->input->post('sid'))
-            ->get('portal_schedule_event');
+                ->select('sid')
+                ->where('sid', $this->input->post('event_id') ? $this->input->post('event_id') : $this->input->post('sid'))
+                ->get('portal_schedule_event');
             $result_arr = $result->row_array();
             $result     = $result->free_result();
             //
-            if(!sizeof($result_arr)){
+            if (!sizeof($result_arr)) {
                 $res['Response'] = 'Unable to update/delete event as Event already Deleted';
                 $this->response($res);
             }
@@ -1421,18 +1470,18 @@ class Calendar extends Public_Controller {
                 // Get Applicant Information
                 $users_type = $event_add_post['users_type'];
                 // Skip for Personal type
-                if($event_add_post['users_type'] != 'personal'){
+                if ($event_add_post['users_type'] != 'personal') {
                     // Set user sid
                     $users_sid = $event_add_post['applicant_sid'];
-                    if($event_add_post['users_type'] == 'applicant' && $event_add_post['applicant_sid'] == $event_add_post['employee_sid']){
+                    if ($event_add_post['users_type'] == 'applicant' && $event_add_post['applicant_sid'] == $event_add_post['employee_sid']) {
                         $event_add_post['employee_sid'] = $employer_id;
                         $event_add_post['employers_sid'] = $employer_id;
                     }
                     // $users_sid = $event_add_post[$users_type == 'applicant' ? 'applicant_sid' : 'employee_sid'];
                     // Fetch info
                     $user_info = $users_type == 'applicant'
-                    ? $this->calendar_model->get_applicant_detail($users_sid)
-                    : $this->calendar_model->get_employee_detail($users_sid);
+                        ? $this->calendar_model->get_applicant_detail($users_sid)
+                        : $this->calendar_model->get_employee_detail($users_sid);
 
                     // Set event data
                     $event_data['applicant_job_sid'] = $users_sid;
@@ -1445,10 +1494,10 @@ class Calendar extends Public_Controller {
                 }
                 // Check if message check is on
                 // only then check for attached file
-                if($event_add_post['messageCheck'] == 1){
+                if ($event_add_post['messageCheck'] == 1) {
                     if (isset($_FILES['messageFile']) && $_FILES['messageFile']['name'] != '') {
                         $file = explode(".", $_FILES["messageFile"]["name"]);
-                        if(!isset($file[1])) $file[1] = '.txt';
+                        if (!isset($file[1])) $file[1] = '.txt';
                         $file_name = str_replace(" ", "-", $file[0]);
                         $attachment = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
@@ -1472,9 +1521,9 @@ class Calendar extends Public_Controller {
         $old_event_start_time = null;
         $old_event_end_time = null;
         $old_event_status = null;
-        if($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event' || $action == 'reschedule_event'){
+        if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event' || $action == 'reschedule_event') {
             $old_event_details = $this->calendar_model->get_event_details($this->input->post('sid'));
-            if(sizeof($old_event_details)){
+            if (sizeof($old_event_details)) {
                 $old_event_date = $old_event_details['date'];
                 $old_event_start_time =  $old_event_details['eventstarttime'];
                 $old_event_end_time =  $old_event_details['eventendtime'];
@@ -1485,14 +1534,14 @@ class Calendar extends Public_Controller {
             case 'cancel_event':
                 $event_sid = $this->input->post('event_id');
                 $old_event_details = $this->calendar_model->get_event_details($event_sid);
-                if(sizeof($old_event_details)){
+                if (sizeof($old_event_details)) {
                     $old_event_status =  $old_event_details['event_status'];
                 }
 
                 $this->calendar_model->cancel_event($event_sid);
                 $event_category = $this->calendar_model->get_event_column_by_event_id($event_sid, 'category');
                 // Check for training session
-                if($event_category == 'training-session'){
+                if ($event_category == 'training-session') {
                     $learning_center_training_sessions = $this->calendar_model->get_event_column_by_event_id($event_sid, 'learning_center_training_sessions');
                     $this->calendar_model->cancel_training_session(
                         $learning_center_training_sessions
@@ -1508,26 +1557,26 @@ class Calendar extends Public_Controller {
                 // $event_data['created_on'] = date('Y-m-d H:i:s');
                 // $event_data['employers_sid'] = $employer_id;
                 $event_data['companys_sid'] = $company_id;
-                if($event_data['users_type'] == 'applicant' && isset($event_add_post['event_timezone'])){
+                if ($event_data['users_type'] == 'applicant' && isset($event_add_post['event_timezone'])) {
                     $event_data['event_timezone'] = $event_add_post['event_timezone'];
                 }
-                if($event_data['users_type'] == 'personal'){
-                    if($event_data['category'] == 'call'){
+                if ($event_data['users_type'] == 'personal') {
+                    if ($event_data['category'] == 'call') {
                         $event_data['users_name'] = $event_add_post['users_name'];
                         $event_data['users_phone'] = $event_add_post['users_phone'];
                     }
-                    if($event_data['category'] == 'email'){
+                    if ($event_data['category'] == 'email') {
                         $event_data['users_name'] = $event_add_post['users_name'];
                         $event_data['applicant_email'] = $event_add_post['users_email'];
                     }
 
                     unset($event_data['users_email']);
-                    if(isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
+                    if (isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
                 }
 
                 $filePath = null;
 
-                if($event_data['users_type'] != 'personal'){
+                if ($event_data['users_type'] != 'personal') {
                     if ($verify_event_session == 0) {
                         $res['Response'] = 'Error: Sorry! The event cannot be added as it does not belong to your company.';
                         $this->response($res);
@@ -1552,7 +1601,7 @@ class Calendar extends Public_Controller {
                 // Get last inserted id
                 $event_sid = $this->db->insert_id();
                 // Check for training session
-                if($event_data['category'] == 'training-session'){
+                if ($event_data['category'] == 'training-session') {
                     $event_add_post_updated = $event_add_post;
                     $event_add_post_updated['date'] = $event_data['date'];
                     $event_add_post_updated['eventstarttime'] = $event_data['eventstarttime'];
@@ -1566,7 +1615,7 @@ class Calendar extends Public_Controller {
                 $res['Response'] = 'Event Added successfully, scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y');
                 $res['EventId'] = $last_id;
                 $res['Status'] = TRUE;
-            break;
+                break;
             case 'update_event':
             case 'drop_update_event':
                 //
@@ -1575,24 +1624,24 @@ class Calendar extends Public_Controller {
                 $event_sid = $event_add_post['sid'];
 
                 // $event_data['event_status'] = 'confirmed';
-                if($event_data['users_type'] == 'personal'){
-                    if($event_data['category'] == 'call'){
+                if ($event_data['users_type'] == 'personal') {
+                    if ($event_data['category'] == 'call') {
                         $event_data['users_name'] = $event_add_post['users_name'];
                         $event_data['users_phone'] = $event_add_post['users_phone'];
                     }
-                    if($event_data['category'] == 'email'){
+                    if ($event_data['category'] == 'email') {
                         $event_data['users_name'] = $event_add_post['users_name'];
                         $event_data['applicant_email'] = $event_add_post['users_email'];
                     }
                     unset($event_data['users_email']);
-                    if(isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
-                }else{
+                    if (isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
+                } else {
                     $event_data['applicant_email'] = $email;
                     $event_data['applicant_job_sid'] = $users_sid;
                 }
 
                 // Check for training session
-                if($event_data['category'] == 'training-session'){
+                if ($event_data['category'] == 'training-session') {
                     $event_add_post_updated = $event_add_post;
                     $event_add_post_updated['date'] = $event_data['date'];
                     $event_add_post_updated['eventstarttime'] = $event_data['eventstarttime'];
@@ -1603,11 +1652,11 @@ class Calendar extends Public_Controller {
                         $event_add_post_updated,
                         'update'
                     );
-                }else{
+                } else {
                     // Check for LCTS and remove it
                     $lcts = $this->calendar_model
-                    ->get_event_column_by_event_id($event_sid, 'learning_center_training_sessions');
-                    if($lcts != '') $this->calendar_model->delete_training_session($lcts);
+                        ->get_event_column_by_event_id($event_sid, 'learning_center_training_sessions');
+                    if ($lcts != '') $this->calendar_model->delete_training_session($lcts);
                 }
 
                 unset(
@@ -1618,7 +1667,7 @@ class Calendar extends Public_Controller {
 
                 // Check for date and reminder flag
                 // and set sent flag to 0
-                if( $event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true) ) $event_data['sent_flag'] = 0;
+                if ($event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true)) $event_data['sent_flag'] = 0;
                 // Reset date/times from UTC to server time
                 //reset_event_datetime($event_data, $this, true);
                 // $this->_e($event_data, true, true);
@@ -1628,15 +1677,15 @@ class Calendar extends Public_Controller {
                     $res['Status'] = TRUE;
                     $res['Response'] = 'Event updated successfully, it is scheduled on ' . $event_date;
                 }
-            break;
+                break;
             case 'delete_event':
                 $event_id = $this->input->post('event_sid');
                 $this->calendar_model->deleteEvent($event_id);
                 $res['Response'] = 'Event Successfully Deleted!';
                 $res['Status'] = TRUE;
                 break;
-            // added on: 02-04-2019
-            // handle drag & resize
+                // added on: 02-04-2019
+                // handle drag & resize
             case 'drag_update_event':
                 $event_data_array = array();
                 $event_data_array['date'] = $this->input->post('date');
@@ -1659,30 +1708,31 @@ class Calendar extends Public_Controller {
                 );
 
                 //
-                if($learning_center_training_sessions != ''){
+                if ($learning_center_training_sessions != '') {
                     $array = array();
                     $array['session_date']        = $event_data_array['date'];
                     $array['session_start_time']  = DateTime::createFromFormat('H:iA', $event_data_array['eventstarttime'])->format('H:i:s');
                     $array['session_end_time']    = DateTime::createFromFormat('H:iA', $event_data_array['eventendtime'])->format('H:i:s');
                     $this->calendar_model->update_lc_by_id(
-                        $learning_center_training_sessions, $array
+                        $learning_center_training_sessions,
+                        $array
                     );
                 }
                 //
                 $res['Response'] = "Event updated successfully!.";
                 // set event_id for ICS
                 $event_sid = $this->input->post('sid');
-            break;
-            // added on: 08-04-2019
-            // Handle reschedule
+                break;
+                // added on: 08-04-2019
+                // Handle reschedule
             case 'reschedule_event':
                 // Fetch event date
                 $old_event_details = $this->calendar_model->get_event_details($event_add_post['sid']);
-                if(sizeof($old_event_details)){
+                if (sizeof($old_event_details)) {
                     $old_event_status =  $old_event_details['event_status'];
                 }
                 $event_prev_date = $this->calendar_model->get_event_column_by_event_id($event_add_post['sid'], 'date', true);
-                if(!$event_prev_date){
+                if (!$event_prev_date) {
                     $res['Response'] = 'Error: Sorry! there was an error, Please try again';
                     $this->response($res);
                 }
@@ -1692,23 +1742,23 @@ class Calendar extends Public_Controller {
                 unset($event_data['video_ids'], $event_data['lcts']);
                 unset($event_data['interviewer_type']);
                 // Check if
-                if($event_prev_date <= strtotime('now')){
+                if ($event_prev_date <= strtotime('now')) {
                     // $event_data['created_on'] = date('Y-m-d H:i:s');
                     $event_data['employers_sid'] = $employer_id;
                     $event_data['companys_sid'] = $company_id;
                     $event_data['parent_sid'] = $this->input->post('sid');
 
-                    if($event_data['users_type'] == 'personal'){
-                        if($event_data['category'] == 'call'){
+                    if ($event_data['users_type'] == 'personal') {
+                        if ($event_data['category'] == 'call') {
                             $event_data['users_name'] = $event_add_post['users_name'];
                             $event_data['users_phone'] = $event_add_post['users_phone'];
                         }
-                        if($event_data['category'] == 'email'){
+                        if ($event_data['category'] == 'email') {
                             $event_data['users_name'] = $event_add_post['users_name'];
                             $event_data['applicant_email'] = $event_add_post['users_email'];
                         }
                         unset($event_data['users_email']);
-                        if(isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
+                        if (isset($event_add_post['users_email'])) $event_data['applicant_email'] = $event_add_post['users_email'];
                     }
 
                     unset($event_data['sid']);
@@ -1729,7 +1779,7 @@ class Calendar extends Public_Controller {
                     // Check for training session
                     $res['EventId'] = $event_sid;
                     $res['Status'] = TRUE;
-                    if($event_data['category'] == 'training-session'){
+                    if ($event_data['category'] == 'training-session') {
                         $event_add_post_updated = $event_add_post;
                         $event_add_post_updated['date'] = $event_data['date'];
                         $event_add_post_updated['eventstarttime'] = $event_data['eventstarttime'];
@@ -1746,25 +1796,25 @@ class Calendar extends Public_Controller {
                     $res['Response'] = 'Event Added successfully, re-scheduled for ' . DateTime::createFromFormat('Y-m-d', $event_data['date'])->format('F j, Y');
                     // set event_id for ICS
                     // $event_sid = $this->input->post('sid');
-                }else{
+                } else {
                     //
-                    if($event_data['category'] == 'training-session')
+                    if ($event_data['category'] == 'training-session')
                         $this->calendar_model->training_session_reset_status($lcts, 'pending');
                     $event_sid = $event_add_post['sid'];
 
                     $event_data['event_status'] = 'pending';
 
-                    if($event_data['users_type'] == 'personal'){
-                        if($event_data['category'] == 'call'){
+                    if ($event_data['users_type'] == 'personal') {
+                        if ($event_data['category'] == 'call') {
                             $event_data['users_name'] = $event_add_post['users_name'];
                             $event_data['users_phone'] = $event_add_post['users_phone'];
                         }
-                        if($event_data['category'] == 'email'){
+                        if ($event_data['category'] == 'email') {
                             $event_data['users_name'] = $event_add_post['users_name'];
                             $event_data['applicant_email'] = $event_add_post['users_email'];
                         }
                         unset($event_data['users_email']);
-                    }else{
+                    } else {
                         $event_data['applicant_email'] = $email;
                         $event_data['applicant_job_sid'] = $users_sid;
                     }
@@ -1772,7 +1822,7 @@ class Calendar extends Public_Controller {
 
                     // Check for date and reminder flag
                     // and set sent flag to 0
-                    if( $event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true) ) $event_data['sent_flag'] = 0;
+                    if ($event_data['date'] >= date('Y-m-d') && (isset($event_data['reminder_flag']) ? $event_data['reminder_flag'] : true)) $event_data['sent_flag'] = 0;
 
                     // Reset date/times from UTC to server time
                     //reset_event_datetime($event_data, $this, true);
@@ -1783,12 +1833,12 @@ class Calendar extends Public_Controller {
                         $res['Response'] = 'Event updated successfully, it is scheduled on ' . $event_date;
                     }
                 }
-            break;
+                break;
         }
 
         // Don't delete the participents
         // for drag and resize events
-        if( $action != 'drag_update_event' ){
+        if ($action != 'drag_update_event') {
             // Check if participent already exits
             // then update the record otherwise
             // add it and delete the diference
@@ -1830,39 +1880,39 @@ class Calendar extends Public_Controller {
             } // Save External Participants - End
         }
         $diff_array_json = @json_decode($difference_array, true);
-        if($action == 'update_event' && !empty($old_event_date) && !empty($old_event_start_time)){
-            if(isset($diff_array_json['old_event_start_time']))
+        if ($action == 'update_event' && !empty($old_event_date) && !empty($old_event_start_time)) {
+            if (isset($diff_array_json['old_event_start_time']))
                 $diff_array_json['old_event_start_time'] = $old_event_start_time;
-            if(isset($diff_array_json['old_event_end_time']))
+            if (isset($diff_array_json['old_event_end_time']))
                 $diff_array_json['old_event_end_time'] = $old_event_end_time;
-            if(isset($diff_array_json['old_date']))
+            if (isset($diff_array_json['old_date']))
                 $diff_array_json['old_date'] = $old_event_date;
         }
 
-        if($action == 'update_event'){
-            if(isset($diff_array_json['new_event_start_time']) && isset($event_data['eventstarttime']))
+        if ($action == 'update_event') {
+            if (isset($diff_array_json['new_event_start_time']) && isset($event_data['eventstarttime']))
                 $diff_array_json['new_event_start_time'] = $event_data['eventstarttime'];
-            if(isset($diff_array_json['new_event_end_time']) && isset($event_data['eventendtime']))
+            if (isset($diff_array_json['new_event_end_time']) && isset($event_data['eventendtime']))
                 $diff_array_json['new_event_end_time'] = $event_data['eventendtime'];
-            if(isset($diff_array_json['new_date']) && isset($event_data['date']))
+            if (isset($diff_array_json['new_date']) && isset($event_data['date']))
                 $diff_array_json['new_date'] = $event_data['date'];
         }
-        if(isset($diff_array_json['new_date']) && isset($event_data['eventstarttime'])){
+        if (isset($diff_array_json['new_date']) && isset($event_data['eventstarttime'])) {
             $diff_array_json['timezone_new_start_time'] = $event_data['eventstarttime'];
         }
-        if(isset($diff_array_json['old_date']) && isset($old_event_start_time)){
+        if (isset($diff_array_json['old_date']) && isset($old_event_start_time)) {
             $diff_array_json['timezone_old_start_time'] = $old_event_start_time;
         }
-        if(sizeof($diff_array_json)){
+        if (sizeof($diff_array_json)) {
             $diff_array_json['users_type'] = $event_data['users_type'];
         }
 
-        if(($action == "cancel_event") && !empty($old_event_status)){
+        if (($action == "cancel_event") && !empty($old_event_status)) {
             $diff_array_json['old_event_status'] = $old_event_status;
             $diff_array_json['new_event_status'] = 'cancelled';
         }
-        if($action == 'reschedule_event'){
-            if($old_event_status == 'cancelled')
+        if ($action == 'reschedule_event') {
+            if ($old_event_status == 'cancelled')
                 $diff_array_json['old_event_status'] = 'cancelled';
             else
                 $diff_array_json['old_event_status'] = 'expired';
@@ -1916,10 +1966,12 @@ class Calendar extends Public_Controller {
      * @return Void
      *
      */
-    private function reset_event_data($event_add_post, &$event_data, $attachment){
+    private function reset_event_data($event_add_post, &$event_data, $attachment)
+    {
         foreach ($event_add_post as $key => $value) {
-            if(($value == '<update_ev></update_ev>ent'  || $value == 'drop_update_event' ) && $key == 'sid') continue;
-            if ($key != 'action' &&
+            if (($value == '<update_ev></update_ev>ent'  || $value == 'drop_update_event') && $key == 'sid') continue;
+            if (
+                $key != 'action' &&
                 $key != 'date' &&
                 $key != 'applicant_sid' &&
                 $key != 'redirect_to' &&
@@ -1928,7 +1980,8 @@ class Calendar extends Public_Controller {
                 $key != 'show_email' &&
                 $key != 'address_type' &&
                 $key != 'employee_sid' &&
-                $key != 'external_participants') { // exclude these values from array
+                $key != 'external_participants'
+            ) { // exclude these values from array
                 // Check for array and implode it
                 if (is_array($value)) $value = implode(',', $value);
                 $event_data[$key] = $value;
@@ -1958,55 +2011,55 @@ class Calendar extends Public_Controller {
         }
 
         // Message convert
-        if(isset($event_data['meetingId']) && $event_data['meetingId'] == 'null'){
+        if (isset($event_data['meetingId']) && $event_data['meetingId'] == 'null') {
             // unset(
-                $event_data['meetingId'] = 0;
-                $event_data['meetingCallNumber'] = '';
-                $event_data['meetingURL'] = '';
+            $event_data['meetingId'] = 0;
+            $event_data['meetingCallNumber'] = '';
+            $event_data['meetingURL'] = '';
             // );
         }
 
-        if(isset($event_data['messageCheck']) && $event_data['messageCheck'] == 0){
+        if (isset($event_data['messageCheck']) && $event_data['messageCheck'] == 0) {
             // unset(
-                $event_data['message'] = '';
-                $event_data['subject'] = '';
+            $event_data['message'] = '';
+            $event_data['subject'] = '';
             // );
         }
 
-        if(isset($event_data['interviewer']) && $event_data['interviewer'] == 'null'){
+        if (isset($event_data['interviewer']) && $event_data['interviewer'] == 'null') {
             $event_data['interviewer'] = '';
             // unset( $event_data['interviewer']);
         }
 
-        if(isset($event_data['address']) && $event_data['address'] == 'null'){
+        if (isset($event_data['address']) && $event_data['address'] == 'null') {
             $event_data['address'] = '';
         }
 
-        if(isset($event_data['commentCheck']) && $event_data['commentCheck'] == '0'){
+        if (isset($event_data['commentCheck']) && $event_data['commentCheck'] == '0') {
             $event_data['comment'] = '';
         }
 
-        if(isset($event_data['employee_sid']) && $event_data['employee_sid'] == 'null'){
+        if (isset($event_data['employee_sid']) && $event_data['employee_sid'] == 'null') {
             $event_data['employee_sid'] = 0;
         }
 
-        if(isset($event_data['applicant_sid']) && $event_data['applicant_sid'] == 'undefined'){
+        if (isset($event_data['applicant_sid']) && $event_data['applicant_sid'] == 'undefined') {
             $event_data['applicant_sid'] = 0;
         }
 
         // Decode the json object
         $recurr = json_decode($event_add_post['recur'], true);
         // Check if recurr event is set
-        if(sizeof($recurr)){
+        if (sizeof($recurr)) {
             $event_data['is_recur'] = 1;
             $event_data['recur_type'] = $recurr['recur_type'];
             $event_data['recur_start_date'] = $recurr['recur_start_date'];
-            if($recurr['recur_end_date'] != '')
+            if ($recurr['recur_end_date'] != '')
                 $event_data['recur_end_date'] = $recurr['recur_end_date'];
             $event_data['recur_list'] = @json_encode($recurr['list']);
         }
         //
-        if(!isset($event_add_post['event_timezone'])){
+        if (!isset($event_add_post['event_timezone'])) {
             $event_add_post['event_timezone'] = get_current_timezone($this)['key'];
         }
         // unset recur
@@ -2016,9 +2069,9 @@ class Calendar extends Public_Controller {
         // Added on: 28-06-2019
         //$event_date = reset_datetime(array('datetime' => $event_add_post['date'], '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d', 'from_timezone' => $event_add_post['event_timezone'], 'new_zone' => STORE_DEFAULT_TIMEZONE_ABBR));
         // $event_date = DateTime::createFromFormat('m-d-Y', $event_add_post['date'])->format('Y-m-d');
-        if(isset($event_add_post['eventstarttime'])){
+        if (isset($event_add_post['eventstarttime'])) {
             $event_data['date'] = reset_datetime(array(
-                'datetime' => $event_add_post['date'].''.$event_add_post['eventstarttime'],
+                'datetime' => $event_add_post['date'] . '' . $event_add_post['eventstarttime'],
                 '_this' => $this,
                 'from_format' => 'm-d-Y h:iA',
                 'format' => 'Y-m-d',
@@ -2029,9 +2082,9 @@ class Calendar extends Public_Controller {
 
         // Reset start time to server timezone
         // Added on: 28-06-2019
-        if(isset($event_add_post['eventstarttime'])){
+        if (isset($event_add_post['eventstarttime'])) {
             $event_data['eventstarttime'] = reset_datetime(array(
-                'datetime' => $event_add_post['date'].''.$event_add_post['eventstarttime'],
+                'datetime' => $event_add_post['date'] . '' . $event_add_post['eventstarttime'],
                 '_this' => $this,
                 'from_format' => 'm-d-Y h:iA',
                 'format' => 'h:iA',
@@ -2042,9 +2095,9 @@ class Calendar extends Public_Controller {
 
         // Reset end time to server timezone
         // Added on: 28-06-2019
-        if(isset($event_add_post['eventendtime'])){
+        if (isset($event_add_post['eventendtime'])) {
             $event_data['eventendtime'] = reset_datetime(array(
-                'datetime' => $event_add_post['date'].''.$event_add_post['eventendtime'],
+                'datetime' => $event_add_post['date'] . '' . $event_add_post['eventendtime'],
                 '_this' => $this,
                 'from_format' => 'm-d-Y h:iA',
                 'format' => 'h:iA',
@@ -2073,45 +2126,46 @@ class Calendar extends Public_Controller {
      *
      * @return String
      */
-    private function generate_event_status_rows($event_sid, $user_sid, $event_type, $user_name, $user_email, $event_category, $learning_center_training_sessions){
+    private function generate_event_status_rows($event_sid, $user_sid, $event_type, $user_name, $user_email, $event_category, $learning_center_training_sessions)
+    {
         //
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
         $this->load->library('encrypt');
-        $base_url = base_url().'event/';
+        $base_url = base_url() . 'event/';
         // Set event code string
-        $string_conf = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=confirmed:name='.$user_name.':email='.$user_email;
-        $string_notconf = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=notconfirmed:name='.$user_name.':email='.$user_email;
-        $string_reschedule = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=reschedule:name='.$user_name.':email='.$user_email;
-        if($event_category == 'training-session')
-            $string_attended = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=attended:name='.$user_name.':email='.$user_email;
+        $string_conf = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=confirmed:name=' . $user_name . ':email=' . $user_email;
+        $string_notconf = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=notconfirmed:name=' . $user_name . ':email=' . $user_email;
+        $string_reschedule = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=reschedule:name=' . $user_name . ':email=' . $user_email;
+        if ($event_category == 'training-session')
+            $string_attended = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=attended:name=' . $user_name . ':email=' . $user_email;
         // Set encoded string
-        $enc_string_conf = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_conf));
-        if($event_category == 'training-session')
-            $enc_string_attended = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_attended));
-        $enc_string_notconf  = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_notconf));
-        $enc_string_reschedule = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_reschedule));
+        $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_conf));
+        if ($event_category == 'training-session')
+            $enc_string_attended = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_attended));
+        $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_notconf));
+        $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $this->encrypt->encode($string_reschedule));
         // Set button rows
         $button_rows = '<div>';
         $button_rows .= '   <p>Please, select one of the options.</p>';
-        if($event_category == 'training-session'){
-            $button_rows .= '   <a href="'.$enc_string_notconf.'" target="_blank" style="background-color: #cc1100; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Unable To Attend</a>';
-            $button_rows .= '   <a href="'.$enc_string_conf.'" target="_blank" style="background-color: #f0ad4e ; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Will Attend</a>';
-            $button_rows .= '   <a href="'.$enc_string_attended.'" target="_blank" style="background-color: #009966; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Attended</a>';
-            $button_rows .= '   <a href="'.$enc_string_reschedule.'" target="_blank" style="background-color: #006699; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Reschedule</a>';
+        if ($event_category == 'training-session') {
+            $button_rows .= '   <a href="' . $enc_string_notconf . '" target="_blank" style="background-color: #cc1100; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Unable To Attend</a>';
+            $button_rows .= '   <a href="' . $enc_string_conf . '" target="_blank" style="background-color: #f0ad4e ; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Will Attend</a>';
+            $button_rows .= '   <a href="' . $enc_string_attended . '" target="_blank" style="background-color: #009966; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Attended</a>';
+            $button_rows .= '   <a href="' . $enc_string_reschedule . '" target="_blank" style="background-color: #006699; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Reschedule</a>';
             // Only show trainig session link
             // when blue panel is active
-            if(check_blue_panel_status() && $event_type != 'extrainterviewer'){
+            if (check_blue_panel_status() && $event_type != 'extrainterviewer') {
                 $button_rows .= '   <br />';
                 $button_rows .= '   <br />';
                 $button_rows .= '   <p>Below is the link for the training session.</p>';
-                $button_rows .= '   <a href="'.base_url('learning_center/view_training_session').'/'.$learning_center_training_sessions.'" target="_blank" style="background-color: none; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; margin-right: 10px;">'.base_url('learning_center/view_training_session').'/'.$learning_center_training_sessions.'</a>';
+                $button_rows .= '   <a href="' . base_url('learning_center/view_training_session') . '/' . $learning_center_training_sessions . '" target="_blank" style="background-color: none; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; margin-right: 10px;">' . base_url('learning_center/view_training_session') . '/' . $learning_center_training_sessions . '</a>';
             }
-        }else{
-            $button_rows .= '   <a href="'.$enc_string_conf.'" target="_blank" style="background-color: #009966; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Confirm</a>';
-            $button_rows .= '   <a href="'.$enc_string_notconf.'" target="_blank" style="background-color: #cc1100; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Cannot attend</a>';
-            $button_rows .= '   <a href="'.$enc_string_reschedule.'" target="_blank" style="background-color: #006699; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Reschedule</a>';
+        } else {
+            $button_rows .= '   <a href="' . $enc_string_conf . '" target="_blank" style="background-color: #009966; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Confirm</a>';
+            $button_rows .= '   <a href="' . $enc_string_notconf . '" target="_blank" style="background-color: #cc1100; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Cannot attend</a>';
+            $button_rows .= '   <a href="' . $enc_string_reschedule . '" target="_blank" style="background-color: #006699; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block; margin-right: 10px;">Reschedule</a>';
         }
         $button_rows .= '</div>';
 
@@ -2131,7 +2185,8 @@ class Calendar extends Public_Controller {
      *
      * @return VOID
      */
-    private function ics_files($event_sid, $company_id, $company_info, $action, $email_list = array()){
+    private function ics_files($event_sid, $company_id, $company_info, $action, $email_list = array())
+    {
         if ($action == 'delete_event') return false;
         // Generate Updated .ics file
         $destination = APPPATH . '../assets/ics_files/';
@@ -2139,7 +2194,7 @@ class Calendar extends Public_Controller {
         $event_details = $this->calendar_model->get_event_details($event_sid); //Get Event Details
         // Set defaults
         $send_to_interviewers = $send_to_extraparticipants = $send_to_ae = true;
-         //
+        //
         $employer_info = $this->session->userdata('logged_in')['employer_detail'];
         // Set default user info array
         $user_info['first_name'] = $employer_info['first_name'];
@@ -2153,7 +2208,7 @@ class Calendar extends Public_Controller {
         $event_category = $event_details['category'];
         // Set applicant/employee details
         // if user type is not 'Personal'
-        if ($event_details['users_type'] != 'personal'){
+        if ($event_details['users_type'] != 'personal') {
             $detail_type = $event_details['users_type'] == 'applicant' ? 'get_applicant_detail' : 'get_employee_detail';
             $user_info = $this->calendar_model->$detail_type($event_details['applicant_job_sid']);
         }
@@ -2165,12 +2220,24 @@ class Calendar extends Public_Controller {
 
         // Reset categories
         switch ($event_details['category']) {
-            case 'interview': $event_category = 'In-Person Interview'; break;
-            case 'interview-phone': $event_category = 'Phone Interview'; break;
-            case 'interview-voip': $event_category = 'Voip Interview'; break;
-            case 'training-session': $event_category = 'Training Session'; break;
-            case 'other': $event_category = 'Other Appointment'; break;
-            default: $event_category = ucwords($event_category); break;
+            case 'interview':
+                $event_category = 'In-Person Interview';
+                break;
+            case 'interview-phone':
+                $event_category = 'Phone Interview';
+                break;
+            case 'interview-voip':
+                $event_category = 'Voip Interview';
+                break;
+            case 'training-session':
+                $event_category = 'Training Session';
+                break;
+            case 'other':
+                $event_category = 'Other Appointment';
+                break;
+            default:
+                $event_category = ucwords($event_category);
+                break;
         }
 
         $interviewers_rows = $this->generate_interviewers_rows(
@@ -2204,18 +2271,18 @@ class Calendar extends Public_Controller {
                 $applicant_job_list_sid = $user_info['job_applications'][0]['sid'];
                 $applicant_jobs_list = $event_details['applicant_jobs_list'];
 
-                if($applicant_jobs_list != '' && $applicant_jobs_list != null) {
+                if ($applicant_jobs_list != '' && $applicant_jobs_list != null) {
                     $applicant_jobs_array = explode(',', $applicant_jobs_list);
                 }
 
                 $user_tile .= '<p><b>Job(s) Applied:</b></p>';
                 $user_tile .= '<ol>';
 
-                if(!empty($applicant_jobs_array)) {
+                if (!empty($applicant_jobs_array)) {
                     foreach ($user_info['job_applications'] as $job_application) {
                         $applicant_sid = $job_application['sid'];
 
-                        if(in_array($applicant_sid, $applicant_jobs_array)) {
+                        if (in_array($applicant_sid, $applicant_jobs_array)) {
                             $job_title = !empty($job_application['job_title']) ? $job_application['job_title'] : '';
                             $desired_job_title = !empty($job_application['desired_job_title']) ? $job_application['desired_job_title'] : '';
 
@@ -2230,13 +2297,12 @@ class Calendar extends Public_Controller {
                             $user_tile .= '<li>' . $title . '</li>';
                             $applicant_job_list_sid = $job_application['sid'];
                         }
-
                     }
                 } else {
                     $job_application = $user_info['job_applications'];
                     $job_application_last_index = count($job_application) - 1;
 
-                    for ($i = 0; $i<count($job_application); $i++) {
+                    for ($i = 0; $i < count($job_application); $i++) {
                         $applicant_sid = $job_application[$i]['sid'];
 
                         $job_title = !empty($job_application[$i]['job_title']) ? $job_application[$i]['job_title'] : '';
@@ -2252,7 +2318,6 @@ class Calendar extends Public_Controller {
 
                         $user_tile .= '<li>' . $title . '</li>';
                         $applicant_job_list_sid = $job_application[$job_application_last_index]['sid'];
-
                     }
                 }
 
@@ -2274,7 +2339,7 @@ class Calendar extends Public_Controller {
         $from_name = ucwords($company_info["CompanyName"]);
         $message_hf = message_header_footer($company_id, ucwords($company_info["CompanyName"]));
         $applicant_name = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-        $email_subject = ucwords($event_category) . ' - Has Been ' .ucwords($event_details['event_status']) . ' ' . ucwords($company_info['CompanyName']);
+        $email_subject = ucwords($event_category) . ' - Has Been ' . ucwords($event_details['event_status']) . ' ' . ucwords($company_info['CompanyName']);
         // Set subject for 'Personal' type
         // and categories 'Call, Email'
         if ($event_details['users_type'] == 'personal' && ($event_details['category'] == 'call' || $event_details['category'] == 'email'))
@@ -2288,27 +2353,24 @@ class Calendar extends Public_Controller {
 
         if ($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails') {
             $email_message .= '<p><b>This is a reminder email regarding an upcoming event. Please, find the details below.</b></p>';
-        }
-        else if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event') {
+        } else if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event') {
             // $email_message .= '<p><b>Your Event Details Have been Changed Please update your calendar as per below information. </b></p>';
             $email_message .= '<p><b>Your Event details have been Changed. Please update your calendar with the new information. </b></p>';
-        }else{
+        } else {
             // Set subject for 'Personal' type
             // and categories 'Call, Email'
-            if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call' )
-                $email_message .= '<p>You have scheduled an event regarding making a ' . ucwords($event_category) . ' to <b>'.$event_details['users_name'].'</b></p>';
+            if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call')
+                $email_message .= '<p>You have scheduled an event regarding making a ' . ucwords($event_category) . ' to <b>' . $event_details['users_name'] . '</b></p>';
             else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'email')
-                $email_message .= '<p>You have scheduled an event regarding sending an ' . ucwords($event_category) . ' to <b>'.$event_details['users_name'].'</b></p>';
-            else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session'){
+                $email_message .= '<p>You have scheduled an event regarding sending an ' . ucwords($event_category) . ' to <b>' . $event_details['users_name'] . '</b></p>';
+            else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session') {
                 $email_message .= '<p>You have scheduled a ' . ucwords($event_category) . ' for </p>';
                 $email_message .= $interviewers_rows;
-            }
-            else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'Appointment'){
+            } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'Appointment') {
                 $email_message .= '<p>You have scheduled an Appointment for </p>';
                 $email_message .= $interviewers_rows;
-            }
-            else{
-                if($event_details['event_status'] == 'pending')
+            } else {
+                if ($event_details['event_status'] == 'pending')
                     $email_message .= '<p>' . ucwords($event_category) . ' has been planned with status of ' . ucwords($event_details['event_status']) . ' for you with <b>"{{target_user}}"</b></p>';
                 else
                     $email_message .= '<p>' . ucwords($event_category) . ' has been ' . ucwords($event_details['event_status']) . ' for you with <b>"{{target_user}}"</b></p>';
@@ -2322,8 +2384,8 @@ class Calendar extends Public_Controller {
         $email_message .= ' ';
         $email_message .= '<p><b>Event Details are as follows:</b></p>'; //event information
 
-        if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call' )
-            $email_message .= '<p><b>Event :</b> ' . ucwords($event_category) . '  "' . ucwords($event_details['users_name']) . '" on '.$event_details['users_phone'].'</p>';
+        if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call')
+            $email_message .= '<p><b>Event :</b> ' . ucwords($event_category) . '  "' . ucwords($event_details['users_name']) . '" on ' . $event_details['users_phone'] . '</p>';
         else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'email')
             $email_message .= '<p><b>Event :</b> Send an ' . ucwords($event_category) . ' to "' . ucwords($event_details['users_name']) . '"</p>';
         else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session')
@@ -2333,7 +2395,7 @@ class Calendar extends Public_Controller {
         else
             // $email_message .= '<p><b>Event :</b> ' . ucwords($event_category) . ' With "{{target_user}}"</p>';
 
-        $email_message .= '<p><b>Date :</b> ' . date_with_time($event_details['date']) . '</p>';
+            $email_message .= '<p><b>Date :</b> ' . date_with_time($event_details['date']) . '</p>';
         $email_message .= '<p><b>Time :</b> From ' . $event_details['eventstarttime'] . ' To ' . $event_details['eventendtime'] . '</p>';
         $email_message .= '<hr />';
         $comment_tile = ''; //Comment Check
@@ -2379,11 +2441,11 @@ class Calendar extends Public_Controller {
             $email_message .= '<hr />';
         }
 
-        if($event_details['users_type'] != 'personal') $email_message .= $interviewers_rows;
+        if ($event_details['users_type'] != 'personal') $email_message .= $interviewers_rows;
 
         if (!empty($event_details['address'])) {
-        // if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip' && $event_details['category'] != 'call' && $event_details['category'] != 'email') {
-            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=".GOOGLE_API_KEY."&markers=color:blue|label:|" . urlencode($event_details['address']);
+            // if (!empty($event_details['address']) && $event_details['category'] != 'interview-phone' && $event_details['category'] != 'interview-voip' && $event_details['category'] != 'call' && $event_details['category'] != 'email') {
+            $map_url = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($event_details['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($event_details['address']);
             $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($event_details['address']) . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
             $email_message .= '<p><b>Address:</b> ' . $event_details['address'] . ' </p>';
             $email_message .= '<p> ' . $map_anchor . ' </p>';
@@ -2396,21 +2458,22 @@ class Calendar extends Public_Controller {
         $user_message = $email_message; //Send Email to Applicant
 
         // For Send Reminder Emails
-        if($action == 'send_reminder_emails' && !sizeof($email_list)){
+        if ($action == 'send_reminder_emails' && !sizeof($email_list)) {
             header('content-type: application/json');
-            echo json_encode(array('Response'=>'Error! this event is no longer available.', 'Redirect'=> FALSE, 'Status' => FALSE)); exit(0);
+            echo json_encode(array('Response' => 'Error! this event is no longer available.', 'Redirect' => FALSE, 'Status' => FALSE));
+            exit(0);
         }
 
-        if($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails'){
+        if ($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails') {
             $date = date('Y-m-d H:i:s');
             foreach ($email_list as $k0 => $v0) {
                 $user_message = $email_message; //Send Email to Applicant
                 $user_message = str_replace('{{user_name}}', $v0['value'], $user_message);
                 $user_message = str_replace('{{user_tile}}', ' ', $user_message);
-                $user_message = str_replace('{{comment_tile}}', ( $v0['type'] == 'employee' || $v0['type'] == 'applicant' ? '' : $event_details['comment'] ), $user_message);
+                $user_message = str_replace('{{comment_tile}}', ($v0['type'] == 'employee' || $v0['type'] == 'applicant' ? '' : $event_details['comment']), $user_message);
                 $user_message = str_replace('{{target_user}}', ucwords($company_info['CompanyName']), $user_message);
                 //
-                if($action != 'send_cron_reminder_emails'){
+                if ($action != 'send_cron_reminder_emails') {
                     // Set data array
                     $data_array = array();
                     $data_array['event_sid']     = $event_sid;
@@ -2435,13 +2498,14 @@ class Calendar extends Public_Controller {
                         $event_details['category'],
                         $event_details['learning_center_training_sessions']
                     );
-                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message );
+                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
                 $this->log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $v0['email_address'], $email_subject, $user_message, $from_name, $ics_file);
             }
-            if($action != 'send_cron_reminder_emails'){
+            if ($action != 'send_cron_reminder_emails') {
                 header('content-type: application/json');
-                echo json_encode(array('Response'=>'Reminder emails are sent to the selected emails.', 'Redirect'=> FALSE, 'Status' => TRUE)); exit(0);
-            }else {
+                echo json_encode(array('Response' => 'Reminder emails are sent to the selected emails.', 'Redirect' => FALSE, 'Status' => TRUE));
+                exit(0);
+            } else {
                 // $this->_e($user_message, true, true);
                 exit(0);
             };
@@ -2450,37 +2514,37 @@ class Calendar extends Public_Controller {
         // Don't send email to interviewers
         // and to non-employee interviewers in case of
         // type 'Personal'
-        if($event_details['users_type'] == 'personal') $send_to_extraparticipants = $send_to_interviewers = false;
+        if ($event_details['users_type'] == 'personal') $send_to_extraparticipants = $send_to_interviewers = false;
         // Send email to applicant/employee/person
-        if($send_to_ae){
+        if ($send_to_ae) {
             $user_message = str_replace('{{user_name}}', $applicant_name, $user_message);
             $user_message = str_replace('{{user_tile}}', ' ', $user_message);
             $user_message = str_replace('{{comment_tile}}', ' ', $user_message);
             $user_message = str_replace('{{target_user}}', ucwords($company_info['CompanyName']), $user_message);
             //
-            if($event_details['users_type'] != 'personal'){
+            if ($event_details['users_type'] != 'personal') {
                 // Add event status buttons
                 $user_email_status_button_rows =
-                $this->generate_event_status_rows(
-                    $event_details['sid'],
-                    $user_info['sid'],
-                    $event_details['users_type'],
-                    $user_info['first_name'].' '.$user_info['last_name'],
-                    $user_info['email'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions']
+                    $this->generate_event_status_rows(
+                        $event_details['sid'],
+                        $user_info['sid'],
+                        $event_details['users_type'],
+                        $user_info['first_name'] . ' ' . $user_info['last_name'],
+                        $user_info['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions']
 
-                );
-                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message );
-            }else
-                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', '', $user_message );
+                    );
+                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
+            } else
+                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', '', $user_message);
             $this->log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $user_info['email'], $email_subject, $user_message, $from_name, $ics_file);
 
             // $this->_e($email_subject, true);
             // $this->_e($user_message, true);
         }
         // Send emails to Interviewers
-        if($send_to_interviewers){
+        if ($send_to_interviewers) {
             //
             foreach ($employers as $employer) { //Send Email To Employers
                 $user_message = $email_message;
@@ -2493,23 +2557,23 @@ class Calendar extends Public_Controller {
 
                 // Add event status buttons
                 $interviewer_email_status_button_rows =
-                $this->generate_event_status_rows(
-                    $event_details['sid'],
-                    $employer['sid'],
-                    'interviewer',
-                    $employer_name,
-                    $employer['email'],
-                    $event_details['category'],
-                    $event_details['learning_center_training_sessions']
-                );
-                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message );
+                    $this->generate_event_status_rows(
+                        $event_details['sid'],
+                        $employer['sid'],
+                        'interviewer',
+                        $employer_name,
+                        $employer['email'],
+                        $event_details['category'],
+                        $event_details['learning_center_training_sessions']
+                    );
+                $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $interviewer_email_status_button_rows, $user_message);
                 // $this->_e($user_message, true);
 
                 $this->log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $employer['email'], $email_subject, $user_message, $from_name, $ics_file);
             }
         }
         // Send emails to non-employee Interviewers
-        if($send_to_extraparticipants){
+        if ($send_to_extraparticipants) {
             if (!empty($event_external_participants)) { //Send Email To External Participants
                 foreach ($event_external_participants as $event_external_participant) {
                     // $this->_e($event_external_participant, true, true);
@@ -2521,16 +2585,16 @@ class Calendar extends Public_Controller {
                     $user_message  = str_replace('{{target_user}}', $applicant_name, $user_message);
                     // Add event status buttons
                     $extrainterviewer_email_status_button_rows =
-                    $this->generate_event_status_rows(
-                        $event_details['sid'],
-                        $event_external_participant['sid'],
-                        'extrainterviewer',
-                        $employer_name,
-                        $event_external_participant['email'],
-                        $event_details['category'],
-                        $event_details['learning_center_training_sessions']
-                    );
-                    $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message );
+                        $this->generate_event_status_rows(
+                            $event_details['sid'],
+                            $event_external_participant['sid'],
+                            'extrainterviewer',
+                            $employer_name,
+                            $event_external_participant['email'],
+                            $event_details['category'],
+                            $event_details['learning_center_training_sessions']
+                        );
+                    $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
                     // $this->_e($user_message, true);
                     $this->log_and_send_email_with_attachment(FROM_EMAIL_NOTIFICATIONS, $event_external_participant['email'], $email_subject, $user_message, $from_name, $ics_file);
                 }
@@ -2548,13 +2612,14 @@ class Calendar extends Public_Controller {
      *
      * @return JSON
      */
-    private function send_reminder_emails($res, $company_info){
-        if(
+    private function send_reminder_emails($res, $company_info)
+    {
+        if (
             !$this->input->post('emails') ||
             !is_array($this->input->post('emails')) ||
             !sizeof($this->input->post('emails')) ||
             !$this->input->post('event_id')
-        ){
+        ) {
             $res['Response'] = 'Error! Invalid request made.';
             $this->response($res);
         }
@@ -2565,7 +2630,7 @@ class Calendar extends Public_Controller {
             $event_sid
         );
         //
-        if(!sizeof($event_detail)) {
+        if (!sizeof($event_detail)) {
             $res['Response'] = 'Error! this event is no longer available.';
             $this->response($res);
         }
@@ -2613,9 +2678,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_event_availablity_requests($event_sid, $current_page){
+    function get_event_availablity_requests($event_sid, $current_page)
+    {
         // Check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // Check if request method is not GET
@@ -2632,7 +2698,7 @@ class Calendar extends Public_Controller {
             $current_page,
             $this->limit
         );
-        if(!$history){
+        if (!$history) {
             $return_array['Response'] = 'no history found.';
             $this->response($return_array);
         }
@@ -2644,10 +2710,10 @@ class Calendar extends Public_Controller {
         $return_array['Response'] = 'success';
         $return_array['Limit']    = $this->limit;
         $return_array['ListSize'] = $this->list_size;
-        if(isset($history['Count'])){
+        if (isset($history['Count'])) {
             $return_array['Total']    = $history['Count'];
             $return_array['History']  = $history['History'];
-        }else
+        } else
             $return_array['History']  = $history;
         $this->response($return_array);
     }
@@ -2666,7 +2732,8 @@ class Calendar extends Public_Controller {
      * @return Array
      *
      */
-    private function generate_interviewers_rows($employers, $event_details, $event_category, $event_sid, $user_info){
+    private function generate_interviewers_rows($employers, $event_details, $event_category, $event_sid, $user_info)
+    {
         if (!sizeof($employers)) return '';
         $show_emails = array(); //Interviewers
 
@@ -2674,13 +2741,12 @@ class Calendar extends Public_Controller {
             $show_emails = explode(',', $event_details['interviewer_show_email']);
         }
         $interviewers_rows = '';
-        if($event_category == '') $event_details['category'];
+        if ($event_category == '') $event_details['category'];
         //
-        if($event_details['users_type'] == 'personal' && ( $event_details['category'] == 'other' || $event_details['category'] == 'training-session' )){
+        if ($event_details['users_type'] == 'personal' && ($event_details['category'] == 'other' || $event_details['category'] == 'training-session')) {
             $interviewers_rows .= '';
             // $event_category = ;
-        }
-        else
+        } else
             $interviewers_rows .= '<p><b>Your ' . $event_category . ' is ' . ucwords($event_details['event_status']) . ' with:</b></p>';
 
         $interviewers_rows .= '<ul>';
@@ -2730,9 +2796,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_reminder_email_history($event_sid, $current_page){
+    function get_reminder_email_history($event_sid, $current_page)
+    {
         // Check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // Check if request method is not GET
@@ -2749,7 +2816,7 @@ class Calendar extends Public_Controller {
             $current_page,
             $this->limit
         );
-        if(!$history){
+        if (!$history) {
             $return_array['Response'] = 'no history found.';
             $this->response($return_array);
         }
@@ -2758,10 +2825,10 @@ class Calendar extends Public_Controller {
         $return_array['Response'] = 'success';
         $return_array['Limit']    = $this->limit;
         $return_array['ListSize'] = $this->list_size;
-        if(isset($history['Count'])){
+        if (isset($history['Count'])) {
             $return_array['Total']    = $history['Count'];
             $return_array['History']  = $history['History'];
-        }else
+        } else
             $return_array['History']  = $history;
         $this->response($return_array);
     }
@@ -2777,10 +2844,11 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function get_event_change_history($event_sid, $current_page){
+    function get_event_change_history($event_sid, $current_page)
+    {
 
         // Check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // Check if request method is not GET
@@ -2799,7 +2867,7 @@ class Calendar extends Public_Controller {
             $this->limit
         );
 
-        if(!$history){
+        if (!$history) {
             $return_array['Response'] = 'no history found.';
             $this->response($return_array);
         }
@@ -2808,10 +2876,10 @@ class Calendar extends Public_Controller {
         $return_array['Response'] = 'success';
         $return_array['Limit']    = $this->limit;
         $return_array['ListSize'] = $this->list_size;
-        if(isset($history['Count'])){
+        if (isset($history['Count'])) {
             $return_array['Total']    = $history['Count'];
             $return_array['History']  = $history['History'];
-        }else
+        } else
             $return_array['History']  = $history;
         $this->response($return_array);
     }
@@ -2825,9 +2893,10 @@ class Calendar extends Public_Controller {
      * @return JSON
      *
      */
-    function fetch_online_videos(){
+    function fetch_online_videos()
+    {
         // Check if ajax request is not set
-        if(!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
+        if (!$this->input->is_ajax_request()) redirect('calendar/my_events', 'referesh');
         // set return array
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
         // Check if request method is not GET
@@ -2846,7 +2915,7 @@ class Calendar extends Public_Controller {
             $company_id,
             $employee_id
         );
-        if(!$videos){
+        if (!$videos) {
             $return_array['Response'] = 'no videos found.';
             $this->response($return_array);
         }
@@ -2872,7 +2941,8 @@ class Calendar extends Public_Controller {
         $company_sid,
         $event_sid,
         $event_add_post,
-        $mode = 'save'){
+        $mode = 'save'
+    ) {
 
         // Reset date/times from UTC to server time
         //reset_event_datetime($event_add_post, $this, true);
@@ -2880,7 +2950,7 @@ class Calendar extends Public_Controller {
         $array['company_sid'] = $company_sid;
         $array['created_by']  = $event_add_post['employee_sid'];
         $array['session_topic'] = $event_add_post['title'];
-        if(isset($event_add_post['description']))
+        if (isset($event_add_post['description']))
             $array['session_description'] = $event_add_post['description'];
         $array['session_status'] = 'pending';
         $array['portal_schedule_event_details'] = serialize(array($event_sid => 'training-session'));
@@ -2893,8 +2963,8 @@ class Calendar extends Public_Controller {
 
         $array['online_video_sid'] = NULL;
         $video_sid_arr = array();
-        if(isset($event_add_post['video_ids']) && !is_null($event_add_post['video_ids']) && $event_add_post['video_ids'] != ''){
-            $video_sid_arr = explode(',',$event_add_post['video_ids']);
+        if (isset($event_add_post['video_ids']) && !is_null($event_add_post['video_ids']) && $event_add_post['video_ids'] != '') {
+            $video_sid_arr = explode(',', $event_add_post['video_ids']);
             $array['online_video_sid'] = $event_add_post['video_ids'];
         }
 
@@ -2903,11 +2973,11 @@ class Calendar extends Public_Controller {
         //
         $external_participants = @json_decode($event_add_post['external_participants'], true);
         //
-        if($mode != 'update')
+        if ($mode != 'update')
             $session_sid = $this->calendar_model->insert_learning_center_training_session($array);
-        else{
+        else {
             $session_sid = $event_add_post['lcts'];
-            if($session_sid == '')
+            if ($session_sid == '')
                 $session_sid = $this->calendar_model->insert_learning_center_training_session($array);
             $this->calendar_model->update_learning_center_training_session($session_sid, $array);
             $last_active_assignments = $this->calendar_model->get_last_active_training_session_assignments($session_sid);
@@ -2927,7 +2997,7 @@ class Calendar extends Public_Controller {
             }
 
             foreach ($interviewer_list as $sid) {
-                if($mode == 'update')
+                if ($mode == 'update')
                     $last_active_assignment = $this->get_assignment_record($last_active_assignments, 'employee', $sid);
                 $array = array();
                 $array['training_session_sid'] = $session_sid;
@@ -2950,7 +3020,7 @@ class Calendar extends Public_Controller {
 
         // Drop all non-employee
         $this->calendar_model->drop_all_non_employee_from_lc($session_sid);
-        if($external_participants[0]['name'] != ''){
+        if ($external_participants[0]['name'] != '') {
             foreach ($external_participants as $key => $value) {
                 $array = array();
                 $array['training_session_sid'] = $session_sid;
@@ -2982,7 +3052,8 @@ class Calendar extends Public_Controller {
      *
      * @return Array
      */
-    private function get_assignment_record($assignments, $user_type, $user_sid) {
+    private function get_assignment_record($assignments, $user_type, $user_sid)
+    {
         if (!sizeof($assignments)) return array();
         foreach ($assignments as $assignment) {
             if ($assignment['user_type'] == $user_type && $assignment['user_sid'] == $user_sid)
@@ -3000,24 +3071,26 @@ class Calendar extends Public_Controller {
      *
      * @return JSON
      */
-    function reschedule_training_session(){
-        if(!$this->input->is_ajax_request()) redirect();
+    function reschedule_training_session()
+    {
+        if (!$this->input->is_ajax_request()) redirect();
         //
         $return_array = array();
         $return_array['Redirect'] = TRUE;
         $return_array['Status'] = FALSE;
         //
-        if($this->input->method() != 'post'){
+        if ($this->input->method() != 'post') {
             $return_array['Response'] = 'Invalid request.';
             $this->send_response($return_array);
         }
 
         //
-        if( !$this->input->post('lcid') ||
+        if (
+            !$this->input->post('lcid') ||
             !$this->input->post('event_date') ||
             !$this->input->post('event_start_time') ||
             !$this->input->post('event_end_time')
-        ){
+        ) {
             $return_array['Response'] = 'Key is missing from request.';
             $this->send_response($return_array);
         }
@@ -3027,7 +3100,7 @@ class Calendar extends Public_Controller {
         // Fetch the event
         $event_row = $this->calendar_model->fetch_ts_event_row_by_lcid($this->input->post('lcid'));
 
-        if(!$event_row){
+        if (!$event_row) {
             $return_array['Response'] = 'Oops! something went wrong.';
             $this->send_response($return_array);
         }
@@ -3049,7 +3122,7 @@ class Calendar extends Public_Controller {
             $event_row['learning_center_training_sessions']
         );
 
-        if(!$training_session_sid){
+        if (!$training_session_sid) {
             $this->calendar_model->trans('trans_rollback');
             $return_array['Response'] = 'Oops! something went wrong.';
             $this->send_response($return_array);
@@ -3066,7 +3139,7 @@ class Calendar extends Public_Controller {
             // Add the LC assignments
             $this->calendar_model->_insert(
                 'learning_center_training_sessions_assignments',
-                 $v0
+                $v0
             );
         }
 
@@ -3082,20 +3155,20 @@ class Calendar extends Public_Controller {
 
         // Add it to event
         $event_sid =
-        $this->calendar_model->_insert(
-            'portal_schedule_event',
-            $event_row['event_details']
-        );
+            $this->calendar_model->_insert(
+                'portal_schedule_event',
+                $event_row['event_details']
+            );
 
         //
-        if(!$event_sid){
+        if (!$event_sid) {
             $this->calendar_model->trans('trans_rollback');
             $return_array['Response'] = 'Oops! something went wrong.';
             $this->send_response($return_array);
         }
 
         // Add external particpants
-        if(sizeof($event_row['event_external_participants'])){
+        if (sizeof($event_row['event_external_participants'])) {
             foreach ($event_row['event_external_participants'] as $k0 => $v0) {
                 unset($v0['sid']);
                 $v0['event_sid'] = $event_sid;
@@ -3121,14 +3194,14 @@ class Calendar extends Public_Controller {
         $return_array['Status'] = TRUE;
         $return_array['Response'] = 'Event is rescheduled.';
         $this->send_response($return_array);
-
     }
 
     /**
      * Send JSON
      *
      */
-    private function send_response($array){
+    private function send_response($array)
+    {
         header('Content-Type: application/json');
         echo json_encode($array);
         exit(0);
@@ -3151,7 +3224,7 @@ class Calendar extends Public_Controller {
         $user_id,
         $company_sid,
         $difference_array = array()
-    ){
+    ) {
         // Create an Insert array
         $data_array = array(
             'event_sid' => $event_sid,
@@ -3164,8 +3237,9 @@ class Calendar extends Public_Controller {
         return $this->calendar_model->_insert('portal_schedule_event_history', $data_array);
     }
 
-    public function insert_event_timezones($key){
-        if($key = "wercxviuweijdiwerskmckjwirm24234354jksfirsdfq3497qr4jsdkfhasdfq8widruqwiqejfqkhswer"){
+    public function insert_event_timezones($key)
+    {
+        if ($key = "wercxviuweijdiwerskmckjwirm24234354jksfirsdfq3497qr4jsdkfhasdfq8widruqwiqejfqkhswer") {
             $this->db->select('sid');
             $this->db->select('timezone');
             $this->db->where('parent_sid', 0);
@@ -3174,9 +3248,9 @@ class Calendar extends Public_Controller {
             $records_obj = $this->db->get('users');
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-            foreach($records_arr as $company){
+            foreach ($records_arr as $company) {
                 $timezone = STORE_DEFAULT_TIMEZONE_ABBR;
-                if(!empty($company['timezone']))
+                if (!empty($company['timezone']))
                     $timezone = $company['timezone'];
                 $this->db->update(
                     'portal_schedule_event',
@@ -3188,19 +3262,18 @@ class Calendar extends Public_Controller {
         }
     }
 
-    public function handle_short_link($short_link){
-        if(!empty($short_link) && $short_link != NULL){
-            $this->db->where('short_link',$short_link);
+    public function handle_short_link($short_link)
+    {
+        if (!empty($short_link) && $short_link != NULL) {
+            $this->db->where('short_link', $short_link);
             $result = $this->db->get('short_links')->result_array();
-            if(sizeof($result)){
+            if (sizeof($result)) {
                 redirect($result[0]['redirect_link']);
-            }else{
+            } else {
                 redirect(base_url('login'));
             }
-        }else{
+        } else {
             redirect(base_url('login'));
         }
-
     }
-
 }
