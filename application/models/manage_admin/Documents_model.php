@@ -156,6 +156,15 @@ class Documents_model extends CI_Model
         if (strtolower($document) == 'end_user_license_agreement') {
             $this->db->insert('form_document_eula', $dataToSave);
         } elseif (strtolower($document) == 'credit_card_authorization_form') {
+
+            $documentCreditCard = $this->db
+                ->from('form_document_credit_card_authorization')
+                ->where('company_sid', $company_sid)
+                ->count_all_results();
+            if ($documentCreditCard > 0) {
+                return;
+            }
+
             $this->db->insert('form_document_credit_card_authorization', $dataToSave);
         } elseif (strtolower($document) == 'company_contacts') {
             $this->db->insert('form_document_company_contacts', $dataToSave);

@@ -1435,13 +1435,17 @@ class Companies extends Admin_Controller
             $company_admin_invoices = $this->admin_invoices_model->Get_all_admin_invoices(1, 10000, $company_sid);
             $company_portal_status = $this->maintenance_mode_model->get_employer_portal_record($company_sid);
             $company_portal_invoices = $this->invoice_model->get_all_invoices($company_sid);
-            $company_documents_status = $this->company_model->get_documents_status($company_sid);
+          // $company_documents_status = $this->company_model->get_documents_status($company_sid);
             $company_trial_period_detail = $this->company_model->get_company_trial_period_detail($company_sid);
             $company_billing_contacts = $this->company_billing_contacts_model->get_all_billing_contacts($company_sid);
             $company_portal_email_templates = $this->portal_email_templates_model->getallemailtemplates($company_sid);
             $job_fair_page_status = $this->company_model->get_job_fair_status($company_sid);
             $this->data['job_fair_page_status'] = $job_fair_page_status;
             $this->form_validation->set_rules('company_sid', 'company_sid', 'required');
+
+
+            $company_documents_status = $this->company_model->getDocumentsStatusNew($company_sid);
+
 
             if ($this->form_validation->run() == false) {
 

@@ -43,7 +43,9 @@ class Documents extends Admin_Controller {
             $company_admin_email = $this->input->post('company_admin_email');
             $company_admin_full_name = $this->input->post('company_admin_full_name');
 
+
             switch ($perform_action) {
+                
                 case 'generate_form':
                     if ($form_name == 'eula') {
                         $verification_key = random_key(80);

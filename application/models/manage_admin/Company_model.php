@@ -3415,4 +3415,83 @@ class Company_model extends CI_Model
         $this->db->where('module_sid', '13');
         $this->db->update('company_modules', $data);
     }
+
+
+    //
+    function getDocumentsStatusNew($company_sid)
+    {
+        //
+        $documentsArray = [];
+
+        $companyData = $this->db
+            ->select('CompanyName')
+            ->where('sid', $company_sid)
+            ->get('users')
+            ->row_array();
+
+        //
+        $documentCreditCard = $this->db
+            ->select('status as cc_auth_status')
+            ->where('company_sid', $company_sid)
+            ->order_by('sid', 'DESC')
+            ->get('form_document_credit_card_authorization')
+            ->row_array();
+
+        if (empty($documentCreditCard)) {
+            $documentCreditCard['cc_auth_status'] = '';
+        }
+
+        //
+        $documentEula = $this->db
+            ->select('status as eula_status')
+            ->where('company_sid', $company_sid)
+            ->order_by('sid', 'DESC')
+            ->get('form_document_eula')
+            ->row_array();
+
+        if (empty($documentEula)) {
+            $documentEula['eula_status'] = '';
+        }
+
+        //
+        $payrollAgreement = $this->db
+            ->select('status as fpa_status')
+            ->where('company_sid', $company_sid)
+            ->order_by('sid', 'DESC')
+            ->get('form_payroll_agreement')
+            ->row_array();
+
+        if (empty($payrollAgreement)) {
+            $payrollAgreement['fpa_status'] = '';
+        }
+
+        //
+        $documentCompanyContacts = $this->db
+            ->select('status as company_contacts_status')
+            ->where('company_sid', $company_sid)
+            ->order_by('sid', 'DESC')
+            ->get('form_document_company_contacts')
+            ->row_array();
+
+        if (empty($documentCompanyContacts)) {
+            $documentCompanyContacts['company_contacts_status'] = '';
+        }
+
+        //
+        $payrollCreditCardAuthorization = $this->db
+            ->select('status as payroll_cc_auth_status')
+            ->where('company_sid', $company_sid)
+            ->order_by('sid', 'DESC')
+            ->get('form_document_payroll_credit_card_authorization')
+            ->row_array();
+
+        if (empty($payrollCreditCardAuthorization)) {
+            $payrollCreditCardAuthorization['company_contacts_status'] = '';
+        }
+
+        //
+        $documentsArray = array_merge($documentsArray, $companyData, $documentCreditCard, $documentEula, $payrollAgreement, $documentCompanyContacts, $payrollCreditCardAuthorization);
+
+        return  $documentsArray;
+    }
 }
