@@ -198,6 +198,61 @@ class Lb_gusto
         );
     }
 
+    /**
+     * converts bank array to Gusto
+     *
+     * @param array $bankAccounts
+     * @return array
+     */
+    public function setAndGetPaymentMethodSplits(array $bankAccounts): array
+    {
+        // set return
+        $return = [
+            'split_by' => 'Percentage',
+            'splits' => []
+        ];
+        // when there is only 1 split
+        if (count($bankAccounts) === 1) {
+            //
+            $return['splits'] = [
+                "uuid" => $bankAccounts[0]["gusto_uuid"],
+                "name" => $bankAccounts[0]["account_title"],
+                "priority" => 1,
+                'split_amount' => 100,
+            ];
+            //
+            return $return;
+        }
+        // for multiple
+        // set the split by
+        if ($bankAccounts[0]['deposit_type'] == 'amount') {
+            $return['split_by'] = 'Amount';
+        }
+        // for first bank account
+        $return['splits'][0] = [
+            "uuid" => $bankAccounts[0]["gusto_uuid"],
+            "name" => $bankAccounts[0]["account_title"],
+            "priority" => 1,
+            'split_amount' => $bankAccounts[0]["account_percentage"],
+        ];
+        // for second bank account
+        $return['splits'][1] = [
+            "uuid" => $bankAccounts[1]["gusto_uuid"],
+            "name" => $bankAccounts[1]["account_title"],
+            "priority" => 2,
+            'split_amount' => null,
+        ];
+
+        if ($return["split_by"] === "Amount") {
+            $return['splits'][1]['split_amount'] = null;
+        } else {
+            $return['splits'][1]["split_amount"] =
+                100 - $return['splits'][0]["split_amount"];
+        }
+        //
+        return $return;
+    }
+
     // ----------------------------------------------------------
     // Template
     // ----------------------------------------------------------
@@ -614,6 +669,21 @@ class Lb_gusto
         // state_taxes
         $urls["state_taxes"] =
             "v1/employees/{$key1}/state_taxes";
+        // payment_method
+        $urls["payment_method"] =
+            "v1/employees/{$key1}/payment_method";
+        // bank_accounts
+        $urls["employee_bank_accounts"] =
+            "v1/employees/{$key1}/bank_accounts";
+        // forms
+        $urls["employee_forms"] =
+            "v1/employees/{$key1}/forms";
+        // benefits
+        $urls["employee_benefits"] =
+            "v1/employees/{$key1}/employee_benefits";
+            // garnishments
+        $urls["garnishments"] =
+            "v1/employees/{$key1}/garnishments";
 
 
 

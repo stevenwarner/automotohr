@@ -10,24 +10,12 @@ loadUpModel("v1/Payroll/Base_payroll_model", "base_payroll_model");
  */
 class Employee_payroll_model extends Base_payroll_model
 {
-    /**
-     * holds the admin data
-     * @var array
-     */
-    private $adminArray;
 
     /**
      * main function
      */
     public function __construct()
     {
-        // set the admin
-        $this->adminArray = [
-            'first_name' => 'Steven',
-            'last_name' => 'Warner',
-            'email' => 'Steven@AutomotoHR.com',
-            'phone' => '951-385-8204',
-        ];
     }
 
     /**
@@ -346,20 +334,23 @@ class Employee_payroll_model extends Base_payroll_model
             ]
         );
         // sync work address
-        // $this->syncWorkAddress();
+        $this->syncWorkAddress();
         // sync home address
-        // $this->syncHomeAddress();
-        // sync job & compensations
-        // $this->syncJobAndCompensations();
-        // sync employments
-        // $this->syncEmployments();
-        // sync federal tax
-        // $this->syncFederalTax();
-        // sync state tax
+        $this->syncHomeAddress();
+        // // sync job & compensations
+        $this->syncJobAndCompensations();
+        // // sync employments
+        $this->syncEmployments();
+        // // sync federal tax
+        $this->syncFederalTax();
+        // // sync state tax
         $this->syncStateTax();
+        // // sync payment method
+        $this->syncPaymentMethod();
+        // // sync forms
+        $this->syncForms();
 
-
-        die("sadas");
+        return true;
     }
 
     /**
@@ -413,7 +404,7 @@ class Employee_payroll_model extends Base_payroll_model
             ->lb_gusto
             ->hasGustoErrors($response);
         //
-        if ($errors) {
+        if ($errors || !$response) {
             return false;
         }
         //
@@ -505,6 +496,9 @@ class Employee_payroll_model extends Base_payroll_model
             ->hasGustoErrors($response);
         //
         if ($errors) {
+            return false;
+        }
+        if (!$response) {
             return false;
         }
         //
@@ -713,6 +707,9 @@ class Employee_payroll_model extends Base_payroll_model
             ->hasGustoErrors($response);
         //
         if ($errors) {
+            return false;
+        }
+        if (!$response) {
             return false;
         }
         //
@@ -948,6 +945,9 @@ class Employee_payroll_model extends Base_payroll_model
             ->hasGustoErrors($response);
         //
         if ($errors) {
+            return false;
+        }
+        if (!$response) {
             return false;
         }
         //
@@ -1930,6 +1930,496 @@ class Employee_payroll_model extends Base_payroll_model
             ->limit(1)
             ->get("gusto_employees_state_tax")
             ->row_array();
+    }
+
+
+    // ---------------------------------------------------
+    // sync payment method
+    // ---------------------------------------------------
+    /**
+     * sync payment method
+     */
+    private function syncPaymentMethod()
+    {
+        //
+        $this->gustoToStorePaymentMethod();
+        // check if dd is present
+        if (
+            $this
+            ->db
+            ->where([
+                "users_type" => "employee",
+                "users_sid" => $this->gustoEmployee["employee_sid"],
+                "is_consent" => 1,
+                "gusto_uuid is null" => null,
+            ])
+            ->count_all_results("bank_account_details")
+        ) {
+            $this->changePaymentMethodToDirectDeposit();
+            $this->storeToGustoPaymentMethod();
+        }
+    }
+
+    /**
+     * sync payment method
+     * Gusto to Store
+     */
+    private function gustoToStorePaymentMethod()
+    {
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "payment_method",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+        //
+        $ins = [];
+        $ins["gusto_version"] = $response["version"];
+        $ins["type"] = $response["type"];
+        $ins["split_by"] = $response["split_by"];
+        $ins["splits"] = json_encode($response["splits"] ?? []);
+        $ins["updated_at"] = getSystemDate();
+        //
+        if (
+            !$this
+                ->db
+                ->where([
+                    "employee_sid" =>
+                    $this->gustoEmployee["employee_sid"]
+                ])
+                ->count_all_results("gusto_employees_payment_method")
+        ) {
+            //
+            $ins["employee_sid"] = $this->gustoEmployee["employee_sid"];
+            $ins["created_at"] = $ins["updated_at"];
+            // insert
+            $this
+                ->db
+                ->insert(
+                    "gusto_employees_payment_method",
+                    $ins
+                );
+        } else {
+            $this
+                ->db
+                ->where([
+                    "employee_sid" =>
+                    $this->gustoEmployee["employee_sid"]
+                ])
+                ->update(
+                    "gusto_employees_payment_method",
+                    $ins
+                );
+        }
+
+        // when the type is check
+        if (strtolower($response["type"]) === 'check') {
+            $this
+                ->db
+                ->where([
+                    "users_type" => "employee",
+                    "users_sid" => $this->gustoEmployee["employee_sid"],
+                ])
+                ->update(
+                    "bank_account_details",
+                    [
+                        "gusto_uuid" => null
+                    ]
+                );
+        }
+
+        return true;
+    }
+
+    /**
+     * set payment method to direct deposit
+     * Gusto to Store
+     */
+    private function changePaymentMethodToDirectDeposit()
+    {
+        // get the bank accounts
+        $records =
+            $this
+            ->db
+            ->select([
+                "sid",
+                "account_title",
+                "routing_transaction_number",
+                "account_number",
+                "financial_institution_name",
+                "account_type",
+                "deposit_type",
+                "account_percentage",
+                "gusto_uuid",
+            ])
+            ->where([
+                "users_type" => "employee",
+                "users_sid" => $this->gustoEmployee["employee_sid"],
+                "gusto_uuid is null" => null,
+                "is_consent" => 1,
+            ])
+            ->get("bank_account_details")
+            ->result_array();
+        //
+        if (!$records) {
+            return false;
+        }
+        //
+        foreach ($records as $v0) {
+            //
+            $this->storeToGustoBankAccount($v0);
+        }
+
+        return true;
+    }
+
+    /**
+     * push a single bank account to Gusto
+     */
+    private function storeToGustoBankAccount(
+        array $bankAccount
+    ) {
+        // set request
+        $request = [
+            "name" => $bankAccount["account_title"],
+            "routing_number" => $bankAccount["routing_transaction_number"],
+            "account_number" => $bankAccount["account_number"],
+            "account_type" => ucwords($bankAccount["account_type"]),
+        ];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "employee_bank_accounts",
+                $this->gustoCompany,
+                $request,
+                "POST"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+
+        //
+        $this
+            ->db
+            ->where("sid", $bankAccount["sid"])
+            ->update(
+                "bank_account_details",
+                [
+                    "gusto_uuid" => $response["uuid"]
+                ]
+            );
+
+        return true;
+    }
+
+    /**
+     * set payment method to direct deposit
+     * Gusto to Store
+     */
+    private function storeToGustoPaymentMethod()
+    {
+        // get the version
+        $gustoPaymentMethod =
+            $this
+            ->db
+            ->select([
+                "gusto_version"
+            ])
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->limit(1)
+            ->get("gusto_employees_payment_method")
+            ->row_array();
+        //
+        if (!$gustoPaymentMethod) {
+            return false;
+        }
+        // get the bank accounts
+        $records =
+            $this
+            ->db
+            ->select([
+                "deposit_type",
+                "account_percentage",
+                "account_title",
+                "gusto_uuid",
+            ])
+            ->where([
+                "users_type" => "employee",
+                "users_sid" => $this->gustoEmployee["employee_sid"],
+                "gusto_uuid is not null" => null,
+                "is_consent" => 1,
+            ])
+            ->order_by("sid", "ASC")
+            ->limit(2)
+            ->get("bank_account_details")
+            ->result_array();
+        //
+        if (!$records) {
+            return false;
+        }
+
+        //
+        $accountToSplits = $this
+            ->lb_gusto
+            ->setAndGetPaymentMethodSplits(
+                $records
+            );
+
+        // set request
+        $request = [];
+        $request["version"] = $gustoPaymentMethod["gusto_version"];
+        $request["type"] = "Direct Deposit";
+        $request["split_by"] = $accountToSplits["split_by"];
+        $request["splits"] = $accountToSplits["splits"];
+
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "payment_method",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+        //
+        $this
+            ->db
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->update(
+                "gusto_employees_payment_method",
+                [
+                    "gusto_version" => $response["version"],
+                    "type" => $response["type"],
+                    "split_by" => $response["split_by"],
+                    "splits" => json_encode($response["splits"]),
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+
+        return true;
+    }
+
+
+    // ---------------------------------------------------
+    // sync forms
+    // ---------------------------------------------------
+    /**
+     * sync forms
+     */
+    private function syncForms()
+    {
+        //
+        $this->gustoToStoreForms();
+    }
+
+    /**
+     * sync forms
+     * Gusto to Store
+     */
+    private function gustoToStoreForms()
+    {
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "employee_forms",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+        //
+        foreach ($response as $v0) {
+            //
+            $ins = [];
+            $ins['form_name'] = $v0['name'];
+            $ins['form_title'] = $v0['title'];
+            $ins['description'] = $v0['description'];
+            $ins['requires_signing'] = $v0['requires_signing'];
+            $ins['draft'] = $v0['draft'];
+            $ins['updated_at'] = getSystemDate();
+
+            // we need to check the current status of w4
+            if ($v0['name'] == 'US_W-4') {
+                $document = $this->getW4AssignStatus();
+                $ins['status'] = $document['status'];
+                $ins['document_sid'] = $document['documentId'];
+            } elseif ($v0['name'] == 'employee_direct_deposit') {
+                $document = $this->getDirectDepositAssignStatus();
+                $ins['status'] = $document['status'];
+                $ins['document_sid'] = $document['documentId'];
+            }
+
+            //
+            if (
+                $this
+                ->db
+                ->where([
+                    'employee_sid' => $this->gustoEmployee["employee_sid"],
+                    'gusto_uuid' => $v0['uuid']
+                ])
+                ->count_all_results(
+                    'gusto_employees_forms'
+                )
+            ) {
+                $this
+                    ->db
+                    ->where([
+                        'employee_sid' => $this->gustoEmployee["employee_sid"],
+                        'gusto_uuid' => $v0['uuid']
+                    ])
+                    ->update('gusto_employees_forms', $ins);
+            } else {
+                //
+                $ins['company_sid'] = $this->gustoCompany['company_sid'];
+                $ins['employee_sid'] = $this->gustoEmployee["employee_sid"];
+                $ins['gusto_uuid'] = $v0['uuid'];
+                $ins['created_at'] = $ins["updated_at"];
+                //
+                $this->db
+                    ->insert('gusto_employees_forms', $ins);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * update employee's payment method
+     */
+    private function getW4AssignStatus(): array
+    {
+        //
+        $record = $this->db
+            ->select('status, sid')
+            ->where([
+                'employer_sid' => $this->gustoEmployee["employee_sid"],
+                'user_type' => 'employee'
+            ])
+            ->get('form_w4_original')
+            ->row_array();
+        //
+        if (!$record) {
+            return [
+                'status' => 'pending',
+                'documentId' => 0,
+                'documentType' => 'w4_form'
+            ];
+        }
+        //
+        if ($record['status'] == 1) {
+            return [
+                'status' => 'assign',
+                'documentId' => $record['sid'],
+                'documentType' => 'w4_form'
+            ];
+        }
+        //
+        return [
+            'status' => 'revoke',
+            'documentId' => $record['sid'],
+            'documentType' => 'w4_form'
+        ];
+    }
+
+    /**
+     * update employee's payment method
+     */
+    private function getDirectDepositAssignStatus(): array
+    {
+        //
+        $record = $this->db
+            ->select('status, sid')
+            ->where([
+                'user_sid' => $this->gustoEmployee["employee_sid"],
+                'user_type' => 'employee',
+                'document_type' => 'direct_deposit'
+            ])
+            ->get('documents_assigned_general')
+            ->row_array();
+        //
+        if (!$record) {
+            return [
+                'status' => 'pending',
+                'documentId' => 0,
+                'documentType' => 'direct_deposit'
+            ];
+        }
+        //
+        if ($record['status'] == 1) {
+            return [
+                'status' => 'assign',
+                'documentId' => $record['sid'],
+                'documentType' => 'direct_deposit'
+            ];
+        }
+        return [
+            'status' => 'revoke',
+            'documentId' => $record['sid'],
+            'documentType' => 'direct_deposit'
+        ];
     }
 }
 

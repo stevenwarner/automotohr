@@ -57,7 +57,7 @@ class Cron_company_payroll extends CI_Controller
         //
         $this->job = $job;
         //
-        // $this->runCompanyEvents();
+        $this->runCompanyEvents();
         //
         $this->runEmployeeEvents();
     }
