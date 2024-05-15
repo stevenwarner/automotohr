@@ -88,19 +88,53 @@ class Employee_performance_evaluation_model extends CI_Model
         $returnArray["completion_status"] = $record["completed_at"] ? true : false;
         // for sections
         if ($record["section_1_json"]) {
-            $returnArray["sections"][1] = true;
+            $info = json_decode($record['section_1_json'], true);
+            //
+            $returnArray["sections"][1] = [
+                "status" => $info['verified_by'] ? true : false,
+                "completed_on" => $info['completed_at'],
+                "completed_by" => getUserNameBySID($info['completed_by'])
+            ];
         }
         if ($record["section_2_json"]) {
-            $returnArray["sections"][2] = true;
+            $info = json_decode($record['section_2_json'], true);
+            //
+            $returnArray["sections"][2] = [
+                "status" => true,
+                "completed_on" => $info['completed_at'],
+                "completed_by" => getUserNameBySID($info['completed_by'])
+            ];
         }
         if ($record["section_3_json"]) {
-            $returnArray["sections"][3] = true;
+            $info = json_decode($record['section_3_json'], true);
+            //
+            $returnArray["sections"][3] = [
+                "status" => true,
+                "completed_on" => $info['completed_at'],
+                "completed_by" => getUserNameBySID($info['completed_by'])
+            ];
         }
         if ($record["section_4_json"]) {
-            $returnArray["sections"][4] = true;
+            $info = json_decode($record['section_4_json'], true);
+            //
+            $managerName = $info['manager_signature_by'] ? getUserNameBySID($info['manager_signature_by']) : "Not sign yet";
+            $employeeName = $info['employee_signature_by'] ? getUserNameBySID($info['employee_signature_by']) : "Not sign yet";
+            //
+            $returnArray["sections"][4] = [
+                "status" => $info['is_completed'] == 1 ? true : false,
+                "completed_on" => $info['completed_at'],
+                "completed_by" => "Manager: " . $managerName . "<br>Employee: " . $employeeName
+            ];
         }
         if ($record["section_5_json"]) {
-            $returnArray["sections"][5] = true;
+            $info = json_decode($record['section_5_json'], true);
+            //
+            $returnArray["sections"][5] = [
+                "manager_completed" => $info['manager_completed_at'] ? true : false,
+                "status" => $info['is_completed'] == 1 ? true : false,
+                "completed_by" => $info['is_completed'] == 1 ? getUserNameBySID($info['hr_manager_completed_by']) : '',
+                "completed_on" => $info['is_completed'] == 1 ? $info['hr_manager_completed_at'] : '',
+            ];
         }
 
         return $returnArray;
@@ -281,25 +315,47 @@ class Employee_performance_evaluation_model extends CI_Model
      * @param int $employeeId
      * @return array
      */
-    public function getEmployeeDocumentSection (
+    public function getEmployeeDocumentSection(
         $employeeId,
         $section
-    ): array
-    {
+    ): array {
         return $this
-        ->db
-        ->select($section)
-        ->where("employee_sid",$employeeId)
-        ->limit(1)
-        ->get(
-            "employee_performance_evaluation_document"
-        )
-        ->row_array();
+            ->db
+            ->select($section)
+            ->where("employee_sid", $employeeId)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->row_array();
     }
 
-    public function saveEmployeeDocumentSectionOne ($employeeId, $data) {
+    /**
+     * Get desire document data
+     *
+     * @param int $employeeId
+     * @param string $sections
+     * @return array
+     */
+    public function getEmployeePerformanceDocumentData(
+        $employeeId,
+        $sections
+    ): array {
+        return $this
+            ->db
+            ->select($sections)
+            ->where("employee_sid", $employeeId)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->row_array();
+    }
+
+    public function saveEmployeeDocumentSectionOne($employeeId, $data)
+    {
         $this->db
-        ->where("employee_sid", $employeeId)
+            ->where("employee_sid", $employeeId)
             ->update(
                 "employee_performance_evaluation_document",
                 [
@@ -308,13 +364,26 @@ class Employee_performance_evaluation_model extends CI_Model
             );
     }
 
-    public function saveEmployeeDocumentSectionTwo ($employeeId, $data) {
+    public function saveEmployeeDocumentSectionTwo($employeeId, $data)
+    {
         $this->db
-        ->where("employee_sid", $employeeId)
+            ->where("employee_sid", $employeeId)
             ->update(
                 "employee_performance_evaluation_document",
                 [
                     "section_2_json" => json_encode($data)
+                ]
+            );
+    }
+
+    public function saveEmployeeDocumentSectionThree($employeeId, $data)
+    {
+        $this->db
+            ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                [
+                    "section_3_json" => json_encode($data)
                 ]
             );
     }
@@ -325,33 +394,76 @@ class Employee_performance_evaluation_model extends CI_Model
      * @param int $employeeId
      * @return bool
      */
-    public function checkEmployeeUncompletedDocument ($employeeId): bool
+    public function checkEmployeeUncompletedDocument($employeeId): bool
     {
         $record = $this
-        ->db
-        ->select("section_2_json")
-        ->where("employee_sid", $employeeId)
-        ->where( "status", 1)
-        ->limit(1)
-        ->get(
-            "employee_performance_evaluation_document"
-        )
-        ->row_array();
+            ->db
+            ->select("section_2_json, section_3_json, employee_signature")
+            ->where("employee_sid", $employeeId)
+            ->where("status", 1)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->row_array();
         //
-        if ($record['section_2_json']) {
-            return false;
+        if ($record) {
+            if ($record['section_2_json']) {
+                //
+                if ($record['section_3_json'] && $record['employee_signature']) {
+                    return false;
+                } else if ($record['section_3_json']) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return true;
+            }
         } else {
-            return true;
+            return false;
         }
     }
-    
+
+    /**
+     * get which section is pending
+     *
+     * @param int $employeeId
+     * @return string
+     */
+    public function getEmployeePendingSectionName($employeeId): string
+    {
+        $record = $this
+            ->db
+            ->select("section_2_json, section_3_json, employee_signature")
+            ->where("employee_sid", $employeeId)
+            ->where("status", 1)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->row_array();
+        //
+        if ($record) {
+            if (!$record['section_2_json']) {
+                return "section_2";
+            } else if ($record['section_2_json'] && !$record['section_3_json']) {
+                return "section_2";
+            } else if ($record['section_3_json'] && !$record['employee_signature']) {
+                return "section_4";
+            }
+            //
+            return "all_section_completed";
+        }
+    }
+
     /**
      * Check Employee complete its section 2
      *
      * @param int $employeeId
      * @return bool
      */
-    public function checkEmployeeAssignPerformanceDocument ($employeeId): bool
+    public function checkEmployeeAssignPerformanceDocument($employeeId): bool
     {
         //
         if (
@@ -366,5 +478,171 @@ class Employee_performance_evaluation_model extends CI_Model
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get all active employees
+     *
+     * @param int $companyId
+     * @return array
+     */
+    function getCompanyActiveEmployees($companyId): array
+    {
+        $a = $this->db
+            ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
+            ->where('parent_sid', $companyId)
+            ->where('active', 1)
+            ->order_by('concat(first_name,last_name)', 'ASC', false)
+            ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    /**
+     * Save verification manager
+     *
+     * @param array $record
+     * @return bool
+     */
+    function saveVerificationManager($record): bool
+    {
+        $this
+            ->db
+            ->insert(
+                "employee_performance_verification_document_manager",
+                $record
+            );
+        //
+        return $this->db->insert_id() ? true : false;
+    }
+
+    function deleteSectionVerificationManagers($employeeId, $section)
+    {
+        //
+        $this->db
+            ->where('employee_sid', $employeeId)
+            ->where('section', $section)
+            ->delete('employee_performance_verification_document_manager');
+    }
+
+    function checkPerformanceVerificationDocumentSection($employeeId, $section)
+    {
+        return $this
+            ->db
+            ->where("manager_sid", $employeeId)
+            ->where("section", $section)
+            ->where("is_expired", 0)
+            ->count_all_results(
+                "employee_performance_verification_document_manager"
+            );
+    }
+
+    /**
+     * Get all pending verification document
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    function getAssignedPendingVerificationDocuments($employeeId): array
+    {
+        $a = $this->db
+            ->select('employee_sid, section, created_at, created_by')
+            ->where("manager_sid", $employeeId)
+            ->where("is_expired", 0)
+            ->get('employee_performance_verification_document_manager');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    public function updateVerificationManagers($employeeId, $section)
+    {
+        $this
+            ->db
+            ->where("employee_sid", $employeeId)
+            ->where("section", $section)
+            ->update(
+                "employee_performance_verification_document_manager",
+                [
+                    "is_expired" => 1
+                ]
+            );
+    }
+
+    public function getEmployeeSectionFourData($employeeId)
+    {
+        //
+        return $this
+            ->db
+            ->select("section_1_json, section_2_json, section_3_json, section_4_json, manager_signature, employee_signature")
+            ->where("employee_sid", $employeeId)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->row_array();
+    }
+
+    public function saveEmployeeDocumentSectionFour($employeeId, $data)
+    {
+        //
+        $this->db
+            ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                [
+                    "section_4_json" => json_encode($data)
+                ]
+            );
+    }
+
+    public function saveEmployeeDocumentSectionFive ($employeeId, $data) {
+        //
+        $this->db
+            ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                [
+                    "section_5_json" => json_encode($data)
+                ]
+            );
+    }
+
+    public function saveSignature($employeeId, $employeeType, $base64)
+    {
+        $dataToUpdate = [];
+        //
+        if ($employeeType == "manager") {
+            $dataToUpdate['manager_signature'] = $base64;
+        } else if ($employeeType == "employee") {
+            $dataToUpdate['employee_signature'] = $base64;
+        } else if ($employeeType == "HR_manager") {
+            $dataToUpdate['hr_signature'] = $base64;
+            $dataToUpdate['completed_at'] = date('Y-m-d H:i:s');
+        }
+
+        $this->db
+            ->where("employee_sid", $employeeId)
+            ->update(
+                "employee_performance_evaluation_document",
+                $dataToUpdate
+            );
+    }
+
+    public function getEmployeeCurrentPayRate ($employeeId) {
+        return $this
+            ->db
+            ->select("hourly_rate")
+            ->where("sid", $employeeId)
+            ->limit(1)
+            ->get(
+                "users"
+            )
+            ->row_array();
     }
 }

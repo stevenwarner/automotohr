@@ -700,6 +700,21 @@ class Dashboard extends Public_Controller
                     $employer_id,
                     true
                 );
+            //
+            $this
+                ->load
+                ->model(
+                    "v1/Employee_performance_evaluation_model",
+                    "employee_performance_evaluation_model"
+                );
+            //
+            $pendingVerificationPerformanceSectionOne =
+                $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
+                    $employer_id,
+                    1
+                ); 
+            //
+            $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;
 
             //
             $this->load->view('main/header', $data);

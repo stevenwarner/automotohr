@@ -45,7 +45,69 @@
         // Sections
         $(document).on("click", ".jsEPESectionOne", handleSectionOneProcess);
         $(document).on("click", ".jsSaveSectionOne", handleSectionOneSave);
+        $(document).on("click", ".jsEPESectionThree", handleSectionThreeProcess);
+        $(document).on("click", ".jsSaveSectionThree", handleSectionThreeSave);
+        $(document).on("click", ".jsEPESectionFour", handleSectionFourProcess);
+        $(document).on("click", ".jsGetEmployeeSignature", handleSectionFourSignature);
+        $(document).on("click", ".jsSaveEsignature", handleSectionFourSave);
+        $(document).on("click", ".jsEPESectionFive", handleSectionFiveProcess);
+        $(document).on("click", ".jsSaveSectionFive", handleSectionFiveSave);
+        $(document).on("click", ".jsSaveHRManagerApproval", handleSectionFiveApprovalSave);
 
+        $(document).on("click", ".jsSelectAll", function() {
+            event.preventDefault();
+            $(".jsVerificationEmployees").prop("checked", true);
+        });
+
+        $(document).on("click", ".jsRemoveAll", function() {
+            event.preventDefault();
+            $(".jsVerificationEmployees").prop("checked", false);
+        });
+
+        $(document).on("click", ".jsSendVerificationRequest", function() {
+            event.preventDefault();
+            //
+            selected_employees = get_all_selected_employees();
+            //
+            if (selected_employees.length === 0) {
+                alertify.alert('ERROR!', 'Please select at least one employee to send verification email.');
+                return;
+            }
+            //
+            XHR = $
+                .ajax({
+                    url: baseUrl("fillable/epe/send_verification_request/<?= $user_sid; ?>/1"),
+                    method: "POST",
+                    data: {
+                        employees: selected_employees
+                    }
+                })
+                .always(function() {
+                    XHR = null;
+                })
+                .fail(handleErrorResponse)
+                .done(function(resp) {
+                    return _success(
+                        resp.message,
+                        function() {
+                            window.location.reload();
+                        }
+                    )
+                });
+        });
+
+        function get_all_selected_employees() {
+            //
+            var tmp = [];
+            //
+            $.each($('input[name="employees[]"]:checked'), function() {
+                var obj = {};
+                obj.employee_sid = parseInt($(this).val());
+                tmp.push(obj);
+            });
+            //
+            return tmp;
+        }
 
         /**
          * get the form
@@ -119,7 +181,7 @@
                 row += '    </td>';
                 // not completed
                 row += '    <td class="text-center">';
-                row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/' + (data.completed_on ? "on" : "off") + '.gif" title="Not Completed" />';
+                row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/' + (data.completion_status ? "on" : "off") + '.gif" title="Not Completed" />';
                 row += '    </td>';
                 // is required
                 row += '    <td class="text-center">';
@@ -131,10 +193,30 @@
                 // assign action
                 row += '    <td class="text-center">';
                 row += '        <button class="btn btn-danger jsRevokeEPE jsEPEBtn">Revoke</button>';
+                row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/manager/print")+'" class="btn btn-orange">Print</a>';
+                row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/manager/download")+'" class="btn btn-black">Download</a>';
                 // check for sections
                 if (!data.sections[1].status) {
                     row += '        <button class="btn btn-success jsEPESectionOne">Complete Section 1</button>';
                 }
+                //
+                if (data.sections[1].status && !data.sections[3].status) {
+                    row += '        <button class="btn btn-success jsEPESectionThree">Complete Section 3</button>';
+                }
+                //
+                if (data.sections[3].status && !data.sections[4].status) {
+                    row += '        <button class="btn btn-success jsEPESectionFour">Complete Section 4</button>';
+                }
+                //
+                if (data.sections[4].status && !data.sections[5].status) {
+                    if (!data.sections[5].manager_completed) {
+                        row += '        <button class="btn btn-success jsEPESectionFive">Complete Section 5</button>';
+                    } else if (data.sections[5].manager_completed) {
+                        row += '        <button class="btn btn-success jsEPESectionFive">Section 5 Approval</button>';
+                    }
+
+                }
+                //
                 row += '    </td>';
                 row += '</tr>';
             } else if (data.status === "revoked") {
@@ -307,15 +389,54 @@
                 Title: "Employee Performance Evaluation - Section One",
                 Body: '<div id="jsSectionOneEPEModalBody"></div>'
             }, function() {
-                loadSection("one")
-                // setInterval(
-                //     function() {
-                //         loadSection("one")
-                //     },
-                //     3000
-                // );
+                loadSection("one");
+            });
+        }
 
-            })
+
+        /**
+         * start process of section three
+         */
+        function handleSectionThreeProcess(event) {
+            //
+            Modal({
+                Id: "jsSectionOneEPEModal",
+                Loader: "jsSectionOneEPEModalLoader",
+                Title: "Employee Performance Evaluation - Section Three",
+                Body: '<div id="jsSectionOneEPEModalBody"></div>'
+            }, function() {
+                loadSection("three");
+            });
+        }
+
+        /**
+         * start process of section four
+         */
+        function handleSectionFourProcess(event) {
+            //
+            Modal({
+                Id: "jsSectionOneEPEModal",
+                Loader: "jsSectionOneEPEModalLoader",
+                Title: "Employee Performance Evaluation - Section Four",
+                Body: '<div id="jsSectionOneEPEModalBody"></div>'
+            }, function() {
+                loadSection("four");
+            });
+        }
+
+        /**
+         * start process of section five
+         */
+        function handleSectionFiveProcess(event) {
+            //
+            Modal({
+                Id: "jsSectionOneEPEModal",
+                Loader: "jsSectionOneEPEModalLoader",
+                Title: "Employee Performance Evaluation - Section Five",
+                Body: '<div id="jsSectionOneEPEModalBody"></div>'
+            }, function() {
+                loadSection("five");
+            });
         }
 
         /**
@@ -360,126 +481,126 @@
          * save the section one
          *
          */
-        function handleSectionOneSave () {
+        function handleSectionOneSave() {
 
             $("#jsSectionOneForm").validate({
-                rules :{
-                    "epe_employee_name" : {
-                        required : true
+                rules: {
+                    "epe_employee_name": {
+                        required: true
                     },
-                    "epe_job_title" : {
-                        required : true
+                    "epe_job_title": {
+                        required: true
                     },
-                    "epe_department" : {
-                        required : true
+                    "epe_department": {
+                        required: true
                     },
-                    "epe_manager" : {
-                        required : true
+                    "epe_manager": {
+                        required: true
                     },
-                    "epe_hire_date" : {
-                        required : true
+                    "epe_hire_date": {
+                        required: true
                     },
-                    "epe_start_date" : {
-                        required : true
+                    "epe_start_date": {
+                        required: true
                     },
-                    "epe_review_start" : {
-                        required : true
+                    "epe_review_start": {
+                        required: true
                     },
-                    "epe_review_end" : {
-                        required : true
+                    "epe_review_end": {
+                        required: true
                     },
-                    "epe_review_end" : {
-                        required : true
+                    "epe_review_end": {
+                        required: true
                     },
                     "position_knowledgeable_radio": {
-                        required : true
+                        required: true
                     },
                     "position_knowledgeable_comments": {
-                        required : true
+                        required: true
                     },
                     "position_improved": {
-                        required : true
+                        required: true
                     },
                     "position_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "position_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "quantity_improved": {
-                        required : true
+                        required: true
                     },
                     "quantity_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "quantity_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "quality_improved": {
-                        required : true
+                        required: true
                     },
                     "quality_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "quality_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "relations_improved": {
-                        required : true
+                        required: true
                     },
                     "relations_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "relations_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "skill_improved": {
-                        required : true
+                        required: true
                     },
                     "skill_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "skill_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "dependability_improved": {
-                        required : true
+                        required: true
                     },
                     "dependability_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "dependability_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "policy_procedure_improved": {
-                        required : true
+                        required: true
                     },
                     "policy_procedure_improved_other": {
-                        required : true
+                        required: true
                     },
                     "policy_procedure_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "policy_procedure_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "standard_improved": {
-                        required : true
+                        required: true
                     },
                     "standard_improved_other": {
-                        required : true
+                        required: true
                     },
                     "standard_improved_radio": {
-                        required : true
+                        required: true
                     },
                     "standard_improved_comment": {
-                        required : true
+                        required: true
                     },
                     "managers_additional_comment": {
-                        required : true
+                        required: true
                     },
                 },
-                submitHandler: function (form) {
+                submitHandler: function(form) {
                     //
                     XHR = $
                         .ajax({
@@ -493,13 +614,199 @@
                         .fail(handleErrorResponse)
                         .done(function(resp) {
                             return _success(
-                                resp.message
+                                resp.message,
+                                function() {
+                                    $(".jsSectionOneFormSection").addClass("hidden");
+                                    $(".jsSectionOneEmployees").removeClass("hidden");
+                                }
                             )
                         });
                 }
             });
         }
-        // handleSectionOneProcess("asdas");
+
+        /**
+         * 
+         * save the section three
+         *
+         */
+        function handleSectionThreeSave() {
+            //
+            $("#jsSectionThreeForm").validate({
+                rules: {
+                    "additional_comment_one": {
+                        required: true
+                    },
+                },
+                submitHandler: function(form) {
+                    //
+                    XHR = $
+                        .ajax({
+                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/three"),
+                            method: "POST",
+                            data: $(form).serialize()
+                        })
+                        .always(function() {
+                            XHR = null;
+                        })
+                        .fail(handleErrorResponse)
+                        .done(function(resp) {
+                            return _success(
+                                resp.message,
+                                function() {
+                                    window.location.reload();
+                                }
+                            )
+                        });
+                }
+            });
+        }
+
+        /**
+         * 
+         * get employee signature
+         *
+         */
+        function handleSectionFourSignature() {
+            //
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            //
+            XHR = $
+                .ajax({
+                    url: baseUrl("fillable/epe/get_employee_signature"),
+                    method: "GET"
+                })
+                .always(function() {
+                    XHR = null;
+                    ml(
+                        false,
+                        "jsSectionOneEPEModalLoader"
+                    );
+                })
+                .fail(handleErrorResponse)
+                .done(function(resp) {
+                    //
+                    if (!resp.success) {
+                        return _success(
+                            resp.message,
+                        )
+                    } else {
+                        $('.jsSaveEsignature').removeClass('disabled');
+                        $('.jsSaveHRManagerApproval').removeClass('disabled');
+                        $('.jsGetEmployeeSignature').hide();
+                        $('#jsDrawEmployeeSignature').attr('src', resp.signature_base64);
+                    }
+                });
+        }
+        //
+
+        /**
+         * 
+         * save the section four
+         *
+         */
+        function handleSectionFourSave() {
+            //
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            //
+            XHR = $
+                .ajax({
+                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/four"),
+                    method: "POST",
+                    data: {
+                        "action": "save_signature",
+                        "user_type": "manager"
+                    }
+                })
+                .always(function() {
+                    XHR = null;
+                })
+                .fail(handleErrorResponse)
+                .done(function(resp) {
+                    return _success(
+                        resp.message,
+                        function() {
+                            window.location.reload();
+                        }
+                    )
+                });
+        }
+
+        function handleSectionFiveSave() {
+            //
+            $("#jsSectionFiveForm").validate({
+                rules: {
+                    "current_pay": {
+                        required: true
+                    },
+                    "recommended_pay": {
+                        required: true
+                    },
+                },
+                submitHandler: function(form) {
+                    //
+                    XHR = $
+                        .ajax({
+                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/five"),
+                            method: "POST",
+                            data: $(form).serialize()
+                        })
+                        .always(function() {
+                            XHR = null;
+                        })
+                        .fail(handleErrorResponse)
+                        .done(function(resp) {
+                            return _success(
+                                resp.message,
+                                function() {
+                                    window.location.reload();
+                                }
+                            )
+                        });
+                }
+            });
+        }
+
+        function handleSectionFiveApprovalSave() {
+            //
+            $("#jsSectionFiveForm").validate({
+                rules: {
+                    "approved_amount": {
+                        required: true
+                    },
+                    "effective_increase_date": {
+                        required: true
+                    }
+                },
+                submitHandler: function(form) {
+                    alert("here")
+                    //
+                    XHR = $
+                        .ajax({
+                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/five"),
+                            method: "POST",
+                            data: $(form).serialize()
+                        })
+                        .always(function() {
+                            XHR = null;
+                        })
+                        .fail(handleErrorResponse)
+                        .done(function(resp) {
+                            return _success(
+                                resp.message,
+                                function() {
+                                    window.location.reload();
+                                }
+                            )
+                        });
+                }
+            });
+        }
+
         //
         getEPE();
     });

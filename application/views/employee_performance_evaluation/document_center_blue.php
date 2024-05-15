@@ -41,8 +41,11 @@
         $(document).on("click", ".jsReAssignEPE", handleReAssignProcess);
 
         // Sections
-        $(document).on("click", ".jsEPESectionTwo", handleSectionOneProcess);
-        $(document).on("click", ".jsSaveSectionTwo", handleSectionOneSave);
+        $(document).on("click", ".jsEPESectionTwo", handleSectionTwoProcess);
+        $(document).on("click", ".jsSaveSectionTwo", handleSectionTwoSave);
+        $(document).on("click", ".jsEPESectionFour", handleSectionFourProcess);
+        $(document).on("click", ".jsGetEmployeeSignature", handleSectionFourSignature);
+        $(document).on("click", ".jsSaveEsignature", handleSectionFourSave);
 
         $(document).on("click", ".jsEPEActionButton", function() {
             var action = $(this).data("key");
@@ -99,6 +102,7 @@
          * set the view
          */
         function setView(data) {
+            var section = "<?= $pendingPerformanceSectionName; ?>";
             let row = "";
 
             row += '<tr>';
@@ -113,7 +117,11 @@
             row += '    <td class="text-center">';
             row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/print")+'" class="btn btn-info btn-orange">Print</a>';
             row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/download")+'" class="btn btn-info btn-black">Download</a>';
-            row += '        <button class="btn btn-info jsEPESectionTwo">View Sign</button>';
+            if (section == "section_2") {
+                row += '        <button class="btn btn-info jsEPESectionTwo">View Sign</button>';
+            } else if (section == "section_4" || section == "all_section_completed") {
+                row += '        <button class="btn btn-info jsEPESectionFour">View Sign</button>';
+            }
             row += '    </td>';
             row += '</tr>';
 
@@ -213,9 +221,9 @@
         }
 
         /**
-         * start process of section one
+         * start process of section two
          */
-        function handleSectionOneProcess(event) {
+        function handleSectionTwoProcess(event) {
             // event.preventDefault();
             //
             Modal({
@@ -226,6 +234,22 @@
             }, function() {
                 loadSection("two");
             })
+        }
+
+
+        /**
+         * start process of section four
+         */
+        function handleSectionFourProcess(event) {
+            //
+            Modal({
+                Id: "jsSectionOneEPEModal",
+                Loader: "jsSectionOneEPEModalLoader",
+                Title: "Employee Performance Evaluation - Section Four",
+                Body: '<div id="jsSectionOneEPEModalBody"></div>'
+            }, function() {
+                loadSection("four");
+            });
         }
 
         /**
@@ -254,7 +278,7 @@
                 .done(function(response) {
                     $("#jsSectionOneEPEModalBody").html(response.view);
                     //
-                    handleSectionOneSave();
+                    handleSectionTwoSave();
                 });
 
         }
@@ -265,7 +289,7 @@
          * save the section one
          *
          */
-        function handleSectionOneSave() {
+        function handleSectionTwoSave() {
 
             $("#jsSectionOneForm").validate({
                 rules: {
@@ -320,6 +344,80 @@
                 }
             });
         }
+
+        /** 
+         * get employee signature
+         *
+         */
+        function handleSectionFourSignature() {
+            //
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            //
+            XHR = $
+                .ajax({
+                    url: baseUrl("fillable/epe/get_employee_signature"),
+                    method: "GET"
+                })
+                .always(function() {
+                    XHR = null;
+                    ml(
+                        false,
+                        "jsSectionOneEPEModalLoader"
+                    );
+                })
+                .fail(handleErrorResponse)
+                .done(function(resp) {
+                    //
+                    if (!resp.success) {
+                        return _success(
+                            resp.message,
+                        )
+                    } else {
+                        $('.jsSaveEsignature').removeClass('hidden');
+                        $('.jsGetEmployeeSignature').hide();
+                        $('#jsDrawEmployeeSignature').attr('src', resp.signature_base64);
+                        $('#jsEmployeeSignatureInput').val(resp.signature_base64);
+                    }
+                });
+        }
+        //
+
+        /**
+         * 
+         * save the section four
+         *
+         */
+        function handleSectionFourSave() {
+            //
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            //
+            XHR = $
+                .ajax({
+                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/four"),
+                    method: "POST",
+                    data: {
+                        "action" : "save_signature",
+                        "user_type" : "employee"
+                    }
+                })
+                .always(function() {
+                    XHR = null;
+                })
+                .fail(handleErrorResponse)
+                .done(function(resp) {
+                    return _success(
+                        resp.message,
+                        function() {
+                            window.location.reload();
+                        }
+                    )
+                });
+        }
+
         //
         getEPE();
     });

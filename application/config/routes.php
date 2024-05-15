@@ -2285,3 +2285,18 @@ $route["fillable/epe/(:num)/save_section/(:any)"]["post"] =
 
 $route["fillable/epe/(:num)/(:any)/(:any)"]["get"] =
   "v1/Employee_performance_evaluation/handleDocumentAction/$1/$2/$3";  
+
+$route["fillable/epe/send_verification_request/(:num)/(:num)"]["post"] =
+  "v1/Employee_performance_evaluation/sendVerificationRequest/$1/$2";    
+
+$route["fillable/epe/verification/documents"]["get"] =
+  "v1/Employee_performance_evaluation/pendingVerificationDocuments";
+
+$route["fillable/epe/verification/documents/(:num)/(:num)"]["get"] =
+  "v1/Employee_performance_evaluation/getPendingVerificationDocument/$1/$2";
+
+$route["fillable/epe/verification_request/(:num)/(:num)/(:num)/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/completeVerificationRequest/$1/$2/$3/$4";  
+
+$route["fillable/epe/get_employee_signature"]["get"] =
+  "v1/Employee_performance_evaluation/getEmployeeSignature";

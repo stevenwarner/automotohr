@@ -5976,6 +5976,9 @@ class Hr_documents_management extends Public_Controller
                     $data['session']['employer_detail']['sid']
                 );
                 //
+                $data['pendingPerformanceSectionName'] = $this->employee_performance_evaluation_model->getEmployeePendingSectionName(
+                    $data['session']['employer_detail']['sid']
+                );
             }
 
             $data['load_view'] = check_blue_panel_status(false, 'self');
@@ -14304,7 +14307,7 @@ class Hr_documents_management extends Public_Controller
         $data['session'] = $session;
         $data['company_sid'] = $company_sid;
         $data['security_details'] = $security_details;
-        $data['title'] = 'Pending Employer Section For Verificastion Documents';
+        $data['title'] = 'Pending Employer Section For Verification Documents';
         $data['employee_pending'] = $employee_pending;
         $data['applicant_pending'] = $applicant_pending;
         $data['load_view'] = check_blue_panel_status(false, 'self');
