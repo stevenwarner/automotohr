@@ -608,6 +608,12 @@ class Lb_gusto
         // rehire
         $urls["rehire"] =
             "v1/employees/{$key1}/rehire";
+        // federal_taxes
+        $urls["federal_taxes"] =
+            "v1/employees/{$key1}/federal_taxes";
+        // state_taxes
+        $urls["state_taxes"] =
+            "v1/employees/{$key1}/state_taxes";
 
 
 

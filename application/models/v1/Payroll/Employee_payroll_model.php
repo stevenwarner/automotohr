@@ -1,8 +1,4 @@
-<?php
-
-use Twilio\TwiML\Voice\Record;
-
-defined('BASEPATH') || exit('No direct script access allowed');
+<?php defined('BASEPATH') || exit('No direct script access allowed');
 loadUpModel("v1/Payroll/Base_payroll_model", "base_payroll_model");
 /**
  * Employee payroll model
@@ -356,7 +352,11 @@ class Employee_payroll_model extends Base_payroll_model
         // sync job & compensations
         // $this->syncJobAndCompensations();
         // sync employments
-        $this->syncEmployments();
+        // $this->syncEmployments();
+        // sync federal tax
+        // $this->syncFederalTax();
+        // sync state tax
+        $this->syncStateTax();
 
 
         die("sadas");
@@ -1256,8 +1256,6 @@ class Employee_payroll_model extends Base_payroll_model
      */
     private function syncEmployments()
     {
-        //
-        $this->gustoToStoreEmployments();
         // check if not linked
         if (
             $this
@@ -1314,119 +1312,6 @@ class Employee_payroll_model extends Base_payroll_model
         }
         //
         return true;
-    }
-
-    /**
-     * sync employments
-     * Gusto to Store
-     */
-    private function gustoToStoreEmployments()
-    {
-        $this->gustoToStoreTerminations();
-    }
-
-    /**
-     * sync terminations
-     * Gusto to Store
-     */
-    private function gustoToStoreTerminations()
-    {
-        //
-        $this->gustoCompany["other_uuid"] =
-            $this->gustoEmployee["gusto_uuid"];
-        //
-        $response = $this
-            ->lb_gusto
-            ->gustoCall(
-                "terminations",
-                $this->gustoCompany,
-                [],
-                "GET"
-            );
-        //
-        $errors = $this
-            ->lb_gusto
-            ->hasGustoErrors($response);
-        //
-        if ($errors) {
-            return false;
-        }
-        //
-        if (!$response) {
-            return false;
-        }
-        //
-        foreach ($response as $v0) {
-            // check if already exists
-            if (
-                !$this
-                    ->db
-                    ->where(
-                        "employee_sid",
-                        $this->gustoEmployee["employee_sid"]
-                    )
-                    ->where("gusto_uuid", $v0["uuid"])
-                    ->where("is_work_address", 1)
-                    ->count_all_results(
-                        "gusto_companies_employees_work_addresses"
-                    )
-            ) {
-                //
-                $ins = [
-                    "employee_sid" => $this->gustoEmployee["employee_sid"],
-                    "gusto_uuid" => $v0["uuid"],
-                    "gusto_version" => $v0["version"],
-                    "gusto_location_uuid" => $v0["location_uuid"],
-                    "effective_date" => $v0["effective_date"],
-                    "active" => $v0["active"],
-                    "street_1" => $v0["street_1"],
-                    "street_2" => $v0["street_2"],
-                    "city" => $v0["city"],
-                    "state" => $v0["state"],
-                    "zip" => $v0["zip"],
-                    "is_work_address" => 1,
-                    "country" => $v0["country"],
-                    "created_at" => getSystemDate(),
-                    "updated_at" => getSystemDate(),
-                ];
-                //
-                $this
-                    ->db
-                    ->insert(
-                        "gusto_companies_employees_work_addresses",
-                        $ins
-                    );
-            } else {
-                //
-                $ins = [
-                    "gusto_version" => $v0["version"],
-                    "gusto_location_uuid" => $v0["location_uuid"],
-                    "effective_date" => $v0["effective_date"],
-                    "active" => $v0["active"],
-                    "street_1" => $v0["street_1"],
-                    "street_2" => $v0["street_2"],
-                    "city" => $v0["city"],
-                    "state" => $v0["state"],
-                    "zip" => $v0["zip"],
-                    "is_work_address" => 1,
-                    "country" => $v0["country"],
-                    "updated_at" => getSystemDate(),
-                ];
-                //
-                $this
-                    ->db
-                    ->where(
-                        "employee_sid",
-                        $this->gustoEmployee["employee_sid"]
-                    )
-                    ->where("is_work_address", 1)
-                    ->where("gusto_uuid", $v0["uuid"])
-                    ->update(
-                        "gusto_companies_employees_work_addresses",
-                        $ins
-                    );
-            }
-        }
     }
 
     /**
@@ -1534,6 +1419,517 @@ class Employee_payroll_model extends Base_payroll_model
                 "terminated_employees",
                 $upd
             );
+    }
+
+    // ---------------------------------------------------
+    // sync federal tax
+    // ---------------------------------------------------
+    /**
+     * sync federal tax
+     */
+    private function syncFederalTax()
+    {
+        //
+        $this->gustoToStoreFederalTax();
+        if (
+            $this
+            ->db
+            ->where([
+                "user_type" => "employee",
+                "employer_sid" => $this->gustoEmployee["employee_sid"],
+                "status" => 1,
+                "user_consent" => 1
+            ])
+            ->count_all_results("form_w4_original")
+        ) {
+            $this->storeToGustoFederalTax();
+        }
+    }
+
+    /**
+     * sync federal tax
+     * Gusto to Store
+     */
+    private function gustoToStoreFederalTax()
+    {
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "federal_taxes",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+
+        $ins = [
+            "gusto_version" => $response["version"],
+            "filing_status" => $response["filing_status"],
+            "extra_withholding" => $response["extra_withholding"],
+            "two_jobs" => $response["two_jobs"],
+            "dependents_amount" => $response["dependents_amount"],
+            "other_income" => $response["other_income"],
+            "deductions" => $response["deductions"],
+            "w4_data_type" => $response["w4_data_type"],
+            "updated_at" => getSystemDate(),
+        ];
+
+        // check if already exists
+        if (
+            !$this
+                ->db
+                ->where(
+                    "employee_sid",
+                    $this->gustoEmployee["employee_sid"]
+                )
+                ->count_all_results(
+                    "gusto_employees_federal_tax"
+                )
+        ) {
+            $ins["created_at"] = $ins["updated_at"];
+            $ins["employee_sid"] = $this->gustoEmployee["employee_sid"];
+            //
+            $this
+                ->db
+                ->insert(
+                    "gusto_employees_federal_tax",
+                    $ins
+                );
+        } else {
+            //
+            $this
+                ->db
+                ->where(
+                    "employee_sid",
+                    $this->gustoEmployee["employee_sid"]
+                )
+                ->update(
+                    "gusto_employees_federal_tax",
+                    $ins
+                );
+        }
+
+        return true;
+    }
+
+    /**
+     * sync federal tax
+     * Gusto to Store
+     */
+    private function storeToGustoFederalTax()
+    {
+        //
+        $gusto = $this
+            ->db
+            ->select([
+                "gusto_version"
+            ])
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->limit(1)
+            ->get("gusto_employees_federal_tax")
+            ->row_array();
+        //
+        if (!$gusto) {
+            return false;
+        }
+        //
+        $record = $this->db
+            ->select("
+                marriage_status,
+                mjsw_status,
+                dependents_children,
+                other_dependents,
+                other_income,
+                other_deductions,
+                additional_tax
+            ")
+            ->limit(1)
+            ->where([
+                "user_type" => "employee",
+                "employer_sid" => $this->gustoEmployee["employee_sid"],
+                "status" => 1,
+                "user_consent" => 1
+            ])
+            ->get("form_w4_original")
+            ->row_array();
+        //
+        $record['dependents_children'] = (int)$record['dependents_children'];
+        $record['other_dependents'] = (int)$record['other_dependents'];
+        //
+        $request = [];
+        //
+        $request['filing_status'] = $record['marriage_status'] == 'jointly'
+            ? "Married"
+            : "Single";
+        if ($record['marriage_status'] == 'head') {
+            $request['filing_status'] = "Head of Household";
+        } elseif ($record['marriage_status'] == 'separately') {
+            $request['filing_status'] = "Single";
+        }
+        $request['two_jobs'] = $record['mjsw_status'] === "similar_pay" ? "yes" : "no";
+        //
+        $request['dependents_amount'] = $record['dependents_children'] + $record['other_dependents'];
+        $request['extra_withholding'] = (int) $record['additional_tax'];
+        $request['other_income'] = (int) $record['other_income'];
+        $request['deductions'] = (int) $record['other_deductions'];
+        $request['w4_data_type'] = "rev_2020_w4";
+        $request['version'] = $gusto["gusto_version"];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "federal_taxes",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+
+        $ins = [
+            "gusto_version" => $response["version"],
+            "filing_status" => $response["filing_status"],
+            "two_jobs" => $response["two_jobs"],
+            "dependents_amount" => $response["dependents_amount"],
+            "other_income" => $response["other_income"],
+            "extra_withholding" => $response["extra_withholding"],
+            "deductions" => $response["deductions"],
+            "w4_data_type" => $response["w4_data_type"],
+            "updated_at" => getSystemDate(),
+        ];
+        //
+        $this
+            ->db
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->update(
+                "gusto_employees_federal_tax",
+                $ins
+            );
+
+        return true;
+    }
+
+    // ---------------------------------------------------
+    // sync state tax
+    // ---------------------------------------------------
+    /**
+     * sync state tax
+     */
+    private function syncStateTax()
+    {
+        //
+        $this->gustoToStoreStateTax();
+        if (
+            $this
+            ->db
+            ->where([
+                "user_type" => "employee",
+                "user_sid" => $this->gustoEmployee["employee_sid"],
+                "status" => 1,
+                "user_consent" => 1
+            ])
+            ->count_all_results("portal_state_form")
+        ) {
+            $this->storeToGustoStateTax();
+            $this->gustoToStoreStateTax();
+        }
+    }
+
+    /**
+     * sync state tax
+     * Gusto to Store
+     */
+    private function gustoToStoreStateTax()
+    {
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "state_taxes",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+        //
+        foreach ($response as $v0) {
+            //
+            $ins = [];
+            $ins["state_code"] = strtoupper($v0["state"]);
+            $ins["file_new_hire_report"] = $v0["file_new_hire_report"];
+            $ins["is_work_state"] = $v0["is_work_state"];
+            $ins["questions_json"] = json_encode($v0["questions"]);
+            $ins["updated_at"] = getSystemDate();
+            //
+            if (
+                !$this
+                    ->db
+                    ->where([
+                        "employee_sid" =>
+                        $this->gustoEmployee["employee_sid"],
+                        "state_code" => strtoupper($v0["state"])
+                    ])
+                    ->count_all_results("gusto_employees_state_tax")
+            ) {
+                //
+                $ins["employee_sid"] = $this->gustoEmployee["employee_sid"];
+                $ins["created_at"] = $ins["updated_at"];
+                // insert
+                $this
+                    ->db
+                    ->insert(
+                        "gusto_employees_state_tax",
+                        $ins
+                    );
+            } else {
+                $this
+                    ->db
+                    ->where([
+                        "employee_sid" =>
+                        $this->gustoEmployee["employee_sid"],
+                        "state_code" => strtoupper($v0["state"])
+                    ])
+                    ->update(
+                        "gusto_employees_state_tax",
+                        $ins
+                    );
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * sync state tax
+     * Gusto to Store
+     */
+    private function storeToGustoStateTax()
+    {
+        $records = $this->getGustoStateTaxRecords();
+        //
+        if (!$records) {
+            return false;
+        }
+        //
+        foreach ($records as $v0) {
+            //
+            $gusto = $this->getGustoStateTaxRecord(
+                $v0["state_code"]
+            );
+            //
+            if (!$gusto) {
+                continue;
+            }
+            //
+            $questionsArray = json_decode(
+                $gusto["questions_json"],
+                true
+            );
+            // set tmp array
+            $tmp = [];
+            // convert to list
+            foreach ($questionsArray as $question) {
+                $tmp[$question['key']] = $question;
+            }
+            //
+            $questionsArray = $tmp;
+            //
+            $record = json_decode($v0["fields_json"], true);
+            // prepare data
+            $data = [];
+            $data["filing_status"] = "E";
+            if ($record["marital_status"] == 1) {
+                $data["filing_status"] = "S";
+            } elseif ($record["marital_status"] == 2) {
+                $data["filing_status"] = "M";
+            } elseif ($record["marital_status"] == 3) {
+                $data["filing_status"] = "MH";
+            }
+            $data["withholding_allowance"] = $record["section_1_allowances"]
+                ? $record["section_1_allowances"]
+                : 0;
+            $data["additional_withholding"] = $record["section_1_additional_withholding"]
+                ? $record["section_1_additional_withholding"]
+                : 0.0;
+            $data["file_new_hire_report"] = "yes";
+            // set default error array
+            $errorsArray = [];
+            // add the answers to questions
+            foreach ($data as $index => $value) {
+                //
+                if ($questionsArray[$index]['input_question_format']['type'] !== 'Select' && $value < 0) {
+                    $errorsArray[] = '"' . ($questionsArray[$index]['label']) . '" can not be less than 0.';
+                }
+                //
+                if ($questionsArray[$index]['input_question_format']['type'] !== 'Select' && !$value) {
+                    $value = 0;
+                } elseif ($questionsArray[$index]['input_question_format']['type'] === 'Select') {
+                    $value = $value == 'yes' ? "true" : $value;
+                    $value = $value == 'no' ? "false" : $value;
+                }
+                //
+                if ($questionsArray[$index]['answers'][0]['value']) {
+                    $questionsArray[$index]['answers'][0]['value'] = $value;
+                } else {
+                    $questionsArray[$index]['answers'] = [['value' => $value, 'valid_from' => '2010-01-01']];
+                }
+            }
+            // when an error occurred
+            if ($errorsArray) {
+                continue;
+            }
+            //
+            $passData = [
+                'state' => $v0['state_code'],
+                'questions' => array_values(
+                    $questionsArray
+                )
+            ];
+
+            $this->pushStateTaxToGusto(
+                $passData
+            );
+        }
+        return true;
+    }
+
+    /**
+     * push the state tax to Gusto
+     * Gusto to Store
+     */
+    private function pushStateTaxToGusto(
+        array $stateData
+    ) {
+        // set request
+        $request = [
+            "states" => [
+                $stateData
+            ]
+        ];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "state_taxes",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        if (!$response) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * get state tax records
+     */
+    private function getGustoStateTaxRecords()
+    {
+        return $this
+            ->db
+            ->select([
+                "states.state_code",
+                "portal_state_form.fields_json"
+            ])
+            ->join(
+                "state_forms",
+                "state_forms.sid = portal_state_form.state_form_sid",
+                "inner"
+            )
+            ->join(
+                "states",
+                "states.sid = state_forms.state_sid",
+                "inner"
+            )
+            ->where([
+                "portal_state_form.user_type" => "employee",
+                "portal_state_form.user_sid" =>
+                $this->gustoEmployee["employee_sid"],
+                "portal_state_form.status" => 1,
+                "portal_state_form.user_consent" => 1
+            ])
+            ->get("portal_state_form")
+            ->result_array();
+    }
+
+    /*
+     * get state tax record for gusto
+     */
+    private function getGustoStateTaxRecord(
+        $stateCode
+    ) {
+        return
+            $this
+            ->db
+            ->select([
+                "questions_json"
+            ])
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->where("state_code", strtoupper($stateCode))
+            ->limit(1)
+            ->get("gusto_employees_state_tax")
+            ->row_array();
     }
 }
 
