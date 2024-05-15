@@ -41,7 +41,7 @@ class Cron_company_payroll extends CI_Controller
             ->row_array();
         //
         if (!$job) {
-            exit("No jb found!");
+            exit("No job found!");
         }
         //
         $this->runJob($job);
@@ -60,6 +60,8 @@ class Cron_company_payroll extends CI_Controller
         $this->runCompanyEvents();
         //
         $this->runEmployeeEvents();
+        //
+        $this->markJobComplete();
     }
 
     /**
@@ -156,6 +158,22 @@ class Cron_company_payroll extends CI_Controller
                 [
                     "stage" => $stage,
                     "updated_at" => getSystemDate()
+                ]
+            );
+    }
+
+    /**
+     * mark the job completed
+     */
+    private function markJobComplete()
+    {
+        $this
+            ->db
+            ->where("sid", $this->job["sid"])
+            ->update(
+                "payrolls.gusto_sync_queue",
+                [
+                    "is_processed" => 1
                 ]
             );
     }
