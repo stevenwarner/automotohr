@@ -153,8 +153,15 @@
                         <br style="page-break-before:always; clear:both" />
                     </p>
 
-                    <?php if ($sectionData['section_1_json'] && $userType != "employee") { ?>
-                        <?php $section1 = json_decode($sectionData['section_1_json'], true)['data']; ?>
+                    <?php if ($userType != "employee") { ?>
+
+                        <!-- Section 1 Start -->
+                        <?php
+                        $section1 = [];
+                        if ($sectionData['section_1_json']) {
+                            $section1 = json_decode($sectionData['section_1_json'], true)['data'];
+                        }
+                        ?>
                         <h2 style="line-height:normal">
                             <span style="font-family:Calibri; color:#000000">Manager Section 1: Employee Year in Review Evaluation</span>
                         </h2>
@@ -210,7 +217,7 @@
                             <tr style="height:10.1pt">
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
                                     <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Hire Date with <?=$companyName?></strong><strong>&#xa0; </strong>
+                                        <strong>Hire Date with <?= $companyName ?></strong><strong>&#xa0; </strong>
                                     </p>
                                 </td>
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
@@ -837,390 +844,403 @@
                     <p style="line-height:108%; font-size:14pt">
                         <br style="page-break-before:always; clear:both" />
                     </p>
+                    <!-- Section 1 End -->
 
-                    <?php if ($sectionData['section_2_json']) { ?>
-                        <?php $section2 = json_decode($sectionData['section_2_json'], true)['data']; ?>
-                        <p style="line-height:108%; font-size:14pt">
-                            <strong>Employee Section 2: The Year in Review</strong>
-                        </p>
-                        <p style="margin-bottom:1.05pt; line-height:108%; font-size:12pt">
-                            <strong>List 3-4 top accomplishments &amp; add a reflection on overall performance for the year.</strong>
-                        </p>
-                        <table class="table table-responsive table-bordered">
-                            <tr style="height:22.55pt">
-                                <td style="width:16.5pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>&#xa0;</strong>
-                                    </p>
-                                </td>
-                                <td style="width:151.1pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Accomplishment</strong>
-                                    </p>
-                                </td>
-                                <td style="width:316.3pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Employee Comments/Reflection</strong>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:22.55pt">
-                                <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        1
-                                    </p>
-                                </td>
-                                <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_1']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_comment_1']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:22.55pt">
-                                <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        2
-                                    </p>
-                                </td>
-                                <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_2']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_comment_2']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:22.6pt">
-                                <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        3
-                                    </p>
-                                </td>
-                                <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_3']; ?>
-                                    </p>
-                                </td>
-                                <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_comment_3']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:22.6pt">
-                                <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        4
-                                    </p>
-                                </td>
-                                <td style="width:151.1pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_4']; ?>
-                                    </p>
-                                </td>
-                                <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['accomplishment_comment_4']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            <strong><span style="color:#1f497d">&#xa0;</span></strong>
-                        </p>
-                        <p style="line-height:108%; font-size:12pt">
-                            <strong>Opportunities for Improved Performance: List 2-4 areas of improvement &amp; how you will work on these improvements over the coming year.</strong>
-                        </p>
-                        <table class="table table-responsive table-bordered">
-                            <tr style="height:17.55pt">
-                                <td style="width:29.25pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>&#xa0;</strong>
-                                    </p>
-                                </td>
-                                <td style="width:191.25pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Opportunity for Improvement</strong>
-                                    </p>
-                                </td>
-                                <td style="width:260.95pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Employee Comments</strong>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:24.2pt">
-                                <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        1
-                                    </p>
-                                </td>
-                                <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_1']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_comment_1']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:17.55pt">
-                                <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        2
-                                    </p>
-                                </td>
-                                <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_2']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_comment_2']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:17.6pt">
-                                <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        3
-                                    </p>
-                                </td>
-                                <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_3']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_comment_3']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:17.6pt">
-                                <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        4
-                                    </p>
-                                </td>
-                                <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_4']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['opportunities_comment_4']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="line-height:108%; font-size:12pt">
-                            <strong>&#xa0;</strong>
-                        </p>
-                        <p style="line-height:108%; font-size:12pt">
-                            <strong>List 2-3 goals for the upcoming year. </strong><strong><u>One</u></strong><strong> must reflect a personal development goal.</strong>
-                        </p>
-                        <table class="table table-responsive table-bordered">
-                            <tr style="height:32.35pt">
-                                <td style="width:21.88pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>&#xa0;</strong>
-                                    </p>
-                                </td>
-                                <td style="width:143.52pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Goal</strong><strong>&#xa0; </strong>
-                                    </p>
-                                </td>
-                                <td style="width:329.67pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
-                                    <p style="margin-right:4.35pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>General comments and summary relating to the status of the goal, attainment, difficulty of goal, and impacting factors. </strong>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:22.85pt">
-                                <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        1
-                                    </p>
-                                </td>
-                                <td style="width:143.52pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_1']; ?>
-                                    </p>
-                                </td>
-                                <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_comment_1']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:21.05pt">
-                                <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        2
-                                    </p>
-                                </td>
-                                <td style="width:143.52pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_2']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_comment_2']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:32.5pt">
-                                <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        3
-                                    </p>
-                                </td>
-                                <td style="width:143.52pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_3']; ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section2['goal_comment_3']; ?>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <h2>
-                            <span style="font-family:Calibri; color:#000000">&#xa0;</span>
-                        </h2>
-                        <ol style="margin:0pt; padding-left:0pt">
-                            <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.89pt; font-family:Calibri">
-                                <strong>Have you and your manager reviewed your job description for this review period</strong>?&#xa0;&#xa0; <span style="width:33.8pt; display:inline-block">&#xa0;</span>                           
-                            </li>
-                        </ol>
-                        <p style="margin-left:0pt; text-indent:18pt; line-height:108%; font-size:12pt">
-                            (Please attach a copy of your job description for review with your manager)
-                        </p>
-                        <p style="text-indent:36pt; line-height:108%; font-size:12pt">
-                            <?php echo $section2['review_period_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['review_period_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
-                        </p>
-                        <p style="margin-left:18pt; text-indent:18pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <ol start="2" style="margin:0pt; padding-left:0pt">
-                            <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
-                                Do you have access to equipment and resources necessary to perform your job function?&#xa0; <span style="width:2.16pt; display:inline-block">&#xa0;</span>
-                            </li>
-                        </ol>
-                        <p style="margin-left:20pt; line-height:108%; font-size:12pt">
-                            (If No, please list the equipment you deem necessary subject to Managers approval and budgeting)
-                        </p>
-                        <p style="text-indent:36pt; line-height:108%; font-size:12pt">
-                            <?php echo $section2['equipment_resources_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['equipment_resources_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
-                        </p>
-                        <p style="line-height:108%; font-size:12pt">
-                            <strong>Necessary Equipment or Resources Needed</strong>:
-                            <br>
-                            <?= $section2['equipment_resources_needed']; ?>
-                        </p>
-                        <p style="text-indent:36pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <ol start="3" style="margin:0pt; padding-left:0pt">
-                            <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
-                                Is there any additional support or training you feel would be helpful for <?=$companyName?> to provide for you to help you succeed in your current role?<span style="color:#1f497d"> </span>
-                            </li>
-                        </ol>
-                        <?= $section2['additional_support']; ?>
-                        <p class="ListParagraph">
-                            <span style="font-family:Calibri">&#xa0;</span>
-                        </p>
-                        <ol start="4" style="margin:0pt; padding-left:0pt">
-                            <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
-                                Employee Additional Comments:
-                            </li>
-                        </ol>
-                        <?= $section2['additional_comment']; ?>
-                    <?php } ?>
+                    <!-- Section 2 Start -->
+                    <?php
+                    $section2 = [];
+                    if ($sectionData['section_2_json']) {
+                        $section2 = json_decode($sectionData['section_2_json'], true)['data'];
+                    }
+                    ?>
+                    <p style="line-height:108%; font-size:14pt">
+                        <strong>Employee Section 2: The Year in Review</strong>
+                    </p>
+                    <p style="margin-bottom:1.05pt; line-height:108%; font-size:12pt">
+                        <strong>List 3-4 top accomplishments &amp; add a reflection on overall performance for the year.</strong>
+                    </p>
+                    <table class="table table-responsive table-bordered">
+                        <tr style="height:22.55pt">
+                            <td style="width:16.5pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>&#xa0;</strong>
+                                </p>
+                            </td>
+                            <td style="width:151.1pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Accomplishment</strong>
+                                </p>
+                            </td>
+                            <td style="width:316.3pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Employee Comments/Reflection</strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:22.55pt">
+                            <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    1
+                                </p>
+                            </td>
+                            <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_1']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_comment_1']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:22.55pt">
+                            <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    2
+                                </p>
+                            </td>
+                            <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_2']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_comment_2']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:22.6pt">
+                            <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    3
+                                </p>
+                            </td>
+                            <td style="width:151.1pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_3']; ?>
+                                </p>
+                            </td>
+                            <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_comment_3']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:22.6pt">
+                            <td style="width:16.5pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    4
+                                </p>
+                            </td>
+                            <td style="width:151.1pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_4']; ?>
+                                </p>
+                            </td>
+                            <td style="width:316.3pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['accomplishment_comment_4']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        <strong><span style="color:#1f497d">&#xa0;</span></strong>
+                    </p>
+                    <p style="line-height:108%; font-size:12pt">
+                        <strong>Opportunities for Improved Performance: List 2-4 areas of improvement &amp; how you will work on these improvements over the coming year.</strong>
+                    </p>
+                    <table class="table table-responsive table-bordered">
+                        <tr style="height:17.55pt">
+                            <td style="width:29.25pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>&#xa0;</strong>
+                                </p>
+                            </td>
+                            <td style="width:191.25pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Opportunity for Improvement</strong>
+                                </p>
+                            </td>
+                            <td style="width:260.95pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Employee Comments</strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:24.2pt">
+                            <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    1
+                                </p>
+                            </td>
+                            <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_1']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_comment_1']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:17.55pt">
+                            <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    2
+                                </p>
+                            </td>
+                            <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_2']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_comment_2']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:17.6pt">
+                            <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    3
+                                </p>
+                            </td>
+                            <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_3']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_comment_3']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:17.6pt">
+                            <td style="width:29.25pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    4
+                                </p>
+                            </td>
+                            <td style="width:191.25pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_4']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:260.95pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['opportunities_comment_4']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="line-height:108%; font-size:12pt">
+                        <strong>&#xa0;</strong>
+                    </p>
+                    <p style="line-height:108%; font-size:12pt">
+                        <strong>List 2-3 goals for the upcoming year. </strong><strong><u>One</u></strong><strong> must reflect a personal development goal.</strong>
+                    </p>
+                    <table class="table table-responsive table-bordered">
+                        <tr style="height:32.35pt">
+                            <td style="width:21.88pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>&#xa0;</strong>
+                                </p>
+                            </td>
+                            <td style="width:143.52pt; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Goal</strong><strong>&#xa0; </strong>
+                                </p>
+                            </td>
+                            <td style="width:329.67pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top; background-color:#d9e2f3">
+                                <p style="margin-right:4.35pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>General comments and summary relating to the status of the goal, attainment, difficulty of goal, and impacting factors. </strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:22.85pt">
+                            <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    1
+                                </p>
+                            </td>
+                            <td style="width:143.52pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_1']; ?>
+                                </p>
+                            </td>
+                            <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_comment_1']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:21.05pt">
+                            <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    2
+                                </p>
+                            </td>
+                            <td style="width:143.52pt; border:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_2']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_comment_2']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:32.5pt">
+                            <td style="width:21.88pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    3
+                                </p>
+                            </td>
+                            <td style="width:143.52pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_3']; ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:329.67pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?= $section2['goal_comment_3']; ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <h2>
+                        <span style="font-family:Calibri; color:#000000">&#xa0;</span>
+                    </h2>
+                    <ol style="margin:0pt; padding-left:0pt">
+                        <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.89pt; font-family:Calibri">
+                            <strong>Have you and your manager reviewed your job description for this review period</strong>?&#xa0;&#xa0; <span style="width:33.8pt; display:inline-block">&#xa0;</span>                           
+                        </li>
+                    </ol>
+                    <p style="margin-left:0pt; text-indent:18pt; line-height:108%; font-size:12pt">
+                        (Please attach a copy of your job description for review with your manager)
+                    </p>
+                    <p style="text-indent:36pt; line-height:108%; font-size:12pt">
+                        <?php echo $section2['review_period_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['review_period_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
+                    </p>
+                    <p style="margin-left:18pt; text-indent:18pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <ol start="2" style="margin:0pt; padding-left:0pt">
+                        <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
+                            Do you have access to equipment and resources necessary to perform your job function?&#xa0; <span style="width:2.16pt; display:inline-block">&#xa0;</span>
+                        </li>
+                    </ol>
+                    <p style="margin-left:20pt; line-height:108%; font-size:12pt">
+                        (If No, please list the equipment you deem necessary subject to Managers approval and budgeting)
+                    </p>
+                    <p style="text-indent:36pt; line-height:108%; font-size:12pt">
+                        <?php echo $section2['equipment_resources_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['equipment_resources_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
+                    </p>
+                    <p style="line-height:108%; font-size:12pt">
+                        <strong>Necessary Equipment or Resources Needed</strong>:
+                        <br>
+                        <?= $section2['equipment_resources_needed']; ?>
+                    </p>
+                    <p style="text-indent:36pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <ol start="3" style="margin:0pt; padding-left:0pt">
+                        <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
+                            Is there any additional support or training you feel would be helpful for <?= $companyName ?> to provide for you to help you succeed in your current role?<span style="color:#1f497d"> </span>
+                        </li>
+                    </ol>
+                    <?= $section2['additional_support']; ?>
+                    <p class="ListParagraph">
+                        <span style="font-family:Calibri">&#xa0;</span>
+                    </p>
+                    <ol start="4" style="margin:0pt; padding-left:0pt">
+                        <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
+                            Employee Additional Comments:
+                        </li>
+                    </ol>
+                    <?= $section2['additional_comment']; ?>
+                    <!-- Section 2 End -->
+
 
                     <p style="line-height:108%; font-size:14pt">
                         <br style="page-break-before:always; clear:both" />
                     </p>
 
-                    <?php if ($sectionData['section_3_json']) { ?>
-                        <?php $section3 = json_decode($sectionData['section_3_json'], true)['data']; ?>
+                    <!-- Section 3 Start -->
+                    <?php
+                    $section3 = [];
+                    if ($sectionData['section_3_json']) {
+                        $section3 = json_decode($sectionData['section_3_json'], true)['data'];
+                    }
+                    ?>
 
-                        <h2 style="line-height:108%; font-size:14pt">
-                            <span style="font-family:Calibri; color:#000000">Manager &amp; Employee Section 3: The Year in Review </span>
-                        </h2>
-                        <h2>
-                            <span style="font-family:Calibri; color:#000000">&#xa0;</span>
-                        </h2>
-                        <h2>
-                            <span style="font-family:Calibri; color:#000000">Additional Comments, Feedback - Managers Comments: </span>
-                        </h2>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            <?= $section3['additional_comment_one'] ?>
-                        </p>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <p style="margin-bottom:1.05pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <h2>
-                            <span style="font-family:Calibri; color:#000000">Additional Comments, Feedback - Managers Comments: </span>
-                        </h2>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            <?= $section3['additional_comment_two'] ?>
-                        </p>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                    <?php } ?>
+                    <h2 style="line-height:108%; font-size:14pt">
+                        <span style="font-family:Calibri; color:#000000">Manager &amp; Employee Section 3: The Year in Review </span>
+                    </h2>
+                    <h2>
+                        <span style="font-family:Calibri; color:#000000">&#xa0;</span>
+                    </h2>
+                    <h2>
+                        <span style="font-family:Calibri; color:#000000">Additional Comments, Feedback - Managers Comments: </span>
+                    </h2>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        <?= $section3['additional_comment_one'] ?>
+                    </p>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <p style="margin-bottom:1.05pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <h2>
+                        <span style="font-family:Calibri; color:#000000">Additional Comments, Feedback - Managers Comments: </span>
+                    </h2>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        <?= $section3['additional_comment_two'] ?>
+                    </p>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <!-- Section 3 End -->
 
+                    <!-- Section 4 Start -->
                     <p style="margin-bottom:1.05pt; line-height:108%; font-size:12pt">
                         &#xa0;
                     </p>
@@ -1306,7 +1326,9 @@
                                 </td>
                             </tr>
                         </table>
+                    <!-- Section 4 End -->    
 
+                    <!-- Section 5 Start -->
                         <p style="margin-bottom:0pt; text-align:justify; line-height:108%; font-size:12pt">
                             <strong><span style="color:#1f497d">&#xa0;</span></strong>
                         </p>
@@ -1396,6 +1418,7 @@
                                 </td>
                             </tr>
                         </table>
+                    <!-- Section 5 End -->
                     <?php } ?>
                 </div>
             </div>
