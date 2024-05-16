@@ -13041,6 +13041,7 @@ class Hr_documents_management extends Public_Controller
         } else exit(0);
         //
         $data['documents'] = $documents;
+        _e($documents,true,true);
         //
         $data['user_sid'] = $id;
         $data['user_type'] = $type;

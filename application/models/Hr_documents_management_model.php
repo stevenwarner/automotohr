@@ -6021,7 +6021,6 @@ class Hr_documents_management_model extends CI_Model
         $a = $a->free_result();
         //
         if (count($b)) {
-            _e(count($b),true);
             //
             foreach ($b as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
@@ -6046,7 +6045,6 @@ class Hr_documents_management_model extends CI_Model
                     unset($b[$key]);
                 }
             }
-            _e(count($b),true,true);
             //
             $r['Assigned'] = $b;
         }
