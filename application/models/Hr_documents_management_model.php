@@ -6046,7 +6046,7 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
             //
-            $r['Assigned'] = $b;
+            $r['Assigned'] = array_values($b);
         }
         //
         return $r;
