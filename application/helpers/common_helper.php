@@ -11609,15 +11609,24 @@ if (!function_exists('getFileName')) {
     function getFileName(
         $o,
         $u,
-        $a = ''
+        $a = '',
+        $doClean = false
     ) {
         //
         $t = explode('.', $u);
         $ue = '.' . $t[count($t) - 1];
         $ue = $a == '' ? $ue : $a . $ue;
         //
-        if (strpos($o, '.') === false) return $o . $ue;
-        return $o;
+        $name = "";
+        //
+        if (strpos($o, '.') === false) {$name = $o . $ue;}
+        else {$name = $o;}
+
+        if ($doClean) {
+            $name = strtolower(preg_replace("/[^a-zA-Z0-9-_.]/", "_", $name));
+        }
+
+        return $name;
     }
 }
 
