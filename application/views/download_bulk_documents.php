@@ -90,7 +90,10 @@
 
         //
         $(function() {
+
             let assigned = <?= json_encode($documents['Assigned']); ?>;
+            console.log(assignedLength)
+            console.log(assigned)
             let assignedLength = assigned.length;
             let dt = 10;
             let dc = 0;
