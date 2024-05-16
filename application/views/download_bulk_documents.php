@@ -92,10 +92,7 @@
         $(function() {
 
             let assigned = <?= json_encode($documents['Assigned']); ?>;
-            
-            console.log(assigned)
             let assignedLength = assigned.length;
-            console.log(assignedLength)
             let dt = 10;
             let dc = 0;
             let gd = 0;
@@ -355,7 +352,6 @@
                     dct.document_type == 'uploaded' ||
                     dct.offer_letter_type == 'uploaded'
                 ) {
-                    console.log(dct.document_title)
                     uploadDocument({
                         title: dct.document_title,
                         orig_filename: dct.document_original_name,
