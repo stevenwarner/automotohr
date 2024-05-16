@@ -6042,7 +6042,7 @@ class Hr_documents_management_model extends CI_Model
                 }
                 //
                 if ($is_magic_tag_exist == 1) {
-                    // unset($b[$key]);
+                    unset($b[$key]);
                 }
             }
             //
