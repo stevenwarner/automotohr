@@ -13108,9 +13108,7 @@ class Hr_documents_management extends Public_Controller
                 downloadFileFromAWS(
                     getFileName(
                         $dir . time() . '_' . $post['data']['orig_filename'],
-                        AWS_S3_BUCKET_URL . $post['data']['s3_filename'],
-                        "",
-                        true
+                        AWS_S3_BUCKET_URL . $post['data']['s3_filename']
                     ),
                     AWS_S3_BUCKET_URL . $post['data']['s3_filename']
                 );

@@ -10833,7 +10833,7 @@ if (!function_exists('downloadFileFromAWS')) {
         $fp = fopen($filePath, 'w');
         //Here is the file we are downloading, replace spaces with %20
         $ch = curl_init(str_replace(" ", "%20", $url));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 70);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
         // write curl response to file
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
