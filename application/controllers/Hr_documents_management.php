@@ -13104,6 +13104,7 @@ class Hr_documents_management extends Public_Controller
                 fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
                 fclose($f);
             } else if (isset($post['data']['s3_filename'])) {
+                echo "here";
                 // For Generated documents
                 downloadFileFromAWS(
                     getFileName(
