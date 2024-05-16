@@ -11,6 +11,7 @@ class Settings extends Public_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
+        require_once(APPPATH . 'libraries/Lb_shifts.php');
     }
 
     public function validate_sub_domain($str)
@@ -318,7 +319,6 @@ class Settings extends Public_Controller
             $data['title'] = 'Company Profile';
             $company = $this->dashboard_model->get_company_detail($company_id);
 
-
             if (empty($company['extra_info'])) {
                 $data['onboarding_eeo_form_status'] = 1;
                 $data['safety_sheet'] = 1;
@@ -331,6 +331,8 @@ class Settings extends Public_Controller
                 $company['timesheet_enable_for_attendance'] = "";
                 $company['shift_reminder_email_for_next_day'] = 0;
                 $company['week_off_days'] = [];
+
+                $company['shifts_export_duration'] = 'month';
             } else {
                 $serializedata = unserialize($company['extra_info']);
                 $data['onboarding_eeo_form_status'] = $serializedata['EEO'];
@@ -344,6 +346,8 @@ class Settings extends Public_Controller
                 $company['timesheet_enable_for_attendance'] = isset($serializedata['timesheet_enable_for_attendance']) ? $serializedata['timesheet_enable_for_attendance'] : 0;
                 $company['shift_reminder_email_for_next_day'] = isset($serializedata['shift_reminder_email_for_next_day']) ? $serializedata['shift_reminder_email_for_next_day'] : 0;
                 $company['week_off_days'] = isset($serializedata['week_off_days']) ? $serializedata['week_off_days'] : [];
+
+                $company['shifts_export_duration'] = isset($serializedata['shifts_export_duration']) ? $serializedata['shifts_export_duration'] : 'month';
             }
             $serializedata = unserialize($company['extra_info']);
             $data['company'] = $company;
@@ -444,6 +448,12 @@ class Settings extends Public_Controller
                 if (isset($post['l_employment'])) {
                     $company_extra_info['l_employment'] = $post['l_employment'];
                 }
+
+                if ($post["shifts_export_duration"]) {
+                    $company_extra_info["shifts_export_duration"] = $post["shifts_export_duration"];
+                }
+
+
                 $extra_info = serialize($company_extra_info);
                 $video_id = '';
                 $remove_flag;
@@ -537,10 +547,10 @@ class Settings extends Public_Controller
                 $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
                 $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
 
-
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
                 $data['Location_State'] = $this->input->post('Location_State', true);
+
 
                 $this->dashboard_model->update_user($sid, $data);
                 $company_details = $data;
@@ -5742,6 +5752,7 @@ class Settings extends Public_Controller
 
     public function processMultiShiftPublicStatus()
     {
+
         // check and generate error for session
         $session = checkAndGetSession();
         // set the sanitized post
@@ -5751,11 +5762,14 @@ class Settings extends Public_Controller
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // call the function
+
+
         $this->shift_model
             ->SingleMultiPublishStatusChange(
                 $session["company_detail"]["sid"],
                 $post
             );
+
         // Send  Notification Email
         if ($post['sendEmail'] == 1) {
 
@@ -5818,12 +5832,15 @@ class Settings extends Public_Controller
         string $companyName,
         array $emailTemplateData
     ) {
+
+
         // set replace array
         $replaceArray = [
             "{{first_name}}" => $shiftsData[0]["first_name"],
             "{{last_name}}" => $shiftsData[0]["last_name"],
             "{{shift_details}}" => "",
             "{{company_name}}" => $companyName,
+            "{{employee_name}}" => $shiftsData[0]["first_name"] . ' ' . $shiftsData[0]["last_name"],
         ];
         //
         $shiftDetails = "";
@@ -5837,6 +5854,8 @@ class Settings extends Public_Controller
         $shiftDetails .= '<tbody>';
 
         // set the first and last name
+
+        $employeeId = '';
         foreach ($shiftsData as $row) {
             $shiftDetails .= "<tr>";
             $shiftDetails .= "<td>" . formatDateToDB(
@@ -5858,12 +5877,44 @@ class Settings extends Public_Controller
             );
             $shiftDetails .= "</td>";
             $shiftDetails .= "</tr>";
+
+            $employeeId = $row['employee_sid'];
         }
         //
         $shiftDetails .= '</tbody>';
         $shiftDetails .= "</table>";
+
+
+        $icsVscButtons = '';
+
+        $icsVscButtons .= '<br><br> <div>';
+        $icsVscButtons .= '<a href="' . base_url('calendar/shifts/' . $employeeId . '/ics') . '" class="" style="font-weight: 600;
+        font-size: 16px;
+        background-color: #fd7a2a;
+        color: #f1f1f1;
+        text-transform: capitalize;
+        border-radius: 5px; margin-right: 20px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 3px;
+        padding-right: 3px;"> &nbsp;Sync Shifts - ICS </a>';
+        $icsVscButtons .= '<a href="' . base_url('calendar/shifts/' . $employeeId . '/vcs') . '" class="" style="font-weight: 600;
+        font-size: 16px;
+        background-color: #fd7a2a;
+        color: #f1f1f1;
+        text-transform: capitalize;
+        border-radius: 5px; margin-right: 20px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 3px;
+        padding-right: 3px; ">&nbsp;Sync Shifts - VCS</a>';
+        $icsVscButtons .= '</div>';
+
         //
-        $replaceArray["{{shift_details}}"] = $shiftDetails;
+        $replaceArray["{{shift_details}}"] = $shiftDetails . $icsVscButtons;
+
+        $replaceArray["{{shift_publish_status}}"] = '';
+
 
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
@@ -5884,10 +5935,12 @@ class Settings extends Public_Controller
             $emailTemplateBody
         );
 
+
+        //emailTemplateBody
+
         $body = $message_hf['header']
             . $emailTemplateBody
             . $message_hf['footer'];
-
 
         log_and_sendEmail(
             $emailTemplateData['from_email'],
@@ -5896,5 +5949,66 @@ class Settings extends Public_Controller
             $body,
             STORE_NAME
         );
+    }
+
+
+    //
+    public function processCalendarShiftsImport($employeeId, $importType)
+    {
+        if ($employeeId == 0 || $importType == '') {
+
+            return;
+        }
+
+        $loggedInCompany = checkAndGetSession("company_detail");
+        //
+        $company = $this->dashboard_model->get_company_detail($loggedInCompany['sid']);
+
+        $duration = 'week';
+
+        if (empty($company['extra_info'])) {
+            $duration = 'month';
+        } else {
+            $serializedata = unserialize($company['extra_info']);
+            $duration = isset($serializedata['shifts_export_duration']) ? $serializedata['shifts_export_duration'] : 'month';
+        }
+
+        //
+        if ($duration === "week") {
+            // get the current week dates
+            $weekDates = getWeekDates(false, SITE_DATE);
+            // set start date
+            $data["filter"]["start_date"] = $weekDates['start_date'];
+            $data["filter"]["end_date"] =  $weekDates['end_date'];
+        } elseif ($duration === "month") {
+            //
+            $data["filter"]["start_date"] = date("m/01/Y", now());
+            $data["filter"]["end_date"] = date("m/t/Y", now());
+        } elseif ($duration === "year") {
+
+            $data["filter"]["start_date"] = date("01/01/Y");
+            $data["filter"]["end_date"] = date("12/01/Y");
+        } elseif ($duration === "all") {
+
+            $data["filter"]["mode"] = 'all';
+        }
+
+        //
+        $this->load->model("v1/Shift_model", "shift_model");
+
+        $data["shifts"] = $this->shift_model->getShifts(
+            $data["filter"],
+            [$employeeId],
+            true
+        );
+
+        //
+        $libShifts = new Lb_shifts();
+
+        if ($importType == "ics") {
+            $libShifts->generateIcsFileForShifts($data["shifts"][$employeeId]['dates'], $loggedInCompany['CompanyName']);
+        } elseif ($importType == "vcs") {
+            $libShifts->generateVcsFileForShifts($data["shifts"][$employeeId]['dates']);
+        }
     }
 }

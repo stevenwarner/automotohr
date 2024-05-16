@@ -569,6 +569,48 @@
                             </div>
                         </div>
 
+
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--radio">
+                                    Week <small class="help_text">Selecting this functionality will result in export shifts in current week.</small>
+                                    <input <?php echo set_radio('shifts_export_duration', 'week', $company['shifts_export_duration'] == 'week'); ?> class="video_source" type="radio" name="shifts_export_duration" value="week" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--radio">
+                                    Month <small class="help_text">Selecting this functionality will result in export shifts in current month.</small>
+                                    <input <?php echo set_radio('shifts_export_duration', 'month', $company['shifts_export_duration'] == 'month'); ?> class="video_source" type="radio" name="shifts_export_duration" value="month" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--radio">
+                                    Year <small class="help_text">Selecting this functionality will result in export shifts in current year.</small>
+                                    <input <?php echo set_radio('shifts_export_duration', 'year', $company['shifts_export_duration'] == 'year'); ?> class="video_source" type="radio" name="shifts_export_duration" value="year" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--radio">
+                                    All <small class="help_text">Selecting this functionality will result in export all shifts.</small>
+                                    <input <?php echo set_radio('shifts_export_duration', 'all', $company['shifts_export_duration'] == 'all'); ?> class="video_source" type="radio" name="shifts_export_duration" value="all" />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <h3>Company Week off days</h3>
@@ -585,7 +627,6 @@
                                 </select>
                             </div>
                         </div>
-
 
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">

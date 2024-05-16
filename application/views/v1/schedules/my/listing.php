@@ -81,6 +81,16 @@ if ($filter["mode"] === "month") {
 
                                     <div class="col-sm-4 text-right">
 
+                                        <div class="btn-group" role="group">
+                                            <button id="btnGroupDrop1" type="button" class="btn btn-orange dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Export
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="background-color: #f1f1f1; color: #333131; padding-left: 10px;">
+                                                <a class="dropdown-item" href="<?php echo base_url('calendar/shifts/' . $employeeId . '/ics')?>">In ICS </a><br>
+                                                <a class="dropdown-item" href="<?php echo base_url('calendar/shifts/' . $employeeId . '/vcs')?>">In VCS </a>
+                                            </div>
+                                        </div>
+
                                         <button class="btn btn-blue jsFilterBtn">
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters

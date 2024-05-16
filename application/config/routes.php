@@ -2272,3 +2272,6 @@ $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
 $route["settings/shifts/singleshift/public-status"]["post"] = "Settings/processSingleShiftPublicStatus";
 $route["settings/shifts/multishift/public-status"]["post"] = "Settings/processMultiShiftPublicStatus";
 
+$route["calendar/shifts/(:num)/(:any)"]["get"] = "Settings/processCalendarShiftsImport/$1/$2";
+
+

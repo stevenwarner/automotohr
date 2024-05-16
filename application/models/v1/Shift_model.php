@@ -380,6 +380,7 @@ class Shift_model extends CI_Model
             $this->db
                 ->where("shift_date >= ", $startDate)
                 ->where("shift_date <= ", $endDate);
+        } elseif ($filter["mode"] === "all") {
         } else {
             //
             $this->db
@@ -394,6 +395,7 @@ class Shift_model extends CI_Model
         $records = $this->db
             ->get("cl_shifts")
             ->result_array();
+
         //
         if ($records) {
             // extract employee ids
@@ -1428,7 +1430,7 @@ class Shift_model extends CI_Model
                     ->limit(1)
                     ->get()
                     ->row_array();
-                
+
                 if (!$result) {
                     unset($records[$key]);
                     continue;

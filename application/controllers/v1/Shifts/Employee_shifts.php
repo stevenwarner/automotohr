@@ -102,6 +102,8 @@ class Employee_shifts extends Public_Controller
         $data["filterEndDate"] = $filterEndDate;
         $data["loadView"] = true;
         $data["sanitizedView"] = true;
+        $data["employeeId"] =  $employeeId;
+
         // get off and holidays
         $data["holidays"] = $this->shift_model->getCompanyHolidaysWithTitle(
             $loggedInCompany["sid"],
