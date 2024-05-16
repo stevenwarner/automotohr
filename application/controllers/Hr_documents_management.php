@@ -200,12 +200,12 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         //
-                        $documentDescription = 
-                        checkAndGetDocumentDescription(
-                            $document_sid,
-                            $this->input->post('document_description'),
-                            true
-                        );
+                        $documentDescription =
+                            checkAndGetDocumentDescription(
+                                $document_sid,
+                                $this->input->post('document_description'),
+                                true
+                            );
 
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
@@ -1403,7 +1403,7 @@ class Hr_documents_management extends Public_Controller
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
 
-                        if($document_info["fillable_document_slug"]) {
+                        if ($document_info["fillable_document_slug"]) {
                             $document_name = $document_info["document_title"];
                             $document_description = $document_info["document_description"];
                         }
@@ -3782,7 +3782,7 @@ class Hr_documents_management extends Public_Controller
 
                             if ($documentBodyOld != $document_body) {
 
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -5652,12 +5652,12 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             $magic_codes = array('{{signature}}', '{{inital}}');
 
-                           //
+                            //
                             $documentBodyOld = $document_body;
                             $document_body = magicCodeCorrection($document_body);
 
                             if ($documentBodyOld != $document_body) {
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
 
@@ -7198,14 +7198,14 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                             $magic_codes = array('{{signature}}', '{{inital}}');
-                             
-                               //
-                               $documentBodyOld = $document_body;
-                               $document_body = magicCodeCorrection($document_body);
-   
-                               if ($documentBodyOld != $document_body) {
-                                   updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
-                               }
+
+                            //
+                            $documentBodyOld = $document_body;
+                            $document_body = magicCodeCorrection($document_body);
+
+                            if ($documentBodyOld != $document_body) {
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
+                            }
 
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -7914,7 +7914,7 @@ class Hr_documents_management extends Public_Controller
 
                 if ($document["fillable_document_slug"]) {
                     $postfix = $type === "original" ? "print_assigned" : "print";
-                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);    
+                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);
                 }
 
                 $this->load->view('hr_documents_management/print_generated_document', $data);
@@ -13041,7 +13041,6 @@ class Hr_documents_management extends Public_Controller
         } else exit(0);
         //
         $data['documents'] = $documents;
-        // _e($documents,true,true);
         //
         $data['user_sid'] = $id;
         $data['user_type'] = $type;
@@ -13104,14 +13103,23 @@ class Hr_documents_management extends Public_Controller
                 fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
                 fclose($f);
             } else if (isset($post['data']['s3_filename'])) {
+
+                $this->load->library("aws_lib");
+                $this
+                    ->aws_lib
+                    ->get_object(
+                        AWS_S3_BUCKET_NAME,
+                        $post['data']['s3_filename'],
+                    $dir . time() . '_' . $post['data']['orig_filename']
+                    );
                 // For Generated documents
-                downloadFileFromAWS(
-                    getFileName(
-                        $dir . time() . '_' . $post['data']['orig_filename'],
-                        AWS_S3_BUCKET_URL . $post['data']['s3_filename']
-                    ),
-                    AWS_S3_BUCKET_URL . $post['data']['s3_filename']
-                );
+                // downloadFileFromAWS(
+                //     getFileName(
+                //         $dir . time() . '_' . $post['data']['orig_filename'],
+                //         AWS_S3_BUCKET_URL . $post['data']['s3_filename']
+                //     ),
+                //     AWS_S3_BUCKET_URL . $post['data']['s3_filename']
+                // );
             }
 
             if ($post['type'] == 'I9' || $post['type'] == 'W9' || $post['type'] == 'W4') {

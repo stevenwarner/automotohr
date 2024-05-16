@@ -10833,7 +10833,7 @@ if (!function_exists('downloadFileFromAWS')) {
         $fp = fopen($filePath, 'w');
         //Here is the file we are downloading, replace spaces with %20
         $ch = curl_init(str_replace(" ", "%20", $url));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 70);
         // write curl response to file
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -11609,24 +11609,15 @@ if (!function_exists('getFileName')) {
     function getFileName(
         $o,
         $u,
-        $a = '',
-        $doClean = false
+        $a = ''
     ) {
         //
         $t = explode('.', $u);
         $ue = '.' . $t[count($t) - 1];
         $ue = $a == '' ? $ue : $a . $ue;
         //
-        $name = "";
-        //
-        if (strpos($o, '.') === false) {$name = $o . $ue;}
-        else {$name = $o;}
-
-        if ($doClean) {
-            $name = strtolower(preg_replace("/[^a-zA-Z0-9-_.]/", "_", $name));
-        }
-
-        return $name;
+        if (strpos($o, '.') === false) return $o . $ue;
+        return $o;
     }
 }
 
