@@ -351,6 +351,7 @@
                 }
                 //
                 if (
+                    dct.document_type == 'confidential' ||
                     dct.document_type == 'uploaded' ||
                     dct.offer_letter_type == 'uploaded'
                 ) {
