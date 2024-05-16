@@ -485,7 +485,7 @@
                 var company_sid = "<?= $company_sid; ?>";
                 window.location.href = "<?= base_url('hr_documents_management/generate_zip'); ?>/" + token + "/<?= $slug; ?>/" + user_sid + "/" + user_type + "/" + company_sid;
                 setTimeout(() => {
-                    // window.close();
+                    window.close();
                 }, 10000);
             }
 
