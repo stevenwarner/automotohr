@@ -13110,7 +13110,7 @@ class Hr_documents_management extends Public_Controller
                     ->get_object(
                         AWS_S3_BUCKET_NAME,
                         $post['data']['s3_filename'],
-                    $dir . time() . '_' . $post['data']['orig_filename']
+                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/','_',$post['data']['orig_filename']))
                     );
                 // For Generated documents
                 // downloadFileFromAWS(
