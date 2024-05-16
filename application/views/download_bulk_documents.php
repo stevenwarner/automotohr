@@ -94,7 +94,7 @@
             let assigned = <?= json_encode($documents['Assigned']); ?>;
             
             console.log(assigned)
-            let assignedLength = <?=$assign_documents_count?>;
+            let assignedLength = assigned.length;
             console.log(assignedLength)
             let dt = 10;
             let dc = 0;
