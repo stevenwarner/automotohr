@@ -6021,6 +6021,31 @@ class Hr_documents_management_model extends CI_Model
         $a = $a->free_result();
         //
         if (count($b)) {
+            //
+            foreach ($b as $key => $assigned_document) {
+                $is_magic_tag_exist = 0;
+    
+                if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+                    $document_body = $assigned_document['document_description'];
+                    $magic_codes = array('{{signature}}', '{{inital}}');
+                    //
+                    $documentBodyOld = $document_body;
+                    $document_body = magicCodeCorrection($document_body);
+    
+                    if ($documentBodyOld != $document_body) {
+                        updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
+                    }
+    
+                    if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                        $is_magic_tag_exist = 1;
+                    }
+                }
+                //
+                if ($is_magic_tag_exist == 1) {
+                    unset($b[$key]);
+                }
+            }
+            //
             $r['Assigned'] = $b;
         }
         //
