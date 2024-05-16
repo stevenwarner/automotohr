@@ -132,20 +132,28 @@ class Employee_performance_evaluation extends CI_Controller
                 $data['section_1'] = json_decode($sectionData['section_1_json'], true)['data'];
             } else {
                 //
-                $data['section_1']['epe_employee_name'] = getUserNameBySID($employeeId);
-                $data['section_1']['epe_job_title'] = $this->loggedInEmployeeSession['job_title'];
+                $userInfo = db_get_employee_profile($employeeId);
+                //
+                $data['section_1']['epe_employee_name'] = $userInfo[0]['first_name'] . ' ' . $userInfo[0]['last_name'];
+                $data['section_1']['epe_job_title'] = $userInfo[0]['job_title'];
                 $data['section_1']['epe_department'] = getDepartmentNameBySID($employeeId);
                 $data['section_1']['epe_manager'] = $this->loggedInEmployeeSession['first_name'] . ' ' . $this->loggedInEmployeeSession['last_name'];
                 $data['section_1']['epe_hire_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
                 $data['section_1']['epe_start_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
-                $data['section_1']['epe_review_start'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
-                $data['section_1']['epe_review_end'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
             }
+            //
             $data['employees'] = $this
                 ->employee_performance_evaluation_model
                 ->getCompanyActiveEmployees(
                     $this->loggedInCompanySession["sid"]
                 );
+            //
+            $data['verification_managers'] = $this
+                ->employee_performance_evaluation_model
+                ->getVerificationManagers(
+                    $employeeId,
+                    1
+                );    
         } else if ($section == "two") {
             $sectionData = $this
                 ->employee_performance_evaluation_model
@@ -298,6 +306,7 @@ class Employee_performance_evaluation extends CI_Controller
         $this->protectedRoute();
         //
         $message = '';
+        $extra = [];
         //
         if ($section == "one") {
             $this->employee_performance_evaluation_model
@@ -312,7 +321,14 @@ class Employee_performance_evaluation extends CI_Controller
                     ]
                 );
             //
-            $message = 'Section one save successfully.';
+            $message = "The performance evaluation in section one has been saved successfully.";
+            //
+            $extra['verification_managers'] = $this
+                ->employee_performance_evaluation_model
+                ->getVerificationManagers(
+                    $employeeId,
+                    1
+                );
         } else if ($section == "two") {
             $this->employee_performance_evaluation_model
                 ->saveEmployeeDocumentSectionTwo(
@@ -324,7 +340,7 @@ class Employee_performance_evaluation extends CI_Controller
                     ]
                 );
             //
-            $message = 'Data save successfully.';
+            $message = 'The performance evaluation data has been saved successfully.';
         } else if ($section == "three") {
             $this->employee_performance_evaluation_model
                 ->saveEmployeeDocumentSectionThree(
@@ -336,7 +352,7 @@ class Employee_performance_evaluation extends CI_Controller
                     ]
                 );
             //
-            $message = 'Section three save successfully';
+            $message = 'The performance evaluation in section three has been saved successfully.';
         } else if ($section == "four") {
             //
             $signature = get_e_signature(
@@ -413,7 +429,7 @@ class Employee_performance_evaluation extends CI_Controller
                     );
             }
             //
-            $message = 'Signature save successfully.';
+            $message = 'The performance evaluation in section four has been saved successfully.';
         } else if ($section == "five") {
             //
             if ($_POST['user_type'] == "manager") {
@@ -469,14 +485,15 @@ class Employee_performance_evaluation extends CI_Controller
             }
 
             //
-            $message = 'Section five save successfully';
+            $message = 'The performance evaluation in section five has been saved successfully.';
         }
         //
         return SendResponse(
             200,
             [
                 "success" => true,
-                "message" => $message
+                "message" => $message,
+                "extra" => $extra
             ]
         );
     }
@@ -518,6 +535,17 @@ class Employee_performance_evaluation extends CI_Controller
                 ]
             );
         //
+        if (!$sectionData['section_1_json']) {
+            //
+            $userInfo = db_get_employee_profile($employeeId);
+            //
+            $data['defaultData']['epe_employee_name'] = $userInfo[0]['first_name'] . ' ' . $userInfo[0]['last_name'];
+            $data['defaultData']['epe_job_title'] = $userInfo[0]['job_title'];
+            $data['defaultData']['epe_department'] = getDepartmentNameBySID($employeeId);
+            $data['defaultData']['epe_manager'] = $this->loggedInEmployeeSession['first_name'] . ' ' . $this->loggedInEmployeeSession['last_name'];
+            $data['defaultData']['epe_hire_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
+            $data['defaultData']['epe_start_date'] = formatDateToDB(getUserStartDate($employeeId, true), DB_DATE, 'm-d-Y');
+        }
         $data['sectionData'] = $sectionData;
         $data['companyName'] = $this->loggedInCompanySession["CompanyName"];
         //
@@ -595,7 +623,7 @@ class Employee_performance_evaluation extends CI_Controller
             200,
             [
                 "success" => true,
-                "message" => "Verification employee added successfully."
+                "message" => "The verification email was successfully sent to the manager for performance evaluation."
             ]
         );
     }

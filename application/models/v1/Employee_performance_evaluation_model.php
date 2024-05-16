@@ -91,7 +91,8 @@ class Employee_performance_evaluation_model extends CI_Model
             $info = json_decode($record['section_1_json'], true);
             //
             $returnArray["sections"][1] = [
-                "status" => $info['verified_by'] ? true : false,
+                "status" => $info['completed_at'] ? true : false,
+                "is_verified" => $info['verified_by'] ? true : false,
                 "completed_on" => $info['completed_at'],
                 "completed_by" => getUserNameBySID($info['completed_by'])
             ];
@@ -330,6 +331,32 @@ class Employee_performance_evaluation_model extends CI_Model
             ->row_array();
     }
 
+     /**
+     * Get verification managers list
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getVerificationManagers (
+        $employeeId,
+        $section
+    ): array {
+        $this->db->select('manager_sid');
+        $this->db->where("employee_sid", $employeeId);
+        $this->db->where('is_expired', 0);
+        $this->db->where('section', $section);
+        $records_obj = $this->db->get('employee_performance_verification_document_manager');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = array_column($records_arr, "manager_sid");
+        }
+
+        return $return_data;
+    }
+
     /**
      * Get desire document data
      *
@@ -491,6 +518,7 @@ class Employee_performance_evaluation_model extends CI_Model
         $a = $this->db
             ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
             ->where('parent_sid', $companyId)
+            ->where('access_level <>', "Employee")
             ->where('active', 1)
             ->order_by('concat(first_name,last_name)', 'ASC', false)
             ->get('users');

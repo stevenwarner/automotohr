@@ -181,12 +181,12 @@
                             <tr style="height:22pt">
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_employee_name']; ?>
+                                        <?= $section1['epe_employee_name'] ?? $defaultData['epe_employee_name']; ?>
                                     </p>
                                 </td>
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_job_title']; ?>
+                                        <?= $section1['epe_job_title'] ?? $defaultData['epe_job_title']; ?>
                                     </p>
                                 </td>
                             </tr>
@@ -205,12 +205,12 @@
                             <tr style="height:20.15pt">
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_department']; ?>
+                                        <?= $section1['epe_department'] ?? $defaultData['epe_department']; ?>
                                     </p>
                                 </td>
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_manager']; ?>
+                                        <?= $section1['epe_manager'] ?? $defaultData['epe_manager']; ?>
                                     </p>
                                 </td>
                             </tr>
@@ -229,12 +229,12 @@
                             <tr style="height:17.05pt">
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_hire_date']; ?>
+                                        <?= $section1['epe_hire_date'] ?? $defaultData['epe_hire_date']; ?>
                                     </p>
                                 </td>
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= $section1['epe_start_date']; ?>
+                                        <?= $section1['epe_start_date'] ?? $defaultData['epe_start_date']; ?>
                                     </p>
                                 </td>
                             </tr>

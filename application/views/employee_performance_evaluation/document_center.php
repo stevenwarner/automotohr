@@ -19,7 +19,7 @@
                                 <th>Document Name</th>
                                 <th class="text-center">Assigned On</th>
                                 <th class="text-center">Completion Status</th>
-                                <th class="text-center">Is Required?</th>
+                                <!-- <th class="text-center">Is Required?</th> -->
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -54,45 +54,51 @@
         $(document).on("click", ".jsSaveSectionFive", handleSectionFiveSave);
         $(document).on("click", ".jsSaveHRManagerApproval", handleSectionFiveApprovalSave);
 
-        $(document).on("click", ".jsSelectAll", function() {
-            event.preventDefault();
-            $(".jsVerificationEmployees").prop("checked", true);
-        });
-
-        $(document).on("click", ".jsRemoveAll", function() {
-            event.preventDefault();
-            $(".jsVerificationEmployees").prop("checked", false);
-        });
-
         $(document).on("click", ".jsSendVerificationRequest", function() {
             event.preventDefault();
             //
             selected_employees = get_all_selected_employees();
             //
             if (selected_employees.length === 0) {
-                alertify.alert('ERROR!', 'Please select at least one employee to send verification email.');
+                alertify.alert('ERROR!', 'Please choose at least one manager to receive the performance evaluation verification email.');
                 return;
             }
             //
-            XHR = $
-                .ajax({
-                    url: baseUrl("fillable/epe/send_verification_request/<?= $user_sid; ?>/1"),
-                    method: "POST",
-                    data: {
-                        employees: selected_employees
-                    }
-                })
-                .always(function() {
-                    XHR = null;
-                })
-                .fail(handleErrorResponse)
-                .done(function(resp) {
-                    return _success(
-                        resp.message,
-                        function() {
-                            window.location.reload();
-                        }
-                    )
+            if (XHR !== null) {
+                XHR.abort();
+            }
+            //
+            alertify.confirm(
+                'Are you sure?',
+                'Are you certain you wish to send the performance evaluation verification?',
+                function() {
+                    //
+                    const btnHook = callButtonHook($(".jsSendVerificationRequest"), true);
+                    //
+                    XHR = $
+                        .ajax({
+                            url: baseUrl("fillable/epe/send_verification_request/<?= $user_sid; ?>/1"),
+                            method: "POST",
+                            data: {
+                                employees: selected_employees
+                            }
+                        })
+                        .always(function() {
+                            XHR = null;
+                            callButtonHook(btnHook, false);
+                        })
+                        .fail(handleErrorResponse)
+                        .done(function(resp) {
+                            return _success(
+                                resp.message,
+                                function() {
+                                    window.location.reload();
+                                }
+                            )
+                        });
+                },
+                function() {
+                    alertify.error('Cancelled!');
                 });
         });
 
@@ -154,12 +160,12 @@
                 row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/off.gif" title="Not Completed" />';
                 row += '    </td>';
                 // is required
-                row += '    <td class="text-center">';
-                row += '        <label class="control control--checkbox">';
-                row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
-                row += '            <div class="control__indicator"></div>';
-                row += '        </label>';
-                row += '    </td>';
+                // row += '    <td class="text-center">';
+                // row += '        <label class="control control--checkbox">';
+                // row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
+                // row += '            <div class="control__indicator"></div>';
+                // row += '        </label>';
+                // row += '    </td>';
                 // assign action
                 row += '    <td class="text-center">';
                 row += '        <button class="btn btn-success jsAssignEPE jsEPEBtn">Assign</button>';
@@ -184,23 +190,23 @@
                 row += '<img src="<?= base_url('assets/manage_admin/images'); ?>/' + (data.completion_status ? "on" : "off") + '.gif" title="Not Completed" />';
                 row += '    </td>';
                 // is required
-                row += '    <td class="text-center">';
-                row += '        <label class="control control--checkbox">';
-                row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
-                row += '            <div class="control__indicator"></div>';
-                row += '        </label>';
-                row += '    </td>';
+                // row += '    <td class="text-center">';
+                // row += '        <label class="control control--checkbox">';
+                // row += '            <input type="checkbox" name="jsRequiredCheckboxEPE" disabled />';
+                // row += '            <div class="control__indicator"></div>';
+                // row += '        </label>';
+                // row += '    </td>';
                 // assign action
                 row += '    <td class="text-center">';
                 row += '        <button class="btn btn-danger jsRevokeEPE jsEPEBtn">Revoke</button>';
-                row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/manager/print")+'" class="btn btn-orange">Print</a>';
-                row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/manager/download")+'" class="btn btn-black">Download</a>';
+                row += '        <a target="_blank" href="' + baseUrl("fillable/epe/<?= $user_sid; ?>/manager/print") + '" class="btn btn-orange">Print</a>';
+                row += '        <a target="_blank" href="' + baseUrl("fillable/epe/<?= $user_sid; ?>/manager/download") + '" class="btn btn-black">Download</a>';
                 // check for sections
-                if (!data.sections[1].status) {
+                if (!data.sections[1].is_verified) {
                     row += '        <button class="btn btn-success jsEPESectionOne">Complete Section 1</button>';
                 }
                 //
-                if (data.sections[1].status && !data.sections[3].status) {
+                if (data.sections[1].is_verified && !data.sections[3].status) {
                     row += '        <button class="btn btn-success jsEPESectionThree">Complete Section 3</button>';
                 }
                 //
@@ -252,6 +258,7 @@
                 row += '                <td class="text-center">Completion<br/>Status</td>';
                 row += '                <td class="text-center">Completed<br/>By</td>';
                 row += '                <td class="text-center">Completed<br/>On</td>';
+                row += '                <td class="text-center">Action</td>'
                 row += '            </tr>';
                 row += '        </thead>';
                 row += '        </tbody>';
@@ -265,6 +272,18 @@
                     row += '                     <p>';
                     row += '                        <strong>';
                     row += section.completed_by ? section.completed_by : "-";
+                    if (i == 1) {
+                        if (!data.sections[1].is_verified) {
+                            row += '                <br><p class="text-danger">Verification Pending</p>';
+                        }
+                    }
+                    row += '                        </strong>';
+                    row += '                    </p>';
+                    row += '                </td>';
+                    row += '                <td class="text-center">';
+                    row += '                     <p>';
+                    row += '                        <strong>';
+                    row += section.completed_on ? moment(section.completed_on).format("MMM Do YYYY, ddd H:m:s") : "-";
                     row += '                        </strong>';
                     row += '                    </p>';
                     row += '                </td>';
@@ -602,6 +621,8 @@
                 },
                 submitHandler: function(form) {
                     //
+                    const btnHook = callButtonHook($(".jsSaveSectionOne"), true);
+                    //
                     XHR = $
                         .ajax({
                             url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/one"),
@@ -610,6 +631,7 @@
                         })
                         .always(function() {
                             XHR = null;
+                            callButtonHook(btnHook, false);
                         })
                         .fail(handleErrorResponse)
                         .done(function(resp) {
@@ -617,7 +639,15 @@
                                 resp.message,
                                 function() {
                                     $(".jsSectionOneFormSection").addClass("hidden");
-                                    $(".jsSectionOneEmployees").removeClass("hidden");
+                                    $(".jsSectionOneManagers").removeClass("hidden");
+                                    var managers = resp.extra['verification_managers'];
+                                    console.log(managers)
+                                    var i;
+                                    for (i = 0; i < managers.length; ++i) {
+                                        console.log(managers[i])
+                                        $('input[name="employees[]"][value="'+managers[i]+'"]').prop('checked', true);
+                                    }
+                                    
                                 }
                             )
                         });

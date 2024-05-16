@@ -49,30 +49,59 @@
 
         $(document).on("click", ".jsEPEActionButton", function() {
             var action = $(this).data("key");
-            
+
+        });
+
+        $(document).on("keyup", ".jsAccomplishment", function() {
+            var name = $(this).data("key");
+            //
+            if ($(this).val().length == 1) {
+                // 
+                $("." + name).rules("add", {
+                    required: true
+                });
+            } else if ($(this).val().length == 0) {
+                $("." + name).rules("remove");
+            }
         });
 
         $(document).on("keyup", ".jsOpportunities", function() {
             var name = $(this).data("key");
+            //
             if ($(this).val().length == 1) {
                 // 
-                $("."+name).rules("add", {
+                $("." + name).rules("add", {
                     required: true
-                }); 
+                });
             } else if ($(this).val().length == 0) {
-                $("."+name).rules("remove");
+                $("." + name).rules("remove");
             }
         });
 
         $(document).on("keyup", ".jsGoal", function() {
             var name = $(this).data("key");
+            //
             if ($(this).val().length == 1) {
                 // 
-                $("."+name).rules("add", {
+                $("." + name).rules("add", {
                     required: true
-                }); 
+                });
             } else if ($(this).val().length == 0) {
-                $("."+name).rules("remove");
+                $("." + name).rules("remove");
+            }
+        });
+
+        $(document).on("change", ".jsEquipmentResourcesRadio", function() {
+            
+            var status = $('input[name="equipment_resources_radio"]:checked').val();
+            //
+            if (status == 2) {
+                // 
+                $(".jsEquipmentResourcesNeeded").rules("add", {
+                    required: true
+                });
+            } else if (status == 1) {
+                $(".jsEquipmentResourcesNeeded").rules("remove");
             }
         });
 
@@ -115,8 +144,8 @@
             row += '        </strong>';
             row += '    </td>';
             row += '    <td class="text-center">';
-            row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/print")+'" class="btn btn-info btn-orange">Print</a>';
-            row += '        <a target="_blank" href="'+baseUrl("fillable/epe/<?= $user_sid; ?>/employee/download")+'" class="btn btn-info btn-black">Download</a>';
+            row += '        <a target="_blank" href="' + baseUrl("fillable/epe/<?= $user_sid; ?>/employee/print") + '" class="btn btn-info btn-orange">Print</a>';
+            row += '        <a target="_blank" href="' + baseUrl("fillable/epe/<?= $user_sid; ?>/employee/download") + '" class="btn btn-info btn-black">Download</a>';
             if (section == "section_2") {
                 row += '        <button class="btn btn-info jsEPESectionTwo">View Sign</button>';
             } else if (section == "section_4" || section == "all_section_completed") {
@@ -277,8 +306,6 @@
                 .fail(handleErrorResponse)
                 .done(function(response) {
                     $("#jsSectionOneEPEModalBody").html(response.view);
-                    //
-                    handleSectionTwoSave();
                 });
 
         }
@@ -325,6 +352,11 @@
                     },
                 },
                 submitHandler: function(form) {
+                    if (XHR !== null) {
+                        XHR.abort();
+                    }
+                    //
+                    const btnHook = callButtonHook($(".jsSaveSectionTwo"), true);
                     //
                     XHR = $
                         .ajax({
@@ -334,11 +366,13 @@
                         })
                         .always(function() {
                             XHR = null;
+                            callButtonHook(btnHook, false);
                         })
                         .fail(handleErrorResponse)
                         .done(function(resp) {
                             return _success(
-                                resp.message
+                                resp.message,
+                                window.location.refresh
                             )
                         });
                 }
@@ -400,8 +434,8 @@
                     url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/four"),
                     method: "POST",
                     data: {
-                        "action" : "save_signature",
-                        "user_type" : "employee"
+                        "action": "save_signature",
+                        "user_type": "employee"
                     }
                 })
                 .always(function() {
