@@ -355,6 +355,7 @@
                     dct.document_type == 'uploaded' ||
                     dct.offer_letter_type == 'uploaded'
                 ) {
+                    console.log(dct.document_title)
                     uploadDocument({
                         title: dct.document_title,
                         orig_filename: dct.document_original_name,
@@ -488,7 +489,7 @@
                 var company_sid = "<?= $company_sid; ?>";
                 window.location.href = "<?= base_url('hr_documents_management/generate_zip'); ?>/" + token + "/<?= $slug; ?>/" + user_sid + "/" + user_type + "/" + company_sid;
                 setTimeout(() => {
-                    window.close();
+                    // window.close();
                 }, 10000);
             }
 
