@@ -13103,14 +13103,17 @@ class Hr_documents_management extends Public_Controller
                 fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
                 fclose($f);
             } else if (isset($post['data']['s3_filename'])) {
-
+                //
+                $file_info = pathinfo($post['data']['s3_filename']);
+                $extension = strtolower($file_info['extension']);
+                //
                 $this->load->library("aws_lib");
                 $this
                     ->aws_lib
                     ->get_object(
                         AWS_S3_BUCKET_NAME,
                         $post['data']['s3_filename'],
-                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/','_',$post['data']['orig_filename']))
+                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/','_',$post['data']['orig_filename'])).'.'.$extension
                     );
                 // For Generated documents
                 // downloadFileFromAWS(
