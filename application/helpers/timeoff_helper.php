@@ -843,66 +843,6 @@ if (!function_exists('getEmployeeAccrual')) {
         if ($employementStatus == 'probation') {
             // Probation
             $accrualRate = $accruals['newHireRate'];
-            //
-            $effectiveDate = getEffectiveDateFromApplicableTimeAdType(
-                $employeeJoiningDate,
-                $applicableTime,
-                $applicableType
-            );
-            // get consumed time between the period
-            $manualBalanceProbation = getEmployeeManualBalance(
-                $employeeId,
-                $policyId,
-                $employeeJoiningDate,
-                $effectiveDate,
-                0
-            );
-
-            $consumedTimeInMinutes = $_this
-                ->timeoff_model
-                ->getEmployeeConsumedTimeByResetDateNew(
-                    $policyId,
-                    $employeeId,
-                    $employeeJoiningDate,
-                    $effectiveDate
-                );
-
-            $accrualRate = $accrualRate + $manualBalanceProbation;
-
-            $r['AllowedTime'] = $accrualRate;
-            $r['ConsumedTime'] = $consumedTimeInMinutes;
-            $r['CarryOverTime'] = 0;
-            $r['RemainingTime'] = $accrualRate - $consumedTimeInMinutes;
-            $r['MaxNegativeTime'] = 0;
-            $r['Balance'] = $manualBalanceProbation;
-            $r['EmployementStatus'] = $employementStatus;
-
-            $r['lastAnniversaryDate'] =  $employeeJoiningDate;
-            $r['upcomingAnniversaryDate'] = $effectiveDate;
-
-            //
-            if (
-                $accruals['frequency'] == 'none'
-            ) {
-                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
-            } else if ($accruals['frequency'] == 'monthly') {
-                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
-            } else if ($accruals['frequency'] == 'yearly') {
-                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
-            } else if ($accruals['frequency'] == 'custom') {
-                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
-            }
-            //
-            $r['IsUnlimited'] = $accrualRate == 0 ? 1 : 0;
-
-            // for unpaid
-            if ($categoryType == '0') {
-                $tmp = $r['UnpaidConsumedTime'];
-                $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
-                $r['ConsumedTime'] = $tmp;
-            }
-
-            return $r;
         }
         // See if policy implements
         // When the policy starts from employee joining date
@@ -931,6 +871,23 @@ if (!function_exists('getEmployeeAccrual')) {
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
         if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
+            $r = hasAllowedTimeBeforePolicyImplements(
+                $employeeId,
+                $policyId,
+                $employeeJoiningDate,
+                $applicableTime,
+                $applicableType,
+                $accruals['newHireRate'],
+                $categoryType,
+                $employementStatus,
+                $r
+            );
+
+            if ($r["allowed"]) {
+                unset($r["allowed"]);
+                return $r;
+            }
+
             //
             $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType.";
             return $r;
@@ -2041,4 +1998,75 @@ if (!function_exists('processESSTPolicy')) {
         //
         return $r;
     }
+}
+
+
+function hasAllowedTimeBeforePolicyImplements(
+    $employeeId,
+    $policyId,
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType,
+    $accrualRate,
+    $categoryType,
+    $employementStatus,
+    $r
+) {
+    // Get instance of CI
+    $_this = &get_instance();
+    // Load time off modal
+    $_this->load->model('timeoff_model');
+    //
+    $effectiveDate = getEffectiveDateFromApplicableTimeAdType(
+        $employeeJoiningDate,
+        $applicableTime,
+        $applicableType
+    );
+    // get consumed time between the period
+    $manualBalanceProbation = getEmployeeManualBalance(
+        $employeeId,
+        $policyId,
+        $employeeJoiningDate,
+        $effectiveDate,
+        0
+    );
+
+    $consumedTimeInMinutes = $_this
+        ->timeoff_model
+        ->getEmployeeConsumedTimeByResetDateNew(
+            $policyId,
+            $employeeId,
+            $employeeJoiningDate,
+            $effectiveDate
+        );
+
+    $accrualRate = $accrualRate + $manualBalanceProbation;
+
+    if ($accrualRate - $consumedTimeInMinutes == 0) {
+        return $r;
+    }
+
+    $r['AllowedTime'] = $accrualRate;
+    $r['ConsumedTime'] = $consumedTimeInMinutes;
+    $r['CarryOverTime'] = 0;
+    $r['RemainingTime'] = $accrualRate - $consumedTimeInMinutes;
+    $r['MaxNegativeTime'] = 0;
+    $r['Balance'] = $manualBalanceProbation;
+    $r['EmployementStatus'] = $employementStatus;
+
+    $r['lastAnniversaryDate'] =  $employeeJoiningDate;
+    $r['upcomingAnniversaryDate'] = $effectiveDate;
+    //
+    $r['IsUnlimited'] = 0;
+
+    // for unpaid
+    if ($categoryType == '0') {
+        $tmp = $r['UnpaidConsumedTime'];
+        $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+        $r['ConsumedTime'] = $tmp;
+    }
+
+    $r["allowed"] = 1;
+
+    return $r;
 }
