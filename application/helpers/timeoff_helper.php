@@ -230,6 +230,9 @@ if (!function_exists('getEmployeeAccrualNew')) {
     ) {
         // get CI instance
         $CI = &get_instance();
+        $accrualRate = $accruals['rate'];
+        $applicableTime = $accruals['applicableTime'];
+        $applicableType = $accruals['applicableTimeType'];
         // set default plan array
         $policyPlansDates = [
             'lastAnniversaryDate' => $employeeJoiningDate,
@@ -841,9 +844,65 @@ if (!function_exists('getEmployeeAccrual')) {
             // Probation
             $accrualRate = $accruals['newHireRate'];
             //
-            if ($accrualRate == 0) {
-                // return $r;
+            $effectiveDate = getEffectiveDateFromApplicableTimeAdType(
+                $employeeJoiningDate,
+                $applicableTime,
+                $applicableType
+            );
+            // get consumed time between the period
+            $manualBalanceProbation = getEmployeeManualBalance(
+                $employeeId,
+                $policyId,
+                $employeeJoiningDate,
+                $effectiveDate,
+                0
+            );
+
+            $consumedTimeInMinutes = $_this
+                ->timeoff_model
+                ->getEmployeeConsumedTimeByResetDateNew(
+                    $policyId,
+                    $employeeId,
+                    $employeeJoiningDate,
+                    $effectiveDate
+                );
+
+            $accrualRate = $accrualRate + $manualBalanceProbation;
+
+            $r['AllowedTime'] = $accrualRate;
+            $r['ConsumedTime'] = $consumedTimeInMinutes;
+            $r['CarryOverTime'] = 0;
+            $r['RemainingTime'] = $accrualRate - $consumedTimeInMinutes;
+            $r['MaxNegativeTime'] = 0;
+            $r['Balance'] = $manualBalanceProbation;
+            $r['EmployementStatus'] = $employementStatus;
+
+            $r['lastAnniversaryDate'] =  $employeeJoiningDate;
+            $r['upcomingAnniversaryDate'] = $effectiveDate;
+
+            //
+            if (
+                $accruals['frequency'] == 'none'
+            ) {
+                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
+            } else if ($accruals['frequency'] == 'monthly') {
+                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
+            } else if ($accruals['frequency'] == 'yearly') {
+                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
+            } else if ($accruals['frequency'] == 'custom') {
+                $r['RemainingTimeWithNegative'] = $r['RemainingTime'] + 0;
             }
+            //
+            $r['IsUnlimited'] = $accrualRate == 0 ? 1 : 0;
+
+            // for unpaid
+            if ($categoryType == '0') {
+                $tmp = $r['UnpaidConsumedTime'];
+                $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+                $r['ConsumedTime'] = $tmp;
+            }
+
+            return $r;
         }
         // See if policy implements
         // When the policy starts from employee joining date
@@ -1417,6 +1476,23 @@ function getTimeDifference(
     if ($minutes >= $applicableTimeToMinutes) return true;
     //
     return false;
+}
+
+function getEffectiveDateFromApplicableTimeAdType(
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType
+) {
+    //
+    if ($applicableTime == 0) {
+        return $employeeJoiningDate;
+    }
+    //
+    $initialDateTime = new DateTime($employeeJoiningDate);
+    //
+    $initialDateTime->modify("+{$applicableTime} {$applicableType}");
+    //
+    return $initialDateTime->format(DB_DATE);
 }
 
 function getEmployementStatus(
