@@ -2171,6 +2171,7 @@ class Timeoff_model extends CI_Model
                 'Category' => $policy['category_name'],
                 'Reason' => ''
             ];
+            
             if ($policy['is_entitled_employee'] == 1) {
                 //
                 if ($policy['assigned_employees'] == '0' || $policy['assigned_employees'] == '') {
@@ -2902,7 +2903,9 @@ class Timeoff_model extends CI_Model
                 'added_time' => $post['time'],
                 'note' => $post['note'],
                 'effective_at' => DateTime::createFromFormat('m/d/Y', $post['effectedDate'])->format('Y-m-d'),
-                'policy_sid' => $post['policy']
+                'policy_sid' => $post['policy'],
+                'utilize_probation' => $post['utilizeProbation'],
+
             ]
         );
         return $this->db->insert_id();
@@ -3037,7 +3040,9 @@ class Timeoff_model extends CI_Model
             );
             //
             $durationInHours = $durationInMinutes / 60;
-            //
+
+            //          
+          
             $balance['AllowedTime'] = get_array_from_minutes($t['AllowedTime'], $durationInHours, $slug);
             $balance['ConsumedTime'] = get_array_from_minutes($t['ConsumedTime'], $durationInHours, $slug);
             $balance['RemainingTime'] = get_array_from_minutes($t['RemainingTime'], $durationInHours, $slug);
@@ -3046,12 +3051,13 @@ class Timeoff_model extends CI_Model
             $balance['Balance'] = get_array_from_minutes($t['Balance'], $durationInHours, $slug);
             $balance['IsUnlimited'] = $t['IsUnlimited'];
             $balance['EmployeeJoinedAt'] = $t['EmployeeJoinedAt'];
-            $balance['EmployementStatus'] = $t['EmployementStatus'];
+            $balance['EmployementStatus'] =  $t['EmployementStatus'];
             $balance['RemainingTimeWithNegative'] = get_array_from_minutes($t['RemainingTimeWithNegative'], $durationInHours, $slug);
             $balance['Reason'] = $t['Reason'];
 
             $balance['lastAnniversaryDate'] = $t['lastAnniversaryDate'];
             $balance['upcomingAnniversaryDate'] = $t['upcomingAnniversaryDate'];
+            
             //
             $r[] = $balance;
         }

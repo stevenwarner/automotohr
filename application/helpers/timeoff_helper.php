@@ -366,7 +366,6 @@ if (!function_exists('getEmployeeAccrualNew')) {
         if (!isset($accruals['carryOverCycle'])) {
             $accruals['carryOverCycle'] = 0;
         }
-
         if ($accruals['carryOverCheck'] == 'yes') {
             //
             if ($accruals['carryOverCycle'] == 0 || count($policyPlansDates['breakdown']) == 1) {
@@ -598,6 +597,7 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 }
             }
         }
+
         //
         // _e($allowedTime,true);
         // _e($consumedTimeInMinutes,true);
@@ -628,7 +628,39 @@ if (!function_exists('getEmployeeAccrualNew')) {
             $employeeDefaultAccrual['RemainingTimeWithNegative'] = $employeeDefaultAccrual['RemainingTime'] + $negativeTimeInMinutes;
         }
         //
+
+
         $employeeDefaultAccrual['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
+
+
+        //
+        if ($employeeDefaultAccrual['EmployementStatus'] == 'probation') {
+
+            $allowedTime = 0;
+            $balanceInMinutes = 0;
+
+            $CI = &get_instance();
+            $CI->db->select_sum('added_time');
+            $CI->db->where('policy_sid', $policyId);
+            $CI->db->where('user_sid', $employeeId);
+            $CI->db->where('is_added', 1);
+            $CI->db->where('utilize_probation', 1);
+            $result = $CI->db->get('timeoff_balances')->result_array();
+
+            if (!empty($result)) {
+
+                $balanceInMinutes = $result[0]['added_time'];;
+                $employeeDefaultAccrual['IsUnlimited'] = 0;
+                $allowedTime = $balanceInMinutes;
+
+                $employeeDefaultAccrual['AllowedTime'] =  $balanceInMinutes;
+                $employeeDefaultAccrual['ConsumedTime'] = $consumedTimeInMinutes;
+                $employeeDefaultAccrual['CarryOverTime'] = $carryOverTime;
+                $employeeDefaultAccrual['RemainingTime'] = ($balanceInMinutes - $consumedTimeInMinutes) + $carryOverTime;
+                $employeeDefaultAccrual['Balance'] = $balanceInMinutes;
+            }
+        }
+
 
         // for unpaid
         if ($categoryType == '0') {
@@ -836,6 +868,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
+
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -871,8 +904,31 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
-        if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
-            //
+
+
+        //
+        $manualBalanceFlag = 0;
+        if ($r['EmployementStatus'] == 'probation') {
+            $CI = &get_instance();
+            $CI->db->select_sum('added_time');
+            $CI->db->where('policy_sid', $policyId);
+            $CI->db->where('user_sid', $employeeId);
+            $CI->db->where('is_added', 1);
+            $CI->db->where('utilize_probation', 1);
+            $result = $CI->db->get('timeoff_balances')->result_array();
+
+            if (!empty($result)) {
+
+                $balanceInMinutes = $result[0]['added_time'];
+
+                if ($result[0]['added_time'] > 0) {
+                    $manualBalanceFlag = 1;
+                }
+            }
+        }
+
+        if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false && $manualBalanceFlag==0) {
+            // 
             $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType.";
             return $r;
         }
@@ -911,6 +967,7 @@ if (!function_exists('getEmployeeAccrual')) {
                 $effectedDate = $accruals['resetDate'];
             }
         }
+
         //
         // Convert rate into minutes
         // For days
@@ -925,6 +982,7 @@ if (!function_exists('getEmployeeAccrual')) {
         //
         $employeeAnniversaryDate = getEmployeeAnniversary($effectedDate, $todayDate);
         //
+
         if (isset($accruals['defaultFlow']) && $accruals['defaultFlow'] == 0) {
             return getEmployeeAccrualNew(
                 $policyId,
@@ -1007,7 +1065,8 @@ if (!function_exists('getEmployeeAccrual')) {
         $monthsWorked = $difference->y * 12;
         $monthsWorked += $difference->m;
         // Only get pending time if carryover
-        // is enabled
+        // is enabled  
+
         if ($accruals['carryOverCheck'] == 'yes' && $accruals['carryOverCheck'] != 'on') {
             // Difference in minutes
             $carryOverInMinutes = $accruals['carryOverVal'] * 60;
@@ -1299,6 +1358,7 @@ if (!function_exists('getEmployeeAccrual')) {
             $allowedTime = $newAllowedTime > $allowedTime ? $allowedTime : $newAllowedTime;
         }
         //
+
         $r['AllowedTime'] = $allowedTime + $balanceInMinutes;
         $r['ConsumedTime'] = $consumedTimeInMinutes;
         $r['CarryOverTime'] = $carryOverTimeInMinutes;

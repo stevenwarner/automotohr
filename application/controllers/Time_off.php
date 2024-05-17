@@ -3825,6 +3825,7 @@ class Time_off extends Public_Controller
                     $post['companyId'],
                     $post['employeeId']
                 );
+
                 //
                 $this->res['Status'] = true;
                 $this->res['Code'] = 'SUCCESS';
