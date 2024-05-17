@@ -1397,7 +1397,7 @@ class Hr_documents_management extends Public_Controller
                         $document_name = $this->input->post('document_title');
                         $document_description = $this->input->post('document_description');
 
-                        $document_description = magicCodeCorrection($document_description);
+                        $document_description = $document_description ? magicCodeCorrection($document_description) : $document_description;
 
                         $video_required = $this->input->post('video_source');
                         $document_description = htmlentities($document_description);
@@ -3777,7 +3777,7 @@ class Hr_documents_management extends Public_Controller
 
                             //
                             $documentBodyOld = $document_body;
-                            $document_body = magicCodeCorrection($document_body);
+                            $document_body = $document_body ? magicCodeCorrection($document_body) : $document_body;
 
 
                             if ($documentBodyOld != $document_body) {
@@ -5654,7 +5654,7 @@ class Hr_documents_management extends Public_Controller
 
                             //
                             $documentBodyOld = $document_body;
-                            $document_body = magicCodeCorrection($document_body);
+                            $document_body = $document_body ? magicCodeCorrection($document_body) : $document_body;
 
                             if ($documentBodyOld != $document_body) {
                                 updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
@@ -7201,7 +7201,7 @@ class Hr_documents_management extends Public_Controller
 
                             //
                             $documentBodyOld = $document_body;
-                            $document_body = magicCodeCorrection($document_body);
+                            $document_body = $document_body ? magicCodeCorrection($document_body) : $document_body;
 
                             if ($documentBodyOld != $document_body) {
                                 updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
@@ -12223,7 +12223,7 @@ class Hr_documents_management extends Public_Controller
             //
             $oldDesc = $desc;
 
-            $desc = magicCodeCorrection($desc);
+            $desc = $desc ? magicCodeCorrection($desc) : $desc;
 
 
             $assigner_firstname = $this->session->userData('logged_in')['employer_detail']['first_name'];
@@ -12734,7 +12734,7 @@ class Hr_documents_management extends Public_Controller
         //
         $desc = $this->input->post('desc');
 
-        $desc = magicCodeCorrection($desc);
+        $desc = $desc ? magicCodeCorrection($desc) : $desc;
 
         //
         $assignInsertId = $post['documentSid'];

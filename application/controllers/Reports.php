@@ -3452,7 +3452,7 @@ class Reports extends Public_Controller
 
                     $totalDocsNotCompleted = 0;
                     $totalDocsCompleted = 0;
-                    $totalDocsNoaction = 0;
+                    $totalDocsNoAction = 0;
                     $completedStatus ='';
                     //
                     if (!empty($row['assignedi9document'])) {
@@ -3580,7 +3580,7 @@ class Reports extends Public_Controller
                             }
 
                             if ($assigned_row['completedStatus'] == 'No Action Required') {
-                                $totalDocsNoaction = $totalDocsNoaction  +1;
+                                $totalDocsNoAction = $totalDocsNoAction  +1;
                                $completedStatus = ' (No Action Required) ';
                             }
 
@@ -3593,7 +3593,6 @@ class Reports extends Public_Controller
                                     $totalDocs = $totalDocs - 1;
                                 }
                             } else {
-
                                 $doc .= $assigned_row['document_title'] . $completedStatus . "\n\n";
                             }
                         }
@@ -3605,7 +3604,7 @@ class Reports extends Public_Controller
                     $a[] = $totalDocs;
                     $a[] = $totalDocsNotCompleted;
                     $a[] = $totalDocsCompleted;
-                    $a[] = $totalDocsNoaction;
+                    $a[] = $totalDocsNoAction;
                     $a[] = $doc;
                     //
                     fputcsv($output, $a);

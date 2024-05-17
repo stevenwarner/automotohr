@@ -2613,6 +2613,7 @@ class Reports_model extends CI_Model
         documents_assigned.acknowledgment_required,
         documents_assigned.download_required,
         documents_assigned.signature_required,
+        documents_assigned.acknowledged,
         documents_assigned.uploaded,
         documents_assigned.downloaded,
         documents_assigned.document_sid,
