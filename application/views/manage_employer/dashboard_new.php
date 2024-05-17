@@ -1109,13 +1109,13 @@
                                                     <i class="fa fa-file <?= $pendingVerificationPerformanceDocument != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                 </figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>">Pending Performance Verification</a>
+                                                    <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>">Pending Performance Evaluation</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
-                                                    <span class="green"><?= $pendingVerificationPerformanceDocument ?? 0; ?> course(s) pending</span><br>
+                                                    <span class="green"><?= $pendingVerificationPerformanceDocument ?? 0; ?> Verification pending</span><br>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>" class="site-btn">Access & Manage</a>
+                                                    <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>" class="site-btn">Show</a>
                                                 </div>
                                             </div>
                                         </div>
