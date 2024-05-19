@@ -597,41 +597,54 @@ class Shift_model extends CI_Model
         //
         if ($post["id"]) {
             // update
-            // check if entry already exists
-            if ($this->db->where([
-                "company_sid" => $companyId,
-                "employee_sid" => $post["shift_employee"],
-                "shift_date" => $post["shift_date"],
-                "start_time" => $post["start_time"],
-                "end_time" => $post["end_time"],
-            ])->where("sid <>", $post["id"])->count_all_results("cl_shifts")) {
-                $response["msg"] = "Shift already exists.";
+            if (
+                !$this->db
+                    ->where(
+                        [
+                            "employee_sid" => $post["shift_employee"],
+                            "date" => $post["shift_date"]
+                        ]
+                    )
+                    ->count_all_results("cl_unavailability_shifts")
+            ) {
+                // check if entry already exists
+                if ($this->db->where([
+                    "company_sid" => $companyId,
+                    "employee_sid" => $post["shift_employee"],
+                    "shift_date" => $post["shift_date"],
+                    "start_time" => $post["start_time"],
+                    "end_time" => $post["end_time"],
+                ])->where("sid <>", $post["id"])->count_all_results("cl_shifts")) {
+                    $response["msg"] = "Shift already exists.";
+                } else {
+                    // update
+                    $this->db
+                        ->where("sid", $post["id"])
+                        ->update("cl_shifts", [
+                            "shift_date" => $post["shift_date"],
+                            "start_time" => $post["start_time"],
+                            "end_time" => $post["end_time"],
+                            "breaks_count" => count($post["breaks"]),
+                            "breaks_json" => json_encode($post["breaks"]),
+                            "job_sites" => json_encode($post["job_sites"] ?? []),
+                            "notes" => $post["notes"],
+                            "updated_at" => getSystemDate(),
+                        ]);
+
+                    $ins = [];
+                    $ins["cl_shift_sid"] = $post["id"];
+                    $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                    $ins["action"] = "updated";
+                    $ins["action_json"] = "{}";
+                    $ins["created_at"] = getSystemDate();
+                    //
+                    $this->db->insert("cl_shifts_logs", $ins);
+
+                    $status = 200;
+                    $response = ["msg" => "You have successfully updated shift."];
+                }
             } else {
-                // update
-                $this->db
-                    ->where("sid", $post["id"])
-                    ->update("cl_shifts", [
-                        "shift_date" => $post["shift_date"],
-                        "start_time" => $post["start_time"],
-                        "end_time" => $post["end_time"],
-                        "breaks_count" => count($post["breaks"]),
-                        "breaks_json" => json_encode($post["breaks"]),
-                        "job_sites" => json_encode($post["job_sites"] ?? []),
-                        "notes" => $post["notes"],
-                        "updated_at" => getSystemDate(),
-                    ]);
-
-                $ins = [];
-                $ins["cl_shift_sid"] = $post["id"];
-                $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
-                $ins["action"] = "updated";
-                $ins["action_json"] = "{}";
-                $ins["created_at"] = getSystemDate();
-                //
-                $this->db->insert("cl_shifts_logs", $ins);
-
-                $status = 200;
-                $response = ["msg" => "You have successfully updated shift."];
+                $response["msg"] = "Employee is unavailable on this day.";
             }
         } else {
             // insert
@@ -757,57 +770,69 @@ class Shift_model extends CI_Model
         foreach ($post["employees"] as $employeeId) {
             foreach ($dates as $v0) {
                 //
-                if ($markoffDayAsWorking == 0) {
-                    if (in_array($v0, $holidaysAndOffDays)) {
+                if (
+                    !$this->db
+                        ->where(
+                            [
+                                "employee_sid" => $employeeId,
+                                "date" => $v0
+                            ]
+                        )
+                        ->count_all_results("cl_unavailability_shifts")
+                ) {
+                    //
+                    if ($markoffDayAsWorking == 0) {
+                        if (in_array($v0, $holidaysAndOffDays)) {
+                            continue;
+                        }
+                    }
+
+                    //
+                    $where = [
+                        "employee_sid" => $employeeId,
+                        "shift_date" => $v0
+                    ];
+                    // check if shift already assigned
+                    if ($this->db->where($where)->count_all_results("cl_shifts")) {
+                        if (!$employeesAlreadyExists[$employeeId]) {
+                            $employeesAlreadyExists[$employeeId] = [
+                                "dates" => []
+                            ];
+                        }
+                        $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
                         continue;
                     }
-                }
-
-                //
-                $where = [
-                    "employee_sid" => $employeeId,
-                    "shift_date" => $v0
-                ];
-                // check if shift already assigned
-                if ($this->db->where($where)->count_all_results("cl_shifts")) {
-                    if (!$employeesAlreadyExists[$employeeId]) {
-                        $employeesAlreadyExists[$employeeId] = [
-                            "dates" => []
-                        ];
-                    }
-                    $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
-                    continue;
-                }
-                // add the shift
-                $ins = [];
-                $ins["company_sid"] = $companyId;
-                $ins["employee_sid"] = $employeeId;
-                $ins["shift_date"] = $v0;
-                $ins["start_time"] = $post["start_time"];
-                $ins["end_time"] = $post["end_time"];
-                $ins["breaks_count"] = count($post["breaks"]);
-                $ins["breaks_json"] = json_encode($post['breaks']);
-                $ins["job_sites"] = json_encode($post["job_sites"] ?? []);
-                $ins["notes"] = $post['notes'];
-                $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
-                //
-                $this->db->insert("cl_shifts", $ins);
-                //
-                $insertId = $this->db->insert_id();
-                //
-                if ($insertId) {
+                    // add the shift
                     $ins = [];
-                    $ins["cl_shift_sid"] = $insertId;
-                    $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
-                    $ins["action"] = "created";
-                    $ins["action_json"] = "{}";
-                    $ins["created_at"] = $currentDateAndTime;
+                    $ins["company_sid"] = $companyId;
+                    $ins["employee_sid"] = $employeeId;
+                    $ins["shift_date"] = $v0;
+                    $ins["start_time"] = $post["start_time"];
+                    $ins["end_time"] = $post["end_time"];
+                    $ins["breaks_count"] = count($post["breaks"]);
+                    $ins["breaks_json"] = json_encode($post['breaks']);
+                    $ins["job_sites"] = json_encode($post["job_sites"] ?? []);
+                    $ins["notes"] = $post['notes'];
+                    $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
                     //
-                    $this->db->insert("cl_shifts_logs", $ins);
+                    $this->db->insert("cl_shifts", $ins);
+                    //
+                    $insertId = $this->db->insert_id();
+                    //
+                    if ($insertId) {
+                        $ins = [];
+                        $ins["cl_shift_sid"] = $insertId;
+                        $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                        $ins["action"] = "created";
+                        $ins["action_json"] = "{}";
+                        $ins["created_at"] = $currentDateAndTime;
+                        //
+                        $this->db->insert("cl_shifts_logs", $ins);
+                    }
                 }
             }
         }
-
+        //
         return SendResponse(
             200,
             [
@@ -901,54 +926,65 @@ class Shift_model extends CI_Model
                 $shiftDataToCopy = $lastCycleShiftData[$key];
                 //
                 if ($lastCycleShiftData[$key]) {
+                    //
+                    if (
+                        !$this->db
+                            ->where(
+                                [
+                                    "employee_sid" => $employeeId,
+                                    "date" => $v0
+                                ]
+                            )
+                            ->count_all_results("cl_unavailability_shifts")
+                    ) {
+                        if ($markoffDayAsWorking == 0) {
+                            if (in_array($v0, $holidaysAndOffDays)) {
+                                continue;
+                            }
+                        }
 
-                    if ($markoffDayAsWorking == 0) {
-                        if (in_array($v0, $holidaysAndOffDays)) {
+                        //
+                        $where = [
+                            "employee_sid" => $employeeId,
+                            "shift_date" => $v0
+                        ];
+                        // check if shift already assigned
+                        if ($this->db->where($where)->count_all_results("cl_shifts")) {
+                            if (!$employeesAlreadyExists[$employeeId]) {
+                                $employeesAlreadyExists[$employeeId] = [
+                                    "dates" => []
+                                ];
+                            }
+                            $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
                             continue;
                         }
-                    }
-
-                    //
-                    $where = [
-                        "employee_sid" => $employeeId,
-                        "shift_date" => $v0
-                    ];
-                    // check if shift already assigned
-                    if ($this->db->where($where)->count_all_results("cl_shifts")) {
-                        if (!$employeesAlreadyExists[$employeeId]) {
-                            $employeesAlreadyExists[$employeeId] = [
-                                "dates" => []
-                            ];
-                        }
-                        $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
-                        continue;
-                    }
-                    // add the shift
-                    $ins = [];
-                    $ins["company_sid"] = $companyId;
-                    $ins["employee_sid"] = $employeeId;
-                    $ins["shift_date"] = $v0;
-                    $ins["start_time"] = $shiftDataToCopy["start_time"];
-                    $ins["end_time"] = $shiftDataToCopy["end_time"];
-                    $ins["breaks_count"] = $shiftDataToCopy["breaks_count"];
-                    $ins["breaks_json"] = $shiftDataToCopy['breaks_json'];
-                    $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? "[]";
-                    $ins["notes"] = $shiftDataToCopy['notes'];
-                    $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
-                    //
-                    $this->db->insert("cl_shifts", $ins);
-                    //
-                    $insertId = $this->db->insert_id();
-                    //
-                    if ($insertId) {
+                        // add the shift
                         $ins = [];
-                        $ins["cl_shift_sid"] = $insertId;
-                        $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
-                        $ins["action"] = "created";
-                        $ins["action_json"] = "{}";
-                        $ins["created_at"] = $currentDateAndTime;
+                        $ins["company_sid"] = $companyId;
+                        $ins["employee_sid"] = $employeeId;
+                        $ins["shift_date"] = $v0;
+                        $ins["start_time"] = $shiftDataToCopy["start_time"];
+                        $ins["end_time"] = $shiftDataToCopy["end_time"];
+                        $ins["breaks_count"] = $shiftDataToCopy["breaks_count"];
+                        $ins["breaks_json"] = $shiftDataToCopy['breaks_json'];
+                        $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? "[]";
+                        $ins["notes"] = $shiftDataToCopy['notes'];
+                        $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
                         //
-                        $this->db->insert("cl_shifts_logs", $ins);
+                        $this->db->insert("cl_shifts", $ins);
+                        //
+                        $insertId = $this->db->insert_id();
+                        //
+                        if ($insertId) {
+                            $ins = [];
+                            $ins["cl_shift_sid"] = $insertId;
+                            $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                            $ins["action"] = "created";
+                            $ins["action_json"] = "{}";
+                            $ins["created_at"] = $currentDateAndTime;
+                            //
+                            $this->db->insert("cl_shifts_logs", $ins);
+                        }
                     }
                 }
             }
@@ -1303,7 +1339,8 @@ class Shift_model extends CI_Model
         return $convertToSeconds ? $duration : $duration / 60 / 60;
     }
 
-    public function saveUnavailableSlot ($ins) {
+    public function saveUnavailableSlot($ins)
+    {
         $this->db->insert("cl_unavailability_shifts", $ins);
     }
 
