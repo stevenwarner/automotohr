@@ -1,3 +1,8 @@
+<style>
+    textarea {
+        resize: none;
+    }
+</style>
 <br />
 <div class="container">
     <form action="" id="jsSectionThreeForm">

@@ -293,7 +293,7 @@
             //
             XHR = $
                 .ajax({
-                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/section/" + section),
+                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/section/" + section + "/employee"),
                     method: "GET"
                 })
                 .always(function() {
@@ -372,7 +372,7 @@
                         .done(function(resp) {
                             return _success(
                                 resp.message,
-                                window.location.refresh
+                                window.location.href = window.location.href
                             )
                         });
                 }
@@ -389,6 +389,8 @@
                 XHR.abort();
             }
             //
+            const btnHook = callButtonHook($(".jsGetEmployeeSignature"), true);
+            //
             XHR = $
                 .ajax({
                     url: baseUrl("fillable/epe/get_employee_signature"),
@@ -396,6 +398,7 @@
                 })
                 .always(function() {
                     XHR = null;
+                    callButtonHook(btnHook, false);
                     ml(
                         false,
                         "jsSectionOneEPEModalLoader"
@@ -409,10 +412,9 @@
                             resp.message,
                         )
                     } else {
-                        $('.jsSaveEsignature').removeClass('hidden');
+                        $('.jsSaveEsignature').removeClass('not_sign_yet');
                         $('.jsGetEmployeeSignature').hide();
                         $('#jsDrawEmployeeSignature').attr('src', resp.signature_base64);
-                        $('#jsEmployeeSignatureInput').val(resp.signature_base64);
                     }
                 });
         }
@@ -425,9 +427,16 @@
          */
         function handleSectionFourSave() {
             //
+            if ($(".jsSaveEsignature").hasClass("not_sign_yet")) {
+                return _error(
+                    'Signing is mandatory to complete performance evaluation.',
+                )
+            }
+            //
             if (XHR !== null) {
                 XHR.abort();
             }
+            const btnHook = callButtonHook($(".jsSaveEsignature"), true);
             //
             XHR = $
                 .ajax({
@@ -440,13 +449,14 @@
                 })
                 .always(function() {
                     XHR = null;
+                    callButtonHook(btnHook, false);
                 })
                 .fail(handleErrorResponse)
                 .done(function(resp) {
                     return _success(
                         resp.message,
                         function() {
-                            window.location.reload();
+                            window.location.href = window.location.href
                         }
                     )
                 });

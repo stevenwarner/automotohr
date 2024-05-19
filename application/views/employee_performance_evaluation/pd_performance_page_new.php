@@ -1157,7 +1157,15 @@
                         (Please attach a copy of your job description for review with your manager)
                     </p>
                     <p style="text-indent:36pt; line-height:108%; font-size:12pt">
-                        <?php echo $section2['review_period_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['review_period_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
+                        Yes
+                        <span style="width:16.78pt; text-indent:0pt; display:inline-block">
+                            <?php echo $section2['review_period_radio'] == 1 ? '<i class="fa fa-check-circle" style="display: contents !important;" aria-hidden="true"></i>' : '' ?>
+                        </span>
+                        <span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span>
+                        No
+                        <span style="width:16.78pt; text-indent:0pt; display:inline-block">
+                            <?php echo $section2['review_period_radio'] == 2 ? '<i class="fa fa-check-circle" tyle="display: contents !important;" aria-hidden="true"></i>' : '' ?>
+                        </span>
                     </p>
                     <p style="margin-left:18pt; text-indent:18pt; line-height:108%; font-size:12pt">
                         &#xa0;
@@ -1171,7 +1179,15 @@
                         (If No, please list the equipment you deem necessary subject to Managers approval and budgeting)
                     </p>
                     <p style="text-indent:36pt; line-height:108%; font-size:12pt">
-                        <?php echo $section2['equipment_resources_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> Yes<span style="width:16.78pt; text-indent:0pt; display:inline-block">&#xa0;</span><span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span> <?php echo $section2['equipment_resources_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?> No
+                        Yes
+                        <span style="width:16.78pt; text-indent:0pt; display:inline-block">
+                            <?php echo $section2['equipment_resources_radio'] == 1 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?>
+                        </span>
+                        <span style="width:36pt; text-indent:0pt; display:inline-block">&#xa0;</span>
+                        No
+                        <span style="width:16.78pt; text-indent:0pt; display:inline-block">
+                            <?php echo $section2['equipment_resources_radio'] == 2 ? '<i class="fa fa-check-circle" aria-hidden="true"></i>' : '' ?>
+                        </span>
                     </p>
                     <p style="line-height:108%; font-size:12pt">
                         <strong>Necessary Equipment or Resources Needed</strong>:
@@ -1245,90 +1261,90 @@
                         &#xa0;
                     </p>
 
-                    <?php if ($userType != "employee") { ?>
-                        <h2>
-                            <u><span style="font-family:Calibri; color:#000000">Section 4: Signatures</span></u>
-                        </h2>
-                        <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
-                            &#xa0;
-                        </p>
-                        <table class="table table-responsive table-bordered">
-                            <tr style="height:11.9pt">
-                                <td style="width:240.9pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Employee</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
-                                    </p>
-                                </td>
-                                <td style="width:240.9pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Manager</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:23.65pt">
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['employee_signature']) { ?>
-                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['employee_signature'] ?>" />
-                                        <?php } ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['employee_signature']) { ?>
-                                            <?php $signDate = json_decode($sectionData['section_4_json'], true)['employee_signature_at']; ?>
-                                            <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
-                                        <?php } ?>
-                                    </p>
-                                </td>
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['manager_signature']) { ?>
-                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['manager_signature'] ?>" />
-                                        <?php } ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['employee_signature']) { ?>
-                                            <?php $signDate = json_decode($sectionData['section_4_json'], true)['manager_signature_at']; ?>
-                                            <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
-                                        <?php } ?>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:11.9pt">
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Next Level Approval</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
-                                    </p>
-                                </td>
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <strong>Human Resources</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height:23.6pt">
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        &#xa0;
-                                    </p>
-                                </td>
-                                <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['hr_signature']) { ?>
-                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['hr_signature'] ?>" />
-                                        <?php } ?>
-                                    </p>
-                                    <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?php if ($sectionData['hr_signature']) { ?>
-                                            <?php $signDate = json_decode($sectionData['section_5_json'], true)['hr_manager_completed_at']; ?>
-                                            <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
-                                        <?php } ?>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    <!-- Section 4 End -->    
+                    <h2>
+                        <u><span style="font-family:Calibri; color:#000000">Section 4: Signatures</span></u>
+                    </h2>
+                    <p style="margin-bottom:0pt; line-height:108%; font-size:12pt">
+                        &#xa0;
+                    </p>
+                    <table class="table table-responsive table-bordered">
+                        <tr style="height:11.9pt">
+                            <td style="width:240.9pt; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Employee</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
+                                </p>
+                            </td>
+                            <td style="width:240.9pt; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Manager</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:23.65pt">
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['employee_signature']) { ?>
+                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['employee_signature'] ?>" />
+                                    <?php } ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['employee_signature']) { ?>
+                                        <?php $signDate = json_decode($sectionData['section_4_json'], true)['employee_signature_at']; ?>
+                                        <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
+                                    <?php } ?>
+                                </p>
+                            </td>
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['manager_signature']) { ?>
+                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['manager_signature'] ?>" />
+                                    <?php } ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['employee_signature']) { ?>
+                                        <?php $signDate = json_decode($sectionData['section_4_json'], true)['manager_signature_at']; ?>
+                                        <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
+                                    <?php } ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:11.9pt">
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Next Level Approval</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
+                                </p>
+                            </td>
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <strong>Human Resources</strong><strong>&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0;&#xa0; </strong><strong>Date</strong><strong>&#xa0; </strong>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height:23.6pt">
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    &#xa0;
+                                </p>
+                            </td>
+                            <td style="width:240.9pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; padding-top:0.55pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['hr_signature']) { ?>
+                                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $sectionData['hr_signature'] ?>" />
+                                    <?php } ?>
+                                </p>
+                                <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
+                                    <?php if ($sectionData['hr_signature']) { ?>
+                                        <?php $signDate = json_decode($sectionData['section_5_json'], true)['hr_manager_completed_at']; ?>
+                                        <strong>Sign Date:</strong> <?= formatDateToDB($signDate, DB_DATE_WITH_TIME, 'm-d-Y'); ?>
+                                    <?php } ?>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Section 4 End -->
 
-                    <!-- Section 5 Start -->
+                    <?php if ($userType != "employee") { ?>
+                        <!-- Section 5 Start -->
                         <p style="margin-bottom:0pt; text-align:justify; line-height:108%; font-size:12pt">
                             <strong><span style="color:#1f497d">&#xa0;</span></strong>
                         </p>
@@ -1418,7 +1434,7 @@
                                 </td>
                             </tr>
                         </table>
-                    <!-- Section 5 End -->
+                        <!-- Section 5 End -->
                     <?php } ?>
                 </div>
             </div>
@@ -1460,7 +1476,7 @@
                             dataURI: pdf,
                             fileName: 'performance_evaluation_document.pdf',
                         });
-                        // window.close();
+                        window.close();
                     });
             } else {
                 window.print();

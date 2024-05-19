@@ -49,7 +49,7 @@
         $(document).on("click", ".jsSaveSectionThree", handleSectionThreeSave);
         $(document).on("click", ".jsEPESectionFour", handleSectionFourProcess);
         $(document).on("click", ".jsGetEmployeeSignature", handleSectionFourSignature);
-        $(document).on("click", ".jsSaveEsignature", handleSectionFourSave);
+        $(document).on("click", ".jsSaveEsignature:enabled", handleSectionFourSave);
         $(document).on("click", ".jsEPESectionFive", handleSectionFiveProcess);
         $(document).on("click", ".jsSaveSectionFive", handleSectionFiveSave);
         $(document).on("click", ".jsSaveHRManagerApproval", handleSectionFiveApprovalSave);
@@ -92,7 +92,7 @@
                             return _success(
                                 resp.message,
                                 function() {
-                                    window.location.reload();
+                                    window.location.href = window.location.href;
                                 }
                             )
                         });
@@ -470,7 +470,7 @@
             //
             XHR = $
                 .ajax({
-                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/section/" + section),
+                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/section/" + section + "/manager"),
                     method: "GET"
                 })
                 .always(function() {
@@ -645,9 +645,9 @@
                                     var i;
                                     for (i = 0; i < managers.length; ++i) {
                                         console.log(managers[i])
-                                        $('input[name="employees[]"][value="'+managers[i]+'"]').prop('checked', true);
+                                        $('input[name="employees[]"][value="' + managers[i] + '"]').prop('checked', true);
                                     }
-                                    
+
                                 }
                             )
                         });
@@ -670,6 +670,8 @@
                 },
                 submitHandler: function(form) {
                     //
+                    const btnHook = callButtonHook($(".jsSaveSectionThree"), true);
+                    //
                     XHR = $
                         .ajax({
                             url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/three"),
@@ -678,13 +680,14 @@
                         })
                         .always(function() {
                             XHR = null;
+                            callButtonHook(btnHook, false);
                         })
                         .fail(handleErrorResponse)
                         .done(function(resp) {
                             return _success(
                                 resp.message,
                                 function() {
-                                    window.location.reload();
+                                    window.location.href = window.location.href;
                                 }
                             )
                         });
@@ -703,6 +706,8 @@
                 XHR.abort();
             }
             //
+            const btnHook = callButtonHook($(".jsGetEmployeeSignature"), true);
+            //
             XHR = $
                 .ajax({
                     url: baseUrl("fillable/epe/get_employee_signature"),
@@ -710,6 +715,7 @@
                 })
                 .always(function() {
                     XHR = null;
+                    callButtonHook(btnHook, false);
                     ml(
                         false,
                         "jsSectionOneEPEModalLoader"
@@ -723,7 +729,7 @@
                             resp.message,
                         )
                     } else {
-                        $('.jsSaveEsignature').removeClass('disabled');
+                        $('.jsSaveEsignature').removeClass('not_sign_yet');
                         $('.jsSaveHRManagerApproval').removeClass('disabled');
                         $('.jsGetEmployeeSignature').hide();
                         $('#jsDrawEmployeeSignature').attr('src', resp.signature_base64);
@@ -739,9 +745,17 @@
          */
         function handleSectionFourSave() {
             //
+            if ($(".jsSaveEsignature").hasClass("not_sign_yet")) {
+                return _error(
+                    'Signing is mandatory to complete Section 4',
+                )
+            }
+            //
             if (XHR !== null) {
                 XHR.abort();
             }
+            //
+            const btnHook = callButtonHook($(".jsSaveEsignature"), true);
             //
             XHR = $
                 .ajax({
@@ -754,13 +768,14 @@
                 })
                 .always(function() {
                     XHR = null;
+                    callButtonHook(btnHook, false);
                 })
                 .fail(handleErrorResponse)
                 .done(function(resp) {
                     return _success(
                         resp.message,
                         function() {
-                            window.location.reload();
+                            window.location.href = window.location.href;
                         }
                     )
                 });
@@ -771,13 +786,21 @@
             $("#jsSectionFiveForm").validate({
                 rules: {
                     "current_pay": {
-                        required: true
+                        required: true,
+                        number: true
                     },
                     "recommended_pay": {
-                        required: true
+                        required: true,
+                        number: true
                     },
                 },
                 submitHandler: function(form) {
+                    //
+                    if (XHR !== null) {
+                        XHR.abort();
+                    }
+                    //
+                    const btnHook = callButtonHook($(".jsSaveSectionFive"), true);
                     //
                     XHR = $
                         .ajax({
@@ -787,13 +810,14 @@
                         })
                         .always(function() {
                             XHR = null;
+                            callButtonHook(btnHook, false);
                         })
                         .fail(handleErrorResponse)
                         .done(function(resp) {
                             return _success(
                                 resp.message,
                                 function() {
-                                    window.location.reload();
+                                    window.location.href = window.location.href;
                                 }
                             )
                         });
@@ -813,7 +837,12 @@
                     }
                 },
                 submitHandler: function(form) {
-                    alert("here")
+                    //
+                    if (XHR !== null) {
+                        XHR.abort();
+                    }
+                    //
+                    const btnHook = callButtonHook($(".jsSaveSectionFive"), true);
                     //
                     XHR = $
                         .ajax({
@@ -829,7 +858,7 @@
                             return _success(
                                 resp.message,
                                 function() {
-                                    window.location.reload();
+                                    window.location.href = window.location.href;
                                 }
                             )
                         });
@@ -840,4 +869,4 @@
         //
         getEPE();
     });
-</script>
+</script>>

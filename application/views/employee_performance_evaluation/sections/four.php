@@ -9,7 +9,7 @@
                         <h4 class="panel-title">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_section_one">
                                 <span class="glyphicon glyphicon-plus"></span>
-                                Section One
+                                Manager Section 1: Employee Year in Review Evaluation
                             </a>
                         </h4>
                     </div>
@@ -18,13 +18,6 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="m0">
-                                            <strong>
-                                                Manager Section 1: Employee Year in Review Evaluation
-                                            </strong>
-                                        </h3>
-                                    </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <label class="col-sm-6">
@@ -701,7 +694,7 @@
                         <h4 class="panel-title">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_section_two">
                                 <span class="glyphicon glyphicon-plus"></span>
-                                Section Two
+                                Employee Section 2: The Year in Review
                             </a>
                         </h4>
                     </div>
@@ -710,13 +703,6 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="m0">
-                                            <strong>
-                                                Employee Section 2: The Year in Review
-                                            </strong>
-                                        </h3>
-                                    </div>
                                     <div class="panel-body">
                                         <!-- Question Start -->
                                         <p>
@@ -960,7 +946,7 @@
                         <h4 class="panel-title">
                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_section_three">
                                 <span class="glyphicon glyphicon-plus"></span>
-                                Section Three
+                                Employee Section 3: The Year in Review
                             </a>
                         </h4>
                     </div>
@@ -969,13 +955,6 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h3 class="m0">
-                                            <strong>
-                                                Employee Section 3: The Year in Review
-                                            </strong>
-                                        </h3>
-                                    </div>
                                     <div class="panel-body">
                                         <!-- Question Start -->
                                         <label class="col-sm-12">
@@ -1038,17 +1017,17 @@
             <?php if (!$signature) { ?>
                 <p>
                     <a class="btn blue-button btn-sm jsGetEmployeeSignature" href="javascript:;">Create E-Signature</a>
-                    <div class="img-full">
-                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="" id="jsDrawEmployeeSignature" />
-                    </div>
+                <div class="img-full">
+                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="" id="jsDrawEmployeeSignature" />
+                </div>
                 </p>
             <?php } else { ?>
                 <p>
-                    <div class="img-full">
-                        <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?=$signature?>" />
-                    </div>
+                <div class="img-full">
+                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?= $signature ?>" />
+                </div>
                 </p>
-            <?php } ?>    
+            <?php } ?>
         </div>
         <div class="col-sm-6">
             <p><strong>Date: <span class="cs-required">*</span><strong></p>
@@ -1058,7 +1037,13 @@
 
     <hr />
     <!--  -->
-    <div class="btn-wrp full-width mrg-top-20 text-center">
-        <button class="btn btn-info btn-success pull-right green_panel_consent_btn disabled jsSaveEsignature">I CONSENT AND ACCEPT</button>
-    </div>
+    <?php if (!$signature) { ?>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-wrp full-width mrg-top-20 text-center">
+                    <button class="btn blue-button btn-lg not_sign_yet jsSaveEsignature">I CONSENT AND ACCEPT</button>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </div>

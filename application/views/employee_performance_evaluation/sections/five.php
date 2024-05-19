@@ -70,7 +70,7 @@
                         <span class="text-large">
                             Employees Current Pay Rate:
                         </span>
-                        <input type="text" readonly name="current_pay" class="invoice-fields" value="<?php echo $current_pay ?? '' ?>">
+                        <input type="number" readonly name="current_pay" class="invoice-fields" value="<?php echo $current_pay ?? '' ?>">
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->
@@ -79,7 +79,7 @@
                         <span class="text-large">
                             Recommended Pay Increase:
                         </span>
-                        <input type="text" readonly name="recommended_pay" class="invoice-fields" value="<?php echo $recommended_pay ?? '' ?>">
+                        <input type="number" readonly name="recommended_pay" class="invoice-fields" value="<?php echo $recommended_pay ?? '' ?>">
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->
@@ -88,7 +88,7 @@
                         <span class="text-large">
                             Approved Amount:
                         </span>
-                        <input type="text" name="approved_amount" class="invoice-fields" value="<?php echo $approved_amount ?? '' ?>">
+                        <input type="number" name="approved_amount" class="invoice-fields" value="<?php echo $approved_amount ?? '' ?>">
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->
@@ -97,7 +97,7 @@
                         <span class="text-large">
                             Effective Date of Increase:
                         </span>
-                        <input type="text" name="effective_increase_date" class="form-control input-bg jsDatePicker" value="<?php echo $effective_increase_date ?? '' ?>" />
+                        <input type="text" name="effective_increase_date" class="form-control input-bg readonly jsDatePicker" value="<?php echo $effective_increase_date ?? '' ?>" />
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->

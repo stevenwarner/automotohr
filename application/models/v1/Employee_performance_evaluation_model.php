@@ -663,14 +663,32 @@ class Employee_performance_evaluation_model extends CI_Model
     }
 
     public function getEmployeeCurrentPayRate ($employeeId) {
-        return $this
+        //
+        $currentPayRate = 0;
+        //
+        $a = $this
             ->db
-            ->select("hourly_rate")
+            ->select("hourly_rate, flat_rate_technician, hourly_technician, semi_monthly_salary")
             ->where("sid", $employeeId)
             ->limit(1)
             ->get(
                 "users"
-            )
-            ->row_array();
+            );
+        //
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();    
+        //
+        if (!empty($a['hourly_rate']) && $a['hourly_rate'] > 0) {
+            $currentPayRate = $a['hourly_rate'];
+        } else if (!empty($a['semi_monthly_salary']) && $a['semi_monthly_salary'] > 0) {
+            $currentPayRate = $a['semi_monthly_salary'];
+        } else if (!empty($a['hourly_technician']) && $a['hourly_technician'] > 0) {
+            $currentPayRate = $a['hourly_technician'];
+        } else if (!empty($a['flat_rate_technician']) && $a['flat_rate_technician'] > 0) {
+            $currentPayRate = $a['flat_rate_technician'];
+        } 
+        //
+        return $currentPayRate;
     }
 }

@@ -200,12 +200,12 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         //
-                        $documentDescription = 
-                        checkAndGetDocumentDescription(
-                            $document_sid,
-                            $this->input->post('document_description'),
-                            true
-                        );
+                        $documentDescription =
+                            checkAndGetDocumentDescription(
+                                $document_sid,
+                                $this->input->post('document_description'),
+                                true
+                            );
 
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
@@ -1403,7 +1403,7 @@ class Hr_documents_management extends Public_Controller
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
 
-                        if($document_info["fillable_document_slug"]) {
+                        if ($document_info["fillable_document_slug"]) {
                             $document_name = $document_info["document_title"];
                             $document_description = $document_info["document_description"];
                         }
@@ -3782,7 +3782,7 @@ class Hr_documents_management extends Public_Controller
 
                             if ($documentBodyOld != $document_body) {
 
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -5652,12 +5652,12 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             $magic_codes = array('{{signature}}', '{{inital}}');
 
-                           //
+                            //
                             $documentBodyOld = $document_body;
                             $document_body = magicCodeCorrection($document_body);
 
                             if ($documentBodyOld != $document_body) {
-                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                             }
 
 
@@ -5961,11 +5961,11 @@ class Hr_documents_management extends Public_Controller
             );
             //
             $this
-            ->load
-            ->model(
-                "v1/Employee_performance_evaluation_model",
-                "employee_performance_evaluation_model"
-            );
+                ->load
+                ->model(
+                    "v1/Employee_performance_evaluation_model",
+                    "employee_performance_evaluation_model"
+                );
 
             $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
                 $data['session']['employer_detail']['sid']
@@ -7218,14 +7218,14 @@ class Hr_documents_management extends Public_Controller
                             $document_body = $assigned_document['document_description'];
                             // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                             $magic_codes = array('{{signature}}', '{{inital}}');
-                             
-                               //
-                               $documentBodyOld = $document_body;
-                               $document_body = magicCodeCorrection($document_body);
-   
-                               if ($documentBodyOld != $document_body) {
-                                   updateDocumentCorrectionDesc($document_body, $assigned_document['sid'],$assigned_document['document_sid']);
-                               }
+
+                            //
+                            $documentBodyOld = $document_body;
+                            $document_body = magicCodeCorrection($document_body);
+
+                            if ($documentBodyOld != $document_body) {
+                                updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
+                            }
 
 
                             if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -7934,7 +7934,7 @@ class Hr_documents_management extends Public_Controller
 
                 if ($document["fillable_document_slug"]) {
                     $postfix = $type === "original" ? "print_assigned" : "print";
-                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);    
+                    return $this->load->view("v1/documents/fillable/{$document["fillable_document_slug"]}_{$postfix}", $data);
                 }
 
                 $this->load->view('hr_documents_management/print_generated_document', $data);

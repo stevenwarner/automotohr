@@ -109,11 +109,13 @@ class Employee_performance_evaluation extends CI_Controller
      *
      * @param int $employeeId
      * @param string $section
+     * @param string $userType
      * @return json
      */
     public function loadSection(
         int $employeeId,
-        string $section
+        string $section,
+        string $userType
     ) {
         // check for protected route
         $this->protectedRoute();
@@ -197,7 +199,7 @@ class Employee_performance_evaluation extends CI_Controller
             $data['companyName'] = $this->loggedInCompanySession["CompanyName"];
             $data['signDate'] = formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y');
             //
-            if ($employeeId == $this->loggedInEmployeeSession["sid"]) {
+            if ($userType == "employee") {
                 $data['section_2'] = json_decode($sectionData['section_2_json'], true)['data'];
                 $data['section_3'] = json_decode($sectionData['section_3_json'], true)['data'];
                 $data['user_type'] = "employee";
@@ -207,7 +209,7 @@ class Employee_performance_evaluation extends CI_Controller
                 }
                 //
                 $data['signature'] = $sectionData['employee_signature'];
-            } else {
+            } else if ($userType == "manager") {
                 $data['section_1'] = json_decode($sectionData['section_1_json'], true)['data'];
                 $data['section_2'] = json_decode($sectionData['section_2_json'], true)['data'];
                 $data['section_3'] = json_decode($sectionData['section_3_json'], true)['data'];
@@ -242,10 +244,10 @@ class Employee_performance_evaluation extends CI_Controller
                     ->employee_performance_evaluation_model
                     ->getEmployeeCurrentPayRate(
                         $employeeId,
-                    );
+                    );   
                 //
                 $data['section_5'] = [];
-                $data['section_5']['current_pay'] = $currentPayRate['hourly_rate'];
+                $data['section_5']['current_pay'] = $currentPayRate;
                 $data['section_5_status'] = 'uncompleted';
                 $data['section_5_employee_type'] = 'manager';
                 $data['employees'] = $this
