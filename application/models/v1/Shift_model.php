@@ -365,7 +365,6 @@ class Shift_model extends CI_Model
         if (empty($employeeIds)) {
             $employeeIds = ['0'];
         }
-
         $this->db
             ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,is_published")
             ->where_in("employee_sid", $employeeIds);
@@ -414,7 +413,7 @@ class Shift_model extends CI_Model
                     ];
                 }
                 //
-                $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]] = [
+                $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]][] = [
                     "sid" => $v0["sid"],
                     "start_time" => $v0["start_time"],
                     "end_time" => $v0["end_time"],
@@ -427,6 +426,7 @@ class Shift_model extends CI_Model
                     "shift_date" => $v0["shift_date"],
 
                 ];
+
                 //
                 $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
                     $v0["shift_date"] . ' ' . $v0["start_time"],
@@ -581,7 +581,6 @@ class Shift_model extends CI_Model
         //
         $post["breaks"] = array_values($post["breaks"]);
         //
-
         if ($post["breaks"]) {
             foreach ($post["breaks"] as $index => $break) {
                 if ($break["start_time"]) {
@@ -642,18 +641,28 @@ class Shift_model extends CI_Model
                 $response = ["msg" => "You have successfully updated shift."];
             }
         } else {
+
             // insert
             // check if entry already exists
-            if ($this->db->where([
-                "company_sid" => $companyId,
-                "employee_sid" => $post["shift_employee"],
-                "shift_date" => $post["shift_date"],
-                "start_time" => $post["start_time"],
-                "end_time" => $post["end_time"],
-            ])->count_all_results("cl_shifts")) {
-                $response["msg"] = "Shift already exists.";
-            } else {
-                // insert
+
+            $this->db->where("company_sid", $companyId);
+            $this->db->where("employee_sid", $post["shift_employee"]);
+            $this->db->where("shift_date", $post["shift_date"]);
+            $this->db->where("end_time >=", $post["start_time"]);
+
+            $shiftExist = $this->db->count_all_results("cl_shifts");
+
+            if ($shiftExist) {
+                $response["msg"] = "Conflict! Shift overlaps with an existing shift starting at " . formatDateToDB(
+                    $post["start_time"] . ":00",
+                    "H:i:s",
+                    "h:i a"
+                ) . " and endding at " . formatDateToDB(
+                    $post["end_time"] . ":00",
+                    "H:i:s",
+                    "h:i a"
+                );
+            } else {                // insert
                 $this->db
                     ->insert("cl_shifts", [
                         "company_sid" => $companyId,
@@ -771,13 +780,16 @@ class Shift_model extends CI_Model
                     }
                 }
 
-                //
-                $where = [
-                    "employee_sid" => $employeeId,
-                    "shift_date" => $v0
-                ];
+                //                            
+                $this->db->where("company_sid", $companyId);
+                $this->db->where("employee_sid", $employeeId);
+                $this->db->where("shift_date", $v0);
+                $this->db->where("end_time >=", $post["start_time"]);
+
+                $shiftExist = $this->db->count_all_results("cl_shifts");
+
                 // check if shift already assigned
-                if ($this->db->where($where)->count_all_results("cl_shifts")) {
+                if ($shiftExist) {
                     if (!$employeesAlreadyExists[$employeeId]) {
                         $employeesAlreadyExists[$employeeId] = [
                             "dates" => []
@@ -904,59 +916,79 @@ class Shift_model extends CI_Model
             $this->db->where('employee_sid',  $employeeId);
             $lastCycleShiftData = $this->db->get("cl_shifts")->result_array();
 
-            foreach ($dates as $key => $v0) {
+            foreach ($lastCycleShiftData as $lastCycleShiftDataRow) {
+                foreach ($dates as $key => $v0) {
 
-                $shiftDataToCopy = $lastCycleShiftData[$key];
-                //
-                if ($lastCycleShiftData[$key]) {
+                    $shiftDataToCopy = $lastCycleShiftData[$key];
+                    //
+                    if ($lastCycleShiftData[$key]) {
 
-                    if ($markoffDayAsWorking == 0) {
-                        if (in_array($v0, $holidaysAndOffDays)) {
+                        if ($markoffDayAsWorking == 0) {
+                            if (in_array($v0, $holidaysAndOffDays)) {
+                                continue;
+                            }
+                        }
+
+                        //
+
+                        /*
+                        $where = [
+                            "employee_sid" => $employeeId,
+                            "shift_date" => $v0,
+                            "start_time" => $lastCycleShiftDataRow['start_time'],
+                            "end_time" => $lastCycleShiftDataRow['end_time']
+                        ];
+*/
+
+
+                        $this->db->where("employee_sid", $employeeId);
+                        $this->db->where("shift_date", $v0);
+                        $this->db->where("end_time >=", $lastCycleShiftDataRow['start_time']);
+
+                        $shiftExist = $this->db->count_all_results("cl_shifts");
+
+
+                        // check if shift already assigned
+                        if ($shiftExist) {
+                            if (!$employeesAlreadyExists[$employeeId]) {
+                                $employeesAlreadyExists[$employeeId] = [
+                                    "dates" => []
+                                ];
+                            }
+                            $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
                             continue;
                         }
-                    }
-
-                    //
-                    $where = [
-                        "employee_sid" => $employeeId,
-                        "shift_date" => $v0
-                    ];
-                    // check if shift already assigned
-                    if ($this->db->where($where)->count_all_results("cl_shifts")) {
-                        if (!$employeesAlreadyExists[$employeeId]) {
-                            $employeesAlreadyExists[$employeeId] = [
-                                "dates" => []
-                            ];
-                        }
-                        $employeesAlreadyExists[$employeeId]["dates"][] = $v0;
-                        continue;
-                    }
-                    // add the shift
-                    $ins = [];
-                    $ins["company_sid"] = $companyId;
-                    $ins["employee_sid"] = $employeeId;
-                    $ins["shift_date"] = $v0;
-                    $ins["start_time"] = $shiftDataToCopy["start_time"];
-                    $ins["end_time"] = $shiftDataToCopy["end_time"];
-                    $ins["breaks_count"] = $shiftDataToCopy["breaks_count"];
-                    $ins["breaks_json"] = $shiftDataToCopy['breaks_json'];
-                    $ins["job_sites"] = $shiftDataToCopy["job_sites"] ?? "[]";
-                    $ins["notes"] = $shiftDataToCopy['notes'];
-                    $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
-                    //
-                    $this->db->insert("cl_shifts", $ins);
-                    //
-                    $insertId = $this->db->insert_id();
-                    //
-                    if ($insertId) {
+                        // add the shift
                         $ins = [];
-                        $ins["cl_shift_sid"] = $insertId;
-                        $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
-                        $ins["action"] = "created";
-                        $ins["action_json"] = "{}";
-                        $ins["created_at"] = $currentDateAndTime;
+                        $ins["company_sid"] = $companyId;
+                        $ins["employee_sid"] = $employeeId;
+                        $ins["shift_date"] = $v0;
+
+                        $ins["start_time"] = $lastCycleShiftDataRow["start_time"];
+                        $ins["end_time"] = $lastCycleShiftDataRow["end_time"];
+                        $ins["breaks_count"] = $lastCycleShiftDataRow["breaks_count"];
+                        $ins["breaks_json"] = $lastCycleShiftDataRow['breaks_json'];
+                        $ins["job_sites"] = $lastCycleShiftDataRow["job_sites"] ?? "[]";
+                        $ins["notes"] = $lastCycleShiftDataRow['notes'];
+
+
+                        $ins["created_at"] = $ins["updated_at"] = $currentDateAndTime;
                         //
-                        $this->db->insert("cl_shifts_logs", $ins);
+
+                        $this->db->insert("cl_shifts", $ins);
+                        //
+                        $insertId = $this->db->insert_id();
+                        //
+                        if ($insertId) {
+                            $ins = [];
+                            $ins["cl_shift_sid"] = $insertId;
+                            $ins["employee_sid"] = checkAndGetSession("employee")["sid"];
+                            $ins["action"] = "created";
+                            $ins["action_json"] = "{}";
+                            $ins["created_at"] = $currentDateAndTime;
+                            //
+                            $this->db->insert("cl_shifts_logs", $ins);
+                        }
                     }
                 }
             }
@@ -1011,10 +1043,12 @@ class Shift_model extends CI_Model
     public function deleteSingleShift(int $companyId, array $post)
     {
 
-        $shiftId = $post['id'];
-
+        $employeeId = $post['employeeId'];
+        $shiftDate = $post['shiftDate'];
         $this->db->where('company_sid',  $companyId);
-        $this->db->where('sid',  $shiftId);
+        $this->db->where('employee_sid',  $employeeId);
+        $this->db->where('shift_date',  $shiftDate);
+
         $this->db->delete('cl_shifts');
 
         return SendResponse(
@@ -1428,7 +1462,7 @@ class Shift_model extends CI_Model
                     ->limit(1)
                     ->get()
                     ->row_array();
-                
+
                 if (!$result) {
                     unset($records[$key]);
                     continue;

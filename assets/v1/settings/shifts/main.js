@@ -393,6 +393,10 @@ $(function manageShifts() {
 		event.preventDefault();
 		//
 		const shiftId = $(this).data("id");
+
+		const employeeId = $(this).data("employeeid");
+		const shiftDate = $(this).data("shiftdate");
+
 		// generate html
 		alertify.confirm(
 			"Are You Sure?",
@@ -402,6 +406,9 @@ $(function manageShifts() {
 				const formObj = new FormData();
 				// set the file object
 				formObj.append("id", shiftId);
+				formObj.append("employeeId", employeeId);
+     			formObj.append("shiftDate", shiftDate);
+
 				//
 				processCallWithoutContentType(
 					formObj,
@@ -615,6 +622,7 @@ $(function manageShifts() {
 					.add(2, "week")
 					.subtract(1, "days")
 					.format("MM/DD/YYYY");
+					
 		} else {
 			// make date from month and year
 			const year = getSearchParam("year") || moment().format("YYYY");

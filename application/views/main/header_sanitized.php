@@ -31,7 +31,7 @@
     <?= $appCSS ?? ""; ?>
     <?= bundleCSS([
         "v1/app/css/global",
-    ], "public/v1/app/", "global", true); ?>
+    ], "public/v1/app/", "global", false); ?>
 </head>
 
 <body>

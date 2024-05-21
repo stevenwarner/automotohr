@@ -10,7 +10,7 @@
                         </h2>
                     </div>
                     <div class="col-sm-6 text-right">
-                        <a href="javascript:;" class="btn btn-orange jsMarkAsDayOff" data-id="<?php echo $shift['sid']; ?>">
+                        <a href="javascript:;" class="btn btn-orange jsMarkAsDayOff" data-id="<?php echo $shift['sid']; ?>" data-employeeid="<?php echo $shift['employee_sid']; ?>" data-shiftdate="<?php echo $shift['shift_date']; ?>">
                             <i class="fa fa-ban" aria-hidden="true"></i>
                             &nbsp;Mark as Day Off
                         </a>

@@ -4157,6 +4157,8 @@ class Settings extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+
+
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves
@@ -4173,8 +4175,12 @@ class Settings extends Public_Controller
             explode(",", $employees);
         $data["filter_toggle"] = $toggleFilter;
 
-        $data["filter_jobtitle"] =
-            explode(",", $jobTitle);
+        if ($jobTitle != '') {
+            $data["filter_jobtitle"] =
+                explode(",", $jobTitle);
+        } else {
+            $data["filter_jobtitle"] = ['all'];
+        }
 
 
         // get off and holidays
@@ -4203,7 +4209,7 @@ class Settings extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/main"
-        ], "public/v1/shifts/", "main", true);
+        ], "public/v1/shifts/", "main", false);
         //
         $this->load->view('main/header', $data);
         $this->load->view('v1/settings/shifts/listing');
@@ -5131,6 +5137,7 @@ class Settings extends Public_Controller
 
         // set the sanitized post
         $post = $this->input->post(null, true);
+
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         // call the function
@@ -5418,6 +5425,7 @@ class Settings extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves

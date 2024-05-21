@@ -22,7 +22,7 @@
                             To Date
                             <strong class="text-red">*</strong>
                         </label>
-                        <input type="text" class="form-control" name="shift_date_to" id="shift_date_to" />
+                        <input type="text" class="form-control datepicker hasDatepicker"  name="shift_date_to" id="shift_date_to" />
                     </div>
                 </div>
 
