@@ -69,7 +69,6 @@
          */
         function startBulkAssignProcess(event) {
             event.preventDefault();
-            alert("sdas")
         }
 
         $(".jsBulkAssignEPE").trigger("click")

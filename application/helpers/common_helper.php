@@ -25,6 +25,19 @@ if (!function_exists('getUserNameBySID')) {
     }
 }
 
+if (!function_exists('getEmployeeOnlyNameBySID')) {
+    function getEmployeeOnlyNameBySID($sid)
+    {
+        $employee_info = db_get_employee_profile($sid);
+        //
+        if ($employee_info) {
+            return $employee_info[0]["first_name"] . " " . $employee_info[0]["last_name"];
+        } else {
+            return "";
+        }
+    }
+}
+
 
 if (!function_exists('getApplicantNameBySID')) {
     function getApplicantNameBySID($sid, $remake = true)
@@ -5356,7 +5369,7 @@ if (!function_exists('get_admin_notifications')) {
                 COUNT(*) as count
             ')
             ->get('indeed_disposition_status_map')
-            ->row_array()['count'];    
+            ->row_array()['count'];
         //
         $data['indeed_pending_status'] = $totalStatus - $mapStatus;
         return $data;
@@ -15581,7 +15594,7 @@ if (!function_exists('get_all_group_documents')) {
         if (!empty($record_arr)) {
             //
             $tmp = [];
-            foreach($record_arr as $rc) {
+            foreach ($record_arr as $rc) {
                 if (!$tmp[$rc["document_sid"]]) {
                     $tmp[$rc["document_sid"]] = $rc;
                 }

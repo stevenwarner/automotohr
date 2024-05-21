@@ -679,16 +679,60 @@ class Employee_performance_evaluation_model extends CI_Model
         $b = $a->row_array();
         $a = $a->free_result();    
         //
-        if (!empty($a['hourly_rate']) && $a['hourly_rate'] > 0) {
-            $currentPayRate = $a['hourly_rate'];
-        } else if (!empty($a['semi_monthly_salary']) && $a['semi_monthly_salary'] > 0) {
-            $currentPayRate = $a['semi_monthly_salary'];
-        } else if (!empty($a['hourly_technician']) && $a['hourly_technician'] > 0) {
-            $currentPayRate = $a['hourly_technician'];
-        } else if (!empty($a['flat_rate_technician']) && $a['flat_rate_technician'] > 0) {
-            $currentPayRate = $a['flat_rate_technician'];
+        if (!empty($b['hourly_rate']) && $b['hourly_rate'] > 0) {
+            $currentPayRate = $b['hourly_rate'];
+        } else if (!empty($b['semi_monthly_salary']) && $b['semi_monthly_salary'] > 0) {
+            $currentPayRate = $b['semi_monthly_salary'];
+        } else if (!empty($b['hourly_technician']) && $b['hourly_technician'] > 0) {
+            $currentPayRate = $b['hourly_technician'];
+        } else if (!empty($b['flat_rate_technician']) && $b['flat_rate_technician'] > 0) {
+            $currentPayRate = $b['flat_rate_technician'];
         } 
         //
         return $currentPayRate;
+    }
+
+
+    /**
+     * get performance document info
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    public function getEmployeePerformanceDocumentInfo($employeeId): array
+    {
+        $response = [
+            "completed_at" => '',
+            'assign_at' => '',
+            'assign_by' => ''
+        ];
+        //
+        $a = $this
+            ->db
+            ->select("section_2_json, section_4_json, assigned_on, last_assigned_by")
+            ->where("employee_sid", $employeeId)
+            ->where("status", 1)
+            ->limit(1)
+            ->get(
+                "employee_performance_evaluation_document"
+            );
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if ($b['section_2_json'] && !$b['section_4_json']) {
+            $info = json_decode($b['section_2_json'], true);
+            //
+            $response['completed_at'] = formatDateToDB($info['completed_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); 
+        } else if ($b['section_4_json']) {
+            $info = json_decode($b['section_4_json'], true);
+            //
+            $response['completed_at'] = formatDateToDB($info['employee_signature_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+        }
+        //
+        $response['assign_at'] = formatDateToDB($b['assigned_on'], DB_DATE_WITH_TIME, DATE_WITH_TIME); 
+        $response['assign_by'] = getUserNameBySID($b['last_assigned_by']); 
+        //
+        return $response;
     }
 }

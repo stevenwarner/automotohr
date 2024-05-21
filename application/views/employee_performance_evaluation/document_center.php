@@ -206,7 +206,7 @@
                     row += '        <button class="btn btn-success jsEPESectionOne">Complete Section 1</button>';
                 }
                 //
-                if (data.sections[1].is_verified && !data.sections[3].status) {
+                if (data.sections[1].is_verified && data.sections[2].status && !data.sections[3].status) {
                     row += '        <button class="btn btn-success jsEPESectionThree">Complete Section 3</button>';
                 }
                 //
@@ -273,7 +273,7 @@
                     row += '                        <strong>';
                     row += section.completed_by ? section.completed_by : "-";
                     if (i == 1) {
-                        if (!data.sections[1].is_verified) {
+                        if (data.sections[1].status && !data.sections[1].is_verified) {
                             row += '                <br><p class="text-danger">Verification Pending</p>';
                         }
                     }
@@ -501,7 +501,9 @@
          *
          */
         function handleSectionOneSave() {
-
+            //
+            
+            //
             $("#jsSectionOneForm").validate({
                 rules: {
                     "epe_employee_name": {
@@ -647,7 +649,6 @@
                                         console.log(managers[i])
                                         $('input[name="employees[]"][value="' + managers[i] + '"]').prop('checked', true);
                                     }
-
                                 }
                             )
                         });
@@ -661,6 +662,8 @@
          *
          */
         function handleSectionThreeSave() {
+            //
+            
             //
             $("#jsSectionThreeForm").validate({
                 rules: {
@@ -730,7 +733,7 @@
                         )
                     } else {
                         $('.jsSaveEsignature').removeClass('not_sign_yet');
-                        $('.jsSaveHRManagerApproval').removeClass('disabled');
+                        $('.jsSaveHRManagerApproval').removeClass('not_sign_yet');
                         $('.jsGetEmployeeSignature').hide();
                         $('#jsDrawEmployeeSignature').attr('src', resp.signature_base64);
                     }
@@ -745,43 +748,51 @@
          */
         function handleSectionFourSave() {
             //
+            
+            //
             if ($(".jsSaveEsignature").hasClass("not_sign_yet")) {
-                return _error(
+                alertify.alert(
+                    'Warning!',
                     'Signing is mandatory to complete Section 4',
                 )
-            }
-            //
-            if (XHR !== null) {
-                XHR.abort();
-            }
-            //
-            const btnHook = callButtonHook($(".jsSaveEsignature"), true);
-            //
-            XHR = $
-                .ajax({
-                    url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/four"),
-                    method: "POST",
-                    data: {
-                        "action": "save_signature",
-                        "user_type": "manager"
-                    }
-                })
-                .always(function() {
-                    XHR = null;
-                    callButtonHook(btnHook, false);
-                })
-                .fail(handleErrorResponse)
-                .done(function(resp) {
-                    return _success(
-                        resp.message,
-                        function() {
-                            window.location.href = window.location.href;
+                return true;
+            } else {
+                //
+                if (XHR !== null) {
+                    XHR.abort();
+                }
+                //
+                const btnHook = callButtonHook($(".jsSaveEsignature"), true);
+                //
+                XHR = $
+                    .ajax({
+                        url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/four"),
+                        method: "POST",
+                        data: {
+                            "action": "save_signature",
+                            "user_type": "manager"
                         }
-                    )
-                });
+                    })
+                    .always(function() {
+                        XHR = null;
+                        callButtonHook(btnHook, false);
+                    })
+                    .fail(handleErrorResponse)
+                    .done(function(resp) {
+                        return _success(
+                            resp.message,
+                            function() {
+                                window.location.href = window.location.href;
+                            }
+                        )
+                    });
+            }
+
         }
 
         function handleSectionFiveSave() {
+            //
+            
             //
             $("#jsSectionFiveForm").validate({
                 rules: {
@@ -827,43 +838,57 @@
 
         function handleSectionFiveApprovalSave() {
             //
-            $("#jsSectionFiveForm").validate({
-                rules: {
-                    "approved_amount": {
-                        required: true
+            
+            //
+            if ($(".jsSaveHRManagerApproval").hasClass("not_sign_yet")) {
+                alertify.alert(
+                    'Warning!',
+                    'Signing is mandatory to complete Section 5',
+                )
+                return false;
+            } else {
+                $("#jsSectionFiveForm").validate({
+                    rules: {
+                        "approved_amount": {
+                            required: true,
+                            number: true
+                        },
+                        "effective_increase_date": {
+                            required: true
+                        }
                     },
-                    "effective_increase_date": {
-                        required: true
+                    submitHandler: function(form) {
+                        //
+                        if (XHR !== null) {
+                            XHR.abort();
+                        }
+                        //
+                        const btnHook = callButtonHook($(".jsSaveHRManagerApproval"), true);
+                        //
+                        XHR = $
+                            .ajax({
+                                url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/five"),
+                                method: "POST",
+                                data: $(form).serialize()
+                            })
+                            .always(function() {
+                                XHR = null;
+                                callButtonHook(btnHook, false);
+                            })
+                            .fail(handleErrorResponse)
+                            .done(function(resp) {
+                                return _success(
+                                    resp.message,
+                                    function() {
+                                        window.location.href = window.location.href;
+                                    }
+                                )
+                            });
                     }
-                },
-                submitHandler: function(form) {
-                    //
-                    if (XHR !== null) {
-                        XHR.abort();
-                    }
-                    //
-                    const btnHook = callButtonHook($(".jsSaveSectionFive"), true);
-                    //
-                    XHR = $
-                        .ajax({
-                            url: baseUrl("fillable/epe/<?= $user_sid; ?>/save_section/five"),
-                            method: "POST",
-                            data: $(form).serialize()
-                        })
-                        .always(function() {
-                            XHR = null;
-                        })
-                        .fail(handleErrorResponse)
-                        .done(function(resp) {
-                            return _success(
-                                resp.message,
-                                function() {
-                                    window.location.href = window.location.href;
-                                }
-                            )
-                        });
-                }
-            });
+                });
+            }
+            //
+
         }
 
         //

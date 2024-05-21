@@ -2547,6 +2547,7 @@ class Reports_model extends CI_Model
             $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid'], $v['parent_sid']);
+            $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid']);
         endforeach;
 
         //
@@ -2595,8 +2596,38 @@ class Reports_model extends CI_Model
         return $result ? $result->result_array() : [];
     }
 
-
-
+    //
+    private function getAssignedPerformanceDocumentForReport($employeeId)
+    {
+        //
+        $completedStatus = 'Not Assigned'; 
+        //
+        $this
+            ->load
+            ->model(
+                "v1/Employee_performance_evaluation_model",
+                "employee_performance_evaluation_model"
+            );
+        //
+        $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+            $employeeId
+        );
+        //
+        if ($assignPerformanceDocument) {
+            //
+            $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                $employeeId
+            );
+            //`                                                                 
+            if ($pendingPerformanceSection) {
+                $completedStatus = 'Not Completed';
+            } else {
+                $completedStatus = 'Completed';
+            }
+        }
+        //
+        return  $completedStatus; 
+    }
 
 
     //
@@ -2660,7 +2691,7 @@ class Reports_model extends CI_Model
                 } else {
                     //
                     if ($this->isDocumentArchived($val["document_sid"])) {
-                        unset($data[$key]); 
+                        unset($data[$key]);
                         continue;
                     }
                     //
@@ -2910,7 +2941,8 @@ class Reports_model extends CI_Model
             ->count_all_results("documents_management");
     }
 
-    public function getTerminatedEmployees($company_sids = NULL, $between = '', $limit = null, $start = null){
+    public function getTerminatedEmployees($company_sids = NULL, $between = '', $limit = null, $start = null)
+    {
         //
         $this->db->select('terminated_employees.termination_reason');
         $this->db->select('terminated_employees.termination_date');
@@ -2930,11 +2962,11 @@ class Reports_model extends CI_Model
         $this->db->where('terminated_employees.employee_status', 1);
         $this->db->where('users.parent_sid', $company_sids);
         //
-        if($between != '' && $between != NULL){
+        if ($between != '' && $between != NULL) {
             $this->db->where($between);
         }
         //
-        if($limit != null){
+        if ($limit != null) {
             $this->db->limit($limit, $start);
         }
         //  

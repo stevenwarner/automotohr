@@ -1362,14 +1362,13 @@ class Hr_documents_management_model extends CI_Model
     public function getMainDocumentField(
         int $documentId,
         string $column
-    )
-    {
+    ) {
         $record = $this
-        ->db
-        ->select($column)
-        ->where("sid", $documentId)
-        ->get("documents_management")
-        ->row_array();
+            ->db
+            ->select($column)
+            ->where("sid", $documentId)
+            ->get("documents_management")
+            ->row_array();
         //
         if (!$record) {
             return null;
@@ -2505,6 +2504,45 @@ class Hr_documents_management_model extends CI_Model
         //
         // remove all those active company employees from list with no pending documents
         foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
+            //
+            $this
+                ->load
+                ->model(
+                    "v1/Employee_performance_evaluation_model",
+                    "employee_performance_evaluation_model"
+                );
+            //
+            $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+                $p_key
+            );
+            //
+            if ($assignPerformanceDocument) {
+                //
+                $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                    $p_key
+                );
+                //
+                if ($pendingPerformanceSection) {
+                    $performanceDocumentInfo = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                        $p_key
+                    );
+                    //
+                    $assigned_on = date('M d Y, D h:i:s', strtotime($performanceDocumentInfo["assign_at"]));
+                    //
+                    $datediff = $now - strtotime($assigned_document['assigned_date']);
+                    $days = round($datediff / (60 * 60 * 24));
+                    //
+                    $pendingDocuments[$p_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => "Performance Evaluation Document",
+                        'Type' => 'Performance Evaluation',
+                        'AssignedOn' => $performanceDocumentInfo["assign_at"],
+                        'Days' => $days,
+                        'AssignedBy' => $performanceDocumentInfo['assign_by']
+                    );
+                }
+            }
+            //
             if (empty($pendingEmployeeDocuments['Documents'])) {
                 unset($pendingDocuments[$p_key]);
             } else {

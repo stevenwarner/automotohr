@@ -27,7 +27,7 @@
                         <span class="text-large">
                             Employees Current Pay Rate:
                         </span>
-                        <input type="text" name="current_pay" class="invoice-fields" value="<?php echo $section_5['current_pay'] ?? '' ?>">
+                        <input type="number" name="current_pay" class="invoice-fields" value="<?php echo $section_5['current_pay'] ?? '' ?>">
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->
@@ -36,7 +36,7 @@
                         <span class="text-large">
                             Recommended Pay Increase:
                         </span>
-                        <input type="text" name="recommended_pay" class="invoice-fields" value="<?php echo $section_5['recommended_pay'] ?? '' ?>">
+                        <input type="number" name="recommended_pay" class="invoice-fields" value="<?php echo $section_5['recommended_pay'] ?? '' ?>">
                     </label>
                     <!-- Question End -->
                 </div>
@@ -97,7 +97,7 @@
                         <span class="text-large">
                             Effective Date of Increase:
                         </span>
-                        <input type="text" name="effective_increase_date" class="form-control input-bg readonly jsDatePicker" value="<?php echo $effective_increase_date ?? '' ?>" />
+                        <input type="text" readonly name="effective_increase_date" class="form-control input-bg jsDatePicker" value="<?php echo $effective_increase_date ?? '' ?>" />
                     </label>
                     <!-- Question End -->
                     <!-- Question Start -->
@@ -149,8 +149,12 @@
 
                     <hr />
                     <!--  -->
-                    <div class="btn-wrp full-width mrg-top-20 text-center">
-                        <button class="btn btn-info btn-success pull-right green_panel_consent_btn disabled jsSaveHRManagerApproval">I CONSENT AND ACCEPT</button>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="btn-wrp full-width mrg-top-20 text-center">
+                                <button class="btn blue-button btn-lg not_sign_yet jsSaveHRManagerApproval">I CONSENT AND ACCEPT</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="user_type" value="HR_manager">

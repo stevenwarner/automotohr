@@ -401,6 +401,20 @@
 
                     }
                 }
+
+                if (record.assignedPerformanceDocument != 'Not Assigned') {
+                    //
+                    if (record.assignedPerformanceDocument == 'Completed') {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+                    //
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>Performance Evaluation Document ' + $completedStatus + '</span></div>';
+                }
+
                 $completedStatus = '';
 
                 //

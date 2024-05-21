@@ -155,7 +155,7 @@ class Employee_performance_evaluation extends CI_Controller
                 ->getVerificationManagers(
                     $employeeId,
                     1
-                );    
+                );
         } else if ($section == "two") {
             $sectionData = $this
                 ->employee_performance_evaluation_model
@@ -244,7 +244,7 @@ class Employee_performance_evaluation extends CI_Controller
                     ->employee_performance_evaluation_model
                     ->getEmployeeCurrentPayRate(
                         $employeeId,
-                    );   
+                    );
                 //
                 $data['section_5'] = [];
                 $data['section_5']['current_pay'] = $currentPayRate;
@@ -533,7 +533,9 @@ class Employee_performance_evaluation extends CI_Controller
                     'section_5_json',
                     'employee_signature',
                     'manager_signature',
-                    'hr_signature'
+                    'hr_signature',
+                    'assigned_on',
+                    'last_assigned_by'
                 ]
             );
         //
@@ -551,7 +553,30 @@ class Employee_performance_evaluation extends CI_Controller
         $data['sectionData'] = $sectionData;
         $data['companyName'] = $this->loggedInCompanySession["CompanyName"];
         //
-        $this->load->view('employee_performance_evaluation/pd_performance_page_new', $data);
+        if ($action == "preview") {
+            $data['session'] = $this->currentSession;
+            $companyId = $this->loggedInCompanySession["sid"];
+            $employerId = $this->loggedInEmployeeSession["sid"];
+
+            $securityDetails = db_get_access_level_details($employerId);
+            getCompanyEmsStatusBySid($companyId);
+            //
+            $data['session'] = $this->currentSession;
+            $data['company_sid'] = $companyId;
+            $data['security_details'] = $securityDetails;
+            $data['title'] = 'Pending Performance Verification Section';
+            $data['assignOn'] = formatDateToDB($sectionData['assigned_on'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+            $data['assignBy'] = getUserNameBySID($sectionData['last_assigned_by']);
+            $data['assignTo'] = getUserNameBySID($employeeId);
+            //
+            $data['employee'] = $this->loggedInEmployeeSession;
+            $this->load->view('onboarding/on_boarding_header', $data);
+            $this->load->view('employee_performance_evaluation/performance_evaluation_document_preview');
+            $this->load->view('onboarding/on_boarding_footer');
+        } else {
+            //
+            $this->load->view('employee_performance_evaluation/pd_performance_evaluation_form', $data);
+        }
     }
 
     /**

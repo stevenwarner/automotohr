@@ -1405,7 +1405,7 @@
                                 </td>
                                 <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top">
                                     <p style="margin-left:0.05pt; margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                        <?= getUserNameBySID($section5['hr_manager_completed_by']); ?>
+                                        <?= getEmployeeOnlyNameBySID($section5['hr_manager_completed_by']); ?>
                                     </p>
                                 </td>
                             </tr>

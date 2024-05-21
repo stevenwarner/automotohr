@@ -3600,6 +3600,11 @@ class Reports extends Public_Controller
                     }
 
                     //
+                    if ($row['assignedPerformanceDocument'] != 'Not Assigned') {
+                        $doc .= "Performance Evaluation Document" . $row['assignedPerformanceDocument'] . "\n\n";
+                    }
+
+                    //
                     $a = [];
                     $a[] = $employeeOBJ[$row['sid']];
                     $a[] = $totalDocs;

@@ -1,4 +1,8 @@
 <style>
+    .jsSectionThree:nth-child(even) {
+        background: #eee;
+    }
+    
     textarea {
         resize: none;
     }
@@ -24,22 +28,33 @@
             </div>
             <div class="panel-body">
                 <!-- Question Start -->
-                <label class="col-sm-12">
-                    <br>
-                    <span class="text-large">
-                        Additional Comments, Feedback - Managers Comments:
-                    </span>
-                    <textarea name="additional_comment_one" rows="10" class="form-control"><?= $section_3['additional_comment_one'] ?? '' ?></textarea>
-                </label>
+                <div class="row jsSectionThree  mrg-bottom-20">
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group autoheight">
+                            <h3>
+                                <strong>
+                                    Additional Comments, Feedback - Managers Comments:
+                                </strong>
+                            </h3>
+                            <textarea name="additional_comment_one" rows="10" <?= $readonly ?> class="form-control"><?= $section_3['additional_comment_one'] ?? '' ?></textarea>
+                        </div>
+                    </div>
+                </div>
                 <!-- Question End -->
+
                 <!-- Question Start -->
-                <label class="col-sm-12">
-                    <br>
-                    <span class="text-large">
-                        Additional Comments, Feedback - Managers Comments:
-                    </span>
-                    <textarea name="additional_comment_two" rows="10" class="form-control"><?= $section_3['additional_comment_two'] ?? '' ?></textarea>
-                </label>
+                <div class="row jsSectionThree  mrg-bottom-20">
+                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="form-group autoheight">
+                            <h3>
+                                <strong>
+                                    Additional Comments, Feedback - Managers Comments:
+                                </strong>
+                            </h3>
+                            <textarea name="additional_comment_two" rows="10" <?= $readonly ?> class="form-control"><?= $section_3['additional_comment_two'] ?? '' ?></textarea>
+                        </div>
+                    </div>
+                </div>
                 <!-- Question End -->
             </div>
         </div>
@@ -50,6 +65,6 @@
                     <button class="btn btn-orange jsSaveSectionThree">Save</button>
                 </div>
             </div>
-        <?php } ?>    
+        <?php } ?>
     </form>
 </div>
