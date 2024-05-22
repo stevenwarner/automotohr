@@ -1075,15 +1075,15 @@ class Dashboard extends Public_Controller
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
             //
-            $this->load->model('payroll_model', 'pm');
-            //
-            $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
-                'payroll_employees_pay_stubs',
-                [
-                    'employee_sid' => $data['session']['employer_detail']['sid']
-                ],
-                'sid'
-            ));
+            // $this->load->model('payroll_model', 'pm');
+            // //
+            // $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
+            //     'payroll_employees_pay_stubs',
+            //     [
+            //         'employee_sid' => $data['session']['employer_detail']['sid']
+            //     ],
+            //     'sid'
+            // ));
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //

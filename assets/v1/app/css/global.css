@@ -968,3 +968,37 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	background: #000ccc1a !important;
 	/* color: var(--txColor) !important; */
 }
+
+
+/* page loader */
+/* Common loader CSS */
+
+.csPageLoader {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	background: rgba(255, 255, 255, 0.9);
+	z-index: 3;
+}
+
+.csPageLoader .csPageLoaderBox {
+	position: relative;
+	display: inline-block;
+	top: 100px;
+	left: 50%;
+	transform: translate(-50%);
+	text-align: center;
+}
+
+.csPageLoader .csPageLoaderBox i {
+	font-size: 50px;
+	color: #fd7a2a;
+}
+
+.csPageLoader .csPageLoaderBox span {
+	font-size: 16px;
+	color: #333;
+}

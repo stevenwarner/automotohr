@@ -43,8 +43,15 @@ class Lb_gusto
     {
         // holds the CI instance
         $this->ci = &get_instance();
-        // set the mode
-        $this->setMode($params["companyId"]);
+        // check when company id is set
+        if (isset($params["companyId"])) {
+            // set the mode
+            $this->setMode($params["companyId"]);
+        } elseif (isset($params["mode"])) {
+            $this->setManualMode($params["mode"]);
+        } else {
+            exit("Please provide a company id.");
+        }
         // ste the version
         $this->version = "2024-03-01";
     }
@@ -189,6 +196,26 @@ class Lb_gusto
             [
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Token ' . ($this->credentials["api_token"]) . '',
+                    'Content-Type: application/json',
+                    "X-Gusto-API-Version: {$this->version}"
+                ]
+            ]
+        );
+    }
+
+    /**
+     * get requests
+     *
+     * @return array
+     */
+    public function getWebHooks(): array
+    {
+        return $this->makeCall(
+            $this->getUrl('webhook_subscriptions'),
+            [
+                CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => [
                     'Authorization: Token ' . ($this->credentials["api_token"]) . '',
                     'Content-Type: application/json',
@@ -425,6 +452,65 @@ class Lb_gusto
     }
 
     /**
+     * Company benefits
+     *
+     * @return array
+     */
+    public function getBenefits(): array
+    {
+        return [
+            [
+                "benefit_type" => "2",
+                "description" => "Dental",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "0",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ],
+            [
+                "benefit_type" => "6",
+                "description" => "Health Savings Contribution",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "1",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ],
+            [
+                "benefit_type" => "1",
+                "description" => "Medical Premium",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "0",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ],
+            [
+                "benefit_type" => "3",
+                "description" => "Vision Premium",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "0",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ],
+            [
+                "benefit_type" => "993",
+                "description" => "Voluntary Life Insurance Premi",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "0",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ],
+            [
+                "benefit_type" => "5",
+                "description" => "401(k) - Retirement Account",
+                "deletable" => "1",
+                "supports_percentage_amounts" => "1",
+                "responsible_for_employer_taxes" => "0",
+                "responsible_for_employee_w2" => "0"
+            ]
+        ];
+    }
+
+    /**
      * make call to Gusto
      *
      * @param string $url
@@ -604,6 +690,9 @@ class Lb_gusto
         // create partner company routes
         $urls["partner_managed_companies"] =
             "v1/partner_managed_companies";
+        // webhook_subscriptions
+        $urls["webhook_subscriptions"] =
+            "v1/webhook_subscriptions";
         // agreements
         $urls["agreement"] =
             "v1/partner_managed_companies/{$key}/accept_terms_of_service";
@@ -642,6 +731,12 @@ class Lb_gusto
         // employees
         $urls["employees"] =
             "v1/companies/{$key}/employees";
+        // industry
+        $urls["industry"] =
+            "v1/companies/{$key}/industry_selection";
+        // flows
+        $urls["flows"] =
+            "v1/companies/{$key}/flows";
 
 
         // Employees
@@ -681,9 +776,14 @@ class Lb_gusto
         // benefits
         $urls["employee_benefits"] =
             "v1/employees/{$key1}/employee_benefits";
-            // garnishments
+        // garnishments
         $urls["garnishments"] =
             "v1/employees/{$key1}/garnishments";
+
+        // Payrolls
+        // payroll_blockers
+        $urls["payroll_blockers"] =
+            "v1/companies/{$key}/payrolls/blockers";
 
 
 
@@ -794,6 +894,19 @@ class Lb_gusto
         ) {
             $this->mode = "production";
         }
+        //
+        $this->setCredentials();
+    }
+
+    /**
+     * check the company mode
+     *
+     * @param string $mode
+     */
+    private function setManualMode(string $mode)
+    {
+        // set default mode
+        $this->mode = $mode === "production" ? $mode : "demo";
         //
         $this->setCredentials();
     }

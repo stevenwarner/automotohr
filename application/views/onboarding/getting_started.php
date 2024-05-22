@@ -909,7 +909,11 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                         <?php $this->load->view('v1/attendance/partials/clocks/blue/getting_started_block'); ?>
 
-                        <?php if (isset($employeePayStubsCount)) { ?>
+                        <?php
+                        $isSyncInProgress = checkIfSyncingInProgress();
+                        ?>
+
+                        <?php if (!$isSyncInProgress && isset($employeePayStubsCount)) { ?>
                             <!-- Payroll -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
@@ -930,7 +934,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             </div>
                         <?php } ?>
 
-                        <?php if (isCompanyVerifiedForPayroll() && isEmployeeOnPayroll($employee_sid)) { ?>
+                        <?php if (!$isSyncInProgress && isCompanyVerifiedForPayroll() && isEmployeeOnPayroll($employee_sid)) { ?>
                             <!-- Payroll -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box bg-box">

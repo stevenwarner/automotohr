@@ -1787,8 +1787,8 @@ $route['payrolls/agreement/(:num)']['get'] =
 $route['payrolls/agreement/(:num)']['post'] =
   'v1/payrolls/Company_payroll/signCompanyAgreement/$1';
 
-$route['payrolls/dashboard']['get'] = 'v1/Payroll/dashboard';
-$route['payrolls/setup']['get'] = 'v1/Payroll/setup';
+$route['payrolls/dashboard']['get'] = 'v1/payrolls/modules/Clp_dashboard';
+$route['payrolls/setup']['get'] = 'v1/payrolls/modules/Clp_dashboard/setup';
 // admin routes
 $route['payrolls/admins']['get'] = 'v1/Payroll/manageAdmins';
 $route['payrolls/admins/add']['get'] = 'v1/Payroll/manageAddAdmin';
@@ -2277,3 +2277,7 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 
 
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
+
+
+//
+$route["payrolls/sync"]["get"] = "Settings/showPayrollSyncMessage";

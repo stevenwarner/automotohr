@@ -56,11 +56,13 @@ class Cron_company_payroll extends CI_Controller
     {
         //
         $this->job = $job;
-        //
+        // sync company
         $this->runCompanyEvents();
-        //
+        // sync employees
         $this->runEmployeeEvents();
-        //
+        // sync payroll blockers
+        $this->runPayrollEvents();
+
         $this->markJobComplete();
     }
 
@@ -111,6 +113,18 @@ class Cron_company_payroll extends CI_Controller
         $this
             ->company_payroll_model
             ->syncFederalTax();
+
+        // sync benefits
+        $this->updateStage("benefits");
+        $this
+            ->company_payroll_model
+            ->syncBenefits();
+
+        // sync industry
+        $this->updateStage("industry");
+        $this
+            ->company_payroll_model
+            ->syncIndustry();
     }
 
     /**
@@ -137,9 +151,28 @@ class Cron_company_payroll extends CI_Controller
         $this
             ->employee_payroll_model
             ->syncEmployees();
+    }
 
-
-        _e("sdas");
+    /**
+     * company events
+     */
+    private function runPayrollEvents()
+    {
+        $this->load->model(
+            "v1/Payroll/Company_payroll_model",
+            "company_payroll_model"
+        );
+        //
+        $this
+            ->company_payroll_model
+            ->setCompanyDetails(
+                $this->job["company_sid"]
+            );
+        // sync admins
+        $this->updateStage("payroll_blockers");
+        $this
+            ->company_payroll_model
+            ->gustoToStorePayrollBlockers();
     }
 
     /**

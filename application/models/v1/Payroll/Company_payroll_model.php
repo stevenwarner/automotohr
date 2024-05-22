@@ -414,11 +414,13 @@ class Company_payroll_model extends Base_payroll_model
     // ------------------------------------------------------
     /**
      * set company details
-     * 
+     *
      * @param int $companyId
+     * @param string $column Optional
      */
     public function setCompanyDetails(
-        int $companyId
+        int $companyId,
+        string $column = "company_sid"
     ) {
         //
         $this
@@ -426,10 +428,81 @@ class Company_payroll_model extends Base_payroll_model
                 $companyId,
                 [
                     "company_sid"
-                ]
+                ],
+                true,
+                $column
             );
         //
         $this->initialize($companyId);
+    }
+
+    /**
+     * get the payroll blockers from Gusto
+     */
+    public function gustoToStorePayrollBlockers()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "payroll_blockers",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        // set insert array
+        $ins = [
+            "blocker_json" => json_encode(
+                $response
+            ),
+            "updated_at" => getSystemDate()
+        ];
+
+        //
+        if (
+            !$this
+                ->db
+                ->where(
+                    "company_sid",
+                    $this->gustoCompany["company_sid"]
+                )
+                ->count_all_results(
+                    "payrolls.payroll_blockers"
+                )
+        ) {
+            //
+            $ins["company_sid"] = $this->gustoCompany["company_sid"];
+            $ins["created_at"] = $ins["updated_at"];
+            //
+            $this
+                ->db
+                ->insert(
+                    "payrolls.payroll_blockers",
+                    $ins
+                );
+        } else {
+            //
+            $this
+                ->db
+                ->where(
+                    "company_sid",
+                    $this->gustoCompany["company_sid"]
+                )
+                ->update(
+                    "payrolls.payroll_blockers",
+                    $ins
+                );
+        }
+
+        return true;
     }
 
 
@@ -1238,24 +1311,359 @@ class Company_payroll_model extends Base_payroll_model
         }
     }
 
+
+    // ------------------------------------------------------
+    // Sync benefits
+    // ------------------------------------------------------
     /**
-     * test
+     * sync benefits
+     *
+     * @method storeToGustoCompanyAddress
+     * @method storeToGustoAdmins
+     * @return array
+     */
+    public function syncBenefits()
+    {
+        $this->gustoToStoreBenefits();
+        $this->storeToGustoBenefits();
+    }
+
+    /**
+     * sync benefits
+     * Gusto to store
      *
      * @return array
      */
-    public function test(string $event)
+    private function gustoToStoreBenefits()
     {
         //
         $response = $this
             ->lb_gusto
             ->gustoCall(
-                $event,
+                "company_benefits",
                 $this->gustoCompany,
                 [],
                 "GET"
             );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        foreach ($response as $v0) {
+            $data = [
+                "gusto_uuid" => $v0["uuid"],
+                "gusto_version" => $v0["version"],
+                "benefit_type" => $v0["benefit_type"],
+                "description" => $v0["description"],
+                "active" => $v0["active"],
+                "responsible_for_employer_taxes" =>
+                $v0["responsible_for_employer_taxes"],
+                "responsible_for_employee_w2" =>
+                $v0["responsible_for_employee_w2"],
+                "deletable" => $v0["deletable"],
+                "supports_percentage_amounts" =>
+                $v0["supports_percentage_amounts"],
+                "updated_at" => getSystemDate()
+            ];
+            // check if already exists
+            if (
+                $this
+                ->db
+                ->where("company_sid", $this->gustoCompany["company_sid"])
+                ->where("gusto_uuid", $v0["uuid"])
+                ->count_all_results("payrolls.company_benefits")
+            ) {
+                // update
+                $this
+                    ->db
+                    ->where(
+                        "company_sid",
+                        $this->gustoCompany["company_sid"]
+                    )
+                    ->where("gusto_uuid", $v0["uuid"])
+                    ->update(
+                        "payrolls.company_benefits",
+                        $data
+                    );
+            } else {
+                // insert
+                $data["company_sid"] = $this->gustoCompany["company_sid"];
+                $data["created_at"] = $data["updated_at"];
+                // insert
+                $this
+                    ->db
+                    ->insert(
+                        "payrolls.company_benefits",
+                        $data
+                    );
+            }
+        }
+        return true;
+    }
+
+    /**
+     * sync benefits
+     * store to Gusto
+     *
+     * @return array
+     */
+    private function storeToGustoBenefits()
+    {
+        // get the benefits
+        $benefits = $this
+            ->lb_gusto
+            ->getBenefits();
+
+        if (!$benefits) {
+            return false;
+        }
+        //
+        foreach ($benefits as $v0) {
+            // check if not exists
+            if (
+                $this
+                ->db
+                ->where([
+                    "company_sid" => $this->gustoCompany["company_sid"],
+                    "benefit_type" => $v0["benefit_type"],
+                    "description" => $v0["description"]
+                ])
+                ->limit(1)
+                ->count_all_results("payrolls.company_benefits")
+            ) {
+                continue;
+            }
+            // prepare request array
+            $request = [];
+            $request['benefit_type'] = $v0["benefit_type"];
+            $request['active'] = true;
+            $request['description'] = $v0["description"];
+            $request['responsible_for_employer_taxes'] =
+                $v0["responsible_for_employer_taxes"];
+            $request['responsible_for_employee_w2'] =
+                $v0["responsible_for_employee_w2"];
+            //
+            $response = $this
+                ->lb_gusto
+                ->gustoCall(
+                    "company_benefits",
+                    $this->gustoCompany,
+                    $request,
+                    "POST"
+                );
+            //
+            $errors = $this
+                ->lb_gusto
+                ->hasGustoErrors($response);
+            //
+            if ($errors) {
+                return $errors;
+            }
+            //
+            if (!$response) {
+                return false;
+            }
+            //
+            $ins = [];
+            $ins['gusto_uuid'] = $response['uuid'];
+            $ins['gusto_version'] = $response['version'];
+            $ins['benefit_type'] = $response['benefit_type'];
+            $ins['description'] = $response['description'];
+            $ins['active'] = $response['active'];
+            $ins['responsible_for_employer_taxes'] =
+                $response['responsible_for_employer_taxes'];
+            $ins['responsible_for_employee_w2'] =
+                $response['responsible_for_employee_w2'];
+            $ins['deletable'] = $response['deletable'];
+            $ins['supports_percentage_amounts'] =
+                $response['supports_percentage_amounts'];
+            $ins['company_sid'] = $this->gustoCompany["company_sid"];
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert(
+                'payrolls.company_benefits',
+                $ins
+            );
+            usleep(200);
+        }
+
+        return true;
+    }
+
+    // ------------------------------------------------------
+    // Sync industry
+    // ------------------------------------------------------
+    /**
+     * sync industry
+     *
+     * @method storeToGustoCompanyAddress
+     * @method storeToGustoAdmins
+     * @return array
+     */
+    public function syncIndustry()
+    {
+        $this->gustoToStoreIndustry();
+        $this->storeToGustoIndustry();
+    }
+
+    /**
+     * sync benefits
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreIndustry()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "industry",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $dataArray = [];
+        $dataArray['naics_code'] = $response['naics_code'];
+        $dataArray['sic_codes'] = json_encode($response['sic_codes']);
+        $dataArray['title'] = $response['title'];
+        $dataArray['updated_at'] = getSystemDate();
+        //
+        $whereArray = [
+            'company_sid' => $this->gustoCompany["company_sid"]
+        ];
+        //
+        if (
+            !$this
+                ->db
+                ->where($whereArray)
+                ->count_all_results("gusto_company_industry")
+        ) {
+            //
+            $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+            $dataArray['created_at'] =
+                $dataArray['updated_at'];
+            //
+            $this
+                ->db
+                ->insert(
+                    "gusto_company_industry",
+                    $dataArray
+                );
+        } else {
+            //
+            $this
+                ->db
+                ->where($whereArray)
+                ->update(
+                    "gusto_company_industry",
+                    $dataArray
+                );
+        }
+
+        return true;
+    }
+
+    /**
+     * sync benefits
+     * store to Gusto
+     *
+     * @return array
+     */
+    private function storeToGustoIndustry()
+    {
+        // prepare request array
+        $request = [];
+        $request['title'] = "New Car Dealers";
+        $request['naics_code'] = "441110";
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "industry",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $dataArray = [];
+        $dataArray['naics_code'] = $response['naics_code'];
+        $dataArray['sic_codes'] = json_encode($response['sic_codes']);
+        $dataArray['title'] = $response['title'];
+        $dataArray['updated_at'] = getSystemDate();
+        //
+        $whereArray = [
+            'company_sid' => $this->gustoCompany["company_sid"]
+        ];
+        //
+        if (
+            !$this
+                ->db
+                ->where($whereArray)
+                ->count_all_results("gusto_company_industry")
+        ) {
+            //
+            $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+            $dataArray['created_at'] =
+                $dataArray['updated_at'];
+            //
+            $this
+                ->db
+                ->insert(
+                    "gusto_company_industry",
+                    $dataArray
+                );
+        } else {
+            //
+            $this
+                ->db
+                ->where($whereArray)
+                ->update(
+                    "gusto_company_industry",
+                    $dataArray
+                );
+        }
+
+        return true;
+    }
 
 
-        _e($response, true, true);
+    public function test()
+    {
+        _e($this->gustoCompany);
     }
 }

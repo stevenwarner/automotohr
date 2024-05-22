@@ -26,6 +26,12 @@ class Payroll extends CI_Controller
         $this->form_validation->set_message('valid_email', '"{field}" is invalid.');
         // Call the model
         $this->load->model("v1/Payroll_model", "payroll_model");
+        //
+        $this
+            ->payroll_model
+            ->checkSyncProgress(
+                $this->session->userdata('logged_in')['company_detail']["sid"]
+            );
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
         // set path to CSS file
@@ -1038,7 +1044,7 @@ class Payroll extends CI_Controller
         return SendResponse(400, ['errors' => ['Invalid call.']]);
     }
 
-   
+
 
     /**
      * employee onboard flow

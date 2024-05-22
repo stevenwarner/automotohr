@@ -36,12 +36,14 @@ class Base_payroll_model extends CI_Model
      * @param int   $companyId
      * @param array $extra Optional
      * @param bool  $include Optional
+     * @param string $whereColumn Optional
      * @return array
      */
     protected function getGustoLinkedCompanyDetails(
         int $companyId,
         array $extra = [],
-        bool $include = true
+        bool $include = true,
+        $whereColumn = "company_sid"
     ): array {
         //
         $columns = $include ? array_merge([
@@ -53,7 +55,7 @@ class Base_payroll_model extends CI_Model
         return $this->gustoCompany =
             $this->db
             ->select($columns)
-            ->where('company_sid', $companyId)
+            ->where($whereColumn, $companyId)
             ->get('gusto_companies')
             ->row_array();
     }

@@ -230,6 +230,25 @@ class Webhook_model extends CI_Model
                     "updated_at" => getSystemDate()
                 ]);
         }
+        // updated
+        elseif ($this->post["event_type"] === "company.updated") {
+            // get the company id by gusto uuid
+            // load the company model
+            $this
+                ->load
+                ->model(
+                    "v1/Payroll/Company_payroll_model",
+                    "company_payroll_model"
+                );
+            //
+            $this
+                ->company_payroll_model
+                ->setCompanyDetails(
+                    $this->post["entity_uuid"],
+                    "gusto_uuid"
+                );
+            _e($this->company_payroll_model->test());
+        }
     }
 
     /**

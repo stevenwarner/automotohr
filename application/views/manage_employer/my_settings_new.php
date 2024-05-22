@@ -244,7 +244,11 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
-                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(PAYROLL)) { ?>
+                                        <?php if (
+                                            isPayrollOrPlus() 
+                                            && checkIfAppIsEnabled(PAYROLL)
+                                            && (PAYROLL)
+                                            ) { ?>
                                             <li>
                                                 <a href="<?= base_url("schedules"); ?>">
                                                     Company Pay Schedules

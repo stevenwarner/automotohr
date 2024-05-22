@@ -370,7 +370,7 @@
                         <figure><i class="fa fa-sign"></i></figure>Payroll Service Agreement
                     </a></li>
             <?php } ?>
-            <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+            <?php if ($isCompanyOnPayroll && $isTermsAgreed && !checkIfSyncingInProgress()) { ?>
                 <li><a href="<?= base_url('payrolls/dashboard'); ?>">
                         <figure><i class="fa fa-cogs"></i></figure>Payroll Dashboard
                     </a></li>
