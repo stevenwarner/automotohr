@@ -518,6 +518,12 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                         </div>
                     </div>
                 <?php } ?>
+
+                <!-- Performance Documents Start -->
+                <?php if ($assignPerformanceDocument && $pendingPerformanceSection) { ?>
+                    <?php $this->load->view('employee_performance_evaluation/document_center_blue'); ?>
+                <?php } ?>
+                <!-- Performance Documents End -->
             </div>
             <!-- Not Completed Document End -->
 
@@ -1077,6 +1083,12 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                     <?php } ?>
 
                     <?php $this->load->view("hr_documents_management/partials/tabs/my_completed_state_forms"); ?>
+
+                    <!-- Performance Documents Start -->
+                    <?php if ($assignPerformanceDocument && !$pendingPerformanceSection) { ?>
+                        <?php $this->load->view('employee_performance_evaluation/document_center_blue'); ?>
+                    <?php } ?>
+                    <!-- Performance Documents End -->
                 </div>
             </div>
             <!-- Completed Document End -->

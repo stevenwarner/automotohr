@@ -488,6 +488,10 @@ $assignIdObj = $confidential_sids;
                             <!--  -->
                             <?php $this->load->view('hr_documents_management/general_document_assignment'); ?>
 
+                            <?php if ($user_type != 'applicant' && isPayrollOrPlus()) { ?>
+                                <?php $this->load->view('employee_performance_evaluation/document_center'); ?>
+                            <?php } ?>
+
                             <div class="row">
                                 <div class="col-xs-12">
                                     <div class="hr-box">

@@ -705,8 +705,6 @@ define("ALLOWED_EXTENSIONS", "image/*, video/mp4, video/mov");
 define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 435);
 define("ARE_YOU_STILL_INTERESTED", 436);
 
-
-
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
 
@@ -716,4 +714,7 @@ define("FONT_COLOR_UNPUBLISHED_SHIFTS", "#ffffff");
 
 //
 define("SHIFTS_PUBLISH_CONFIRMATION", 447);
+
+//
+define('EMPLOYEE_PERFORMANCE_EVALUATION_MODULE', 'employeeperformanceevaluation');
 

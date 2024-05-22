@@ -291,8 +291,35 @@
                                                             <?php } ?>
                                                         </td>
                                                     </tr>
-                                                <?php }
-                                                ?>
+                                                <?php } ?>
+
+                                                <?php if (!empty($performanceDocumentInfo)) { ?>
+                                                    <tr>
+                                                        <td>
+                                                            Performance Evaluation Document</b> 
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <i class="fa fa-2x fa-file-text"></i>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $performanceDocumentInfo['assign_at']; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <?php echo '<b>N/A</b>'; ?>
+                                                        </td>
+                                                        <td>
+                                                            <a class="btn btn-success btn-sm btn-block" target="_blamk" href="<?=base_url('fillable/epe/'.$userDetail['sid'].'/manager/preview')?>">
+                                                                Preview Assigned
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?> 
                                             </tbody>
                                         </table>
                                     </div>

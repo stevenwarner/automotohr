@@ -2272,3 +2272,36 @@ $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
 $route["settings/shifts/singleshift/public-status"]["post"] = "Settings/processSingleShiftPublicStatus";
 $route["settings/shifts/multishift/public-status"]["post"] = "Settings/processMultiShiftPublicStatus";
 
+
+/**
+ * Fillable performance document
+ */
+$route["fillable/epe/(:num)/get"]["get"] =
+  "v1/Employee_performance_evaluation/getEmployeeDocument/$1";
+
+$route["fillable/epe/(:num)"]["post"] =
+  "v1/Employee_performance_evaluation/handleDocumentAssignment/$1";
+
+$route["fillable/epe/(:num)/section/(:any)/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/loadSection/$1/$2/$3";
+
+$route["fillable/epe/(:num)/save_section/(:any)"]["post"] =
+  "v1/Employee_performance_evaluation/saveSectionData/$1/$2";  
+
+$route["fillable/epe/(:num)/(:any)/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/handleDocumentAction/$1/$2/$3";  
+
+$route["fillable/epe/send_verification_request/(:num)/(:num)"]["post"] =
+  "v1/Employee_performance_evaluation/sendVerificationRequest/$1/$2";    
+
+$route["fillable/epe/verification/documents"]["get"] =
+  "v1/Employee_performance_evaluation/pendingVerificationDocuments";
+
+$route["fillable/epe/verification/documents/(:num)/(:num)"]["get"] =
+  "v1/Employee_performance_evaluation/getPendingVerificationDocument/$1/$2";
+
+$route["fillable/epe/verification_request/(:num)/(:num)/(:num)/(:any)"]["get"] =
+  "v1/Employee_performance_evaluation/completeVerificationRequest/$1/$2/$3/$4";  
+
+$route["fillable/epe/get_employee_signature"]["get"] =
+  "v1/Employee_performance_evaluation/getEmployeeSignature";
