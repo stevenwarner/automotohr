@@ -1102,7 +1102,7 @@
                                         <!--  -->
                                     <?php endif; ?>
 
-                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <!-- <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
                                                 <figure>
@@ -1119,7 +1119,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
