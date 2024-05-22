@@ -585,6 +585,16 @@ class Dashboard extends CI_Controller
             $this->limit
         );
         //
+        foreach ($users as $ukey => $user) {
+            if (isset($user["is_executive_admin"]) && $user["is_executive_admin"] == 1) {
+                $is_executive = $this->Users_model->checkExecutiveAdmin($user["user_email"]);
+                //
+                if ($is_executive == 'no') {
+                    unset($users[$ukey]);
+                }
+            } 
+        }
+        //
         if (!sizeof($users)) {
             $this->resp['Response'] = 'No records found.';
             $this->response();
