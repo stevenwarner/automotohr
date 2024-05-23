@@ -1364,6 +1364,7 @@ class Shift_model extends CI_Model
         }
 
         $data['updated_by'] = checkAndGetSession("employee")["sid"];
+        $data['company_sid'] = checkAndGetSession("company")['sid'];
 
         if ($this->db->where("shift_sid", $shiftId)->count_all_results("cl_shifts_request")) {
 
@@ -1444,10 +1445,17 @@ class Shift_model extends CI_Model
     public function getAwatinSwapShiftsByUserId(int $employeeId)
     {
         //
-        $records =  $this->db
-            ->where("to_employee_sid", $employeeId)
-            ->where("request_status", 'awaiting confirmation')
-            ->count_all_results('cl_shifts_request');
+
+        $accessLevel = checkAndGetSession("employee")['access_level'];
+
+        if ($accessLevel != 'Admin') {
+            $this->db->where("to_employee_sid", $employeeId);
+        }
+
+        $this->db->where("company_sid", checkAndGetSession("company")['sid']);
+
+        $this->db->where("request_status", 'awaiting confirmation');
+        $records =     $this->db->count_all_results('cl_shifts_request');
         //
         return  $records;
     }

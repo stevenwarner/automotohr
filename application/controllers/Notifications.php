@@ -147,10 +147,20 @@ class Notifications extends Public_Controller
         $this->load->model("v1/Shift_model", "shift_model");
         $awatingShiftsRequests = $this->shift_model->getAwatinSwapShiftsByUserId($ses['employer_detail']['sid']);
 
+        //
+        $accessLevel = checkAndGetSession("employee")['access_level'];
+
+        $url='';
+        if ($accessLevel == 'Admin') {
+            $url=base_url('settings/shifts/trade');
+        }else{
+            $url=base_url('shifts/mytrade');
+        }
+
         if ($awatingShiftsRequests > 0) {
             $data[] = [
                 'count' => $awatingShiftsRequests,
-                'link' => base_url('shifts/mytrade'),
+                'link' => $url,
                 'title' => 'Shifts Swap Requests'
             ];
         }
