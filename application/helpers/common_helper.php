@@ -11198,13 +11198,13 @@ if (!function_exists('checkIfAppIsEnabled')) {
         // Get session
         $ses = $ci->session->userdata('logged_in');
         //
-        if ($ctl == "performancemanagement"){
-            if (in_array($ses['company_detail']['sid'], $devIds) || in_array($ses['company_detail']['sid'], $stagingIds)){
+        if ($ctl == "performancemanagement") {
+            if (in_array($ses['company_detail']['sid'], $devIds) || in_array($ses['company_detail']['sid'], $stagingIds)) {
                 return true;
             } else {
                 return false;
             }
-        }    
+        }
         // Check if use is logged in
         if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
         // Get the called controller name
@@ -17017,5 +17017,35 @@ if (!function_exists('get_company_departments_teams_dropdown')) {
 
         //
         return $id ? $select : $departments;
+    }
+}
+
+
+
+//
+if (!function_exists('downloadFileFromAWSNew')) {
+    function downloadFileFromAWSNew($dir, $s3file, $originFileName)
+    {
+
+        $CI->load->library('aws_lib');
+        $CI->aws_lib
+            ->get_object(
+                AWS_S3_BUCKET_NAME,
+                $s3file,
+                $dir . $originFileName
+            );
+    }
+}
+
+//
+if (!function_exists('sanitizeFileName')) {
+    function sanitizeFileName($file, $origFilename)
+    {
+
+        $filename = '';
+        $file_info = pathinfo($file);
+        $extension = strtolower($file_info['extension']);
+        $filename = time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/', '_', $origFilename)) . '.' . $extension;
+        return $filename;
     }
 }

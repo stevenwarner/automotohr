@@ -13163,6 +13163,7 @@ class Hr_documents_management extends Public_Controller
                 fclose($f);
                 // Uploaded Document
                 // For Generated documents
+
                 downloadFileFromAWS(
                     getFileName(
                         $dir . time() . '_' . $post['data']['title'] . '2.pdf',
@@ -13180,6 +13181,8 @@ class Hr_documents_management extends Public_Controller
                 //
                 $file_info = pathinfo($post['data']['s3_filename']);
                 $extension = strtolower($file_info['extension']);
+
+                
                 //
                 $this->load->library("aws_lib");
                 $this
