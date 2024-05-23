@@ -11191,12 +11191,20 @@ if (!function_exists('checkIfAppIsEnabled')) {
     ) {
         // Temporaty
         // if(getUserIP() == '72.255.38.246') return true;
-        $devIds = array(57);
+        $devIds = array(571);
         $stagingIds = array(57);
         // Get the instance of CI object
         $ci = &get_instance();
         // Get session
         $ses = $ci->session->userdata('logged_in');
+        //
+        if ($ctl == "performancemanagement"){
+            if (in_array($ses['company_detail']['sid'], $devIds) || in_array($ses['company_detail']['sid'], $stagingIds)){
+                return true;
+            } else {
+                return false;
+            }
+        }    
         // Check if use is logged in
         if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
         // Get the called controller name
