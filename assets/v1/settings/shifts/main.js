@@ -608,6 +608,9 @@ $(function manageShifts() {
 	function getEndDate(startDate) {
 		let endDate = "";
 
+		startDate = getStartDate();
+
+
 		if (mode === "week") {
 			endDate =
 				getSearchParam("end_date") ||
