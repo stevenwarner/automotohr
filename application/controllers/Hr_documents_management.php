@@ -4346,26 +4346,28 @@ class Hr_documents_management extends Public_Controller
             $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
             $data["userCompletedStateForms"] = $companyStateForms["completed"];
             //
-            $this
-                ->load
-                ->model(
-                    "v1/Employee_performance_evaluation_model",
-                    "employee_performance_evaluation_model"
-                );
-            //
-            $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
-                $user_sid
-            );
-            //
-            if ($data['assignPerformanceDocument']) {
-                $data['pendingPerformanceSection'] = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+            if (checkIfAppIsEnabled('performancemanagement')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
+                //
+                $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
                     $user_sid
                 );
                 //
-                $data['performanceDocumentInfo'] = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
-                    $user_sid
-                );
-            }
+                if ($data['assignPerformanceDocument']) {
+                    $data['pendingPerformanceSection'] = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $user_sid
+                    );
+                    //
+                    $data['performanceDocumentInfo'] = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                        $user_sid
+                    );
+                }
+            }    
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -5981,27 +5983,29 @@ class Hr_documents_management extends Public_Controller
                 'completed'
             );
             //
-            $this
-                ->load
-                ->model(
-                    "v1/Employee_performance_evaluation_model",
-                    "employee_performance_evaluation_model"
-                );
+            if (checkIfAppIsEnabled('performancemanagement')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
 
-            $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
-                $data['session']['employer_detail']['sid']
-            );
-
-            if ($data['assignPerformanceDocument']) {
-                $data['pendingPerformanceSection'] = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                $data['assignPerformanceDocument'] = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
                     $data['session']['employer_detail']['sid']
                 );
-                //
-                $data['pendingPerformanceSectionName'] = $this->employee_performance_evaluation_model->getEmployeePendingSectionName(
-                    $data['session']['employer_detail']['sid']
-                );
-            }
 
+                if ($data['assignPerformanceDocument']) {
+                    $data['pendingPerformanceSection'] = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $data['session']['employer_detail']['sid']
+                    );
+                    //
+                    $data['pendingPerformanceSectionName'] = $this->employee_performance_evaluation_model->getEmployeePendingSectionName(
+                        $data['session']['employer_detail']['sid']
+                    );
+                }
+            }    
+            //
             $data['load_view'] = check_blue_panel_status(false, 'self');
             $data['employee'] = $data['session']['employer_detail'];
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
@@ -7383,29 +7387,31 @@ class Hr_documents_management extends Public_Controller
                         "employee"
                     );
                 //
-                $this
-                    ->load
-                    ->model(
-                        "v1/Employee_performance_evaluation_model",
-                        "employee_performance_evaluation_model"
-                    );
-                //
-                $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
-                    $employee_id
-                );
-                //
-                if ($assignPerformanceDocument) {
+                if (checkIfAppIsEnabled('performancemanagement')) {
+                    $this
+                        ->load
+                        ->model(
+                            "v1/Employee_performance_evaluation_model",
+                            "employee_performance_evaluation_model"
+                        );
                     //
-                    $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                    $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
                         $employee_id
                     );
-                    //`                                                                 
-                    if ($pendingPerformanceSection) {
-                        $data['performanceDocumentInfo'] = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                    //
+                    if ($assignPerformanceDocument) {
+                        //
+                        $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
                             $employee_id
                         );
-                        //
-                        
+                        //`                                                                 
+                        if ($pendingPerformanceSection) {
+                            $data['performanceDocumentInfo'] = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                                $employee_id
+                            );
+                            //
+                            
+                        }
                     }
                 }
                 //

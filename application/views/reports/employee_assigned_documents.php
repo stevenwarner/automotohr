@@ -402,7 +402,7 @@
                     }
                 }
 
-                if (record.assignedPerformanceDocument != 'Not Assigned') {
+                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned') {
                     //
                     if (record.assignedPerformanceDocument == 'Completed') {
                         totalCompletedDoc = totalCompletedDoc + 1;
