@@ -5790,9 +5790,6 @@ class Settings extends Public_Controller
 
         $data["shiftsData"] = $this->shift_model->getShiftsByShiftId($shiftIds);
 
-
-        // _e($data["shiftsData"], true, true);
-
         //
         foreach ($data["shiftsData"] as $rowShifts) {
             $data_insert_request = [];
@@ -5810,16 +5807,23 @@ class Settings extends Public_Controller
         $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_AWAITING_CONFIRMATION);
         $emailTemplateToEmployee = $emailTemplateFromEmployee;
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
+
+        $companyId = $session['company_detail']['sid'];
+
         $company_data = get_company_data($companyId);
+
         foreach ($requestsData as $requestRow) {
 
-            /*
-            if ($requestRow['from_employee_sid'] != '') {
 
-                $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $requestRow['from_employee']);
+            //
+            $adminList = getActiveAdmin($companyId);
+
+            foreach ($adminList as $adminRow) {
+                $adminName = $adminRow['first_name'] . ' ' . $adminRow['last_name'];
+                $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $adminName, true);
 
                 $from = $emailTemplateFromEmployee['from_email'];
-                $to = $requestRow['from_employee_email'];
+                $to = $adminRow['email'];
                 $subject = $emailTemplateFromEmployee['subject'];
                 $from_name = $emailTemplateFromEmployee['from_name'];
                 $body = EMAIL_HEADER
@@ -5839,9 +5843,8 @@ class Settings extends Public_Controller
                 );
                 save_email_log_common($emailData);
             }
-            */
 
-
+            //
             if ($requestRow['to_employee_sid'] != '') {
 
                 $emailTemplateBodyToEmployee = $this->shiftSwapEmailTemplate($emailTemplateToEmployee['text'], $requestRow, $company_data, $requestRow['to_employee']);
@@ -5859,6 +5862,7 @@ class Settings extends Public_Controller
                     sendMail($from, $to, $subject, $body, $from_name);
                 }
                 //saving email to logs
+
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
                     'subject' => $subject,
@@ -6292,16 +6296,16 @@ class Settings extends Public_Controller
     }
 
     //
-    function shiftSwapEmailTemplate($emailTemplateBody, $replacementArray, $company_data, $employeeName)
+    function shiftSwapEmailTemplate($emailTemplateBody, $replacementArray, $company_data, $employeeName, $isAdmin = false)
     {
         if (!$replacementArray) {
             return $emailTemplateBody;
         }
-
-        $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/reject' . '" target="_blank">Reject</a>';
-        //
-        $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/confirm' . '" target="_blank">Confirm</a>';
-
+        if ($isAdmin != true) {
+            $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/reject' . '" target="_blank">Reject</a>';
+            //
+            $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/confirm' . '" target="_blank">Confirm</a>';
+        }
         $emailTemplateBody = str_replace('{{employee_name}}', $employeeName, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_date}}', $replacementArray['shift_date'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_time}}', $replacementArray['start_time'], $emailTemplateBody);
