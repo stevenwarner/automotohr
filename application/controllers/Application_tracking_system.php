@@ -525,7 +525,7 @@ class Application_tracking_system extends Public_Controller
             $data['employer_jobs']                                              = $applicants;
             $data['employer_sid']                                               = $employer_sid;
             $data['jobs_approval_module_status']                                = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'jobs');
-            $questionnaires                                                     = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid); //Getting questionnaires of company
+            $questionnaires                                                     = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid, 'job'); //Getting questionnaires of company
             $data['questionnaires']                                             = $questionnaires;
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
 
