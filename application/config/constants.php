@@ -717,4 +717,5 @@ define("SHIFTS_PUBLISH_CONFIRMATION", 447);
 
 //
 define('EMPLOYEE_PERFORMANCE_EVALUATION_MODULE', 'employeeperformanceevaluation');
+define('PERFORMANCE_VERIFICATION_EMAIL', 441);
 

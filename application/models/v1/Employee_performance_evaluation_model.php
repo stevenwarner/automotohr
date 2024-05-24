@@ -735,4 +735,20 @@ class Employee_performance_evaluation_model extends CI_Model
         //
         return $response;
     }
+
+    function getEmailTemplateById($sid)
+    {
+        $this->db->select('sid, name, from_name, from_email, subject, text');
+        $this->db->where('sid', $sid);
+        $record_obj = $this->db->get('email_templates');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
 }

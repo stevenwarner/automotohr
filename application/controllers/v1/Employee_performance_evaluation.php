@@ -604,30 +604,36 @@ class Employee_performance_evaluation extends CI_Controller
                 $this->loggedInCompanySession["CompanyName"]
             );
             //
+            $employeeName = getEmployeeOnlyNameBySID($employeeId);
+            //
             foreach ($employees as $managerId) {
                 //
-                $managerEmail = get_employee_profile_info($managerId)['email'];
-                $button = getButton(
-                    [
-                        '{{url}}' => base_url('fillable/epe/verification_request/' . $employeeId . '/' . $managerId . '/1/approved'),
-                        '{{color}}' => '#4CBB17',
-                        '{{text}}' => 'Approve Performance Document'
-                    ]
-                );
+                $managerInfo = get_employee_profile_info($managerId);
+                $managerEmail = $managerInfo['email'];
+                $managerFirstName = $managerInfo['first_name'];
+                $managerLastName = $managerInfo['last_name'];
+                //
+                $clickHere = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('fillable/epe/verification/documents') . '" target="_blank">Manage Pending Performance Evaluation</a>';
+                //
+                $loginLink = '<a href="' . (base_url('login')) . '" style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;">Click to login</a>';
+                //
+                $emailTemplateData = $this->employee_performance_evaluation_model->getEmailTemplateById(PERFORMANCE_VERIFICATION_EMAIL);
+                $emailTemplateBody = $emailTemplateData['text'];
+                //
+                $emailTemplateBody = str_replace('{{user_first_name}}', $managerFirstName, $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{user_last_name}}', $managerLastName, $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{employee_name}}', $employeeName, $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{requested_date}}', formatDateToDB(date('Y-m-d'), DB_DATE, 'm-d-Y'), $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{login_link}}', $loginLink, $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{pending_verification_link}}', $clickHere, $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{company_name}}', $this->loggedInCompanySession["CompanyName"], $emailTemplateBody);
                 //
                 $message_body = '';
                 $message_body .= $message_hf['header'];
-                $message_body .= '<p>' . 'Dear <strong>' . getUserNameBySID($managerId) . '</strong>,' . '</p>';
-                $message_body .= '<p>' . 'A new performance review has been assigned to you with the following details' . '</p>';
-                $message_body .= '<p>' . 'Payment Details are as Follows: ' . '</p>';
-                $message_body .= '<p><u><strong>Details:</strong></u></p>';
-                $message_body .= '<p>' . 'Employee Name: ' .  getUserNameBySID($employeeId) . '</p>';
-                $message_body .= '<p>' . $button . '</p>';
-                $message_body .= '<p>' . STORE_NAME . '</p>';
-                $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
+                $message_body .= $emailTemplateBody;
                 $message_body .= $message_hf['footer'];
                 //
-                log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $managerEmail, "Verification Performance Evaluation Document", $message_body, FROM_STORE_NAME);
+                log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $managerEmail, $emailTemplateData['subject'], $message_body, FROM_STORE_NAME);
                 //
                 $dataToInsert = [];
                 $dataToInsert['company_sid'] = $this->loggedInCompanySession["sid"];
