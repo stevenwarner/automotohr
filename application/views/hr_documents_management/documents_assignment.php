@@ -488,7 +488,7 @@ $assignIdObj = $confidential_sids;
                             <!--  -->
                             <?php $this->load->view('hr_documents_management/general_document_assignment'); ?>
 
-                            <?php if (checkIfAppIsEnabled('performancemanagement') && $user_type != 'applicant' && isPayrollOrPlus()) { ?>
+                            <?php if (checkIfAppIsEnabled('performanceevaluation') && $user_type != 'applicant' && isPayrollOrPlus()) { ?>
                                 <?php $this->load->view('employee_performance_evaluation/document_center'); ?>
                             <?php } ?>
 

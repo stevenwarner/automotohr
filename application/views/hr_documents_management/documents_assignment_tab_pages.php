@@ -580,7 +580,7 @@ $noActionRequiredDocumentsList = [];
                     <?php $this->load->view("hr_documents_management/partials/tabs/not_completed_state_forms"); ?>
 
                     <!-- Performance Documents Start -->
-                    <?php if (checkIfAppIsEnabled('performancemanagement') && $assignPerformanceDocument && $pendingPerformanceSection) { ?>
+                    <?php if (checkIfAppIsEnabled('performanceevaluation') && $assignPerformanceDocument && $pendingPerformanceSection) { ?>
                         <?php $ncd++; ?>
                         <div class="row">
                             <div class="col-xs-12">
@@ -1700,7 +1700,7 @@ $noActionRequiredDocumentsList = [];
                     <?php } ?>
 
                     <!-- Performance Documents Start -->
-                    <?php if (checkIfAppIsEnabled('performancemanagement') && $assignPerformanceDocument && !$pendingPerformanceSection) { ?>
+                    <?php if (checkIfAppIsEnabled('performanceevaluation') && $assignPerformanceDocument && !$pendingPerformanceSection) { ?>
                         <?php $cd++; ?>
                         <div class="row">
                             <div class="col-xs-12">

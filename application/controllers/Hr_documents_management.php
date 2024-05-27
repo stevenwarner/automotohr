@@ -4346,7 +4346,7 @@ class Hr_documents_management extends Public_Controller
             $data["userNotCompletedStateForms"] = $companyStateForms["not_completed"];
             $data["userCompletedStateForms"] = $companyStateForms["completed"];
             //
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $this
                     ->load
                     ->model(
@@ -5983,7 +5983,7 @@ class Hr_documents_management extends Public_Controller
                 'completed'
             );
             //
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $this
                     ->load
                     ->model(
@@ -7387,7 +7387,7 @@ class Hr_documents_management extends Public_Controller
                         "employee"
                     );
                 //
-                if (checkIfAppIsEnabled('performancemanagement')) {
+                if (checkIfAppIsEnabled('performanceevaluation')) {
                     $this
                         ->load
                         ->model(

@@ -1102,7 +1102,7 @@
                                         <!--  -->
                                     <?php endif; ?>
 
-                                    <?php if (checkIfAppIsEnabled('performancemanagement')) { ?>
+                                    <?php if (checkIfAppIsEnabled('performanceevaluation')) { ?>
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">

@@ -2505,7 +2505,7 @@ class Hr_documents_management_model extends CI_Model
         // remove all those active company employees from list with no pending documents
         foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
             //
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $this
                     ->load
                     ->model(

@@ -146,7 +146,7 @@ class Notifications extends Public_Controller {
             $this->resp();
         }
         //
-        if (checkIfAppIsEnabled('performancemanagement')) {
+        if (checkIfAppIsEnabled('performanceevaluation')) {
             $this
             ->load
             ->model(

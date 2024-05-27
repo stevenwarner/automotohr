@@ -702,7 +702,7 @@ class Dashboard extends Public_Controller
                     true
                 );
             //
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $this
                     ->load
                     ->model(
@@ -1183,7 +1183,7 @@ class Dashboard extends Public_Controller
                     true
                 );
             //
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $this
                     ->load
                     ->model(

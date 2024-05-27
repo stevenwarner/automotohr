@@ -11197,14 +11197,7 @@ if (!function_exists('checkIfAppIsEnabled')) {
         $ci = &get_instance();
         // Get session
         $ses = $ci->session->userdata('logged_in');
-        //
-        if ($ctl == "performancemanagement"){
-            if (in_array($ses['company_detail']['sid'], $devIds) || in_array($ses['company_detail']['sid'], $stagingIds)){
-                return true;
-            } else {
-                return false;
-            }
-        }    
+        // 
         // Check if use is logged in
         if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
         // Get the called controller name

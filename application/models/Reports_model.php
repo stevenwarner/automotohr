@@ -2547,7 +2547,7 @@ class Reports_model extends CI_Model
             $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid'], $v['parent_sid']);
-            if (checkIfAppIsEnabled('performancemanagement')) {
+            if (checkIfAppIsEnabled('performanceevaluation')) {
                 $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid']);
             }
         endforeach;
