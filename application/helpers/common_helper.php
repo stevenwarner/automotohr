@@ -11192,7 +11192,7 @@ if (!function_exists('checkIfAppIsEnabled')) {
         // Temporaty
         // if(getUserIP() == '72.255.38.246') return true;
         $devIds = array(57);
-        $stagingIds = array(8578);
+        $stagingIds = array(57);
         // Get the instance of CI object
         $ci = &get_instance();
         // Get session
