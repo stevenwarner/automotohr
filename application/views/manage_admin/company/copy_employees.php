@@ -422,7 +422,7 @@ foreach ($companies as $company)
 
                 if (currentPage < totalPages) {
                     currentPage++;
-                    fetch_employee(company_sid, employee_type);
+                    fetch_employee(company_sid, employee_type, to_company_sid, employee_sortby, employee_sort_orderby, employee_keyword);
                 } else {
                     loader(false);
                     $('#js-loader-text').html('');
