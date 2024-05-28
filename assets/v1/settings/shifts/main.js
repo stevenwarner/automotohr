@@ -645,14 +645,22 @@ $(function manageShifts() {
 						}
 					},
 					submitHandler: function (form) {
+
 						return processCallWithoutContentType(
 							formArrayToObj($(form).serializeArray()),
 							$(".jsPageCreateSingleShiftBtn"),
 							"settings/shifts/single/create",
 							function (resp) {
-								_success(resp.msg, function () {
-									window.location.reload();
-								});
+								if (resp.shiftid != 0) {
+									callToCreateBoxSendShifts(resp.shiftid,resp.shiftdate);
+
+								} else {
+									_success(resp.msg, function () {
+										//
+										window.location.reload();
+									});
+
+								}
 							}
 						);
 					},
@@ -1252,5 +1260,276 @@ $(function manageShifts() {
 		html += "</div>";
 		//
 		return html;
+	}
+
+
+	//
+	$('body').on('click', '.jsPageCreateSingleShiftAndSendBtn', function () {
+		$("<input>").attr({
+			name: "create_and_send_shift",
+			id: "hiddenId",
+			type: "hidden",
+			value: 1
+		}).appendTo("form");
+
+		$("#jsPageCreateSingleShiftForm").submit();
+
+	});
+
+
+	//
+	function callToCreateBoxSendShifts(sendShiftId,shiftDate) {
+		makePage("Send Shift", "send_shift", 0, function () {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			$(".jsSelect2").select2();
+			$(".js-filter-jobtitle").select2();
+
+
+			$("#jssendShiftId").val(sendShiftId);
+			$("#jssendShiftDate").val(shiftDate);
+
+
+			$(".jsSelectAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", true);
+			});
+			$(".jsRemoveAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", false);
+			});
+
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+				rules: {
+					start_time: { required: true, timeIn12Format: true },
+					end_time: { required: true, timeIn12Format: true },
+				},
+				errorPlacement: function (error, element) {
+					if ($(element).parent().hasClass("input-group")) {
+						$(element).parent().after(error);
+					} else {
+						$(element).after(error);
+					}
+				},
+				submitHandler: function (form) {
+					$(form).serializeArray();
+
+					const passObj = {
+						start_date: $("#shift_date_from").val(),
+						end_date: $("#shift_date_to").val(),
+						employees: [],
+					};
+
+					//
+					$(".jsPageApplyTemplateEmployees:checked").map(function () {
+						passObj.employees.push($(this).val());
+					});
+
+					if (!passObj.start_date.length) {
+						return _error("Please select From Date.");
+					}
+					if (!passObj.end_date.length) {
+						return _error("Please select To Date.");
+					}
+
+					if (!passObj.employees.length) {
+						return _error("Please select at least one employee.");
+					}
+
+					//
+					processCallWithoutContentType(
+						formArrayToObj($(form).serializeArray()),
+						$(".jsPageCreateSingleShiftBtn"),
+						"settings/shifts/multyshift/apply",
+						function (resp) {
+							//
+							let html = "";
+							// check the keys
+							if (Object.keys(resp.list).length > 0) {
+								//
+								$.each(resp.list, function (i, v) {
+									html += "<p>";
+									html += $(
+										'.jsPageApplyTemplateEmployees[value="' +
+										i +
+										'"]'
+									)
+										.parent()
+										.text()
+										.trim();
+									html +=
+										" has already shift on the following dates;";
+									html += "</p>";
+									v.dates.map(function (v0) {
+										html +=
+											"<span>" +
+											moment(v0, "YYYY-MM-DD").format(
+												"MM/DD/YYYY"
+											) +
+											"</span>, ";
+									});
+									html += "<br />";
+									html += "<br />";
+								});
+							}
+							// show the message
+							_success(resp.msg + html, function () {
+								window.location.href = baseUrl(
+									"settings/shifts/manage" +
+									window.location.search
+								);
+							});
+						}
+					);
+				},
+			});
+		});
+	}
+
+
+
+	//
+
+	$('body').on('click', '.js-apply-filter', function (event) {
+		event.preventDefault();
+
+		let teamid = $("#teamIds").val();
+		let jobtitle = $("#jobtitleIds").val();
+		let shift_date = $("#jssendShiftDate").val();
+
+		// hides the loader
+		ml(false, modalLoader);
+		event.preventDefault();
+
+		const passObj = {
+			departmentId: teamid,
+			job_titles: jobtitle,
+			shift_date: shift_date
+		};
+
+		//
+		const btnRef = callButtonHook($(".js-apply-filter"), true);
+		// make a new call
+
+		url = 'settings/shifts/get_employee_list';
+		XHR = $.ajax({
+			url: baseUrl(url),
+			method: "POST",
+			data: passObj,
+			processData: true,
+		})
+			.always(function () {
+				//
+				callButtonHook(btnRef, false);
+				//
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				//
+
+				let html = "";
+
+				$.each(resp.list, function (i, v) {
+
+					html += '<div class="col-sm-6">';
+					html += '<label class="control control--checkbox">';
+					html += '<input type="checkbox" class="jsPageApplyTemplateEmployees" value="' + v.userId + '" name="employees[]" />';
+					html += v.employee_name;
+					html += '<div class="control__indicator"></div>';
+					html += '</label>';
+					html += '</div>';
+				});
+
+				$('#employeeList').html(html);
+
+			});
+
+	});
+
+
+
+	//
+	$('body').on('click', '.js-reset-filter', function (event) {
+		event.preventDefault();
+
+		$("#teamIds").select2("val", "0");
+		$("#jobtitleIds").select2("val", "all");
+		$('#employeeList').html('');
+	});
+
+
+	//
+	$('body').on('click', '.jsSendShiftNotification', function (event) {
+		event.preventDefault();
+
+		let shift_id = $("#jssendShiftId").val();
+		const passObj = {
+			shift_id: shift_id,
+			employees: [],
+		};
+
+
+		//
+		$(".jsPageApplyTemplateEmployees:checked").map(function () {
+			passObj.employees.push($(this).val());
+		});
+
+
+		if (!passObj.employees.length) {
+			return _error("Please select at least one employee.");
+		}
+
+		//		
+		const btnRef = callButtonHook($(".jsSendShiftNotification"), true);
+		// make a new call
+
+		url = 'settings/shifts/send_shift';
+
+		XHR = $.ajax({
+			url: baseUrl(url),
+			method: "POST",
+			data: passObj,
+			processData: true,
+		})
+			.always(function () {
+				//
+				callButtonHook(btnRef, false);
+				//
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				//
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						"settings/shifts/manage" +
+						window.location.search
+					);
+				});
+
+			});
+
+	});
+
+
+
+	$('body').on('click', '.jsPageSingleShifthistory', function (event) {
+		event.preventDefault();
+
+		let shiftId = $(".jsPageSingleShifthistory").data('shiftid');
+		callToCreateBoxShiftsRequestHistroy(shiftId)
+	});
+
+
+	//
+	function callToCreateBoxShiftsRequestHistroy(shiftId) {
+
+		makePage("Shift Histroy", "shift_history", shiftId, function () {
+			// hides the loader
+			ml(false, modalLoader);
+
+		});
 	}
 });

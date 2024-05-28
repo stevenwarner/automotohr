@@ -2279,4 +2279,9 @@ $route["settings/shifts/tradeshiftsreject"]["post"] = "Settings/processTradeShif
 
 $route['swap_shift_confirm/(:any)/(:any)/(:any)'] = 'v1/Shifts/Employee_shifts/swapShiftConfirm/$1/$2/$3';
 
+//
+$route["settings/shifts/get_employee_list"]["post"] = "Settings/processGetEmployeeList";
+$route["settings/shifts/send_shift"]["post"] = "Settings/processSendShift";
+
+
 

@@ -4,13 +4,13 @@
             <div class="panel-heading">
                 <div class="row">
                     <div class="col-sm-6">
-                    <h2 class="text-medium panel-heading-text weight-6">
-                        <i class="fa fa-save text-orange" aria-hidden="true"></i>
-                        Edit Employee Shift
-                    </h2>
+                        <h2 class="text-medium panel-heading-text weight-6">
+                            <i class="fa fa-save text-orange" aria-hidden="true"></i>
+                            Edit Employee Shift
+                        </h2>
                     </div>
                     <div class="col-sm-6 text-right">
-                        <a href="javascript:;" class="btn btn-orange jsMarkAsDayOff" data-id ="<?php echo $shift['sid']; ?>">
+                        <a href="javascript:;" class="btn btn-orange jsMarkAsDayOff" data-id="<?php echo $shift['sid']; ?>">
                             <i class="fa fa-ban" aria-hidden="true"></i>
                             &nbsp;Mark as Day Off
                         </a>
@@ -65,19 +65,19 @@
                     </div>
                 </div>
 
-                <?php if ($jobSites) {?>
-                <div class="form-group">
-                    <label class="text-medium">
-                        Job Sites
-                    </label>
-                    <br>
-                    <div class="row">
+                <?php if ($jobSites) { ?>
+                    <div class="form-group">
+                        <label class="text-medium">
+                            Job Sites
+                        </label>
+                        <br>
+                        <div class="row">
 
-                        <?php
+                            <?php
                             $selectedJobSotes = [];
                             $selectedJobSotes = json_decode($shift['job_sites']);
                             foreach ($jobSites as $v0) {
-                        ?>
+                            ?>
                                 <div class="col-sm-4">
                                     <label class="control control--checkbox">
                                         <input type="checkbox" name="job_sites[]" value="<?= $v0["sid"]; ?>" <?php echo in_array($v0["sid"], $selectedJobSotes) ? "checked" : "" ?> />
@@ -85,12 +85,12 @@
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
-                        <?php
+                            <?php
                             }
-                        ?>
+                            ?>
+                        </div>
                     </div>
-                </div>
-                <?php }?>
+                <?php } ?>
 
                 <!--  -->
                 <div class="form-group jsBreakContainer">
@@ -145,6 +145,14 @@
             </div>
             <!--  -->
             <div class="panel-footer text-right">
+
+                <?php if ($shiftHistoryCount > 0) { ?>
+                    <button class="btn btn-orange jsPageSingleShifthistory" type="button" data-shiftid="<?php echo $shift['sid']; ?>">
+                        <i class="fa fa-history" aria-hidden="true"></i>
+                        &nbsp;View History
+                    </button>
+                <?php } ?>
+
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>
                     &nbsp;Update Shift

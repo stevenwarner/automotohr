@@ -306,16 +306,19 @@ class Employee_shifts extends Public_Controller
         $data['updated_at'] = getSystemDate();
 
         if ($action == 'confirm') {
-            $shiftRecord = $this->shift_model->getShiftsRequestById($shiftId, 'awaiting confirmation');
+            //  $shiftRecord = $this->shift_model->getShiftsRequestById($shiftId, 'awaiting confirmation');
+            $shiftRecord = $this->shift_model->getShiftsRequestById($shiftId, ['confirmed', 'admin rejected', 'approved']);
 
             if (!empty($shiftRecord)) {
-                // Confirm Shift
+                $this->session->set_flashdata('message', '<b>Error:</b> Shift Request is not available !');
+            } else {
+                // Confirm Shift               
+
                 $data['request_status'] = 'confirmed';
                 $this->shift_model->updateShiftsTradeRequest($shiftId, $toEmployeeId, $data);
                 $this->session->set_flashdata('message', 'Shift Request is confirmed Successfully!');
-            } else {
-                $this->session->set_flashdata('message', '<b>Error:</b> Shift Request is not available !');
-            }
+
+           }
         }
 
 
@@ -331,7 +334,7 @@ class Employee_shifts extends Public_Controller
             }
         }
 
-        
+
         $this->header = "v1/app/header";
         $this->footer = "v1/app/footer";
         //

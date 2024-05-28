@@ -405,6 +405,8 @@ $(function shiftsTrade() {
 
 		let shiftsArrayIds = [];
 		let shiftId = $(this).data('shiftid');
+		let toEmployeeId = $(this).data('toemployeeid');
+
 
 		alertify.confirm(
 			'Are You Sure?',
@@ -415,6 +417,8 @@ $(function shiftsTrade() {
 				// set the file object
 				shiftsArrayIds.push(shiftId);
 				formObj.append("shiftids", shiftsArrayIds);
+				formObj.append("toEmployeeId", toEmployeeId);
+
 				// 
 
 				processCallWithoutContentType(
@@ -492,6 +496,8 @@ $(function shiftsTrade() {
 
 		let shiftsArrayIds = [];
 		let shiftId = $(this).data('shiftid');
+		let toEmployeeId = $(this).data('toemployeeid');
+
 
 
 		alertify.confirm(
@@ -503,6 +509,8 @@ $(function shiftsTrade() {
 				// set the file object
 				shiftsArrayIds.push(shiftId);
 				formObj.append("shiftids", shiftsArrayIds);
+				formObj.append("toEmployeeId", toEmployeeId);
+
 				// 
 
 				processCallWithoutContentType(
@@ -792,7 +800,7 @@ $(function shiftsTrade() {
 			//
 			rows += `<tr>`;
 			rows += `<td>`;
-			if ((`${v.request_status}`) != "Approved" && (`${v.request_status}`) != "Admin Rejected") {
+			if ((`${v.request_status}`) != "Approved" && (`${v.request_status}`) != "Admin Rejected" &&  (`${v.request_type}`) != "open") {
 				rows += `<label class="control control--checkbox">`;
 				rows += `<input type="checkbox" name="checkit[]" value="${v.shift_sid}" class="my_checkbox" data-status="" >`;
 				rows += `<div class="control__indicator"></div>`;
@@ -817,10 +825,10 @@ $(function shiftsTrade() {
 
 			if ((`${v.request_status}`) != "Approved" && (`${v.request_status}`) != "Admin Rejected") {
 
-				rows += `<button class="btn btn-red jsAdminRejectTradeShift" data-shiftid="${v.shift_sid}">Reject`;
+				rows += `<button class="btn btn-red jsAdminRejectTradeShift" data-shiftid="${v.shift_sid}" data-toemployeeid="${v.to_employee_sid}">Reject`;
 				rows += `</button>`;
 
-				rows += `<button class="btn btn-orange jsApproveTradeShift" data-shiftid="${v.shift_sid}">Approve`;
+				rows += `<button class="btn btn-orange jsApproveTradeShift" data-shiftid="${v.shift_sid}" data-toemployeeid="${v.to_employee_sid}">Approve`;
 				rows += `</button>`;
 			}
 
