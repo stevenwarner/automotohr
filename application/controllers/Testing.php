@@ -614,7 +614,7 @@ class Testing extends CI_Controller
         //
         $this->aws_lib->copyObject($options);
 
-        return $fileName;
+        return urlencode($fileName);
     }
 
     public function addNewEmployeesIntoCompany ($companyId) {
