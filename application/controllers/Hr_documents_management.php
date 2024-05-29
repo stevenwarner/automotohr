@@ -6831,6 +6831,9 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+
+
+
         getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -6870,13 +6873,24 @@ class Hr_documents_management extends Public_Controller
 
             if ($this->form_validation->run() == false) {
                 //
+                
+                /*
                 $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingDoc(
                     $company_sid,
                     $employees,
                     $documents
                 );
+                */
+
+                $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingDocEMS(
+                    $company_sid,
+                    $employees,
+                    $documents
+                );
+
+                
                 //
-                // _e($data['employees'],true,true);
+              //   _e($data['employees'],true,true);
                 //
                 if ($type == 'export') {
                     ob_start();

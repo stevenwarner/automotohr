@@ -2197,7 +2197,6 @@ class Hr_documents_management_model extends CI_Model
         $documentList = 'all'
     ) {
 
-
         //
         $pendingDocuments = [];
         //
@@ -2238,9 +2237,12 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('documents_assigned.user_type', 'employee');
             $this->db->where('documents_assigned.archive', 0);
             $this->db->where('documents_management.archive', 0);
+
+
             $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
             //
             $employees_assigned_documents = $this->db->get('documents_assigned')->result_array();
+
             //
             if (!empty($employees_assigned_documents)) {
                 foreach ($employees_assigned_documents as $assigned_document) {
@@ -2286,9 +2288,13 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('documents_assigned.user_type', 'employee');
             $this->db->where('documents_assigned.archive', 0);
             $this->db->where('offer_letter.archive', 0);
+
+            //
+
             $this->db->join('offer_letter', 'offer_letter.sid = documents_assigned.document_sid', 'left');
             //
             $employees_assigned_offer_letters = $this->db->get('documents_assigned')->result_array();
+
             //
             if (!empty($employees_assigned_offer_letters)) {
                 //
@@ -2575,6 +2581,8 @@ class Hr_documents_management_model extends CI_Model
             }
         }
         //
+
+
         return array_values($pendingDocuments);
     }
 
@@ -11864,5 +11872,212 @@ class Hr_documents_management_model extends CI_Model
             ])
             ->get()
             ->row_array();
+    }
+
+
+
+    //
+    function getEmployeesWithPendingDocEMS(
+        $company_sid,
+        $employeeList = 'all',
+        $documentList = 'all'
+    ) {
+        //
+        $pendingDocuments = [];
+        //
+        $activeEmployees = explode(':', $employeeList);
+        $filterDocuments = explode(':', $documentList);
+        //
+        $now = time();
+        //
+        if (!empty($activeEmployees)) {
+            //
+            foreach ($activeEmployees as $employee) {
+                $pendingDocuments[$employee]['Documents'] = [];
+            }
+
+            //
+            // Get all company assigned documents
+            $this->db->select('
+                documents_assigned.sid,
+                documents_assigned.user_sid, 
+                documents_assigned.assigned_by, 
+                documents_assigned.document_description, 
+                documents_assigned.document_title, 
+                documents_assigned.document_type, 
+                documents_assigned.acknowledgment_required, 
+                documents_assigned.download_required, 
+                documents_assigned.signature_required, 
+                documents_assigned.uploaded,
+                documents_assigned.acknowledged, 
+                documents_assigned.downloaded, 
+                documents_assigned.user_consent, 
+                documents_assigned.document_sid, 
+                documents_assigned.assigned_date
+            ');
+            //
+            $this->db->where_in('documents_assigned.user_sid', $activeEmployees);
+            $this->db->where('documents_assigned.user_consent', 0);
+            $this->db->where('documents_assigned.status', 1);
+            $this->db->where('documents_assigned.user_type', 'employee');
+            $this->db->where('documents_assigned.archive', 0);
+            $this->db->where('documents_management.archive', 0);
+
+            //
+            $this->db->where_in('documents_assigned.document_sid', $filterDocuments);
+
+            $this->db->join('documents_management', 'documents_management.sid = documents_assigned.document_sid', 'left');
+            //
+            $employees_assigned_documents = $this->db->get('documents_assigned')->result_array();
+
+            //
+            if (!empty($employees_assigned_documents)) {
+                foreach ($employees_assigned_documents as $assigned_document) {
+                    //
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_document);
+                    //
+                    if ($is_document_completed == 0) {
+                        //
+                        $employeeId = $assigned_document['user_sid'];
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                        //
+                        $datediff = $now - strtotime($assigned_document['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+
+                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                    }
+                }
+            }
+            //
+            // Get all company assigned offer letter
+            $this->db->select('
+                documents_assigned.sid,
+                documents_assigned.user_sid, 
+                documents_assigned.assigned_by, 
+                documents_assigned.document_description, 
+                documents_assigned.document_title, 
+                documents_assigned.offer_letter_type as document_type,
+                documents_assigned.acknowledgment_required, 
+                documents_assigned.download_required, 
+                documents_assigned.signature_required, 
+                documents_assigned.uploaded,
+                documents_assigned.acknowledged, 
+                documents_assigned.downloaded, 
+                documents_assigned.user_consent, 
+                documents_assigned.document_sid, 
+                documents_assigned.assigned_date
+            ');
+            //
+            $this->db->where('documents_assigned.document_type', 'offer_letter');
+            $this->db->where_in('documents_assigned.user_sid', $activeEmployees);
+            $this->db->where('documents_assigned.user_consent', 0);
+            $this->db->where('documents_assigned.status', 1);
+            $this->db->where('documents_assigned.user_type', 'employee');
+            $this->db->where('documents_assigned.archive', 0);
+            $this->db->where('offer_letter.archive', 0);
+
+            //
+            $this->db->where_in('documents_assigned.document_sid', $filterDocuments);
+
+            $this->db->join('offer_letter', 'offer_letter.sid = documents_assigned.document_sid', 'left');
+            //
+            $employees_assigned_offer_letters = $this->db->get('documents_assigned')->result_array();
+
+            //
+            if (!empty($employees_assigned_offer_letters)) {
+                //
+                foreach ($employees_assigned_offer_letters as $assigned_offer_letter) {
+                    //
+                    $is_document_completed = $this->checkDocumentCompletionStatus($assigned_offer_letter);
+                    //
+                    if ($is_document_completed == 0) {
+                        //
+                        $employeeId = $assigned_offer_letter['user_sid'];
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_offer_letter['assigned_date']));
+                        //
+                        $datediff = $now - strtotime($assigned_offer_letter['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+
+                        $pendingDocuments[$employeeId]['Documents'][] = array('ID' => $assigned_offer_letter['document_sid'], 'Title' => $assigned_offer_letter['document_title'], 'Type' => ucwords($assigned_offer_letter['document_type']) . ' Offer Letter', 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_offer_letter['assigned_by']);
+                    }
+                }
+            }                             
+           
+        }
+     
+        // remove all those active company employees from list with no pending documents
+        foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
+            //
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
+                //
+                $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+                    $p_key
+                );
+                //
+                if ($assignPerformanceDocument) {
+                    //
+                    $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $p_key
+                    );
+                    //
+                    if ($pendingPerformanceSection) {
+                        $performanceDocumentInfo = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                            $p_key
+                        );
+                        //
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($performanceDocumentInfo["assign_at"]));
+                        //
+                        $datediff = $now - strtotime($assigned_document['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+                        //
+                        $pendingDocuments[$p_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => "Performance Evaluation Document",
+                            'Type' => 'Performance Evaluation',
+                            'AssignedOn' => $performanceDocumentInfo["assign_at"],
+                            'Days' => $days,
+                            'AssignedBy' => $performanceDocumentInfo['assign_by']
+                        );
+                    }
+                }
+            }    
+            //
+            if (empty($pendingEmployeeDocuments['Documents'])) {
+                unset($pendingDocuments[$p_key]);
+            } else {
+                //
+                $this->db->select('
+                    sid, 
+                    first_name, 
+                    last_name,
+                    email, 
+                    is_executive_admin, 
+                    access_level, 
+                    access_level_plus,
+                    pay_plan_flag,
+                    job_title
+                ');
+                $this->db->where('sid', $p_key);
+                $employeeInfo = $this->db->get('users')->row_array();
+                //
+                $pendingDocuments[$p_key]['sid'] = $employeeInfo['sid'];
+                $pendingDocuments[$p_key]['first_name'] = $employeeInfo['first_name'];
+                $pendingDocuments[$p_key]['last_name'] = $employeeInfo['last_name'];
+                $pendingDocuments[$p_key]['email'] = $employeeInfo['email'];
+                $pendingDocuments[$p_key]['is_executive_admin'] = $employeeInfo['is_executive_admin'];
+                $pendingDocuments[$p_key]['access_level'] = $employeeInfo['access_level'];
+                $pendingDocuments[$p_key]['access_level_plus'] = $employeeInfo['access_level_plus'];
+                $pendingDocuments[$p_key]['pay_plan_flag'] = $employeeInfo['pay_plan_flag'];
+                $pendingDocuments[$p_key]['job_title'] = $employeeInfo['job_title'];
+            }
+        }
+        //
+        return array_values($pendingDocuments);
     }
 }
