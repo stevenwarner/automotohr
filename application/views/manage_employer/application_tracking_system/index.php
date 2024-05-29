@@ -1944,7 +1944,7 @@
                         }
                     })
                     .done(function() {
-                        $(".jsCustomPreview").attr("src", "https://automotohrattachments.s3.amazonaws.com/" + iframe_url);
+                        $(".jsCustomPreview").attr("src", "https://automotohrattachments.s3.amazonaws.com/" + urlencode(iframe_url));
                     })
             }
 
