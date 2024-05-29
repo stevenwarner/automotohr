@@ -90,7 +90,7 @@ class Copy_employees extends Admin_Controller
         }
 
         $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50, $employee_sortby, $employee_sort_orderby, $employee_keyword);
-        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid, $employee_keyword);
+        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $employee_keyword);
 
         if (empty($company_employees)) {
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
