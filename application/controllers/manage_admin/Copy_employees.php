@@ -90,7 +90,7 @@ class Copy_employees extends Admin_Controller
         }
 
         $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50, $employee_sortby, $employee_sort_orderby, $employee_keyword);
-        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $employee_keyword);
+        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid, $employee_keyword);
 
         if (empty($company_employees)) {
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
@@ -155,7 +155,7 @@ class Copy_employees extends Admin_Controller
 
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
-            if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
+            if ($employee["email"] && $this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
                 //
