@@ -31,16 +31,20 @@
                             <?php foreach ($employees as $employeeId) { ?>
                                 <tr>
                                     <td>
-                                        <?=getUserNameBySID($employeeId)?>
+                                        <?= getUserNameBySID($employeeId) ?>
                                     </td>
                                     <td>
-                                        <?=db_get_employee_profile($employeeId)[0]['email']?>
+                                        <?= db_get_employee_profile($employeeId)[0]['email'] ?>
                                     </td>
                                     <td><a href="<?= base_url('hr_documents_management/employee_document/' . $employeeId) ?>" target="_blank" class="btn btn-success btn-sm">View All</a></td>
                                 </tr>
                             <?php } ?>
                         <?php } else { ?>
-
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <strong>Document not assigned yet!</strong>
+                                </td>
+                            </tr>
                         <?php } ?>
                     </tbody>
                 </table>
