@@ -430,11 +430,11 @@
                 Title: "Employee Performance Evaluation",
                 Body: '<div id="jsPreviewDocumentEPEModalBody"></div>'
             }, function() {
-                loadAssignEmployees();
+                loadDocumentPreview();
             });
         }
 
-        function loadAssignEmployees() {
+        function loadDocumentPreview() {
             //
             if (XHR !== null) {
                 XHR.abort();
