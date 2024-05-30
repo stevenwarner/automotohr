@@ -9,8 +9,8 @@
             <br>
             <div class="row">
                 <div class="col-sm-12">
-                    <a href="<?= base_url('employee_management_system'); ?>" class="btn btn-info csRadius5">
-                        <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                    <a href="<?= base_url('fillable/epe/verification/documents'); ?>" class="btn btn-info csRadius5">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Employee Performance Documents
                     </a>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                     <form id="jsSectionOneForm">
                         <div class="panel panel-default">
                             <div class="panel-footer text-right">
-                            <a href="<?=base_url('fillable/epe/verification_request/'.$employeeId.'/'.$managerId.'/1/approved')?>" class="btn btn-orange jsSaveSectionOne">Verify Document</a>
+                            <a href="<?=base_url('fillable/epe/verification_request/'.$employeeId.'/'.$managerId.'/1/approved')?>" class="btn btn-orange jsSaveSectionOne">Approved Section</a>
                             </div>
                         </div>
 
@@ -695,7 +695,7 @@
 
                         <div class="panel panel-default">
                             <div class="panel-footer text-right">
-                                <a href="<?=base_url('fillable/epe/verification_request/'.$employeeId.'/'.$managerId.'/1/approved')?>" class="btn btn-orange jsSaveSectionOne">Verify Document</a>
+                                <a href="<?=base_url('fillable/epe/verification_request/'.$employeeId.'/'.$managerId.'/1/approved')?>" class="btn btn-orange jsSaveSectionOne">Approved Section</a>
                             </div>
                         </div>
 

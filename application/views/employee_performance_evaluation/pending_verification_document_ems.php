@@ -21,7 +21,7 @@
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <h4 class="alert alert-default" style="padding: 0">
-                                                    <strong>Employee pending Performance verification section.</strong>
+                                                    <strong>Employee Performance Evaluation Verification.</strong>
                                                 </h4>
                                                 <hr>
                                             </div>

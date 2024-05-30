@@ -163,7 +163,7 @@ class Notifications extends Public_Controller {
                 $data[] = [
                     'count' => 1,
                     'link' => base_url('hr_documents_management/my_documents'),
-                    'title' => 'Pending Performance Evaluation'
+                    'title' => 'Employee Performance Evaluation'
                 ];
             }   
             //

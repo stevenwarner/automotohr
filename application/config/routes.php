@@ -2305,3 +2305,22 @@ $route["fillable/epe/verification_request/(:num)/(:num)/(:num)/(:any)"]["get"] =
 
 $route["fillable/epe/get_employee_signature"]["get"] =
   "v1/Employee_performance_evaluation/getEmployeeSignature";
+
+$route["fillable/epe/get_assign_bulk"]["get"] =
+  "v1/Employee_performance_evaluation/getAssignBulkEmployees";
+
+$route["fillable/epe/assign_bulk_document_to_employee"]["post"] =
+  "v1/Employee_performance_evaluation/assignBulkDocument";
+
+$route["fillable/epe/get_schedule_document_view"]["get"] =
+  "v1/Employee_performance_evaluation/getScheduleDocumentView";  
+
+$route["fillable/epe/save_schedule_setting"]["post"] =
+  "v1/Employee_performance_evaluation/saveScheduleSetting";
+
+$route["fillable/epe/get_assign_employees"]["get"] =
+  "v1/Employee_performance_evaluation/getAssignEmployees";  
+
+$route["fillable/epe/get_document_preview"]["get"] =
+  "v1/Employee_performance_evaluation/getDocumentPreview";
+
