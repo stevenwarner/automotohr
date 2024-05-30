@@ -1194,7 +1194,7 @@ class Dashboard extends Public_Controller
                 $pendingVerificationPerformanceSectionOne =
                     $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
                         $employer_id,
-                        2
+                        1
                     );
                 //
                 $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;

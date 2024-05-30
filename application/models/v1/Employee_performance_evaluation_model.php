@@ -220,6 +220,9 @@ class Employee_performance_evaluation_model extends CI_Model
                         "section_4_json" => null,
                         "section_5_json" => null,
                         "completed_at" => null,
+                        "manager_signature" => null,
+                        "employee_signature" => null,
+                        "hr_signature" => null,
                         "status" => 0,
                         "last_assigned_by" => $loggedInEmployeeId,
                         "updated_at" => $systemDateTime,
@@ -518,7 +521,30 @@ class Employee_performance_evaluation_model extends CI_Model
         $a = $this->db
             ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
             ->where('parent_sid', $companyId)
+            ->where('active', 1)
+            ->where('is_executive_admin', 0)
+            ->order_by('concat(first_name,last_name)', 'ASC', false)
+            ->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+    /**
+     * Get all active managers 
+     *
+     * @param int $companyId
+     * @return array
+     */
+    function getCompanyActiveManagers($companyId): array
+    {
+        $a = $this->db
+            ->select('sid, first_name, last_name, access_level, access_level_plus, is_executive_admin, pay_plan_flag, job_title')
+            ->where('parent_sid', $companyId)
             ->where('access_level <>', "Employee")
+            ->where('is_executive_admin', 0)
             ->where('active', 1)
             ->order_by('concat(first_name,last_name)', 'ASC', false)
             ->get('users');
@@ -563,6 +589,8 @@ class Employee_performance_evaluation_model extends CI_Model
             ->where("manager_sid", $employeeId)
             ->where("section", $section)
             ->where("is_expired", 0)
+            ->where("employee_performance_evaluation_document.status", 1)
+            ->join('employee_performance_evaluation_document', 'employee_performance_evaluation_document.employee_sid = employee_performance_verification_document_manager.employee_sid', 'inner')
             ->count_all_results(
                 "employee_performance_verification_document_manager"
             );
@@ -577,9 +605,16 @@ class Employee_performance_evaluation_model extends CI_Model
     function getAssignedPendingVerificationDocuments($employeeId): array
     {
         $a = $this->db
-            ->select('employee_sid, section, created_at, created_by')
+            ->select('
+                employee_performance_verification_document_manager.employee_sid, 
+                employee_performance_verification_document_manager.section, 
+                employee_performance_verification_document_manager.created_at, 
+                employee_performance_verification_document_manager.created_by
+            ')
             ->where("manager_sid", $employeeId)
             ->where("is_expired", 0)
+            ->where("employee_performance_evaluation_document.status", 1)
+            ->join('employee_performance_evaluation_document', 'employee_performance_evaluation_document.employee_sid = employee_performance_verification_document_manager.employee_sid', 'inner')
             ->get('employee_performance_verification_document_manager');
         //
         $b = $a->result_array();
@@ -750,5 +785,107 @@ class Employee_performance_evaluation_model extends CI_Model
             return array();
         }
     }
+
+    /**
+     * handle document schedule setting
+     *
+     * @param int $companyId
+     * @return array
+     */
+    function getScheduleSetting (
+        $companyId
+    ): array {
+        $this->db->select('assign_type, assign_date, assign_time, assigned_employee_list');
+        $this->db->where("company_sid", $companyId);
+        $record_obj = $this->db->get('employee_performance_verification_document_schedule');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    /**
+     * handle document schedule setting
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @param array $data
+     * @return json
+     */
+    function saveScheduleSetting (
+        int $companyId,
+        int $employeeId,
+        array $data
+    ): array {
+        // get system dare time
+
+        $systemDateTime = getSystemDate();
+        // check if document already schedule
+        if (
+            $this
+            ->db
+            ->where("company_sid", $companyId)
+            ->count_all_results(
+                "employee_performance_verification_document_schedule"
+            )
+        ) {
+            //
+            $data['employer_sid'] = $employeeId;
+            $data['updated_at'] = $systemDateTime;
+            //
+            $this
+                ->db
+                ->where("company_sid", $companyId)
+                ->update(
+                    "employee_performance_verification_document_schedule",
+                    $data
+                );
+            //
+            $message = "You have successfully updated schedule setting";
+        } else {
+            //
+            $data['company_sid'] = $companyId;
+            $data['employer_sid'] = $employeeId;
+            $data['created_at'] = $systemDateTime;
+            $data['updated_at'] = $systemDateTime;
+            //
+            $this
+                ->db
+                ->insert(
+                    "employee_performance_verification_document_schedule",
+                    $data
+                );
+            //
+            $message = "You have successfully added schedule setting";
+        }
+        //
+        return [
+            "success" => true,
+            "message" => $message
+        ];
+    }
+
+    /**
+    * Get desire document section data
+    *
+    * @param int $companyId
+    * @return array
+    */
+   public function getCompanyAssignedEmployees(
+       $companyId
+   ): array {
+       return $this
+           ->db
+           ->select('employee_sid')
+           ->where("company_sid", $companyId)
+           ->get(
+               "employee_performance_evaluation_document"
+           )
+           ->result_array();
+   }
 
 }

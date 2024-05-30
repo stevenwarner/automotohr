@@ -1051,9 +1051,9 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 <div class="widget-box">
                                     <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>">
                                         <div class="link-box bg-bgcyan full-width">
-                                            <h2>Performance Evaluation</h2>
+                                            <h2>Employee Performance Evaluation</h2>
                                             <div class="current-date">
-                                                <span><?php echo count($pendingVerificationPerformanceDocument); ?><sub>Pending</sub></span>
+                                                <span><?= $pendingVerificationPerformanceDocument ?? 0; ?><sub>Pending</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>Document(s)</h3>

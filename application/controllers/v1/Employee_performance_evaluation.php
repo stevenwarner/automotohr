@@ -146,7 +146,7 @@ class Employee_performance_evaluation extends CI_Controller
             //
             $data['employees'] = $this
                 ->employee_performance_evaluation_model
-                ->getCompanyActiveEmployees(
+                ->getCompanyActiveManagers(
                     $this->loggedInCompanySession["sid"]
                 );
             //
@@ -252,7 +252,7 @@ class Employee_performance_evaluation extends CI_Controller
                 $data['section_5_employee_type'] = 'manager';
                 $data['employees'] = $this
                     ->employee_performance_evaluation_model
-                    ->getCompanyActiveEmployees(
+                    ->getCompanyActiveManagers(
                         $this->loggedInCompanySession["sid"]
                     );
             }
@@ -580,7 +580,7 @@ class Employee_performance_evaluation extends CI_Controller
     }
 
     /**
-     * print and download
+     * Send email to verification manager
      *
      * @param int $employeeId
      * @return json
@@ -613,7 +613,7 @@ class Employee_performance_evaluation extends CI_Controller
                 $managerFirstName = $managerInfo['first_name'];
                 $managerLastName = $managerInfo['last_name'];
                 //
-                $clickHere = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('fillable/epe/verification/documents') . '" target="_blank">Manage Pending Performance Evaluation</a>';
+                $clickHere = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url('fillable/epe/verification/documents/' . $employeeId . '/1') . '" target="_blank">Manage Employee Performance Evaluation</a>';
                 //
                 $loginLink = '<a href="' . (base_url('login')) . '" style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;">Click to login</a>';
                 //
@@ -663,7 +663,7 @@ class Employee_performance_evaluation extends CI_Controller
 
     function pendingVerificationDocuments()
     {
-        // // check for protected route
+        // check for protected route
         $this->protectedRoute();
 
         $companyId = $this->loggedInCompanySession["sid"];
@@ -671,29 +671,34 @@ class Employee_performance_evaluation extends CI_Controller
         $securityDetails = db_get_access_level_details($employeeId);
         getCompanyEmsStatusBySid($companyId);
         //
-        // For verification documents
-        $pendingDocuments = $this
-            ->employee_performance_evaluation_model
-            ->getAssignedPendingVerificationDocuments(
-                $employeeId
-            );
-        // 
-        //
-        $data['pendingDocuments'] = $pendingDocuments;
-        $data['session'] = $this->currentSession;
-        $data['company_sid'] = $companyId;
-        $data['security_details'] = $securityDetails;
-        $data['title'] = 'Pending Performance Verification Section';
-        //
-        $data['employee'] = $this->loggedInEmployeeSession;
-        $this->load->view('onboarding/on_boarding_header', $data);
-        $this->load->view('employee_performance_evaluation/pending_verification_document_ems');
-        $this->load->view('onboarding/on_boarding_footer');
+        if (checkIfAppIsEnabled('performanceevaluation')) {
+            // For verification documents
+            $pendingDocuments = $this
+                ->employee_performance_evaluation_model
+                ->getAssignedPendingVerificationDocuments(
+                    $employeeId
+                );
+            // 
+            //
+            $data['pendingDocuments'] = $pendingDocuments;
+            $data['session'] = $this->currentSession;
+            $data['company_sid'] = $companyId;
+            $data['security_details'] = $securityDetails;
+            $data['title'] = 'Pending Performance Verification Section';
+            //
+            $data['employee'] = $this->loggedInEmployeeSession;
+            $this->load->view('onboarding/on_boarding_header', $data);
+            $this->load->view('employee_performance_evaluation/pending_verification_document_ems');
+            $this->load->view('onboarding/on_boarding_footer');
+        } else { //Onboarding Complete or Expired
+            $this->session->set_flashdata('message', '<strong>Error</strong> Access denied for this module due to lack of permission.');
+            redirect('dashboard', 'refresh');
+        }
     }
 
     function getPendingVerificationDocument($employeeId, $section)
     {
-        // // check for protected route
+        // check for protected route
         $this->protectedRoute();
 
         $companyId = $this->loggedInCompanySession["sid"];
@@ -806,5 +811,216 @@ class Employee_performance_evaluation extends CI_Controller
                 ]
             );
         }
+    }
+
+    function getAssignBulkEmployees()
+    {
+        // check for protected route
+        $this->protectedRoute();
+
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        $securityDetails = db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);
+        //
+        $data['employees'] = $this
+            ->employee_performance_evaluation_model
+            ->getCompanyActiveEmployees(
+                $this->loggedInCompanySession["sid"]
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this
+                    ->load
+                    ->view(
+                        "employee_performance_evaluation/assign_bulk_employees",
+                        $data,
+                        true
+                    )
+            ]
+        );
+    }
+
+    function assignBulkDocument()
+    {
+        // check for protected route
+        $this->protectedRoute();
+
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        $securityDetails = db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);
+        //
+        $employees = array_column($_POST['employees'], "employee_sid");
+        //
+        foreach ($employees as $employeeId) {
+            //
+            $this
+                ->employee_performance_evaluation_model
+                ->handleDocumentAssignment(
+                    $this->loggedInCompanySession["sid"],
+                    $this->loggedInEmployeeSession["sid"],
+                    $employeeId,
+                    "assign"
+                );
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                "success" => true,
+                "message" => "The assignment of the <b>Employee Performance Evaluation</b> document was successful.."
+            ]
+        );
+    }
+
+    function getScheduleDocumentView()
+    {
+        // check for protected route
+        $this->protectedRoute();
+
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);
+        //
+        //
+        $scheduleSetting = $this
+            ->employee_performance_evaluation_model
+            ->getScheduleSetting(
+                $companyId
+            );
+        //
+        if ($scheduleSetting) {
+            $scheduleSetting['assigned_employee_list'] = json_decode($scheduleSetting['assigned_employee_list']);
+        }    
+        //    
+        $data['employees'] = $this
+            ->employee_performance_evaluation_model
+            ->getCompanyActiveEmployees(
+                $this->loggedInCompanySession["sid"]
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this
+                    ->load
+                    ->view(
+                        "employee_performance_evaluation/assign_schedule_document",
+                        $data,
+                        true
+                    ),
+                'setting' => $scheduleSetting  
+            ]
+        );
+    }
+
+    function saveScheduleSetting()
+    {
+        // check for protected route
+        $this->protectedRoute();
+        //
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);
+        //
+        $data_to_update = [];
+        // 
+        $aType = $this->input->post('scheduleType', true);
+        $aDate = $this->input->post('scheduleDate', true);
+        $aDay = $this->input->post('scheduleDay', true);
+        $aTime = $this->input->post('scheduleTime', true);
+        $aEmployees = $this->input->post('scheduleEmployees', true);
+        //
+        $data_to_update['assign_type'] = $aType;
+        $data_to_update['assign_date'] = $aDate;
+        $data_to_update['assign_time'] = $aTime;
+        //
+        if ($aType == 'custom' && empty($aDate) && empty($aTime)) $data_to_update['assign_type'] = 'none';
+        //
+        if (empty($aDate) && empty($aDay)) $data_to_update['assign_date'] = null;
+        if (empty($aTime)) $data_to_update['assign_time'] = null;
+        //
+        if ($aType == 'weekly' && !empty($aDay)) $data_to_update['assign_date'] = $aDay;
+        if ($aType == 'weekly' && empty($aDay)) $data_to_update['assign_date'] = null;
+        //
+        if ($aEmployees && count($aEmployees)) {
+            //
+            if (in_array('-1', $aEmployees)) $data_to_update['assigned_employee_list'] = 'all';
+            else $data_to_update['assigned_employee_list'] = json_encode($aEmployees);
+        }
+        //
+        $response = $this
+            ->employee_performance_evaluation_model
+            ->saveScheduleSetting(
+                $companyId,
+                $employeeId,
+                $data_to_update
+            );
+        //
+        return SendResponse(
+            200,
+            $response
+        );
+    }
+
+    function getAssignEmployees()
+    {
+        // check for protected route
+        $this->protectedRoute();
+
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);  
+        //    
+        $data['employees'] = $this
+            ->employee_performance_evaluation_model
+            ->getCompanyAssignedEmployees(
+                $companyId
+            );
+        //    
+        $data['employees'] = array_column($data['employees'], "employee_sid");   
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this
+                    ->load
+                    ->view(
+                        "employee_performance_evaluation/get_assigned_employees",
+                        $data,
+                        true
+                    )
+            ]
+        );
+    }
+
+    function getDocumentPreview()
+    {
+        // check for protected route
+        $this->protectedRoute();
+
+        $companyId = $this->loggedInCompanySession["sid"];
+        $employeeId = $this->loggedInEmployeeSession["sid"];
+        db_get_access_level_details($employeeId);
+        getCompanyEmsStatusBySid($companyId);  
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this
+                    ->load
+                    ->view(
+                        "employee_performance_evaluation/get_document_preview",
+                        $data,
+                        true
+                    )
+            ]
+        );
     }
 }
