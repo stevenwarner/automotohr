@@ -959,6 +959,43 @@
                                                         </div>
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
+
+
+
+                                                    <article class="information-box">
+                                                        <header class="hr-box-header">Company Bank Account</header>
+                                                        <div class="table-outer">
+                                                            <div class="info-row">
+                                                                <ul>
+                                                                    <li class="lineheight">
+                                                                        <strong>Manage account</strong>
+                                                                        <a href="<?php echo base_url('manage_admin/misc/bank_ac_management') . '/' . $company_sid; ?>" class="site-btn pull-right">Manage Account</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <header class="hr-box-header hr-box-footer"></header>
+                                                    </article>
+
+                                                    <article class="information-box">
+                                                        <header class="hr-box-header">Federal tax information</header>
+                                                        <div class="table-outer">
+                                                            <div class="info-row">
+                                                                <ul>
+                                                                    <li class="lineheight">
+                                                                        <strong>Manage information</strong>
+                                                                        <a href="<?php echo base_url('manage_admin/misc/federal_tax_information') . '/' . $company_sid; ?>" class="site-btn pull-right">Manage Information</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <header class="hr-box-header hr-box-footer"></header>
+                                                    </article>
+
+
+
+
+
                                                     <article class="information-box">
                                                         <header class="hr-box-header">Administrator Status</header>
                                                         <div class="table-outer">

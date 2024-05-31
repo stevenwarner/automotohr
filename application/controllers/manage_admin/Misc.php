@@ -1179,4 +1179,104 @@ class Misc extends Admin_Controller
         //
         $this->db->insert('paypal_log', $insertArray);
     }
+
+
+
+    //
+    public function bank_ac_management($company_sid = 0)
+    {
+
+        $redirect_url = 'manage_admin/companies';
+        $function_name = 'edit_company';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+
+        if ($company_sid == 0) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Company not found!');
+            redirect('manage_admin/companies', "refresh");
+        }
+
+        $this->form_validation->set_rules('account_title', 'Account Title', 'required|trim');
+        $this->form_validation->set_rules('account_type', 'Account Type', 'required|trim');
+        $this->form_validation->set_rules('account_number', 'Account Number', 'required|trim');
+        $this->form_validation->set_rules('routing_number', 'Routing Number', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $bankAccount = $this->ext_model->get_company_bank_account($company_sid);
+            $this->data['bankAccount'] = $bankAccount;
+            $this->data['company_sid'] = $company_sid;
+
+            $this->render('manage_admin/company/company_bank_account_form');
+        } else {
+
+            $updateData = [];
+            $updateData['bank_name'] = $this->input->post('bank_name');
+            $updateData['account_title'] = $this->input->post('account_title');
+            $updateData['account_type'] = $this->input->post('account_type');
+            $updateData['account_number'] = $this->input->post('account_number');
+            $updateData['routing_number'] = $this->input->post('routing_number');
+            $updateData['company_sid'] = $this->input->post('company_sid');
+            $updateData['sid'] = $this->input->post('sid');
+            $this->ext_model->update_company_bank_account($updateData);
+
+            $this->session->set_flashdata('message', '<strong>Success: </strong> Bank Account Successfully Updated!');
+
+           redirect('manage_admin/misc/bank_ac_management/' . $updateData['company_sid'], "refresh");
+
+        }
+    }
+
+
+    //
+    public function federal_tax_information($company_sid = 0)
+    {
+
+        $redirect_url = 'manage_admin/companies';
+        $function_name = 'edit_company';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name);
+
+        if ($company_sid == 0) {
+            $this->session->set_flashdata('message', '<b>Error:</b> Company not found!');
+            redirect('manage_admin/companies', "refresh");
+        }
+
+        $this->form_validation->set_rules('ssn', 'Federal EIN', 'required|trim');
+        $this->form_validation->set_rules('tax_payer_type', 'Tax Payer Type', 'required|trim');
+        $this->form_validation->set_rules('filing_form', 'Federal Filling Form', 'required|trim');
+        $this->form_validation->set_rules('legal_name', 'Legal Entitlty Name', 'required|trim');
+
+        if ($this->form_validation->run() == false) {
+            $taxInfo = $this->ext_model->get_company_federal_tax_informarion($company_sid);
+            $this->data['taxInfo'] = $taxInfo;
+            $this->data['company_sid'] = $company_sid;
+
+            $this->render('manage_admin/company/company_federal_information_form');
+        } else {
+
+            $updateData = [];
+            $updateData['ssn'] = $this->input->post('ssn');
+            $updateData['tax_payer_type'] = $this->input->post('tax_payer_type');
+            $updateData['filing_form'] = $this->input->post('filing_form');
+            $updateData['legal_name'] = $this->input->post('legal_name');
+            $updateData['company_sid'] = $this->input->post('company_sid');
+            $updateData['sid'] = $this->input->post('sid');
+
+            $this->ext_model->update_company_federal_tax_information($updateData);
+
+            $this->session->set_flashdata('message', '<strong>Success: </strong> Federal tax information Successfully Updated!');
+
+            redirect('manage_admin/misc/federal_tax_information/' . $updateData['company_sid'], "refresh");
+
+        }
+    }
+
+
+
+
+    
 }

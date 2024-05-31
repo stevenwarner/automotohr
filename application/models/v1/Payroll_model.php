@@ -6801,4 +6801,55 @@ class Payroll_model extends CI_Model
         //
         return true;
     }
+
+
+
+    //
+
+
+      /**
+     * add company bank account
+     *
+     * @param int   $companyId
+     * @param array $data
+     * @return array
+     */
+    public function addCompanyBankAccount(
+        int $companyId,
+        array $data
+    ): array {
+        // get company details
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        // response
+        $gustoResponse = gustoCall(
+            'addCompanyBankAccount',
+            $companyDetails,
+            [
+                'routing_number' => $data['name'],
+                'account_number' => $data['name'],
+                'account_type' => $data['name']
+            ],
+            'POST'
+        );
+        //
+        $errors = hasGustoErrors($gustoResponse);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        /*
+        $ins = [];
+        $ins['name'] = $gustoResponse['name'];
+        $ins['gusto_uuid'] = $gustoResponse['uuid'];
+        $ins['fields_json'] = json_encode($data);
+        $ins['is_default'] = 0;
+        $ins['updated_at'] = $ins['created_at'] = getSystemDate();
+        $ins['company_sid'] = $companyId;
+        $this->db->insert('gusto_companies_earning_types', $ins);
+        //
+        return ['success' => true];
+        */
+        
+    }
 }

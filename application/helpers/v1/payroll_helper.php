@@ -337,6 +337,11 @@ if (!function_exists('getUrl')) {
         $urls['deactivateCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
         $urls['addCompanyEarningTypes'] = "v1/companies/$key/earning_types";
         $urls['editCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
+
+        // Company Bank Account
+        $urls['addCompanyBankAccount'] = "v1/companies/$key/bank_accounts";
+
+
         // webhooks
         $urls['createCompanyWebHook'] = "v1/webhook_subscriptions";
         $urls['verifyCompanyWebHook'] = "v1/webhook_subscriptions/$key/verify";

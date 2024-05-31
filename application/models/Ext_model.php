@@ -1,10 +1,13 @@
 <?php
-class Ext_model extends CI_Model {
-    function __construct() {
+class Ext_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
-    function cc_future_store($carddata, $company_id, $employer_id) { // first check if the card is already stored or not.
+    function cc_future_store($carddata, $company_id, $employer_id)
+    { // first check if the card is already stored or not.
         $this->db->select('*');
         $this->db->where('company_sid', $company_id);
         $this->db->where('number', $carddata['number']);
@@ -29,18 +32,21 @@ class Ext_model extends CI_Model {
         }
     }
 
-    function cc_add_order($data) { // first check if the card is already stored or not.
+    function cc_add_order($data)
+    { // first check if the card is already stored or not.
         $this->db->insert('orders', $data);
         return $this->db->insert_id();
     }
 
-    function cc_add_product($order_sid, $data) { // first check if the card is already stored or not.
+    function cc_add_product($order_sid, $data)
+    { // first check if the card is already stored or not.
         $order_sid = array('order_sid' => $order_sid);
         $final_data = array_merge($order_sid, $data);
         $this->db->insert('order_product', $final_data);
     }
 
-    function get_product_cost_price($product_sid) {
+    function get_product_cost_price($product_sid)
+    {
         $this->db->select('cost_price');
         $this->db->where('sid', $product_sid);
         $this->db->from('products');
@@ -55,16 +61,19 @@ class Ext_model extends CI_Model {
         }
     }
 
-    function empty_cart($id) {
+    function empty_cart($id)
+    {
         $this->db->where('company_sid', $id);
         $this->db->delete('shopping_cart');
         $this->session->unset_userdata('coupon_data');
         $userdata = $this->session->userdata('logged_in');
-        $sess_array = array('company_detail' => $userdata["company_detail"],
-                            'employer_detail' => $userdata["employer_detail"],
-                            'cart' => array(),
-                            'portal_detail' => $userdata["portal_detail"],
-                            'clocked_status' => $userdata["clocked_status"]);
+        $sess_array = array(
+            'company_detail' => $userdata["company_detail"],
+            'employer_detail' => $userdata["employer_detail"],
+            'cart' => array(),
+            'portal_detail' => $userdata["portal_detail"],
+            'clocked_status' => $userdata["clocked_status"]
+        );
 
         if (isset($userdata['is_super']) && intval($userdata['is_super']) == 1) {
             $sess_array['is_super'] = 1;
@@ -75,32 +84,38 @@ class Ext_model extends CI_Model {
         $this->session->set_userdata('logged_in', $sess_array);
     }
 
-    function cc_add_invoice($data) {
+    function cc_add_invoice($data)
+    {
         $this->db->insert('invoices', $data);
         return $this->db->insert_id();
     }
 
-    function insertJobFeed($jobData) {
+    function insertJobFeed($jobData)
+    {
         $this->db->insert('jobs_to_feed', $jobData);
     }
 
-    function reset_all_cards($company_id) {
+    function reset_all_cards($company_id)
+    {
         $args = array('is_default' => 0);
         $this->db->where('company_sid', $company_id);
         $this->db->update('emp_cards', $args);
     }
 
-    function delete_credit_card($id) {
+    function delete_credit_card($id)
+    {
         $this->db->where('sid', $id);
         $this->db->delete('emp_cards');
     }
 
-    function update_card($card_id, $dataToUpdate) {
+    function update_card($card_id, $dataToUpdate)
+    {
         $this->db->where('sid', $card_id);
         $this->db->update('emp_cards', $dataToUpdate);
     }
 
-    public function get_admin_invoices($sids = array()) {
+    public function get_admin_invoices($sids = array())
+    {
         $this->db->select('*');
         $this->db->where_in('sid', $sids);
         $this->db->from('admin_invoices');
@@ -111,11 +126,13 @@ class Ext_model extends CI_Model {
         return $records_arr;
     }
 
-    public function insert_invoice_track_initial_record($data_to_insert) {
+    public function insert_invoice_track_initial_record($data_to_insert)
+    {
         $this->db->insert('invoice_items_track', $data_to_insert);
     }
 
-    function get_all_company_cards($company_sid, $active_status = null) {
+    function get_all_company_cards($company_sid, $active_status = null)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
 
@@ -130,19 +147,21 @@ class Ext_model extends CI_Model {
         return $records_arr;
     }
 
-    function update_card_active_status($card_sid, $active_status = 0) {
+    function update_card_active_status($card_sid, $active_status = 0)
+    {
         $this->db->where('sid', $card_sid);
         $this->db->set('active', $active_status);
         $this->db->update('emp_cards');
     }
 
-    function fetch_details($id) {
+    function fetch_details($id)
+    {
         $this->db->select('myci, mycs');
         $this->db->where('myid', $id);
         $record_obj = $this->db->get('portal_themes_ext');
         $result = $record_obj->result_array();
         $record_obj->free_result();
- 
+
         if (!empty($result)) {
             $data = $result[0];
             $key = $data['myci'];
@@ -150,6 +169,89 @@ class Ext_model extends CI_Model {
             return array('id' => $key, 'pass' => $value);
         } else {
             return array();
+        }
+    }
+
+
+
+
+    //
+    function get_company_bank_account($company_sid)
+    {
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->from('company_bank_accounts');
+        $records = $this->db->get()->row_array();
+        return $records;
+    }
+
+
+
+    //
+    public function update_company_bank_account($data)
+    {
+
+        if ($data['sid'] == 0) {
+            unset($data['sid']);
+            $this->db->insert('company_bank_accounts', $data);
+            //
+            if (isCompanyOnBoard($data['company_sid'])) {
+
+            }
+            
+        } else {
+
+            $this->db->where('sid', $data['sid']);
+            $this->db->where('company_sid', $data['company_sid']);
+            $this->db->update('company_bank_accounts', $data);
+            //           
+            if (isCompanyOnBoard($data['company_sid'])) {
+
+            }
+        }
+    }
+
+    function get_company_federal_tax_informarion($company_sid)
+    {
+        $this->db->select('companies_federal_tax.*,users.ssn');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->join('users', 'users.sid=companies_federal_tax.company_sid');
+
+        $this->db->from('companies_federal_tax');
+        $records = $this->db->get()->row_array();
+        return $records;
+    }
+
+
+    //
+    public function update_company_federal_tax_information($data)
+    {
+
+        if ($data['sid'] == 0) {
+            unset($data['sid']);
+            $this->db->where('sid', $data['company_sid']);
+            $this->db->update('users', ['ssn' => $data['ssn']]);
+            //
+            unset($data['ssn']);
+            $this->db->insert('companies_federal_tax', $data);
+            //
+            if (isCompanyOnBoard($data['company_sid'])) {
+
+            }
+
+        } else {
+            //
+            $this->db->where('sid', $data['company_sid']);
+            $this->db->update('users', ['ssn' => $data['ssn']]);
+
+            unset($data['ssn']);
+            $this->db->where('sid', $data['sid']);
+            $this->db->where('company_sid', $data['company_sid']);
+            $this->db->update('companies_federal_tax', $data);
+            //
+            if (isCompanyOnBoard($data['company_sid'])) {
+
+            }
         }
     }
 }
