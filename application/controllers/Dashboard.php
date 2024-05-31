@@ -1204,9 +1204,11 @@ class Dashboard extends Public_Controller
                         $employer_id
                     );
                 //
-                $data['documents_count'] = $data['documents_count'] + $pendingPerformanceDocument ? 1 : 0;   
+
+                $data['documents_count'] = $data['documents_count'] + ($pendingPerformanceDocument ? 1 : 0);   
             } 
 
+            
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');

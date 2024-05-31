@@ -154,19 +154,7 @@ class Notifications extends Public_Controller {
                 "employee_performance_evaluation_model"
             );
             //
-            $pendingPerformanceSection =
-                    $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
-                        $ses['employer_detail']['sid']
-                    );
-            //
-            if ($pendingPerformanceSection) {
-                $data[] = [
-                    'count' => 1,
-                    'link' => base_url('hr_documents_management/my_documents'),
-                    'title' => 'Employee Performance Evaluation'
-                ];
-            }   
-            //
+           
             $pendingVerificationPerformanceSectionOne =
                 $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
                     $ses['employer_detail']['sid'],

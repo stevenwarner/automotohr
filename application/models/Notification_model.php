@@ -267,8 +267,35 @@ class Notification_model extends CI_Model
             $eeoc_form = 0;
         }
         $stateFormCount = $this->getMyPendingStateFormsCount($ses);
+
+    
+
         $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter + $stateFormCount;
         //
+
+        if (checkIfAppIsEnabled('performanceevaluation')) {
+            $this
+            ->load
+            ->model(
+                "v1/Employee_performance_evaluation_model",
+                "employee_performance_evaluation_model"
+            );
+            //
+            $pendingPerformanceSection =
+                    $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $ses['employer_detail']['sid']
+                    );
+            //
+            if ($pendingPerformanceSection) {
+                $c = $c + ($pendingPerformanceSection ? 1 : 0);
+            }   
+            
+        } 
+
+
+
+
+
         if ((int)$c !== 0) {
             $r[] = array(
                 'count' => $c,
