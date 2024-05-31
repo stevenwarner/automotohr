@@ -246,6 +246,40 @@ class Company_payroll_model extends Base_payroll_model
             );
     }
 
+    /**
+     * Sync company
+     * triggers from the webhook
+     * Gusto To Store
+     * 
+     * @version 1.0
+     */
+    public function syncGustoToStore()
+    {
+        // sync the payroll blockers
+        // $this->gustoToStorePayrollBlockers();
+        // // // add the missing gusto uuid
+        // $this->gustoToCompanyAdmins();
+        // // // // sync the address
+        // $this->gustoToStoreAddress();
+        // // // // sync the earning types
+        // $this->gustoToStoreEarningTypes();
+        // // // // sync payment config
+        // $this->gustoToStorePaymentConfig();
+        // // // sync federal tax
+        // $this->gustoToStoreFederalTax();
+        // // // sync benefits
+        // $this->gustoToStoreBenefits();
+        // // // sync industry
+        // $this->gustoToStoreIndustry();
+        // // sync bank accounts
+        // $this->gustoToStoreBankAccounts();
+        // // sync signatories
+        // $this->gustoToStoreSignatories();
+        // // sync company forms
+        // $this->gustoToStoreForms();
+
+        $this->gustoToStoreMinimumWages();
+    }
 
     /**
      * check if company already partnered with Gusto
@@ -1661,9 +1695,541 @@ class Company_payroll_model extends Base_payroll_model
         return true;
     }
 
-
-    public function test()
+    // ------------------------------------------------------
+    // Sync bank accounts
+    // ------------------------------------------------------
+    /**
+     * sync bank accounts
+     *
+     * @method gustoToStoreBankAccounts
+     * @return array
+     */
+    public function syncBankAccounts()
     {
-        _e($this->gustoCompany);
+        $this->storeToGustoBankAccounts();
+        $this->gustoToStoreBankAccounts();
+
+        // check if the company is a demo one
+        if (
+            !$this
+                ->db
+                ->where([
+                    "company_sid" => $this->gustoCompany["company_sid"],
+                    "stage" => "production",
+                ])
+                ->count_all_results("gusto_companies_mode")
+        ) {
+            // start the bank account verification process
+            $this->verifyBankAccounts();
+            $this->gustoToStoreBankAccounts();
+        }
+    }
+
+    /**
+     * sync bank accounts
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreBankAccounts()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "bank_accounts",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $systemDateTime = getSystemDate();
+        //
+        foreach ($response as $v0) {
+            //
+            $dataArray = [];
+            $dataArray['gusto_uuid'] = $v0['uuid'];
+            $dataArray['account_type'] = $v0['account_type'];
+            $dataArray['routing_number'] = $v0['routing_number'];
+            $dataArray['hidden_account_number'] = $v0['hidden_account_number'];
+            $dataArray['verification_status'] = $v0['verification_status'];
+            $dataArray['verification_type'] = $v0['verification_type'];
+            $dataArray['plaid_status'] = $v0['plaid_status'] ?? null;
+            $dataArray['last_cached_balance'] = $v0['last_cached_balance'] ?? null;
+            $dataArray['balance_fetched_date'] = $v0['balance_fetched_date'] ?? null;
+            $dataArray['name'] = $v0['name'];
+            $dataArray['updated_at'] = $systemDateTime;
+            //
+            $whereArray = [
+                'company_sid' => $this->gustoCompany["company_sid"],
+                'gusto_uuid' => $v0["uuid"]
+            ];
+            //
+            if (
+                !$this
+                    ->db
+                    ->where($whereArray)
+                    ->count_all_results("gusto_company_bank_accounts")
+            ) {
+                //
+                $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+                $dataArray['created_at'] = $systemDateTime;
+                //
+                $this
+                    ->db
+                    ->insert(
+                        "gusto_company_bank_accounts",
+                        $dataArray
+                    );
+            } else {
+                //
+                $this
+                    ->db
+                    ->where($whereArray)
+                    ->update(
+                        "gusto_company_bank_accounts",
+                        $dataArray
+                    );
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * sync bank accounts
+     * Store to Gusto
+     *
+     * @return array
+     */
+    private function storeToGustoBankAccounts()
+    {
+        // check and get the bank accounts
+        $records = $this
+            ->db
+            ->select([
+                "sid",
+                "account_type",
+                "routing_number",
+                "account_number",
+            ])
+            ->where([
+                "gusto_uuid is null" => null,
+                "company_sid" =>
+                $this->gustoCompany["company_sid"]
+            ])
+            ->get("gusto_company_bank_accounts")
+            ->result_array();
+        //
+        if (!$records) {
+            return false;
+        }
+        //
+        foreach ($records as $record) {
+            //
+            $request = [
+                "routing_number" => $record["routing_number"],
+                "account_number" => $record["account_number"],
+                "account_type" => $record["account_type"],
+            ];
+            //
+            $response = $this
+                ->lb_gusto
+                ->gustoCall(
+                    "bank_accounts",
+                    $this->gustoCompany,
+                    $request,
+                    "POST"
+                );
+            //
+            $errors = $this
+                ->lb_gusto
+                ->hasGustoErrors($response);
+            //
+            if ($errors) {
+                return $errors;
+            }
+            //
+            if (!$response) {
+                return false;
+            }
+        }
+        //
+        $dataArray = [];
+        $dataArray['gusto_uuid'] = $response['uuid'];
+        $dataArray['account_type'] = $response['account_type'];
+        $dataArray['routing_number'] = $response['routing_number'];
+        $dataArray['hidden_account_number'] = $response['hidden_account_number'];
+        $dataArray['verification_status'] = $response['verification_status'];
+        $dataArray['verification_type'] = $response['verification_type'];
+        $dataArray['plaid_status'] = $response['plaid_status'] ?? null;
+        $dataArray['last_cached_balance'] = $response['last_cached_balance'] ?? null;
+        $dataArray['balance_fetched_date'] = $response['balance_fetched_date'] ?? null;
+        $dataArray['name'] = $response['name'];
+        $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+        $dataArray['updated_at'] = getSystemDate();
+        //
+        $this
+            ->db
+            ->where("sid", $record["sid"])
+            ->update(
+                "gusto_company_bank_accounts",
+                $dataArray
+            );
+        //
+        return true;
+    }
+
+    /**
+     * verify bank accounts
+     *
+     * @return array
+     */
+    private function verifyBankAccounts()
+    {
+        // check and get the bank accounts
+        $records = $this
+            ->db
+            ->select([
+                "gusto_uuid",
+            ])
+            ->where([
+                "gusto_uuid is not null" => null,
+                "company_sid" =>
+                $this->gustoCompany["company_sid"]
+            ])
+            ->get("gusto_company_bank_accounts")
+            ->result_array();
+        //
+        if (!$records) {
+            return false;
+        }
+        //
+        foreach ($records as $record) {
+
+            //
+            $this->gustoCompany["other_uuid"]
+                = $record["gusto_uuid"];
+            //
+            $response = $this
+                ->lb_gusto
+                ->gustoCall(
+                    "send_test_deposits",
+                    $this->gustoCompany,
+                    [],
+                    "POST"
+                );
+            //
+            $errors = $this
+                ->lb_gusto
+                ->hasGustoErrors($response);
+            //
+            if ($errors) {
+                continue;
+            }
+            //
+            if (!$response) {
+                continue;
+            }
+            //
+            $response2 = $this
+                ->lb_gusto
+                ->gustoCall(
+                    "verify_bank_Account",
+                    $this->gustoCompany,
+                    [
+                        "deposit_1" => $response["deposit_1"],
+                        "deposit_2" => $response["deposit_2"]
+                    ],
+                    "PUT"
+                );
+            //
+            $errors = $this
+                ->lb_gusto
+                ->hasGustoErrors($response2);
+            //
+            if ($errors) {
+                continue;
+            }
+            //
+            if (!$response2) {
+                continue;
+            }
+        }
+    }
+
+    // ------------------------------------------------------
+    // Sync signatories
+    // ------------------------------------------------------
+    /**
+     * sync signatories
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreSignatories()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "signatories",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $systemDateTime = getSystemDate();
+        //
+        foreach ($response as $v0) {
+            //
+            $dataArray = [];
+            $dataArray['gusto_uuid'] = $v0['uuid'];
+            $dataArray['gusto_version'] = $v0['version'];
+            $dataArray['title'] = $v0['title'];
+            $dataArray['first_name'] = $v0['first_name'];
+            $dataArray['last_name'] = $v0['last_name'];
+            $dataArray['email'] = $v0['email'];
+            $dataArray['phone'] = $v0['phone'];
+            $dataArray['birthday'] = $v0['birthday'];
+            $dataArray['identity_verification_status'] = $v0['identity_verification_status'];
+            $dataArray['street_1'] = $v0["home_address"]['street_1'];
+            $dataArray['street_2'] = $v0["home_address"]['street_2'];
+            $dataArray['city'] = $v0["home_address"]['city'];
+            $dataArray['state'] = $v0["home_address"]['state'];
+            $dataArray['zip'] = $v0["home_address"]['zip'];
+            $dataArray['updated_at'] = $systemDateTime;
+            //
+            $whereArray = [
+                'company_sid' => $this->gustoCompany["company_sid"],
+                'gusto_uuid' => $v0["uuid"]
+            ];
+            //
+            if (
+                !$this
+                    ->db
+                    ->where($whereArray)
+                    ->count_all_results("gusto_companies_signatories")
+            ) {
+                //
+                $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+                $dataArray['created_at'] = $systemDateTime;
+                //
+                $this
+                    ->db
+                    ->insert(
+                        "gusto_companies_signatories",
+                        $dataArray
+                    );
+            } else {
+                //
+                $this
+                    ->db
+                    ->where($whereArray)
+                    ->update(
+                        "gusto_companies_signatories",
+                        $dataArray
+                    );
+            }
+        }
+
+        return true;
+    }
+
+    // ------------------------------------------------------
+    // Sync forms
+    // ------------------------------------------------------
+    /**
+     * sync forms
+     * Gusto to store
+     *
+     * @return array
+     */
+    private function gustoToStoreForms()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "forms",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $systemDateTime = getSystemDate();
+        //
+        foreach ($response as $v0) {
+            //
+            $this->gustoCompany["other_uuid"]
+                = $v0["uuid"];
+            //
+            $gustoFormPDF =
+                $this
+                ->lb_gusto
+                ->gustoCall(
+                    "forms_pdf",
+                    $this->gustoCompany,
+                    [],
+                    "GET"
+                );
+            //
+            $errors = $this
+                ->lb_gusto
+                ->hasGustoErrors($response);
+            //
+            if ($errors) {
+                return $errors;
+            }
+            //
+            if (!$response) {
+                return false;
+            }
+            //
+            $dataArray = [];
+            $dataArray['gusto_uuid'] = $v0['uuid'];
+            $dataArray['form_name'] = $v0['name'];
+            $dataArray['form_title'] = $v0['title'];
+            $dataArray['form_content'] = $v0['description'];
+            $dataArray['draft'] = $v0['draft'];
+            $dataArray['year'] = $v0['year'] ? $v0["year"] : null;
+            $dataArray['quarter'] = $v0['quarter'] ? $v0["quarter"] : null;
+            $dataArray['requires_signing'] = $v0['requires_signing'];
+            $dataArray['updated_at'] = $systemDateTime;
+            //
+            $whereArray = [
+                'company_sid' => $this->gustoCompany["company_sid"],
+                'gusto_uuid' => $v0["uuid"]
+            ];
+            // copy the company form from Gusto
+            // to store and make it private
+            $fileObject = copyFileFromUrlToS3(
+                $gustoFormPDF["document_url"],
+                $v0["name"],
+                "",
+                "private"
+            );
+            // set the unsigned file
+            $dataArray['s3_form'] = $fileObject["s3_file_name"];
+            //
+            if (
+                !$this
+                    ->db
+                    ->where($whereArray)
+                    ->count_all_results("gusto_company_forms")
+            ) {
+                //
+                $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+                $dataArray['created_at'] = $systemDateTime;
+                //
+                $this
+                    ->db
+                    ->insert(
+                        "gusto_company_forms",
+                        $dataArray
+                    );
+            } else {
+                //
+                $this
+                    ->db
+                    ->where($whereArray)
+                    ->update(
+                        "gusto_company_forms",
+                        $dataArray
+                    );
+            }
+        }
+
+        return true;
+    }
+
+    // ------------------------------------------------------
+    // Sync Minimum Wages
+    // ------------------------------------------------------
+
+    /**
+     * sync Minimum Wages
+     *
+     * @return array
+     */
+    public function gustoToStoreMinimumWages()
+    {
+        // get the locations
+        $record
+            = $this->db
+            ->select([
+                "states.state_code",
+            ])
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->join('gusto_companies_locations', 'states.sid = users.Location_State', 'left')
+            ->where('users.sid', $this->gustoCompany["company_sid"])
+            ->limit(1)
+            ->get('users')
+            ->row_array();
+        //
+        if (!$record) {
+            return false;
+        }
+        //
+        $this->gustoCompany["other_uuid"]
+            = $record["state_code"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "minimum_wages",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        _e($response);
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
     }
 }

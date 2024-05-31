@@ -3737,18 +3737,16 @@ if (!function_exists("updateDocumentCorrectionDesc")) {
     }
 }
 
-if (!function_exists("checkAndGetDocumentDescription"))
-{
+if (!function_exists("checkAndGetDocumentDescription")) {
     function checkAndGetDocumentDescription(
         int $documentId,
         string $description,
         bool $encode = false
-    ):string
-    {
+    ): string {
         // get CI instance
-        $CI =& get_instance();
+        $CI = &get_instance();
         // check if fillable document
-        if(
+        if (
             $CI
             ->db
             ->where([
@@ -3756,7 +3754,7 @@ if (!function_exists("checkAndGetDocumentDescription"))
                 "fillable_document_slug IS NOT NULL" => null
             ])
             ->count_all_results("documents_management")
-        ){
+        ) {
             return $encode ? htmlentities(
                 $description
             ) : $description;
@@ -3772,7 +3770,104 @@ if (!function_exists("checkAndGetDocumentDescription"))
             ->row_array();
         //
         return $encode ? htmlentities(
-                $record["document_description"]
-            ) : $record["document_description"];
+            $record["document_description"]
+        ) : $record["document_description"];
+    }
+}
+
+
+if (!function_exists("copyFileFromUrlToS3")) {
+    /**
+     * copy files from url to s3
+     *
+     * @param string $fileURL
+     * @param string $fileName
+     * @param string $prefix Optional
+     * @param string $aclMode Optional
+     * Default: public-read
+     * @return array
+     */
+    function copyFileFromUrlToS3(
+        string $fileURL,
+        string $fileName,
+        string $prefix = "",
+        string $aclMode = "public-read"
+    ): array {
+        // lets reset the name
+        $newFileName = $prefix . (
+            preg_replace( // convert multiple _ to single
+                "/_+/",
+                "_",
+                preg_replace(
+                    "/[\W]/i", // replace any not word or digit
+                    "_",
+                    $fileName
+                )
+            )
+        );
+        //Initialize a cURL session
+        $ch = curl_init();
+        // Set the URL and other options
+        curl_setopt($ch, CURLOPT_URL, $fileURL);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Execute the cURL session and get the file contents
+        $fileContents = curl_exec($ch);
+        // Check for cURL errors
+        if (curl_errno($ch)) {
+            return [];
+        }
+        // Close the cURL session
+        curl_close($ch);
+        // Get the MIME type of the file
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->buffer($fileContents);
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->load->library('aws_lib');
+        //
+        $newFileName .= getExtensionFromMimeType($mimeType);
+        //
+        $options = [
+            'Bucket' => AWS_S3_BUCKET_NAME,
+            'Key' => $newFileName,
+            'Body' => $fileContents,
+            'ACL' => $aclMode,
+            'ContentType' => $mimeType
+        ];
+        //
+        $CI->aws_lib->put_object($options);
+        //
+        return [
+            's3_file_name' => $newFileName,
+            'mime_type' => $mimeType,
+            's3_file_url' => AWS_S3_BUCKET_URL . $newFileName
+        ];
+    }
+}
+
+
+if (!function_exists("getExtensionFromMimeType")) {
+    /**
+     * get extension from mime type
+     *
+     * @param string $mimeType
+     * @return string
+     */
+    function getExtensionFromMimeType($mimeType): string
+    {
+        // MIME type to file extension mapping
+        $mimeToExt = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'application/pdf' => 'pdf',
+            'text/plain' => 'txt',
+            'application/zip' => 'zip',
+            'audio/mpeg' => 'mp3',
+            'video/mp4' => 'mp4',
+        ];
+
+        return isset($mimeToExt[$mimeType]) ? "." . $mimeToExt[$mimeType] : ".pdf";
     }
 }

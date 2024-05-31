@@ -219,10 +219,24 @@ class Webhook_model extends CI_Model
         $this->post = $post;
         // we need to verify hook
         if ($this->post["verification_token"]) {
-            $this->verifyHook("company", $this->post);
+            return $this->verifyHook("company", $this->post);
         }
+        // load the company model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Company_payroll_model",
+                "company_payroll_model"
+            );
         //
-        elseif ($this->post["event_type"] === "company.approved") {
+        $this
+            ->company_payroll_model
+            ->setCompanyDetails(
+                $this->post["entity_uuid"],
+                "gusto_uuid"
+            );
+        //
+        if ($this->post["event_type"] === "company.approved") {
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
@@ -232,22 +246,10 @@ class Webhook_model extends CI_Model
         }
         // updated
         elseif ($this->post["event_type"] === "company.updated") {
-            // get the company id by gusto uuid
-            // load the company model
-            $this
-                ->load
-                ->model(
-                    "v1/Payroll/Company_payroll_model",
-                    "company_payroll_model"
-                );
-            //
+            // load the helper
             $this
                 ->company_payroll_model
-                ->setCompanyDetails(
-                    $this->post["entity_uuid"],
-                    "gusto_uuid"
-                );
-            _e($this->company_payroll_model->test());
+                ->syncGustoToStore();
         }
     }
 

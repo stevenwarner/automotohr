@@ -96,6 +96,12 @@ class Cron_company_payroll extends CI_Controller
             ->company_payroll_model
             ->syncCompanyAddress();
 
+        // sync minimum wages
+        $this->updateStage("minimum_wages");
+        $this
+            ->company_payroll_model
+            ->gustoToStoreMinimumWages();
+
         // sync earning types
         $this->updateStage("earning_types");
         $this
@@ -125,6 +131,12 @@ class Cron_company_payroll extends CI_Controller
         $this
             ->company_payroll_model
             ->syncIndustry();
+
+        // sync bank_accounts
+        $this->updateStage("bank_accounts");
+        $this
+            ->company_payroll_model
+            ->syncBankAccounts();
     }
 
     /**

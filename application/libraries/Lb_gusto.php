@@ -704,6 +704,9 @@ class Lb_gusto
         // locations
         $urls["company_locations"] =
             "v1/companies/{$key}/locations";
+        // minimum_wages
+        $urls["minimum_wages"] =
+            "v1/locations/{$key}/minimum_wages";
         // payment_configs
         $urls["payment_configs"] =
             "v1/companies/{$key}/payment_configs";
@@ -716,12 +719,21 @@ class Lb_gusto
         // forms
         $urls["forms"] =
             "v1/companies/{$key}/forms";
+        // forms_pdf
+        $urls["forms_pdf"] =
+            "v1/forms/{$key1}/pdf";
         // company_benefits
         $urls["company_benefits"] =
             "v1/companies/{$key}/company_benefits";
         // bank_accounts
         $urls["bank_accounts"] =
             "v1/companies/{$key}/bank_accounts";
+        // send_test_deposits
+        $urls["send_test_deposits"] =
+            "v1/companies/{$key}/bank_accounts/{$key1}/send_test_deposits";
+        // verify_bank_Account
+        $urls["verify_bank_Account"] =
+            "v1/companies/{$key}/bank_accounts/{$key1}/verify";
         // departments
         $urls["departments"] =
             "v1/companies/{$key}/departments";
@@ -737,6 +749,9 @@ class Lb_gusto
         // flows
         $urls["flows"] =
             "v1/companies/{$key}/flows";
+        // signatories
+        $urls["signatories"] =
+            "v1/companies/{$key}/signatories";
 
 
         // Employees
