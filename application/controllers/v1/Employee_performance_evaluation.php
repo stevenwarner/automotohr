@@ -1010,6 +1010,9 @@ class Employee_performance_evaluation extends CI_Controller
         db_get_access_level_details($employeeId);
         getCompanyEmsStatusBySid($companyId);  
         //
+        $data = [];
+        $data['companyName'] = $this->loggedInCompanySession['CompanyName'];
+        //
         return SendResponse(
             200,
             [

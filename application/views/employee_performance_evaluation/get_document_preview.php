@@ -202,7 +202,7 @@
                     <tr style="height:10.1pt">
                         <td style="width:241.6pt; border-top:0.75pt solid #000000; border-right:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
                             <p style="margin-bottom:0pt; line-height:normal; font-size:12pt">
-                                <strong>Hire Date with Company</strong><strong>&#xa0; </strong>
+                                <strong>Hire Date with <?= $companyName ?></strong><strong>&#xa0; </strong>
                             </p>
                         </td>
                         <td style="width:241.6pt; border-top:0.75pt solid #000000; border-left:0.75pt solid #000000; border-bottom:0.75pt solid #000000; padding-top:0.5pt; padding-right:5.38pt; padding-left:4.97pt; vertical-align:top; background-color:#dbe5f1">
@@ -1175,7 +1175,7 @@
                 </p>
                 <ol start="3" style="margin:0pt; padding-left:0pt">
                     <li class="ListParagraph" style="margin-left:14.11pt; padding-left:3.71pt; font-family:Calibri; font-weight:bold">
-                        Is there any additional support or training you feel would be helpful for Company to provide for you to help you succeed in your current role?<span style="color:#1f497d"> </span>
+                        Is there any additional support or training you feel would be helpful for <?= $companyName ?> to provide for you to help you succeed in your current role?<span style="color:#1f497d"> </span>
                     </li>
                 </ol>
 
