@@ -2543,7 +2543,7 @@ class Hr_documents_management_model extends CI_Model
                         );
                     }
                 }
-            }    
+            }
             //
             if (empty($pendingEmployeeDocuments['Documents'])) {
                 unset($pendingDocuments[$p_key]);
@@ -3718,6 +3718,8 @@ class Hr_documents_management_model extends CI_Model
         $data_to_update['drivers_license'] = 0;
         $data_to_update['emergency_contacts'] = 0;
         $data_to_update['occupational_license'] = 0;
+        $data_to_update['performance_evaluation'] = 0;
+
 
         $this->db->where('sid', $sid);
         $this->db->update('documents_group_management', $data_to_update);
@@ -6064,18 +6066,18 @@ class Hr_documents_management_model extends CI_Model
             //
             foreach ($b as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
-    
+
                 if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
                     $magic_codes = array('{{signature}}', '{{inital}}');
                     //
                     $documentBodyOld = $document_body;
                     $document_body = magicCodeCorrection($document_body);
-    
+
                     if ($documentBodyOld != $document_body) {
                         updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
                     }
-    
+
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
                     }
@@ -9151,7 +9153,8 @@ class Hr_documents_management_model extends CI_Model
                         'emergency_contacts' => $group['emergency_contacts'],
                         'dependents' => $group['dependents'],
                         'documents_count' => count($group_documents),
-                        'documents' => $group_documents
+                        'documents' => $group_documents,
+                        'performance_evaluation' => $group['performance_evaluation']
                     );
                 } else {
                     $in_active_groups[] = array(
@@ -9170,7 +9173,9 @@ class Hr_documents_management_model extends CI_Model
                         'emergency_contacts' => $group['emergency_contacts'],
                         'dependents' => $group['dependents'],
                         'documents_count' => count($group_documents),
-                        'documents' => $group_documents
+                        'documents' => $group_documents,
+                        'performance_evaluation' => $group['performance_evaluation'],
+
                     );
                 }
 
@@ -9188,7 +9193,7 @@ class Hr_documents_management_model extends CI_Model
                 array_push($assigned_groups, $value['group_sid']);
                 $system_document = $this->get_document_group($value['group_sid']);
 
-                //start
+               //start
                 // General Documents 
                 foreach ($system_document as $gk => $gv) {
                     //
@@ -9214,6 +9219,30 @@ class Hr_documents_management_model extends CI_Model
                     }
                 }
                 //end
+
+
+                  // performance_evaluation
+                  if (
+                    isset($system_document['performance_evaluation']) &&
+                    $system_document['performance_evaluation'] == 1
+                ) {
+                    // load the model
+                    $this
+                        ->load
+                        ->model(
+                            "v1/Employee_performance_evaluation_model",
+                            "employee_performance_evaluation_model"
+                        );
+                    // check and assign the form
+                    $this
+                        ->employee_performance_evaluation_model
+                        ->checkAndAssignDocument(
+                            $company_sid,
+                            $this->session->userdata("logged_in")["employer_detail"]["sid"],
+                            $user_sid
+                        );
+                }
+            
 
                 if ($system_document['w4'] == 1) {
                     $is_w4_assign = $this->check_w4_form_exist($user_type, $user_sid);
@@ -11037,6 +11066,7 @@ class Hr_documents_management_model extends CI_Model
         }
         // check and assign the group documents
         if ($checkAndAssignGroupDocuments) {
+
             $this->checkAndAssignGroupDocuments(
                 $companyId,
                 $jobId,
@@ -11103,7 +11133,8 @@ class Hr_documents_management_model extends CI_Model
                 drivers_license,
                 emergency_contacts,
                 occupational_license,
-                state_forms_json
+                performance_evaluation,
+
             ")
             ->where_in("sid", $groupIds)
             ->where("status", 1)
@@ -11126,6 +11157,8 @@ class Hr_documents_management_model extends CI_Model
         $returnArray["occupational_license"] = 0;
         $returnArray["state_forms"] = [];
         $returnArray["documents"] = [];
+        $returnArray["performance_evaluation"] = 0;
+
         //
         foreach ($groups as $v0) {
             // for w4
@@ -11147,6 +11180,10 @@ class Hr_documents_management_model extends CI_Model
             // for occupational_license
             $returnArray["occupational_license"] = $returnArray["occupational_license"] == 0 && $v0["occupational_license"] != 0 ? 1 : $returnArray["occupational_license"];
             // state forms
+
+            $returnArray["performance_evaluation"] = $returnArray["performance_evaluation"] == 0 && $v0["performance_evaluation"] != 0 ? 1 : $returnArray["performance_evaluation"];
+
+
             $stateForms = json_decode(
                 $v0["state_forms_json"],
                 true
@@ -11288,7 +11325,6 @@ class Hr_documents_management_model extends CI_Model
         int $userId,
         string $userType
     ) {
-
         // handle verification and general document assignment
         $sendGroupEmail = $this->handleVerificationAndGeneralDocumentAssignment(
             $companyId,
@@ -11345,6 +11381,8 @@ class Hr_documents_management_model extends CI_Model
         $sendGroupEmail = 0;
         // get groups
         $assignedGroups = $this->getAssignedGroupForUser($userId, $userType);
+
+
         // handle general and verification documents
         if ($assignedGroups) {
             foreach ($assignedGroups as $value) {
@@ -11373,6 +11411,30 @@ class Hr_documents_management_model extends CI_Model
                         }
                     }
                 }
+
+                // performance_evaluation
+                if (
+                    isset($system_document['performance_evaluation']) &&
+                    $system_document['performance_evaluation'] == 1
+                ) {
+                    // load the model
+                    $this
+                        ->load
+                        ->model(
+                            "v1/Employee_performance_evaluation_model",
+                            "employee_performance_evaluation_model"
+                        );
+                    // check and assign the form
+                    $this
+                        ->employee_performance_evaluation_model
+                        ->checkAndAssignDocument(
+                            $companyId,
+                            $this->session->userdata("logged_in")["employer_detail"]["sid"],
+                            $userId
+                        );
+                }
+
+
                 // w4
                 if (isset($system_document['w4']) && $system_document['w4'] == 1) {
                     $is_w4_assign = $this->check_w4_form_exist($userType, $userId);

@@ -3319,7 +3319,9 @@ class Hr_documents_management extends Public_Controller
                             'dependents' => $group['dependents'],
                             'documents_count' => count($group_documents) + $otherDocumentCount,
                             'documents' => $group_documents,
-                            'other_documents' => $otherDocuments
+                            'other_documents' => $otherDocuments,
+                            'performance_evaluation' => $group['performance_evaluation']
+
                         );
                     } else {
                         $in_active_groups[] = array(
@@ -3332,6 +3334,7 @@ class Hr_documents_management extends Public_Controller
                             'w9' => $group['w9'],
                             'i9' => $group['i9'],
                             'eeoc' => $group['eeoc'],
+                            'performance_evaluation' => $group['performance_evaluation'],
                             'direct_deposit' => $group['direct_deposit'],
                             'drivers_license' => $group['drivers_license'],
                             'occupational_license' => $group['occupational_license'],
@@ -3568,6 +3571,32 @@ class Hr_documents_management extends Public_Controller
                             }
                         }
                     }
+
+
+                    // performance_evaluation
+                    if (
+                        isset($system_document['performance_evaluation']) &&
+                        $system_document['performance_evaluation'] == 1
+                    ) {
+                        // load the model
+                        $this
+                            ->load
+                            ->model(
+                                "v1/Employee_performance_evaluation_model",
+                                "employee_performance_evaluation_model"
+                            );
+                        // check and assign the form
+                        $this
+                            ->employee_performance_evaluation_model
+                            ->checkAndAssignDocument(
+                                $company_sid,
+                                $this->session->userdata("logged_in")["employer_detail"]["sid"],
+                                $user_sid
+                            );
+                    }
+
+
+
 
                     if (!empty($system_document['w4']) && $system_document['w4'] == 1) {
                         $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
@@ -4367,7 +4396,7 @@ class Hr_documents_management extends Public_Controller
                         $user_sid
                     );
                 }
-            }    
+            }
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -5451,6 +5480,30 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
+
+                    // performance_evaluation
+                    if (
+                        isset($system_document['performance_evaluation']) &&
+                        $system_document['performance_evaluation'] == 1
+                    ) {
+                        // load the model
+                        $this
+                            ->load
+                            ->model(
+                                "v1/Employee_performance_evaluation_model",
+                                "employee_performance_evaluation_model"
+                            );
+                        // check and assign the form
+                        $this
+                            ->employee_performance_evaluation_model
+                            ->checkAndAssignDocument(
+                                $company_sid,
+                                $this->session->userdata("logged_in")["employer_detail"]["sid"],
+                                $employer_sid
+                            );
+                    }
+
+
                     if (isset($system_document['w4']) && $system_document['w4'] == 1) {
                         $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist('employee', $employer_sid);
                         if (empty($is_w4_assign)) {
@@ -6004,7 +6057,7 @@ class Hr_documents_management extends Public_Controller
                         $data['session']['employer_detail']['sid']
                     );
                 }
-            }    
+            }
             //
             $data['load_view'] = check_blue_panel_status(false, 'self');
             $data['employee'] = $data['session']['employer_detail'];
@@ -7410,7 +7463,7 @@ class Hr_documents_management extends Public_Controller
                                 $employee_id
                             );
                             //
-                            
+
                         }
                     }
                 }
@@ -8482,6 +8535,14 @@ class Hr_documents_management extends Public_Controller
                 $stateForms = $this->input->post('state_forms');
                 $this->hr_documents_management_model->unassign_system_document_from_group($group_sid);
 
+                //
+                $epe = $this->input->post('epe');
+                if ($epe == 'epe') {
+                    $data_to_update['performance_evaluation'] = 1;
+                    $this->hr_documents_management_model->assign_system_document_2_group($group_sid, $data_to_update);
+                }
+
+
                 if (!empty($assign_system_documents)) {
                     foreach ($assign_system_documents as $document_name) {
                         $data_to_update = array();
@@ -8522,6 +8583,7 @@ class Hr_documents_management extends Public_Controller
                         "state_forms_json" => json_encode([])
                     ]);
                 }
+
 
                 $this->hr_documents_management_model->delete_document_2_group($group_sid);
 
@@ -13187,7 +13249,7 @@ class Hr_documents_management extends Public_Controller
                     ->get_object(
                         AWS_S3_BUCKET_NAME,
                         $post['data']['s3_filename'],
-                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/','_',$post['data']['orig_filename'])).'.'.$extension
+                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/', '_', $post['data']['orig_filename'])) . '.' . $extension
                     );
                 // For Generated documents
                 // downloadFileFromAWS(

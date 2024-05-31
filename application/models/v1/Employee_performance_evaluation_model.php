@@ -238,6 +238,58 @@ class Employee_performance_evaluation_model extends CI_Model
     }
 
     /**
+     * handle document assignment
+     *
+     * @param int $loggedInCompanyId
+     * @param int $loggedInEmployeeId
+     * @param int $employeeId
+     * @return bool
+     */
+    public function checkAndAssignDocument(
+        int $loggedInCompanyId,
+        int $loggedInEmployeeId,
+        int $employeeId
+    ) {
+        // check for employee performance ebvaluation
+        // module. If enabled, then load the model
+        if (!checkIfAppIsEnabled('performanceevaluation')) {
+            return false;
+        }
+        // check if not already assigned
+        if (
+            !$this
+                ->db
+                ->where("employee_sid", $employeeId)
+                ->count_all_results(
+                    "employee_performance_evaluation_document"
+                )
+        ) {
+            //
+            $systemDateTime = getSystemDate();
+            // set insert array
+            $ins = [
+                "company_sid" => $loggedInCompanyId,
+                "employee_sid" => $employeeId,
+                "assigned_on" => $systemDateTime,
+                "last_assigned_by" => $loggedInEmployeeId,
+                "completed_at" => null,
+                "status" => 1,
+                "created_at" => $systemDateTime,
+                "updated_at" => $systemDateTime,
+            ];
+            //
+            $this
+                ->db
+                ->insert(
+                    "employee_performance_evaluation_document",
+                    $ins
+                );
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * set the default return document array
      *
      * @return array
@@ -334,13 +386,13 @@ class Employee_performance_evaluation_model extends CI_Model
             ->row_array();
     }
 
-     /**
+    /**
      * Get verification managers list
      *
      * @param int $employeeId
      * @return array
      */
-    public function getVerificationManagers (
+    public function getVerificationManagers(
         $employeeId,
         $section
     ): array {
@@ -664,7 +716,8 @@ class Employee_performance_evaluation_model extends CI_Model
             );
     }
 
-    public function saveEmployeeDocumentSectionFive ($employeeId, $data) {
+    public function saveEmployeeDocumentSectionFive($employeeId, $data)
+    {
         //
         $this->db
             ->where("employee_sid", $employeeId)
@@ -697,7 +750,8 @@ class Employee_performance_evaluation_model extends CI_Model
             );
     }
 
-    public function getEmployeeCurrentPayRate ($employeeId) {
+    public function getEmployeeCurrentPayRate($employeeId)
+    {
         //
         $currentPayRate = 0;
         //
@@ -712,7 +766,7 @@ class Employee_performance_evaluation_model extends CI_Model
         //
         //
         $b = $a->row_array();
-        $a = $a->free_result();    
+        $a = $a->free_result();
         //
         if (!empty($b['hourly_rate']) && $b['hourly_rate'] > 0) {
             $currentPayRate = $b['hourly_rate'];
@@ -722,7 +776,7 @@ class Employee_performance_evaluation_model extends CI_Model
             $currentPayRate = $b['hourly_technician'];
         } else if (!empty($b['flat_rate_technician']) && $b['flat_rate_technician'] > 0) {
             $currentPayRate = $b['flat_rate_technician'];
-        } 
+        }
         //
         return $currentPayRate;
     }
@@ -758,15 +812,15 @@ class Employee_performance_evaluation_model extends CI_Model
         if ($b['section_2_json'] && !$b['section_4_json']) {
             $info = json_decode($b['section_2_json'], true);
             //
-            $response['completed_at'] = formatDateToDB($info['completed_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); 
+            $response['completed_at'] = formatDateToDB($info['completed_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
         } else if ($b['section_4_json']) {
             $info = json_decode($b['section_4_json'], true);
             //
             $response['completed_at'] = formatDateToDB($info['employee_signature_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
         }
         //
-        $response['assign_at'] = formatDateToDB($b['assigned_on'], DB_DATE_WITH_TIME, DATE_WITH_TIME); 
-        $response['assign_by'] = getUserNameBySID($b['last_assigned_by']); 
+        $response['assign_at'] = formatDateToDB($b['assigned_on'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+        $response['assign_by'] = getUserNameBySID($b['last_assigned_by']);
         //
         return $response;
     }
@@ -792,7 +846,7 @@ class Employee_performance_evaluation_model extends CI_Model
      * @param int $companyId
      * @return array
      */
-    function getScheduleSetting (
+    function getScheduleSetting(
         $companyId
     ): array {
         $this->db->select('assign_type, assign_date, assign_time, assigned_employee_list');
@@ -816,7 +870,7 @@ class Employee_performance_evaluation_model extends CI_Model
      * @param array $data
      * @return json
      */
-    function saveScheduleSetting (
+    function saveScheduleSetting(
         int $companyId,
         int $employeeId,
         array $data
@@ -870,22 +924,21 @@ class Employee_performance_evaluation_model extends CI_Model
     }
 
     /**
-    * Get desire document section data
-    *
-    * @param int $companyId
-    * @return array
-    */
-   public function getCompanyAssignedEmployees(
-       $companyId
-   ): array {
-       return $this
-           ->db
-           ->select('employee_sid')
-           ->where("company_sid", $companyId)
-           ->get(
-               "employee_performance_evaluation_document"
-           )
-           ->result_array();
-   }
-
+     * Get desire document section data
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAssignedEmployees(
+        $companyId
+    ): array {
+        return $this
+            ->db
+            ->select('employee_sid')
+            ->where("company_sid", $companyId)
+            ->get(
+                "employee_performance_evaluation_document"
+            )
+            ->result_array();
+    }
 }

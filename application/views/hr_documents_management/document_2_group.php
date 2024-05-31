@@ -140,6 +140,25 @@
                                                         </div>
                                                         <!-- general documents end -->
 
+                                                        <?php if (checkIfAppIsEnabled('performanceevaluation')) { ?>
+                                                            <div class="col-xs-12">
+                                                                <hr />
+                                                            </div>
+                                                            <div class="col-xs-12">
+                                                                <h4><strong>Employee Performance Evaluation</strong></h4>
+                                                            </div>
+
+                                                            <div class="col-xs-12">
+                                                                <label class="control control--checkbox font-normal">
+                                                                    Employee Performance Evaluation
+                                                                    <input class="doc_checkbox" name="epe" value="epe" type="checkbox" <?php echo $group['performance_evaluation'] == 1 ? 'checked="checked"' : ''; ?>>
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        <?php
+                                                        } ?>
+
+
                                                         <!-- company documents start -->
                                                         <div class="col-xs-12">
                                                             <hr>
@@ -168,6 +187,7 @@
                                                             </div>
                                                         <?php } ?>
                                                         <!-- company documents end -->
+
                                                     </div>
                                                 </div>
                                             </div>
