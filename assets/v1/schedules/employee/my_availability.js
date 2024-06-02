@@ -36,6 +36,7 @@ $(function myAvailability() {
 		if($(".jsRepeat").prop('checked') == true){
 			$("#jsSelectedDate").html($(".jsUnavailableDate").val());
 			$(".jsRepeatSection").removeClass("hidden");
+			$(".jsOnOccurrences").addClass("hidden");
 		} else {
 			$(".jsRepeatSection").addClass("hidden");
 		}
@@ -58,6 +59,21 @@ $(function myAvailability() {
 			$(".jsMonthlyRepeat").removeClass("hidden");
 			$(".jsMonthlySection").removeClass("hidden");
 			$(".jsWeeklyMonthlySectionSeparator").removeClass("hidden");
+		}
+		//
+	});
+
+	$(document).on("change", "#jsOccurrencesType", function (event) {
+		//
+		var type = $(this).val();
+		//
+		if (type == "after") {
+			$(".jsAfterOccurrences").removeClass("hidden");
+			$(".jsOnOccurrences").addClass("hidden");
+		} else if (type == "on") {
+			$(".jsOnOccurrences").removeClass("hidden");
+			$(".jsAfterOccurrences").addClass("hidden");
+			applyDatePicker1();
 		}
 		//
 	});
@@ -150,11 +166,24 @@ $(function myAvailability() {
 			}
 			//
 			obj.occurrencesType = $("#jsOccurrencesType").val();
-			obj.occurrences = $("#jsOccurrences").val();
 			//
-			if (!obj.occurrences || obj.occurrences == 0) {
-				errorArray.push('Occurrences number is missing.');
+			if (obj.occurrencesType == 'after') {
+				obj.occurrences = $("#jsOccurrences").val();
+				//
+				if (!obj.occurrences || obj.occurrences == 0) {
+					errorArray.push('Occurrences number is missing.');
+				} else if (obj.occurrences > 30) {
+					errorArray.push('Occurrences number is less then 30.');
+				}
+				//
+			} else if (obj.occurrencesType == 'on') {
+				obj.occurrenceEndDate = $(".jsUnavailableEndDate").val();
+				//
+				if (!obj.occurrenceEndDate) {
+					errorArray.push('Last occurrence date is missing.');
+				}
 			}
+			
 		} else {
 			obj.repeat = 'no';
 		}
@@ -313,6 +342,20 @@ $(function myAvailability() {
 			dynamic: false,
 			dropdown: false,
 			scrollbar: false,
+		});
+	}
+
+	/**
+	 * apply time picker
+	 */
+	function applyDatePicker1() {
+		$(".jsUnavailableEndDate").daterangepicker({
+			showDropdowns: true,
+			singleDatePicker: true,
+			autoApply: true,
+			locale: {
+				format: "MM/DD/YYYY",
+			},
 		});
 	}
 });

@@ -189,11 +189,6 @@
                             </div>
                             <div class="col-lg-11 col-md-11 col-xs-12 col-sm-11">
                                 <label class="control control--checkbox">
-                                    <input type="checkbox" class="jsUnavailableWeekDay" value="7" />
-                                    Sunday
-                                    <div class="control__indicator"></div>
-                                </label>
-                                <label class="control control--checkbox">
                                     <input type="checkbox" class="jsUnavailableWeekDay" value="1" checked />
                                     Monday
                                     <div class="control__indicator"></div>
@@ -221,6 +216,11 @@
                                 <label class="control control--checkbox">
                                     <input type="checkbox" class="jsUnavailableWeekDay" value="6" />
                                     Saturday
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--checkbox">
+                                    <input type="checkbox" class="jsUnavailableWeekDay" value="7" />
+                                    Sunday
                                     <div class="control__indicator"></div>
                                 </label>
                             </div>
@@ -319,9 +319,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2">
+                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 jsAfterOccurrences">
                                 <div class="form-group">
-                                    <input type="number" class="form-control" id="jsOccurrences" value="1">
+                                    <input type="number" class="form-control" id="jsOccurrences" max="30" value="1">
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 jsOnOccurrences">
+                                <div class="form-group">
+                                    <input type="text" readonly class="form-control jsUnavailableEndDate">
                                 </div>
                             </div>
                             <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">

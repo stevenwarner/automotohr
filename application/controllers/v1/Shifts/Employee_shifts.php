@@ -131,7 +131,7 @@ class Employee_shifts extends Public_Controller
 
         // set bundle
         $data["appJs"] = bundleJs([
-            "v1/plugins/ms_modal/main", 
+            "v1/plugins/ms_modal/main",
             "v1/schedules/employee/my_availability",
             "v1/settings/shifts/ems_main"
         ], "public/v1/shifts/", "my_ems_shifts", false);
@@ -141,7 +141,8 @@ class Employee_shifts extends Public_Controller
         $this->load->view('main/footer');
     }
 
-    public function getPageContent () {
+    public function getPageContent()
+    {
         return SendResponse(
             200,
             [
@@ -155,7 +156,8 @@ class Employee_shifts extends Public_Controller
         );
     }
 
-    public function myUnavailability () {
+    public function myUnavailability()
+    {
         // check if plus or don't have access to the module
         if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
@@ -210,95 +212,168 @@ class Employee_shifts extends Public_Controller
         ]);
     }
 
-    private function getDailyDaysRange ($post, $startDate) {
+    private function getDailyDaysRange($post, $startDate)
+    {
         //
         $unavailableDays = [];
         array_push($unavailableDays, $startDate);
         //
-        $end = $post['occurrencesType'] == 'after' ? $post['occurrences'] : ($post['occurrences'] - 1);
+        if ($post['occurrencesType'] == 'after') {
+            //
+            $end = $post['occurrences'];
+            //
+            for ($i = 1; $i <= $end; $i++) {
+                $newDate = date(DB_DATE, strtotime('+' . ($post['daily'] * $i) . ' day', strtotime($startDate))) . PHP_EOL;
+                array_push($unavailableDays, $newDate);
+            }
+        } else {
+            $sd = new DateTime($startDate);
+            $oed = new DateTime(DateTime::createFromFormat('m/d/Y', $post['occurrenceEndDate'])->format('Y-m-d'));
+            //
+            $end = $oed->diff($sd)->format("%a");
+            //
+            for ($i = 1; $i <= $end; $i++) {
+                $newDate = date(DB_DATE, strtotime('+' . ($post['daily'] * $i) . ' day', strtotime($startDate))) . PHP_EOL;
+                //
+                if ($newDate < date_format($oed, 'Y-m-d')) {
+                    array_push($unavailableDays, $newDate);
+                }
+                
+            }
+        }
         //
-        for ($i = 1; $i <= $end; $i++) {
-            $newDate = date(DB_DATE, strtotime('+' . ($post['daily'] * $i) .' day', strtotime($startDate))) . PHP_EOL;
-            array_push($unavailableDays, $newDate);
-        }  
-        //
-        return $unavailableDays;  
+        return $unavailableDays;
     }
 
-    private function getWeeklyDaysRange ($post, $startDate) {
+    private function getWeeklyDaysRange($post, $startDate)
+    {
         //
         $unavailableDays = [];
         array_push($unavailableDays, $startDate);
         //
-        $currentWeek = explode(',',date('Y,W', strtotime($startDate)) . PHP_EOL);
+        $currentWeek = explode(',', date('Y,W', strtotime($startDate)) . PHP_EOL);
         //
         foreach ($post['weekDays'] as  $weekDay) {
             $gendate = new DateTime();
-            $gendate->setISODate($currentWeek[0],$currentWeek[1],$weekDay);
+            $gendate->setISODate($currentWeek[0], $currentWeek[1], $weekDay);
             $newDate = $gendate->format('Y-m-d');
             //
             if ($newDate > $startDate) {
                 array_push($unavailableDays, $newDate);
             }
-            
         }
         //
-        $end = $post['occurrencesType'] == 'after' ? $post['occurrences'] : ($post['occurrences'] - 1);
-        //
-        for ($i = 1; $i <= $end; $i++) {
+        if ($post['occurrencesType'] == 'after') {
             //
-            $newWeek = explode(',',date('Y,W', strtotime('+' . ($post['weekly'] * $i) .' week', strtotime($startDate))) . PHP_EOL);
+            $end = $post['occurrences'];
             //
-            foreach ($post['weekDays'] as  $weekDay) {
-                $gendate = new DateTime();
-                $gendate->setISODate($newWeek[0],$newWeek[1],$weekDay);
-                $newDate = $gendate->format('Y-m-d');
-                array_push($unavailableDays, $newDate);
+            for ($i = 1; $i <= $end; $i++) {
+                //
+                $newWeek = explode(',', date('Y,W', strtotime('+' . ($post['weekly'] * $i) . ' week', strtotime($startDate))) . PHP_EOL);
+                //
+                foreach ($post['weekDays'] as  $weekDay) {
+                    $gendate = new DateTime();
+                    $gendate->setISODate($newWeek[0], $newWeek[1], $weekDay);
+                    $newDate = $gendate->format('Y-m-d');
+                    array_push($unavailableDays, $newDate);
+                }
             }
-        } 
+        } else if ($post['occurrencesType'] == 'on') {
+            $sd = new DateTime($startDate);
+            $oed = new DateTime(DateTime::createFromFormat('m/d/Y', $post['occurrenceEndDate'])->format('Y-m-d'));
+            //
+            $end = floor($oed->diff($sd)->days/7);
+            //
+            for ($i = 1; $i <= $end; $i++) {
+                //
+                $newWeek = explode(',', date('Y,W', strtotime('+' . ($post['weekly'] * $i) . ' week', strtotime($startDate))) . PHP_EOL);
+                //
+                foreach ($post['weekDays'] as  $weekDay) {
+                    $gendate = new DateTime();
+                    $gendate->setISODate($newWeek[0], $newWeek[1], $weekDay);
+                    $newDate = $gendate->format('Y-m-d');
+                    //
+                    if ($newDate < date_format($oed, 'Y-m-d')) {
+                        array_push($unavailableDays, $newDate);
+                    }
+                }
+            }
+        }
+      
         //
         return $unavailableDays;
     }
 
-    private function getMonthlyDaysRange ($post, $startDate) {
+    private function getMonthlyDaysRange($post, $startDate)
+    {
         //
         $unavailableDays = [];
         array_push($unavailableDays, $startDate);
-        $year = formatDateToDB($post['date'], SITE_DATE, 'Y');
         //
         if (date("m", strtotime($startDate)) < $post['monthly']) {
             foreach ($post['monthDays'] as  $monthDay) {
                 if (is_numeric($monthDay)) {
-                    $dayString = $year.'-'.$post['monthly'].'-'.$monthDay;
+                    $dayString = $year . '-' . $post['monthly'] . '-' . $monthDay;
                     $newDate = date("Y-m-d", strtotime($dayString));
                     array_push($unavailableDays, $newDate);
                 } else {
-                    $dayString = $monthDay.' of '.$year.'-'.$post['monthly'];
+                    $dayString = $monthDay . ' of ' . $year . '-' . $post['monthly'];
                     $newDate = date("Y-m-d", strtotime($dayString));
                     array_push($unavailableDays, $newDate);
                 }
-                
             }
         }
         //
-        $end = $post['occurrencesType'] == 'after' ? $post['occurrences'] : ($post['occurrences'] - 1);
-        //
-        for ($i = 1; $i <= $end; $i++) {
-            $year = $year + $i;
+        if ($post['occurrencesType'] == 'after') {
             //
-            foreach ($post['monthDays'] as  $monthDay) {
-                if (is_numeric($monthDay)) {
-                    $dayString = $year.'-'.$post['monthly'].'-'.$monthDay;
-                    $newDate = date("Y-m-d", strtotime($dayString));
-                    array_push($unavailableDays, $newDate);
-                } else {
-                    $dayString = $monthDay.' of '.$year.'-'.$post['monthly'];
-                    $newDate = date("Y-m-d", strtotime($dayString));
-                    array_push($unavailableDays, $newDate);
+            $end = $post['occurrences'];
+            //
+            for ($i = 1; $i <= $end; $i++) {
+                $year = formatDateToDB($post['date'], SITE_DATE, 'Y');
+                $year = $year + $i;
+                //
+                foreach ($post['monthDays'] as  $monthDay) {
+                    if (is_numeric($monthDay)) {
+                        $dayString = $year . '-' . $post['monthly'] . '-' . $monthDay;
+                        $newDate = date("Y-m-d", strtotime($dayString));
+                        array_push($unavailableDays, $newDate);
+                    } else {
+                        $dayString = $monthDay . ' of ' . $year . '-' . $post['monthly'];
+                        $newDate = date("Y-m-d", strtotime($dayString));
+                        array_push($unavailableDays, $newDate);
+                    }
                 }
-                
             }
-        } 
+            //
+        } else if ($post['occurrencesType'] == 'on') {
+            $sd = new DateTime($startDate);
+            $oed = new DateTime(DateTime::createFromFormat('m/d/Y', $post['occurrenceEndDate'])->format('Y-m-d'));
+            //
+            $end = $oed->diff($sd)->y;
+            //
+            for ($i = 1; $i <= $end; $i++) {
+                $year = formatDateToDB($post['date'], SITE_DATE, 'Y');
+                $year = $year + $i;
+                //
+                foreach ($post['monthDays'] as  $monthDay) {
+                    if (is_numeric($monthDay)) {
+                        $dayString = $year . '-' . $post['monthly'] . '-' . $monthDay;
+                        $newDate = date("Y-m-d", strtotime($dayString));
+                        //
+                        if ($newDate < date_format($oed, 'Y-m-d')) {
+                            array_push($unavailableDays, $newDate);
+                        }
+                    } else {
+                        $dayString = $monthDay . ' of ' . $year . '-' . $post['monthly'];
+                        $newDate = date("Y-m-d", strtotime($dayString));
+                        //
+                        if ($newDate < date_format($oed, 'Y-m-d')) {
+                            array_push($unavailableDays, $newDate);
+                        }
+                    }
+                }
+            }
+        }    
         //
         return $unavailableDays;
     }
