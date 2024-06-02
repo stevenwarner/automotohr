@@ -2126,8 +2126,8 @@ $route["payrolls/employee_job_compensation/(:num)/(:any)"]["post"] = "v1/Users/M
  * Attendance routes
  * @version 1.0
  */
-$route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
-$route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
+// $route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
+// $route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
 $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
 $route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/Main/getMyTodaysFootprints";
 $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
@@ -2323,4 +2323,11 @@ $route["fillable/epe/get_assign_employees"]["get"] =
 
 $route["fillable/epe/get_document_preview"]["get"] =
   "v1/Employee_performance_evaluation/getDocumentPreview";
+
+/**
+ * Attendance routes
+ * @version 2.0
+ */
+$route["v1/clock"]["get"] = "v1/Attendance/api/My/getClockWithState";
+$route["v1/clock/mark"]["post"] = "v1/Attendance/api/My/markAttendance";
 

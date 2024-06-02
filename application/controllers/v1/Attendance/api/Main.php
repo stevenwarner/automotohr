@@ -87,6 +87,7 @@ class Main extends Public_Controller
             $post["latitude"] = $latLon["lat"];
             $post["longitude"] = $latLon["lng"];
         }
+        _e($post,true,true);
         //
         $this->clock_model->markAttendance(
             $this->loggedInCompany["sid"],
