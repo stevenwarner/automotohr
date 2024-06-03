@@ -245,10 +245,9 @@
                                         <?php } ?>
 
                                         <?php if (
-                                            isPayrollOrPlus() 
+                                            isPayrollOrPlus()
                                             && checkIfAppIsEnabled(PAYROLL)
-                                            && (PAYROLL)
-                                            ) { ?>
+                                        ) { ?>
                                             <li>
                                                 <a href="<?= base_url("schedules"); ?>">
                                                     Company Pay Schedules
@@ -259,6 +258,11 @@
                                                     Employees Pay Schedules
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="<?= base_url("minimum_wages"); ?>">
+                                                    Company Minimum Wages
+                                                </a>
+                                            </li>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
                                             <li>
@@ -266,11 +270,7 @@
                                                     Company Overtime Rules
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a href="<?= base_url("minimum_wages"); ?>">
-                                                    Company Minimum Wages
-                                                </a>
-                                            </li>
+
                                             <li>
                                                 <a href="<?= base_url("settings/job_sites"); ?>">
                                                     Manage Job Sites

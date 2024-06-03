@@ -250,34 +250,46 @@ class Company_payroll_model extends Base_payroll_model
      * Sync company
      * triggers from the webhook
      * Gusto To Store
-     * 
+     *
+     * @method gustoToStorePayrollBlockers
+     * @method gustoToCompanyAdmins
+     * @method gustoToStoreAddress
+     * @method gustoToStoreEarningTypes
+     * @method gustoToStorePaymentConfig
+     * @method gustoToStoreFederalTax
+     * @method gustoToStoreBenefits
+     * @method gustoToStoreIndustry
+     * @method gustoToStoreBankAccounts
+     * @method gustoToStoreSignatories
+     * @method gustoToStoreForms
+     * @method gustoToStoreMinimumWages
      * @version 1.0
      */
     public function syncGustoToStore()
     {
         // sync the payroll blockers
-        // $this->gustoToStorePayrollBlockers();
+        $this->gustoToStorePayrollBlockers();
         // // // add the missing gusto uuid
-        // $this->gustoToCompanyAdmins();
+        $this->gustoToCompanyAdmins();
         // // // // sync the address
-        // $this->gustoToStoreAddress();
+        $this->gustoToStoreAddress();
         // // // // sync the earning types
-        // $this->gustoToStoreEarningTypes();
+        $this->gustoToStoreEarningTypes();
         // // // // sync payment config
-        // $this->gustoToStorePaymentConfig();
+        $this->gustoToStorePaymentConfig();
         // // // sync federal tax
-        // $this->gustoToStoreFederalTax();
+        $this->gustoToStoreFederalTax();
         // // // sync benefits
-        // $this->gustoToStoreBenefits();
+        $this->gustoToStoreBenefits();
         // // // sync industry
-        // $this->gustoToStoreIndustry();
+        $this->gustoToStoreIndustry();
         // // sync bank accounts
-        // $this->gustoToStoreBankAccounts();
+        $this->gustoToStoreBankAccounts();
         // // sync signatories
-        // $this->gustoToStoreSignatories();
+        $this->gustoToStoreSignatories();
         // // sync company forms
-        // $this->gustoToStoreForms();
-
+        $this->gustoToStoreForms();
+        // sync minimum wages
         $this->gustoToStoreMinimumWages();
     }
 
@@ -2142,7 +2154,7 @@ class Company_payroll_model extends Base_payroll_model
             $fileObject = copyFileFromUrlToS3(
                 $gustoFormPDF["document_url"],
                 $v0["name"],
-                "",
+                (isDevServer() ? "local_" : "") . $this->gustoCompany["company_sid"] . "_",
                 "private"
             );
             // set the unsigned file
@@ -2190,17 +2202,14 @@ class Company_payroll_model extends Base_payroll_model
      */
     public function gustoToStoreMinimumWages()
     {
-        // get the locations
+        // get the location uuid
         $record
             = $this->db
-            ->select([
-                "states.state_code",
-            ])
-            ->join('states', 'states.sid = users.Location_State', 'left')
-            ->join('gusto_companies_locations', 'states.sid = users.Location_State', 'left')
-            ->where('users.sid', $this->gustoCompany["company_sid"])
+            ->select("gusto_uuid")
+            ->where('company_sid', $this->gustoCompany["company_sid"])
             ->limit(1)
-            ->get('users')
+            ->order_by("sid", "DESC")
+            ->get('gusto_companies_locations')
             ->row_array();
         //
         if (!$record) {
@@ -2208,8 +2217,8 @@ class Company_payroll_model extends Base_payroll_model
         }
         //
         $this->gustoCompany["other_uuid"]
-            = $record["state_code"];
-        //
+            = $record["gusto_uuid"];
+
         $response = $this
             ->lb_gusto
             ->gustoCall(
@@ -2218,7 +2227,6 @@ class Company_payroll_model extends Base_payroll_model
                 [],
                 "GET"
             );
-        _e($response);
         //
         $errors = $this
             ->lb_gusto
@@ -2230,6 +2238,53 @@ class Company_payroll_model extends Base_payroll_model
         //
         if (!$response) {
             return false;
+        }
+        //
+        $systemDateTime = getSystemDate();
+        //
+        foreach ($response as $v0) {
+            //
+            $dataArray = [];
+            $dataArray['gusto_uuid'] = $v0['uuid'];
+            $dataArray['wage'] = $v0['wage'];
+            $dataArray['wage_type'] = $v0['wage_type'];
+            $dataArray['effective_date'] = $v0['effective_date'];
+            $dataArray['authority'] = $v0['authority'];
+            $dataArray['notes'] = $v0['notes'];
+            $dataArray['is_custom'] = 0;
+            $dataArray['updated_at'] = $systemDateTime;
+            //
+            $whereArray = [
+                'company_sid' => $this->gustoCompany["company_sid"],
+                'gusto_uuid' => $v0["uuid"]
+            ];
+            //
+            if (
+                !$this
+                    ->db
+                    ->where($whereArray)
+                    ->count_all_results("company_minimum_wages")
+            ) {
+                //
+                $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+                $dataArray['created_at'] = $systemDateTime;
+                //
+                $this
+                    ->db
+                    ->insert(
+                        "company_minimum_wages",
+                        $dataArray
+                    );
+            } else {
+                //
+                $this
+                    ->db
+                    ->where($whereArray)
+                    ->update(
+                        "company_minimum_wages",
+                        $dataArray
+                    );
+            }
         }
     }
 }

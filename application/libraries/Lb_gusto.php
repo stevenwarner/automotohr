@@ -706,7 +706,7 @@ class Lb_gusto
             "v1/companies/{$key}/locations";
         // minimum_wages
         $urls["minimum_wages"] =
-            "v1/locations/{$key}/minimum_wages";
+            "v1/locations/{$key1}/minimum_wages";
         // payment_configs
         $urls["payment_configs"] =
             "v1/companies/{$key}/payment_configs";

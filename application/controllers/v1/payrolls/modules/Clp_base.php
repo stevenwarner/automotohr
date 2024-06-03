@@ -130,6 +130,7 @@ class Clp_base extends CI_Controller
         $data['employerId'] = $data['session']['employer_detail']['sid'];
         $data['level'] = 0;
         // get the security details
+        $data['securityDetails'] =
         $data['security_details'] = db_get_access_level_details(
             $data['session']['employer_detail']['sid'],
             null,

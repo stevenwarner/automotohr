@@ -29,33 +29,6 @@
                                 'id' => 'jsDashboard',
                                 "message" => "Please wait, while we are generating view."
                             ]); ?>
-                        <!-- Content area -->
-                        <div class="row">
-                            <div class="col-sm-12 col-md-12 text-right">
-                                <?php if ($payrollBlockers && !$companyOnProduction) { ?>
-                                    <button class="btn btn-success jsVerifyCompany csF16" title="Verify Company" placement="top">
-                                        <i class="fa fa-shield csF16" aria-hidden="true"></i>&nbsp;
-                                        <span>Verify Company</span>
-                                    </button>
-                                    <button class="btn btn-success jsVerifyBankAccount csF16" title="Verify bank account" placement="top">
-                                        <i class="fa fa-check-circle csF16" aria-hidden="true"></i>&nbsp;
-                                        <span>Verify Bank Account</span>
-                                    </button>
-                                <?php } ?>
-                                <?php if (!$companyOnProduction) { ?>
-                                    <button class="btn btn-success jsSyncCompanyData csF16" title="Sync data" placement="top">
-                                        <i class="fa fa-refresh csF16" aria-hidden="true"></i>&nbsp;
-                                        <span>Sync</span>
-                                    </button>
-                                <?php } ?>
-                                <?php if (isCompanyVerifiedForPayroll()) { ?>
-                                    <a class="btn btn-success csF16" href="<?= base_url("payrolls/clair/company"); ?>">
-                                        <i class="fa fa-cogs csF16" aria-hidden="true"></i>&nbsp;
-                                        <span>Set up Clair</span>
-                                    </a>
-                                <?php } ?>
-                            </div>
-                        </div>
                         <hr />
                         <?php if ($payrollBlockers["blocker_json"]) { ?>
 
