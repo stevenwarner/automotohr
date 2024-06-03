@@ -526,7 +526,7 @@
             //
             if (xhr.applicantXHR !== null) xhr.applicantXHR.abort();
 
-            let keywords = req.term.trim().replace(/\s+/, '_');
+            let keywords = decodeURIComponent(req.term).trim().replace(/\s/, '_');
 
             xhr.applicantXHR =
                 $.get(baseURI + "fetch-applicants/" + keywords + "", function(resp) {
