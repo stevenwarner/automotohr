@@ -752,7 +752,9 @@ class Lb_gusto
         // signatories
         $urls["signatories"] =
             "v1/companies/{$key}/signatories";
-
+        // employee_form_pdf
+        $urls["employee_form_pdf"] =
+            "v1/employees/{$key1}/forms/{$key2}/pdf";
 
         // Employees
         // work_addresses

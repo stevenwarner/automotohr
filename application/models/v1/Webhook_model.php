@@ -267,8 +267,20 @@ class Webhook_model extends CI_Model
         if ($this->post["verification_token"]) {
             return $this->verifyHook("employee", $this->post);
         }
-        // load payroll model
-        $this->load->model("v1/Employee_payroll_model", "employee_payroll_model");
+        // load the company model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Employee_payroll_model",
+                "employee_payroll_model"
+            );
+        //
+        $this
+            ->employee_payroll_model
+            ->setCompanyDetails(
+                $this->post["resource_uuid"],
+                "gusto_uuid"
+            );
         // when employee is onboard
         if ($this->post["event_type"] === "employee.onboarded") {
             // update onboard status
@@ -288,10 +300,7 @@ class Webhook_model extends CI_Model
                     ]
                 );
         }
-        if (
-            $this->post["event_type"] === "employee.onboarded"
-            || $this->post["event_type"] === "employee.updated"
-        ) {
+        if ($this->post["event_type"] === "employee.updated") {
             // handle employee sync
             $this
                 ->employee_payroll_model

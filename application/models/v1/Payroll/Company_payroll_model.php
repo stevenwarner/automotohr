@@ -2108,31 +2108,7 @@ class Company_payroll_model extends Base_payroll_model
         $systemDateTime = getSystemDate();
         //
         foreach ($response as $v0) {
-            //
-            $this->gustoCompany["other_uuid"]
-                = $v0["uuid"];
-            //
-            $gustoFormPDF =
-                $this
-                ->lb_gusto
-                ->gustoCall(
-                    "forms_pdf",
-                    $this->gustoCompany,
-                    [],
-                    "GET"
-                );
-            //
-            $errors = $this
-                ->lb_gusto
-                ->hasGustoErrors($response);
-            //
-            if ($errors) {
-                return $errors;
-            }
-            //
-            if (!$response) {
-                return false;
-            }
+           
             //
             $dataArray = [];
             $dataArray['gusto_uuid'] = $v0['uuid'];
@@ -2149,6 +2125,19 @@ class Company_payroll_model extends Base_payroll_model
                 'company_sid' => $this->gustoCompany["company_sid"],
                 'gusto_uuid' => $v0["uuid"]
             ];
+            //
+            $this->gustoCompany["other_uuid"]
+            = $v0["uuid"];
+            //
+            $gustoFormPDF =
+                $this
+                ->lb_gusto
+                ->gustoCall(
+                    "forms_pdf",
+                    $this->gustoCompany,
+                    [],
+                    "GET"
+                );
             // copy the company form from Gusto
             // to store and make it private
             $fileObject = copyFileFromUrlToS3(

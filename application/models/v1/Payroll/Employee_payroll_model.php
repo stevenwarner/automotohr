@@ -20,11 +20,13 @@ class Employee_payroll_model extends Base_payroll_model
 
     /**
      * set company details
-     * 
+     *
      * @param int $companyId
+     * @param string $column Optional
      */
     public function setCompanyDetails(
-        int $companyId
+        int $companyId,
+        string $column = "company_sid"
     ) {
         //
         $this
@@ -33,7 +35,9 @@ class Employee_payroll_model extends Base_payroll_model
                 [
                     "company_sid",
                     "employee_ids"
-                ]
+                ],
+                true,
+                $column
             );
         //
         $this->initialize($companyId);
@@ -52,6 +56,49 @@ class Employee_payroll_model extends Base_payroll_model
                 $this->onboardEmployee($v0);
             }
         }
+    }
+
+    /**
+     * Sync employee
+     * triggers from the webhook
+     * Gusto To Store
+     *
+     * @method gustoToStoreWA
+     * @method gustoToStoreHA
+     * @method gustoToStoreJobsAndCompensations
+     * @method gustoToStoreFederalTax
+     * @method gustoToStoreStateTax
+     * @method gustoToStoreFederalTax
+     * @method gustoToStorePaymentMethod
+     * @method gustoToStoreForms
+     * @version 1.0
+     */
+    public function syncEmployeeFromGustoToStore(
+        string $employeeGustoUUID
+    ) {
+        // set the employee details
+        $this->getGustoLinkedEmployeeDetails(
+            $employeeGustoUUID,
+            [
+                "employee_sid"
+            ],
+            true,
+            "gusto_uuid"
+        );
+        // sync work address
+        $this->gustoToStoreWA();
+        // sync home address
+        $this->gustoToStoreHA();
+        // sync job & compensations
+        $this->gustoToStoreJobsAndCompensations();
+        // sync federal tax
+        $this->gustoToStoreFederalTax();
+        // sync state tax
+        $this->gustoToStoreStateTax();
+        // sync payment method
+        $this->gustoToStorePaymentMethod();
+        // sync forms
+        $this->gustoToStoreForms();
     }
 
     /**
@@ -2312,6 +2359,39 @@ class Employee_payroll_model extends Base_payroll_model
                 $ins['document_sid'] = $document['documentId'];
             }
 
+            //
+            $this->gustoCompany["other_uuid"]
+                = $this->gustoEmployee["gusto_uuid"];
+            //
+            $this->gustoCompany["other_uuid_2"]
+                = $v0["uuid"];
+            //
+            $gustoFormPDF =
+                $this
+                ->lb_gusto
+                ->gustoCall(
+                    "employee_form_pdf",
+                    $this->gustoCompany,
+                    [],
+                    "GET"
+                );
+            //
+            if ($gustoFormPDF["document_url"]) {
+                // copy the employee form from Gusto
+                // to store and make it private
+                $fileObject = copyFileFromUrlToS3(
+                    $gustoFormPDF["document_url"],
+                    $v0["name"],
+                    (isDevServer() ? "local_" : "") .
+                        $this->gustoCompany["company_sid"] .
+                        "_" .
+                        $this->gustoEmployee["employee_sid"] .
+                        "_",
+                    "private"
+                );
+                // set the unsigned file
+                $ins['s3_form'] = $fileObject["s3_file_name"];
+            }
             //
             if (
                 $this

@@ -144,15 +144,16 @@ class Base_payroll_model extends CI_Model
     /**
      * Get gusto employee details for gusto
      *
-     * @param int   $employeeId
+     * @param string   $employeeId
      * @param array $extra Optional
      * @param bool  $include Optional
      * @return array
      */
     protected function getGustoLinkedEmployeeDetails(
-        int $employeeId,
+        string $employeeId,
         array $extra = [],
-        bool $include = true
+        bool $include = true,
+        string $column = "employee_sid"
     ): array {
         //
         $columns = $include ? array_merge([
@@ -163,7 +164,7 @@ class Base_payroll_model extends CI_Model
         return $this->gustoEmployee =
             $this->db
             ->select($columns)
-            ->where('employee_sid', $employeeId)
+            ->where($column, $employeeId)
             ->get('gusto_companies_employees')
             ->row_array();
     }
