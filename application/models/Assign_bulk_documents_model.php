@@ -94,6 +94,8 @@ class Assign_bulk_documents_model extends CI_Model
             ->where('portal_job_applications.hired_status', 0)
             ->group_start()
             ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', $query)
+            ->or_where('portal_job_applications.first_name', $query)
+            ->or_where('portal_job_applications.last_name', $query)
             ->or_like('portal_job_applications.email', $query)
             ->group_end()
             ->order_by('value', 'DESC')
