@@ -87,7 +87,7 @@ class Assign_bulk_documents_model extends CI_Model
     function fetchApplicantByQuery($companyId, $query)
     {
         //
-        $tmp = explode(" ", $query);
+        $tmp = explode("_", $query);
         //
         $this->db
             ->select('portal_job_applications.sid as id')
@@ -104,7 +104,7 @@ class Assign_bulk_documents_model extends CI_Model
 
         if ($tmp[1]) {
             $this->db
-                ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', $query);
+                ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', str_replace('_', ' ', $query));
         } else {
             $this->db
                 ->where('portal_job_applications.first_name', $query)
