@@ -107,8 +107,8 @@ class Assign_bulk_documents_model extends CI_Model
                 ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', $query);
         } else {
             $this->db
-                ->like('portal_job_applications.first_name', $query)
-                ->or_like('portal_job_applications.last_name', $query);
+                ->where('portal_job_applications.first_name', $query)
+                ->or_where('portal_job_applications.last_name', $query);
         }
 
         $this
