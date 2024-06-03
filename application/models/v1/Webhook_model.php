@@ -217,11 +217,17 @@ class Webhook_model extends CI_Model
     {
         //
         $this->post = $post;
+
         // we need to verify hook
+        
+        
         if ($this->post["verification_token"]) {
             return $this->verifyHook("company", $this->post);
         }
+
+
         // load the company model
+    
         $this
             ->load
             ->model(
@@ -235,14 +241,63 @@ class Webhook_model extends CI_Model
                 $this->post["entity_uuid"],
                 "gusto_uuid"
             );
+
+
         //
         if ($this->post["event_type"] === "company.approved") {
+            
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
                     "status" => "approved",
                     "updated_at" => getSystemDate()
                 ]);
+
+
+            // Send Company Approved Email
+
+            $this->db->select('company_sid');
+            $this->db->where('gusto_uuid', $this->post["entity_uuid"]);
+            $record_obj = $this->db->get('gusto_companies');
+            $record_arr = $record_obj->row_array();
+
+            //
+            if (!empty($record_arr)) {
+                $companySid = $record_arr['company_sid'];
+
+                $employeeList = getNotificationContacts(
+                    $companySid,
+                    'payroll_notifications',
+                    'payroll_notifications'
+                );
+
+                $companyName=getCompanyNameBySid($companySid);
+
+                $message_hf = message_header_footer(
+                    $companySid,
+                    $companyName
+                );
+
+                if (!empty($employeeList)) {
+
+                    foreach ($employeeList as $employeeRow) {
+
+                        $emailTemplateData = $this->getEmailTemplateById(COMPANY_APPROVE_FROM_GUSTO_EMAIL);
+                        $emailTemplateBody = $emailTemplateData['text'];
+                        //
+                        $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                        $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+
+                        //
+                        $message_body = '';
+                        $message_body .= $message_hf['header'];
+                        $message_body .= $emailTemplateBody;
+                        $message_body .= $message_hf['footer'];
+                        //
+                        log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $emailTemplateData['subject'], $message_body, FROM_STORE_NAME);
+                    }
+                }
+            }
         }
         // updated
         elseif ($this->post["event_type"] === "company.updated") {
@@ -323,6 +378,25 @@ class Webhook_model extends CI_Model
         // we need to verify hook
         if ($this->post["verification_token"]) {
             $this->verifyHook("payroll", $this->post);
+        }
+    }
+
+
+
+
+
+    function getEmailTemplateById($sid)
+    {
+        $this->db->select('sid, name, from_name, from_email, subject, text');
+        $this->db->where('sid', $sid);
+        $record_obj = $this->db->get('email_templates');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
         }
     }
 }

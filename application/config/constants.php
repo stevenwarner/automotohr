@@ -719,3 +719,6 @@ define("SHIFTS_PUBLISH_CONFIRMATION", 447);
 define('EMPLOYEE_PERFORMANCE_EVALUATION_MODULE', 'employeeperformanceevaluation');
 define('PERFORMANCE_VERIFICATION_EMAIL', 448);
 
+define('PAYROLL_NOTIFICATIONS_MESSAGE', 'The following individuals will be notified of any changes to the payroll.');
+
+define('COMPANY_APPROVE_FROM_GUSTO_EMAIL', 449);

@@ -338,6 +338,32 @@
                                                 </div>
                                             </div>
                                         </div>
+
+
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-envelope"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('notification_emails/private_message_notification'); ?>">Payroll Notifications</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>View Payroll Notifications</small>
+                                                        <br>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                <?php echo PAYROLL_NOTIFICATIONS_MESSAGE; ?>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/payroll_message_notification'); ?>">View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                 </div>
                             </div>
