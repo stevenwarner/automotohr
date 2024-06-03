@@ -26,7 +26,7 @@
                                     <!-- Regular -->
                                     <div class="panel panel-success">
                                         <div class="panel-heading">
-                                            <h1 class="csF16 csW m0">
+                                            <h1 class="text-large">
                                                 <strong>
                                                     Regular payroll
                                                 </strong>

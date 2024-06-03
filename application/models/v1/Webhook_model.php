@@ -219,16 +219,37 @@ class Webhook_model extends CI_Model
         $this->post = $post;
         // we need to verify hook
         if ($this->post["verification_token"]) {
-            $this->verifyHook("company", $this->post);
+            return $this->verifyHook("company", $this->post);
         }
+        // load the company model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Company_payroll_model",
+                "company_payroll_model"
+            );
         //
-        elseif ($this->post["event_type"] === "company.approved") {
+        $this
+            ->company_payroll_model
+            ->setCompanyDetails(
+                $this->post["entity_uuid"],
+                "gusto_uuid"
+            );
+        //
+        if ($this->post["event_type"] === "company.approved") {
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
                     "status" => "approved",
                     "updated_at" => getSystemDate()
                 ]);
+        }
+        // updated
+        elseif ($this->post["event_type"] === "company.updated") {
+            // load the helper
+            $this
+                ->company_payroll_model
+                ->syncGustoToStore();
         }
     }
 
@@ -246,8 +267,20 @@ class Webhook_model extends CI_Model
         if ($this->post["verification_token"]) {
             return $this->verifyHook("employee", $this->post);
         }
-        // load payroll model
-        $this->load->model("v1/Employee_payroll_model", "employee_payroll_model");
+        // load the company model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Employee_payroll_model",
+                "employee_payroll_model"
+            );
+        //
+        $this
+            ->employee_payroll_model
+            ->setCompanyDetails(
+                $this->post["resource_uuid"],
+                "gusto_uuid"
+            );
         // when employee is onboard
         if ($this->post["event_type"] === "employee.onboarded") {
             // update onboard status
@@ -267,10 +300,7 @@ class Webhook_model extends CI_Model
                     ]
                 );
         }
-        if (
-            $this->post["event_type"] === "employee.onboarded"
-            || $this->post["event_type"] === "employee.updated"
-        ) {
+        if ($this->post["event_type"] === "employee.updated") {
             // handle employee sync
             $this
                 ->employee_payroll_model

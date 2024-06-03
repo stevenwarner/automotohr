@@ -493,99 +493,6 @@ class Company_benefits extends Public_controller
     }
 
     /**
-     * flush payroll data
-     */
-    public function flushPayroll()
-    {
-        // get the session
-        $session = checkUserSession();
-
-        $companyId = $session['company_detail']['sid'];
-        // get company payroll ids
-        $employeeIds = $this->db->select('employee_sid')
-            ->where('company_sid', $companyId)
-            ->get('gusto_companies_employees')
-            ->result_array();
-        // get company payroll ids
-        $contractorIds = $this->db->select('sid')
-            ->where('company_sid', $companyId)
-            ->get('gusto_contractors')
-            ->result_array();
-        // get company payroll ids
-        $externalPayrollId = $this->db->select('sid')
-            ->where('company_sid', $companyId)
-            ->get('payrolls.external_payrolls')
-            ->result_array();
-        // get company payroll ids
-        $regularPayrollId = $this->db->select('sid')
-            ->where('company_sid', $companyId)
-            ->get('payrolls.regular_payrolls')
-            ->result_array();
-        //
-        if ($employeeIds) {
-            //
-            $employeeIds = array_column($employeeIds, 'employee_sid');
-            //
-            $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_companies_employees_work_addresses');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_employees_federal_tax');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_employees_jobs');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_employees_payment_method');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('gusto_employees_state_tax');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('payrolls.employee_benefits');
-            $this->db->where_in('employee_sid', $employeeIds)->delete('payrolls.employee_garnishments');
-            $this->db
-                ->where_in('users_sid', $employeeIds)
-                ->where('users_type', 'employee')
-                ->update('bank_account_details', ['gusto_uuid' => null]);
-            $this->db->where_in('sid', $employeeIds)->update('users', ['on_payroll' => 0]);
-        }
-        //
-        if ($contractorIds) {
-            //
-            $contractorIds = array_column($contractorIds, 'sid');
-            //
-            $this->db->where_in('contractor_sid', $contractorIds)->delete('gusto_contractors_bank_accounts');
-            $this->db->where_in('contractor_sid', $contractorIds)->delete('gusto_contractors_documents');
-        }
-        //
-        if ($externalPayrollId) {
-            //
-            $externalPayrollId = array_column($externalPayrollId, 'sid');
-            //
-            $this->db->where_in('external_payrolls_sid', $externalPayrollId)->delete('payrolls.external_payrolls_employees');
-            $this->db->where_in('external_payrolls_sid', $externalPayrollId)->delete('payrolls.external_payrolls_logs');
-            $this->db->where_in('external_payrolls_sid', $externalPayrollId)->delete('payrolls.external_payrolls_tax_suggestions');
-        }
-        //
-        if ($regularPayrollId) {
-            //
-            $regularPayrollId = array_column($regularPayrollId, 'sid');
-            //
-            $this->db->where_in('regular_payroll_sid', $regularPayrollId)->delete('payrolls.regular_payrolls_employees');
-        }
-        //
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies');
-        $this->db->where('company_sid', $companyId)->delete('companies_bank_accounts');
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies_admin');
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies_earning_types');
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies_employees');
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies_locations');
-        $this->db->where('company_sid', $companyId)->delete('gusto_companies_signatories');
-        $this->db->where('company_sid', $companyId)->delete('gusto_company_temporary');
-        $this->db->where('company_sid', $companyId)->delete('gusto_contractors');
-        $this->db->where('company_sid', $companyId)->delete('gusto_employees_forms');
-        $this->db->where('company_sid', $companyId)->delete('payrolls.company_benefits');
-        $this->db->where('company_sid', $companyId)->delete('payrolls.external_payrolls');
-        $this->db->where('company_sid', $companyId)->delete('payrolls.external_payrolls_tax_liabilities');
-        $this->db->where('company_sid', $companyId)->delete('payrolls.payroll_blockers');
-        $this->db->where('company_sid', $companyId)->delete('payrolls.regular_payrolls');
-        $this->db->where('sid', $companyId)->update('users', ['on_payroll' => 0]);
-        //
-        return redirect('/dashboard');
-    }
-
-
-    /**
      * get common data
      */
     private function getData()
@@ -635,7 +542,7 @@ class Company_benefits extends Public_controller
     private function checkForLinkedCompany($isAJAX = false)
     {
         // check if module is active
-        if (!isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])) {
+        if (!isCompanyLinkedWithGusto($this->session->userdata('logged_in')['company_detail']['sid'])) {
             //
             if ($isAJAX) {
                 return SendResponse(

@@ -26,6 +26,12 @@ class Payroll extends CI_Controller
         $this->form_validation->set_message('valid_email', '"{field}" is invalid.');
         // Call the model
         $this->load->model("v1/Payroll_model", "payroll_model");
+        //
+        $this
+            ->payroll_model
+            ->checkSyncProgress(
+                $this->session->userdata('logged_in')['company_detail']["sid"]
+            );
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
         // set path to CSS file
@@ -911,24 +917,6 @@ class Payroll extends CI_Controller
     }
 
     /**
-     * check company requirements
-     *
-     * @param int $companyId
-     * @return array
-     */
-    public function checkCompanyRequirements(int $companyId): array
-    {
-        //
-        $returnArray = $this->payroll_model->checkCompanyRequirements($companyId);
-        //
-        if (!$returnArray) {
-            return SendResponse(200, ['success' => true]);
-        }
-        //
-        return SendResponse(400, ['errors' => $returnArray]);
-    }
-
-    /**
      * get the create partner company step
      *
      * @param int $step
@@ -1056,106 +1044,7 @@ class Payroll extends CI_Controller
         return SendResponse(400, ['errors' => ['Invalid call.']]);
     }
 
-    /**
-     * get the company agreement
-     *
-     * @param int $companyId
-     */
-    public function getCompanyAgreement(int $companyId): array
-    {
-        // check for linked company
-        // $this->checkForLinkedCompany(true);
 
-        if (isCompanyOnBoard($companyId)) {
-            // set
-            $data = [];
-            // check if the contract is signed
-            $data['agreement'] = $this->db
-                ->select('is_ts_accepted, ts_email, ts_ip')
-                ->where('company_sid', $companyId)
-                ->get('gusto_companies')
-                ->row_array();
-            // get company's dmins
-            $data['admins'] = $this->db
-                ->select('email_address, automotohr_reference')
-                ->where('company_sid', $companyId)
-                ->where('is_store_admin', 0)
-                ->get('gusto_companies_admin')
-                ->result_array();
-            //
-            return SendResponse(
-                200,
-                [
-                    'view' => $this->load->view('v1/payroll/create_partner_company/agreement', $data, true)
-                ]
-            );
-        }
-    }
-
-    /**
-     * get the company agreement
-     *
-     * @param int $companyId
-     */
-    public function signCompanyAgreement(int $companyId): array
-    {
-        // set the sanitized post
-        $post = $this->input->post(null, true);
-        //
-        $errors = [];
-        // validation
-        if (!$post['email']) {
-            $errors[] = '"Email" is required.';
-        }
-        if (!filter_var($post['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = '"Email" is invalid.';
-        }
-        if (!$post['userReference']) {
-            $errors[] = '"System User Reference" is required.';
-        }
-        //
-        if ($errors) {
-            return SendResponse(400, ['errors' => $errors]);
-        }
-        //
-        $companyDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['employee_ids']);
-        //
-        $request = [];
-        $request['ip_address'] = getUserIP();
-        $request['external_user_id'] = $post['userReference'];
-        $request['email'] = $post['email'];
-        //
-        $gustoResponse = agreeToServiceAgreementFromGusto($request, $companyDetails);
-        //
-        $errors = hasGustoErrors($gustoResponse);
-        //
-        if ($errors) {
-            return SendResponse(400, $errors);
-        }
-        //
-        $this->db->where('company_sid', $companyId)
-            ->update('gusto_companies', [
-                'is_ts_accepted' => 1,
-                'ts_email' => $request['email'],
-                'ts_ip' => $request['ip_address'],
-                'ts_user_sid' => $request['external_user_id'],
-            ]);
-        // let's push the saved data
-        // location
-        $this->payroll_model->checkAndPushCompanyLocationToGusto($companyId);
-        //
-        if ($companyDetails['employee_ids']) {
-            // get the employee list
-            $ids = explode(',', $companyDetails['employee_ids']);
-            //
-            foreach ($ids as $employeeId) {
-                // selected employees
-                $this->payroll_model->onboardEmployee($employeeId, $companyId);
-            }
-        }
-        //
-        return SendResponse(200, ['success' => true]);
-    }
 
     /**
      * employee onboard flow
@@ -2815,7 +2704,7 @@ class Payroll extends CI_Controller
     private function checkForLinkedCompany($isAJAX = false)
     {
         // check if module is active
-        if (!isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])) {
+        if (!isCompanyLinkedWithGusto($this->session->userdata('logged_in')['company_detail']['sid'])) {
             //
             if ($isAJAX) {
                 return SendResponse(

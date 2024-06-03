@@ -93,7 +93,7 @@ class Settings extends Public_Controller
                 if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
                     $data['PageScripts'][] = 'v1/payroll/js/agreement';
                 }
-                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
                     $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
                 }
             }
@@ -5896,5 +5896,26 @@ class Settings extends Public_Controller
             $body,
             STORE_NAME
         );
+    }
+
+    /**
+     * Show sync message
+     */
+    public function showPayrollSyncMessage()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $data['security_details'] =
+                db_get_access_level_details(
+                    $data['session']['employer_detail']['sid']
+                );
+            $data['title'] = "Payroll Sync";
+
+            $this->load->view('main/header', $data);
+            $this->load->view('v1/payroll/syncMessage');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
     }
 }

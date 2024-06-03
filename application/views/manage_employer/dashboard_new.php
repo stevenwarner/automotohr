@@ -892,13 +892,14 @@
                                         </div>
                                     <?php } ?>
 
-                                    <?php if (checkIfAppIsEnabled('payroll')) { ?>
+                                    <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
                                         <?php
-                                        $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                        $isCompanyOnPayroll = isCompanyLinkedWithGusto($session['company_detail']['sid']);
                                         $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
+                                        $isSyncInProgress = checkIfSyncingInProgress();
                                         ?>
 
-                                        <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                                        <?php if (!$isCompanyOnPayroll && isPayrollOrPlus()) { ?>
                                             <!-- Set up -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
@@ -942,7 +943,7 @@
                                             </div>
                                         <?php } ?>
 
-                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
+                                        <?php if ($isCompanyOnPayroll && !$isSyncInProgress && $isTermsAgreed && isPayrollOrPlus()) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">
@@ -963,7 +964,7 @@
                                             </div>
                                         <?php } ?>
 
-                                        <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+                                        <?php if ($isCompanyOnPayroll&& !$isSyncInProgress && $isTermsAgreed) { ?>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="dash-box">
                                                     <div class="dashboard-widget-box">

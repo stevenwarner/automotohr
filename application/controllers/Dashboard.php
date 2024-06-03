@@ -661,12 +661,12 @@ class Dashboard extends Public_Controller
                 if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
                 }
-                if (!isCompanyOnBoard($data['session']['company_detail']['sid'])) {
+                if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', true);
                 }
 
                 // for payroll
-                if (isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+                if (isCompanyLinkedWithGusto($company_id) && isEmployeeOnPayroll($employer_id)) {
                     // load up the model
                     $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
                     //
@@ -1093,15 +1093,15 @@ class Dashboard extends Public_Controller
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
             //
-            $this->load->model('payroll_model', 'pm');
-            //
-            $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
-                'payroll_employees_pay_stubs',
-                [
-                    'employee_sid' => $data['session']['employer_detail']['sid']
-                ],
-                'sid'
-            ));
+            // $this->load->model('payroll_model', 'pm');
+            // //
+            // $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
+            //     'payroll_employees_pay_stubs',
+            //     [
+            //         'employee_sid' => $data['session']['employer_detail']['sid']
+            //     ],
+            //     'sid'
+            // ));
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //
@@ -1152,7 +1152,7 @@ class Dashboard extends Public_Controller
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
             // for payroll
-            if (checkIfAppIsEnabled(PAYROLL) && isCompanyOnBoard($company_id) && isEmployeeOnPayroll($employer_id)) {
+            if (checkIfAppIsEnabled(PAYROLL) && isCompanyLinkedWithGusto($company_id) && isEmployeeOnPayroll($employer_id)) {
                 // load up the model
                 $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
                 //

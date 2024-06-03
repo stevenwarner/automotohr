@@ -227,7 +227,6 @@ if (!function_exists('hasGustoErrors')) {
         } elseif (isset($response['errors']['invalid_grant'])) {
             $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
         } elseif (isset($response['errors'])) {
-            // _e($response['errors'],true,true);
             foreach ($response['errors'] as $err) {
                 //
                 
@@ -479,6 +478,10 @@ if (!function_exists('getUrl')) {
         $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
         // location minimum wages
         $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
+
+
+        //
+        $urls["create_admin"] = "v1/companies/$key/admins";
 
         return getCreds("AHR")->GUSTO->DEMO->URL . $urls[$index];
     }

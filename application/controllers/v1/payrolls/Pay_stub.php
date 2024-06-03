@@ -304,7 +304,7 @@ class Pay_stub extends Public_controller
     private function checkForLinkedCompany($isAJAX = false)
     {
         // check if module is active
-        if (!isCompanyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])) {
+        if (!isCompanisCompanyLinkedWithGustoyOnBoard($this->session->userdata('logged_in')['company_detail']['sid'])) {
             //
             if ($isAJAX) {
                 return SendResponse(

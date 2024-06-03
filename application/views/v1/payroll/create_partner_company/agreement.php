@@ -26,7 +26,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group hidden">
                     <label>System User Reference <strong class="text-danger">*</strong></label>
                     <input type="text" id="jsTermsOfServiceReference" class="form-control" required />
                 </div>

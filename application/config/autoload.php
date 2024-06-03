@@ -84,7 +84,7 @@ $autoload['drivers'] = array();
   |
   |	$autoload['helper'] = array('url', 'file');
  */
-$autoload['helper'] = array('app', 'url', 'security', 'form', 'common', 'company_info', 'html', 'file', 'ui', "date");
+$autoload['helper'] = array('app', 'url', 'security', 'form', 'common', 'company_info', 'html', 'file', 'ui', "date", "v1/gusto");
 
 /*
   | -------------------------------------------------------------------

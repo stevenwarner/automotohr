@@ -357,7 +357,7 @@
 
         <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
             <?php
-            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+            $isCompanyOnPayroll = isCompanyLinkedWithGusto($session['company_detail']['sid']);
             $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
             ?>
             <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
@@ -370,7 +370,7 @@
                         <figure><i class="fa fa-sign"></i></figure>Payroll Service Agreement
                     </a></li>
             <?php } ?>
-            <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
+            <?php if ($isCompanyOnPayroll && $isTermsAgreed && !checkIfSyncingInProgress()) { ?>
                 <li><a href="<?= base_url('payrolls/dashboard'); ?>">
                         <figure><i class="fa fa-cogs"></i></figure>Payroll Dashboard
                     </a></li>

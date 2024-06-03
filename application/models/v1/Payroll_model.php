@@ -509,95 +509,6 @@ class Payroll_model extends CI_Model
     // Create partner company process
 
     /**
-     * create partner company on Gusto
-     *
-     * @param int $companyId
-     * @param array $employees
-     * @return array
-     */
-    public function startCreatePartnerCompany(int $companyId, array $employees): array
-    {
-        // set default return array
-        $returnArray = ['success' => true];
-        // check if company is already onboard
-        if (!$this->checkIfCompanyAlreadyPartnered($companyId)) {
-            // company needs to be created first
-            $response = $this->createPartnerCompany($companyId);
-            //
-            if ($response['errors']) {
-                return $response;
-            }
-        }
-        // saves the employees list
-        $this->db
-            ->where('company_sid', $companyId)
-            ->update('gusto_companies', [
-                'employee_ids' => implode(',', $employees)
-            ]);
-        // push the admins to Gusto
-        $this->checkAndSetPayrollStoreAdmin($companyId);
-        // sync the admins
-        $this->syncPayrollAdmins($companyId);
-        // return
-        return $returnArray;
-    }
-
-    /**
-     * set the store admin against company
-     *
-     * @param int $companyId
-     * @return int
-     */
-    private function checkAndSetPayrollStoreAdmin(int $companyId): int
-    {
-        // set where array
-        $whereArray = [
-            'company_sid' => $companyId,
-            'is_store_admin' => 1,
-            'email_address' => $this->adminArray['email_address']
-        ];
-        // check if already pushed
-        if ($this->db->where($whereArray)->count_all_results('gusto_companies_admin')) {
-            return 0;
-        }
-        //
-        $firstName = $this->adminArray['first_name'];
-        $lastName = $this->adminArray['last_name'];
-        $email = $this->adminArray['email_address'];
-        //
-        if (
-            $this->checkDefaultAdminExist($companyId)
-        ) {
-            $defaultAdmin = $this->db
-                ->select('first_name, last_name, email_address')
-                ->where('company_sid', $companyId)
-                ->get('gusto_companies_default_admin')
-                ->row_array();
-            //
-            $firstName = $defaultAdmin['first_name'];
-            $lastName = $defaultAdmin['last_name'];
-            $email = $defaultAdmin['email_address'];
-        }
-        //
-        // insert the admin
-        $this->db->insert(
-            'gusto_companies_admin',
-            [
-                'company_sid' => $companyId,
-                'is_store_admin' => 1,
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'email_address' => $email,
-                'gusto_uuid' => null,
-                'created_at' => getSystemDate(),
-                'updated_at' => getSystemDate()
-            ]
-        );
-        // inserted id
-        return $this->db->insert_id();
-    }
-
-    /**
      * sync payroll admins
      *
      * @param int $companyId
@@ -721,120 +632,8 @@ class Payroll_model extends CI_Model
         return true;
     }
 
-    /**
-     * check if company already partnered with Gusto
-     *
-     * @param int $companyId
-     * @return bool
-     */
-    private function checkIfCompanyAlreadyPartnered(int $companyId): bool
-    {
-        return $this->db
-            ->where('company_sid', $companyId)
-            ->count_all_results('gusto_companies');
-    }
 
-    /**
-     * create partner company on Gusto
-     *
-     * @param int $companyId
-     * @return
-     */
-    private function createPartnerCompany(int $companyId): array
-    {
-        // set default return array
-        $returnArray = [];
-        $returnArray['errors'] = [];
-        // check and get company
-        $companyDetails = $this->db
-            ->select('
-            users.CompanyName,
-            users.ssn,
-            users.Location_Address,
-            users.Location_City,
-            users.Location_State,
-            users.Location_ZipCode
-        ')
-            ->where(
-                'users.sid',
-                $companyId
-            )
-            ->get('users')
-            ->row_array();
-        // check for SSN
-        if (!$companyDetails['ssn']) {
-            // set error
-            $returnArray['errors'][] = '"EIN" is missing.';
-        }
-        // Check if EIN is already used
-        if ($this->db->where('ein', $companyDetails['ssn'])->count_all_results('gusto_companies')) {
-            // set error
-            $returnArray['errors'][] = '"EIN" already in used.';
-        }
-        // check for company location
-        if (!$companyDetails['Location_Address']) {
-            // set error
-            $returnArray['errors'][] = '"Location Address" is missing.';
-        }
-        if (!$companyDetails['Location_State']) {
-            // set error
-            $returnArray['errors'][] = '"Location State" is missing.';
-        }
-        if (!$companyDetails['Location_City']) {
-            // set error
-            $returnArray['errors'][] = '"Location City" is missing.';
-        }
-        if (!$companyDetails['Location_ZipCode']) {
-            // set error
-            $returnArray['errors'][] = '"Location Zip" is missing.';
-        }
-        // check and return errors
-        if ($returnArray['errors']) {
-            //
-            return $returnArray;
-        }
-        // set request array
-        $request = [
-            'user' => [],
-            'company' => []
-        ];
-        // add primary admin
-        $request['user']['first_name'] = $this->adminArray['first_name'];
-        $request['user']['last_name'] = $this->adminArray['last_name'];
-        $request['user']['email'] = $this->adminArray['email_address'];
-        $request['user']['phone'] = $this->adminArray['phone_number'];
-        // add company details
-        $request['company']['name'] = $companyDetails['CompanyName'];
-        $request['company']['ein'] = $companyDetails['ssn'];
-        //
-        $response = createPartnerCompany($request);
-        // // set errors
-        $errors = hasGustoErrors($response);
-        //
-        if ($errors) {
-            // Error took place
-            return $errors;
-        }
-        // set the insert array
-        $ia = [];
-        $ia['company_sid'] = $companyId;
-        $ia['ein'] = $request['company']['ein'];
-        $ia['parent_company_sid'] = 0;
-        $ia['gusto_uuid'] = $response['company_uuid'];
-        $ia['refresh_token'] = $response['refresh_token'];
-        $ia['access_token'] = $response['access_token'];
-        $ia['is_ts_accepted'] = 0;
-        $ia['ts_email'] = null;
-        $ia['ts_ip'] = null;
-        $ia['ts_user_sid'] = null;
-        $ia['created_at'] = $ia['updated_at'] = getSystemDate();
-        // insert the array
-        $this->db->insert('gusto_companies', $ia);
-        // set the success array
-        return [
-            'success' => true
-        ];
-    }
+
 
     // create partner company ends
 
@@ -6616,161 +6415,162 @@ class Payroll_model extends CI_Model
         return true;
     }
 
-    private function checkAndPushCompanyDefaultEarnings ($companyId) {
+    private function checkAndPushCompanyDefaultEarnings($companyId)
+    {
         $customEarnings = [
             "cash_spiffs" => [
-                    "name" => "Cash Spiffs",
-                    "fields_json" => '{"name":"Cash Spiffs","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => "Cash Spiffs",
+                "fields_json" => '{"name":"Cash Spiffs","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "accrued_commission" => [
-                    "name" => "Accrued Commission",
-                    "fields_json" => '{"name":"Accrued Commission","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => "Accrued Commission",
+                "fields_json" => '{"name":"Accrued Commission","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "accrued_payroll" => [
-                    "name" => 'Accrued Payroll',
-                    "fields_json" => '{"name":"Accrued Payroll","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Accrued Payroll',
+                "fields_json" => '{"name":"Accrued Payroll","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
-            "apprentice_pay" => [ 
-                    "name" => 'Apprentice Pay',
-                    "fields_json" => '{"name":"Apprentice Pay","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+            "apprentice_pay" => [
+                "name" => 'Apprentice Pay',
+                "fields_json" => '{"name":"Apprentice Pay","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "building_maintenance_pay" => [
-                    "name" => 'Building Maintenance Pay',
-                    "fields_json" => '{"name":"Building Maintenance Pay","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Building Maintenance Pay',
+                "fields_json" => '{"name":"Building Maintenance Pay","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "commercial_truck_reg_hours" => [
-                    "name" => 'Commercial Truck Reg Hours',
-                    "fields_json" => '{"name":"Commercial Truck Reg Hours","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Commercial Truck Reg Hours',
+                "fields_json" => '{"name":"Commercial Truck Reg Hours","rate_type":"Hourly Rate","rate":"0.0","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
-            "cost_of_medical_coverage" => [ 
-                    "name" => 'Cost of Medical Coverage',
-                    "fields_json" => '{"name":"Cost of Medical Coverage","rate_type":"Flat Rate","rate":"0.0","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"Yes","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"No","medicare_company":"No","medicare_employee":"No","federal_unemployment_insurance":"No","mn_income_tax":"No","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
+            "cost_of_medical_coverage" => [
+                "name" => 'Cost of Medical Coverage',
+                "fields_json" => '{"name":"Cost of Medical Coverage","rate_type":"Flat Rate","rate":"0.0","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"Yes","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"No","medicare_company":"No","medicare_employee":"No","federal_unemployment_insurance":"No","mn_income_tax":"No","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
             ],
             "demo_earnings" => [
-                    "name" => 'Demo Earnings',
-                    "fields_json" => '{"name":"Demo Earnings","rate_type":"Flat Rate","rate":"0.0","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"No","mn_income_tax":"No","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
+                "name" => 'Demo Earnings',
+                "fields_json" => '{"name":"Demo Earnings","rate_type":"Flat Rate","rate":"0.0","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"No","mn_income_tax":"No","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
             ],
             "employee_referral_bonus" => [
-                    "name" => 'Employee Referral Bonus',
-                    "fields_json" => '{"name":"Employee Referral Bonus","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Employee Referral Bonus',
+                "fields_json" => '{"name":"Employee Referral Bonus","rate_type":"Flat Rate","rate":"0.0","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "esst" => [
-                    "name" => 'ESST',
-                    "fields_json" => '{"name":"ESST","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"0","federal_income_tax":"0","federal_income_tax_additional":"0","federal_income_tax_fixed_rate":"0","social_security_company":"0","social_security_employee":"0","medicare_company":"0","medicare_employee":"0","federal_unemployment_insurance":"0","mn_income_tax":"0","mn_income_tax_additional":"0","mn_income_tax_fixed_rate":"0","mn_unemployment_insurance":"0","mn_workforce_dev_assessment":"0"}'
+                "name" => 'ESST',
+                "fields_json" => '{"name":"ESST","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"0","federal_income_tax":"0","federal_income_tax_additional":"0","federal_income_tax_fixed_rate":"0","social_security_company":"0","social_security_employee":"0","medicare_company":"0","medicare_employee":"0","federal_unemployment_insurance":"0","mn_income_tax":"0","mn_income_tax_additional":"0","mn_income_tax_fixed_rate":"0","mn_unemployment_insurance":"0","mn_workforce_dev_assessment":"0"}'
             ],
             "f&i_manager_commission" => [
-                    "name" => 'F&I Manager Commission',
-                    "fields_json" => '{"name":"F&I Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'F&I Manager Commission',
+                "fields_json" => '{"name":"F&I Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "general_manager_commission" => [
-                    "name" => 'General Manager Commission',
-                    "fields_json" => '{"name":"General Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'General Manager Commission',
+                "fields_json" => '{"name":"General Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "general_manager_salary" => [
-                    "name" => 'General Manager Salary',
-                    "fields_json" => '{"name":"General Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'General Manager Salary',
+                "fields_json" => '{"name":"General Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "holiday_pay" => [
-                    "name" => 'Holiday Pay',
-                    "fields_json" => '{"name":"Holiday Pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Holiday Pay',
+                "fields_json" => '{"name":"Holiday Pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "manager_commission" => [
-                    "name" => 'Manager Commission',
-                    "fields_json" => '{"name":"Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Manager Commission',
+                "fields_json" => '{"name":"Manager Commission","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "manager_holiday_hours" => [
-                    "name" => 'Manager Holiday Hours',
-                    "fields_json" => '{"name":"Manager Holiday Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Manager Holiday Hours',
+                "fields_json" => '{"name":"Manager Holiday Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "manager_salary" => [
-                    "name" => 'Manager Salary',
-                    "fields_json" => '{"name":"Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Manager Salary',
+                "fields_json" => '{"name":"Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "manager_vacation_hours" => [
-                    "name" => 'Manager Vacation Hours',
-                    "fields_json" => '{"name":"Manager Vacation Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"Yes","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Manager Vacation Hours',
+                "fields_json" => '{"name":"Manager Vacation Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"Yes","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "miscellaneous_earnings" => [
-                    "name" => 'Miscellaneous Earnings',
-                    "fields_json" => '{"name":"Miscellaneous Earnings","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Miscellaneous Earnings',
+                "fields_json" => '{"name":"Miscellaneous Earnings","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "officer_health_premiums" => [
-                    "name" => 'Officer Health Premiums',
-                    "fields_json" => '{"name":"Officer Health Premiums","rate_type":"Flat Rate","rate":"","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"Yes","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"No","medicare_company":"No","medicare_employee":"No","federal_unemployment_insurance":"No","mn_income_tax":"Yes","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
+                "name" => 'Officer Health Premiums',
+                "fields_json" => '{"name":"Officer Health Premiums","rate_type":"Flat Rate","rate":"","wage_type":"Imputed Income","count_toward_minimum_wage":"No","non_monetary_income":"Yes","process_as_ot":"0","report_as_a_fringe_benefit":"Yes","from_w-2_box_14":"Yes","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"No","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"No","medicare_company":"No","medicare_employee":"No","federal_unemployment_insurance":"No","mn_income_tax":"Yes","mn_income_tax_additional":"No","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"No","mn_workforce_dev_assessment":"No"}'
             ],
             "other_pay" => [
-                    "name" => 'Other Pay',
-                    "fields_json" => '{"name":"Other Pay","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Other Pay',
+                "fields_json" => '{"name":"Other Pay","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "overtime_hourly_wages" => [
-                    "name" => 'Overtime Hourly Wages',
-                    "fields_json" => '{"name":"Overtime Hourly Wages","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"Yes","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Overtime Hourly Wages',
+                "fields_json" => '{"name":"Overtime Hourly Wages","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"Yes","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "overtime_premium" => [
-                    "name" => 'Overtime Premium',
-                    "fields_json" => '{"name":"Overtime Premium","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Overtime Premium',
+                "fields_json" => '{"name":"Overtime Premium","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "owner_salary" => [
-                    "name" => 'Owner Salary',
-                    "fields_json" => '{"name":"Owner Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Owner Salary',
+                "fields_json" => '{"name":"Owner Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "paid_time_off" => [
-                    "name" => 'Paid Time Off',
-                    "fields_json" => '{"name":"Paid Time Off","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"No","process_as_ot":"No","report_as_a_fringe_benefit":"No","from_w-2_box_14":"0","update_balances_":"Yes","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Paid Time Off',
+                "fields_json" => '{"name":"Paid Time Off","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"No","process_as_ot":"No","report_as_a_fringe_benefit":"No","from_w-2_box_14":"0","update_balances_":"Yes","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "piece_work_1" => [
-                    "name" => 'Piece Work 1',
-                    "fields_json" => '{"name":"Piece Work 1","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Piece Work 1',
+                "fields_json" => '{"name":"Piece Work 1","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"No","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "piece_work_2" => [
-                    "name" => 'Piece Work 2',
-                    "fields_json" => '{"name":"Piece Work 2","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Piece Work 2',
+                "fields_json" => '{"name":"Piece Work 2","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "pto_payout" => [
-                    "name" => 'PTO Payout',
-                    "fields_json" => '{"name":"PTO Payout","rate_type":"Hourly Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'PTO Payout',
+                "fields_json" => '{"name":"PTO Payout","rate_type":"Hourly Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"Yes","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "regular_hourly_wages" => [
-                    "name" => 'Regular Hourly Wages',
-                    "fields_json" => '{"name":"Regular Hourly Wages","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Regular Hourly Wages',
+                "fields_json" => '{"name":"Regular Hourly Wages","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "salary" => [
-                    "name" => 'Salary',
-                    "fields_json" => '{"name":"Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Salary',
+                "fields_json" => '{"name":"Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"0","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "shuttle_driver_reg_hours" => [
-                    "name" => 'Shuttle Driver Reg Hours',
-                    "fields_json" => '{"name":"Shuttle Driver Reg Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Shuttle Driver Reg Hours',
+                "fields_json" => '{"name":"Shuttle Driver Reg Hours","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "sign_on_bonus" => [
-                    "name" => 'Sign On Bonus',
-                    "fields_json" => '{"name":"Sign On Bonus","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Sign On Bonus',
+                "fields_json" => '{"name":"Sign On Bonus","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"No","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"Yes","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"No","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"Yes","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "tech_unapplied_time" => [
-                    "name" => 'Tech Unapplied Time',
-                    "fields_json" => '{"name":"Tech Unapplied Time","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Tech Unapplied Time',
+                "fields_json" => '{"name":"Tech Unapplied Time","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "technician_upsells" => [
-                    "name" => 'Technician Upsells',
-                    "fields_json" => '{"name":"Technician Upsells","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Technician Upsells',
+                "fields_json" => '{"name":"Technician Upsells","rate_type":"Flat Rate","rate":"","wage_type":"Supplemental Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "training_hourly_pay" => [
-                    "name" => 'Training Hourly Pay',
-                    "fields_json" => '{"name":"Training Hourly Pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Training Hourly Pay',
+                "fields_json" => '{"name":"Training Hourly Pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "training_fixed_amount" => [
-                    "name" => 'Training Fixed Amount',
-                    "fields_json" => '{"name":"Training Fixed Amount","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Training Fixed Amount',
+                "fields_json" => '{"name":"Training Fixed Amount","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "umt_manager_salary" => [
-                    "name" => 'UMT Manager Salary',
-                    "fields_json" => '{"name":"UMT Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'UMT Manager Salary',
+                "fields_json" => '{"name":"UMT Manager Salary","rate_type":"Flat Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ],
             "vacation_pay" => [
-                    "name" => 'Vacation pay',
-                    "fields_json" => '{"name":"Vacation pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
+                "name" => 'Vacation pay',
+                "fields_json" => '{"name":"Vacation pay","rate_type":"Hourly Rate","rate":"","wage_type":"Regular Wages","count_toward_minimum_wage":"Yes","non_monetary_income":"0","process_as_ot":"0","report_as_a_fringe_benefit":"0","from_w-2_box_14":"0","update_balances_":"0","leave_plan":"0","federal_loan_assessment":"Yes","federal_income_tax":"Yes","federal_income_tax_additional":"Yes","federal_income_tax_fixed_rate":"No","social_security_company":"Yes","social_security_employee":"Yes","medicare_company":"Yes","medicare_employee":"Yes","federal_unemployment_insurance":"Yes","mn_income_tax":"Yes","mn_income_tax_additional":"Yes","mn_income_tax_fixed_rate":"No","mn_unemployment_insurance":"Yes","mn_workforce_dev_assessment":"Yes"}'
             ]
-        
+
         ];
         //
         $customName = array_column($customEarnings, 'name');
@@ -6783,11 +6583,11 @@ class Payroll_model extends CI_Model
         if ($result) {
             foreach ($result as $key => $customEarning) {
                 if (in_array($customEarning['name'], $customName)) {
-                    $index = strtolower(str_replace(' ','_',$customEarning['name']));
+                    $index = strtolower(str_replace(' ', '_', $customEarning['name']));
                     unset($customEarnings[$index]);
-                } 
+                }
             }
-        } 
+        }
         //
         if (!empty($customEarnings)) {
             //
@@ -6800,5 +6600,26 @@ class Payroll_model extends CI_Model
         }
         //
         return true;
+    }
+
+    /**
+     * check the job queue progress
+     *
+     * @param int $companyId
+     */
+    public function checkSyncProgress(
+        int $companyId
+    ) {
+        if (
+            $this
+            ->db
+            ->where("is_processed", 0)
+            ->where("company_sid", $companyId)
+            ->count_all_results("payrolls.gusto_sync_queue")
+        ) {
+            return redirect("payrolls/sync");
+        }
+        //
+        return false;
     }
 }

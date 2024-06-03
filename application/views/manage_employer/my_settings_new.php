@@ -244,7 +244,10 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
-                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(PAYROLL)) { ?>
+                                        <?php if (
+                                            isPayrollOrPlus()
+                                            && checkIfAppIsEnabled(PAYROLL)
+                                        ) { ?>
                                             <li>
                                                 <a href="<?= base_url("schedules"); ?>">
                                                     Company Pay Schedules
@@ -255,6 +258,11 @@
                                                     Employees Pay Schedules
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="<?= base_url("minimum_wages"); ?>">
+                                                    Company Minimum Wages
+                                                </a>
+                                            </li>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
                                             <li>
@@ -262,11 +270,7 @@
                                                     Company Overtime Rules
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a href="<?= base_url("minimum_wages"); ?>">
-                                                    Company Minimum Wages
-                                                </a>
-                                            </li>
+
                                             <li>
                                                 <a href="<?= base_url("settings/job_sites"); ?>">
                                                     Manage Job Sites
@@ -281,7 +285,7 @@
 
                                         <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
                                             <?php
-                                            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                            $isCompanyOnPayroll = isCompanyLinkedWithGusto($session['company_detail']['sid']);
                                             $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
                                             ?>
                                             <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>

@@ -914,7 +914,7 @@
 
                                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                                             <?php
-                                                            $isCompanyOnPayroll = isCompanyOnBoard($session['company_detail']['sid']);
+                                                            $isCompanyOnPayroll = isCompanyLinkedWithGusto($session['company_detail']['sid']);
                                                             $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
                                                             ?>
 
