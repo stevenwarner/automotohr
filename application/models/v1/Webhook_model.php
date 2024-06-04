@@ -219,15 +219,16 @@ class Webhook_model extends CI_Model
         $this->post = $post;
 
         // we need to verify hook
-        
-        
+
+
+
         if ($this->post["verification_token"]) {
             return $this->verifyHook("company", $this->post);
         }
 
 
         // load the company model
-    
+
         $this
             ->load
             ->model(
@@ -242,10 +243,12 @@ class Webhook_model extends CI_Model
                 "gusto_uuid"
             );
 
-
         //
+        $data = [];
+        $data['entity_uuid'] = $this->post["entity_uuid"];
+
         if ($this->post["event_type"] === "company.approved") {
-            
+
             $this->db
                 ->where("gusto_uuid", $this->post["entity_uuid"])
                 ->update("gusto_companies", [
@@ -255,49 +258,8 @@ class Webhook_model extends CI_Model
 
 
             // Send Company Approved Email
-
-            $this->db->select('company_sid');
-            $this->db->where('gusto_uuid', $this->post["entity_uuid"]);
-            $record_obj = $this->db->get('gusto_companies');
-            $record_arr = $record_obj->row_array();
-
-            //
-            if (!empty($record_arr)) {
-                $companySid = $record_arr['company_sid'];
-
-                $employeeList = getNotificationContacts(
-                    $companySid,
-                    'payroll_notifications',
-                    'payroll_notifications'
-                );
-
-                $companyName=getCompanyNameBySid($companySid);
-
-                $message_hf = message_header_footer(
-                    $companySid,
-                    $companyName
-                );
-
-                if (!empty($employeeList)) {
-
-                    foreach ($employeeList as $employeeRow) {
-
-                        $emailTemplateData = $this->getEmailTemplateById(COMPANY_APPROVE_FROM_GUSTO_EMAIL);
-                        $emailTemplateBody = $emailTemplateData['text'];
-                        //
-                        $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
-                        $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
-
-                        //
-                        $message_body = '';
-                        $message_body .= $message_hf['header'];
-                        $message_body .= $emailTemplateBody;
-                        $message_body .= $message_hf['footer'];
-                        //
-                        log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $emailTemplateData['subject'], $message_body, FROM_STORE_NAME);
-                    }
-                }
-            }
+            $data['company_status'] = "Approved";
+            $this->sendCompanyEmail($data);
         }
         // updated
         elseif ($this->post["event_type"] === "company.updated") {
@@ -305,6 +267,14 @@ class Webhook_model extends CI_Model
             $this
                 ->company_payroll_model
                 ->syncGustoToStore();
+
+            //Send Mail
+            $data['company_status'] = "Updated";
+            $this->sendCompanyEmail($data);
+        } elseif ($this->post["event_type"] === "company.onboarded") {
+            //Send Mail
+            $data['company_status'] = "Onboarded";
+            $this->sendCompanyEmail($data);
         }
     }
 
@@ -337,6 +307,10 @@ class Webhook_model extends CI_Model
                 "gusto_uuid"
             );
         // when employee is onboard
+
+        $data = [];
+        $data['entity_uuid'] = $this->post["entity_uuid"];
+
         if ($this->post["event_type"] === "employee.onboarded") {
             // update onboard status
             $this->db
@@ -354,6 +328,11 @@ class Webhook_model extends CI_Model
                         "updated_at" => getSystemDate()
                     ]
                 );
+
+
+            //Send Email
+            $data['employee_status'] = "Onboarded";
+            $this->sendEmployeeEmail($data);
         }
         if ($this->post["event_type"] === "employee.updated") {
             // handle employee sync
@@ -362,6 +341,22 @@ class Webhook_model extends CI_Model
                 ->syncEmployeeFromGustoToStore(
                     $this->post["entity_uuid"]
                 );
+
+            //Send Email
+            $data['employee_status'] = "Updated";
+            $this->sendEmployeeEmail($data);
+        } elseif ($this->post["event_type"] === "employee.deleted") {
+            //Send Email
+            $data['employee_status'] = "Deleted";
+            $this->sendEmployeeEmail($data);
+        } elseif ($this->post["event_type"] === "employee.terminated") {
+            //Send Email
+            $data['employee_status'] = "Terminated";
+            $this->sendEmployeeEmail($data);
+        } elseif ($this->post["event_type"] === "employee.rehired") {
+            //Send Email
+            $data['employee_status'] = "Rehired";
+            $this->sendEmployeeEmail($data);
         }
     }
 
@@ -375,16 +370,49 @@ class Webhook_model extends CI_Model
     {
         //
         $this->post = $post;
+
+
         // we need to verify hook
         if ($this->post["verification_token"]) {
             $this->verifyHook("payroll", $this->post);
+        }
+
+
+        $data = [];
+        $data['entity_uuid'] = $this->post["entity_uuid"];
+
+        //
+        if ($this->post["event_type"] === "payroll.submitted") {
+
+            // Send Email
+            $data['payroll_status'] = "Submitted";
+            $this->sendPayrollEmail($data);
+        } elseif ($this->post["event_type"] === "payroll.cancelled") {
+            // Send Email
+            $data['payroll_status'] = "Cancelled";
+            $this->sendPayrollEmail($data);
+        } elseif ($this->post["event_type"] === "payroll.processed") {
+            // Send Email
+            $data['payroll_status'] = "Processed";
+            $this->sendPayrollEmail($data);
+        } elseif ($this->post["event_type"] === "payroll.paid") {
+            // Send Email
+            $data['payroll_status'] = "Paid";
+            $this->sendPayrollEmail($data);
+        } elseif ($this->post["event_type"] === "payroll.updated") {
+            // Send Email
+            $data['payroll_status'] = "Updated";
+            $this->sendPayrollEmail($data);
+        } elseif ($this->post["event_type"] === "payroll.reversed") {
+            // Send Email
+            $data['payroll_status'] = "Reversed";
+            $this->sendPayrollEmail($data);
         }
     }
 
 
 
-
-
+    //
     function getEmailTemplateById($sid)
     {
         $this->db->select('sid, name, from_name, from_email, subject, text');
@@ -397,6 +425,161 @@ class Webhook_model extends CI_Model
             return $record_arr;
         } else {
             return array();
+        }
+    }
+
+
+    //
+    function sendCompanyEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(COMPANY_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_status}}', $data['company_status'], $emailTemplateBody);
+
+                    $subject = str_replace('{{company_status}}', $data['company_status'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
+        }
+    }
+
+
+    //
+    function sendPayrollEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(PAYROLL_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{payroll_status}}', $data['payroll_status'], $emailTemplateBody);
+                    $subject = str_replace('{{payroll_status}}', $data['payroll_status'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
+        }
+    }
+
+
+
+
+    function sendEmployeeEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(EMPLOYEE_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{employee_status}}', $data['employee_status'], $emailTemplateBody);
+                    $subject = str_replace('{{employee_status}}', $data['employee_status'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
         }
     }
 }

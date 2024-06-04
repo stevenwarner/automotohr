@@ -721,4 +721,9 @@ define('PERFORMANCE_VERIFICATION_EMAIL', 448);
 
 define('PAYROLL_NOTIFICATIONS_MESSAGE', 'The following individuals will be notified of any changes to the payroll.');
 
-define('COMPANY_APPROVE_FROM_GUSTO_EMAIL', 449);
+define('COMPANY_STATUS_FROM_GUSTO_EMAIL', 449);
+
+define('PAYROLL_STATUS_FROM_GUSTO_EMAIL', 450);
+define('EMPLOYEE_STATUS_FROM_GUSTO_EMAIL', 451);
+
+
