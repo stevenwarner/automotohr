@@ -218,9 +218,7 @@ class Webhook_model extends CI_Model
         //
         $this->post = $post;
 
-        // we need to verify hook
-
-
+        // we need to verify hook   
 
         if ($this->post["verification_token"]) {
             return $this->verifyHook("company", $this->post);
@@ -228,7 +226,6 @@ class Webhook_model extends CI_Model
 
 
         // load the company model
-
         $this
             ->load
             ->model(
@@ -242,6 +239,7 @@ class Webhook_model extends CI_Model
                 $this->post["entity_uuid"],
                 "gusto_uuid"
             );
+
 
         //
         $data = [];
@@ -275,6 +273,24 @@ class Webhook_model extends CI_Model
             //Send Mail
             $data['company_status'] = "Onboarded";
             $this->sendCompanyEmail($data);
+        } elseif ($this->post["event_type"] === "company.bank_account.created") {
+
+            // Company Bank Account
+            $data['account_status'] = "Created";
+            $data['account_for'] = "Comapny";
+            $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "company.bank_account.updated") {
+
+            // Company Bank Account
+            $data['account_status'] = "Update";
+            $data['account_for'] = "Comapny";
+            $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "company.bank_account.deleted") {
+
+            // Company Bank Account
+            $data['account_status'] = "Deleted";
+            $data['account_for'] = "Comapny";
+            $this->sendBankAccountEmail($data);
         }
     }
 
@@ -357,6 +373,24 @@ class Webhook_model extends CI_Model
             //Send Email
             $data['employee_status'] = "Rehired";
             $this->sendEmployeeEmail($data);
+        } elseif ($this->post["event_type"] === "employee.bank_account.created") {
+
+            // Company Bank Account
+            $data['account_status'] = "Created";
+            $data['account_for'] = "Employee";
+            $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "employee.bank_account.updated") {
+
+            // Company Bank Account
+            $data['account_status'] = "Updated";
+            $data['account_for'] = "Employee";
+            $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "employee.bank_account.deleted") {
+
+            // Company Bank Account
+            $data['account_status'] = "Deleted";
+            $data['account_for'] = "Employee";
+            $this->sendBankAccountEmail($data);
         }
     }
 
@@ -441,7 +475,6 @@ class Webhook_model extends CI_Model
 
         if (!empty($record_arr)) {
             $companySid = $record_arr['company_sid'];
-
             $employeeList = getNotificationContacts(
                 $companySid,
                 'payroll_notifications',
@@ -531,9 +564,7 @@ class Webhook_model extends CI_Model
         }
     }
 
-
-
-
+    //
     function sendEmployeeEmail($data)
     {
 
@@ -570,6 +601,61 @@ class Webhook_model extends CI_Model
                     $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
                     $emailTemplateBody = str_replace('{{employee_status}}', $data['employee_status'], $emailTemplateBody);
                     $subject = str_replace('{{employee_status}}', $data['employee_status'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
+        }
+    }
+
+
+
+
+    //
+    function sendBankAccountEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(BANK_ACCOUNT_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{account_status}}', $data['account_status'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{account_for}}', $data['account_for'], $emailTemplateBody);
+
+                    $subject = str_replace('{{account_for}}', $data['account_for'], $emailTemplateData['subject']);
 
                     //
                     $message_body = '';
