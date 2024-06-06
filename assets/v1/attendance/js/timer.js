@@ -12,6 +12,10 @@ $(function markAttendance() {
 	 */
 	let initialDateDuration;
 	/**
+	 * holds the initial value
+	 */
+	let timeZone;
+	/**
 	 * holds the timer ref
 	 */
 	let timerREF;
@@ -269,6 +273,7 @@ $(function markAttendance() {
 				} else {
 					initialDate = resp.clock_time;
 					initialDateDuration = resp.time;
+					timeZone = resp.timezone;
 					timerREF = setInterval(handleTimer, 1000);
 				}
 				//
@@ -386,13 +391,15 @@ $(function markAttendance() {
 		}
 		// clock date
 		const clockDateObj = moment
-			.utc(initialDate)
+			.utc(initialDate).tz(timeZone)
 			.subtract(initialDateDuration, "seconds");
-		const todayDate = moment.utc();
+		const todayDate = moment.utc().tz(timeZone);
+		// const todayDate = moment.utc("2024-06-03 00:42:25");
+		console.log(todayDate);
 		// get the difference
 		const diff = todayDate.diff(clockDateObj);
 		//
-		const dt = moment(diff).utc();
+		const dt = moment(diff).utc().tz(timeZone);
 		//
 		$(".jsAttendanceClockHour").html(dt.format("HH"));
 		$(".jsAttendanceClockMinute").html(dt.format("mm"));

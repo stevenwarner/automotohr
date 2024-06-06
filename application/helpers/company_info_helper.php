@@ -729,7 +729,7 @@ if (!function_exists('db_get_employee_profile')) {
     function db_get_employee_profile($emp_id)
     {
         $CI = &get_instance();
-        $CI->db->select('first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone');
         $CI->db->where('sid', $emp_id);
         return $CI->db->get('users')->result_array();
     }

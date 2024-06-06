@@ -385,13 +385,15 @@ class My_clock_model extends Base_model
         $upd = [];
         //
         if ($post["type"] === "clocked_out" || $post["type"] === "break_started") {
-            $upd["clocked_out"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
+            $upd["clocked_out"] = $this->loggedInPersonDateTime;
+            $upd["clocked_out_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
         } else {
             $upd["clocked_out"] = null;
+            $upd["clocked_out_utc"] = null;
         }
         $upd["last_event"] = $post["type"] === "break_ended" ? "clocked_in" : $post["type"];
         $upd["updated_at"] = getSystemDate();
-        $upd["last_record_time"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
+        $upd["last_record_time"] = $this->loggedInPersonDateTime;
         $upd["is_approved"] = 0;
         //
         $this->db
@@ -656,7 +658,8 @@ class My_clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["break_start"] = $this->clockDate . " " . getSystemDateInUTC(TIME);
+        $insLog["break_start"] = $this->loggedInPersonDateTime;
+        $insLog["break_start_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
         $insLog["job_site_sid"] = $response["job_site_sid"];
@@ -712,8 +715,8 @@ class My_clock_model extends Base_model
         }
         // add the entry to log table
         $updLog = [];
-        $updLog["break_end"] =
-            $this->clockDate . " " . getSystemDateInUTC(TIME);
+        $updLog["break_end"] = $this->loggedInPersonDateTime;
+        $updLog["break_end_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
@@ -748,8 +751,8 @@ class My_clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["clocked_in"] =
-            $this->clockDate . " " . getSystemDateInUTC(TIME);
+        $insLog["clocked_in"] = $this->loggedInPersonDateTime;
+        $insLog["clocked_in_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
         $insLog["job_site_sid"] = $post["job_site"];
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
@@ -809,8 +812,8 @@ class My_clock_model extends Base_model
         }
         // update table log
         $updLog = [];
-        $updLog["clocked_out"] =
-            $this->clockDate . " " . getSystemDateInUTC(TIME);
+        $updLog["clocked_out"] = $this->loggedInPersonDateTime;
+        $updLog["clocked_out_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
@@ -891,7 +894,6 @@ class My_clock_model extends Base_model
     public function processTimeSheetDetails($post)
     {
         if ($post["sid"] == 0) {
-            // prepare insert array
             $ins = [];
             $ins["company_sid"] = $post["companyId"];
             $ins["employee_sid"] = $post["employeeId"];
@@ -946,8 +948,20 @@ class My_clock_model extends Base_model
                     // add the entry to log table
                     $insLog = [];
                     $insLog["cl_attendance_sid"] = $post["sid"];
-                    $insLog[$indexOne] = $v0["startTime"];
-                    $insLog[$indexTwo] = $v0["endTime"];
+                    $insLog[$indexOne] = convertTimeZone(
+                        $v0["startTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexTwo] = convertTimeZone(
+                        $v0["endTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexOne."_utc"] = $v0["startTime"];
+                    $insLog[$indexTwo."_utc"] = $v0["endTime"];
                     $insLog["lat"] = 0;
                     $insLog["lng"] = 0;
                     $insLog["created_at"] = getSystemDate();
@@ -973,9 +987,30 @@ class My_clock_model extends Base_model
                         ])->update(
                             "cl_attendance",
                             [
-
-                                "clocked_in" => $initialClockIn,
-                                "last_record_time" => $initialClockIn
+                                "clocked_date_utc" => formatDateToDB(
+                                    convertTimeZone(
+                                        $initialClockIn,
+                                        DB_DATE_WITH_TIME,
+                                        "UTC",
+                                        getLoggedInPersonTimeZone()
+                                    ),
+                                    DB_DATE_WITH_TIME,
+                                    DB_DATE
+                                ),
+                                "clocked_in" => convertTimeZone(
+                                    $initialClockIn,
+                                    DB_DATE_WITH_TIME,
+                                    "UTC",
+                                    getLoggedInPersonTimeZone()
+                                ),
+                                "last_record_time" => convertTimeZone(
+                                    $initialClockIn,
+                                    DB_DATE_WITH_TIME,
+                                    "UTC",
+                                    getLoggedInPersonTimeZone()
+                                ),
+                                "clocked_in_utc" => $initialClockIn,
+                                "last_record_time_utc" => $initialClockIn
                             ]
                         );
                 }
@@ -987,7 +1022,13 @@ class My_clock_model extends Base_model
                         ])->update(
                             "cl_attendance",
                             [
-                                "clocked_out" => $initialClockOut
+                                "clocked_out" => convertTimeZone(
+                                    $initialClockOut,
+                                    DB_DATE_WITH_TIME,
+                                    "UTC",
+                                    getLoggedInPersonTimeZone()
+                                ),
+                                "clocked_out_utc" => $initialClockOut
                             ]
                         );
                 }
@@ -1038,8 +1079,20 @@ class My_clock_model extends Base_model
                     // add the entry to log table
                     $insLog = [];
                     $insLog["cl_attendance_sid"] = $post["sid"];
-                    $insLog[$indexOne] = $v0["startTime"];
-                    $insLog[$indexTwo] = $v0["endTime"];
+                    $insLog[$indexOne] = convertTimeZone(
+                        $v0["startTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexTwo] = convertTimeZone(
+                        $v0["endTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexOne."_utc"] = $v0["startTime"];
+                    $insLog[$indexTwo."_utc"] = $v0["endTime"];
                     $insLog["duration"] =
                         $this->attendance_lib
                         ->getDurationInMinutes(
@@ -1058,8 +1111,20 @@ class My_clock_model extends Base_model
                 } else {
                     // update
                     $insLog = [];
-                    $insLog[$indexOne] = $v0["startTime"];
-                    $insLog[$indexTwo] = $v0["endTime"];
+                    $insLog[$indexOne] = convertTimeZone(
+                        $v0["startTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexTwo] = convertTimeZone(
+                        $v0["endTime"],
+                        DB_DATE_WITH_TIME,
+                        "UTC",
+                        getLoggedInPersonTimeZone()
+                    );
+                    $insLog[$indexOne."_utc"] = $v0["startTime"];
+                    $insLog[$indexTwo."_utc"] = $v0["endTime"];
 
                     if ($indexOne  === "clocked_in") {
                         $insLog["break_start"] = null;
@@ -1100,7 +1165,13 @@ class My_clock_model extends Base_model
                 // add the entry to log table
                 $insLog = [];
                 $insLog["cl_attendance_sid"] = $post["sid"];
-                $insLog["clocked_in"] = $breakStartTime;
+                $insLog["clocked_in"] = convertTimeZone(
+                    $breakStartTime,
+                    DB_DATE_WITH_TIME,
+                    "UTC",
+                    getLoggedInPersonTimeZone()
+                );
+                $insLog["clocked_in_utc"] = $breakStartTime;
                 $insLog["lat"] = 0;
                 $insLog["lng"] = 0;
                 $insLog["created_at"] = getSystemDate();
@@ -1113,10 +1184,22 @@ class My_clock_model extends Base_model
             }
 
             if ($initialClockIn) {
-                $upd["clocked_in"] = $initialClockIn;
+                $upd["clocked_in"] = convertTimeZone(
+                    $initialClockIn,
+                    DB_DATE_WITH_TIME,
+                    "UTC",
+                    getLoggedInPersonTimeZone()
+                );
+                $upd["clocked_in_utc"] = $initialClockIn;
             }
             if ($initialClockOut && $state !== "break_in_out") {
-                $upd["clocked_out"] = $initialClockOut;
+                $upd["clocked_out"] = convertTimeZone(
+                    $initialClockOut,
+                    DB_DATE_WITH_TIME,
+                    "UTC",
+                    getLoggedInPersonTimeZone()
+                );
+                $upd["clocked_out_utc"] = $initialClockOut;
             }
             //
             // insert log
@@ -1129,789 +1212,7 @@ class My_clock_model extends Base_model
                 );
         }
     }
-
-    public function getPeopleClocks(int $companyId, string $date)
-    {
-        // // convert the date in UTC
-        // $date = convertTimeZone(
-        //     $date,
-        //     DB_DATE,
-        //     STORE_DEFAULT_TIMEZONE_ABBR,
-        //     DB_TIMEZONE
-        // );
-        //
-        $returnArray = [
-            "breaks" => [],
-            "clocked_in" => [],
-            "clocked_out" => [],
-            "absent" => []
-        ];
-        //
-        $records = $this->db
-            ->select(getUserFields())
-            ->select("cl_attendance.last_event, cl_attendance.employee_sid")
-            ->join(
-                "users",
-                "users.sid = cl_attendance.employee_sid",
-                "inner"
-            )
-            ->where("cl_attendance.clocked_date", $date)
-            ->where("cl_attendance.company_sid", $companyId)
-            ->get("cl_attendance")
-            ->result_array();
-        //
-        if ($records) {
-            foreach ($records as $v0) {
-                if ($v0["last_event"] == "clocked_in") {
-                    $returnArray["clocked_in"][] = $v0;
-                } elseif ($v0["last_event"] == "break_started") {
-                    $returnArray["breaks"][] = $v0;
-                } elseif ($v0["last_event"] == "clocked_out") {
-                    $returnArray["clocked_out"][] = $v0;
-                }
-            }
-        }
-
-        $ids = array_column($records, "employee_sid");
-
-        //
-        $this->db
-            ->select(getUserFields())
-            ->where("active", 1)
-            ->where("is_executive_admin", 0)
-            ->where("terminated_status", 0)
-            ->where("parent_sid", $companyId);
-
-        if ($ids) {
-            $this->db->where_not_in("sid", $ids);
-        }
-        $returnArray["absent"] = $this->db->get("users")
-            ->result_array();
-
-        return $returnArray;
-    }
-
-    public function getEmployees($companyId)
-    {
-        return //
-            $this->db
-            ->select(getUserFields())
-            ->where("active", 1)
-            ->where("is_executive_admin", 0)
-            ->where("terminated_status", 0)
-            ->where("parent_sid", $companyId)
-            ->get("users")
-            ->result_array();
-    }
-
-    public function processTimeSheetStatus($post)
-    {
-        $this->db
-            ->where_in("sid", $post["ids"])
-            ->update("cl_attendance", [
-                "is_approved" => $post["status"]
-            ]);
-    }
-
-
-    public function getTimeSheetHistory($attendanceId)
-    {
-        //
-        $record = $this->db
-            ->select("employee_sid, company_sid, clocked_date")
-            ->where("sid", $attendanceId)
-            ->get("cl_attendance")
-            ->row_array();
-
-        $breaks = $this->getAllowedBreaksForEmployee(
-            $record["employee_sid"],
-            $record["clocked_date"],
-        );
-
-        return $this->getAttendanceFootprints($attendanceId, $breaks);
-    }
-
-    /**
-     * get employee shift for a specific date
-     *
-     * @return array
-     */
-    private function getAllowedBreaksForEmployee($employeeId, $date): array
-    {
-        // get the employee shifts
-        $shift = $this->db
-            ->select("
-                breaks_json
-            ")
-            ->where([
-                "employee_sid" => $employeeId,
-                "shift_date" => $date,
-            ])
-            ->get("cl_shifts")
-            ->row_array();
-        //
-        if (!$shift) {
-            return [];
-        }
-        //
-        if (!$shift["breaks_json"]) {
-            return [];
-        }
-        //
-        $breaks = json_decode($shift["breaks_json"], true);
-        //
-        foreach ($breaks as $index => $v0) {
-            //
-            if ($v0["start_time"]) {
-                $breaks[$index]["start_time"] = formatDateToDB(
-                    $v0["start_time"],
-                    "H:i",
-                    "h:i a"
-                );
-                $breaks[$index]["end_time"] = formatDateToDB(
-                    $v0["end_time"],
-                    "H:i",
-                    "h:i a"
-                );
-            }
-        }
-        //
-        return $breaks;
-    }
-
-    /**
-     * Calculate the worked time within range
-     *
-     * @param int $employeeId
-     * @param string $periodStartDate Y-m-d
-     * @param string $periodEndDate Y-m-d
-     * @return array
-     */
-    public function calculateTimeWithinRange(
-        int $employeeId,
-        string $periodStartDate,
-        string $periodEndDate
-    ): array {
-        // set new record array
-        $returnArray = [
-            "periods" => [],
-            "schedule_time" => 0,
-            "difference_time" => 0,
-            "clocked_time" => 0,
-            "worked_time" => 0,
-            "regular_time" => 0,
-            "breaks_time" => 0,
-            "paid_break_time" => 0,
-            "unpaid_break_time" => 0,
-            "overtime" => 0,
-            "double_overtime" => 0,
-            "normal_rate" => 0,
-            "over_time_rate" => 0,
-            "double_over_time_rate" => 0,
-            "paid_time_off" => [],
-            "shift_status" => [
-                "approved_count" => 0,
-                "unapproved_count" => 0,
-                "total_shifts" => 0
-            ],
-            "text" => [
-                "schedule_time" => "0h",
-                "difference_time" => "0h",
-                "clocked_time" => '0h',
-                "worked_time" => '0h',
-                "regular_time" => '0h',
-                "breaks_time" => '0h',
-                "paid_break_time" => '0h',
-                "unpaid_break_time" => '0h',
-                "overtime" => '0h',
-                "double_overtime" => '0h',
-                "overtime_detail" => '0h',
-                "double_overtime_detail" => '0h',
-            ]
-        ];
-        //
-        $records =
-            $this->db
-            ->select("
-                sid,
-                company_sid,
-                clocked_in,
-                clocked_out,
-                is_approved,
-                clocked_date
-            ")
-            ->where([
-                "employee_sid" => $employeeId,
-                "clocked_date >= " => $periodStartDate,
-                "clocked_date <= " => $periodEndDate,
-            ])
-            ->get("cl_attendance")
-            ->result_array();
-        // when no record are found
-        if (!$records) {
-            return $returnArray;
-        }
-        //
-        // load break model
-        $this->load->model("v1/Shift_break_model", "shift_break_model");
-        // load shift model
-        $this->load->model("v1/Shift_model", "shift_model");
-        // load holiday model
-        $this->load->model("v1/Holiday_model", "holiday_model");
-        //
-        $this->load->model("v1/Users/main_model", "main_model");
-        //
-        $this->load->model("Timeoff_model", "timeoff_model");
-        // get employee shifts
-        $returnArray['paid_time_off'] = $this->timeoff_model
-            ->getEmployeePaidTimeOffsInRange(
-                $employeeId,
-                $periodStartDate,
-                $periodEndDate
-            );
-        //
-        $employeeWageInfo = $this->main_model->getJobWageData(
-            $employeeId,
-            'employee',
-            $records[0]["company_sid"]
-
-        );
-        //
-        // get employee overtime rule
-        $employeeOverTime = $this->getEmployeeOverTimeRule($employeeId);
-        // get company breaks
-        $companyBreaks = $this->shift_break_model->get($records[0]["company_sid"], false);
-        // get company holidays date pool
-        $companyHolidays = $this->holiday_model->get($records[0]["company_sid"], getSystemDate("Y", $periodStartDate), true);
-        // convert the array to list
-        $companyBreaks = convertToList($companyBreaks, "break_name");
-        // get employee shifts within range
-        $employeeShifts = $this->shift_model->getEmployeeShiftsWithinRange(
-            $employeeId,
-            $periodStartDate,
-            $periodEndDate
-        );
-        //
-        $employeeRate = getRatePerHour($employeeWageInfo['rate'], $employeeWageInfo['per']);
-        //
-        $returnArray['normal_rate'] = $employeeRate;
-        $returnArray['over_time_rate'] = $employeeRate * $employeeOverTime['overtime_multiplier'];
-        $returnArray['double_over_time_rate'] = $employeeRate * $employeeOverTime['double_overtime_multiplier'];
-        //
-        foreach ($records as $v0) {
-            //
-            $returnArray['shift_status']['total_shifts'] += 1;
-            //
-            if ($v0["is_approved"] == 1) {
-                $returnArray['shift_status']['approved_count'] += 1;
-            } else {
-                $returnArray['shift_status']['unapproved_count'] += 1;
-            }
-            // set a tmp array
-            $tmp = [
-                "date" => $v0["clocked_date"],
-                "schedule_time" => 0,
-                "difference_time" => 0,
-                "clocked_time" => 0,
-                "worked_time" => 0,
-                "regular_time" => 0,
-                "breaks_time" => 0,
-                "paid_break_time" => 0,
-                "unpaid_break_time" => 0,
-                "overtime" => 0,
-                "double_overtime" => 0,
-                "text" => [
-                    "schedule_time" => '0h',
-                    "difference_time" => '',
-                    "clocked_time" => '0h',
-                    "worked_time" => '0h',
-                    "regular_time" => '0h',
-                    "breaks_time" => '0h',
-                    "paid_break_time" => '0h',
-                    "unpaid_break_time" => '0h',
-                    "overtime" => '0h',
-                    "double_overtime" => '0h',
-                ]
-            ];
-            // get the attendance log
-            $logs = $this->db
-                ->select("
-                    job_site_sid,
-                    clocked_in,
-                    clocked_out,
-                    break_id,
-                    break_start,
-                    break_end,
-                    duration,
-            ")
-                ->where("cl_attendance_sid", $v0["sid"])
-                ->get("cl_attendance_log")
-                ->result_array();
-            //
-            foreach ($logs as $v1) {
-                // clocked in time
-                if ($v1["clocked_in"]) {
-                    $tmp["clocked_time"] += $v1["duration"];
-                } else {
-                    // for break
-                    if ($v1["break_id"]) {
-                        // get the relevant break
-                        $break = stringToSlug($employeeShifts[$v0["clocked_date"]]["breaks"][$v1["break_id"]]["break"] ?? "", "_");
-                        // check if exists in company breaks
-                        if ($companyBreaks[$break]) {
-                            // check wether the break is paid or unpaid
-                            // case of paid
-                            if ($companyBreaks[$break]["break_type"] === "paid") {
-                                $tmp["paid_break_time"] += $v1["duration"];
-                            } else {
-                                //case of unpaid
-                                $tmp["unpaid_break_time"] += $v1["duration"];
-                            }
-                        } else {
-                            // case when no company break found
-                            $tmp["unpaid_break_time"] += $v1["duration"];
-                        }
-                    } else {
-                        // when no break id found mark it as unpaid
-                        $tmp["unpaid_break_time"] += $v1["duration"];
-                    }
-                    // in any case add the time to break
-                    $tmp["breaks_time"] += $v1["duration"];
-                }
-            }
-            //
-            $tmp["clocked_time"] =  $tmp["clocked_time"] + ($tmp["unpaid_break_time"] + $tmp["paid_break_time"]);
-            $tmp["worked_time"] =  $tmp["clocked_time"] - ($tmp["unpaid_break_time"] + $tmp["paid_break_time"]);
-            // calculate
-            // calculate overtime for daily
-            if ($employeeOverTime["daily"]) {
-                // get day
-                $day = strtolower(formatDateToDB(
-                    $v0["clocked_date"],
-                    DB_DATE,
-                    "l"
-                ));
-                //
-                // for holiday
-                if ($employeeOverTime["holiday"] && $employeeOverTime["holiday"]["overtime"] && in_array($v0["clocked_date"], $companyHolidays)) {
-                    // convert overtime to seconds
-                    $overtime = ($employeeOverTime["holiday"]["overtime"] ?? 0) * 60 * 60;
-                    // convert double-overtime to seconds
-                    $double_overtime = ($employeeOverTime["holiday"]["double_overtime"] ?? 0) * 60 * 60;
-                    // check if clocked time is > overtime
-                    if ($tmp["worked_time"] > $overtime) {
-                        $tmp["overtime"] = $tmp["worked_time"] - $overtime;
-                    }
-                    // for double overtime
-                    if ($double_overtime > 0 && ($tmp["worked_time"] > $double_overtime)) {
-                        // deduct the double overtime from clocked time
-                        $tmp["double_overtime"] = $tmp["worked_time"] - $double_overtime;
-                        // recalculate overtime
-                        $tmp["overtime"] = $double_overtime - $overtime;
-                    }
-                }
-                // for daily overtime
-                elseif ($employeeOverTime["daily"][$day] && $employeeOverTime["daily"][$day]["overtime"]) {
-                    // convert overtime to seconds
-                    $overtime = ($employeeOverTime["daily"][$day]["overtime"] ?? 0) * 60 * 60;
-                    // convert double-overtime to seconds
-                    $double_overtime = ($employeeOverTime["daily"][$day]["double_overtime"] ?? 0) * 60 * 60;
-                    // check if clocked time is > overtime
-                    if ($tmp["worked_time"] > $overtime) {
-                        $tmp["overtime"] = $tmp["worked_time"] - $overtime;
-                    }
-                    // for double overtime
-                    if ($double_overtime > 0 && ($tmp["worked_time"] > $double_overtime)) {
-                        // deduct the double overtime from clocked time
-                        $tmp["double_overtime"] = $tmp["worked_time"] - $double_overtime;
-                        // recalculate overtime
-                        $tmp["overtime"] = $double_overtime - $overtime;
-                    }
-                }
-                // TODO: seven consecutive day overtime
-            }
-            // convert to text
-            $regularTime = $tmp["worked_time"] - ($tmp["overtime"] + $tmp["double_overtime"]);
-            $tmp['regular_time'] = $regularTime;
-            //
-            if ($employeeShifts[$v0['clocked_date']]) {
-                $shiftStart = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["start_time"];
-                $shiftEnd = $v0['clocked_date'].' '.$employeeShifts[$v0['clocked_date']]["end_time"];
-                //
-                $d1Obj = new DateTime($shiftStart, new DateTimeZone("UTC"));
-                // convert d1 to UTC
-                $d2Obj = new DateTime($shiftEnd, new DateTimeZone("UTC"));
-                // apply difference
-                $diff = $d2Obj->diff($d1Obj);
-                // if diference is off one minute
-                $shiftDuration =
-                    $diff->s
-                    + ($diff->i * 60)
-                    + ($diff->h * 3600)
-                    + ($diff->d * 86400)
-                    + ($diff->m * 2592000)
-                    + ($diff->y * 31536000);
-                //
-                $tmp['schedule_time'] = $shiftDuration;
-                $tmp['difference_time'] = $tmp['clocked_time'] - $shiftDuration;
-            } else {
-                $tmp['difference_time'] = $tmp['clocked_time'];
-            }
-            //
-            $shifyDifference = '';
-            //
-            if ($tmp["difference_time"] < 0) {
-                $shifyDifference = '<span class="label label-danger"> -'.convertSecondsToTime(str_replace('-', '', $tmp["difference_time"])).' </span>';
-            } else if ($tmp["difference_time"] > 0) {
-                $shifyDifference = '<span class="label label-warning"> +'.convertSecondsToTime($tmp["difference_time"]).'</span>';
-            }
-            //
-            $tmp["text"] = [
-                "schedule_time" => convertSecondsToTime($tmp['schedule_time']),
-                "difference_time" => $shifyDifference,
-                "clocked_time" => convertSecondsToTime($tmp['clocked_time']),
-                "worked_time" => convertSecondsToTime($tmp["worked_time"]),
-                "regular_time" => convertSecondsToTime($tmp['regular_time']),
-                "breaks_time" => convertSecondsToTime($tmp["breaks_time"]),
-                "paid_break_time" => convertSecondsToTime($tmp["paid_break_time"]),
-                "unpaid_break_time" => convertSecondsToTime($tmp["unpaid_break_time"]),
-                "overtime" => convertSecondsToTime($tmp["overtime"]),
-                "double_overtime" => convertSecondsToTime($tmp["double_overtime"]),
-            ];
-            //
-            // set to main array
-            $returnArray["periods"][] = $tmp;
-            $returnArray["schedule_time"] += $tmp['schedule_time'];
-            $returnArray["difference_time"] += $tmp['difference_time'];
-            $returnArray["clocked_time"] += $tmp['clocked_time'];
-            $returnArray["worked_time"] += $tmp['worked_time'];
-            $returnArray["regular_time"] += $tmp['regular_time'];
-            $returnArray["breaks_time"] += $tmp["breaks_time"];
-            $returnArray["paid_break_time"] += $tmp["paid_break_time"];
-            $returnArray["unpaid_break_time"] += $tmp["unpaid_break_time"];
-            $returnArray["overtime"] += $tmp["overtime"];
-            $returnArray["double_overtime"] += $tmp["double_overtime"];
-        }
-        //
-        // apply weekly overtime
-        if ($employeeOverTime["weekly"] && $employeeOverTime["weekly"]["overtime"]) {
-            // convert overtime to seconds
-            $overtime = ($employeeOverTime["weekly"]["overtime"] ?? 0) * 60 * 60;
-            // convert double-overtime to seconds
-            $double_overtime = ($employeeOverTime["weekly"]["double_overtime"] ?? 0) * 60 * 60;
-            //
-            $weekOverTime = 0;
-            $weekDoubleOvertime = 0;
-            // check if clocked time is > overtime
-            if ($returnArray["worked_time"] > $overtime) {
-                $weekOverTime = $returnArray["worked_time"] - $overtime;
-            }
-            // for double overtime
-            if ($double_overtime > 0 && ($returnArray["worked_time"] > $double_overtime)) {
-                // deduct the double overtime from clocked time
-                $weekDoubleOvertime = $returnArray["worked_time"] - $double_overtime;
-                // recalculate overtime
-                $weekOverTime = $double_overtime - $overtime;
-            }
-            //
-            $overtime_detail = "Daily overtime: " . convertSecondsToTime($returnArray["overtime"])
-                . " <br> Weekly overtime: " . convertSecondsToTime($weekOverTime)
-                . " <br> Total overtime: " . convertSecondsToTime($returnArray["overtime"] + $weekOverTime);
-            $double_overtime_detail = "Daily double overtime: " . convertSecondsToTime($returnArray["double_overtime"])
-                . " <br> Weekly double overtime: " . convertSecondsToTime($weekDoubleOvertime)
-                . " <br> Total double overtime: " . convertSecondsToTime($returnArray["double_overtime"] + $weekDoubleOvertime);
-            //
-            $returnArray["overtime"] += $weekOverTime;
-            $returnArray["double_overtime"] += $weekDoubleOvertime;
-        }
-        // apply seven consecutive day overtime
-        // convert to text
-        $totalDifference = '';
-        
-        if ($returnArray["difference_time"] < 0) {
-            $totalDifference = '<span class="label label-danger"> -'.convertSecondsToTime($returnArray["difference_time"]).' </span>';
-        } else if ($returnArray["difference_time"] > 0) {
-            $totalDifference = '<span class="label label-warning"> +'.convertSecondsToTime($returnArray["difference_time"]).'</span>';
-        }
-        //
-        $returnArray["text"] = [
-            "schedule_time" => convertSecondsToTime($returnArray["schedule_time"]),
-            "difference_time" => $totalDifference,
-            "clocked_time" => convertSecondsToTime($returnArray["clocked_time"]),
-            "worked_time" => convertSecondsToTime($returnArray["worked_time"]),
-            "regular_time" => convertSecondsToTime($returnArray["regular_time"]),
-            "breaks_time" => convertSecondsToTime($returnArray["breaks_time"]),
-            "paid_break_time" => convertSecondsToTime($returnArray["paid_break_time"]),
-            "unpaid_break_time" => convertSecondsToTime($returnArray["unpaid_break_time"]),
-            "overtime" => convertSecondsToTime($returnArray["overtime"]),
-            "double_overtime" => convertSecondsToTime($returnArray["double_overtime"]),
-            "overtime_detail" => $overtime_detail,
-            "double_overtime_detail" => $double_overtime_detail,
-        ];
-        //
-        return $returnArray;
-    }
-
-    public function getClockedInEmployees ($companyId, $date, $employees) {
-        //
-        $this->db->select('
-            sid,
-            employee_sid,
-            clocked_date
-        ');
-        //
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('clocked_date', $date);
-        //
-        if ($employees && array_search("all", $employees) === false) {
-            $this->db->where_in('employee_sid', $employees);
-        }
-        //
-        $a = $this->db->get('cl_attendance');
-        //
-        $records = $a->result_array();
-        $a = $a->free_result();
-        //
-        $markers = [];
-        //
-        if ($records) {
-            foreach ($records as $row) {
-                $location = $this->db
-                ->select("
-                    lat,
-                    lng,
-                    lat_2,
-                    lng_2
-                ")
-                ->where("cl_attendance_sid", $row['sid'])
-                ->order_by("sid", "ASC")
-                ->get("cl_attendance_log")
-                ->row_array();
-                //
-                if(!empty($location['lat']) || !empty($location['lng'])){
-                    //
-                    $userInfo = get_employee_profile_info($row['employee_sid']);
-                    //
-                    $markers[] = [
-                        'employeeId' => $row['employee_sid'],
-                        'lat' => $location['lat'], 
-                        'lng' => $location['lng'], 
-                        'logo' => getImageURL($userInfo['profile_picture']),
-                        'name' => remakeEmployeeName([
-                            'first_name' => $userInfo['first_name'],
-                            'last_name' => $userInfo['last_name'],
-                            'access_level' => $userInfo['access_level'],
-                            'timezone' => isset($userInfo['timezone']) ? $userInfo['timezone'] : '',
-                            'access_level_plus' => $userInfo['access_level_plus'],
-                            'is_executive_admin' => $userInfo['is_executive_admin'],
-                            'pay_plan_flag' => $userInfo['pay_plan_flag'],
-                            'job_title' => $userInfo['job_title'],
-                        ]) 
-                    ];
-                }
-            } 
-        } 
-        //
-        return $markers; 
-    }
-
-    public function getEmployeeLoginHistory ($employeeId, $date) {
-        $record =
-            $this->db
-            ->select("
-                sid
-            ")
-            ->where([
-                "employee_sid" => $employeeId,
-                "clocked_date" => $date,
-            ])
-            ->get("cl_attendance")
-            ->row_array();
-        //
-        $history = [
-            'logs' => '',
-            'locations' => ''
-        ]; 
-        //    
-        if ($record) {
-            $history = $this->getTimeSheetHistory($record['sid']);
-        } 
-        //
-        return $history;
-    }
-
-    public function getEmployeeOverTimeRule(int $employeeId)
-    {
-        // set the default array
-        $returnArray = [];
-        //
-        $returnArray["overtime_multiplier"] = 1.5;
-        $returnArray["double_overtime_multiplier"] = 2.0;
-        //
-        $record = $this->db
-            ->select("
-                company_overtime_rules.overtime_multiplier,
-                company_overtime_rules.double_overtime_multiplier,
-                company_overtime_rules.daily_json,
-                company_overtime_rules.weekly_json,
-                company_overtime_rules.seven_consecutive_days_json,
-                company_overtime_rules.holiday_json
-            ")
-            ->join(
-                "company_overtime_rules",
-                "company_overtime_rules.sid = users.overtime_rule",
-                "inner"
-            )
-            ->where("users.sid", $employeeId)
-            ->get("users")
-            ->row_array();
-        //
-        if (!$record) {
-            return $returnArray;
-        }
-        $returnArray["overtime_multiplier"] = $record["overtime_multiplier"];
-        $returnArray["double_overtime_multiplier"] = $record["double_overtime_multiplier"];
-        //
-        $record["daily_json"] = json_decode($record["daily_json"], true);
-        $record["weekly_json"] = json_decode($record["weekly_json"], true);
-        $record["seven_consecutive_days_json"] = json_decode($record["seven_consecutive_days_json"], true);
-        $record["holiday_json"] = json_decode($record["holiday_json"], true);
-
-        // set holiday overtime
-        if (
-            $record["holiday_json"]["overtime"]["status"] ||
-            $record["holiday_json"]["double"]["status"]
-        ) {
-            $returnArray["holiday"]["type"] = "holiday";
-            $returnArray["holiday"]["overtime"] = $record["holiday_json"]["overtime"]["hours"] ? $record["holiday_json"]["overtime"]["hours"] : 0;
-            $returnArray["holiday"]["double_overtime"] = $record["holiday_json"]["double"]["hours"] ? $record["holiday_json"]["double"]["hours"] : 0;
-        }
-        // set seven consecutive days overtime
-        if (
-            $record["seven_consecutive_days_json"]["overtime"]["status"] ||
-            $record["seven_consecutive_days_json"]["double"]["status"]
-        ) {
-            $returnArray["seven"]["type"] = "seven";
-            $returnArray["seven"]["overtime"] = $record["seven_consecutive_days_json"]["overtime"]["hours"] ? $record["seven_consecutive_days_json"]["overtime"]["hours"] : 0;
-            $returnArray["seven"]["double_overtime"] = $record["seven_consecutive_days_json"]["double"]["hours"] ? $record["seven_consecutive_days_json"]["double"]["hours"] : 0;
-        }
-        // set weekly overtime
-        if (
-            $record["weekly_json"]["overtime"]["status"] ||
-            $record["weekly_json"]["double"]["status"]
-        ) {
-            $returnArray["weekly"]["type"] = "weekly";
-            $returnArray["weekly"]["overtime"] = $record["weekly_json"]["overtime"]["hours"] ? $record["weekly_json"]["overtime"]["hours"] : 0;
-            $returnArray["weekly"]["double_overtime"] = $record["weekly_json"]["double"]["hours"] ? $record["weekly_json"]["double"]["hours"] :  0;
-        }
-        // set daily overtime
-        $returnArray["daily"]["type"] = "daily";
-        //
-        foreach ($record["daily_json"] as $k0 => $v0) {
-            $returnArray["daily"][$k0]["overtime"] = $v0["overtime"]["hours"] ? $v0["overtime"]["hours"] : 0;
-            $returnArray["daily"][$k0]["double_overtime"] = $v0["double"]["hours"] ? $v0["double"]["hours"] : 0;
-        }
-
-        return $returnArray;
-    }
-
-    function getDepartments($companySid)
-    {
-        $a = $this->db
-            ->select('sid, name')
-            ->where('company_sid', $companySid)
-            ->where('status', 1)
-            ->where('is_deleted', 0)
-            ->order_by('sort_order', 'ASC')
-            ->get('departments_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
-
-    function getTeams($companySid, $departments)
-    {
-        //
-        if (!$departments || !count($departments)) return [];
-        //
-        $a = $this->db
-            ->select('sid, name')
-            ->where('company_sid', $companySid)
-            ->where('status', 1)
-            ->where('is_deleted', 0)
-            ->where_in('department_sid', array_column($departments, 'sid'))
-            ->order_by('sort_order', 'ASC')
-            ->get('departments_team_management');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
-
-    function getJobTitles()
-    {
-        $a = $this->db
-            ->select('sid, title')
-            ->where('status', 1)
-            ->order_by('title', 'ASC')
-            ->get('portal_job_title_templates');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
-
-    function getFilterEmployees(
-        $companyId,
-        $employees,
-        $teams,
-        $department,
-        $jobTitles
-    ) {
-        $this->db->select('
-            users.sid,
-            users.first_name,
-            users.last_name,
-            users.email,
-            users.access_level,
-            users.access_level_plus,
-            users.is_executive_admin,
-            users.job_title,
-            users.timezone,
-            users.pay_plan_flag
-        ');
-        $this->db->join('users', 'users.sid = departments_employee_2_team.employee_sid');
-        $this->db->where('users.active', 1);
-        $this->db->where('users.parent_sid', $companyId);
-        $this->db->where('users.terminated_status', 0);
-        //
-        if ($employees && array_search("all", $employees) === false) {
-            $this->db->where_in('users.sid', $employees);
-        }
-        //
-        if ($department && $department != "all") {
-            $this->db->where('departments_employee_2_team.department_sid', $department);
-        }
-
-        if ($teams && array_search("all", $teams) === false) {
-            $this->db->where_in('departments_employee_2_team.team_sid', $teams);
-        }
-        //
-        if ($jobTitles && array_search("all", $jobTitles) === false) {
-            $this->db->where_in('users.job_title', $jobTitles);
-        }
-        //
-        $a = $this->db->get('departments_employee_2_team');
-        //
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
+   
 
     /**
      * check if the employee is clocking out
@@ -1966,4 +1267,153 @@ class My_clock_model extends Base_model
         //
         return [];
     }
+
+    public function getAttendanceWithinRange(
+        int $companyId,
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        // convert the incoming dates to utc
+        //
+        $records = $this->getAttendanceByDates(
+            $companyId,
+            $employeeId,
+            $startDate,
+            $endDate
+        );
+        // when no record are found
+        if (!$records) {
+            return [];
+        }
+        // get the employee shift
+        // set new record array
+        $returnArray = [];
+        //
+        foreach ($records as $v0) {
+            // set defaults
+            $arr = $v0;
+            //
+            $arr["clocked_in"] = $v0["clocked_in"];
+            //
+            if ($v0["clocked_out"]) {
+                $arr["clocked_out"] = $v0["clocked_out"];
+            }
+            //
+            $arr["worked_time"] = 0;
+            $arr["overtime"] = 0;
+            $arr["breaks"] = 0;
+            $arr["logs"] = [];
+            // get the attendance log
+            $arr["logs"] = $this->db
+                ->select("
+                    sid,
+                    job_site_sid,
+                    clocked_in,
+                    clocked_out,
+                    break_id,
+                    break_start,
+                    break_end,
+                    duration,
+                    lat,
+                    lng,
+                    lat_2,
+                    lng_2
+            ")
+                ->where("cl_attendance_sid", $v0["sid"])
+                ->get("cl_attendance_log")
+                ->result_array();
+            //
+            foreach ($arr["logs"] as $k1 => $v1) {
+
+                if ($v1["clocked_in"]) {
+                    //
+                    $arr["logs"][$k1]["clocked_in"] = $v1["clocked_in"];
+
+                    if ($v1["clocked_out"]) {
+                        $arr["logs"][$k1]["clocked_out"] = $v1["clocked_out"];
+                    }
+                }
+
+                if ($v1["break_start"]) {
+                    $arr["logs"][$k1]["break_start"] = $v1["break_start"];
+                    if ($v1["break_end"]) {
+                        $arr["logs"][$k1]["break_end"] = $v1["break_end"];
+                    }
+                }
+
+
+                if ($v1["clocked_in"]) {
+                    $arr["worked_time"] += $v1["duration"];
+                } else {
+                    $arr["breaks"] += $v1["duration"];
+                }
+            }
+            //
+            if ($arr["worked_time"] > 144000) {
+                $arr["overtime"] = $arr["worked_time"] - 144000;
+            }
+
+            // set it
+            $returnArray[$v0["clocked_date"]] = $arr;
+        }
+        //
+        return $returnArray;
+    }
+
+    /**
+     * get the record
+     *
+     * @return array
+     */
+    private function getAttendanceByDates(
+        int $companyId,
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        return $this->db
+            ->select("
+                sid,
+                clocked_in,
+                clocked_out,
+                is_approved,
+                clocked_date
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "company_sid" => $companyId,
+                "clocked_date >= " => $startDate,
+                "clocked_date <= " => $endDate,
+            ])
+            ->order_by("clocked_date", "ASC")
+            ->get("cl_attendance")
+            ->result_array();
+    }
+
+    /**
+     * get the attendance logs
+     *
+     * @param int $attendanceId
+     * @return array
+     */
+    public function getAttendanceLogsForSheet(int $attendanceId): array
+    {
+        return $this->db
+            ->select("
+                sid,
+                clocked_in,
+                clocked_out,
+                break_id,
+                break_start,
+                break_end,
+                duration,
+                job_site_sid,
+            ")
+            ->where("cl_attendance_sid", $attendanceId)
+            ->order_by("sid", "ASC")
+            ->get("cl_attendance_log")
+            ->result_array();
+    }
+
 }
