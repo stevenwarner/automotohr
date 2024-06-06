@@ -241,7 +241,7 @@ class Complynet_model extends CI_Model
         return array_column($records, 'department_sid');
     }
 
-     /**
+    /**
      * Check and insert department
      *
      * @param int $companyId
@@ -1674,11 +1674,17 @@ class Complynet_model extends CI_Model
                 }
             } else {
                 //
+
+
+                $description = "This department was established for the purpose of " . getUserNameBySID($passArray['newEmployeeId']) . " on " . formatDateToDB(getSystemDate(), DB_DATE_WITH_TIME, DATE_WITH_TIME);
+
                 $this->db->insert('departments_management', [
                     'name' => $record['department_name'],
                     'status' => 1,
                     'company_sid' => $passArray['newCompanyId'],
-                    'created_date' => getSystemDate()
+                    'created_date' => getSystemDate(),
+                    'created_by_sid' => getCompanyAdminSid($passArray['newCompanyId']),
+                    'description' => $description
                 ]);
                 //
                 $departmentId = $this->db->insert_id();
@@ -1687,12 +1693,17 @@ class Complynet_model extends CI_Model
             //
             if ($teamId == 0) {
                 //
+
+                $description = "This team was established under the " . getDepartmentNameBySID($departmentId) . " Department for " . getUserNameBySID($passArray['newEmployeeId']) . " on " . formatDateToDB(getSystemDate(), DB_DATE_WITH_TIME, DATE_WITH_TIME);
+
                 $this->db->insert('departments_team_management', [
                     'name' => $record['name'],
                     'department_sid' => $departmentId,
                     'status' => 1,
                     'company_sid' => $passArray['newCompanyId'],
-                    'created_date' => getSystemDate()
+                    'created_date' => getSystemDate(),
+                    'created_by_sid' => getCompanyAdminSid($passArray['newCompanyId']),
+                    'description' => $description
                 ]);
 
                 //
@@ -2303,7 +2314,8 @@ class Complynet_model extends CI_Model
         }
     }
 
-    function deleteAllPreviousDepartment ($companyId) {
+    function deleteAllPreviousDepartment($companyId)
+    {
         //
         $linkDepartments = $this->getComplyNetLinkedDepartmentsSid($companyId);
         //
@@ -2324,5 +2336,4 @@ class Complynet_model extends CI_Model
         $this->db->where('complynet_department_sid', $departmentId);
         $this->db->delete('complynet_jobRole');
     }
-
-}    
+}
