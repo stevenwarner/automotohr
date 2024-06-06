@@ -81,7 +81,7 @@
                                         </tr> 
                                     </thead>
                                     <tbody>
-                                    <?php   if(empty($notifications_emails)) { ?>
+                                    <?php   if(empty($notifications_emails)) { ?>4
                                                 <tr>
                                                     <td colspan="6">
                                                         <h3 class="text-center">No Email Record Found!</h3>

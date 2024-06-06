@@ -281,16 +281,30 @@ class Webhook_model extends CI_Model
             $this->sendBankAccountEmail($data);
         } elseif ($this->post["event_type"] === "company.bank_account.updated") {
 
-            // Company Bank Account
             $data['account_status'] = "Update";
             $data['account_for'] = "Comapny";
             $this->sendBankAccountEmail($data);
         } elseif ($this->post["event_type"] === "company.bank_account.deleted") {
 
-            // Company Bank Account
             $data['account_status'] = "Deleted";
             $data['account_for'] = "Comapny";
             $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "company_benefit.created") {
+
+            // Company Benefit 
+            $data['benefit_status'] = "Created";
+            $data['benefit_for'] = "Comapny";
+            $this->sendBenefitsEmail($data);
+        } elseif ($this->post["event_type"] === "company_benefit.updated") {
+
+            $data['benefit_status'] = "Updated";
+            $data['benefit_for'] = "Comapny";
+            $this->sendBenefitsEmail($data);
+        } elseif ($this->post["event_type"] === "company_benefit.deleted") {
+
+            $data['benefit_status'] = "Deleted";
+            $data['benefit_for'] = "Comapny";
+            $this->sendBenefitsEmail($data);
         }
     }
 
@@ -381,16 +395,30 @@ class Webhook_model extends CI_Model
             $this->sendBankAccountEmail($data);
         } elseif ($this->post["event_type"] === "employee.bank_account.updated") {
 
-            // Company Bank Account
             $data['account_status'] = "Updated";
             $data['account_for'] = "Employee";
             $this->sendBankAccountEmail($data);
         } elseif ($this->post["event_type"] === "employee.bank_account.deleted") {
 
-            // Company Bank Account
             $data['account_status'] = "Deleted";
             $data['account_for'] = "Employee";
             $this->sendBankAccountEmail($data);
+        } elseif ($this->post["event_type"] === "employee_benefit.created") {
+
+            // Employee Benefit 
+            $data['benefit_status'] = "Created";
+            $data['benefit_for'] = "Employee";
+            $this->sendBenefitsEmail($data);
+        } elseif ($this->post["event_type"] === "employee_benefit.updated") {
+
+            $data['benefit_status'] = "Updated";
+            $data['benefit_for'] = "Employee";
+            $this->sendBenefitsEmail($data);
+        } elseif ($this->post["event_type"] === "employee_benefit.deleted") {
+
+            $data['benefit_status'] = "Deleted";
+            $data['benefit_for'] = "Employee";
+            $this->sendBenefitsEmail($data);
         }
     }
 
@@ -656,6 +684,61 @@ class Webhook_model extends CI_Model
                     $emailTemplateBody = str_replace('{{account_for}}', $data['account_for'], $emailTemplateBody);
 
                     $subject = str_replace('{{account_for}}', $data['account_for'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
+        }
+    }
+
+
+
+
+    //
+    function sendBenefitsEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(BENEFITS_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{benefit_status}}', $data['benefit_status'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{benefit_for}}', $data['benefit_for'], $emailTemplateBody);
+
+                    $subject = str_replace('{{benefit_for}}', $data['benefit_for'], $emailTemplateData['subject']);
 
                     //
                     $message_body = '';
