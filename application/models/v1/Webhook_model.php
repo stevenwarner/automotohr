@@ -419,6 +419,21 @@ class Webhook_model extends CI_Model
             $data['benefit_status'] = "Deleted";
             $data['benefit_for'] = "Employee";
             $this->sendBenefitsEmail($data);
+        } elseif ($this->post["event_type"] === "employee.home_address.created") {
+
+            $data['address_status'] = "created";
+            $data['address_for'] = "Employee";
+            $this->sendAddressEmail($data);
+        } elseif ($this->post["event_type"] === "employee.home_address.updated") {
+
+            $data['address_status'] = "Updated";
+            $data['address_for'] = "Employee";
+            $this->sendAddressEmail($data);
+        } elseif ($this->post["event_type"] === "employee.home_address.deleted") {
+
+            $data['address_status'] = "Deleted";
+            $data['address_for'] = "Employee";
+            $this->sendAddressEmail($data);
         }
     }
 
@@ -739,6 +754,59 @@ class Webhook_model extends CI_Model
                     $emailTemplateBody = str_replace('{{benefit_for}}', $data['benefit_for'], $emailTemplateBody);
 
                     $subject = str_replace('{{benefit_for}}', $data['benefit_for'], $emailTemplateData['subject']);
+
+                    //
+                    $message_body = '';
+                    $message_body .= $message_hf['header'];
+                    $message_body .= $emailTemplateBody;
+                    $message_body .= $message_hf['footer'];
+                    //
+                    log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $employeeRow['email'], $subject, $message_body, FROM_STORE_NAME);
+                }
+            }
+        }
+    }
+
+
+    //
+    function sendAddressEmail($data)
+    {
+
+        // Send Email
+        $this->db->select('company_sid');
+        $this->db->where('gusto_uuid', $data['entity_uuid']);
+        $record_obj = $this->db->get('gusto_companies');
+        $record_arr = $record_obj->row_array();
+
+        if (!empty($record_arr)) {
+            $companySid = $record_arr['company_sid'];
+
+            $employeeList = getNotificationContacts(
+                $companySid,
+                'payroll_notifications',
+                'payroll_notifications'
+            );
+
+            $companyName = getCompanyNameBySid($companySid);
+
+            $message_hf = message_header_footer(
+                $companySid,
+                $companyName
+            );
+
+            if (!empty($employeeList)) {
+
+                foreach ($employeeList as $employeeRow) {
+
+                    $emailTemplateData = $this->getEmailTemplateById(ADDRESS_STATUS_FROM_GUSTO_EMAIL);
+                    $emailTemplateBody = $emailTemplateData['text'];
+                    //
+                    $emailTemplateBody = str_replace('{{contact_name}}', $employeeRow['contact_name'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{company_name}}', $companyName, $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{address_status}}', $data['address_status'], $emailTemplateBody);
+                    $emailTemplateBody = str_replace('{{address_for}}', $data['address_for'], $emailTemplateBody);
+
+                    $subject = str_replace('{{address_for}}', $data['address_for'], $emailTemplateData['subject']);
 
                     //
                     $message_body = '';
