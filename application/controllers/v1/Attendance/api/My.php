@@ -84,6 +84,79 @@ class My extends Public_Controller
     }
 
     /**
+     * Employees dashboard
+     */
+    public function dashboard()
+    {
+        $this->data = [
+            "session" => $this->appSession,
+            "loggedInEmployee" => $this->loggedInEmployee,
+            "sanitizedView" => true,
+            "securityDetails" => db_get_access_level_details(
+                $this->loggedInEmployee["sid"]
+            )
+        ];
+        // add plugins
+        $this->data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            // high charts
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/highcharts.min.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/data.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/exporting.js?v=3.0"),
+            main_url("public/v1/plugins/Highcharts-Maps-11.2.0/code/modules/accessibility.js?v=3.0"),
+        ];
+        // set js
+        $this->setCommon("v1/attendance/js/my/dashboard", "js");
+        $this->getCommon($this->data, "my_dashboard");
+        $this->data["startDate"] = getSystemDateInLoggedInPersonTZ(DB_DATE, "-7 days");
+        $this->data["endDate"] = getSystemDateInLoggedInPersonTZ(DB_DATE);
+
+        $this->data["title"]  = "My Attendance Dashboard :: " . (STORE_NAME);
+        // get todays footprints
+        $this->data["record"] = $this->my_clock_model
+            ->getClockWithState(
+                $this->loggedInCompany["sid"],
+                $this->loggedInEmployee["sid"],
+                getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
+                true
+            );
+        //
+        // _e($this->data["record"],true,true);   
+        // make the blue portal popup
+        $this->data["loadView"] = true;
+        $this->renderView("v1/attendance/my_dashboard");
+    }
+
+    /**
+     * mark attendance
+     */
+    public function getMyTodaysFootprints()
+    {
+        // get todays footprints
+        $data["record"] = $this->my_clock_model
+            ->getClockWithState(
+                $this->loggedInCompany["sid"],
+                $this->loggedInEmployee["sid"],
+                getSystemDateInLoggedInPersonTZ(DB_DATE_WITH_TIME),
+                true
+            );
+        if ($data["record"]["state"]) {
+            // get the logs array
+            $data["logs"] = $this->my_clock_model
+                ->getAttendanceFootprints(
+                    $data["record"]["reference"],
+                    $data["record"]["allowed_breaks"]
+                );
+        }
+
+        return SendResponse(200, [
+            "logs" => $data["logs"]
+        ]);
+    }
+
+    /**
      * get the clock state with job sites
      */
     public function getClockWithState()

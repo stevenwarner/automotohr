@@ -313,11 +313,25 @@ class My_clock_model extends Base_model
         $ins = [];
         $ins["company_sid"] = $this->companyId;
         $ins["employee_sid"] = $this->employeeId;
-        $ins["clocked_date"] = $this->loggedInPersonDate;
-        $ins["clocked_in"] = $this->loggedInPersonDateTime;
-        $ins["last_record_time"] = $ins["clocked_in"];
         $ins["clocked_date_utc"] = getSystemDateInUTC(DB_DATE);
         $ins["clocked_in_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        //
+        $ins["clocked_date"] = convertTimeZone(
+            $ins["clocked_in_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone(),
+            true,
+            DB_DATE
+        );
+        $ins["clocked_in"] = convertTimeZone(
+            $ins["clocked_in_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone()
+        );
+        //
+        $ins["last_record_time"] = $ins["clocked_in"];
         $ins["last_record_time_utc"] = $ins["clocked_in_utc"];
         $ins["is_approved"] = 0;
         $ins["last_event"] = $post["type"];
@@ -385,8 +399,13 @@ class My_clock_model extends Base_model
         $upd = [];
         //
         if ($post["type"] === "clocked_out" || $post["type"] === "break_started") {
-            $upd["clocked_out"] = $this->loggedInPersonDateTime;
             $upd["clocked_out_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+            $upd["clocked_out"] = convertTimeZone(
+                $upd["clocked_out_utc"],
+                DB_DATE_WITH_TIME,
+                "UTC",
+                getLoggedInPersonTimeZone()
+            );
         } else {
             $upd["clocked_out"] = null;
             $upd["clocked_out_utc"] = null;
@@ -658,8 +677,13 @@ class My_clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["break_start"] = $this->loggedInPersonDateTime;
         $insLog["break_start_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        $insLog["break_start"] = convertTimeZone(
+            $insLog["break_start_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone()
+        );
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
         $insLog["job_site_sid"] = $response["job_site_sid"];
@@ -715,8 +739,13 @@ class My_clock_model extends Base_model
         }
         // add the entry to log table
         $updLog = [];
-        $updLog["break_end"] = $this->loggedInPersonDateTime;
         $updLog["break_end_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        $updLog["break_end"] = convertTimeZone(
+            $updLog["break_end_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone()
+        );
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
@@ -751,8 +780,13 @@ class My_clock_model extends Base_model
         // add the entry to log table
         $insLog = [];
         $insLog["cl_attendance_sid"] = $attendanceId;
-        $insLog["clocked_in"] = $this->loggedInPersonDateTime;
         $insLog["clocked_in_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        $insLog["clocked_in"] = convertTimeZone(
+            $insLog["clocked_in_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone()
+        );
         $insLog["job_site_sid"] = $post["job_site"];
         $insLog["lat"] = $post["latitude"];
         $insLog["lng"] = $post["longitude"];
@@ -812,8 +846,13 @@ class My_clock_model extends Base_model
         }
         // update table log
         $updLog = [];
-        $updLog["clocked_out"] = $this->loggedInPersonDateTime;
         $updLog["clocked_out_utc"] = getSystemDateInUTC(DB_DATE_WITH_TIME);
+        $updLog["clocked_out"] = convertTimeZone(
+            $updLog["clocked_out_utc"],
+            DB_DATE_WITH_TIME,
+            "UTC",
+            getLoggedInPersonTimeZone()
+        );
         $updLog["lat_2"] = $post["latitude"];
         $updLog["lng_2"] = $post["longitude"];
         $updLog["duration"] = $this->attendance_lib
@@ -1414,6 +1453,268 @@ class My_clock_model extends Base_model
             ->order_by("sid", "ASC")
             ->get("cl_attendance_log")
             ->result_array();
+    }
+
+      /**
+     * get the attendance logs
+     *
+     * @param int $attendanceId
+     * @param array $breaks
+     * @return array
+     */
+    public function getAttendanceFootprints(int $attendanceId, array $breaks): array
+    {
+        // set return array
+        $returnArray = [
+            "logs" => [],
+            "locations" => [],
+            "pair_locations" => []
+        ];
+        //
+        $logs = $this->db
+            ->select("
+                sid,
+                job_site_sid,
+                clocked_in,
+                clocked_out,
+                break_id,
+                break_start,
+                break_end,
+                duration,
+                lat,
+                lng,
+                lat_2,
+                lng_2
+            ")
+            ->where("cl_attendance_sid", $attendanceId)
+            ->order_by("sid", "ASC")
+            ->get("cl_attendance_log")
+            ->result_array();
+
+        if (!$logs) {
+            return $returnArray;
+        }
+
+        foreach ($logs as $v0) {
+            //
+            $log = [
+                "sid" => $v0["sid"],
+                "text" => "Clock in/out",
+                "startTime" => "",
+                "endTime" => "",
+                "lat" => $v0["lat"],
+                "lng" => $v0["lng"],
+                "lat_2" => $v0["lat_2"],
+                "lng_2" => $v0["lng_2"],
+                "durationText" => convertSecondsToTime($v0["duration"]),
+                "duration" => $v0["duration"],
+                "jobSite" => [],
+                "break" => [],
+                "location" => []
+            ];
+            // set locations
+            $locationArray = [];
+            $pairLocationArray = [];
+            // set the text
+            if ($v0["clocked_in"]) {
+                //
+                $pairLocationArray = [
+                    "id" => $v0["sid"],
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "lat_2" => $v0["lat_2"],
+                    "lng_2" => $v0["lng_2"],
+                    "event" => "clock"
+                ];
+                //
+                $log["text"] = "Clocked in/out";
+                $log["startTime"] =
+                    $v0["clocked_in"];
+                $log["is_ended"] = $v0["clocked_in"] ? true : false;
+                $log["endTime"] = $v0["clocked_out"] ?? "";
+                //
+                $locationArray["clocked_in"] = [
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "address" => getLocationAddress($v0["lat"], $v0["lng"]),
+                    "time" => reset_datetime([
+                        "datetime" => $log["startTime"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => DB_TIMEZONE
+                    ]),
+                    "title" => "Clocked in"
+                ];
+                //
+                if ($v0["clocked_out"]) {
+                    $locationArray["clocked_out"] = [
+                        "lat" => $v0["lat_2"],
+                        "lng" => $v0["lng_2"],
+                        "address" => getLocationAddress($v0["lat_2"], $v0["lng_2"]),
+                        "time" => reset_datetime([
+                            "datetime" => $log["endTime"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => DB_TIMEZONE
+                        ]),
+                        "title" => "Clocked out"
+                    ];
+                }
+            } else {
+                //
+                $pairLocationArray = [
+                    "id" => $v0["sid"],
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "lat_2" => $v0["lat_2"],
+                    "lng_2" => $v0["lng_2"],
+                    "event" => "break"
+                ];
+                $log["text"] = "Break start/end";
+                $log["startTime"] = $v0["break_start"];
+                $log["is_ended"] = $v0["break_end"] ? true : false;
+                $log["endTime"] = $v0["break_end"] ?? "";
+                //
+                $locationArray["break_start"] = [
+                    "lat" => $v0["lat"],
+                    "lng" => $v0["lng"],
+                    "address" => getLocationAddress($v0["lat"], $v0["lng"]),
+                    "time" => reset_datetime([
+                        "datetime" => $log["startTime"],
+                        "from_format" => DB_DATE_WITH_TIME,
+                        "format" => DB_DATE_WITH_TIME,
+                        "_this" => $this,
+                        "from_timezone" => DB_TIMEZONE
+                    ]),
+                    "title" => "Break started"
+                ];
+                //
+                if ($v0["break_end"]) {
+                    $locationArray["break_end"] = [
+                        "lat" => $v0["lat_2"],
+                        "lng" => $v0["lng_2"],
+                        "address" => getLocationAddress($v0["lat_2"], $v0["lng_2"]),
+                        "time" => reset_datetime([
+                            "datetime" => $log["endTime"],
+                            "from_format" => DB_DATE_WITH_TIME,
+                            "format" => DB_DATE_WITH_TIME,
+                            "_this" => $this,
+                            "from_timezone" => DB_TIMEZONE
+                        ]),
+                        "title" => "Break end"
+                    ];
+                }
+            }
+            //
+            $log["startTime"] = $log["startTime"];
+            //  
+            $log["endTime"] = $log["endTime"];
+            //
+            if ($v0["job_site_sid"] && $v0["job_site_sid"] != 0) {
+                $log["jobSite"] = $this->getJobSiteDetails($v0["job_site_sid"]);
+            }
+            //
+            if ($v0["break_id"] && $v0["break_id"] != 0) {
+                foreach ($breaks as $break) {
+                    if ($break["id"] == $v0["break_id"]) {
+                        $log["break"] = $break;
+                    }
+                }
+            }
+
+            //
+            if ($log["jobSite"]) {
+                $locationArray["clocked_in"]["title"] .= " at " . $log["jobSite"]["site_name"];
+                $locationArray["clocked_in"]["constraint"] = [
+                    "lat" => $log["jobSite"]["lat"],
+                    "lng" => $log["jobSite"]["lng"],
+                    "allowed" => $log["jobSite"]["site_radius"],
+                    "title" => $log["jobSite"]["site_name"]
+                ];
+                $pairLocationArray["constraint"] =
+                    [
+                        "lat" => $log["jobSite"]["lat"],
+                        "lng" => $log["jobSite"]["lng"],
+                        "allowed" => $log["jobSite"]["site_radius"],
+                        "title" => $log["jobSite"]["site_name"]
+                    ];
+            }
+            //
+            if ($log["break"]) {
+                $locationArray["break_start"]["title"] .= " for " . $log["break"]["break"];
+            }
+            //
+            $pairLocationArray["onSiteFlag"] = true;
+            $pairLocationArray["text"] = "On site";
+
+            // when job site exists
+            if ($log["jobSite"]) {
+                $text1  = "Clocked in";
+                $text2  = "Clocked out";
+                // check for clock in
+                if (!$v0["clocked_in"]) {
+                    $text1  = "Break started";
+                    $text2  = "Break ended";
+                }
+
+                if ($pairLocationArray["lat"] && $pairLocationArray["lng"]) {
+                    $dd = is_within_radius([
+                        $pairLocationArray["lat"], $pairLocationArray["lng"],
+                    ], [
+                        $pairLocationArray["constraint"]["lat"], $pairLocationArray["constraint"]["lng"],
+                    ], $pairLocationArray["constraint"]["lng"]);
+
+
+                    if (!$dd["within_range"]) {
+                        $pairLocationArray["onSiteFlag"] = false;
+                        $pairLocationArray["text"] = $text1 . " " . ($dd["distance"] * 3.28084) . " feet away from the job site - " . $log["jobSite"]["site_name"] . ".";
+                    }
+                } elseif ($pairLocationArray["lat_2"] && $pairLocationArray["lng_2"]) {
+                    $dd = is_within_radius([
+                        $pairLocationArray["lat_2"], $pairLocationArray["lng_2"],
+                    ], [
+                        $pairLocationArray["constraint"]["lat"], $pairLocationArray["constraint"]["lng"],
+                    ], $pairLocationArray["constraint"]["lng"]);
+
+
+                    if (!$dd["within_range"]) {
+                        $pairLocationArray["onSiteFlag"] = false;
+                        $pairLocationArray["text"] = $text2 . " " . ($dd["distance"] * 3.28084) . " feet away from the job site - " . $log["jobSite"]["site_name"] . ".";
+                    }
+                }
+            }
+            //
+            $log["location"] = $pairLocationArray;
+            $returnArray["logs"][] = $log;
+            $returnArray["locations"] = array_merge(
+                $returnArray["locations"],
+                array_values($locationArray)
+            );
+            $returnArray["pair_locations"][] = $pairLocationArray;
+            //
+        }
+
+        return $returnArray;
+    }
+
+
+    /**
+     * get a single job site
+     */
+    private function getJobSiteDetails(int $jobSiteId): array
+    {
+        return $this->db
+            ->select("
+            site_name,
+            site_radius,
+            lat,
+            lng
+        ")
+            ->where("sid", $jobSiteId)
+            ->get("company_job_sites")
+            ->row_array();
     }
 
 }

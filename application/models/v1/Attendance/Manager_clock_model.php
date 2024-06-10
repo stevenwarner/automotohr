@@ -69,7 +69,6 @@ class Manager_clock_model extends Base_model
         string $endDate
     ): array {
         $session = checkAndGetSession("all");
-        $companyTimezone = $session["company_detail"]["timezone"];
         // convert the incoming dates to utc
         //
         $records = $this->getAttendanceByDates(
@@ -138,7 +137,7 @@ class Manager_clock_model extends Base_model
                         $v1["clocked_in"],
                         DB_DATE_WITH_TIME,
                         DB_TIMEZONE,
-                        $companyTimezone
+                        getLoggedInPersonTimeZone()
                     );
 
                     if ($v1["clocked_out"]) {
@@ -147,7 +146,7 @@ class Manager_clock_model extends Base_model
                                 $v1["clocked_out"],
                                 DB_DATE_WITH_TIME,
                                 DB_TIMEZONE,
-                                $companyTimezone
+                                getLoggedInPersonTimeZone()
                             );
                     }
                 }
@@ -158,7 +157,7 @@ class Manager_clock_model extends Base_model
                             $v1["break_start"],
                             DB_DATE_WITH_TIME,
                             DB_TIMEZONE,
-                            $companyTimezone
+                            getLoggedInPersonTimeZone()
                         );
                     if ($v1["break_end"]) {
                         $arr["logs"][$k1]["break_end"] =
@@ -166,7 +165,7 @@ class Manager_clock_model extends Base_model
                                 $v1["break_end"],
                                 DB_DATE_WITH_TIME,
                                 DB_TIMEZONE,
-                                $companyTimezone
+                                getLoggedInPersonTimeZone()
                             );
                     }
                 }
@@ -1116,20 +1115,20 @@ class Manager_clock_model extends Base_model
             //
             if ($history['logs']) {
                 $session = checkAndGetSession("all");
-                $companyTimezone = $session["company_detail"]["timezone"];
+                getLoggedInPersonTimeZone() = $session["company_detail"]["timezone"];
                 foreach ($history['logs'] as $key => $log) {
                     $history['logs'][$key]['startTime'] = convertTimeZone(
                         $log['startTime'],
                         DB_DATE_WITH_TIME,
                         "UTC",
-                        $companyTimezone
+                        getLoggedInPersonTimeZone()
                     );
 
                     $history['logs'][$key]['endTime'] = convertTimeZone(
                         $log['endTime'],
                         DB_DATE_WITH_TIME,
                         "UTC",
-                        $companyTimezone
+                        getLoggedInPersonTimeZone()
                     );
                 }
             }

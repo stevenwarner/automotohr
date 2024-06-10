@@ -2130,6 +2130,7 @@ $route["payrolls/employee_job_compensation/(:num)/(:any)"]["post"] = "v1/Users/M
 // $route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
 $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
 $route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/Main/getMyTodaysFootprints";
+$route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/My/getMyTodaysFootprints";
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["get"] = "v1/Attendance/api/My/getTimeSheetDetails/$1/$2";
 // $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Manager/getTimeSheetDetails/$1/$2";
@@ -2145,7 +2146,8 @@ $route["v1/clock/timesheet/history/(:num)"]["get"] = "v1/Attendance/api/Main/get
  * @version 1.0
  */
 // employee
-$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+// $route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+$route["attendance/my/overview"]["get"] = "v1/Attendance/api/My/dashboard";
 // $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
 $route["attendance/my/timesheet"]["get"] = "v1/Attendance/api/My/timesheet";
 // employer
