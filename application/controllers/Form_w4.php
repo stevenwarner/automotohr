@@ -212,12 +212,17 @@ class Form_w4 extends Public_Controller
             //
             $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+
             //
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
                 if (isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
                 else {
-                    if ($assign_on >= $compare_date) {
+                    if ($assign_on >= $compare_date_2024) {
+                        $this->load->view('form_w4/index_ems_2024');
+                    } elseif ($assign_on >= $compare_date) {
                         // $this->load->view('form_w4/index_ems_2020');
                         $this->load->view('form_w4/index_ems_2023');
                     } else {
