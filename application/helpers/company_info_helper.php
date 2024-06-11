@@ -150,8 +150,19 @@ if (!function_exists('get_form_view')) {
             }
             //
         } else if ($form == 'pw4') {
+
+
             $form_values['pre_form'] = $form_data;
-            $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
+            $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
+            $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+
+            if ($assign_on >= $compare_date_2024) {
+                $view = $CI->load->view('form_w4/form_w4_2024_pdf', $form_values, TRUE);
+
+            } else {
+                $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
+            }
         } else if ($form == 'pw9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
@@ -543,7 +554,7 @@ if (!function_exists('replace_tags_for_document')) {
                     $supervisor = explode(",", $response["supervisor"]);
                     $supervisor = $supervisor[0];
                     $supervisor = getUserNameBySID($supervisor, false);
-                    $supervisor = $supervisor[0]["first_name"].' '.$supervisor[0]["last_name"];
+                    $supervisor = $supervisor[0]["first_name"] . ' ' . $supervisor[0]["last_name"];
                 }
 
                 if ($response["name"]) {
@@ -552,10 +563,10 @@ if (!function_exists('replace_tags_for_document')) {
             }
         }
         // notice of separation
-        $my_return = str_replace('{{employee_name}}', '<input type="text" class="form-control input-grey gray-background js_employee_name" name="employee_name" value="' . ($user_info["first_name"].' '.$user_info["last_name"]) . '" />', $my_return);
+        $my_return = str_replace('{{employee_name}}', '<input type="text" class="form-control input-grey gray-background js_employee_name" name="employee_name" value="' . ($user_info["first_name"] . ' ' . $user_info["last_name"]) . '" />', $my_return);
 
         $my_return = str_replace('{{employee_job_title}}', '<input type="text" class="form-control input-grey gray-background js_employee_job_title" name="employee_job_title" value="' . ($user_info["job_title"]) . '" />', $my_return);
-        
+
         $my_return = str_replace('{{supervisor}}', '<input type="text" class="form-control input-grey gray-background js_supervisor" name="supervisor" value="' . ($supervisor) . '" />', $my_return);
 
         $my_return = str_replace('{{department}}', '<input type="text" class="form-control input-grey gray-background js_department" name="department" value="' . ($department) . '" />', $my_return);
@@ -565,7 +576,7 @@ if (!function_exists('replace_tags_for_document')) {
         $my_return = str_replace('{{reason_to_leave_company}}', '<textarea rows="5" class="form-control input-grey gray-background js_reason_to_leave_company" name="reason_to_leave_company"></textarea>', $my_return);
 
         $my_return = str_replace('{{forwarding_information}}', '<textarea rows="5" class="form-control input-grey gray-background js_forwarding_information" name="forwarding_information"></textarea>', $my_return);
-        
+
         // notice of termination
         $my_return = str_replace('{{is_termination_voluntary}}', '<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="yes"/> Yes<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="no"/> No', $my_return);
         $my_return = str_replace('{{property_returned}}', '<br /><input type="radio" name="property_returned" class="js_property_returned" value="yes"/> Yes<br /><input type="radio" name="property_returned" class="js_property_returned" value="no"/> No', $my_return);
@@ -581,13 +592,13 @@ if (!function_exists('replace_tags_for_document')) {
         $my_return = str_replace('{{employee_number}}', '<input type="text" class=" form-control input-grey gray-background js_employee_number" name="employee_number" />', $my_return);
 
         $my_return = str_replace('{{q1}}', '<textarea rows="5" class="form-control input-grey gray-background js_q1" name="q1"></textarea>', $my_return);
-        
+
         $my_return = str_replace('{{q2}}', '<textarea rows="5" class="form-control input-grey gray-background js_q2" name="q2"></textarea>', $my_return);
 
         $my_return = str_replace('{{q3}}', '<textarea rows="5" class="form-control input-grey gray-background js_q3" name="q3"></textarea>', $my_return);
 
         $my_return = str_replace('{{q4}}', '<textarea rows="5" class="form-control input-grey gray-background js_q4" name="q4"></textarea>', $my_return);
-        
+
         $my_return = str_replace('{{q5}}', '<textarea rows="5" class="form-control input-grey gray-background js_q5" name="q5"></textarea>', $my_return);
 
         // status and payroll
