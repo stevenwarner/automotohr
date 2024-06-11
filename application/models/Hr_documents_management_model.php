@@ -11247,6 +11247,10 @@ class Hr_documents_management_model extends CI_Model
             );
         }
         //
+        if ($w4Form['user_consent'] == 1) {
+            $updateArray["signature_timestamp"] = $w4Form['signature_timestamp'];
+        }
+        //
         $this->db
             ->where("sid", $w4Form["sid"])
             ->update("form_w4_original", $updateArray);

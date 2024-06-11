@@ -3409,7 +3409,6 @@ class Hr_documents_management extends Public_Controller
                 $assign_on = date("Y-m-d", strtotime($w4_form['sent_date']));
                 $compare_date = date("Y-m-d", strtotime('2020-01-06'));
                 //
-
                 $this->checkAndSetEmployerSection(
                     $w4_form,
                     $user_type,
@@ -17178,6 +17177,10 @@ class Hr_documents_management extends Public_Controller
                 DB_DATE,
                 "m-d-Y"
             );
+        }
+        //
+        if ($w4Form['user_consent'] == 1) {
+            $updateArray["signature_timestamp"] = $w4Form['signature_timestamp'];
         }
         //
         $this->db
