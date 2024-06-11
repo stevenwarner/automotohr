@@ -12,7 +12,6 @@ class Form_w4 extends Public_Controller
 
     public function index($type = null, $sid = null, $jobs_listing = null)
     {
-
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_sid = $data['session']['employer_detail']['sid'];
@@ -816,12 +815,21 @@ class Form_w4 extends Public_Controller
 
     public function print_w4_form_2020($type, $sid)
     {
+
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
+
+            $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
             $data['pre_form'] = $previous_form;
-            $this->load->view('form_w4/print_w4_2023', $data);
+
+            if ($assign_on >= $compare_date_2024) {
+                $this->load->view('form_w4/print_w4_2024', $data);
+            } else {
+                $this->load->view('form_w4/print_w4_2023', $data);
+            }
         } else {
             redirect('login', "refresh");
         }
@@ -835,7 +843,19 @@ class Form_w4 extends Public_Controller
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
 
-            $this->load->view('form_w4/download_w4_2023', $data);
+
+            $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
+
+            $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+            $data['pre_form'] = $previous_form;
+
+            if ($assign_on >= $compare_date_2024) {
+                $this->load->view('form_w4/download_w4_2024', $data);
+            } else {
+
+                $this->load->view('form_w4/download_w4_2023', $data);
+            }
         } else {
             redirect('login', "refresh");
         }

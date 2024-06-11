@@ -470,8 +470,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                                             <div style="overflow-x:auto;">
 
-
-
                                                 <table style="border-collapse:collapse;margin-left:5.5pt; width: 100%;" cellspacing="0">
 
                                                     <tr style="height:12pt">
@@ -1495,18 +1493,12 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                                     </tr>
                                                 </table>
 
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-
                             </div>
-
-
-
-
 
                     </div>
             </div>
@@ -1518,8 +1510,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                     <div class="panel-body">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                             <div style="overflow-x:auto;">
-
-
 
                                 <table style="border-collapse:collapse;margin-left:5.5pt; width: 100%;" cellspacing="0">
                                     <tr style="height:12pt">
@@ -2425,8 +2415,6 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                         </td>
                                     </tr>
                                 </table>
-
-
 
                             </div>
                         </div>
@@ -3362,7 +3350,19 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
             <div id="review_modal_body" class="modal-body">
                 <?php $form_values['pre_form'] = $pre_form;
                 $form_values['pre_form']['dated'] = !empty($pre_form['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $pre_form['signature_timestamp'])->format('M d Y') : '';
+                
+                $assign_on = date("Y-m-d", strtotime($form_values['pre_form']['sent_date']));
+                $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+    
+                if ($assign_on >= $compare_date_2024) {
+                    $view = $this->load->view('form_w4/preview_w4_2024', $form_values, TRUE);
+
+                }else{
+
                 $view = $this->load->view('form_w4/preview_w4_2023', $form_values, TRUE);
+                }
+
+
                 echo $view; ?>
             </div>
             <div id="review_modal_footer" class="modal-footer">

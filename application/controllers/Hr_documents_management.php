@@ -4367,7 +4367,7 @@ class Hr_documents_management extends Public_Controller
                         $user_sid
                     );
                 }
-            }    
+            }
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -6004,7 +6004,7 @@ class Hr_documents_management extends Public_Controller
                         $data['session']['employer_detail']['sid']
                     );
                 }
-            }    
+            }
             //
             $data['load_view'] = check_blue_panel_status(false, 'self');
             $data['employee'] = $data['session']['employer_detail'];
@@ -7410,7 +7410,7 @@ class Hr_documents_management extends Public_Controller
                                 $employee_id
                             );
                             //
-                            
+
                         }
                     }
                 }
@@ -13187,7 +13187,7 @@ class Hr_documents_management extends Public_Controller
                     ->get_object(
                         AWS_S3_BUCKET_NAME,
                         $post['data']['s3_filename'],
-                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/','_',$post['data']['orig_filename'])).'.'.$extension
+                        $dir . time() . '_' . (preg_replace('/[^a-zA-Z0-9-_.]/', '_', $post['data']['orig_filename'])) . '.' . $extension
                     );
                 // For Generated documents
                 // downloadFileFromAWS(
@@ -14652,7 +14652,15 @@ class Hr_documents_management extends Public_Controller
         if ($document_type == 'W4_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original");
             // $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
-            $html = $this->load->view('form_w4/preview_w4_2023', $data, true);
+            $assign_on = date("Y-m-d", strtotime($data["pre_form"]['sent_date']));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+
+            if ($assign_on >= $compare_date_2024) {
+                $html = $this->load->view('form_w4/preview_w4_2024', $data, true);
+            } else {
+                $html = $this->load->view('form_w4/preview_w4_2023', $data, true);
+            }
+
 
             $name = 'W4 Fillable';
         }
