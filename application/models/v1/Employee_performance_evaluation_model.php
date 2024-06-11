@@ -485,6 +485,8 @@ class Employee_performance_evaluation_model extends CI_Model
             //
             return "all_section_completed";
         }
+        //
+        return '';
     }
 
     /**
