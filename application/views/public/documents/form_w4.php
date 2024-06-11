@@ -324,9 +324,9 @@
                                             <div class="form-group autoheight">
                                                 <label>2. Enter: </label>
                                                 <p>
-                                                    &nbsp;&nbsp;• $24,000 if you’re married filing jointly or qualifying widow(er)<br>
-                                                    &nbsp;&nbsp;• $18,000 if you’re head of household<br>
-                                                    &nbsp;&nbsp;• $12,000 if you’re single or married filing separately
+                                                    &nbsp;&nbsp;• $29,200 if you’re married filing jointly or qualifying widow(er)<br>
+                                                    &nbsp;&nbsp;• $21,900 if you’re head of household<br>
+                                                    &nbsp;&nbsp;• $14,600 if you’re single or married filing separately
                                                 </p>
                                                 <input type="text" value="<?php echo !empty($pre_form) && isset($pre_form['dw_input_2']) ? $pre_form['dw_input_2']: ''?>" name="dw_input_2" class="form-control" />
                                             </div>
