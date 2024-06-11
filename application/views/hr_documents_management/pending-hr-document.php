@@ -383,8 +383,12 @@
                     <h4 class="modal-title" id="review_modal_title">Assigned W4 Form</h4>
                 </div>
                 <div id="review_modal_body" class="modal-body">
-                    <?php $view = get_form_view('pw4',$w4_form);
-                    echo $view; ?>
+
+                <?php //_e($w4_form,true,true);?>
+                    <?php //$view = get_form_view('pw4',$w4_form);
+                    $view = get_form_view('pw4',$w4_form);
+                    
+                  echo $view; ?>
                 </div>
                 <div id="review_modal_footer" class="modal-footer">
 

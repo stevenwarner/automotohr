@@ -981,7 +981,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="4" class="text-center border-bottom">
+                                    <td colspan="4" class="text-center">
 
 
                                         <table style="border-collapse:collapse;margin-left:5.5pt; width: 100%;" cellspacing="0">
@@ -2025,7 +2025,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="4" class="text-center border-bottom">
+                                    <td colspan="4" class="text-center">
                                         <table style="border-collapse:collapse;margin-left:5.5pt; width: 100%;" cellspacing="0">
                                             <tr style="height:12pt">
                                                 <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2" rowspan="2">
@@ -2950,7 +2950,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="4" class="text-center border-bottom">
+                                    <td colspan="4" class="text-center">
 
                                         <table style="border-collapse:collapse;margin-left:5.5pt;width: 100%;" cellspacing="0">
 
