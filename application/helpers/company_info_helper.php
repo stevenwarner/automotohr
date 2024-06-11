@@ -115,8 +115,11 @@ if (!function_exists('get_form_view')) {
             $form_values['pre_form'] = $form_data;
             $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
 
-            if ($assign_on >= $compare_date) {
+            if ($assign_on >= $compare_date_2024) {
+                $view = $CI->load->view('form_w4/form_w4_2024_pdf', $form_values, TRUE);
+            } else if ($assign_on >= $compare_date) {
                 //  $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
                 $view = $CI->load->view('form_w4/form_w4_2023_pdf', $form_values, TRUE);
             } else {

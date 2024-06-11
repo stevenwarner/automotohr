@@ -1685,7 +1685,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$10,000 - 19,999
                                             </p>
                                         </td>
-                                      
+
                                         <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 13pt;text-indent: 0pt;text-align: center;">870</p>
                                         </td>
@@ -1738,7 +1738,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
                                                 $20,000 - 29,999</p>
                                         </td>
-                                       <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
                                                 1,020</p>
                                         </td>
@@ -1792,7 +1792,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$30,000 - 39,999
                                             </p>
                                         </td>
-                                      
+
                                         <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">1,020</p>
                                         </td>
@@ -1845,7 +1845,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$40,000 - 59,999
                                             </p>
                                         </td>
-                                     
+
                                         <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">1,390</p>
                                         </td>
@@ -1898,7 +1898,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
                                                 $60,000 - 79,999</p>
                                         </td>
-                                      
+
                                         <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
                                                 1,870</p>
@@ -1953,7 +1953,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$80,000 - 99,999
                                             </p>
                                         </td>
-                                       
+
                                         <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
                                             <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">1,870</p>
                                         </td>
@@ -2424,7 +2424,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                                 25,870</p>
                                         </td>
                                     </tr>
-                                </table>                           
+                                </table>
 
 
 
@@ -2442,1118 +2442,839 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                             <div style="overflow-x:auto;">
 
-                            <table style="border-collapse:collapse;margin-left:5.5pt;width: 100%;" cellspacing="0">
-        <tr style="height:12pt">
-            <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2" rowspan="2">
-                <p class="s29" style="padding-top: 2pt;text-indent: 0pt;line-height: 9pt;text-align: left;">Higher
-                    Paying Job</p>
-            </td>
-            <td style="width:468pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt"
-                colspan="12">
-                <p class="s29" style="text-indent: 0pt;text-align: center;">Lower Paying Job Annual Taxable Wage &amp;
-                    Salary</p>
-            </td>
-        </tr>
-        <tr style="height:1pt">
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p style="text-indent: 0pt;text-align: left;"><br /></p>
-            </td>
-        </tr>
-        <tr style="height:23pt">
-            <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s29" style="padding-left: 5pt;text-indent: 0pt;line-height: 9pt;text-align: left;">Annual
-                    Taxable</p>
-                <p class="s29" style="padding-left: 7pt;text-indent: 0pt;text-align: left;">Wage &amp; Salary</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 8pt;text-indent: 2pt;text-align: left;">$0
-                    - 9,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$10,000 -
-                    19,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$20,000 -
-                    29,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$30,000 -
-                    39,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$40,000 -
-                    49,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$50,000 -
-                    59,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$60,000 -
-                    69,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$70,000 -
-                    79,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$80,000 -
-                    89,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$90,000 -
-                    99,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 5pt;text-indent: -4pt;text-align: left;">$100,000 -
-                    109,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 5pt;text-indent: -4pt;text-align: left;">$110,000 -
-                    120,000</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt;border-top-style:solid;border-top-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$0 -</p>
-            </td>
-            <td
-                style="width:30pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">9,999</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">$0</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 9pt;text-indent: 0pt;text-align: center;">$510</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">$850</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,220
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    $1,960</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$10,000 - 19,999
-                </p>
-            </td>
-           
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">510</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    1,510</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,020</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,220</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,220</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,220</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,420</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    3,420</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,070</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,070</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,160</p>
-            </td>
-            <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">4,360</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$20,000 - 29,999
-                </p>
-            </td>
-         
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">850</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,020</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,560</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,760</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,760</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,960</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    3,960</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,960</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,610</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,700</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,900</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">6,100</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt;border-top-style:solid;border-top-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$30,000 - 39,999
-                </p>
-            </td>
-          
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,020</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,220</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,760</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,960</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    3,160</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,160</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,160</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    6,160</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    6,900</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,100</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,300</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">7,500</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$40,000 - 59,999
-                </p>
-            </td>
-            
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,020</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    2,220</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,810</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,010</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,010</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    6,010</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,070</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    8,270</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,120</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,320</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,520</p>
-            </td>
-            <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">9,720</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:43pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$60,000 - 79,999
-                </p>
-            </td>
-          
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,070</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    3,270</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">4,810</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    6,010</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,070</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    8,270</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,470</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">10,670
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,520
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,720
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,920
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    12,120</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-        <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$80,000 -99,999
-                </p>
-            </td>
-            
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,870</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,070</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">5,670</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,070</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    8,270</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,470</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">10,670
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,870
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,720
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,920
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,120
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    13,450</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$100,000 - 124,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,020</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,420</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,160</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,560</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    8,760</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,960</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,160
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,360
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,210
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,880
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,880
-                </p>
-            </td>
-            <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    15,880</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$125,000 - 149,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,440</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,180</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,580</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    8,780</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,980</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,900
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,900
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,900
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    17,900</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$150,000 - 174,999</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,440</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,180</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    7,580</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,250</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,900
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,030
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">19,330
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    20,630</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$175,000 - 199,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    4,510</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">7,050</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    9,250</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,250
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">17,530
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">19,480
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">20,780
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,080
-                </p>
-            </td>
-            <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    23,380</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$200,000 - 249,999</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,720</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    5,920</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">8,620</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,120
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,420
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,720
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,020
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">20,320
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,270
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">23,570
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">24,870
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    26,170</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$250,000 - 449,999</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,970</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
-                    6,470</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">9,310</p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,810
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,110
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,410
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,710
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">21,010
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,960
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">24,260
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">25,560
-                </p>
-            </td>
-            <td
-                style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
-                    26,860</p>
-            </td>
-        </tr>
-        <tr style="height:12pt">
-            <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt"
-                colspan="2">
-                <p class="s19" style="padding-top: 1pt;text-indent: 0pt;line-height: 9pt;text-align: right;">$450,000 and
-                    over</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
-                    3,140</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    6,840</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
-                    9,880</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    12,580</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    15,080</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    17,580</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    20,080</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    22,580</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    24,730</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    26,230</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    27,730</p>
-            </td>
-            <td
-                style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
-                <p class="s19"
-                    style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
-                    29,230</p>
-            </td>
-        </tr>
-    </table>
-                          
+                                <table style="border-collapse:collapse;margin-left:5.5pt;width: 100%;" cellspacing="0">
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2" rowspan="2">
+                                            <p class="s29" style="padding-top: 2pt;text-indent: 0pt;line-height: 9pt;text-align: left;">Higher
+                                                Paying Job</p>
+                                        </td>
+                                        <td style="width:468pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="12">
+                                            <p class="s29" style="text-indent: 0pt;text-align: center;">Lower Paying Job Annual Taxable Wage &amp;
+                                                Salary</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:1pt">
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p style="text-indent: 0pt;text-align: left;"><br /></p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:23pt">
+                                        <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s29" style="padding-left: 5pt;text-indent: 0pt;line-height: 9pt;text-align: left;">Annual
+                                                Taxable</p>
+                                            <p class="s29" style="padding-left: 7pt;text-indent: 0pt;text-align: left;">Wage &amp; Salary</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 8pt;text-indent: 2pt;text-align: left;">$0
+                                                - 9,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$10,000 -
+                                                19,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$20,000 -
+                                                29,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$30,000 -
+                                                39,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$40,000 -
+                                                49,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$50,000 -
+                                                59,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$60,000 -
+                                                69,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$70,000 -
+                                                79,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$80,000 -
+                                                89,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 7pt;text-indent: -4pt;text-align: left;">$90,000 -
+                                                99,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 5pt;text-indent: -4pt;text-align: left;">$100,000 -
+                                                109,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 5pt;text-indent: -4pt;text-align: left;">$110,000 -
+                                                120,000</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt;border-top-style:solid;border-top-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$0 -</p>
+                                        </td>
+                                        <td style="width:30pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">9,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">$0</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;text-indent: 0pt;text-align: center;">$510</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">$850</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,020
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,220
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">$1,870
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                $1,960</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$10,000 - 19,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">510</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                1,510</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,020</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,220</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,220</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,220</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,420</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                3,420</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">4,360</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$20,000 - 29,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">850</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,020</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,560</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,760</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,760</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,960</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                3,960</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,960</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,610</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,700</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,900</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">6,100</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt;border-top-style:solid;border-top-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$30,000 - 39,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,020</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,220</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,760</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,960</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                3,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                6,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                6,900</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,100</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,300</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">7,500</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$40,000 - 59,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,020</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                2,220</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,810</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,010</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,010</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                6,010</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                8,270</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,120</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,320</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,520</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;text-indent: 0pt;text-align: center;">9,720</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:43pt;border-bottom-style:solid;border-bottom-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$60,000 - 79,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                3,270</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">4,810</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                6,010</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                8,270</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,470</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">10,670
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,520
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,720
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,920
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                12,120</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 3pt;text-indent: 0pt;text-align: right;">$80,000 -99,999
+                                            </p>
+                                        </td>
+
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">1,870</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">5,670</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,070</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                8,270</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,470</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">10,670
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,870
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,720
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,920
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,120
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                13,450</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$100,000 - 124,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,020</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,420</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,160</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,560</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                8,760</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,960</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,160
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">12,360
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,210
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,880
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,880
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                15,880</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$125,000 - 149,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,440</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,180</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,580</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                8,780</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,980</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,900
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,900
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,900
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                17,900</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$150,000 - 174,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,440</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">6,180</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                7,580</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,250</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,900
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,030
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">19,330
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                20,630</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$175,000 - 199,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,040</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                4,510</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">7,050</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                9,250</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,250
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">17,530
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">19,480
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">20,780
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,080
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                23,380</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$200,000 - 249,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,720</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                5,920</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">8,620</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,120
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">13,420
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">15,720
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,020
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">20,320
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,270
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">23,570
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">24,870
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                26,170</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-top-style:solid;border-top-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;text-align: right;">$250,000 - 449,999</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">2,970</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
+                                                6,470</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;text-align: right;">9,310</p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">11,810
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">14,110
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">16,410
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">18,710
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">21,010
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">22,960
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">24,260
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;text-align: center;">25,560
+                                            </p>
+                                        </td>
+                                        <td style="width:39pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;text-align: center;">
+                                                26,860</p>
+                                        </td>
+                                    </tr>
+                                    <tr style="height:12pt">
+                                        <td style="width:73pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="2">
+                                            <p class="s19" style="padding-top: 1pt;text-indent: 0pt;line-height: 9pt;text-align: right;">$450,000 and
+                                                over</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
+                                                3,140</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                6,840</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-right: 5pt;text-indent: 0pt;line-height: 9pt;text-align: right;">
+                                                9,880</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                12,580</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                15,080</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                17,580</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                20,080</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                22,580</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                24,730</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                26,230</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 2pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                27,730</p>
+                                        </td>
+                                        <td style="width:39pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt">
+                                            <p class="s19" style="padding-top: 1pt;padding-left: 6pt;padding-right: 4pt;text-indent: 0pt;line-height: 9pt;text-align: center;">
+                                                29,230</p>
+                                        </td>
+                                    </tr>
+                                </table>
+
                             </div>
                         </div>
                     </div>
