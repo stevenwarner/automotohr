@@ -1114,8 +1114,7 @@ class Manager_clock_model extends Base_model
             $history = $this->getTimeSheetHistory($record['sid']);
             //
             if ($history['logs']) {
-                $session = checkAndGetSession("all");
-                getLoggedInPersonTimeZone() = $session["company_detail"]["timezone"];
+                //
                 foreach ($history['logs'] as $key => $log) {
                     $history['logs'][$key]['startTime'] = convertTimeZone(
                         $log['startTime'],
