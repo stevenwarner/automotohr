@@ -193,13 +193,14 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                     </div>
                                     <div class="panel-body">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
-                                            <p>Complete this step if you (1) hold more than one job at a time, or (2) are married filing jointly and your spouse also works. The correct amount of withholding depends on income earned from all of these jobs.</p>
+                                            <p>Complete this step if you (1) hold more than one job at a time, or (2) are married filing jointly and your spouse
+                                                also works. The correct amount of withholding depends on income earned from all of these jobs.</p>
                                             <p>Do <b>only one</b> of the following.</p>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                                                 <div class="form-group">
                                                     <label class="control control--checkbox">
                                                         (a) Use the estimator at www.irs.gov/W4App for most accurate withholding for this step (and Steps 3–4). If you
-                                                        or your spouse have self-employment income, use this option; or</b>
+                                                        or your spouse have self-employment income, use this option or</b>
                                                     </label>
                                                 </div>
                                             </div>
@@ -407,7 +408,8 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                                                 <div class="form-group autoheight">
-                                                    <label>3. If line 1 is greater than line 2, subtract line 2 from line 1. If line 2 is greater than line 1, enter “-0-” </label>
+                                                    <label>3. If line 1 is greater than line 2, subtract line 2 from line 1 and enter the result here. If line 2 is greater
+                                                        than line 1, enter “-0-” .. </label>
                                                     <input type="text" value="<?php echo !empty($pre_form) && isset($pre_form['dw_input_3']) ? $pre_form['dw_input_3'] : '' ?>" name="dw_input_3" class="form-control" />
                                                 </div>
                                             </div>
@@ -3350,16 +3352,15 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
             <div id="review_modal_body" class="modal-body">
                 <?php $form_values['pre_form'] = $pre_form;
                 $form_values['pre_form']['dated'] = !empty($pre_form['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $pre_form['signature_timestamp'])->format('M d Y') : '';
-                
+
                 $assign_on = date("Y-m-d", strtotime($form_values['pre_form']['sent_date']));
                 $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
-    
+
                 if ($assign_on >= $compare_date_2024) {
                     $view = $this->load->view('form_w4/preview_w4_2024', $form_values, TRUE);
+                } else {
 
-                }else{
-
-                $view = $this->load->view('form_w4/preview_w4_2023', $form_values, TRUE);
+                    $view = $this->load->view('form_w4/preview_w4_2023', $form_values, TRUE);
                 }
 
 

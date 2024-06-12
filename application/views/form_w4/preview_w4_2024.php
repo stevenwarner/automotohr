@@ -360,7 +360,8 @@
                 <tbody>
                     <tr>
                         <td colspan="3" class="border-bottom">
-                            <strong>Complete Steps 2–4 ONLY if they apply to you; otherwise, skip to Step 5.</strong>See page 2 for more information on each step, who can claim exemption from withholding, when to use the online estimator, and privacy.
+                            <strong>Complete Steps 2–4 ONLY if they apply to you; otherwise, skip to Step 5.</strong>See page 2 for more information on each step, who can
+                            claim exemption from withholding, and when to use the estimator at www.irs.gov/W4App.
                         </td>
                     </tr>
                 </tbody>
@@ -375,11 +376,15 @@
                             <strong style="font-size: 15px;">Step 2: <br>Multiple Jobs <br>or Spouse <br>Works</strong>
                         </td>
                         <td>
-                            <p>Complete this step if you (1) hold more than one job at a time, or (2) are married filing jointly and your spouse also works. The correct amount of withholding depends on income earned from all of these jobs.</p>
+                            <p>Complete this step if you (1) hold more than one job at a time, or (2) are married filing jointly and your spouse
+                                also works. The correct amount of withholding depends on income earned from all of these jobs.</p>
                             <p>Do <strong>only one</strong> of the following.</p>
-                            <p><strong>(a)</strong> Use the estimator at www.irs.gov/W4App for most accurate withholding for this step (and Steps 3–4); <strong>or</strong></p>
-                            <p><strong>(b)</strong> Use the Multiple Jobs Worksheet on page 3 and enter the result in Step 4(c) below for roughly accurate withholding; <strong>or</strong></p>
-                            <p><strong>(c)</strong> If there are only two jobs total, you may check this box. Do the same on Form W-4 for the other job. This option is accurate for jobs with similar pay; otherwise, more tax than necessary may be withheld . . . . . ▶ <input type="checkbox" value="" readonly <?php echo !empty($pre_form['mjsw_status']) && isset($pre_form['marriage_status']) ? 'checked="checked"' : '' ?> /></p>
+                            <p><strong>(a)</strong> Use the estimator at www.irs.gov/W4App for most accurate withholding for this step (and Steps 3–4). If you
+                                or your spouse have self-employment income, use this option; <strong>or</strong></p>
+                            <p><strong>(b)</strong> Use the Multiple Jobs Worksheet on page 3 and enter the result in Step 4(c) below; <strong>or</strong></p>
+                            <p><strong>(c)</strong>If there are only two jobs total, you may check this box. Do the same on Form W-4 for the other job. This
+                                option is generally more accurate than (b) if pay at the lower paying job is more than half of the pay at the
+                                higher paying job. Otherwise, (b) is more accurate . . . . . ▶ <input type="checkbox" value="" readonly <?php echo !empty($pre_form['mjsw_status']) && isset($pre_form['marriage_status']) ? 'checked="checked"' : '' ?> /></p>
                             <br>
                         </td>
                     </tr>
@@ -615,9 +620,29 @@
                         <td style="width: 50%;">
                             <h3>Specific Instructions</h3>
                             <span class="heading-text">Step 1(c).</span> Check your anticipated filing status. This will determine the standard deduction and tax rates used to compute your withholding.<br>
-                            <span class="heading-text">Step 2. </span> Use this step if you (1) have more than one job at the same time, or (2) are married filing jointly and you and your spouse both work. .<br>
-                            &nbsp;&nbsp;If you (and your spouse) have a total of only two jobs, you may instead check the box in option (c). The box must also be checked on the Form W-4 for the other job. If the box is checked, the standard deduction and tax brackets will be cut in half for each job to calculate withholding. This option is roughly accurate for jobs with similar pay; otherwise, more tax than necessary may be withheld, and this extra amount will be larger the greater the difference in pay is between the two jobs<br>
-                            ▲! CAUTION Multiple jobs. Complete Steps 3 through 4(b) on only one Form W-4. Withholding will be most accurate if you do this on the Form W-4 for the highest paying job. <br>
+                            <span class="heading-text">Step 2. </span> Use this step if you (1) have more than one job at the
+                            same time, or (2) are married filing jointly and you and your
+                            spouse both work.<br>
+
+                            Option (a) most accurately calculates the additional tax
+                            you need to have withheld, while option (b) does so with a
+                            little less accuracy
+
+                            <br>
+                            &nbsp;&nbsp;Instead, if you (and your spouse) have a total of only two
+                            jobs, you may check the box in option (c). The box must also
+                            be checked on the Form W-4 for the other job. If the box is
+                            checked, the standard deduction and tax brackets will be
+                            cut in half for each job to calculate withholding. This option
+                            is accurate for jobs with similar pay; otherwise, more tax
+                            than necessary may be withheld, and this extra amount will
+                            be larger the greater the difference in pay is between the two
+                            jobs.
+                            ▲!
+                            CAUTION
+                            Multiple jobs. Complete Steps 3 through 4(b) on only
+                            one Form W-4. Withholding will be most accurate if
+                            you do this on the Form W-4 for the highest paying job. <br>
                             <span class="heading-text">Step 3.</span> This step provides instructions for determining the amount of the child tax credit and the credit for other dependents that you may be able to claim when you file your tax return. To qualify for the child tax credit, the child must be under age 17 as of December 31, must be your dependent who generally lives with you for more than half the year, and must have the required social security number. You may be able to claim a credit for other dependents for whom a child tax credit can’t be claimed, such as an older child or a qualifying relative. For additional eligibility requirements for these credits, see Pub. 501, Dependents, Standard Deduction, and Filing Information. You can also include other tax credits for which you are eligible in this step, such as the foreign tax credit and the education tax credits. To do so, add an estimate of the amount for the year to your credits for dependents and enter the total amount in Step 3. Including these credits will increase your paycheck and reduce the amount of any refund you may receive when you file your tax return.<br>
                             <span class="heading-text">Step 4 (optional).</span><br>
                             <span class="heading-text">Step 4(a).</span> Enter in this step the total of your other estimated income for the year, if any. You shouldn’t include income from any jobs or self-employment. If you complete Step 4(a), you likely won’t have to make estimated tax payments for that income. If you prefer to pay estimated tax rather than having tax on other income withheld from your paycheck, see Form 1040-ES, Estimated Tax for Individuals.<br>
@@ -800,7 +825,8 @@
                                 <strong class="indicator-box">3</strong>
                             </td>
                             <td width="86%">
-                                If line 1 is greater than line 2, subtract line 2 from line 1. If line 2 is greater than line 1, enter “-0-” . .
+                                If line 1 is greater than line 2, subtract line 2 from line 1 and enter the result here. If line 2 is greater
+                                than line 1, enter “-0-” ..
                             </td>
                             <td width="2%">
                                 <strong class="indicator-box-2">3</strong>
@@ -1930,13 +1956,13 @@
                     <tbody>
                         <tr>
                             <td colspan="4" class="text-center border-bottom">
-                            <table class="table table-bordered">
+                                <table class="table table-bordered">
                                     <tbody>
                                         <tr>
                                             <td colspan="4" class="text-center">
                                                 <table class="table table-bordered">
-                                                 
-                                                <tr style="height:12pt">
+
+                                                    <tr style="height:12pt">
                                                         <td class="cs_td_setting" colspan="2" rowspan="2">
                                                             <p class="s29" style="padding-top: 2pt;text-indent: 0pt;line-height: 9pt;text-align: left;">Higher
                                                                 Paying Job</p>
@@ -2836,12 +2862,12 @@
                                                     25,870</p>
                                             </td>
                                         </tr>
-                                            </table>
+                                </table>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                                            </tbody>
+                </tbody>
                 </table>
 
             </div>
