@@ -2254,7 +2254,7 @@
                                                         <td class="cs_td_setting">
                                                             <p class="s19" style="padding-top: 1pt;padding-left: 9pt;padding-right: 2pt;text-indent: 0pt;text-align: center;">
                                                                 3,510</p>
-                                                        </td> sasdas
+                                                        </td>
 
                                             </td>
                                             <td class="cs_td_setting">
