@@ -2126,13 +2126,13 @@ $route["payrolls/employee_job_compensation/(:num)/(:any)"]["post"] = "v1/Users/M
  * Attendance routes
  * @version 1.0
  */
-$route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
-$route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
+// $route["v1/clock"]["get"] = "v1/Attendance/api/Main/getClockWithState";
+// $route["v1/clock/mark"]["post"] = "v1/Attendance/api/Main/markAttendance";
 $route["v1/clock/graphs/week_worked_time"]["get"] = "v1/Attendance/api/Main/getWorkedHoursForGraph";
 $route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/Main/getMyTodaysFootprints";
-$route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
+// $route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Main/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/log/(:num)"]["delete"] = "v1/Attendance/api/Main/deleteTimeSheetLogById/$1";
-$route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
+// $route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Main/processTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/status"]["post"] = "v1/Attendance/api/Main/processTimeSheetStatus";
 $route["v1/clock/timesheet/history/(:num)"]["get"] = "v1/Attendance/api/Main/getTimeSheetHistory/$1";
 
@@ -2142,14 +2142,15 @@ $route["v1/clock/timesheet/history/(:num)"]["get"] = "v1/Attendance/api/Main/get
  * @version 1.0
  */
 // employee
-$route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
-$route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
+// $route["attendance/my/overview"]["get"] = "v1/Attendance/Employee/dashboard";
+// $route["attendance/my/timesheet"]["get"] = "v1/Attendance/Employee/timesheet";
+
 // employer
 $route["attendance/dashboard"]["get"] = "v1/Attendance/Attendance/dashboard";
-$route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
+// $route["attendance/timesheet"]["get"] = "v1/Attendance/Attendance/timesheet";
 $route["attendance/employees/timesheets"]["get"] = "v1/Attendance/Attendance/timesheets";
-$route["attendance/employees/locations"]["get"] = "v1/Attendance/Attendance/locations";
-$route["attendance/location_detail"]["get"] = "v1/Attendance/Attendance/location_detail";
+// $route["attendance/employees/locations"]["get"] = "v1/Attendance/Attendance/locations";
+// $route["attendance/location_detail"]["get"] = "v1/Attendance/Attendance/location_detail";
 $route["attendance/settings"]["get"] = "v1/Attendance/Attendance/settings";
 // $route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payroll/syncCompanyWithGusto/$1';
 //
@@ -2323,4 +2324,25 @@ $route["fillable/epe/get_assign_employees"]["get"] =
 
 $route["fillable/epe/get_document_preview"]["get"] =
   "v1/Employee_performance_evaluation/getDocumentPreview";
+
+/**
+ * Attendance routes
+ * @version 2.0
+ */
+
+// Manager Routes
+$route["attendance/timesheet"]["get"] = "v1/Attendance/api/Manager/timesheet";
+$route["attendance/employees/locations"]["get"] = "v1/Attendance/api/Manager/locations";
+$route["attendance/location_detail"]["get"] = "v1/Attendance/api/Manager/location_detail";
+$route["v1/clock/timesheet/(:num)/(:any)"]["get"] = "v1/Attendance/api/Manager/getTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/(:num)/(:any)"]["post"] = "v1/Attendance/api/Manager/processTimeSheetDetails/$1/$2";
+
+// Employee Routes
+$route["v1/clock"]["get"] = "v1/Attendance/api/My/getClockWithState";
+$route["v1/clock/mark"]["post"] = "v1/Attendance/api/My/markAttendance";
+$route["attendance/my/overview"]["get"] = "v1/Attendance/api/My/dashboard";
+$route["attendance/my/timesheet"]["get"] = "v1/Attendance/api/My/timesheet";
+$route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/My/getMyTodaysFootprints";
+$route["v1/clock/timesheet/my/(:num)/(:any)"]["get"] = "v1/Attendance/api/My/getTimeSheetDetails/$1/$2";
+$route["v1/clock/timesheet/my/(:num)/(:any)"]["post"] = "v1/Attendance/api/My/processTimeSheetDetails/$1/$2";
 

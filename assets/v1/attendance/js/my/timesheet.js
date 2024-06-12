@@ -76,7 +76,7 @@ $(function timeSheet() {
 	}
 
 	function showTimeSheetModal() {
-		console.log(obj);
+		//
 		Modal(
 			{
 				Id: "jsTimeSheetModal",
@@ -97,9 +97,9 @@ $(function timeSheet() {
 		if (XHR !== null) {
 			XHR.abort();
 		}
-
+		console.log("employee")
 		XHR = $.ajax({
-			url: baseUrl("v1/clock/timesheet/" + obj.id + "/" + obj.date),
+			url: baseUrl("v1/clock/timesheet/my/" + obj.id + "/" + obj.date),
 			method: "get",
 		})
 			.always(function () {
@@ -201,7 +201,7 @@ $(function timeSheet() {
 			return;
 		}
 		$.ajax({
-			url: baseUrl("v1/clock/timesheet/" + obj.id + "/" + obj.date),
+			url: baseUrl("v1/clock/timesheet/my/" + obj.id + "/" + obj.date),
 			method: "post",
 			data: {
 				logs: formData,
