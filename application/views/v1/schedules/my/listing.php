@@ -230,11 +230,13 @@ if ($filter["mode"] === "month") {
                                                             $available = true;
                                                             $conflict = false;
                                                             $unavailableHighlightStyle = '';
+                                                            $unavailableHighlightText = '';
                                                             //
                                                             if ($unavailability) {
                                                                 foreach ($unavailability[$loggedInEmployee["sid"]]['unavailableDates'] as $unavailable) {
                                                                     if ($unavailable['date'] == $monthDate) {
                                                                         $unavailableHighlightStyle = 'bg-danger';
+                                                                        $unavailableHighlightText = $unavailable['status'];
                                                                         $available = false;
                                                                         //
                                                                         if ($employeeShift) {
@@ -282,6 +284,8 @@ if ($filter["mode"] === "month") {
                                                                     </button>
                                                                 </div>
                                                             <?php } else { ?>
+                                                                <?= $unavailableHighlightText ?>
+                                                                <span class="conflict-label"><i class="fa fa-trash" aria-hidden="true"></i></span>
                                                             <?php } ?>
                                                         </div>
                                                         <?php
