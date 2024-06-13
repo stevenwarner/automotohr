@@ -2423,6 +2423,12 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                     </div>
                 </div>
             </div>
+
+
+
+
+
+
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                 <div class="panel panel-blue">
                     <div class="panel-heading incident-panal-heading">
@@ -3270,6 +3276,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                     </div>
                 </div>
             </div>
+
             <?php //if(!empty($e_signature_data)) { 
             ?>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
