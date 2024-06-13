@@ -3,50 +3,24 @@
         <table class="table bordered-table table-border-collapse" id="footer-table">
             <thead>
                 <tr>
-                    <th colspan="4" class="text-center border-bottom">
+                    <th colspan="4" class="text-center">
                         <span class="heading-text">Head of Household</span>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="4" class="text-center border-bottom">
+                    <td colspan="4" class="text-center">
                         <table class="table table-bordered">
 
                             <tr>
-                                <td class="cs_td_setting" colspan="2" rowspan="2">
-                                </td>
-                                <td class="cs_td_setting" colspan="12">
+
+                                <td class="cs_td_setting" colspan="14">
                                     <p class="s29" style="text-indent: 0pt;text-align: center;"><strong>Lower Paying Job Annual Taxable Wage &amp;
                                             Salary</strong></p>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                                <td class="cs_td_setting">
-                                </td>
-                            </tr>
+
                             <tr>
                                 <td class="cs_td_setting" colspan="2">
                                     <p class="s29" style="padding-left: 5pt;text-indent: 0pt;line-height: 9pt;text-align: left;"> <strong> Higher
@@ -100,22 +74,20 @@
 
 
                             <tr>
-                                <td class="cs_td_setting">
+                                <td class="cs_td_setting" colspan="2">
                                     $0 - 9,999 <br>
                                     $10,000 - 19,999 <br>
                                     $20,000 - 29,999
 
                                 </td>
-                                <td class="cs_td_setting">
-                                    
-                                </td>
+
                                 <td class="cs_td_setting">
                                     $0 <br>
                                     510 <br>
                                     850
                                 </td>
                                 <td class="cs_td_setting">
-                                    $510 <br> 
+                                    $510 <br>
                                     1,510 <br>
                                     2,020
                                 </td>
@@ -132,7 +104,7 @@
                                 <td class="cs_td_setting">
                                     $1,020 <br>
                                     2,220 <br>
-                                    2,760 
+                                    2,760
                                 </td>
                                 <td class="cs_td_setting">
                                     $1,020 <br>
@@ -170,7 +142,7 @@
                                     6,100
                                 </td>
                             </tr>
-                           
+
                             <tr>
                                 <td class="cs_td_setting" colspan="2">
                                     $30,000 - 39,999 <br>
@@ -240,7 +212,7 @@
                                     12,120
                                 </td>
                             </tr>
-                        
+
                             <tr>
                                 <td class="cs_td_setting" colspan="2">
                                     $80,000 -99,999<br>
@@ -380,14 +352,14 @@
 
 
 
-                           <tr>
+                            <tr>
                                 <td class="cs_td_setting" colspan="2">
                                     $250,000 - 449,999<br>
                                     $450,000 and
                                     over
                                 </td>
                                 <td class="cs_td_setting">
-                                    2,970<br>  3,140
+                                    2,970<br> 3,140
 
                                 </td>
                                 <td class="cs_td_setting">
