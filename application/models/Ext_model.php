@@ -195,10 +195,17 @@ class Ext_model extends CI_Model
             unset($data['sid']);
             $this->db->insert('company_bank_accounts', $data);
             //
+
             if (isCompanyOnBoard($data['company_sid'])) {
 
+                $this->load->model('v1/payroll_model');
+
+                $accountInfo = [];
+                $accountInfo['routing_number'] = $data['routing_number'];
+                $accountInfo['account_number'] = $data['account_number'];
+                $accountInfo['account_type'] = $data['account_type'];
+                $response = $this->payroll_model->addCompanyBankAccount($data['company_sid'], $accountInfo);
             }
-            
         } else {
 
             $this->db->where('sid', $data['sid']);
@@ -206,7 +213,6 @@ class Ext_model extends CI_Model
             $this->db->update('company_bank_accounts', $data);
             //           
             if (isCompanyOnBoard($data['company_sid'])) {
-
             }
         }
     }
@@ -236,13 +242,13 @@ class Ext_model extends CI_Model
             $this->db->insert('companies_federal_tax', $data);
             //
             if (isCompanyOnBoard($data['company_sid'])) {
-
             }
-
         } else {
             //
             $this->db->where('sid', $data['company_sid']);
             $this->db->update('users', ['ssn' => $data['ssn']]);
+
+            $ein = $data['ssn'];
 
             unset($data['ssn']);
             $this->db->where('sid', $data['sid']);
@@ -251,6 +257,15 @@ class Ext_model extends CI_Model
             //
             if (isCompanyOnBoard($data['company_sid'])) {
 
+                $this->load->model('v1/payroll_model');
+
+                $accountInfo = [];
+                $accountInfo['legal_name'] = $data['legal_name'];
+                $accountInfo['ein'] = $ein;
+                $accountInfo['account_type'] = $data['tax_payer_type'];
+                $accountInfo['filing_form'] = $data['filing_form'];
+
+                $response = $this->payroll_model->updateCompanyFederalTaxInformarion($data['company_sid'], $accountInfo);
             }
         }
     }

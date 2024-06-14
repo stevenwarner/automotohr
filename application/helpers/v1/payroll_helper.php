@@ -338,10 +338,7 @@ if (!function_exists('getUrl')) {
         $urls['addCompanyEarningTypes'] = "v1/companies/$key/earning_types";
         $urls['editCompanyEarningTypes'] = "v1/companies/$key/earning_types/$key1";
 
-        // Company Bank Account
-        $urls['addCompanyBankAccount'] = "v1/companies/$key/bank_accounts";
-
-
+       
         // webhooks
         $urls['createCompanyWebHook'] = "v1/webhook_subscriptions";
         $urls['verifyCompanyWebHook'] = "v1/webhook_subscriptions/$key/verify";
@@ -484,6 +481,13 @@ if (!function_exists('getUrl')) {
         $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
         // location minimum wages
         $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
+
+
+         // Company Bank Account
+         $urls['addCompanyBankAccount'] = "v1/companies/$key/bank_accounts";
+          // Company Federal Tax Informarion
+          $urls['updateCompanyFederalTaxInformarion'] = "v1/companies/$key/federal_tax_details";
+
 
         return getCreds("AHR")->GUSTO->DEMO->URL . $urls[$index];
     }
@@ -683,6 +687,7 @@ if (!function_exists('gustoCall')) {
         string $requestType = "GET"
     ): array {
         // set call headers
+
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
@@ -699,6 +704,7 @@ if (!function_exists('gustoCall')) {
             $curlOptions[CURLOPT_POSTFIELDS] = json_encode($request);
         }
         // make call to Gusto
+
         $response =  makeCall(
             getUrl(
                 $event,
@@ -708,6 +714,7 @@ if (!function_exists('gustoCall')) {
             ),
             $curlOptions
         );
+
         // auth failed needs to generate new tokens
         if (isset($response['errors']['auth'])) {
             // generate new access token

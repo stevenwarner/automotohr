@@ -213,7 +213,7 @@ if (!function_exists('hasGustoErrors')) {
      * @return array
      */
     function hasGustoErrors($response)
-    {  
+    {
         // set errors array
         $errors = [
             'errors' => []
@@ -230,7 +230,7 @@ if (!function_exists('hasGustoErrors')) {
             // _e($response['errors'],true,true);
             foreach ($response['errors'] as $err) {
                 //
-                
+
                 if (isset($err['error_key']) && $err['error_key'] == "states") {
                     return getStateErrorList($err['errors']);
                 } elseif (isset($err['errors'])) {
@@ -283,7 +283,7 @@ if (!function_exists('getStateErrorList')) {
         //
         return $errors;
     }
-}    
+}
 
 if (!function_exists('getUrl')) {
     /**
@@ -479,7 +479,14 @@ if (!function_exists('getUrl')) {
         $urls['UpdateEmployeeRehireOnGusto'] = 'v1/employees/' . ($key) . '/rehire';
         // location minimum wages
         $urls["locationMinimumWages"] = "v1/locations/$key/minimum_wages";
-        
+
+        // Company Bank Account
+        $urls['addCompanyBankAccount'] = "v1/companies/$key/bank_accounts";
+        // Company Federal Tax Informarion
+        $urls['updateCompanyFederalTaxInformarion'] = "v1/companies/$key/federal_tax_details";
+
+
+
         return getCreds("AHR")->GUSTO->PRODUCTION->URL . $urls[$index];
     }
 }
