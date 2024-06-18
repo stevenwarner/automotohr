@@ -212,10 +212,10 @@ if ($filter["mode"] === "month") {
                                                 $todaysDate = getSystemDate("Y-m-d");
                                                 foreach ($monthDates as $monthDate) { ?>
                                                     <?php $totalHoursInSeconds = 0; ?>
-                                                    <?php 
-                                                        $employeeLeave = $leaves[$loggedInEmployee["sid"]][$monthDate];
+                                                    <?php
+                                                    $employeeLeave = $leaves[$loggedInEmployee["sid"]][$monthDate];
 
-                                                        $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
+                                                    $highlightStyle = $todaysDate === $monthDate ? "bg-success" : "";
                                                     ?>
                                                     <!-- column-->
                                                     <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
@@ -224,27 +224,34 @@ if ($filter["mode"] === "month") {
                                                                 <?= formatDateToDB($monthDate, DB_DATE, "D d"); ?>
                                                             </p>
                                                         </div>
-                                                        <?php 
-                                                            $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
-                                                            //
-                                                            $available = true;
-                                                            $conflict = false;
-                                                            $unavailableHighlightStyle = '';
-                                                            $unavailableHighlightText = '';
-                                                            //
-                                                            if ($unavailability) {
-                                                                foreach ($unavailability[$loggedInEmployee["sid"]]['unavailableDates'] as $unavailable) {
-                                                                    if ($unavailable['date'] == $monthDate) {
-                                                                        $unavailableHighlightStyle = 'bg-danger';
-                                                                        $unavailableHighlightText = $unavailable['status'];
-                                                                        $available = false;
-                                                                        //
-                                                                        if ($employeeShift) {
-                                                                            $conflict = true;
-                                                                        }
+                                                        <?php
+                                                        $employeeShift = $shifts[$loggedInEmployee["sid"]]["dates"][$monthDate];
+                                                        //
+                                                        $available = true;
+                                                        $conflict = false;
+                                                        $unavailableHighlightStyle = '';
+                                                        $unavailableHighlightText = '';
+                                                        $unavailableTime = [];
+                                                        //
+                                                        //
+                                                        if ($unavailability) {
+                                                            foreach ($unavailability[$loggedInEmployee["sid"]]['unavailableDates'] as $ukey => $unavailable) {
+                                                                if ($unavailable['date'] == $monthDate) {
+                                                                    //
+                                                                    $unavailableHighlightStyle = 'bg-danger';
+                                                                    $unavailableHighlightText = $unavailable['status'];
+                                                                    $available = false;
+                                                                    //
+                                                                    if ($employeeShift) {
+                                                                        $conflict = true;
+                                                                    }
+                                                                    //
+                                                                    if ($unavailable['time']) {
+                                                                        $unavailableTime = $unavailable['time'];
                                                                     }
                                                                 }
                                                             }
+                                                        }
                                                         ?>
                                                         <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $available ? $highlightStyle : $unavailableHighlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
                                                             <?php if ($employeeLeave) { ?>
@@ -253,11 +260,10 @@ if ($filter["mode"] === "month") {
                                                                         <?= $employeeLeave["title"]; ?>
                                                                     </strong>
                                                                 </div>
-                                                            <?php } elseif ($employeeShift) {
-                                                                $totalHoursInSeconds += $employeeShift["totalTime"];
-                                                            ?>
+                                                            <?php } elseif ($employeeShift) { ?>
+                                                                <?php $totalHoursInSeconds += $employeeShift["totalTime"]; ?>
                                                                 <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>">
-                                                                
+
                                                                     <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                         <span class="circle circle-orange"></span>
                                                                     <?php } ?>
@@ -281,11 +287,27 @@ if ($filter["mode"] === "month") {
                                                                 <div class="schedule-dayoff">
                                                                     <button class="btn btn-red text-small btn-xs">
                                                                         <?= $holidays[$monthDate]["title"]; ?>
+                                                                        <?php if (!$available) { ?>
+                                                                            <span class="conflict-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                        <?php } ?>
                                                                     </button>
                                                                 </div>
+                                                            <?php } elseif (!$available) { ?>
+                                                                <?php if ($unavailableTime) { ?>
+                                                                    <?php foreach ($unavailableTime as $partial) { ?>
+                                                                        <div class="schedule-dayoff">
+                                                                            <?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>
+                                                                            <span class="l-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>"  data-unavailable_time="<?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>" data-unavailable_type="partial_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                        </div>
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                    <?= $unavailableHighlightText ?>
+                                                                    <br>
+                                                                    Unavailable
+                                                                    <span class="conflict-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>" data-unavailable_type="full_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                <?php } ?>
                                                             <?php } else { ?>
-                                                                <?= $unavailableHighlightText ?>
-                                                                <span class="conflict-label"><i class="fa fa-trash" aria-hidden="true"></i></span>
+
                                                             <?php } ?>
                                                         </div>
                                                         <?php
@@ -307,5 +329,27 @@ if ($filter["mode"] === "month") {
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div style="display:none;">
+    <div id="jsDeleteContent">
+        <label class="control control--radio">
+            Delete all previous unavailability
+            <input id="youtube" name="delete_type" value="previous" type="radio">
+            <div class="control__indicator"></div>
+        </label>
+        <br>
+        <label class="control control--radio">
+            Delete only this unavailability
+            <input id="youtube" name="delete_type" checked="checked" value="current" type="radio">
+            <div class="control__indicator"></div>
+        </label>
+        <br>
+        <label class="control control--radio">
+            Delete all next unavailability
+            <input id="youtube" name="delete_type" value="next" type="radio">
+            <div class="control__indicator"></div>
+        </label>
     </div>
 </div>

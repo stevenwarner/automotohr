@@ -4,9 +4,9 @@ $(function myAvailability() {
 	 */
 	let XHR = null;
 
-    	/**
-	 * holds the modal page id
-	 */
+	/**
+ * holds the modal page id
+ */
 	const modalId = "jsModalPage";
 	const modalLoader = modalId + "Loader";
 	const modalBody = modalId + "Body";
@@ -24,24 +24,24 @@ $(function myAvailability() {
 	});
 
 	$(document).on("click", ".jsUnavailableAllDay", function (event) {
-		if($(".jsUnavailableAllDay").prop('checked') == false){
+		if ($(".jsUnavailableAllDay").prop('checked') == false) {
 			$(".jsHoursRowCustom").remove();
 			$("#jsAddUnavailableTime").removeClass("hidden");
 		} else {
 			$("#jsAddUnavailableTime").addClass("hidden");
 		}
-	});	
+	});
 
 	$(document).on("click", ".jsRepeat", function (event) {
-		if($(".jsRepeat").prop('checked') == true){
+		if ($(".jsRepeat").prop('checked') == true) {
 			$("#jsSelectedDate").html($(".jsUnavailableDate").val());
 			$(".jsRepeatSection").removeClass("hidden");
 			$(".jsOnOccurrences").addClass("hidden");
 		} else {
 			$(".jsRepeatSection").addClass("hidden");
 		}
-	});	
-	
+	});
+
 	$(document).on("change", "#jsRepeatType", function (event) {
 		$(".jsRepeatType").addClass("hidden");
 		$(".jsWeeklyMonthlySection").addClass("hidden");
@@ -89,17 +89,63 @@ $(function myAvailability() {
 		$(".jsHoursContainer").append(generateBreakHtml(uniqId));
 		//
 		applyTimePicker();
-	});	
-	
+	});
+
 	/**
 	* remove the break
 	*/
-   	$(document).on("click", ".jsDeleteHourRow", function (event) {
+	$(document).on("click", ".jsDeleteHourRow", function (event) {
 		event.preventDefault();
 		//
 		const uniqId = $(this).closest(".jsHoursRow").data("key");
 		$('.jsHoursRow[data-key="' + uniqId + '"]').remove();
-   	});
+	});
+
+
+	/**
+	* remove the break
+	*/
+	$(document).on("click", ".jsDeleteUnavailability", function (event) {
+		//
+		event.preventDefault();
+		//
+		var unavailableDate = $(this).data("unavailability");
+		var unavailableType = $(this).data("unavailable_type");
+		var unavailableTime = '';
+		//
+		if (unavailableType == "partial_day") {
+			unavailableTime = $(this).data("unavailable_time");
+		}
+ 		//
+		var dlgContentHTML = $('#jsDeleteContent').html();
+		//
+		alertify.confirm(dlgContentHTML).set('onok', function (closeevent, value) {
+			//
+			var obj = {};
+			obj.sequence = $('input[name="delete_type"]:checked').val();
+			obj.date = unavailableDate;
+			obj.time = unavailableTime;
+			//
+			ml(true, modalLoader);
+			//		
+			XHR = $.ajax({
+				url: baseUrl("shifts/delete/myUnavailability"),
+				method: "POST",
+				data: obj,
+				cache: false,
+			})
+				.done(function (resp) {
+					alertify.alert("SUCCESS!", resp.msg, function () {
+						window.location.reload();
+					})
+				})
+				.fail(handleErrorResponse)
+				.always(function () {
+					XHR = null;
+					ml(false, modalLoader);
+				});
+		}).set('labels', { ok: 'Delete', cancel: 'Cancel' }).set('title', "Delete Unavailability",);
+	});
 
 	/**
 	* remove the break
@@ -111,25 +157,25 @@ $(function myAvailability() {
 		var obj = {};
 		obj.date = $('.jsUnavailableDate').val();
 		obj.note = $('.jsNote').val();
-	
-		if($(".jsUnavailableAllDay").prop('checked') == true){
+
+		if ($(".jsUnavailableAllDay").prop('checked') == true) {
 			obj.allDay = 'yes';
 		} else {
 			obj.allDay = 'no';
 			obj.dailyTimes = [];
-			$('.jsHoursRow').map(function(i) {
+			$('.jsHoursRow').map(function (i) {
 				//
-				var index = i+1;
+				var index = i + 1;
 				//
 				startTime = $(this).closest("div").find(".jsStartTime").val();
 				endTime = $(this).closest("div").find(".jsEndTime").val();
 				//
 				if (!startTime) {
-					errorArray.push('At row '+(index)+' start time is missing.');
+					errorArray.push('At row ' + (index) + ' start time is missing.');
 				}
 				//
 				if (!endTime) {
-					errorArray.push('At row '+(index)+' end time is missing.');
+					errorArray.push('At row ' + (index) + ' end time is missing.');
 				}
 				//
 
@@ -140,7 +186,7 @@ $(function myAvailability() {
 			});
 		}
 
-		if($(".jsRepeat").prop('checked') == true){
+		if ($(".jsRepeat").prop('checked') == true) {
 			obj.repeat = 'yes';
 			obj.repeatType = $('#jsRepeatType').val();
 			//
@@ -149,7 +195,7 @@ $(function myAvailability() {
 			} else if (obj.repeatType == "weekly") {
 				obj.weekly = $('#jsEveryWeekly').val();
 				obj.weekDays = [];
-				$('.jsUnavailableWeekDay:checkbox:checked').each(function(){
+				$('.jsUnavailableWeekDay:checkbox:checked').each(function () {
 					obj.weekDays.push($(this).val());
 				});
 				//
@@ -183,7 +229,7 @@ $(function myAvailability() {
 					errorArray.push('Last occurrence date is missing.');
 				}
 			}
-			
+
 		} else {
 			obj.repeat = 'no';
 		}
@@ -205,7 +251,7 @@ $(function myAvailability() {
 			cache: false,
 		})
 			.done(function (resp) {
-				alertify.alert("SUCCESS!",resp.msg,function () {
+				alertify.alert("SUCCESS!", resp.msg, function () {
 					window.location.reload();
 				})
 			})
@@ -214,7 +260,7 @@ $(function myAvailability() {
 				XHR = null;
 				ml(false, modalLoader);
 			});
-   	});
+	});
 
 	/**
 	 * Create my unavailability
@@ -235,7 +281,7 @@ $(function myAvailability() {
 		);
 	}
 
-    /**
+	/**
 	 * generates the modal
 	 * @param {string} pageTitle
 	 * @param {string} pageSlug
@@ -255,7 +301,7 @@ $(function myAvailability() {
 		);
 	}
 
-    /**
+	/**
 	 * fetch page from server
 	 * @param {string} pageSlug
 	 * @param {function} cb
@@ -293,36 +339,36 @@ $(function myAvailability() {
 		let html = "";
 		html += '<div class="row jsHoursRow jsHoursRowCustom" data-key="' + uniqId + '">';
 		html += '	<div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">';
-        html += '		<label class="text-medium">From<strong class="text-red">*</strong></label>';
-        html += '	</div>';
+		html += '		<label class="text-medium">From<strong class="text-red">*</strong></label>';
+		html += '	</div>';
 		html += '	<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">';
-        html += '		<div class="form-group">';
-        html += '			<input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" aria-invalid="false">';
-        html += '		</div>';
-        html += '	</div>';
-        html += '	<div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">';
-        html += '		<label class="text-medium">To<strong class="text-red">*</strong></label>';
-        html += '	</div>';
-        html += '	<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">';
-        html += '		<div class="form-group">';
-        html += '			<input type="text" class="form-control jsTimeField jsEndTime" placeholder="HH:MM">';
-        html += '		</div>';
-        html += '	</div>';
-        html += '	<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-    	html += '		<button class="btn btn-orange jsAddHours">';
-        html += '			<i class="fa fa-plus-circle" aria-hidden="true"></i>';
-        html += '			Add Hours';
-        html += '		</button>';
+		html += '		<div class="form-group">';
+		html += '			<input type="text" class="form-control jsTimeField jsStartTime" placeholder="HH:MM" aria-invalid="false">';
+		html += '		</div>';
+		html += '	</div>';
+		html += '	<div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">';
+		html += '		<label class="text-medium">To<strong class="text-red">*</strong></label>';
+		html += '	</div>';
+		html += '	<div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">';
+		html += '		<div class="form-group">';
+		html += '			<input type="text" class="form-control jsTimeField jsEndTime" placeholder="HH:MM">';
+		html += '		</div>';
+		html += '	</div>';
+		html += '	<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+		html += '		<button class="btn btn-orange jsAddHours">';
+		html += '			<i class="fa fa-plus-circle" aria-hidden="true"></i>';
+		html += '			Add Hours';
+		html += '		</button>';
 		html += '		<button class="btn btn-red jsDeleteHourRow" title="Delete this break" type="button">';
 		html += '             <i class="fa fa-trash" style="margin-right: 0"></i>';
 		html += '		</button>';
-        html += '	</div>'; 
+		html += '	</div>';
 		html += "</div>";
 		//
 		return html;
 	}
 
-    /**
+	/**
 	 * apply time picker
 	 */
 	function applyDatePicker() {

@@ -1393,4 +1393,137 @@ class Shift_model extends CI_Model
         //
         return $records;
     }
+
+    public function deletePreviousUnavailability($date, $time, $employeeId)
+    {
+        //
+       
+        if ($time) {
+            $this->db->select("sid, time");
+            $this->db->where("employee_sid", $employeeId);
+            $this->db->where("date <= ", $date);
+            //
+            $records = $this->db
+                ->get("cl_unavailability_shifts")
+                ->result_array();
+            //
+            if ($records) {
+                foreach ($records as $value) {
+                    
+                    if ($value['time']) {
+                        $rowId = $value['sid'];
+                        //
+                        $unavailableTimes = unserialize($value['time']);
+                        //
+                        foreach ($unavailableTimes  as $key => $value) {
+                            $time1 = $value['startTime'] . ' - ' . $value['emdTime'];
+                            
+                            if ($time == $time1) {
+                                unset($unavailableTimes[$key]);
+                            }
+                        }
+                        //
+                        $this->db
+                        ->where("sid",$rowId)
+                        ->update("cl_unavailability_shifts", [
+                            "time" => serialize($unavailableTimes)
+                        ]);
+                    }
+                }
+            }
+        } else {
+            $this->db
+                ->where("employee_sid", $employeeId)
+                ->where("date <= ", $date)
+                ->delete("cl_unavailability_shifts");
+        }
+    }
+
+    public function deleteCurrentUnavailability($date, $time, $employeeId)
+    {
+        //
+        if ($time) {
+            $this->db->select("sid, time");
+            $this->db->where("employee_sid", $employeeId);
+            $this->db->where("date", $date);
+            //
+            $records = $this->db
+                ->get("cl_unavailability_shifts")
+                ->result_array();
+            //
+            if ($records) {
+                foreach ($records as $value) {
+                    
+                    if ($value['time']) {
+                        $rowId = $value['sid'];
+                        //
+                        $unavailableTimes = unserialize($value['time']);
+                        //
+                        foreach ($unavailableTimes  as $key => $value) {
+                            $time1 = $value['startTime'] . ' - ' . $value['emdTime'];
+                            
+                            if ($time == $time1) {
+                                unset($unavailableTimes[$key]);
+                            }
+                        }
+                        //
+                        $this->db
+                        ->where("sid",$rowId)
+                        ->update("cl_unavailability_shifts", [
+                            "time" => serialize($unavailableTimes)
+                        ]);
+                    }
+                }
+            }
+        } else {
+            $this->db
+                ->where("employee_sid", $employeeId)
+                ->where("date", $date)
+                ->delete("cl_unavailability_shifts");
+        }        
+    }
+
+    public function deleteNextUnavailability($date, $time, $employeeId)
+    {
+        //
+        if ($time) {
+            $this->db->select("sid, time");
+            $this->db->where("employee_sid", $employeeId);
+            $this->db->where("date >= ", $date);
+            //
+            $records = $this->db
+                ->get("cl_unavailability_shifts")
+                ->result_array();
+            //
+            if ($records) {
+                foreach ($records as $value) {
+                    
+                    if ($value['time']) {
+                        $rowId = $value['sid'];
+                        //
+                        $unavailableTimes = unserialize($value['time']);
+                        //
+                        foreach ($unavailableTimes  as $key => $value) {
+                            $time1 = $value['startTime'] . ' - ' . $value['emdTime'];
+                            
+                            if ($time == $time1) {
+                                unset($unavailableTimes[$key]);
+                            }
+                        }
+                        //
+                        $this->db
+                        ->where("sid",$rowId)
+                        ->update("cl_unavailability_shifts", [
+                            "time" => serialize($unavailableTimes)
+                        ]);
+                    }
+                }
+            }
+        } else {
+            $this->db
+                ->where("employee_sid", $employeeId)
+                ->where("date >= ", $date)
+                ->delete("cl_unavailability_shifts");
+        }        
+    }
 }

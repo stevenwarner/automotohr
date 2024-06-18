@@ -134,7 +134,7 @@ class Employee_shifts extends Public_Controller
             "v1/plugins/ms_modal/main",
             "v1/schedules/employee/my_availability",
             "v1/settings/shifts/ems_main"
-        ], "public/v1/shifts/", "my_ems_shifts", false);
+        ], "public/v1/shifts/", "my_ems_shifts", true);
         //
         // _e($data,true,true);
 
@@ -214,6 +214,34 @@ class Employee_shifts extends Public_Controller
         ]);
     }
 
+    public function deleteMyUnavailability()
+    {
+        // check if plus or don't have access to the module
+        if (!checkIfAppIsEnabled(SCHEDULE_MODULE)) {
+            return SendResponse(400, [
+                "msg" => "Access denied."
+            ]);
+        }
+        // check and get the sessions
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        if ($_POST['sequence'] == "previous") {
+            $this->shift_model->deletePreviousUnavailability($_POST['date'], $_POST['time'], $loggedInEmployee['sid']);
+        } else if ($_POST['sequence'] == "current") {
+            $this->shift_model->deleteCurrentUnavailability($_POST['date'], $_POST['time'],$loggedInEmployee['sid']);
+        } else if ($_POST['sequence'] == "next") {
+            $this->shift_model->deleteNextUnavailability($_POST['date'], $_POST['time'],$loggedInEmployee['sid']);
+        }
+        //
+        return SendResponse(200, [
+            "msg" => "Shift unavailability delete successfully."
+        ]);
+        
+    }
+
     private function getDailyDaysRange($post, $startDate)
     {
         //
@@ -240,7 +268,6 @@ class Employee_shifts extends Public_Controller
                 if ($newDate < date_format($oed, 'Y-m-d')) {
                     array_push($unavailableDays, $newDate);
                 }
-                
             }
         }
         //
@@ -284,7 +311,7 @@ class Employee_shifts extends Public_Controller
             $sd = new DateTime($startDate);
             $oed = new DateTime(DateTime::createFromFormat('m/d/Y', $post['occurrenceEndDate'])->format('Y-m-d'));
             //
-            $end = floor($oed->diff($sd)->days/7);
+            $end = floor($oed->diff($sd)->days / 7);
             //
             for ($i = 1; $i <= $end; $i++) {
                 //
@@ -301,7 +328,7 @@ class Employee_shifts extends Public_Controller
                 }
             }
         }
-      
+
         //
         return $unavailableDays;
     }
@@ -375,7 +402,7 @@ class Employee_shifts extends Public_Controller
                     }
                 }
             }
-        }    
+        }
         //
         return $unavailableDays;
     }
