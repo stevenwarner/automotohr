@@ -366,7 +366,7 @@ class Shift_model extends CI_Model
         }
 
         $this->db
-            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites")
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites, breaks_json")
             ->where_in("employee_sid", $employeeIds);
 
         if ($filter["mode"] === "month") {
@@ -409,6 +409,19 @@ class Shift_model extends CI_Model
                     ];
                 }
                 //
+                $breakTime = 0;
+                //
+                if ($v0["breaks_json"]) {
+                    $breaks = json_decode(
+                        $v0["breaks_json"],
+                        true
+                    );
+                    //
+                    foreach ($breaks as $break) {
+                        $breakTime = $breakTime + $break['duration'];
+                    }
+                }
+                //
                 $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]] = [
                     "sid" => $v0["sid"],
                     "start_time" => $v0["start_time"],
@@ -418,6 +431,7 @@ class Shift_model extends CI_Model
                         $v0["shift_date"] . ' ' . $v0["start_time"],
                         $v0["shift_date"] . ' ' . $v0["end_time"],
                     ),
+                    "breakTime" => $breakTime * 60
                 ];
                 //
                 $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
@@ -428,8 +442,10 @@ class Shift_model extends CI_Model
                 $employees[$v0["employee_sid"]]["totalTimeText"] = convertSecondsToTime(
                     $employees[$v0["employee_sid"]]["totalTime"]
                 );
+                //    
             }
             $records = $employees;
+            // _e($records,true,true);
         }
 
         return $records;

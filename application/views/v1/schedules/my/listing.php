@@ -32,6 +32,10 @@ if ($filter["mode"] === "month") {
         top: -9px !important;
     }
 
+    .Partial-label i {
+        color: #cc0000;
+    }
+
     .conflict-label i {
         color: #cc0000;
     }
@@ -254,7 +258,23 @@ if ($filter["mode"] === "month") {
                                                         }
                                                         ?>
                                                         <div class="schedule-column schedule-column-<?= $loggedInEmployee["sid"]; ?> text-center <?= $available ? $highlightStyle : $unavailableHighlightStyle; ?>" data-eid="<?= $loggedInEmployee["sid"]; ?>">
-                                                            <?php if ($employeeLeave) { ?>
+                                                            <?php if (!$available) { ?>
+                                                                <?php if ($unavailableTime) { ?>
+                                                                    <?php foreach ($unavailableTime as $partial) { ?>
+                                                                        <div class="schedule-dayoff">
+                                                                            <?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>
+                                                                            <span class="Partial-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>"  data-unavailable_time="<?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>" data-unavailable_type="partial_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                        </div>
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                    <div class="schedule-dayoff">
+                                                                        <?= $unavailableHighlightText ?>
+                                                                        <br>
+                                                                        Unavailable
+                                                                        <span class="conflict-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>" data-unavailable_type="full_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                    </div>
+                                                                <?php } ?>
+                                                            <?php } elseif ($employeeLeave) { ?>
                                                                 <div class="schedule-dayoff text-primary text-small">
                                                                     <strong>
                                                                         <?= $employeeLeave["title"]; ?>
@@ -269,7 +289,7 @@ if ($filter["mode"] === "month") {
                                                                     <?php } ?>
                                                                     <p class="text-small">
                                                                         <?php if ($conflict) { ?>
-                                                                            <span class="conflict-label"><i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i></span>
+                                                                            <span class="conflict-label"  data-toggle="popover" title="Popover title"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
                                                                         <?php } ?>
                                                                         <?= formatDateToDB(
                                                                             $employeeShift["start_time"],
@@ -287,27 +307,8 @@ if ($filter["mode"] === "month") {
                                                                 <div class="schedule-dayoff">
                                                                     <button class="btn btn-red text-small btn-xs">
                                                                         <?= $holidays[$monthDate]["title"]; ?>
-                                                                        <?php if (!$available) { ?>
-                                                                            <span class="conflict-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                                                                        <?php } ?>
                                                                     </button>
                                                                 </div>
-                                                            <?php } elseif (!$available) { ?>
-                                                                <?php if ($unavailableTime) { ?>
-                                                                    <?php foreach ($unavailableTime as $partial) { ?>
-                                                                        <div class="schedule-dayoff">
-                                                                            <?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>
-                                                                            <span class="l-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>"  data-unavailable_time="<?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>" data-unavailable_type="partial_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                                                                        </div>
-                                                                    <?php } ?>
-                                                                <?php } else { ?>
-                                                                    <?= $unavailableHighlightText ?>
-                                                                    <br>
-                                                                    Unavailable
-                                                                    <span class="conflict-label jsDeleteUnavailability" data-unavailability="<?= $monthDate; ?>" data-unavailable_type="full_day"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                                                                <?php } ?>
-                                                            <?php } else { ?>
-
                                                             <?php } ?>
                                                         </div>
                                                         <?php

@@ -120,6 +120,13 @@ class Subordinate_shifts extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+        //
+
+        // get the employees unavailability
+        $data["unavailability"] = $this->shift_model->getUnavailability(
+            $data["filter"],
+            $employeeIds
+        );
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves

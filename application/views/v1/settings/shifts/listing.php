@@ -259,7 +259,7 @@ if ($filter["mode"] === "month") {
                                                 <div class="schedule-row-container">
                                                     <?php foreach ($monthDates as $monthDate) { ?>
                                                         <?php $totalHoursInSeconds = 0; ?>
-                                                        
+
                                                         <!-- column-->
                                                         <div class="schedule-column-container" data-date="<?= $monthDate; ?>">
 
@@ -278,25 +278,84 @@ if ($filter["mode"] === "month") {
                                                                     // get the employee shift
                                                                     $employeeShift = $shifts[$employee["userId"]]["dates"][$monthDate];
                                                                     $bgColor = $shifts[$employee["userId"]]["jobColor"] ?? "";
-
+                                                                    //
                                                                     $available = true;
                                                                     $conflict = false;
+                                                                    $conflictText = '';
                                                                     $unavailableHighlightStyle = '';
+                                                                    $unavailableHighlightText = '';
+                                                                    $unavailableTime = [];
                                                                     //
                                                                     if ($unavailability) {
-                                                                        foreach ($unavailability[$employee["userId"]]['unavailableDates'] as $unavailable) {
+                                                                        foreach ($unavailability[$employee["userId"]]['unavailableDates'] as $ukey => $unavailable) {
                                                                             if ($unavailable['date'] == $monthDate) {
+                                                                                //
                                                                                 $unavailableHighlightStyle = 'bg-danger';
+                                                                                $unavailableHighlightText = $unavailable['status'];
                                                                                 $available = false;
                                                                                 //
                                                                                 if ($employeeShift) {
-                                                                                    $conflict = true;
+                                                                                    //
+                                                                                    if ($unavailable['time']) {
+                                                                                        //
+                                                                                        $unavailableHours = 0;
+                                                                                        $unavailableTime = $unavailable['time'];
+                                                                                        //
+                                                                                        foreach ($unavailableTime as $partial) { 
+                                                                                            $time1 = strtotime($partial['startTime']);
+                                                                                            $time2 = strtotime($partial['emdTime']);
+                                                                                            $difference = round(abs($time2 - $time1) / 3600, 2);
+                                                                                            $unavailableHours = $unavailableHours + $difference;
+                                                                                        }
+                                                                                        //
+                                                                                        $time1 = strtotime(formatDateToDB(
+                                                                                            $employeeShift["start_time"],
+                                                                                            "H:i:s",
+                                                                                            "h:i a"
+                                                                                        ));
+                                                                                        $time2 = strtotime(formatDateToDB(
+                                                                                            $employeeShift["end_time"],
+                                                                                            "H:i:s",
+                                                                                            "h:i a"
+                                                                                        ));
+                                                                                        //
+                                                                                        $shiftHours = round($employeeShift['totalTime'] / 3600, 2);
+                                                                                        $breakHours = round($employeeShift['breakTime'] / 3600, 2);
+                                                                                        //
+                                                                                        if ((($shiftHours + $unavailableHours) - $breakHours) > 8) {
+                                                                                            $conflict = true;
+                                                                                        }
+                                                                                    } else {
+                                                                                        $conflict = true;
+                                                                                    }
+                                                                                    //
+                                                                                    if ($conflict) {
+                                                                                        $conflictText = remakeEmployeeName($employee, true, true);
+                                                                                        if ($unavailableHighlightText == "Partial Day") {
+                                                                                            $conflictText .= ' is currently unavailable for a portion of the day.';
+                                                                                        } elseif ($unavailableHighlightText == "Full Day") {
+                                                                                            $conflictText .= ' is unavailable for the entire day.';
+                                                                                        }
+                                                                                    }
+                                                                                    //
                                                                                 }
                                                                             }
                                                                         }
                                                                     }
                                                             ?>
                                                                     <div class="schedule-column <?= $employeeLeave || !$available ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center <?= !$available ? $unavailableHighlightStyle : ''; ?>" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+                                                                        <?php if (!$available) { ?>
+                                                                            <div>
+                                                                                Unavailable
+                                                                                <?php if ($unavailableTime) { ?>
+                                                                                    <?php foreach ($unavailableTime as $partial) { ?>
+                                                                                        <p>
+                                                                                            <?= $partial['startTime'] . ' - ' . $partial['emdTime']; ?>
+                                                                                        </p>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                            </div>
+                                                                        <?php } ?>
                                                                         <?php if ($employeeLeave) { ?>
                                                                             <div class="schedule-dayoff text-primary text-small">
                                                                                 <strong>
@@ -306,13 +365,13 @@ if ($filter["mode"] === "month") {
                                                                         <?php } elseif ($employeeShift) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
-                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor;?>" title="<?=$employee["job_title"];?>" placement="top">
+                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
                                                                                 <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>
                                                                                 <p class="text-small">
                                                                                     <?php if ($conflict) { ?>
-                                                                                        <span class="conflict-label"><i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i></span>
+                                                                                        <span class="conflict-label" data-toggle="popover" title="<?= $conflictText ?>"><i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i></span>
                                                                                     <?php } ?>
                                                                                     <?= formatDateToDB(
                                                                                         $employeeShift["start_time"],
