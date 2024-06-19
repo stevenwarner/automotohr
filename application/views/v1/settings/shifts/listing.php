@@ -327,6 +327,13 @@ if ($filter["mode"] === "month") {
                                                                                             $time2 = strtotime($partial['emdTime']);
                                                                                             //
                                                                                             $unavailableHours = $unavailableHours + round(abs($time2 - $time1) / 3600, 2);
+                                                                                            //
+                                                                                            $time3 = strtotime($employeeShift['start_time']);
+                                                                                            $time4 = strtotime($employeeShift['end_time']);
+                                                                                            //
+                                                                                            if ($time1 > $time3 && $time1 < $time4 || $time2 > $time3 && $time2 < $time4) {
+                                                                                                $conflict = true;
+                                                                                            }
                                                                                         }
                                                                                         //
                                                                                         $shiftHours = round($employeeShift['totalTime'] / 3600, 2);
@@ -353,70 +360,56 @@ if ($filter["mode"] === "month") {
                                                                         }
                                                                     }
                                                             ?>
-                                                                <?php if (!$available) { ?>
-                                                                    <div 
-                                                                        style="cursor: pointer" 
-                                                                        data-container="body" 
-                                                                        data-toggle="cpopover" 
-                                                                        data-placement="left" 
-                                                                        data-title="Unavailability" 
-                                                                        data-content="<?= $unavailableText ?>">
-                                                                            
-                                                                <?php } ?>
-                                                                    <div class="schedule-column <?= $employeeLeave || !$available ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center <?= !$available ? $unavailableHighlightStyle : ''; ?>" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
-                                                                       
-                                                                        <?php if ($employeeLeave) { ?>
-                                                                            <div class="schedule-dayoff text-primary text-small">
-                                                                                <strong>
-                                                                                    <?= $employeeLeave["title"]; ?>
-                                                                                </strong>
-                                                                            </div>
-                                                                        <?php } elseif ($employeeShift) {
-                                                                            $totalHoursInSeconds += $employeeShift["totalTime"];
-                                                                        ?>
-                                                                            <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
-                                                                                <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
-                                                                                    <span class="circle circle-orange"></span>
-                                                                                <?php } ?>
-                                                                                <p class="text-small">
-                                                                                    <?php if ($conflict) { ?>
-                                                                                        <span 
-                                                                                            class="conflict-label" 
-                                                                                            style="cursor: pointer" 
-                                                                                            data-container="body" 
-                                                                                            data-toggle="cpopover" 
-                                                                                            data-placement="left" 
-                                                                                            data-title="Shift Conflict" 
-                                                                                            data-content="<?= $conflictText ?>"
-                                                                                            >
-                                                                                                <i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i>
-                                                                                        </span>
-                                                                                    <?php } ?>
-                                                                                    <?= formatDateToDB(
-                                                                                        $employeeShift["start_time"],
-                                                                                        "H:i:s",
-                                                                                        "h:i a"
-                                                                                    ); ?> -
-                                                                                    <?= formatDateToDB(
-                                                                                        $employeeShift["end_time"],
-                                                                                        "H:i:s",
-                                                                                        "h:i a"
-                                                                                    ); ?>
-                                                                                </p>
-                                                                            </div>
-                                                                        <?php } elseif ($holidays[$monthDate]) { ?>
-                                                                            <div class="schedule-dayoff">
-                                                                                <button class="btn btn-red text-small btn-xs">
-                                                                                    <?= $holidays[$monthDate]["title"]; ?>
-                                                                                </button>
-                                                                            </div>
-                                                                        <?php } else { ?>
+                                                                    <?php if (!$available) { ?>
+                                                                        <div style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="left" data-title="Unavailability" data-content="<?= $unavailableText ?>">
 
                                                                         <?php } ?>
-                                                                    </div>
-                                                                <?php if (!$available) { ?>
-                                                                    </div>
-                                                                <?php } ?>    
+                                                                        <div class="schedule-column <?= $employeeLeave || !$available ? "" : "schedule-column-clickable"; ?> schedule-column-<?= $employee["userId"]; ?> text-center <?= !$available ? $unavailableHighlightStyle : ''; ?>" data-eid="<?= $employee["userId"]; ?>" <?php echo $todatDate == $cDate ? ' style=background-color:#e5e0e0;font-weight:900;font-size:20px;' : '' ?>>
+
+                                                                            <?php if ($employeeLeave) { ?>
+                                                                                <div class="schedule-dayoff text-primary text-small">
+                                                                                    <strong>
+                                                                                        <?= $employeeLeave["title"]; ?>
+                                                                                    </strong>
+                                                                                </div>
+                                                                            <?php } elseif ($employeeShift) {
+                                                                                $totalHoursInSeconds += $employeeShift["totalTime"];
+                                                                            ?>
+                                                                                <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <?= $bgColor; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
+                                                                                    <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
+                                                                                        <span class="circle circle-orange"></span>
+                                                                                    <?php } ?>
+                                                                                    <p class="text-small">
+                                                                                        <?php if ($conflict) { ?>
+                                                                                            <span class="conflict-label" style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="left" data-title="Shift Conflict" data-content="<?= $conflictText ?>">
+                                                                                                <i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i>
+                                                                                            </span>
+                                                                                        <?php } ?>
+                                                                                        <?= formatDateToDB(
+                                                                                            $employeeShift["start_time"],
+                                                                                            "H:i:s",
+                                                                                            "h:i a"
+                                                                                        ); ?> -
+                                                                                        <?= formatDateToDB(
+                                                                                            $employeeShift["end_time"],
+                                                                                            "H:i:s",
+                                                                                            "h:i a"
+                                                                                        ); ?>
+                                                                                    </p>
+                                                                                </div>
+                                                                            <?php } elseif ($holidays[$monthDate]) { ?>
+                                                                                <div class="schedule-dayoff">
+                                                                                    <button class="btn btn-red text-small btn-xs">
+                                                                                        <?= $holidays[$monthDate]["title"]; ?>
+                                                                                    </button>
+                                                                                </div>
+                                                                            <?php } else { ?>
+
+                                                                            <?php } ?>
+                                                                        </div>
+                                                                        <?php if (!$available) { ?>
+                                                                        </div>
+                                                                    <?php } ?>
                                                             <?php
                                                                 }
                                                             }

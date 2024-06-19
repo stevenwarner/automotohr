@@ -277,6 +277,14 @@ if ($filter["mode"] === "month") {
                                                                                 $time2 = strtotime($partial['emdTime']);
                                                                                 //
                                                                                 $unavailableHours = $unavailableHours + round(abs($time2 - $time1) / 3600, 2);
+                                                                                //
+                                                                                $time3 = strtotime($employeeShift['start_time']);
+                                                                                $time4 = strtotime($employeeShift['end_time']);
+                                                                                //
+                                                                                if ($time1 > $time3 && $time1 < $time4 || $time2 > $time3 && $time2 < $time4)
+                                                                                {
+                                                                                    $conflict = true;
+                                                                                }
                                                                             }
                                                                             //
                                                                             $shiftHours = round($employeeShift['totalTime'] / 3600, 2);
