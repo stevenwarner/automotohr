@@ -9,6 +9,13 @@ $(function manageShifts() {
 	//
 	const mode = getSearchParam("mode") || "month";
 
+	//
+	$('[data-toggle="cpopover"]').popover({
+		trigger: 'hover click',
+		placement: 'left auto',
+		html: true
+	});
+
 	// apply date picker
 	$(".jsWeekDaySelect").daterangepicker({
 		opens: "center",

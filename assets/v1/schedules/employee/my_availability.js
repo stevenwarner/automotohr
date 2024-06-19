@@ -11,6 +11,13 @@ $(function myAvailability() {
 	const modalLoader = modalId + "Loader";
 	const modalBody = modalId + "Body";
 
+	//
+	$('[data-toggle="cpopover"]').popover({
+		trigger: 'hover click',
+		placement: 'left auto',
+		html: true
+	});
+
 	/**
 	 * capture the mark attendance event
 	 */

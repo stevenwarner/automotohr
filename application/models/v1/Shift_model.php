@@ -445,7 +445,6 @@ class Shift_model extends CI_Model
                 //    
             }
             $records = $employees;
-            // _e($records,true,true);
         }
 
         return $records;
