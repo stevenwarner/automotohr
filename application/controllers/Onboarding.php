@@ -11311,4 +11311,96 @@ class Onboarding extends CI_Controller
                 );
         }
     }
+
+
+
+
+    function view_equipment_information($unique_sid, $sid)
+    {
+        $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
+
+        if (!empty($onboarding_details)) {
+            $data['title'] = 'Automoto HR Onboarding';
+            $data['onboarding_details'] = $onboarding_details;
+            $applicant_info = $onboarding_details['applicant_info'];
+            $data['applicant'] = $applicant_info;
+            $company_info = $onboarding_details['company_info'];
+            $data['session']['company_detail'] = $company_info;
+            $data['company_info'] = $company_info;
+            $data['unique_sid'] = $unique_sid;
+            $applicant_sid = $onboarding_details['applicant_sid'];
+            $data['applicant_sid'] = $applicant_sid;
+
+            $this->load->model('general_info_model');
+            $equipment_info = $this->general_info_model->equipment_info_details($sid);
+
+            $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
+
+            if ($this->form_validation->run() === FALSE) {
+
+                if (validation_errors() != false) {
+                    $this->session->set_flashdata('message', '<b>Failed: </b>Please check the form for errors and try again!');
+                }
+
+                $equipment_type = isset($equipment_info["equipment_type"]) ? $equipment_info["equipment_type"] : '';
+
+                $data['equipment_info'] = $equipment_info;
+
+                if ($equipment_info['acknowledgement_flag'] == 1) {
+                    $acknowledgement_status = '<strong class="text-success">Equipment Status:</strong> You have successfully Acknowledged this ' . ucwords($equipment_type);
+                    $acknowledgement_button_txt = 'Acknowledged';
+                    $acknowledgement_button_css = 'btn-warning';
+                    $perform_action = 'remove_document';
+                } else {
+                    $acknowledgement_status = '<strong class="text-danger">Equipment Status:</strong> You have not yet acknowledged this ' . ucwords($equipment_type);
+                    $acknowledgement_button_txt = 'I Acknowledge';
+                    $acknowledgement_button_css = 'btn-success';
+                    $perform_action = 'acknowledge_document';
+                }
+
+                $acknowledgment_action_title = '<b>Equipment Action: Acknowledgement Required!</b>';
+                $acknowledgment_action_desc = '<b>Acknowledge the receipt of this ' . ucwords($equipment_type) . '</b>';
+
+                $data['acknowledgment_action_title'] = $acknowledgment_action_title;
+                $data['acknowledgment_action_desc'] = $acknowledgment_action_desc;
+                $data['acknowledgement_button_txt'] = $acknowledgement_button_txt;
+                $data['acknowledgement_status'] = $acknowledgement_status;
+                $data['acknowledgement_button_css'] = $acknowledgement_button_css;
+                $data['perform_action'] = $perform_action;
+
+                $this->load->view('onboarding/applicant_boarding_header', $data);
+                $this->load->view('onboarding/equipment_info_detail.php');
+                $this->load->view('onboarding/on_boarding_footer');
+            } else {
+
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'acknowledge_document':
+                        $equipment_sid = $this->input->post('equipment_sid');
+                        $user_sid = $this->input->post('user_sid');
+                        $user_type = $this->input->post('user_type');
+                        $acknowledgement_flag = 1;
+                        $acknowledgement_notes = $this->input->post('acknowledgement_notes');
+                        $acknowledgement_datetime = date('Y-m-d H:i:s');
+                        $acknowledge_by_ip = getUserIP();
+
+                        $data_to_update = $arrayName = array();
+                        $data_to_update['acknowledgement_flag'] = $acknowledgement_flag;
+                        $data_to_update['acknowledgement_notes'] = $acknowledgement_notes;
+                        $data_to_update['acknowledgement_datetime'] = $acknowledgement_datetime;
+                        $data_to_update['acknowledge_by_ip'] = $acknowledge_by_ip;
+
+                        $this->general_info_model->update_equipment_acknomledgement($data_to_update, $equipment_sid, $user_sid, $user_type);
+
+                        $this->session->set_flashdata('message', '<strong>Success</strong> Equipment Detail Updated!');
+                        redirect(base_url('onboarding/general_information/' . $unique_sid . '/' . $sid), 'refresh');
+                        break;
+                }
+            }
+        } else {
+            $this->session->set_flashdata('message', '<strong>Error</strong> The Onboarding Url has now Expired Please Login or Contact Your HR for Help!');
+            redirect('login', 'refresh');
+        }
+    }
 }

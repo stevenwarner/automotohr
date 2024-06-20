@@ -1051,6 +1051,9 @@ if ($_ssv) {
                                                                                 <br>
                                                                                 <li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
                                                                             <?php } ?>
+                                                                               <br>
+                                                                            <li><strong>Acknowledge:</strong> <?php echo $equipment['acknowledgement_flag'] ? 'Yes' : 'No'; ?></li>
+
                                                                         </ul>
                                                                     </div>
                                                                     <?php if ($equipment['notes'] != NULL && !empty($equipment['notes'])) { ?>
@@ -1058,6 +1061,9 @@ if ($_ssv) {
                                                                             <strong>Notes:</strong> <?php echo !empty($equipment['notes']) ? $equipment['notes'] : 'N/A'; ?>
                                                                         </div>
                                                                     <?php } ?>
+                                                                    <div class="post-options">
+                                                                        <a href="<?php echo base_url('onboarding/view_equipment_information/'. $unique_sid .'/'. $equipment['sid']) ?>" class="btn btn-info btn-block">View Detail</a>
+                                                                    </div>
                                                                 </div>
                                                         </div>
                                                 <?php }

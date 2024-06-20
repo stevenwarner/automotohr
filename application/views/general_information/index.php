@@ -977,6 +977,10 @@ $field_sid = 'employee_sid';
                                                                                 <br>
                                                                                 <li><strong>Serial Number:</strong> <?php echo $equipment['serial_number']; ?></li>
                                                                             <?php } ?>
+                                                                                 <br>
+                                                                            <li><strong>Acknowledge:</strong> <?php echo $equipment['acknowledgement_flag'] ? 'Yes' : 'No'; ?></li>
+
+
                                                                         </ul>
                                                                     </div>
                                                                     <?php if ($equipment['notes'] != NULL && !empty($equipment['notes'])) { ?>
