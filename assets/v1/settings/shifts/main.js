@@ -29,7 +29,6 @@ $(function manageShifts() {
 	//
 	$('[data-toggle="cpopover"]').popover({
 		trigger: 'hover click',
-		placement: 'left auto',
 		html: true
 	});
 

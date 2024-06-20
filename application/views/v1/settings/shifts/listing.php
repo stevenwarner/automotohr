@@ -381,7 +381,7 @@ if ($filter["mode"] === "month") {
                                                                                     <?php } ?>
                                                                                     <p class="text-small">
                                                                                         <?php if ($conflict) { ?>
-                                                                                            <span class="conflict-label" style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="left" data-title="Shift Conflict" data-content="<?= $conflictText ?>">
+                                                                                            <span class="conflict-label" style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="top" data-title="Shift Conflict" data-content="<?= $conflictText ?>">
                                                                                                 <i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i>
                                                                                             </span>
                                                                                         <?php } ?>

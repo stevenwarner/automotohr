@@ -343,7 +343,7 @@ if ($filter["mode"] === "month") {
                                                                                     style="cursor: pointer" 
                                                                                     data-container="body" 
                                                                                     data-toggle="cpopover" 
-                                                                                    data-placement="left" 
+                                                                                    data-placement="top" 
                                                                                     data-title="Shift Conflict" 
                                                                                     data-content="<?= $conflictText ?>"
                                                                                     >
