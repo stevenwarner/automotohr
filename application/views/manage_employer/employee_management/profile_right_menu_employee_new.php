@@ -828,6 +828,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         </div>
     </div>
 </div>
+
 <?php if (isset($w4_form) && sizeof($w4_form) > 0) { ?>
     <div id="w4_modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">

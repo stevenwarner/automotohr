@@ -13,25 +13,44 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
 
 <body>
     <div class="container">
-        <?php if ($eeo_form_info['status'] == 1) { ?>
-            <div>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="margin-top: 14px;">
-                        <?php if ($eeo_form_info["is_expired"] == 1) { ?>
-                            <a target="_blank" href="<?php echo $download_url; ?>" class="btn blue-button" title="Download EEOC Form" placement="top">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                                Download PDF
-                            </a>
-                            <a target="_blank" href="<?php echo $print_url; ?>" class="btn blue-button" title="Print EEOC Form" placement="top">
-                                <i class="fa fa-print" aria-hidden="true"></i>
-                                Print PDF
-                            </a>
-                        <?php } ?>
-                    </div>
+        <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <br>
+                    <p class="alert alert-info text-center">
+                        You have Opt-out from the EEOC.
+                    </p>
                 </div>
-                <hr>
-                <?php $this->load->view('eeo/eeoc_new_form_ems', ['eeocFormOptions' => $eeocFormOptions]); ?>
             </div>
+        <?php } else { ?>
+            <?php if ($eeo_form_info['status'] == 1) { ?>
+                <div>
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="margin-top: 14px;">
+                            <?php if ($eeo_form_info["is_expired"] == 1) { ?>
+                                <a target="_blank" href="<?php echo $download_url; ?>" class="btn blue-button" title="Download EEOC Form" placement="top">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                    Download PDF
+                                </a>
+                                <a target="_blank" href="<?php echo $print_url; ?>" class="btn blue-button" title="Print EEOC Form" placement="top">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Print PDF
+                                </a>
+                            <?php } ?>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 text-right">
+                            <button class="btn btn-orange jsEEOCOptOut" title="You will be opt-out of the EEOC form.">
+                                <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                Opt-out
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <?php $this->load->view('eeo/eeoc_new_form_ems', ['eeocFormOptions' => $eeocFormOptions]); ?>
+                </div>
+            <?php } ?>
         <?php } ?>
     </div>
 </body>
@@ -53,44 +72,47 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                     gender: $('input[name="gender"]:checked').val(),
                     location: "<?= $location; ?>"
                 };
-
+                //
+                const errorArray = [];
                 //
                 if (citizenFlag == 1 && obj.citizen === undefined) {
-                    alertify.alert('Please, select a citizen.');
-                    return;
+                    errorArray.push('Please, select a citizen.');
                 }
-
                 //
-                if (obj.group === undefined) {
-                    alertify.alert('Please, select a group status.');
-                    return;
+                if ($("input[name='citizen'][value='Yes']").prop("checked")) {
+                    //
+                    if (obj.group === undefined) {
+                        errorArray.push('Please, select a group status.');
+                    }
+                    //
+                    <?php if ($eeocFormOptions['dl_vet'] == 1) { ?>
+                        if (obj.veteran === undefined) {
+                            errorArray.push('Please, select veteran.');
+                        }
+                    <?php } ?>
+                    //
+                    <?php if ($eeocFormOptions['dl_vol'] == 1) { ?>
+                        if (obj.disability === undefined) {
+                            errorArray.push('Please, select disability.');
+                        }
+                    <?php } ?>
+                    //
+                    <?php if ($eeocFormOptions['dl_gen'] == 1) { ?>
+                        if (obj.gender === undefined) {
+                            errorArray.push('Please, select gender.');
+                        }
+                    <?php } ?>
                 }
-
                 //
-                <?php if ($eeocFormOptions['dl_vet'] == 1) { ?>
-                    if (obj.veteran === undefined) {
-                        alertify.alert('Please, select veteran.');
-                        return;
-                    }
-
-                <?php } ?>
-
+                if (errorArray.length) {
+                    //
+                    return alertify.alert(
+                        "ERROR!",
+                        getErrorsStringFromArray(errorArray),
+                        CB
+                    );
+                }
                 //
-                <?php if ($eeocFormOptions['dl_vol'] == 1) { ?>
-                    if (obj.disability === undefined) {
-                        alertify.alert('Please, select disability.');
-                        return;
-                    }
-                <?php } ?>
-
-                //
-                <?php if ($eeocFormOptions['dl_gen'] == 1) { ?>
-                    if (obj.gender === undefined) {
-                        alertify.alert('Please, select gender.');
-                        return;
-                    }
-                <?php } ?>
-
                 $.post(
                     "<?= base_url("eeoc_form_submit"); ?>",
                     obj
@@ -106,6 +128,56 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                     alertify.alert('Success!', 'You have successfully submitted the EEOC form.');
                 });
             });
+
+
+            $(".jsEEOCOptOut").click(function(event) {
+                event.preventDefault();
+                _confirm(
+                    "Do you really want to 'Opt-out' of the EEOC form?",
+                    startOptOutProcess
+                );
+            });
+
+            function startOptOutProcess() {
+                const _hook = callButtonHook(
+                    $(".jsEEOCOptOut"),
+                    true
+                );
+                $.ajax({
+                        url: baseUrl("eeoc/<?= $eeo_form_info["sid"]; ?>/opt_out"),
+                        method: "PUT",
+                    })
+                    .always(function() {
+                        callButtonHook(_hook, false)
+                    })
+                    .fail(handleErrorResponse)
+                    .success(function(resp) {
+                        _success(
+                            resp.message,
+                            window.location.refresh
+                        )
+                    });
+            }
+
+            if (typeof getErrorsStringFromArray === "undefined") {
+                /**
+                 * Error message
+                 *
+                 * @param {*} errorArray
+                 * @param {*} errorMessage
+                 * @returns
+                 */
+                function getErrorsStringFromArray(errorArray, errorMessage) {
+                    return (
+                        "<strong><p>" +
+                        (errorMessage ?
+                            errorMessage :
+                            "Please, resolve the following errors") +
+                        "</p></strong><br >" +
+                        errorArray.join("<br />")
+                    );
+                }
+            }
         });
     </script>
 <?php } ?>

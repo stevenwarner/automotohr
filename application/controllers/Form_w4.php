@@ -12,7 +12,6 @@ class Form_w4 extends Public_Controller
 
     public function index($type = null, $sid = null, $jobs_listing = null)
     {
-
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_sid = $data['session']['employer_detail']['sid'];
@@ -212,12 +211,17 @@ class Form_w4 extends Public_Controller
             //
             $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+
             //
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
                 if (isset($previous_form['manual'])) $this->load->view('form_w4/index_upload');
                 else {
-                    if ($assign_on >= $compare_date) {
+                    if ($assign_on >= $compare_date_2024) {
+                        $this->load->view('form_w4/index_ems_2024');
+                    } elseif ($assign_on >= $compare_date) {
                         // $this->load->view('form_w4/index_ems_2020');
                         $this->load->view('form_w4/index_ems_2023');
                     } else {
@@ -387,6 +391,16 @@ class Form_w4 extends Public_Controller
                     $data_to_update['temjw_multiply_7_by_6'] = $temjw_multiply_7_by_6;
                     $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
                 }
+                //
+                $this->load->model('2022/User_model', 'em');
+
+                $this->em->handleGeneralDocumentChange(
+                    'w4',
+                    $this->input->post(null, true),
+                    '',
+                    $this->input->post('user_sid'),
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
                 //
                 $this->form_wi9_model->update_form('w4', $type, $employer_sid, $data_to_update);
                 //
@@ -801,12 +815,21 @@ class Form_w4 extends Public_Controller
 
     public function print_w4_form_2020($type, $sid)
     {
+
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Form W-4';
 
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
+
+            $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
             $data['pre_form'] = $previous_form;
-            $this->load->view('form_w4/print_w4_2023', $data);
+
+            if ($assign_on >= $compare_date_2024) {
+                $this->load->view('form_w4/print_w4_2024', $data);
+            } else {
+                $this->load->view('form_w4/print_w4_2023', $data);
+            }
         } else {
             redirect('login', "refresh");
         }
@@ -820,7 +843,19 @@ class Form_w4 extends Public_Controller
             $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
             $data['pre_form'] = $previous_form;
 
-            $this->load->view('form_w4/download_w4_2023', $data);
+
+            $previous_form = $this->form_wi9_model->fetch_form('w4', $type, $sid);
+
+            $assign_on = date("Y-m-d", strtotime($previous_form['sent_date']));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+            $data['pre_form'] = $previous_form;
+
+            if ($assign_on >= $compare_date_2024) {
+                $this->load->view('form_w4/download_w4_2024', $data);
+            } else {
+
+                $this->load->view('form_w4/download_w4_2023', $data);
+            }
         } else {
             redirect('login', "refresh");
         }

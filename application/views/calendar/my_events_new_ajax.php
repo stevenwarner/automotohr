@@ -69,6 +69,15 @@
                                     </label>
                                 </li>
                             <?php } ?>
+
+                            <?php if (checkIfAppIsEnabled(SCHEDULE_MODULE)){ ?>
+                                <li>
+                                    <label class="control control--checkbox">
+                                        <input type="checkbox" name="shifts" class="jsCalendarTypes" checked="true" /> Shifts
+                                        <div class="control__indicator"></div>
+                                    </label>
+                                </li>
+                            <?php } ?>
                         </ul>
                     </div>
                 </div>

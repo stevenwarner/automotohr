@@ -23,6 +23,14 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-sm-12 text-right">
+                            <h1 class="text-medium">
+                                Clair Status: <strong class="text-<?=$isClairActive ? "success" : "danger";?>"><?= $isClairActive ? "ACTIVE" : "DISABLED";?></strong>
+                            </h1>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-sm-12">
                             <div class="panel panel-default">
                                 <div class="panel-heading">

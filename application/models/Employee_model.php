@@ -2381,11 +2381,16 @@
             // check
             if ($employee["Location_State"] && $w4["state"] != $stateName) {
                 // update state
+                $updateArray = [];
+                $updateArray["state"] = $stateName;
+                //
+                if ($w4['user_consent'] == 1) {
+                    $updateArray["signature_timestamp"] = $w4['signature_timestamp'];
+                }
+                //
                 $this->db
                     ->where("sid", $w4["sid"])
-                    ->update("form_w4_original", [
-                        "state" => $stateName
-                    ]);
+                    ->update("form_w4_original", $updateArray);
                 // log as history
                 saveHistoryToProfile($employeeId, [
                     "Location_State" => [

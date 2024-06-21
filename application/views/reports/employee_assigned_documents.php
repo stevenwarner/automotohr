@@ -95,6 +95,9 @@
                                                                     <tr>
                                                                         <th>Employees</th>
                                                                         <th># of Documents</th>
+                                                                        <th># Not Completed</th>
+                                                                        <th># Completed</th>
+                                                                        <th># No Action Required</th>
                                                                         <th>Action</th>
                                                                     </tr>
                                                                 </thead>
@@ -342,53 +345,174 @@
                 var totalAssignedGeneralDocs = record.assignedgeneraldocuments.length;
                 var totalDocs = totalAssignedDocs + totalAssignedGeneralDocs;
                 var assignedDocs = '';
+
+                var totalCompletedDoc = 0;
+                var totalNotCompletedDoc = 0;
+                var totalNoActionDoc = 0;
+
                 //
-                if (record.assignedi9document == 1) {
+                if (record.assignedi9document.length > 0) {
                     totalDocs = totalDocs + 1;
                 }
-                if (record.assignedw9document == 1) {
-                    totalDocs = totalDocs + 1;
-                }
-                if (record.assignedw4document == 1) {
-                    totalDocs = totalDocs + 1;
-                }
-                if (record.assignedeeocdocument == 1) {
+                if (record.assignedw9document.length > 0) {
                     totalDocs = totalDocs + 1;
                 }
 
+                if (record.assignedw4document.length > 0) {
+                    totalDocs = totalDocs + 1;
+
+                }
+
+                if (record.assignedeeocdocument.length > 0) {
+                    totalDocs = totalDocs + 1;
+                }
+
+
+                //
+                if (record.assignedw4document.length > 0) {
+                    if (record.assignedw4document[0]['user_consent'] == 1) {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                    }
+                }
+
+                if (record.assignedw9document.length > 0) {
+                    if (record.assignedw9document[0]['user_consent'] == 1) {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                    }
+                }
+
+                if (record.assignedi9document.length > 0) {
+                    if (record.assignedi9document[0]['user_consent'] == 1) {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                    }
+                }
+
+                if (record.assignedeeocdocument.length > 0) {
+                    if (record.assignedeeocdocument[0]['last_completed_on'] != '' && record.assignedeeocdocument[0]['last_completed_on'] != null) {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+
+                    }
+                }
+
+                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned') {
+                    //
+                    if (record.assignedPerformanceDocument == 'Completed') {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+                    //
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>Performance Evaluation Document ' + $completedStatus + '</span></div>';
+                }
+
+                $completedStatus = '';
+
                 //
 
-                if (record.assignedi9document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>I9 Fillable </span></div>';
+                if (record.assignedi9document.length > 0) {
+                    $completedStatus = '';
+
+                    if (record.assignedi9document[0]['user_consent'] == 1) {
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>I9 Fillable  ' + $completedStatus + '</span></div>';
                 }
-                if (record.assignedw9document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W9 Fillable </span></div>';
+
+                if (record.assignedw9document.length > 0) {
+                    $completedStatus = '';
+
+                    if (record.assignedw9document[0]['user_consent'] == 1) {
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W9 Fillable ' + $completedStatus + '</span></div>';
                 }
-                if (record.assignedw4document == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W4 Fillable </span></div>';
+
+                if (record.assignedw4document.length > 0) {
+                    $completedStatus = '';
+
+                    if (record.assignedw4document[0]['user_consent'] == 1) {
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>W4 Fillable ' + $completedStatus + '</span></div>';
                 }
-                if (record.assignedeeocdocument == 1) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>EEOC Form </span></div>';
+
+                if (record.assignedeeocdocument.length > 0) {
+                    $completedStatus = '';
+
+                    if (record.assignedeeocdocument[0]['last_completed_on'] != '' && record.assignedeeocdocument[0]['last_completed_on'] != null) {
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+                    } else {
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span>EEOC Form ' + $completedStatus + '</span></div>';
                 }
 
                 $.each(record.assignedgeneraldocuments, function(i, val) {
-                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; text-transform:capitalize; padding-top:2px; padding-bottom:2px;" <span>' + val.document_type.replace("_", " ") + '</span></div>';
+                    $completedStatus = '';
+
+                    if (val.is_completed == 1) {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+
+                    } else {
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                    }
+
+                    assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; text-transform:capitalize; padding-top:2px; padding-bottom:2px;" <span>' + val.document_type.replace("_", " ") + ' ' + $completedStatus + ' </span></div>';
+                    //
+
                 });
 
                 //
                 $.each(record.assigneddocuments, function(i, val) {
                     //
+
+                    if (val.completedStatus == 'Not Completed') {
+                        totalNotCompletedDoc = totalNotCompletedDoc + 1;
+                        $completedStatus = '<span class="text-danger"><strong>(Not Completed)</strong></span>';
+                    }
+                    if (val.completedStatus == 'Completed') {
+                        totalCompletedDoc = totalCompletedDoc + 1;
+                        $completedStatus = '<span class="text-green"><strong>(Completed)</strong></span>';
+
+                    }
+
+                    if (val.completedStatus == 'No Action Required') {
+                        totalNoActionDoc = totalNoActionDoc + 1;
+                        $completedStatus = '<span class="text-orange"><strong>(No Action Required)</strong></span>';
+                    }
+
                     if (val.confidential_employees != null) {
                         var ConfidentialEmployees = val.confidential_employees.split(",");
 
                         if (ConfidentialEmployees.includes('<?php echo $employerSid; ?>')) {
-                            assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + '</span></div>';
+                            assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + ' ' + $completedStatus + '</span></div>';
                         } else {
                             totalDocs = totalDocs - 1;
                         }
 
                     } else {
-                        assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + '</span></div>';
+                        assignedDocs += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="border-bottom: 1px solid #ddd; padding-top:2px; padding-bottom:2px;" <span> ' + val.document_title + ' ' + $completedStatus + '</span></div>';
                     }
 
                 });
@@ -406,6 +530,20 @@
                 rows += '   <td class="vam">';
                 rows += '       <span><strong>' + totalDocs + '</strong> Docs</span>';
                 rows += '   </td>';
+
+                rows += '   <td class="vam">';
+                rows += '       <span><strong>' + totalNotCompletedDoc + '</strong> Docs</span>';
+                rows += '   </td>';
+
+                rows += '   <td class="vam">';
+                rows += '       <span><strong>' + totalCompletedDoc + '</strong> Docs</span>';
+                rows += '   </td>';
+
+                rows += '   <td class="vam">';
+                rows += '       <span><strong>' + totalNoActionDoc + '</strong> Docs</span>';
+                rows += '   </td>';
+
+
                 rows += '   <td class="vam">';
                 if (totalDocs > 0) {
                     rows += '       <a  class="btn btn-success jsviewdoc" href="javascript:void()">View</a>';
@@ -415,7 +553,7 @@
                 rows += '</tr>';
 
                 rows += '<tr style="display: none">';
-                rows += '   <td class="vam" colspan=3><div class="row">' + assignedDocs + '</td></div>';
+                rows += '   <td class="vam" colspan=6><div class="row">' + assignedDocs + '</td></div>';
                 rows += '</tr>';
 
             });

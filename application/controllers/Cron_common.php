@@ -952,4 +952,80 @@ class Cron_common extends CI_Controller
         $this->load->model('timeoff_model');
         $this->timeoff_model->getPublicHolidays();
     }
+
+    public function correctEmployeeStatus()
+    {
+        // get all employees
+        $employees = $this->db
+            ->select("
+                sid,
+                terminated_status,
+                active,
+                general_status
+            ")
+            ->where("parent_sid <>", "0")
+            ->get("users")
+            ->result_array();
+        //
+        if (!$employees) {
+            exit("No employees found.");
+        }
+        //
+        $holder = [
+            "total" => count($employees),
+            "effected" => [],
+            "skipped" => 0,
+        ];
+        //
+        foreach ($employees as $employee) {
+            // get the records
+            $record = $this->db
+                ->select('
+                    employee_status,
+                    status_change_date
+                ')
+                ->where('employee_sid', $employee["sid"])
+                ->order_by('sid', 'DESC')
+                ->limit(1)
+                ->get("terminated_employees")
+                ->row_array();
+
+            if (!$record) {
+                $holder["skipped"]++;
+                continue;
+            }
+            //
+            $ua = getUserFieldsFromEmployeeStatus($record);
+            // check if record is corrupted
+            if (
+                array_key_exists("active", $ua) && (
+                    $ua["active"] != $employee["active"] ||
+                    $ua["terminated_status"] != $employee["terminated_status"]
+                )
+            ) {
+                $holder["effected"][] = [
+                    "original" => $employee,
+                    "parsed" => $ua,
+                ];
+
+                $this->db
+                    ->where("sid", $employee["sid"])
+                    ->update(
+                        "users",
+                        [
+                            "active" => $ua["active"],
+                            "terminated_status" => $ua["terminated_status"],
+                        ]
+                    );
+            }
+        }
+        sendMail(
+            FROM_EMAIL_NOTIFICATIONS,
+            "mubashar.ahmed@egeninext.com",
+            "Employee status sync at " . getSystemDate(),
+            @json_encode($holder),
+            "AutomotoHR CRON"
+        );
+        _e($holder, true, true);
+    }
 }

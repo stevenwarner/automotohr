@@ -84,7 +84,8 @@ class Employee_shifts extends Public_Controller
         // get the shifts
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
-            [$employeeId]
+            [$employeeId],
+            true
         );
         //
         // get the unavailability

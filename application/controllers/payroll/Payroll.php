@@ -2185,7 +2185,7 @@ class Payroll extends CI_Controller
         ]);
         //
         $response = getProcessedPayrollsReceipt($payrollUid, $company, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {
@@ -2222,7 +2222,7 @@ class Payroll extends CI_Controller
         ]);
         //
         $response = getPayrollsEmployeesCompensations($payrollUid, $company, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {
@@ -2271,7 +2271,7 @@ class Payroll extends CI_Controller
             ]);
             //
             $response = getEmployeePayrollsDocuments($company, $checkPrerequisite['payroll_employee_uuid'], [
-                'X-Gusto-API-Version: 2023-03-01'
+                'X-Gusto-API-Version: 2024-03-01'
             ]);
             //
             if (isset($response['errors'])) {
@@ -2308,7 +2308,7 @@ class Payroll extends CI_Controller
         ]);
         //
         $response = getEmployeeFormContent($company, $employeeUUID, $formUUID, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {
@@ -2344,7 +2344,7 @@ class Payroll extends CI_Controller
         ]);
         //
         $response = signPayrollEmployeeForm($company, $employeeUUID, $formUUID, $formData, [
-            'X-Gusto-API-Version: 2023-03-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ]);
         //
         if (isset($response['errors'])) {

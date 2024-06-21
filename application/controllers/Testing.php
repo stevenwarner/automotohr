@@ -346,7 +346,7 @@ class Testing extends CI_Controller
                         ->getPreviousPlicyTitle(
                             $request['company_sid'],
                             $request['timeoff_policy_sid']
-                        );    
+                        );
 
                     // Get Policy Id
                     $newPolicyId = $this->timeoff_model
@@ -354,26 +354,26 @@ class Testing extends CI_Controller
                             $results[0]['to_company_sid'],
                             $policyData['title']
                         );
-                        
+
                     if (empty($newPolicyId)) {
                         $policyDetails =
-                                $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
-                            //
-                            unset($policyDetails['sid']);
-                            //
-                            $policyDetails['company_sid'] = $results[0]['to_company_sid'];
-                            $policyDetails['creator_sid'] = $adminId;
-                            $policyDetails['type_sid'] = $this->timeoff_model
-                                ->checkAndAddType(
-                                    $policyDetails['type_sid'],
-                                    $results[0]['to_company_sid']
-                                );
-                            $policyDetails['is_entitled_employee'] = 1;
-                            $policyDetails['assigned_employees'] = $employeeSid;
+                            $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
+                        //
+                        unset($policyDetails['sid']);
+                        //
+                        $policyDetails['company_sid'] = $results[0]['to_company_sid'];
+                        $policyDetails['creator_sid'] = $adminId;
+                        $policyDetails['type_sid'] = $this->timeoff_model
+                            ->checkAndAddType(
+                                $policyDetails['type_sid'],
+                                $results[0]['to_company_sid']
+                            );
+                        $policyDetails['is_entitled_employee'] = 1;
+                        $policyDetails['assigned_employees'] = $employeeSid;
 
-                            // insert the policy
-                            $this->db->insert('timeoff_policies', $policyDetails);
-                            $newPolicyId['sid'] = $this->db->insert_id();
+                        // insert the policy
+                        $this->db->insert('timeoff_policies', $policyDetails);
+                        $newPolicyId['sid'] = $this->db->insert_id();
                     }
 
                     //
@@ -447,606 +447,192 @@ class Testing extends CI_Controller
         }
     }
 
-    public function fixDocument ($companyId) {
-        $companyDocuments = $this->db
-            ->select(
-                'sid, document_sid, document_title, document_type, offer_letter_type'
-            )
-            ->where('company_sid', $companyId)
-            ->where('document_sid <>', 0)
-            ->get('documents_assigned')
-            ->result_array();
+
+    public function eeoc($employeeID)
+    {
+        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employeeID, "employee");
+        _e($eeo_form_info, true, true);
+    }
+
+    public function checkTimeoff($employeeId, $companyId)
+    {
+        $this->db->select('
+            joined_at,
+            registration_date,
+            rehire_date,
+            user_shift_hours,
+            user_shift_minutes,
+            employee_status,
+            is_executive_admin,
+            employee_type,
+            terminated_status,
+            active
+        ')
+            ->order_by('first_name', 'ASC')
+            ->where('sid', $employeeId);
         //
-        if ($companyDocuments) {
+        $a = $this->db->get('users');
+        $employee = $a->row_array();
+        $a->free_result();
+
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
+        $todayDate = date('Y-m-d', strtotime('now'));
+        //
+        $employeeAnniversaryDate = getEmployeeAnniversary($JoinedDate, $todayDate);
+
+        $this->load->model('timeoff_model');
+        $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
+        //
+        foreach ($policies as $policy) {
+            _e($this->db->last_query(), true);
+            $balanceInMinutes = $this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+                $policy['sid'],
+                $employeeId,
+                $employeeAnniversaryDate['lastAnniversaryDate'],
+                $employeeAnniversaryDate['upcomingAnniversaryDate']
+            );
             //
-            $this->load->model('manage_admin/copy_employees_model');
-            //
-            $updatedDocumentCount = 0;
-            $updatedDocument = [];
-            //
-            foreach ($companyDocuments as $document) {
-                if ($document['document_type'] == 'offer_letter') {
-                    $newDocumentID = $this->copy_employees_model->getAssignedOfferLetterId($companyId, $document);
-                } else {
-                    $newDocumentID = $this->copy_employees_model->getAssignedDocumentId($companyId, $document);   
-                }
+            _e($balanceInMinutes, true);
+        }
+        //
+        _e($employeeAnniversaryDate, true);
+        _e($JoinedDate, true, true);
+    }
+
+    function fixEmployeeMerge()
+    {
+        $this->db->select('
+            sid,
+            primary_employee_sid,
+            secondary_employee_sid,
+            primary_employee_profile_data,
+            secondary_employee_profile_data,
+            merge_at
+        ');
+        //
+        $this->db->group_start();
+        $this->db->where('secondary_employee_profile_data <>', NULL);
+        $this->db->or_where('secondary_employee_profile_data <>', '');
+        $this->db->or_where('secondary_employee_profile_data <>', 'a:0:{}');
+        $this->db->group_end();
+        //
+        $a = $this->db->get('employee_merge_history');
+        $mergeEmployees = $a->result_array();
+        $a->free_result();
+        //
+        $effectedEmployeeCount = 0;
+        $employeeFound = [];
+        $employeeNotFound = [];
+        //
+        if ($mergeEmployees) {
+            foreach ($mergeEmployees as $md) {
                 //
-                if ($document['document_sid'] != $newDocumentID) {
+                if (!empty($md['secondary_employee_profile_data']) && $md['secondary_employee_profile_data'] != 'a:0:{}') {
+                    $secondary_data = @unserialize($md['secondary_employee_profile_data']);
                     //
-                    $dataToUpdate = [];
-                    $dataToUpdate['document_sid'] = $newDocumentID;
-                    $this->db->where('sid', $document['sid']);
-                    $this->db->update('documents_assigned', $dataToUpdate);
-                    //
-                    $updatedDocumentCount++;
-                    $updatedDocument[] = $document;
+                    if ($secondary_data === false) {
+                        //
+                        $newData = '';
+                        //
+
+                        $this->db->select('*');
+                        $this->db->where('sid', $md['secondary_employee_sid']);
+                        //
+                        $b = $this->db->get('deleted_users_by_merge');
+                        $employeeData = $b->row_array();
+                        $b->free_result();
+                        //
+                        if ($employeeData) {
+                            $employeeFound[] = $md['secondary_employee_sid'];
+                            $newData = serialize($employeeData);
+                        } else {
+                            $employeeNotFound[] = $md['secondary_employee_sid'];
+                            $split = explode('s:9:"documents"', $md['secondary_employee_profile_data']);
+                            //
+                            $modifyData = @unserialize($split[0] . 's:9:"documents";a:0:{}}');
+                            //
+                            if ($modifyData !== false) {
+                                $newData = $split[0] . 's:9:"documents";a:0:{}}';
+                            } else {
+                                $split = explode('s:11:"e_signature";a:17:', $md['secondary_employee_profile_data']);
+                                $newData = $split[0] . 's:11:"e_signature";a:0:{}s:4:"eeoc";a:0:{}s:5:"group";a:0:{}s:9:"documents";a:0:{}}';
+                            }
+                            // 
+                        }
+                        //
+                        $effectedEmployeeCount++;
+                        $this->db->where("sid", $md["sid"])
+                            ->update("employee_merge_history", [
+                                "secondary_employee_profile_data" => $newData
+                            ]);
+
+                        //
+                    }
                 }
-                
             }
-        } 
-        _e($updatedDocumentCount." document(s) updated.",true);  
-        _e($updatedDocument,true,true); 
+        }
+        //
+        _e($effectedEmployeeCount, true);
+        _e(json_encode($employeeFound), true);
+        _e(json_encode($employeeNotFound), true, true);
     }
 
-    public function deleteDocument(){
-        $documents = [12294,12295,12296,12297,12298,12299,12300,12301,12302,12303,12304,12305,12306,12307,12308,12309,12310,12311,12312,12313,12314,12315,12316,12317,12318,12319,12320,12321,12322
-        ,12323,12324,12325,12326,12327,12328,12329,12330,12331,12332,12333,12334,12335,12336,12337,12338,12339,12340,12341,12342,12343,12344,12345,12346,12347,12348,12349,12350
-        ,12351,12352];
-        //
-        foreach ($documents as $sid) {
-            $this->db->where('new_document_sid', $sid);
-            $this->db->delete('copy_document_track');
-        }
-        echo count($documents);
-        _e($documents,true);
+    public function getFileBase64()
+    {
+        $this->copyObject($this->input->post("fileName"));
+        echo 'success';
     }
 
-    public function updateDocument(){
-        $documents = Array
-        (
-            Array
-                (
-                    "sid" => 575785,
-                    "document_sid" => 8817
-                )
-        
-            ,Array
-                (
-                    "sid" => 575786,
-                    "document_sid" => 8818
-                )
-        
-            ,Array
-                (
-                    "sid" => 575787,
-                    "document_sid" => 8819
-                )
-        
-            ,Array
-                (
-                    "sid" => 575788,
-                    "document_sid" => 8820
-                )
-        
-            ,Array
-                (
-                    "sid" => 575789,
-                    "document_sid" => 8821
-                )
-        
-            ,Array
-                (
-                    "sid" => 575790,
-                    "document_sid" => 8816
-                )
-        
-            ,Array
-                (
-                    "sid" => 575791,
-                    "document_sid" => 8804
-                )
-        
-            ,Array
-                (
-                    "sid" => 575792,
-                    "document_sid" => 8793
-                )
-        
-            ,Array
-                (
-                    "sid" => 575793,
-                    "document_sid" => 8794
-                )
-        
-            ,Array
-                (
-                    "sid" => 575794,
-                    "document_sid" => 8795
-                )
-        
-            ,Array
-                (
-                    "sid" => 575795,
-                    "document_sid" => 8796
-                )
-        
-            ,Array
-                (
-                    "sid" => 575796,
-                    "document_sid" => 8797
-                )
-        
-            ,Array
-                (
-                    "sid" => 575797,
-                    "document_sid" => 8798
-                )
-        
-            ,Array
-                (
-                    "sid" => 575798,
-                    "document_sid" => 8799
-                )
-        
-            ,Array
-                (
-                    "sid" => 575799,
-                    "document_sid" => 8801
-                )
-        
-            ,Array
-                (
-                    "sid" => 575800,
-                    "document_sid" => 8802
-                )
-        
-            ,Array
-                (
-                    "sid" => 575801,
-                    "document_sid" => 8803
-                )
-        
-            ,Array
-                (
-                    "sid" => 575802,
-                    "document_sid" => 8792
-                )
-        
-            ,Array
-                (
-                    "sid" => 575803,
-                    "document_sid" => 8805
-                )
-        
-            ,Array
-                (
-                    "sid" => 575804,
-                    "document_sid" => 8806
-                )
-        
-            ,Array
-                (
-                    "sid" => 575805,
-                    "document_sid" => 8807
-                )
-        
-            ,Array
-                (
-                    "sid" => 575806,
-                    "document_sid" => 8808
-                )
-        
-            ,Array
-                (
-                    "sid" => 575807,
-                    "document_sid" => 8809
-                )
-        
-            ,Array
-                (
-                    "sid" => 575808,
-                    "document_sid" => 8810
-                )
-        
-            ,Array
-                (
-                    "sid" => 575809,
-                    "document_sid" => 8811
-                )
-        
-            ,Array
-                (
-                    "sid" => 575810,
-                    "document_sid" => 8812
-                )
-        
-            ,Array
-                (
-                    "sid" => 575811,
-                    "document_sid" => 8813
-                )
-        
-            ,Array
-                (
-                    "sid" => 575812,
-                    "document_sid" => 8814
-                )
-        
-            ,Array
-                (
-                    "sid" => 575813,
-                    "document_sid" => 8815
-                )
-        
-            ,Array
-                (
-                    "sid" => 575814,
-                    "document_sid" => 10555
-                )
-        
-            ,Array
-                (
-                    "sid" => 594355,
-                    "document_sid" => 8799
-                )
-        
-            ,Array
-                (
-                    "sid" => 594356,
-                    "document_sid" => 8809
-                )
-        
-            ,Array
-                (
-                    "sid" => 594357,
-                    "document_sid" => 8819
-                )
-        
-            ,Array
-                (
-                    "sid" => 594358,
-                    "document_sid" => 8797
-                )
-        
-            ,Array
-                (
-                    "sid" => 594359,
-                    "document_sid" => 8802
-                )
-        
-            ,Array
-                (
-                    "sid" => 594360,
-                    "document_sid" => 10555
-                )
-        
-            ,Array
-                (
-                    "sid" => 594361,
-                    "document_sid" => 8817
-                )
-        
-            ,Array
-                (
-                    "sid" => 594362,
-                    "document_sid" => 8818
-                )
-        
-            ,Array
-                (
-                    "sid" => 594363,
-                    "document_sid" => 8820
-                )
-        
-            ,Array
-                (
-                    "sid" => 594364,
-                    "document_sid" => 8821
-                )
-        
-            ,Array
-                (
-                    "sid" => 594365,
-                    "document_sid" => 8816
-                )
-        
-            ,Array
-                (
-                    "sid" => 594366,
-                    "document_sid" => 8804
-                )
-        
-            ,Array
-                (
-                    "sid" => 594367,
-                    "document_sid" => 8794
-                )
-        
-            ,Array
-                (
-                    "sid" => 594368,
-                    "document_sid" => 8795
-                )
-        
-            ,Array
-                (
-                    "sid" => 594369,
-                    "document_sid" => 8796
-                )
-        
-            ,Array
-                (
-                    "sid" => 594370,
-                    "document_sid" => 8798
-                )
-        
-            ,Array
-                (
-                    "sid" => 594371,
-                    "document_sid" => 8801
-                )
-        
-            ,Array
-                (
-                    "sid" => 594372,
-                    "document_sid" => 8792
-                )
-        
-            ,Array
-                (
-                    "sid" => 594373,
-                    "document_sid" => 8805
-                )
-        
-            ,Array
-                (
-                    "sid" => 594374,
-                    "document_sid" => 8806
-                )
-        
-            ,Array
-                (
-                    "sid" => 594375,
-                    "document_sid" => 8807
-                )
-        
-            ,Array
-                (
-                    "sid" => 594376,
-                    "document_sid" => 8808
-                )
-        
-            ,Array
-                (
-                    "sid" => 594377,
-                    "document_sid" => 8811
-                )
-        
-            ,Array
-                (
-                    "sid" => 594378,
-                    "document_sid" => 8812
-                )
-        
-            ,Array
-                (
-                    "sid" => 594379,
-                    "document_sid" => 8813
-                )
-        
-            ,Array
-                (
-                    "sid" => 594380,
-                    "document_sid" => 8814
-                )
-        
-            ,Array
-                (
-                    "sid" => 594381,
-                    "document_sid" => 8815
-                )
-        
-            ,Array
-                (
-                    "sid" => 594382,
-                    "document_sid" => 8810
-                )
-        
-            ,Array
-                (
-                    "sid" => 594383,
-                    "document_sid" => 8793
-                )
-        
-            ,Array
-                (
-                    "sid" => 604720,
-                    "document_sid" => 10555
-                )
-        
-            ,Array
-                (
-                    "sid" => 618275,
-                    "document_sid" => 9489
-                )
-        
-            ,Array
-                (
-                    "sid" => 618276,
-                    "document_sid" => 9490
-                )
-        
-            ,Array
-                (
-                    "sid" => 618277,
-                    "document_sid" => 9492
-                )
-        
-            ,Array
-                (
-                    "sid" => 618278,
-                    "document_sid" => 9493
-                )
-        
-            ,Array
-                (
-                    "sid" => 618279,
-                    "document_sid" => 9488
-                )
-        
-            ,Array
-                (
-                    "sid" => 618280,
-                    "document_sid" => 9476
-                )
-        
-            ,Array
-                (
-                    "sid" => 618281,
-                    "document_sid" => 9466
-                )
-        
-            ,Array
-                (
-                    "sid" => 618282,
-                    "document_sid" => 9467
-                )
-        
-            ,Array
-                (
-                    "sid" => 618283,
-                    "document_sid" => 9468
-                )
-        
-            ,Array
-                (
-                    "sid" => 618284,
-                    "document_sid" => 9470
-                )
-        
-            ,Array
-                (
-                    "sid" => 618285,
-                    "document_sid" => 9473
-                )
-        
-            ,Array
-                (
-                    "sid" => 618286,
-                    "document_sid" => 9464
-                )
-        
-            ,Array
-                (
-                    "sid" => 618287,
-                    "document_sid" => 9477
-                )
-        
-            ,Array
-                (
-                    "sid" => 618288,
-                    "document_sid" => 9478
-                )
-        
-            ,Array
-                (
-                    "sid" => 618289,
-                    "document_sid" => 9479
-                )
-        
-            ,Array
-                (
-                    "sid" => 618290,
-                    "document_sid" => 9480
-                )
-        
-            ,Array
-                (
-                    "sid" => 618291,
-                    "document_sid" => 9483
-                )
-        
-            ,Array
-                (
-                    "sid" => 618292,
-                    "document_sid" => 9484
-                )
-        
-            ,Array
-                (
-                    "sid" => 618293,
-                    "document_sid" => 9485
-                )
-        
-            ,Array
-                (
-                    "sid" => 618294,
-                    "document_sid" => 9486
-                )
-        
-            ,Array
-                (
-                    "sid" => 618295,
-                    "document_sid" => 9487
-                )
-        
-            ,Array
-                (
-                    "sid" => 618296,
-                    "document_sid" => 9465
-                )
-        
-            ,Array
-                (
-                    "sid" => 618297,
-                    "document_sid" => 9469
-                )
-        
-            ,Array
-                (
-                    "sid" => 618298,
-                    "document_sid" => 9471
-                )
-        
-            ,Array
-                (
-                    "sid" => 618299,
-                    "document_sid" => 9474
-                )
-        
-            ,Array
-                (
-                    "sid" => 618300,
-                    "document_sid" => 9481
-                )
-        
-            ,Array
-                (
-                    "sid" => 618301,
-                    "document_sid" => 9482
-                )
-        
-            ,Array
-                (
-                    "sid" => 618302,
-                    "document_sid" => 10715
-                )
-        
-            ,Array
-                (
-                    "sid" => 618303,
-                    "document_sid" => 9491
-                )
-        
-        );;
+    /**
+     * 
+     */
+    public function copyObject($fileName)
+    {
+        // load the AWS library
+        $this->load->library(
+            "Aws_lib",
+            '',
+            "aws_lib"
+        );
+
+        $meta = [
+            "ContentType" => "application/pdf",
+            "ContentDisposition" => "inline",
+            "logicByM" => "1"
+        ];
+
+        $options = [
+            'Bucket'     => AWS_S3_BUCKET_NAME,
+            'CopySource' => urlencode(AWS_S3_BUCKET_NAME . '/' . $fileName), // Source object
+            'Key'        => $fileName, // Destination object
+            'Metadata' => $meta,
+            "MetadataDirective" => "REPLACE",
+            "ContentType" => "application/pdf",
+            'ACL'        => 'public-read', // Optional: specify the ACL (access control list)
+        ];
         //
-        foreach ($documents as $doc) {
-            $dataToUpdate = [];
-            $dataToUpdate['document_sid'] = $doc['document_sid'];
-            $this->db->where('sid', $doc['sid']);
-            $this->db->update('documents_assigned', $dataToUpdate);
-        }
-        echo count($documents);
-        _e($documents,true);
+        $this->aws_lib->copyObject($options);
+
+        return urlencode($fileName);
     }
+
+    public function addNewEmployeesIntoCompany ($companyId) {
+        // Load the fake employee library
+        $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
+        //
+        $employees = 
+            $this
+            ->fakeEmployees
+            ->init(5);
+        //
+        foreach($employees as $employee){
+            $employee['parent_sid'] = $companyId;
+            $employee['active'] = 1;
+            //
+            $this->db->insert('users', $employee);
+        }
+        //
+        _e("employee add successfully");
+    } 
 }

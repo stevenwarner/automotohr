@@ -298,6 +298,7 @@ $assignIdObj = $confidential_sids;
                                                                                 </form>
                                                                                 <button onclick="func_remove_i9();" class="btn btn-danger">Revoke</button>
                                                                                 <button class="btn btn-success jsManageI9" title="Manage I9">Manage I9</button>
+                                                                                <a href="<?= base_url("forms/i9/modify/$user_type/$user_sid"); ?>" class="btn btn-orange" title="Modify I9">Modify I9</a>
                                                                                 <?php if ($user_type == 'employee') { ?>
                                                                                     <a class="btn <?php echo $i9_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<?= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $i9_form['sid'] . "/i9_assigned" ?>">Upload Supporting Docs</a>
                                                                                 <?php } ?>
@@ -375,8 +376,12 @@ $assignIdObj = $confidential_sids;
                                                                     <td class="col-lg-2">
                                                                         EEOC FORM
                                                                         <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . ($eeo_form_info['status'] == 1 && $eeo_form_info['is_expired'] == 1 ? 'on' : 'off') . '.gif'); ?>"></br>
-                                                                        Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
-
+                                                                        <?php if ($eeo_form_info && $eeo_form_info["status" == 1]) { ?>
+                                                                            Completed on: <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+                                                                            The user has Opt-out on <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?>
+                                                                        <?php } ?>
                                                                     </td>
                                                                     <td class="col-lg-1 text-center">
                                                                         <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -419,8 +424,8 @@ $assignIdObj = $confidential_sids;
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="remove_EEOC" />
                                                                                 </form>
                                                                                 <button onclick="func_remove_EEOC();" class="btn btn-danger">Revoke</button>
-                                                                                <?php if ($user_type == 'employee') { ?>
-                                                                                    <a class="btn btn-success" href="<?php echo base_url('EEOC/employee/' . $user_sid); ?>">View EEOC Form</a>
+                                                                                <?php if (!$eeo_form_info["is_opt_out"]) { ?>
+                                                                                    <a class="btn btn-success" href="<?php echo base_url('EEOC/'.$user_type.'/' . $user_sid); ?>">View EEOC Form</a>
                                                                                     <?php if ($eeo_form_info['is_expired'] == 1) { ?>
                                                                                         <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/print/' . $user_sid . '/' . $user_type); ?>">Print</a>
                                                                                         <a class="btn btn-success" href="<?php echo base_url('hr_documents_management/print_eeoc_form/download/' . $user_sid . '/' . $user_type); ?>">Download</a>
@@ -431,6 +436,10 @@ $assignIdObj = $confidential_sids;
                                                                                         <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                                                                         Send Email Notification
                                                                                     </a>
+                                                                                    <button class="btn btn-orange jsEEOCOptOut" data-id="<?= $eeo_form_info["sid"]; ?>" title="You will be opt-out of the EEOC form.">
+                                                                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                                                        Opt-out
+                                                                                    </button>
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
                                                                                 <form id="form_assign_EEOC" enctype="multipart/form-data" method="post">
@@ -478,6 +487,10 @@ $assignIdObj = $confidential_sids;
                             <?php } ?>
                             <!--  -->
                             <?php $this->load->view('hr_documents_management/general_document_assignment'); ?>
+
+                            <?php if (checkIfAppIsEnabled('performanceevaluation') && $user_type != 'applicant' && isPayrollOrPlus()) { ?>
+                                <?php $this->load->view('employee_performance_evaluation/document_center'); ?>
+                            <?php } ?>
 
                             <div class="row">
                                 <div class="col-xs-12">
@@ -3228,7 +3241,55 @@ if ($user_type == 'employee') {
                             }
 
                             $.each(form_input_data, function(key, input_value) {
-                                if (input_value[0] == 'signature_person_name') {
+                                // for fillables
+                                if (input_value[0] === "supervisor") {
+                                    $("input.js_supervisor").val(input_value[1]);
+                                } else if (input_value[0] === "department") {
+                                    $("input.js_department").val(input_value[1]);
+                                } else if (input_value[0] === "last_work_date") {
+                                    $("input.js_last_work_date").val(input_value[1]);
+                                } else if (input_value[0] === "reason_to_leave_company") {
+                                    $("textarea.js_reason_to_leave_company").val(input_value[1]);
+                                } else if (input_value[0] === "forwarding_information") {
+                                    $("textarea.js_forwarding_information").val(input_value[1]);
+                                } else if (input_value[0] === "employee_name") {
+                                    $("input.js_employee_name").val(input_value[1]);
+                                } else if (input_value[0] === "employee_job_title") {
+                                    $("input.js_employee_job_title").val(input_value[1]);
+                                } else if (input_value[0] === "is_termination_voluntary") {
+                                    $('input.js_is_termination_voluntary[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "property_returned") {
+                                    $('input.js_property_returned[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "reemploying") {
+                                    $('input.js_reemploying[value="' + (input_value[1]) + '"]').prop("checked", true);
+                                } else if (input_value[0] === "date_of_occurrence") {
+                                    $("input.js_date_of_occurrence").val(input_value[1]);
+                                } else if (input_value[0] === "summary_of_violation") {
+                                    $("textarea.js_summary_of_violation").val(input_value[1]);
+                                } else if (input_value[0] === "summary_of_corrective_plan") {
+                                    $("textarea.js_summary_of_corrective_plan").val(input_value[1]);
+                                }  else if (input_value[0] === "follow_up_dates") {
+                                    $("textarea.js_follow_up_dates").val(input_value[1]);
+                                }  else if (input_value[0] === "counselling_form_fields_textarea") {
+                                    $("textarea.js_counselling_form_fields_textarea").removeClass("hidden");
+                                    $("textarea.js_counselling_form_fields_textarea").val(input_value[1]);
+                                }  else if (input_value[0] === "counselling_form_fields") {
+                                    input_value[1].map(function(v){
+                                        $('input.js_counselling_form_fields[value="'+(v)+'"]').prop("checked", true);
+                                    });
+                                } else if (input_value[0] === "q1") {
+                                    $("textarea.js_q1").val(input_value[1]);
+                                } else if (input_value[0] === "employee_number") {
+                                    $("input.js_employee_number").val(input_value[1]);
+                                } else if (input_value[0] === "q2") {
+                                    $("textarea.js_q2").val(input_value[1]);
+                                } else if (input_value[0] === "q3") {
+                                    $("textarea.js_q3").val(input_value[1]);
+                                } else if (input_value[0] === "q4") {
+                                    $("textarea.js_q4").val(input_value[1]);
+                                } else if (input_value[0] === "q5") {
+                                    $("textarea.js_q5").val(input_value[1]);
+                                } else if (input_value[0] == 'signature_person_name') {
                                     var input_field_id = input_value[0];
                                     var input_field_val = input_value[1];
                                     $('#' + input_field_id).val(input_field_val);
@@ -5021,8 +5082,6 @@ if ($user_type == 'employee') {
                         return;
                     }
                 }
-
-
                 //
                 if ($(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').length !== 0) {
                     btn = $(this).find('td:nth-child(4)').find('button[data-document-type="i9"]').clone().addClass('btn-sm btn-block');
@@ -5687,3 +5746,39 @@ $this->load->view('hr_documents_management/scripts/index', [
         }
     })
 </script> -->
+
+
+<script>
+    $(function() {
+        let eeoId;
+        $(".jsEEOCOptOut").click(function(event) {
+            event.preventDefault();
+            eeoId = $(this).data("id");
+            _confirm(
+                "Do you really want to 'Opt-out' of the EEOC form?",
+                startOptOutProcess
+            );
+        });
+
+        function startOptOutProcess() {
+            const _hook = callButtonHook(
+                $(".jsEEOCOptOut"),
+                true
+            );
+            $.ajax({
+                    url: baseUrl("eeoc/" + (eeoId) + "/opt_out"),
+                    method: "PUT",
+                })
+                .always(function() {
+                    callButtonHook(_hook, false)
+                })
+                .fail(handleErrorResponse)
+                .success(function(resp) {
+                    _success(
+                        resp.message,
+                        window.location.refresh
+                    )
+                });
+        }
+    })
+</script>

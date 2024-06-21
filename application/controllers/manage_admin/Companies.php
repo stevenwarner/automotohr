@@ -305,7 +305,7 @@ class Companies extends Admin_Controller
                 'user_shift_hours' => $this->input->post('shift_hours'),
                 'job_titles_template_group' => $this->input->post('job_titles_template_group'),
                 'company_status' => $this->input->post('company_status'),
-               
+
             );
             //
             if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
@@ -328,10 +328,10 @@ class Companies extends Admin_Controller
 
             // if the company is on payroll
             if (isCompanyOnBoard($company_sid)) {
-
+                // load the model
+                $this->load->model('v1/payroll_model');
+                //
                 if (!$this->db->where('company_sid', $company_sid)->count_all_results('gusto_companies_locations')) {
-                    // load the model
-                    $this->load->model('v1/payroll_model');
                     // get the company details
                     $response = $this->payroll_model->checkAndPushCompanyLocationToGusto($company_sid);
                     //
@@ -340,6 +340,14 @@ class Companies extends Admin_Controller
                     } else {
                         $this->payroll_model->handleInitialEmployeeOnboard($company_sid);
                     }
+                } else {
+                    // // update the location on Gusto
+                    // // get the company details
+                    // $response = $this->payroll_model->updateCompanyLocationToGusto($company_sid);
+                    // //
+                    // if ($response['errors']) {
+                    //     $this->session->set_flashdata('message', "Company is updated sucessfully. " . implode('<br />', $response['errors']));
+                    // }
                 }
             }
 
@@ -548,6 +556,13 @@ class Companies extends Admin_Controller
             $result = $this->users_model->insert($company_data, $employer_data, $employer_portal_data);
 
             if (!empty($result)) {
+                // load the fillable document library
+                $this->load->model("v1/Fillable_documents_model", "fillable_documents_model");
+                $this
+                    ->fillable_documents_model
+                    ->checkAndAddFillableDocuments(
+                        $result['company_id']
+                    );
                 // Also pushes the location to onboarding configuration
                 $this->users_model->fixOnboardingAddress($result['company_id'], 0);
                 //making sub domain
@@ -1406,6 +1421,8 @@ class Companies extends Admin_Controller
             $this->data['page_title'] = 'Manage Company Dashboard';
             $company_info = $this->company_model->get_company_details($company_sid);
 
+            $company_info['incidents'] = checkIfAppIsEnabled('incidents');
+
             if (sizeof($company_info) < 1) {
                 $this->session->set_flashdata('message', 'Company not found!');
                 redirect('manage_admin/companies/', 'refresh');
@@ -1502,6 +1519,7 @@ class Companies extends Admin_Controller
                 $this->data['company_portal_email_templates'] = $company_portal_email_templates;
                 $this->data['automotive_groups'] = $this->company_model->get_groups_by_company($company_sid);
                 //            $this->data['company_card'] = $company_card;
+
 
                 //
                 $this->data['CompanyIndeedDetails'] = $this->company_model->GetCompanyIndeedDetails($company_sid);
@@ -3466,5 +3484,32 @@ class Companies extends Admin_Controller
         $this->data['company_sid'] = $companyId;
         //
         $this->render('manage_admin/company/company_secure_documents');
+    }
+
+
+
+    //
+    function change_incident_status()
+    {
+        $sid = $this->input->post("sid");
+        $status = $this->input->post("status");
+        if ($status) {
+            $data = array('is_active' => 0);
+            $return_data = array(
+                'btnValue' => 'Disable',
+                'label'     => 'Enabled',
+                'value'     =>  1
+            );
+        } else {
+            $data = array('is_active' => 1);
+            $return_data = array(
+                'btnValue' => 'Enable',
+                'label'     => 'Disabled',
+                'value'     =>  0
+            );
+        }
+        $this->company_model->update_incident_status($sid, $data);
+
+        print_r(json_encode($return_data));
     }
 }

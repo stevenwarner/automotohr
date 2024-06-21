@@ -526,8 +526,10 @@
             //
             if (xhr.applicantXHR !== null) xhr.applicantXHR.abort();
 
+            let keywords = decodeURIComponent(req.term).trim().replace(/\s/, '_');
+
             xhr.applicantXHR =
-                $.get(baseURI + "fetch-applicants/" + req.term + "", function(resp) {
+                $.get(baseURI + "fetch-applicants/" + keywords + "", function(resp) {
                     if (!resp) {
                         loaders.applicant.hide(0);
                         return false;

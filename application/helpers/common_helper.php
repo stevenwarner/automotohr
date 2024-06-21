@@ -25,6 +25,19 @@ if (!function_exists('getUserNameBySID')) {
     }
 }
 
+if (!function_exists('getEmployeeOnlyNameBySID')) {
+    function getEmployeeOnlyNameBySID($sid)
+    {
+        $employee_info = db_get_employee_profile($sid);
+        //
+        if ($employee_info) {
+            return $employee_info[0]["first_name"] . " " . $employee_info[0]["last_name"];
+        } else {
+            return "";
+        }
+    }
+}
+
 
 if (!function_exists('getApplicantNameBySID')) {
     function getApplicantNameBySID($sid, $remake = true)
@@ -5341,6 +5354,24 @@ if (!function_exists('get_admin_notifications')) {
         // $CI->db->where('expire_month', $current_month + 1);
         // $CI->db->where('expire_year', $current_year);
         $data['cc_expiring'] = $CI->db->count_all_results();
+        //
+        $totalStatus = $CI->db
+            ->select(' 
+                COUNT(
+                    DISTINCT(LOWER(REGEXP_REPLACE(name, "[^a-zA-Z]", "")))
+                ) as count
+            ')
+            ->get('application_status')
+            ->row_array()['count'];
+        //
+        $mapStatus = $CI->db
+            ->select(' 
+                COUNT(*) as count
+            ')
+            ->get('indeed_disposition_status_map')
+            ->row_array()['count'];
+        //
+        $data['indeed_pending_status'] = $totalStatus - $mapStatus;
         return $data;
     }
 }
@@ -11166,6 +11197,7 @@ if (!function_exists('checkIfAppIsEnabled')) {
         $ci = &get_instance();
         // Get session
         $ses = $ci->session->userdata('logged_in');
+        // 
         // Check if use is logged in
         if (!$ses || !sizeof($ses) || !isset($ses['company_detail'])) return true;
         // Get the called controller name
@@ -15563,7 +15595,7 @@ if (!function_exists('get_all_group_documents')) {
         if (!empty($record_arr)) {
             //
             $tmp = [];
-            foreach($record_arr as $rc) {
+            foreach ($record_arr as $rc) {
                 if (!$tmp[$rc["document_sid"]]) {
                     $tmp[$rc["document_sid"]] = $rc;
                 }

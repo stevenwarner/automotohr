@@ -14,7 +14,6 @@ class Eeo extends Public_Controller
 
     public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $page = null)
     {
-
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -116,7 +115,7 @@ class Eeo extends Public_Controller
                 $segement6 = '/' . $employee_status;
                 $uri_segment = 7;
 
-                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $eeo_candidates = $this->eeo_model->getEEOCEmployeesByFilter($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
                 $total_records = count($eeo_candidates);
 
                 foreach ($eeo_candidates as $employee_row) {
@@ -495,6 +494,7 @@ class Eeo extends Public_Controller
 
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
+            $employee_status = $_POST['employee_status'];
 
             if ($_POST['applicantoption'] == 'employee') {
                 $opt_type = $_POST['opt_type1'];
@@ -503,11 +503,11 @@ class Eeo extends Public_Controller
                 $opt_type = $_POST['opt_type'];
                 $keyword = $_POST['keyword'];
             }
-
             $keyword = empty($keyword) ? 'all' : $keyword;
             $start_date = empty($start_date) ? 'all' : $start_date;
             $end_date = empty($end_date) ? 'all' : $end_date;
             $opt_type = empty($opt_type) ? 'all' : $opt_type;
+            $employee_status = empty($employee_status) ? 'all' : $employee_status;
 
             $display_start_day = 'all';
             $display_end_day = 'all';
@@ -531,7 +531,7 @@ class Eeo extends Public_Controller
             }
 
             if ($_POST['applicantoption'] == 'employee') {
-                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $eeo_candidates = $this->eeo_model->getEEOCEmployeesByFilter($keyword, $opt_type, $start_date, $end_date, $company_id, 0, 0, false, $employee_status);
             } else {
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
 

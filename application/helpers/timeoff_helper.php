@@ -230,6 +230,9 @@ if (!function_exists('getEmployeeAccrualNew')) {
     ) {
         // get CI instance
         $CI = &get_instance();
+        $accrualRate = $accruals['rate'];
+        $applicableTime = $accruals['applicableTime'];
+        $applicableType = $accruals['applicableTimeType'];
         // set default plan array
         $policyPlansDates = [
             'lastAnniversaryDate' => $employeeJoiningDate,
@@ -300,7 +303,6 @@ if (!function_exists('getEmployeeAccrualNew')) {
                 ];
             }
         }
-
 
         // get consumed time
         $consumedTimeInMinutes = $CI->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
@@ -637,10 +639,83 @@ if (!function_exists('getEmployeeAccrualNew')) {
             $employeeDefaultAccrual['UnpaidConsumedTime'] = $employeeDefaultAccrual['ConsumedTime'];
             $employeeDefaultAccrual['ConsumedTime'] = $tmp;
         }
+        //
+        $cp = date('Y-m-d', strtotime('now'));
+        //
+        if (!empty($asOfToday)) {
+            $cp = date('Y-m-d', strtotime($asOfToday));
+        }
+
+        // for adding time off balance
+        if (
+            $cp >= $policyPlansDates['lastAnniversaryDate']
+        ) {
+            //
+            if ($allowedTime != 0) {
+                //
+                $is_added = $CI->timeoff_model->checkAllowedBalanceAdded(
+                    $employeeId,
+                    $policyId,
+                    1,
+                    $policyPlansDates['lastAnniversaryDate'],
+                    $allowedTime
+                );
+                //
+                if ($is_added == 0) {
+                    // This section add allowed balance of current year
+                    $company_sid = $CI->timeoff_model->getEmployeeCompanySid($employeeId);
+                    $policyName = $CI->timeoff_model->getPolicyNameById($policyId);
+                    //
+                    $added_by = getCompanyAdminSid($company_sid);
+                    //
+                    $balanceToAdd = array();
+                    $balanceToAdd['user_sid'] = $employeeId;
+                    $balanceToAdd['policy_sid'] = $policyId;
+                    $balanceToAdd['added_by'] = $added_by;
+                    $balanceToAdd['is_added'] = 1;
+                    $balanceToAdd['added_time'] = $allowedTime;
+                    $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                        $allowedTime,
+                        $accruals['applicableTime'],
+                        $accruals['applicableTimeType'],
+                        $policyName,
+                        $slug,
+                        $durationInMinutes
+                    );
+                    $balanceToAdd['effective_at'] = $policyPlansDates['lastAnniversaryDate'];
+                    //
+                    $CI->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
+                }
+            }
+        }
 
         return $employeeDefaultAccrual;
     }
 }
+
+
+if (!function_exists("getAddPolicyBalanceNote")) {
+    function getAddPolicyBalanceNote(
+        $allowedTime,
+        $applicableTime,
+        $applicableTimeType,
+        $policyName,
+        $slug,
+        $durationInMinutes
+    ) {
+        $date = getSystemDate('M d, Y');
+        $time = getSystemDate('g:i A');
+        //
+        $allowedTimeText = get_array_from_minutes(
+            $allowedTime,
+            $durationInMinutes,
+            $slug
+        )["text"];
+
+        return "On {$date}, at {$time}, a balance of {$allowedTimeText} was added in accordance with policy \"{$policyName}\" after meeting the minimum applicable time of {$applicableTime} {$applicableTimeType}.";
+    }
+}
+
 
 /**
  * Manage Accruals
@@ -768,10 +843,6 @@ if (!function_exists('getEmployeeAccrual')) {
         if ($employementStatus == 'probation') {
             // Probation
             $accrualRate = $accruals['newHireRate'];
-            //
-            if ($accrualRate == 0) {
-                // return $r;
-            }
         }
         // See if policy implements
         // When the policy starts from employee joining date
@@ -800,6 +871,23 @@ if (!function_exists('getEmployeeAccrual')) {
         // Check if employee has worked for certain time
         // Employee doesn't meet the minimum allowed time
         if ($employementStatus == 'permanent' && getTimeDifference($employeeJoiningDate, $applicableTime, $applicableType, $todayDate) == false) {
+            $r = hasAllowedTimeBeforePolicyImplements(
+                $employeeId,
+                $policyId,
+                $employeeJoiningDate,
+                $applicableTime,
+                $applicableType,
+                $accruals['newHireRate'],
+                $categoryType,
+                $employementStatus,
+                $r
+            );
+
+            if ($r["allowed"]) {
+                unset($r["allowed"]);
+                return $r;
+            }
+
             //
             $r['Reason'] = "The employee doesn't meet the minimum work-time of $applicableTime $applicableType.";
             return $r;
@@ -1286,9 +1374,17 @@ if (!function_exists('getEmployeeAccrual')) {
                     $balanceToAdd['added_by'] = $added_by;
                     $balanceToAdd['is_added'] = 1;
                     $balanceToAdd['added_time'] = $allowedTime;
-                    $balanceToAdd['note'] = 'On <b>' . date('M d, Y,', strtotime('now')) . ' at ' . date('g:i A,', strtotime('now')) . '</b> a balance of ' . $accruals['applicableTime'] . ' hours was added in accordance with the <b>"' . $policyName . '"</b> policy.';
+                    $balanceToAdd['note'] = getAddPolicyBalanceNote(
+                        $allowedTime,
+                        $accruals['applicableTime'],
+                        $accruals['applicableTimeType'],
+                        $policyName,
+                        $slug,
+                        $durationInMinutes
+                    );
                     $balanceToAdd['effective_at'] = $employeeAnniversaryDate['lastAnniversaryDate'];
                     //
+                    $_this->timeoff_model->addEmployeeAllowedBalance($balanceToAdd);
                 }
             }
         }
@@ -1337,6 +1433,23 @@ function getTimeDifference(
     if ($minutes >= $applicableTimeToMinutes) return true;
     //
     return false;
+}
+
+function getEffectiveDateFromApplicableTimeAdType(
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType
+) {
+    //
+    if ($applicableTime == 0) {
+        return $employeeJoiningDate;
+    }
+    //
+    $initialDateTime = new DateTime($employeeJoiningDate);
+    //
+    $initialDateTime->modify("+{$applicableTime} {$applicableType}");
+    //
+    return $initialDateTime->format(DB_DATE);
 }
 
 function getEmployementStatus(
@@ -1668,7 +1781,7 @@ if (!function_exists('generateTimeoffRequestSlot')) {
         } else if ($request['employeeStatus'] == 'Terminated') {
             $html .= '<td><strong class="text-danger">Terminated</strong></td>';
         } else {
-            $html .= '<td><strong class="text-warning">'.$request['employeeStatus'].'</strong></td>';
+            $html .= '<td><strong class="text-warning">' . $request['employeeStatus'] . '</strong></td>';
         }
         //
         $html .= '  <td>' . ($request['title']) . '</td>';
@@ -1885,4 +1998,75 @@ if (!function_exists('processESSTPolicy')) {
         //
         return $r;
     }
+}
+
+
+function hasAllowedTimeBeforePolicyImplements(
+    $employeeId,
+    $policyId,
+    $employeeJoiningDate,
+    $applicableTime,
+    $applicableType,
+    $accrualRate,
+    $categoryType,
+    $employementStatus,
+    $r
+) {
+    // Get instance of CI
+    $_this = &get_instance();
+    // Load time off modal
+    $_this->load->model('timeoff_model');
+    //
+    $effectiveDate = getEffectiveDateFromApplicableTimeAdType(
+        $employeeJoiningDate,
+        $applicableTime,
+        $applicableType
+    );
+    // get consumed time between the period
+    $manualBalanceProbation = getEmployeeManualBalance(
+        $employeeId,
+        $policyId,
+        $employeeJoiningDate,
+        $effectiveDate,
+        0
+    );
+
+    $consumedTimeInMinutes = $_this
+        ->timeoff_model
+        ->getEmployeeConsumedTimeByResetDateNew(
+            $policyId,
+            $employeeId,
+            $employeeJoiningDate,
+            $effectiveDate
+        );
+
+    $accrualRate = $accrualRate + $manualBalanceProbation;
+
+    if ($accrualRate - $consumedTimeInMinutes == 0) {
+        return $r;
+    }
+
+    $r['AllowedTime'] = $accrualRate;
+    $r['ConsumedTime'] = $consumedTimeInMinutes;
+    $r['CarryOverTime'] = 0;
+    $r['RemainingTime'] = $accrualRate - $consumedTimeInMinutes;
+    $r['MaxNegativeTime'] = 0;
+    $r['Balance'] = $manualBalanceProbation;
+    $r['EmployementStatus'] = $employementStatus;
+
+    $r['lastAnniversaryDate'] =  $employeeJoiningDate;
+    $r['upcomingAnniversaryDate'] = $effectiveDate;
+    //
+    $r['IsUnlimited'] = 0;
+
+    // for unpaid
+    if ($categoryType == '0') {
+        $tmp = $r['UnpaidConsumedTime'];
+        $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+        $r['ConsumedTime'] = $tmp;
+    }
+
+    $r["allowed"] = 1;
+
+    return $r;
 }

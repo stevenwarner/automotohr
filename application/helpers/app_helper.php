@@ -1099,17 +1099,17 @@ if (!function_exists('checkI9RecordWithProfile')) {
         //
         $address = trim($profileData['Location_Address'] . ' ' . $profileData['Location_Address_2']);
         //
-        $data['section1_last_name'] = $data['section1_last_name'] ?? $profileData['last_name'];
-        $data['section1_first_name'] = $data['section1_first_name'] ?? $profileData['first_name'];
-        $data['section1_middle_initial'] = $data['section1_middle_initial'] ?? $profileData['middle_name'];
-        $data['section1_address'] = $data['section1_address'] ?? $address;
-        $data['section1_city_town'] = $data['section1_city_town'] ?? $profileData['Location_City'];
+        $data['section1_last_name'] = $data['section1_last_name'] ? $data['section1_last_name'] : $profileData['last_name'];
+        $data['section1_first_name'] = $data['section1_first_name'] ? $data['section1_first_name'] : $profileData['first_name'];
+        $data['section1_middle_initial'] = $data['section1_middle_initial'] ? $data['section1_middle_initial'] : $profileData['middle_name'];
+        $data['section1_address'] = $data['section1_address'] ? $data['section1_address'] :  $address;
+        $data['section1_city_town'] = $data['section1_city_town'] ? $data['section1_city_town'] : $profileData['Location_City'];
         $data['section1_state'] = $data['section1_state'] ?? getStateColumnById($profileData['Location_State'] ?? 0);
-        $data['section1_zip_code'] = $data['section1_zip_code'] ?? $profileData['Location_ZipCode'];
-        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ?? $profileData['dob'];
-        $data['section1_social_security_number'] = $data['section1_social_security_number'] ?? $profileData['ssn'];
-        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ?? $profileData['email'];
-        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ?? $profileData['PhoneNumber'];
+        $data['section1_zip_code'] = $data['section1_zip_code'] ? $data['section1_zip_code'] : $profileData['Location_ZipCode'];
+        $data['section1_date_of_birth'] = $data['section1_date_of_birth'] ? $data['section1_date_of_birth'] : $profileData['dob'];
+        $data['section1_social_security_number'] = $data['section1_social_security_number'] ? $data['section1_social_security_number'] :  $profileData['ssn'];
+        $data['section1_emp_email_address'] = $data['section1_emp_email_address'] ? $data['section1_emp_email_address'] : $profileData['email'];
+        $data['section1_emp_telephone_number'] = $data['section1_emp_telephone_number'] ? $data['section1_emp_telephone_number'] : $profileData['PhoneNumber'];
         $data['section1_today_date'] = $data['section1_today_date'] ?? getSystemDate(DB_DATE);
         //
         return $data;
@@ -2145,7 +2145,7 @@ if (!function_exists("convertToHilited")) {
 }
 
 if (!function_exists("makeResourceView")) {
-    function makeResourceView($file)
+    function makeResourceView($file, $props = "")
     {
         // get the file extension
         $extension =
@@ -2154,7 +2154,7 @@ if (!function_exists("makeResourceView")) {
         if (in_array($extension, ['mp4', 'm4a', 'm4v', 'f4v', 'f4a', 'm4b', 'm4r', 'f4b', 'mov'])) {
             return ' <video style="width: 100%"  src="' . (AWS_S3_BUCKET_URL . $file) . '" controls="true" class="resources-video-detail" alt="smiling girl"> </video>';
         } elseif (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea">';
+            return '<img src="' . (AWS_S3_BUCKET_URL . $file) . '" class="resources-card-images-adjustment-detail" alt="tablet with tea" ' . ($props) . '>';
         } else {
             return '<iframe src="' . (AWS_S3_BUCKET_URL . $file) . '" width="100%" height="500px"></iframe> ';
         }
@@ -3387,5 +3387,412 @@ if (!function_exists("getTheWhereFromEmployeeStatus")) {
         }
         //
         return $whereArray;
+    }
+}
+
+
+if (!function_exists("getIndeedMappedQuestionType")) {
+    /**
+     * get the Indeed mapped question type
+     *
+     * @param string $questionType
+     * @return string
+     */
+    function getIndeedMappedQuestionType(string $questionType): string
+    {
+        //
+        $questionType = strtolower($questionType);
+        // set the array
+        $indeedTypeArray = [
+            "string" => "text",
+            "boolean" => "select",
+            "multilist" => "multiselect",
+            "list" => "select",
+        ];
+        // return it
+        return $indeedTypeArray[$questionType];
+    }
+}
+
+if (!function_exists("getEEOCFormQuestions")) {
+    /**
+     * get EEOC form questions
+     *
+     * @return array
+     */
+    function getEEOCFormQuestions(array $fields): array
+    {
+        // set the questions
+        $questionsArray = [];
+        // set the question
+        $questionsArray[0] = [
+            "id" => "citizen",
+            "type" => "select",
+            "question" => "I am a U.S. citizen or permanent resident",
+            "options" => [
+                [
+                    "label" => "Yes",
+                    "value" => "Yes",
+                ],
+                [
+                    "label" => "No",
+                    "value" => "No",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[1] = [
+            "id" => "group",
+            "type" => "select",
+            "question" => "1. GROUP STATUS (PLEASE CHECK ONE)",
+            "options" => [
+                [
+                    "label" => "Hispanic or Latino - A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin regardless of race.",
+                    "value" => "Hispanic or Latino",
+                ],
+                [
+                    "label" => "White (Not Hispanic or Latino) - A person having origins in any of the original peoples of Europe, the Middle East or North Africa.",
+                    "value" => "White",
+                ],
+                [
+                    "label" => "Black or African American (Not Hispanic or Latino) - A person having origins in any of the black racial groups of Africa.",
+                    "value" => "Black or African American",
+                ],
+                [
+                    "label" => "Native Hawaiian or Other Pacific Islander (Not Hispanic or Latino) - A person having origins in any of the peoples of Hawaii, Guam, Samoa or other Pacific Islands.",
+                    "value" => "Native Hawaiian or Other Pacific Islander",
+                ],
+                [
+                    "label" => "Asian (Not Hispanic or Latino) - A person having origins in any of the original peoples of the Far East, Southeast Asia or the Indian Subcontinent, including, for example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand and Vietnam.",
+                    "value" => "Asian",
+                ],
+                [
+                    "label" => "American Indian or Alaska Native (Not Hispanic or Latino) - A person having origins in any of the original peoples of North and South America (including Central America) and who maintain tribal affiliation or community attachment.",
+                    "value" => "American Indian or Alaska Native",
+                ],
+                [
+                    "label" => "Two or More Races (Not Hispanic or Latino) - All persons who identify with more than one of the above five races.",
+                    "value" => "Two or More Races",
+                ],
+            ],
+            "required" => true
+        ];
+        // set the question
+        $questionsArray[2] = [
+            "id" => "veteran",
+            "type" => "select",
+            "question" => "2. VETERAN",
+            "options" => [
+                [
+                    "label" => "Disabled Veteran: A veteran of the U.S. military, ground, naval or air service who is entitled to compensation (or who but for the receipt of military retired pay would be entitled to compensation) under laws administered by the Secretary of Veterans Affairs; or a person who was discharged or released from active duty because of a service-connected disability.",
+                    "value" => "Disabled Veteran",
+                ],
+                [
+                    "label" => "Recently Separated Veteran: A \"recently separated veteran\" means any veteran during the three-year period beginning on the date of such veteran's discharge or release from active duty in the U.S. military, ground, naval, or air service.",
+                    "value" => "Recently Separated Veteran",
+                ],
+                [
+                    "label" => "Active Duty Wartime or Campaign Badge Veteran: An \"active duty wartime or campaign badge veteran\" means a veteran who served on active duty in the U.S. military, ground, naval or air service during a war, or in a campaign or expedition for which a campaign badge has been authorized under the laws administered by the Department of Defense.",
+                    "value" => "Active Duty Wartime or Campaign Badge Veteran",
+                ],
+                [
+                    "label" => "Armed Forces Service Medal Veteran: An \"Armed forces service medal veteran\" means a veteran who, while serving on active duty in the U.S. military, ground, naval or air service, participated in a United States military operation for which an Armed Forces service medal was awarded pursuant to Executive Order 12985.",
+                    "value" => "Armed Forces Service Medal Veteran",
+                ],
+                [
+                    "label" => "I Am Not a Protected Veteran",
+                    "value" => "I Am Not a Protected Veteran",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[3] = [
+            "id" => "disability",
+            "type" => "select",
+            "question" => "3. VOLUNTARY SELF-IDENTIFICATION OF DISABILITY",
+            "options" => [
+                [
+                    "label" => "YES, I HAVE A DISABILITY (or previously had a disability)",
+                    "value" => "YES, I HAVE A DISABILITY",
+                ],
+                [
+                    "label" => "NO, I DON'T HAVE A DISABILITY",
+                    "value" => "NO, I DON'T HAVE A DISABILITY",
+                ],
+                [
+                    "label" => "I DON'T WISH TO ANSWER",
+                    "value" => "I DON'T WISH TO ANSWER",
+                ],
+            ],
+        ];
+        // set the question
+        $questionsArray[4] = [
+            "id" => "gender",
+            "type" => "select",
+            "question" => "4. GENDER (PLEASE CHECK ONE)",
+            "options" => [
+                [
+                    "label" => "Male",
+                    "value" => "Male",
+                ],
+                [
+                    "label" => "Female",
+                    "value" => "Female",
+                ],
+                [
+                    "label" => "Other",
+                    "value" => "Other",
+                ],
+            ],
+        ];
+        // set the required
+        if ($fields["dl_citizen"]) {
+            $questionsArray[0]["required"] = true;
+        }
+        if ($fields["dl_vet"]) {
+            $questionsArray[2]["required"] = true;
+        }
+        if ($fields["dl_vol"]) {
+            $questionsArray[3]["required"] = true;
+        }
+        if ($fields["dl_gen"]) {
+            $questionsArray[4]["required"] = true;
+        }
+
+        //
+        return $questionsArray;
+    }
+}
+
+if (!function_exists("cleanTerminatedEmployees")) {
+    function cleanTerminatedEmployees(&$employeeArray): bool
+    {
+        if (!$employeeArray) {
+            return false;
+        }
+        //
+        $ci = &get_instance();
+        //
+        foreach ($employeeArray as $index => $value) {
+            $record =
+                $ci->db
+                ->select("employee_status")
+                ->where("employee_sid", $value["sid"])
+                ->order_by("sid", "DESC")
+                ->limit(1)
+                ->get("terminated_employees")
+                ->row_array();
+            //
+            if ($record && in_array($record["employee_status"], [1])) {
+                unset($employeeArray[$index]);
+            }
+        }
+        return true;
+    }
+}
+
+if (!function_exists("getUserFieldsFromEmployeeStatus")) {
+    /**
+     * get the employee update array from employee status
+     *
+     * @param array $employeeStatus
+     * @return array
+     */
+    function getUserFieldsFromEmployeeStatus(array $employeeStatus): array
+    {
+        // set update array
+        $updateArray = [];
+        // set termination default to 0
+        $updateArray['terminated_status'] = 0;
+        // in case of terminated
+        if ($employeeStatus["employee_status"] == 1) {
+            $updateArray['active'] = 0;
+            $updateArray['general_status'] = 'terminated';
+            $updateArray['terminated_status'] = 1;
+        } else {
+            //
+            if ($employeeStatus["employee_status"] == 5) {
+                $updateArray['active'] = 1;
+                $updateArray['general_status'] = 'active';
+            } elseif ($employeeStatus["employee_status"] == 6) {
+                $updateArray['active'] = 0;
+                $updateArray['general_status'] = 'inactive';
+            } elseif ($employeeStatus["employee_status"] == 7) {
+                $updateArray['general_status'] = 'leave';
+            } elseif ($employeeStatus["employee_status"] == 4) {
+                $updateArray['general_status'] = 'suspended';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 3) {
+                $updateArray['general_status'] = 'deceased';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 2) {
+                $updateArray['general_status'] = 'retired';
+                $updateArray['active'] = 0;
+            } elseif ($employeeStatus["employee_status"] == 8) {
+                $updateArray['active'] = 1;
+                $updateArray['general_status'] = 'rehired';
+                $updateArray['rehire_date'] = $employeeStatus['status_change_date'];
+            }
+        }
+        //
+        return $updateArray;
+    }
+}
+
+if (!function_exists('checkAndFixDateFormat')) {
+    /**
+     * Check the date format to
+     * avoid 500
+     *
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkAndFixDateFormat($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        //
+        $oldFormat = '';
+        // Check for valid syntax
+        if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm-d-Y';
+        } else if (preg_match('/[0-9]{2}/[0-9]{2}/[0-9]{4}/', $dateIn)) {
+            $oldFormat = 'm/d/Y';
+        } else if (preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y-m-d';
+        } else if (preg_match('/[0-9]{4}/[0-9]{2}/[0-9]{2}/', $dateIn)) {
+            $oldFormat = 'Y/m/d';
+        } else {
+            return $dateIn;
+        }
+        //
+        return formatDateToDB($dateIn, $oldFormat, $format);
+    }
+}
+
+//
+if (!function_exists("magicCodeCorrection")) {
+    /**
+     * corrects the in-format magic codes
+     *
+     * @param string $description
+     * @return string
+     */
+    function magicCodeCorrection(string $description): string
+    {
+        if (!$description) {
+            return $description;
+        }
+        // convert the html entities so browser
+        // don't convert them
+        $description = htmlentities($description);
+        // find all magic codes
+        preg_match_all("/{(.*?){(.*?)}(.*?)}/", $description, $matches, PREG_SET_ORDER);
+        // set replacement array
+        $keyPair = [];
+        // iterate the array
+        foreach ($matches as $v) {
+            //
+            $keyPair[$v[0]] = "{{" . (trim($v[2])) . "}}";
+        }
+        // replace the string
+        return html_entity_decode(
+            str_replace(
+                array_keys($keyPair),
+                $keyPair,
+                $description
+            )
+        );
+    }
+}
+
+if (!function_exists("updateDocumentCorrectionDesc")) {
+    /**
+     * update the document description with corrected string
+     *
+     * @param string $description
+     * @param int    $assignedDocumentSid
+     * @param int    $parentDocumentId Optional
+     */
+    function updateDocumentCorrectionDesc(
+        string $description,
+        int $assignedDocumentSid,
+        int $parentDocumentId = 0
+    ) {
+        // get the CI instance
+        $CI = &get_instance();
+        // update the assigned table
+        $CI->db
+            ->where("sid", $assignedDocumentSid)
+            ->update(
+                "documents_assigned",
+                [
+                    "document_description" => $description,
+                    "is_fixed" => 1
+                ]
+            );
+    }
+}
+
+if (!function_exists("checkAndGetDocumentDescription"))
+{
+    function checkAndGetDocumentDescription(
+        int $documentId,
+        string $description,
+        bool $encode = false
+    ):string
+    {
+        // get CI instance
+        $CI =& get_instance();
+        // check if fillable document
+        if(
+            $CI
+            ->db
+            ->where([
+                "sid" => $documentId,
+                "fillable_document_slug IS NOT NULL" => null
+            ])
+            ->count_all_results("documents_management")
+        ){
+            return $encode ? htmlentities(
+                $description
+            ) : $description;
+        }
+        // get the document content and 
+        $record = $CI
+            ->db
+            ->select("document_description")
+            ->where([
+                "sid" => $documentId
+            ])
+            ->get("documents_management")
+            ->row_array();
+        //
+        return $encode ? htmlentities(
+                $record["document_description"]
+            ) : $record["document_description"];
+    }
+}
+
+/**
+ * Get time off button
+ * 
+ * @employee Mubashir Ahmed
+ * @date     02/07/2021
+ * 
+ * @param Array  $replaceArray
+ * 
+ * @return String
+ */
+if (!function_exists('getButton')) {
+    function getButton($replaceArray)
+    {
+        return
+            str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
+{{text}}             
+</a>');
     }
 }

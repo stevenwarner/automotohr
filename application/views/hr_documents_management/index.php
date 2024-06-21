@@ -54,6 +54,11 @@ $requiredMessage = 'This document is required to complete the process.';
                             </div>
                             <hr />
                         </div>
+
+                        <?php if (isPayrollOrPlus()) { ?>
+                            <?php $this->load->view('employee_performance_evaluation/group'); ?>
+                        <?php } ?>
+
                         <!--start-->
                         <div class="col-md-12">
                             <div class="hr-document-list">
@@ -126,7 +131,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -159,7 +164,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if (true) { ?>
+                                                                                    <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                         <!-- Convert document to Pay Plan -->
                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                                     <?php } ?>
@@ -235,7 +240,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                         <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                                     <?php  } else { ?>
-                                                                                        <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                        <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                                     <?php  } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
@@ -266,7 +271,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                                     <?php } ?>
                                                                                 </td>
                                                                                 <td class="col-xs-1">
-                                                                                    <?php if (true) { ?>
+                                                                                    <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                         <!-- Convert document to Pay Plan -->
                                                                                         <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                                     <?php } ?>
@@ -340,7 +345,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -371,7 +376,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php if (true) { ?>
+                                                                            <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                 <!-- Convert document to Pay Plan -->
                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                             <?php } ?>
@@ -530,7 +535,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <button onclick="func_assign_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>, '<?php echo $document['document_title']; ?>');" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
                                                                             <?php } else { ?>
-                                                                                <button class="btn btn-primary btn-sm btn-block" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
+                                                                                <button class="btn btn-primary btn-sm btn-block" data-fillable="<?=$document["fillable_document_slug"]?1:0;?>" onclick="fLaunchModalGen(this);" data-title="<?php echo $document['document_title']; ?>" data-description="<?php echo $document['document_description']; ?>" data-document-type="<?php echo $document['document_type']; ?>" data-document-sid="<?php echo $document['sid']; ?>">Bulk Assign</button>
                                                                             <?php  } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
@@ -563,7 +568,7 @@ $requiredMessage = 'This document is required to complete the process.';
                                                                             <?php } ?>
                                                                         </td>
                                                                         <td class="col-xs-1">
-                                                                            <?php if (true) { ?>
+                                                                            <?php if (!$document["fillable_document_slug"]) { ?>
                                                                                 <!-- Convert document to Pay Plan -->
                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="convertToPayPlan(<?= $document['sid']; ?>, '<?= $document['document_type']; ?>')">Convert To Pay Plan</button>
                                                                             <?php } ?>
@@ -1437,7 +1442,9 @@ $requiredMessage = 'This document is required to complete the process.';
         $('.js-employee-box').show();
         $('.js-assign-type[value="employee"]').prop('checked', true);
         $('.js-notification-email-gen[value="yes"]').prop('checked', true);
+        $("#jsFillableView").remove()
 
+        var isFillable = $(source).attr('data-fillable');
         var document_title = $(source).attr('data-title');
         var document_description = $(source).attr('data-description');
         var document_type = $(source).attr('data-document-type');
@@ -1447,11 +1454,19 @@ $requiredMessage = 'This document is required to complete the process.';
         var button_title = 'Bulk Assign This Document';
         $('#document_sid_for_validation').val(document_sid);
 
-        console.log(document_description)
-
         $('#model_generated_doc').modal('toggle');
+
         //        $('#gen-doc-title').val(document_title);
-        CKEDITOR.instances.gen_doc_description.setData(document_description);
+        if (isFillable) {
+        CKEDITOR.instances.gen_doc_description
+             && CKEDITOR.instances.gen_doc_description.destroy()
+            $("#gen_doc_description").val((document_description))
+            $("#gen_doc_description").hide()
+            $("#gen_doc_description").after(`<div id="jsFillableView">${makeTheFillableView(document_description)}</div>`)
+        } else {
+            $("#gen_doc_description").show()
+            CKEDITOR.instances.gen_doc_description.setData(document_description);
+        }
         //        $('#gen-doc-description').html(document_description);
         $('#gen-doc-type').val(document_type);
         $('#gen-doc-sid').val(document_sid);
@@ -2006,3 +2021,244 @@ $requiredMessage = 'This document is required to complete the process.';
 <?php $this->load->view('hr_documents_management/partials/schedule_document', [
     'allDocuments' => $allDocuments
 ]); ?>
+
+
+<script>
+    function makeTheFillableView(description)
+    {
+
+        const inputReplace = "---------------";
+        const textAreaReplace = "<p>--------------------------------------------------</p>";
+        const dateReplace = "--/--/----";
+        const radioReplace = `
+            <br />
+            <input type="radio" disabled /> Yes
+            <br />
+            <input type="radio" disabled /> No
+        `;
+        const actualCheckBoxReplace = `
+            <input type="checkbox" disabled /> 
+        `;
+        const checkboxReplace = `
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Absence" />
+                        Absence
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Harassment" />
+                        Harassment
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Tardiness" />
+                        Tardiness
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Dishonesty" />
+                        Dishonesty
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Violation of company policies and/or procedures" />
+                        Violation of company policies and/or procedures
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Violation of safety rules" />
+                        Violation of safety rules
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Horseplay" />
+                        Horseplay
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Leaving work without authorization" />
+                        Leaving work without authorization
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Smoking in unauthorized areas" />
+                        Smoking in unauthorized areas
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Unsatisfactory job performance" />
+                        Unsatisfactory job performance
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Failure to follow instructions" />
+                        Failure to follow instructions
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Insubordination" />
+                        Insubordination
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Unauthorized use of equipment, materials" />
+                        Unauthorized use of equipment, materials
+                    </td>
+                    <td>
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Falsification of records" />
+                        Falsification of records
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" class="js_counselling_form_fields" name="counselling_form_fields[]" value="Other" />
+                        Other:
+                        <textarea rows="5" class="form-control input-grey gray-background hidden js_counselling_form_fields_textarea" name="counselling_form_fields_textarea"></textarea>
+                    </td>
+                </tr>
+            </table>
+        `;
+
+        const inputGroupReplace = `
+            <div class="input-group">
+                <div class="input-group-addon">$</div>
+                <input type="text" class="form-control" />
+            </div>
+        `;
+
+        const statusTableReplace = `
+        <table>
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Seniority increase" />
+                    Seniority increase
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Retirement" />
+                    Retirement
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Layoff" />
+                    Layoff
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Contract change" />
+                    Contract change
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Resignation" />
+                    Resignation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Discharge" />
+                    Discharge
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-evaluation" />
+                    Re-evaluation
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Demotion" />
+                    Demotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Leave of absence" />
+                    Leave of absence
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Transfer" />
+                    Transfer
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Promotion" />
+                    Promotion
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Merit Increase" />
+                    Merit Increase
+                </td>
+            </tr>
+
+
+            <tr>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Probation period end" />
+                    Probation period end
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Re-hired" />
+                    Re-hired
+                </td>
+                <td>
+                    <input type="checkbox" disabled class="js_fillable_all_reasons" name="fillable_all_reasons[]" value="Hired" />
+                    Hired
+                </td>
+            </tr>
+
+        </table>
+        `;
+        // inputs
+        description = description.replace("{{employee_name}}", inputReplace);
+        description = description.replace("{{supervisor}}", inputReplace);
+        description = description.replace("{{department}}", inputReplace);
+        description = description.replace("{{employee_job_title}}", inputReplace);
+        description = description.replace("{{signature}}", inputReplace);
+        description = description.replace("{{signature_print_name}}", inputReplace);
+        description = description.replace("{{authorized_signature}}", inputReplace);
+        description = description.replace("{{employee_number}}", inputReplace);
+        // textarea
+        description = description.replace("{{reason_to_leave_company}}", textAreaReplace);
+        description = description.replace("{{forwarding_information}}", textAreaReplace);
+        description = description.replace("{{forwarding_information}}", textAreaReplace);
+        description = description.replace("{{property_returned}}", textAreaReplace);
+        description = description.replace("{{reemploying}}", textAreaReplace);
+        description = description.replace("{{summary_of_violation}}", textAreaReplace);
+        description = description.replace("{{summary_of_corrective_plan}}", textAreaReplace);
+        description = description.replace("{{follow_up_dates}}", textAreaReplace);
+        description = description.replace("{{q1}}", textAreaReplace);
+        description = description.replace("{{q2}}", textAreaReplace);
+        description = description.replace("{{q3}}", textAreaReplace);
+        description = description.replace("{{q4}}", textAreaReplace);
+        description = description.replace("{{q5}}", textAreaReplace);
+        // dates
+        description = description.replace("{{last_day_of_work}}", dateReplace);
+        description = description.replace("{{sign_date}}", dateReplace);
+        description = description.replace("{{authorized_signature_date}}", dateReplace);
+        description = description.replace("{{date_of_occurrence}}", dateReplace);
+        // radios
+        description = description.replace("{{is_termination_voluntary}}", radioReplace);
+        // checkboxes
+        description = description.replace("{{counselling_form_fields}}", checkboxReplace);
+
+        description = description.replace("{{fillable_rate}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_job}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_department}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_location}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_shift}}", actualCheckBoxReplace)
+        description = description.replace("{{fillable_other}}", actualCheckBoxReplace)
+
+        description = description.replace("{{fillable_from_rate}}", inputGroupReplace)
+        description = description.replace("{{fillable_to_rate}}", inputGroupReplace)
+        description = description.replace("{{fillable_all_reasons}}", statusTableReplace)
+        
+        return description;
+    }
+</script>

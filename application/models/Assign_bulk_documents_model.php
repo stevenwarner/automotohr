@@ -86,20 +86,37 @@ class Assign_bulk_documents_model extends CI_Model
      */
     function fetchApplicantByQuery($companyId, $query)
     {
-        $result = $this->db
+        //
+        $tmp = explode("_", $query);
+        //
+        $this->db
             ->select('portal_job_applications.sid as id')
             ->select('concat( portal_job_applications.first_name, " ", portal_job_applications.last_name, " (",portal_job_applications.email,")") as value ')
             ->where('portal_applicant_jobs_list.company_sid', $companyId)
             ->where('portal_applicant_jobs_list.archived', 0)
             ->where('portal_job_applications.hired_status', 0)
-            ->group_start()
-            ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', $query)
-            ->or_like('portal_job_applications.email', $query)
-            ->group_end()
             ->order_by('value', 'DESC')
             ->group_by('id')
-            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
-            ->limit(10)
+            ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
+
+        $this->db
+            ->group_start();
+
+        if ($tmp[1]) {
+            $this->db
+                ->like('concat(portal_job_applications.first_name, " ", portal_job_applications.last_name)', str_replace('_', ' ', $query));
+        } else {
+            $this->db
+                ->where('portal_job_applications.first_name', $query)
+                ->or_where('portal_job_applications.last_name', $query);
+        }
+
+        $this
+            ->db
+            ->or_like('portal_job_applications.email', $query)
+            ->group_end();
+
+        $result = $this->db->limit(10)
             ->get('portal_applicant_jobs_list');
 
 
@@ -311,7 +328,8 @@ class Assign_bulk_documents_model extends CI_Model
         $this->db->delete('company_secure_documents');
     }
 
-    function getSpecificSecureDocuments ($documentIds) {
+    function getSpecificSecureDocuments($documentIds)
+    {
         $this->db->select('*');
         $this->db->where_in('sid', $documentIds);
         $records_obj = $this->db->get('company_secure_documents');

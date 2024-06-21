@@ -1359,6 +1359,23 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    public function getMainDocumentField(
+        int $documentId,
+        string $column
+    ) {
+        $record = $this
+            ->db
+            ->select($column)
+            ->where("sid", $documentId)
+            ->get("documents_management")
+            ->row_array();
+        //
+        if (!$record) {
+            return null;
+        }
+        return $record[$column];
+    }
+
     function insert_documents_assignment_record($data_to_insert)
     {
         $this->db->insert('documents_assigned', $data_to_insert);
@@ -1619,7 +1636,7 @@ class Hr_documents_management_model extends CI_Model
             return array();
         }
     }
-    
+
     function get_w4_form($user_type, $user_sid)
     {
         $this->db->where('user_type', $user_type);
@@ -1706,6 +1723,7 @@ class Hr_documents_management_model extends CI_Model
         $updateArray['last_assigned_by'] = 0;
         $updateArray['last_sent_at'] = NULL;
         $updateArray['last_completed_on'] = NULL;
+        $updateArray['is_opt_out'] = NULL;
         //
         $this->db->where('users_type', $user_type);
         $this->db->where('application_sid', $user_sid);
@@ -1717,6 +1735,7 @@ class Hr_documents_management_model extends CI_Model
         $updateArray = [];
         $updateArray['status'] = 1;
         $updateArray['is_latest'] = 1;
+        $updateArray['is_opt_out'] = null;
         $updateArray['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $updateArray['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
         //
@@ -2476,7 +2495,7 @@ class Hr_documents_management_model extends CI_Model
                     'ID' => 0,
                     'Title' => $form["title"],
                     'Type' => 'State Form',
-                    'AssignedOn' => $form["created_at"],
+                    'AssignedOn' => formatDateToDB($form["created_at"], DB_DATE_WITH_TIME, DATE_WITH_TIME),
                     'Days' => $days,
                     'AssignedBy' => ""
                 );
@@ -2485,6 +2504,47 @@ class Hr_documents_management_model extends CI_Model
         //
         // remove all those active company employees from list with no pending documents
         foreach ($pendingDocuments as $p_key => $pendingEmployeeDocuments) {
+            //
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
+                //
+                $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+                    $p_key
+                );
+                //
+                if ($assignPerformanceDocument) {
+                    //
+                    $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $p_key
+                    );
+                    //
+                    if ($pendingPerformanceSection) {
+                        $performanceDocumentInfo = $this->employee_performance_evaluation_model->getEmployeePerformanceDocumentInfo(
+                            $p_key
+                        );
+                        //
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($performanceDocumentInfo["assign_at"]));
+                        //
+                        $datediff = $now - strtotime($assigned_document['assigned_date']);
+                        $days = round($datediff / (60 * 60 * 24));
+                        //
+                        $pendingDocuments[$p_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => "Performance Evaluation Document",
+                            'Type' => 'Performance Evaluation',
+                            'AssignedOn' => $performanceDocumentInfo["assign_at"],
+                            'Days' => $days,
+                            'AssignedBy' => $performanceDocumentInfo['assign_by']
+                        );
+                    }
+                }
+            }    
+            //
             if (empty($pendingEmployeeDocuments['Documents'])) {
                 unset($pendingDocuments[$p_key]);
             } else {
@@ -3187,7 +3247,7 @@ class Hr_documents_management_model extends CI_Model
         if ($archive_status !== null) {
             $this->db->where('archive', $archive_status);
         }
-        if ($pp_flag) {
+        if ($pp_flag && !isPayrollOrPlus(true)) {
             $this->db->where('documents_2_category.category_sid', PP_CATEGORY_SID);
             $this->db->join('documents_2_category', 'documents_2_category.document_sid = documents_management.sid', 'inner');
         } else {
@@ -3721,7 +3781,7 @@ class Hr_documents_management_model extends CI_Model
         $records_obj = $this->db->get('documents_2_group');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
- 
+
         if (!empty($records_arr)) {
             foreach ($records_arr as $key => $document) {
                 if ($document['group_sid'] != $group_id) {
@@ -5645,6 +5705,8 @@ class Hr_documents_management_model extends CI_Model
         $b = $a->result_array();
         $a = $a->free_result();
         //
+        cleanTerminatedEmployees($b);
+        //
         return $b;
     }
 
@@ -5999,7 +6061,32 @@ class Hr_documents_management_model extends CI_Model
         $a = $a->free_result();
         //
         if (count($b)) {
-            $r['Assigned'] = $b;
+            //
+            foreach ($b as $key => $assigned_document) {
+                $is_magic_tag_exist = 0;
+    
+                if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+                    $document_body = $assigned_document['document_description'];
+                    $magic_codes = array('{{signature}}', '{{inital}}');
+                    //
+                    $documentBodyOld = $document_body;
+                    $document_body = magicCodeCorrection($document_body);
+    
+                    if ($documentBodyOld != $document_body) {
+                        updateDocumentCorrectionDesc($document_body, $assigned_document['sid'], $assigned_document['document_sid']);
+                    }
+    
+                    if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                        $is_magic_tag_exist = 1;
+                    }
+                }
+                //
+                if ($is_magic_tag_exist == 1) {
+                    unset($b[$key]);
+                }
+            }
+            //
+            $r['Assigned'] = array_values($b);
         }
         //
         return $r;
@@ -7979,6 +8066,7 @@ class Hr_documents_management_model extends CI_Model
             $data_to_update['status'] = 1;
             $data_to_update['is_latest'] = 1;
             $data_to_update['is_expired'] = 0;
+            $data_to_update['is_opt_out'] = null;
             $data_to_update['last_completed_on'] = null;
             $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
@@ -10548,17 +10636,29 @@ class Hr_documents_management_model extends CI_Model
                 $updateArray["state"] = $companyData["Location_State"];
                 $updateArray["zip_code"] = $companyData["Location_ZipCode"];
                 //
+                $upd = [];
+                $upd["employer_json"] = json_encode($updateArray);
+
+                if (
+                    $updateArray["mn_tax_number"] &&
+                    $updateArray["first_name"] &&
+                    $updateArray["ssn"] &&
+                    $updateArray["street_1"] &&
+                    $updateArray["city"] &&
+                    $updateArray["state"] &&
+                    $updateArray["zip_code"]
+                ) {
+                    $upd["employer_consent"] = 1;
+                    $upd["employer_concent_at"] = getSystemDate();
+                    $result["employer_consent"] = 1;
+                    $result["employer_concent_at"] = getSystemDate();
+                }
+                //
                 $this->db
                     ->where("sid", $result["sid"])
-                    ->update("portal_state_form", [
-                        "employer_json" => json_encode($updateArray),
-                        "employer_consent" => 1,
-                        "employer_concent_at" => getSystemDate(),
-                    ]);
+                    ->update("portal_state_form", $upd);
                 //
                 $result["employer_json"] = json_encode($updateArray);
-                $result["employer_consent"] = 1;
-                $result["employer_concent_at"] = getSystemDate();
             }
         }
         //
@@ -10566,7 +10666,7 @@ class Hr_documents_management_model extends CI_Model
             $returnArray['employee_section'] = true;
         }
         //
-        if($result["assigned_by"]) {
+        if ($result["assigned_by"]) {
             $returnArray["assigned_by"] = getUserNameBySID($result["assigned_by"]);
         }
         // set it to revoked
@@ -10862,7 +10962,8 @@ class Hr_documents_management_model extends CI_Model
                 "portal_state_form.state_form_sid = state_forms.sid",
                 "inner"
             )
-            ->where("company_sid", $companyId);
+            ->where("company_sid", $companyId)
+            ->where("portal_state_form.user_consent", 0);
         //
         if (!in_array("all", $employeeIds)) {
             $this->db
@@ -11146,6 +11247,10 @@ class Hr_documents_management_model extends CI_Model
             );
         }
         //
+        if ($w4Form['user_consent'] == 1) {
+            $updateArray["signature_timestamp"] = $w4Form['signature_timestamp'];
+        }
+        //
         $this->db
             ->where("sid", $w4Form["sid"])
             ->update("form_w4_original", $updateArray);
@@ -11393,6 +11498,7 @@ class Hr_documents_management_model extends CI_Model
                         $data_to_insert['download_required'] = $document['download_required'];
                         $data_to_insert['is_confidential'] = $document['is_confidential'];
                         $data_to_insert['is_required'] = $document['is_required'];
+                        $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                         //
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                         //
@@ -11698,5 +11804,69 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where_in('sid', $employeeId);
         $result = $this->db->get('users')->result_array();
         return $result;
+    }
+
+    public function moveDocumentsHistory($applicantId, $employeeId)
+    {
+        //
+        //General Documents
+        $this->db->select('*');
+        $this->db->where('user_sid', $applicantId);
+        $this->db->where('user_type', 'applicant');
+        $this->db->where('document_sid <>', 0);
+        $records_obj = $this->db->get('documents_assigned_history');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if (!empty($records_arr)) {
+            //
+            foreach ($records_arr as $record) {
+                //
+                $this->db->select('sid');
+                $this->db->where('document_sid', $record['document_sid']);
+                $this->db->where('document_type', $record['document_type']);
+                $this->db->where('user_sid', $employeeId);
+                $this->db->where('user_type', 'employee');
+                $record_obj = $this->db->get('documents_assigned');
+                $record_arr = $record_obj->row_array();
+                $record_obj->free_result();
+                $return_data = array();
+                //
+                $newDocumentId = $record_arr['sid'];
+                //
+                unset($record['sid']);
+                $record['doc_sid'] = $newDocumentId;
+                $record['user_sid'] = $employeeId;
+                $record['user_type'] = 'employee';
+                //
+                $this->db->insert('documents_assigned_history', $record);
+                //
+            }
+        }
+        //
+        return true;
+    }
+
+    public function getEmployeeSupervisorAndDepartment(
+        int $employeeId
+    ): array {
+        return $this
+            ->db
+            ->select("
+            departments_management.supervisor,
+            departments_management.name
+        ")
+            ->from("departments_employee_2_team")
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_employee_2_team.department_sid",
+            )
+            ->where([
+                "departments_employee_2_team.employee_sid" => $employeeId,
+                "departments_management.is_deleted" => 0,
+                "departments_management.status" => 1,
+            ])
+            ->get()
+            ->row_array();
     }
 }

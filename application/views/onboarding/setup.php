@@ -172,12 +172,9 @@ if ($user_type == 'applicant') {
                                     <?php if ($user_type == 'applicant') { ?>
                                         <li><a href="#send_email_to_applicant">Send On-Boarding E-Mail</a></li>
                                     <?php } ?>
-
-
-
                                 </ul>
-                                <div>
 
+                                <div>
                                     <div id="getting_started" class="getting-started">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -446,7 +443,6 @@ if ($user_type == 'applicant') {
                                             </div>
                                     </div>
 
-
                                     <div id="department_teams" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
@@ -460,7 +456,6 @@ if ($user_type == 'applicant') {
                                             </div>
                                         </div>
                                     </div>
-
 
                                     <div id="office_locations" class="office-locations">
                                         <div class="row">
@@ -689,30 +684,32 @@ if ($user_type == 'applicant') {
                                         <button type="button" class="btn btn-success" id="add_custom_item_dtn">Add Custom Item To Bring</button>
                                         <hr />
                                         <div class="row grid-columns" id="custom_office_item_section">
-                                            <?php if (!empty($what_to_bring)) { ?>
-                                                <?php foreach ($what_to_bring as $key => $item) { ?>
-                                                    <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
-                                                        <label class="package_label" for="item_<?php echo $item['sid']; ?>">
-                                                            <div class="img-thumbnail text-center package-info-box">
-                                                                <figure>
-                                                                    <i class="fa fa-star"></i>
-                                                                </figure>
-                                                                <div class="caption">
-                                                                    <h3>
-                                                                        <strong><?php echo $item['item_title']; ?></strong>
-                                                                        <br />
-                                                                        <small>
-                                                                            <?php echo $item['item_description']; ?>
-                                                                        </small>
-                                                                    </h3>
-                                                                    <hr />
+                                            <?php if (!empty($what_to_bring) || !empty($custom_office_items)) { ?>
+                                                <?php if ($what_to_bring) { ?>
+                                                    <?php foreach ($what_to_bring as $key => $item) { ?>
+                                                        <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
+                                                            <label class="package_label" for="item_<?php echo $item['sid']; ?>">
+                                                                <div class="img-thumbnail text-center package-info-box">
+                                                                    <figure>
+                                                                        <i class="fa fa-star"></i>
+                                                                    </figure>
+                                                                    <div class="caption">
+                                                                        <h3>
+                                                                            <strong><?php echo $item['item_title']; ?></strong>
+                                                                            <br />
+                                                                            <small>
+                                                                                <?php echo $item['item_description']; ?>
+                                                                            </small>
+                                                                        </h3>
+                                                                        <hr />
+                                                                    </div>
+                                                                    <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
                                                                 </div>
-                                                                <input <?php echo set_checkbox('items[]', $item['sid'], in_array($item['sid'], $items)); ?> class="select-package" data-type="item" id="item_<?php echo $item['sid']; ?>" name="items[]" type="checkbox" value="<?php echo $item['sid']; ?>" />
-                                                            </div>
-                                                        </label>
-                                                    </div>
+                                                            </label>
+                                                        </div>
+                                                    <?php } ?>
                                                 <?php } ?>
-                                                <?php if (!empty($custom_office_items)) { ?>
+                                                <?php if ($custom_office_items) { ?>
                                                     <?php foreach ($custom_office_items as $key => $custom_item) { ?>
                                                         <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
                                                             <label class="package_label" for="custom_item_<?php echo $custom_item['sid']; ?>">
@@ -1361,6 +1358,7 @@ if ($user_type == 'applicant') {
                                                                                         <?php if (sizeof($i9_form_data) > 0) {
                                                                                             if ($i9_form_data['status']) { ?>
                                                                                                 <a href="javascript:;" id="i9" onclick="func_remove_i9();" class="btn btn-danger">Revoke</a>
+                                                                                                <?php echo '<a href="' . base_url("forms/i9/modify/{$i9_form_data["user_type"]}/{$i9_form_data["user_sid"]}") . '" class="btn btn-orange" title="Modify I9">Modify I9</a>'; ?>
                                                                                             <?php } else { ?>
                                                                                                 <a href="javascript:;" id="i9" onclick="func_assign_i9();" class="btn btn-warning">Re-Assign</a>
                                                                                             <?php }
@@ -1383,6 +1381,9 @@ if ($user_type == 'applicant') {
                                                                                         <td class="col-lg-2">
                                                                                             EEOC FORM
                                                                                             <img class="img-responsive pull-left" style=" width: 22px; height: 22px; margin-right:5px;" alt="" title="Signed" data-toggle="tooltip" data-placement="top" src="<?php echo site_url('assets/manage_admin/images/' . (empty($eeo_form_info['status'] && $eeo_form_info['is_expired']) ? 'off' : 'on') . '.gif'); ?>">
+                                                                                            <?php if ($eeo_form_info["is_opt_out"] == 1) { ?>
+                                                                                                <p>The user has Opt-out on <?= reset_datetime(array('datetime' => $eeo_form_info['last_completed_on'], '_this' => $this)); ?></p>
+                                                                                            <?php } ?>
                                                                                         </td>
                                                                                         <td class="col-lg-1 text-center">
                                                                                             <i aria-hidden="true" class="fa fa-2x fa-file-text"></i>
@@ -1424,7 +1425,11 @@ if ($user_type == 'applicant') {
                                                                                                             <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                                                                                             Send Email Notification
                                                                                                         </a>
-                                                                                                    <?php } ?>
+                                                                                                        <button class="btn btn-orange jsEEOCOptOut" data-id="<?= $eeo_form_info["sid"]; ?>" title="You will be opt-out of the EEOC form.">
+                                                                                                            <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                                                                            Opt-out
+                                                                                                        </button>
+                                                                                                        <a class="btn btn-success" href="<?php echo base_url('EEOC/' . $user_type . '/' . $user_sid); ?>">View EEOC Form</a>                     <?php } ?>
                                                                                                 <?php } else { ?>
                                                                                                     <button onclick="func_assign_EEOC();" type="button" class="btn btn-warning">Re-Assign</button>
                                                                                                 <?php } ?>
@@ -1475,7 +1480,7 @@ if ($user_type == 'applicant') {
                                                             </div>
                                                             <div class="hr-innerpadding">
                                                                 <div class="table-responsive">
-                                                                    <table class="table table-bordered table-hover table-stripped">
+                                                                    <table class="table table-bordered table-hover table-stripped" style="display: none;">
                                                                         <thead>
                                                                             <tr>
                                                                                 <th class="col-lg-3">Group Name</th>
@@ -1503,6 +1508,8 @@ if ($user_type == 'applicant') {
                                                                             <?php } ?>
                                                                         </tbody>
                                                                     </table>
+
+                                                                    <?php $this->load->view('onboarding/groups_documents'); ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -3834,3 +3841,68 @@ if ($user_type == 'applicant') {
     </div>
 </div>
 <!-- Preview Latest Document Modal Modal End -->
+
+<script>
+    $(function() {
+        $(".jsRevokeDocumentFromOnboarding").click(function(event) {
+            //
+            event.preventDefault();
+            let formValues = $(this).data();
+            alertify.confirm(
+                'Are you sure?',
+                'Are you sure you want to revoke this document?',
+                function() {
+                    $.ajax({
+                        'url': '<?php echo current_url(); ?>',
+                        'type': 'POST',
+                        'data': {
+                            'perform_action': 'remove_document',
+                            'document_sid': formValues.id,
+                            'document_type': formValues.type
+                        },
+                        success: function(data) {
+                            window.location.reload();
+                        }
+                    });
+                },
+                function() {
+                    alertify.error('Canceled!');
+                });
+        })
+    })
+</script>
+
+<script>
+    $(function() {
+        let eeoId;
+        $(".jsEEOCOptOut").click(function(event) {
+            event.preventDefault();
+            eeoId = $(this).data("id");
+            _confirm(
+                "Do you really want to 'Opt-out' of the EEOC form?",
+                startOptOutProcess
+            );
+        });
+
+        function startOptOutProcess() {
+            const _hook = callButtonHook(
+                $(".jsEEOCOptOut"),
+                true
+            );
+            $.ajax({
+                    url: baseUrl("eeoc/" + (eeoId) + "/opt_out"),
+                    method: "PUT",
+                })
+                .always(function() {
+                    callButtonHook(_hook, false)
+                })
+                .fail(handleErrorResponse)
+                .success(function(resp) {
+                    _success(
+                        resp.message,
+                        window.location.refresh
+                    )
+                });
+        }
+    })
+</script>

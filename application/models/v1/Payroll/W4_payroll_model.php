@@ -253,6 +253,99 @@ class W4_payroll_model extends Payroll_base_model
     }
 
     /**
+     * sync a company's state w4
+     *
+     * @param int $companyId
+     */
+    public function pushMinnesotaStateFormOfEmployeeToGusto(int $employeeId, int $stateFormId)
+    {
+        // get all signed w4s
+        $result = $this->db
+            ->select("
+                portal_state_form.company_sid,
+                portal_state_form.fields_json,
+                portal_state_form.user_sid,
+                gusto_employees_state_tax.questions_json,
+                gusto_employees_state_tax.state_code
+            ")
+            ->where([
+                "portal_state_form.user_sid" => $employeeId,
+                "portal_state_form.user_type" => "employee",
+                "portal_state_form.state_form_sid" => $stateFormId,
+                "portal_state_form.user_consent" => 1
+            ])
+            ->join(
+                "gusto_employees_state_tax",
+                "gusto_employees_state_tax.employee_sid = portal_state_form.user_sid",
+                "inner"
+            )
+            ->get("portal_state_form")
+            ->row_array();
+        //
+        if (!$result) {
+            return ["errors" => ["No Minnesota state w4 form found."]];
+        }
+        //
+        $this->loadPayrollLibrary($result["company_sid"]);
+        //
+        // get the state questions
+        $questionsObj = json_decode($result['questions_json'], true);
+        // set tmp array
+        $tmp = [];
+        // convert to list
+        foreach ($questionsObj as $question) {
+            $tmp[$question['key']] = $question;
+        }
+        //
+        $questionsObj = $tmp;
+        //
+        $record = json_decode($result["fields_json"], true);
+        // prepare data
+        $data = [];
+        $data["filing_status"] = "E";
+        if ($record["marital_status"] == 1) {
+            $data["filing_status"] = "S";
+        } elseif ($record["marital_status"] == 2) {
+            $data["filing_status"] = "M";
+        } elseif ($record["marital_status"] == 3) {
+            $data["filing_status"] = "MH";
+        }
+        $data["withholding_allowance"] = $record["section_1_allowances"] ? $record["section_1_allowances"] : 0;
+        $data["additional_withholding"] = $record["section_1_additional_withholding"] ? $record["section_1_additional_withholding"] : 0.0;
+        $data["file_new_hire_report"] = "yes";
+        // set default error array
+        $errorsArray = [];
+        // add the answers to questions
+        foreach ($data as $index => $value) {
+            //
+            if ($questionsObj[$index]['input_question_format']['type'] !== 'Select' && $value < 0) {
+                $errorsArray[] = '"' . ($questionsObj[$index]['label']) . '" can not be less than 0.';
+            }
+            //
+            if ($questionsObj[$index]['input_question_format']['type'] !== 'Select' && !$value) {
+                $value = 0;
+            } elseif ($questionsObj[$index]['input_question_format']['type'] === 'Select') {
+                $value = $value == 'yes' ? "true" : $value;
+                $value = $value == 'no' ? "false" : $value;
+            }
+            //
+            if ($questionsObj[$index]['answers'][0]['value']) {
+                $questionsObj[$index]['answers'][0]['value'] = $value;
+            } else {
+                $questionsObj[$index]['answers'] = [['value' => $value, 'valid_from' => '2010-01-01']];
+            }
+        }
+        // when an error occurred
+        if ($errorsArray) {
+            return ["errors" => $errorsArray];
+        }
+        //
+        $passData = ['state' => $result['state_code'], 'questions' => array_values($questionsObj)];
+
+        return $this->updateEmployeeStateTax($result["user_sid"], $passData);
+    }
+
+    /**
      * sync a company's w4
      *
      * @param int $companyId

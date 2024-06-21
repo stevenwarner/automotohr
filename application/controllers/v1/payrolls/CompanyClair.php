@@ -39,7 +39,30 @@ class CompanyClair extends Public_Controller
             $data['session']
         );
         //
-        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted']);
+        $companyGustoDetails = $this->payroll_model->getCompanyDetailsForGusto($companyId, ['status', 'added_historical_payrolls', 'is_ts_accepted', "is_clair_active"]);
+        // get the status of Clair
+        // get the live data from Gusto
+        $response = gustoCall(
+            "getCompanyEarningWage",
+            $companyGustoDetails,
+            [],
+            "GET"
+        );
+        //
+        if (isset($response["enrolled"])) {
+            $companyGustoDetails["is_clair_active"] = $response["enrolled"];
+            //
+            $this->db
+                ->where("company_sid", $companyId)
+                ->update(
+                    "gusto_companies",
+                    [
+                        "is_clair_active" => $response["enrolled"]
+                    ]
+                );
+        }
+        //
+        $data["isClairActive"] = $companyGustoDetails["is_clair_active"];
 
         // get the company onboard flow
         $data['flow'] = gustoCall(

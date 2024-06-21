@@ -90,6 +90,7 @@
 
         //
         $(function() {
+
             let assigned = <?= json_encode($documents['Assigned']); ?>;
             let assignedLength = assigned.length;
             let dt = 10;
@@ -347,6 +348,7 @@
                 }
                 //
                 if (
+                    dct.document_type == 'confidential' ||
                     dct.document_type == 'uploaded' ||
                     dct.offer_letter_type == 'uploaded'
                 ) {
@@ -579,13 +581,36 @@
             $assign_on = date("Y-m-d", strtotime($documents['W4']['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
             //
-            $this->load->view('form_w4/' . ($assign_on >= $compare_date ? "form_w4_2020_pdf" : "form_w4_pdf") . '', [
-                'pre_form' => $documents['W4'],
-                'doUpload' => 1,
-                'token' => $token,
-                'employeeSid' => $user_sid,
-                'userFullNameSlug' => $slug
-            ]);
+
+
+
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+            $data['pre_form'] = $previous_form;
+
+            if ($assign_on >= $compare_date_2024) {
+                $this->load->view('form_w4/' . "form_w4_2024_pdf"  . '', [
+                    'pre_form' => $documents['W4'],
+                    'doUpload' => 1,
+                    'token' => $token,
+                    'employeeSid' => $user_sid,
+                    'userFullNameSlug' => $slug
+                ]);
+            }else{
+
+                $this->load->view('form_w4/' . ($assign_on >= $compare_date ? "form_w4_2020_pdf" : "form_w4_pdf") . '', [
+                    'pre_form' => $documents['W4'],
+                    'doUpload' => 1,
+                    'token' => $token,
+                    'employeeSid' => $user_sid,
+                    'userFullNameSlug' => $slug
+                ]);
+
+            }
+
+
+           
+
+
         }
 
         //

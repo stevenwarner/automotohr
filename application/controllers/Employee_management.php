@@ -1916,6 +1916,10 @@ class Employee_management extends Public_Controller
                             ->handleUserUpdate(
                                 $sid
                             );
+                        //
+                        if ($data_to_insert["payment_method"] === "direct_deposit") {
+                            $this->payroll_model->syncEmployeePaymentMethod($sid);
+                        }
                     }
                     // Profile save intercept
                     $this->handleProfileChange(

@@ -579,6 +579,59 @@ $noActionRequiredDocumentsList = [];
 
                     <?php $this->load->view("hr_documents_management/partials/tabs/not_completed_state_forms"); ?>
 
+                    <!-- Performance Documents Start -->
+                    <?php if (checkIfAppIsEnabled('performanceevaluation') && $assignPerformanceDocument && $pendingPerformanceSection) { ?>
+                        <?php $ncd++; ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default hr-documents-tab-content">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle open_not_completed_performance_doc" data-toggle="collapse" data-parent="#accordion" href="#jsPerformanceNotCompletedDocuments">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Performance Documents
+                                                <div class="pull-right total-records"><b>Total: 1</b></div>
+                                            </a>
+
+                                        </h4>
+                                    </div>
+
+                                    <div id="jsPerformanceNotCompletedDocuments" class="panel-collapse collapse in">
+                                        <div class="table-responsive">
+                                            <table class="table table-plane cs-w4-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-lg-8 hidden-xs">Document Name</th>
+                                                        <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                        <th class="col-xs-4 text-center hidden-xs" colspan="2">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>
+                                                                Performance Evaluation
+                                                                <i class="fa fa-asterisk text-danger"></i>
+                                                                <br>
+                                                                Assigned On: <?= $performanceDocumentInfo['assign_at']; ?>
+                                                            </strong>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/print'); ?>" class="btn btn-info btn-orange">Print</a>
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/download'); ?>" class="btn btn-info btn-black">Download</a>
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/preview'); ?>" class="btn btn-success">Preview</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <!-- Performance Documents End -->
+
                 </div>
             </div>
             <!-- Not Completed Document End -->
@@ -630,10 +683,10 @@ $noActionRequiredDocumentsList = [];
                                                         <button class="btn btn-success btn-sm btn-block" onclick="preview_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-type="assigned" data-pcheck="0" data-download-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['document_s3_name']; ?>" data-document-title="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>Preview Assigned</button>
 
                                                     <?php } else { ?>
-                                                        <button onclick="func_get_generated_document_preview(<?php echo $document['document_sid']; ?>, 'generated', 'modified', 0);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>
+                                                        <button onclick="func_get_generated_document_preview(<?php echo $document['document_sid']; ?>, ' generated', 'modified' , 0);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>
                                                         <!-- <button onclick="func_get_generated_document_preview(<?php //echo $document['document_sid']; 
                                                                                                                     ?>//, 'generated', 'modified', <?php //echo $document['sid']; 
-                                                                                                                                                    ?>//);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>-->
+                                                                                                                                                            ?>//);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>-->
                                                     <?php } ?>
                                                 </td>
                                                 <td class="col-lg-2">
@@ -678,9 +731,6 @@ $noActionRequiredDocumentsList = [];
                 </div>
             </div>
             <!-- Offer Letter Document End -->
-
-            <?php //$modifyBTN = ''; 
-            ?>
 
             <!-- Signed Document Start -->
             <div id="signed_doc_details" class="tab-pane fade in hr-innerpadding">
@@ -843,9 +893,15 @@ $noActionRequiredDocumentsList = [];
                                                                                     <td class="col-lg-2">
                                                                                         <?php if ($document_all_permission) { ?>
                                                                                             <?php if (in_array($document['document_sid'], $signed_document_sids)) { ?>
-                                                                                                <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="submitted" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>" data-s3-name="<?php echo $document['uploaded_file']; ?>" <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                                    Preview Submitted
-                                                                                                </button>
+                                                                                                <?php if (!$document["signature_required"] && ($document["download_required"] || $document["acknowledgment_required"])) { ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="assigned" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
+                                                                                                        Preview Submitted
+                                                                                                    </button>
+                                                                                                <?php } else { ?>
+                                                                                                    <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="submitted" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>" data-s3-name="<?php echo $document['uploaded_file']; ?>" <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
+                                                                                                        Preview Submitted
+                                                                                                    </button>
+                                                                                                <?php } ?>
                                                                                             <?php } ?>
                                                                                         <?php } ?>
 
@@ -1510,6 +1566,7 @@ $noActionRequiredDocumentsList = [];
                     <!-- Category Completed Document End -->
 
                     <?php $this->load->view("hr_documents_management/partials/tabs/completed_state_forms"); ?>
+
                     <?php if (isPayrollOrPlus()) { ?>
                         <?php if (!empty($completed_w4) || !empty($completed_w9) || !empty($completed_i9)) { ?>
                             <?php $cvd = count($completed_w4) + count($completed_w9) + count($completed_i9); ?>
@@ -1616,7 +1673,7 @@ $noActionRequiredDocumentsList = [];
                                                                             echo "<br>Assigned By: " . getUserNameBySID($i9_form['last_assign_by']);
                                                                         }
 
-                                                                        if ( $i9_form['section1_today_date'] != '') {
+                                                                        if ($i9_form['section1_today_date'] != '') {
                                                                             echo "<br>Completed: " . reset_datetime(array('datetime' => $i9_form['section1_today_date'], '_this' => $this));
                                                                         }
 
@@ -1641,6 +1698,61 @@ $noActionRequiredDocumentsList = [];
                             </div>
                         <?php } ?>
                     <?php } ?>
+
+                    <!-- Performance Documents Start -->
+                    <?php if (checkIfAppIsEnabled('performanceevaluation') && $assignPerformanceDocument && !$pendingPerformanceSection) { ?>
+                        <?php $cd++; ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default hr-documents-tab-content">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle open_not_completed_performance_doc" data-toggle="collapse" data-parent="#accordion" href="#jsPerformanceNotCompletedDocuments">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Performance Documents
+                                                <div class="pull-right total-records"><b>Total: 1</b></div>
+                                            </a>
+
+                                        </h4>
+                                    </div>
+
+                                    <div id="jsPerformanceNotCompletedDocuments" class="panel-collapse collapse in">
+                                        <div class="table-responsive">
+                                            <table class="table table-plane cs-w4-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-lg-8 hidden-xs">Document Name</th>
+                                                        <th class="col-lg-10 hidden-md hidden-lg hidden-sm">Document</th>
+                                                        <th class="col-xs-4 text-center hidden-xs" colspan="2">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <strong>
+                                                                Performance Evaluation
+                                                                <i class="fa fa-asterisk text-danger"></i>
+                                                                <br>
+                                                                Assigned On: <?= $performanceDocumentInfo['assign_at']; ?>
+                                                                <br>
+                                                                Completed on: <?= $performanceDocumentInfo['completed_at']; ?>
+                                                            </strong>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/print'); ?>" class="btn btn-info btn-orange">Print</a>
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/download'); ?>" class="btn btn-info btn-black">Download</a>
+                                                            <a target="_blank" href="<?php echo base_url('fillable/epe/' . $user_sid . '/manager/preview'); ?>" class="btn btn-success">Preview</a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <!-- Performance Documents End -->
                 </div>
             </div>
             <!-- Signed Document End -->

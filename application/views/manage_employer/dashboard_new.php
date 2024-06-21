@@ -1010,6 +1010,8 @@
                                     <?php } ?>
 
                                     <!-- Incident Reporting -->
+
+                                    <?php if (checkIfAppIsEnabled('incidents')) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -1027,6 +1029,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
+
+
                                     <?php if ($isLMSModuleEnabled) : ?>
                                         <!--  -->
                                         <?php if ($session['employer_detail']['access_level_plus'] == 1) { ?>
@@ -1096,6 +1101,27 @@
                                         </div>
                                         <!--  -->
                                     <?php endif; ?>
+
+                                    <?php if (checkIfAppIsEnabled('performanceevaluation')) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <i class="fa fa-file <?= $pendingVerificationPerformanceDocument != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                    </figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>">Employee Performance Evaluation</a>
+                                                    </h2>
+                                                    <div class="count-box" style="font-size: 12px">
+                                                        <span class="green"><?= $pendingVerificationPerformanceDocument ?? 0; ?> pending</span><br>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a href="<?php echo base_url('fillable/epe/verification/documents'); ?>" class="site-btn">Show</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
 
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

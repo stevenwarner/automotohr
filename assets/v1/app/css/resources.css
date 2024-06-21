@@ -3487,7 +3487,7 @@ button.color_light_grey {
 .blog-main-image {
   padding: 10px 0px 0px 0px;
   text-align: left;
-  height: 550px;
+  /* height: 550px; */
 }
 
 .blog-main-crumb-arrow {

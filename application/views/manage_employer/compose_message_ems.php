@@ -161,7 +161,7 @@
                                                 <?php   } ?>
                                                 <tr>
                                                     <td><b>Subject</b><span class="hr-required red"> * </span></td>
-                                                    <td><?php echo form_input('subject', set_value('subject'), 'class="form-control invoice-fields" id="email_subject"');
+                                                    <td><?php echo form_input('subject', set_value('subject', $message_subject), 'class="form-control invoice-fields" id="email_subject"');
                                                         echo form_error('subject'); ?></td>
                                                 </tr>
                                                 <tr>

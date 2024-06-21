@@ -5693,4 +5693,215 @@ class Settings extends Public_Controller
         $this->load->view('v1/settings/shifts/subordinate_listing');
         $this->load->view('main/footer');
     }
+
+    //
+    public function processSingleShiftPublicStatus()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $loggedInCompany = checkAndGetSession("company_detail");
+        //
+        $this->shift_model
+            ->SingleShiftPublishStatusChange(
+                $session["company_detail"]["sid"],
+                $post
+            );
+        //
+        if ($post['sendEmail'] == 1) {
+            $shiftids = explode(',', $post['shiftId']);
+            // get the message header and footer
+            $message_hf = message_header_footer(
+                $loggedInCompany["sid"],
+                $loggedInCompany['CompanyName']
+            );
+            // get the shifts
+            $shiftsData = $this->shift_model
+                ->getShiftsById(
+                    $loggedInCompany["sid"],
+                    $shiftids
+                );
+
+            $this->sendShiftPublishEmailNotification(
+                $shiftsData,
+                $message_hf,
+                $loggedInCompany['CompanyName'],
+                get_email_template(
+                    SHIFTS_PUBLISH_CONFIRMATION
+                )
+            );
+        }
+
+        $msg = $post['publichStatus'] == 1 ? " Published " : " Unpublished ";
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "You have successfully " . $msg . " a shift."
+            ]
+        );
+    }
+
+
+    public function processMultiShiftPublicStatus()
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        // set the sanitized post
+        $post = $this->input->post(null, true);
+        //
+        $loggedInCompany = checkAndGetSession("company_detail");
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        // call the function
+        $this->shift_model
+            ->SingleMultiPublishStatusChange(
+                $session["company_detail"]["sid"],
+                $post
+            );
+        // Send  Notification Email
+        if ($post['sendEmail'] == 1) {
+
+            $loggedInEmployee = checkAndGetSession("employer_detail");
+
+            if (isset($post['sendShiftsEmailOption']) && $post['sendShiftsEmailOption'] == 'all') {
+                $shiftids = explode(',', $post['allShiftsId']);
+            } else {
+                $shiftids = explode(',', $post['shiftIds']);
+            }
+
+
+            $shiftPublishStatus = '';
+            if ($post['publichStatus'] == 0) {
+                $shiftPublishStatus = 'Unpublished';
+            } else {
+                $shiftPublishStatus = 'Published';
+            }
+
+            $message_hf = message_header_footer($loggedInCompany["sid"], $loggedInCompany['CompanyName']);
+
+            $shiftsData = $this->shift_model->getShiftsById($loggedInCompany["sid"], $shiftids);
+
+            $empdata = [];
+
+            foreach ($shiftsData as $key => $row) {
+
+                $empdata[$row['employee_sid']][] = $row;
+            }
+            //
+            $template = get_email_template(
+                SHIFTS_PUBLISH_CONFIRMATION
+            );
+
+            //
+            foreach ($empdata as $empRow) {
+                $this->sendShiftPublishEmailNotification(
+                    $empRow,
+                    $message_hf,
+                    $loggedInCompany['CompanyName'],
+                    $template
+                );
+            }
+        }
+
+        return SendResponse(
+            200,
+            [
+                "msg" => "shifts are Published successfully."
+            ]
+        );
+    }
+
+    /**
+     * Send email notification publish
+     */
+    private function sendShiftPublishEmailNotification(
+        array $shiftsData,
+        array $message_hf,
+        string $companyName,
+        array $emailTemplateData
+    ) {
+        // set replace array
+        $replaceArray = [
+            "{{first_name}}" => $shiftsData[0]["first_name"],
+            "{{last_name}}" => $shiftsData[0]["last_name"],
+            "{{shift_details}}" => "",
+            "{{company_name}}" => $companyName,
+        ];
+        //
+        $shiftDetails = "";
+        $shiftDetails = '<table>';
+        $shiftDetails .= '<thead>';
+        $shiftDetails .= '  <tr>';
+        $shiftDetails .= '      <th scope="col">Shift Date</th>';
+        $shiftDetails .= '      <th scope="col">Shift Time</th>';
+        $shiftDetails .= '  </tr>';
+        $shiftDetails .= '</thead>';
+        $shiftDetails .= '<tbody>';
+
+        // set the first and last name
+        foreach ($shiftsData as $row) {
+            $shiftDetails .= "<tr>";
+            $shiftDetails .= "<td>" . formatDateToDB(
+                $row['shift_date'],
+                DB_DATE,
+                DATE
+            ) . "</td>";
+            $shiftDetails .= "<td>";
+            $shiftDetails .= formatDateToDB(
+                $row["start_time"],
+                "H:i:s",
+                "h:i A"
+            );
+            $shiftDetails .= " - ";
+            $shiftDetails .= formatDateToDB(
+                $row["end_time"],
+                "H:i:s",
+                "h:i A"
+            );
+            $shiftDetails .= "</td>";
+            $shiftDetails .= "</tr>";
+        }
+        //
+        $shiftDetails .= '</tbody>';
+        $shiftDetails .= "</table>";
+        //
+        $replaceArray["{{shift_details}}"] = $shiftDetails;
+
+        $emailTemplateBody = $emailTemplateData['text'];
+        $emailTemplateSubject = $emailTemplateData['subject'];
+        //
+        $emailTemplateSubject = str_replace(
+            array_keys(
+                $replaceArray
+            ),
+            $replaceArray,
+            $emailTemplateSubject
+        );
+        //
+        $emailTemplateBody = str_replace(
+            array_keys(
+                $replaceArray
+            ),
+            $replaceArray,
+            $emailTemplateBody
+        );
+
+        $body = $message_hf['header']
+            . $emailTemplateBody
+            . $message_hf['footer'];
+
+
+        log_and_sendEmail(
+            $emailTemplateData['from_email'],
+            $shiftsData[0]["email"],
+            $emailTemplateSubject,
+            $body,
+            STORE_NAME
+        );
+    }
 }

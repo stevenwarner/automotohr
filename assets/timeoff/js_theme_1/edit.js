@@ -143,21 +143,31 @@ $(function () {
                 success: function (resp) {
 
                     if (resp.Status === true) {
-                        alertify.confirm(
-                            'Please Confirm',
-                            resp.message,
-                            // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
-                            function () {
-                                //
-                                sendUpdateStatusRequest(cOBJ);
-                            }, function () {
-                                ml(false, 'editModalLoader');
-                            }).set({
-                                'labels': {
-                                    'ok': 'Yes',
-                                    'cancel': 'No'
-                                }
-                            });
+                        if (resp.code == 1) {
+                            alertify.confirm(
+                                'Please Confirm',
+                                resp.message,
+                                // 'Are you sure you want to '+request_type+' time-off request, '+resp.message,
+                                function () {
+                                    //
+                                    sendUpdateStatusRequest(cOBJ);
+                                }, function () {
+                                    ml(false, 'editModalLoader');
+                                }).set({
+                                    'labels': {
+                                        'ok': 'Yes',
+                                        'cancel': 'No'
+                                    }
+                                });
+                            } else if (resp.code == 2) {
+                                alertify.alert(
+                                    'CONFLICT!',
+                                    resp.message,
+                                    function () {
+                                        return true;
+                                    }
+                                )
+                            }        
                     } else {
                         //
                         sendUpdateStatusRequest(cOBJ);

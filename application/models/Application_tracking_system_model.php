@@ -1,5 +1,7 @@
 <?php
 
+use Aws\DynamoDb\Enum\Type;
+
 class Application_tracking_system_model extends CI_Model
 {
 
@@ -3126,10 +3128,14 @@ class Application_tracking_system_model extends CI_Model
         }
     }
 
-    function get_all_questionnaires_by_employer($employer_sid)
+    function get_all_questionnaires_by_employer($employer_sid, $type = '')
     {
         $this->db->select('portal_screening_questionnaires.sid,portal_screening_questionnaires.name,count(portal_questions.sid) as que_count');
         $this->db->where('employer_sid', $employer_sid);
+        if ($type != '') {
+            $this->db->where('type', $type);
+        }
+
         $this->db->order_by("sid", "desc");
         $this->db->join('portal_questions', 'portal_questions.questionnaire_sid = portal_screening_questionnaires.sid', 'left')->group_by('portal_questions.questionnaire_sid');
         return $this->db->get('portal_screening_questionnaires')->result_array();

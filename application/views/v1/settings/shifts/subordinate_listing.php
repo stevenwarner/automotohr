@@ -324,7 +324,9 @@ if ($filter["mode"] === "month") {
                                                                                     }
                                                                                 }
                                                                                 //
+                                                                                
                                                                                 if ($employeeShift) {
+                                                                                    // _e($employee["userId"] == 17136 ? "tt" : "",true);
                                                                                     //
                                                                                     if ($unavailable['time']) {
                                                                                         //
@@ -370,10 +372,16 @@ if ($filter["mode"] === "month") {
                                                                     }
                                                             ?>
                                                                     <?php if (!$available) { ?>
-                                                                        <div style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="left" data-title="Unavailability" data-content="<?= $unavailableText ?>">
-
-                                                                        <?php } ?>
-                                                                        <div class="schedule-column  schedule-column-<?= $employee["userId"]; ?> text-center <?= $available ? $highlightStyle : $unavailableHighlightStyle; ?>" data-eid="<?= $employee["userId"]; ?>">
+                                                                        <div 
+                                                                            style="cursor: pointer" 
+                                                                            data-container="body" 
+                                                                            data-toggle="cpopover" 
+                                                                            data-placement="left" 
+                                                                            data-title="Unavailability" 
+                                                                            data-content="<?= $unavailableText ?>"
+                                                                            >
+                                                                    <?php } ?>
+                                                                        <div class="schedule-column schedule-column-<?= $employee["userId"]; ?> text-center <?= $available ? $highlightStyle : $unavailableHighlightStyle; ?>" data-eid="<?= $employee["userId"]; ?>">
 
                                                                             <?php if ($employeeLeave) { ?>
                                                                                 <div class="schedule-dayoff text-primary text-small">
@@ -389,7 +397,7 @@ if ($filter["mode"] === "month") {
                                                                                         <span class="circle circle-orange"></span>
                                                                                     <?php } ?>
                                                                                     <p class="text-small">
-                                                                                        <?php if ($conflict) { ?>
+                                                                                        <?php if ($conflict) { echo "here";?>
                                                                                             <span class="conflict-label" style="cursor: pointer" data-container="body" data-toggle="cpopover" data-placement="top" data-title="Shift Conflict" data-content="<?= $conflictText ?>">
                                                                                                 <i class="fa fa-exclamation-triangle start_animation" aria-hidden="true"></i>
                                                                                             </span>
