@@ -319,8 +319,9 @@ class Import_applicants_csv extends Public_Controller
                         $formatForDate = 'Y-m-d H:i:s';
                         //
                         $dateApplied = explode(' -', $v0['date_applied']);
-
-                        $applicant_jobs_list_data['date_applied'] = formatDateToDB($dateApplied[0], $formatForDate);
+                        //
+                        $applicant_jobs_list_data['date_applied'] = date("Y-m-d H:i:s",strtotime($dateApplied[0]));
+                        // $applicant_jobs_list_data['date_applied'] = formatDateToDB($dateApplied[0], $formatForDate);
                         $insertArray['date_applied'] = $applicant_jobs_list_data['date_applied'];
                     } else {
                         $applicant_jobs_list_data['date_applied'] = date("Y-m-d H:i:s", strtotime('now'));
