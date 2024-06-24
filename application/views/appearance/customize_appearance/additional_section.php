@@ -11,6 +11,7 @@
                     <div class="universal-form-style-v2">
                         <form id="box-<?php echo isset($box['sid']) ? $box['sid'] : str_replace(' ', '_', $panel_title); ?>" method="post" enctype="multipart/form-data">
                             <ul>
+                                
                                 <li class="form-col-50-left">
                                     <label>Title<!--<span class="staric">*</span>--></label>
                                     <?php echo form_input('title', set_value('title', $box['title']), 'class="invoice-fields"'); ?>
@@ -59,18 +60,6 @@
                                 </div>
 
 
-                                <li class="form-col-50-right">
-                                    <label>Column Type</label>
-                                    <div class="hr-select-dropdown">
-                                        <select class="invoice-fields" name="column_type">
-                                            <option value="left_right" <?php echo $box['column_type'] == "left_right" ? "selected='selected'" : '' ?>>Left Right</option>
-                                            <option value="right_left" <?php echo $box['column_type'] == "right_left" ? "selected='selected'" : '' ?>>Right Left</option>
-                                            <option value="top_down" <?php echo $box['column_type'] == "top_down" ? "selected='selected'" : '' ?>>Top Down</option>
-                                        </select>
-                                    </div>
-                                </li>
-
-
                                 <div id="jsHomeYoutube_<?php echo $box['sid'] ?>">
                                     <?php $video_url = isset($box['video']) && !empty($box['video']) ? 'https://www.youtube.com/embed/' . $box['video'] : ''; ?>
                                     <?php if (!empty($video_url)) { ?>
@@ -84,7 +73,7 @@
                                             <br />
                                         </li>
                                     <?php } ?>
-                                    <li class="form-col-100">
+                                    <li class="form-col-50-left">
                                         <label>Youtube Video URL </label>
                                         <?php $video_url = isset($box['video']) && !empty($box['video']) ? 'https://www.youtube.com/watch?v=' . $box['video'] : ''; ?>
                                         <?php echo form_input('video', set_value('video', $video_url), 'class="invoice-fields video-url"'); ?>
@@ -109,7 +98,7 @@
                                         </li>
                                     <?php } ?>
 
-                                    <li class="form-col-100">
+                                    <li class="form-col-50-left">
                                         <label>Vimeo Video URL</label>
                                         <?php $vimeo_video_url = isset($box['vimeo_video']) && !empty($box['vimeo_video']) ? 'https://vimeo.com/' . $box['vimeo_video'] : ''; ?>
                                         <?php echo form_input('vimeo_video', set_value('vimeo_video', $vimeo_video_url), 'class="invoice-fields video-url"'); ?>
@@ -135,8 +124,8 @@
                                         </li>
                                     <?php } ?>
 
-                                    <li class="form-col-100">
-                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="up_video_container">
+                                    <li class="form-col-50-left">
+                                        <div id="up_video_container">
                                             <label for="uploaded_video_section_02">Upload Video<span class="hr-required">*</span></label>
                                             <div class="upload-file invoice-fields">
                                                 <span class="selected-file" id="name_uploaded_video_section_02"></span>
@@ -146,6 +135,22 @@
                                         </div>
                                     </li>
                                 </div>
+
+
+
+                                  
+                                <li class="form-col-50-right">
+                                    <label>Column Type</label>
+                                    <div class="hr-select-dropdown">
+                                        <select class="invoice-fields" name="column_type">
+                                            <option value="left_right" <?php echo $box['column_type'] == "left_right" ? "selected='selected'" : '' ?>>Left Right</option>
+                                            <option value="right_left" <?php echo $box['column_type'] == "right_left" ? "selected='selected'" : '' ?>>Right Left</option>
+                                            <option value="top_down" <?php echo $box['column_type'] == "top_down" ? "selected='selected'" : '' ?>>Top Down</option>
+                                        </select>
+                                    </div>
+                                </li>
+
+
 
 
                                 <li class="form-col-60-left">
@@ -188,6 +193,8 @@
                                         </div>
                                     </div>
                                 </li>
+
+                                
                                 <li class="form-col-100">
                                     <label class="control control--checkbox">
                                         <input type="checkbox" name="do_show_image" <?php echo !isset($box['do_show_image']) || $box['do_show_image'] == 'on' ? 'checked="checked"' : ''; ?> /> Enable banner/video
@@ -346,7 +353,4 @@
         $("<?php echo '#jsHomeVimeo_' . $box['sid'] ?>").hide();
         $("<?php echo '#jsHomeUploaded_' . $box['sid'] ?>").hide();
     <?php } ?>
-
-
-
 </script>

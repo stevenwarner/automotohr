@@ -747,6 +747,7 @@ if (!function_exists('generate_image_compressed')) {
     function generate_image_compressed($source_image_path, $thumbnail_image_path)
     {
         ImageJPEG(ImageCreateFromString(file_get_contents($source_image_path)), $thumbnail_image_path, 75);
+        
     }
 }
 

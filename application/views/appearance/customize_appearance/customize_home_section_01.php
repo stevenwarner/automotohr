@@ -48,32 +48,43 @@
                                             <input type="hidden" name="show_img_vdo_section_01" value="" />
                                         </div>
 
+                                        
 
+                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                         <div class="questionair_radio_container">
                                             <input type="radio" name="show_img_vdo_section_01" id="show_img_vdo_section_01_uploaded_video" value="uploaded_video" <?php echo (isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] == 'uploaded_video' ? 'checked="checked"' : ''); ?> />
                                             <label for="show_img_vdo_section_01_uploaded_video">
                                                 Uploaded Video
                                             </label>
                                         </div>
+                                        </div>
 
+                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                         <div class="questionair_radio_container">
                                             <input type="radio" name="show_img_vdo_section_01" id="show_img_vdo_section_01_vimeo_video" value="vimeo_video" <?php echo (isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] == 'vimeo_video' ? 'checked="checked"' : ''); ?> />
                                             <label for="show_img_vdo_section_01_vimeo_video">
                                                 Vimeo Video
                                             </label>
                                         </div>
+                                        </div>
 
+                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                         <div class="questionair_radio_container">
                                             <input type="radio" name="show_img_vdo_section_01" id="show_img_vdo_section_01_video" value="video" <?php echo (isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] == 'video' ? 'checked="checked"' : ''); ?> />
                                             <label for="show_img_vdo_section_01_video">
                                                 Youtube Video
                                             </label>
                                         </div>
+
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                         <div class="questionair_radio_container">
                                             <input type="radio" name="show_img_vdo_section_01" id="show_img_vdo_section_01_image" value="image" <?php echo (isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] == 'image' ? 'checked="checked"' : ''); ?> />
                                             <label for="show_img_vdo_section_01_image">
                                                 Image
                                             </label>
+                                        </div>
                                         </div>
 
                                     </li>
@@ -154,7 +165,7 @@
                                     <!-- Required Hidden Fields end -->
 
                                     <li class="form-col-100 autoheight">
-                                        <label for="video_section_01">Video Url <span class="staric">*</span></label>
+                                        <label for="video_section_01">Youtube Video <span class="staric">*</span></label>
                                         <input class="invoice-fields" type="text" id="video_section_01" name="video_section_01" placeholder="Video Url" value="<?php echo (isset($section_01_meta['video']) && $section_01_meta['video'] != '' ? 'https://www.youtube.com/watch?v=' . $section_01_meta['video'] : ''); ?>" />
                                     </li>
                                 </form>
@@ -187,7 +198,7 @@
                                     <!-- Required Hidden Fields end -->
 
                                     <li class="form-col-100 autoheight">
-                                        <label for="vimeo_video_section_01">Video Url <span class="staric">*</span></label>
+                                        <label for="vimeo_video_section_01">Vimeo Video <span class="staric">*</span></label>
                                         <input class="invoice-fields" type="text" id="vimeo_video_section_01" name="vimeo_video_section_01" placeholder="Video Url" value="<?php echo (isset($section_01_meta['vimeo_video']) && $section_01_meta['vimeo_video'] != '' ? 'https://vimeo.com/' . $section_01_meta['vimeo_video'] : ''); ?>" />
                                     </li>
                                 </form>
