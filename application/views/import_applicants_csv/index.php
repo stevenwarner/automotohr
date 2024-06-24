@@ -138,6 +138,9 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             dateAppliedTitles = <?= json_encode(array('DateApplied', 'dateapplied', 'Dateapplied', 'dateApplied', 'AppliedDate', 'applieddate', 'appliedDate', 'Applieddate')); ?>;
         statusAppliedTitles = <?= json_encode(array('Status', 'status')); ?>;
 
+        employeeNumberTitles = <?= json_encode(array('employeenumber', 'EmployeeNumber', 'Employeenumber', 'employeeNumber')); ?>,
+
+
 
 
 
@@ -345,6 +348,13 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             array = statusAppliedTitles;
             for (i; i < len; i++)
                 if (index == array[i]) return 'status';
+
+                i = 0;
+            len = employeeNumberTitles.length;
+            array = employeeNumberTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'employee_number';
+   
 
 
             return -1;

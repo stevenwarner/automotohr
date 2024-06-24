@@ -74,6 +74,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.eeoc_code');
         $this->db->select('portal_job_applications.uniform_top_size');
         $this->db->select('portal_job_applications.uniform_bottom_size');
+        $this->db->select('portal_job_applications.employee_number');
+
         //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');

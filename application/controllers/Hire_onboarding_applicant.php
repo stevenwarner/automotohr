@@ -26,6 +26,7 @@ class Hire_onboarding_applicant extends CI_Controller
             $perform_action = $this->input->post('perform_action');
             switch ($perform_action) {
                 case 'hire_applicant':
+
                     $company_sid = $this->input->post('company_sid');
                     $company_info = $this->hire_onboarding_applicant_model->get_company_information($company_sid);
                     $applicant_detail = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -39,6 +40,7 @@ class Hire_onboarding_applicant extends CI_Controller
 
                     $username = $this->input->post('username');
                     $password = $this->input->post('password');
+
 
                     $configuration = $this->onboarding_model->get_onboarding_configuration('applicant', $applicant_sid);
                     $credentials_data = $this->get_single_record_from_array($configuration, 'section', 'credentials');
@@ -166,6 +168,7 @@ class Hire_onboarding_applicant extends CI_Controller
         // The applicant can be added to company as employee
         $applicant_profile_info = $this->hire_onboarding_applicant_model->get_applicant_profile($applicant_sid);
 
+
         if (empty($applicant_profile_info)) {
             $array['status'] = "error";
             $array['message'] = "Error! Could not hire applicant, Please try again!";
@@ -214,6 +217,10 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data['username'] = $username;
         $employer_data['joined_at'] = $joining_date;
         $employer_data['created_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+
+        $employer_data['employee_number'] = $applicant_profile_info['employee_number'];
+
+
         //
         $employee_type = '';
         //

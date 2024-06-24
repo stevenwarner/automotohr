@@ -266,6 +266,9 @@ class Import_applicants_csv extends Public_Controller
                     $insertArray['gender'] = isset($v0['gender']) ? trim($v0['gender']) : NULL;
 
 
+                    //
+                    $insertArray['employee_number'] = isset($v0['employee_number']) ? trim($v0['employee_number']) : '';
+
 
                     // Check for state
                     if (isset($v0['state'])) {
