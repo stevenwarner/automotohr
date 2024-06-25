@@ -2,6 +2,13 @@
     ul.select2-selection__rendered li {
         height: auto !important;
     }
+
+
+    .universal-form-style-v2 ul li {
+        margin: 0 0 15px 0;
+        position: relative;
+        height: auto !important;
+    }
 </style>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -569,7 +576,7 @@
                                                                                                             <div class="row">
                                                                                                                 <input type="hidden" id="old_upload_video" name="old_upload_video" value="<?php echo $pre_source == 'upload' ? $job_fair_data['video_id'] : ''; ?>">
 
-                                                                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 yt_vm_video_container" id="yt_vm_video_container" <?php echo (isset($page['video_type']) && (trim($page['video_type']) == 'youtube' || trim($page['video_type']) == 'vimeo'|| trim($page['video_type']) == '') ? '' : 'style="display: none"'); ?>>
+                                                                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 yt_vm_video_container" id="yt_vm_video_container" <?php echo (isset($page['video_type']) && (trim($page['video_type']) == 'youtube' || trim($page['video_type']) == 'vimeo' || trim($page['video_type']) == '') ? '' : 'style="display: none"'); ?>>
                                                                                                                     <label for="YouTube_Video_Section_04" id="label_youtube" class="label_youtube" <?php echo  trim($page['video_type'] == 'youtube' || $page['video_type'] == '' ? '' : 'style="display: none"'); ?>>Youtube Video URL <span class="staric">*</span></label>
                                                                                                                     <label for="Vimeo_Video_Section_04" id="label_vimeo" class="label_vimeo" <?php echo (isset($page['video_type']) &&  trim($page['video_type']) == 'vimeo' ? '' : 'style="display: none"'); ?>>Vimeo Video <span class="staric">*</span></label>
                                                                                                                     <input type="text" name="yt_vm_video_url_section_04" value="<?php echo $previous_video_id; ?>" class="invoice-fields" id="yt_vm_video_url_section_04">
@@ -1190,7 +1197,7 @@
     }
 
     function fSavePageYoutubeVideo(source) {
-       
+
         var formId = $(source).attr('data-form-id');
         //  fValidatePageYoutubeVideo(source);
 
