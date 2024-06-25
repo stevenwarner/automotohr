@@ -53,6 +53,15 @@ if ($user_type == 'applicant') {
                                 <h2>The <?php echo $user_type == 'applicant' ? 'applicant' : 'employee'; ?> has not completed the EEOC form.</h2>
                             </div>
                         </div>
+                    <?php } elseif ($eeo_form_info["is_opt_out"]) { ?>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <br>
+                                <p class="alert alert-info text-center">
+                                    You have Opt-out from the EEOC.
+                                </p>
+                            </div>
+                        </div>
                     <?php } else { ?>
                         <div class="row">
                             <div class="col-sm-12 text-right">
@@ -75,6 +84,10 @@ if ($user_type == 'applicant') {
                                         <i class="fa fa-paper-plane" aria-hidden="true"></i>
                                         Send Email Reminder
                                     </a>
+                                    <button class="btn btn-orange csW jsEEOCOptOut" data-id="<?= $eeo_form_info["sid"]; ?>" title="You will be opt-out of the EEOC form.">
+                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                        Opt-out
+                                    </button>
                                 <?php } ?>
                             </div>
                         </div>
@@ -306,4 +319,40 @@ if ($user_type == 'applicant') {
                 });
         });
     });
+</script>
+
+
+<script>
+    $(function() {
+        let eeoId;
+        $(".jsEEOCOptOut").click(function(event) {
+            event.preventDefault();
+            eeoId = $(this).data("id");
+            _confirm(
+                "Do you really want to 'Opt-out' of the EEOC form?",
+                startOptOutProcess
+            );
+        });
+
+        function startOptOutProcess() {
+            const _hook = callButtonHook(
+                $(".jsEEOCOptOut"),
+                true
+            );
+            $.ajax({
+                    url: baseUrl("eeoc/" + (eeoId) + "/opt_out"),
+                    method: "PUT",
+                })
+                .always(function() {
+                    callButtonHook(_hook, false)
+                })
+                .fail(handleErrorResponse)
+                .success(function(resp) {
+                    _success(
+                        resp.message,
+                        window.location.refresh
+                    )
+                });
+        }
+    })
 </script>

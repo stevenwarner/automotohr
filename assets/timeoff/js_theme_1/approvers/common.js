@@ -86,8 +86,14 @@ function fetchEmployees(){
         rows += '<option value="all">All</option>';
         //
         window.timeoff.employees.map(function(v){
-            rows += '<option value="'+( v.user_id )+'">'+( remakeEmployeeName( v ) )+'</option>';
-            dRows += '<option value="'+( v.user_id )+'">'+( remakeEmployeeName( v ) )+'</option>';
+            let status = "";
+			if (v.terminated_status === "1") {
+				status = " - Terminated";
+			} else if (v.active === "0") {
+				status = " - Deactivated";
+			}
+            rows += '<option value="'+( v.user_id )+'">'+( remakeEmployeeName( v ) )+status+'</option>';
+            dRows += '<option value="'+( v.user_id )+'">'+( remakeEmployeeName( v ) )+status+'</option>';
         });
         //
         $('#js-employee-add').html(dRows);

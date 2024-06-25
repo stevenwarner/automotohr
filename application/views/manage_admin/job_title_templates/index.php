@@ -85,6 +85,7 @@
 
                                                         <th class="col-xs-8">Title</th>
                                                         <th class="col-xs-1">Sort Order</th>
+                                                        <th class="col-xs-1">Color</th>
                                                         <?php if(check_access_permissions_for_view($security_details, 'add_edit_job_listing_templates')){ ?>
                                                             <th width="1%" colspan="3" class="actions">Actions</th>
                                                         <?php } ?>
@@ -95,6 +96,9 @@
                                                         <tr>
                                                             <td><?php echo $template['title']?></td>
                                                             <td><?php echo $template['sort_order']?></td>
+                                                            <td>
+                                                                <div style="width: 100%; height: 30px; background: <?=$template["color_code"];?>"></div>
+                                                            </td>
 
                                                             <?php if(check_access_permissions_for_view($security_details, 'add_edit_job_listing_templates')){ ?>
                                                             <td>

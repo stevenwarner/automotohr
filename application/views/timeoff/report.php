@@ -101,7 +101,7 @@ if (!empty($DT['Teams'])) {
                                     <span class="pull-right">
                                         <a class="btn btn-success" href="javascript:;" id="view_report"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Report</a>
                                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/print"); ?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
-                                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true" ></i>&nbsp;Download Report</a>
+                                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
                                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/exporttocsv"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export Report</a>
 
                                     </span>
@@ -177,6 +177,15 @@ if (!empty($DT['Teams'])) {
                                                     <option value="contractual">Contractual</option>
                                                 </select>
                                             </div>
+
+                                                <div class="form-group">
+                                                    <label>Employee Status</label>
+                                                    <div>
+                                                        <?= showEmployeeStatusSelect([
+                                                            $this->input->get("employee_status", true) ?? 0
+                                                        ], 'class="jsFilterEmployeeStatus" name="employee_status"'); ?>
+                                                    </div>
+                                                </div>
 
 
                                             <!--  -->
@@ -260,6 +269,16 @@ if (!empty($DT['Teams'])) {
                                                                 <td>
                                                                     <strong><?= ucwords($emp['first_name'] . ' ' . $emp['last_name']); ?></strong>
                                                                     <br /><?= remakeEmployeeName($emp, false); ?>
+                                                                    <br />
+                                                                    <?php 
+                                                                        if ($emp['employeeStatus'] == 'Active') {
+                                                                            echo '<strong class="text-success">Active</strong>';
+                                                                        } else if ($emp['employeeStatus'] == 'Terminated') {
+                                                                            echo '<strong class="text-danger">Terminated</strong>';
+                                                                        } else {
+                                                                            echo '<strong class="text-warning">'.$emp['employeeStatus'].'</strong>';
+                                                                        }
+                                                                    ?>
                                                                 </td>
                                                                 <td class="td_setting">
                                                                     <?php
@@ -403,7 +422,7 @@ if (!empty($DT['Teams'])) {
                 <div class="row">
                     <div class="col-xs-12 text-right">
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/print"); ?>"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;Print Report</a>
-                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true" ></i>&nbsp;Download Report</a>
+                        <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/report/download"); ?>" style="display: none;"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download Report</a>
                         <a class="btn btn-success jsReportLinkBulk" target="_blank" href="<?= base_url("timeoff/exporttocsv"); ?>"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Export Report</a>
 
                     </div>
@@ -413,6 +432,7 @@ if (!empty($DT['Teams'])) {
                     <thead>
                         <tr>
                             <th scope="col">Employee</th>
+                            <th scope="col">Employee Status</th>
                             <th scope="col">Policy</th>
                             <th scope="col">Time Taken</th>
                             <th scope="col">Start Date</th>
@@ -428,6 +448,7 @@ if (!empty($DT['Teams'])) {
                                 $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
                                 $employee_role = remakeEmployeeName($employee, false);
                                 $employee_no = !empty($employee['employee_number']) ? $employee['employee_number'] : $employee['sid'];
+                                
                                 ?>
                                 <?php foreach ($employee['timeoffs'] as $timeoff) : ?>
                                     <tr style="<?php echo str_replace('CONSUMED', '', $timeoff['request_status']) != $timeoff['request_status'] ? 'background-color:  #f2dede !important;' : '';  ?>">
@@ -439,6 +460,17 @@ if (!empty($DT['Teams'])) {
                                             <?php echo $employee_role; ?>
                                             <br>
                                             <?php echo $employee_no; ?>
+                                        </td>
+                                        <td>
+                                            <?php 
+                                                if ($employee['employeeStatus'] == 'Active') {
+                                                    echo '<strong class="text-success">Active</strong>';
+                                                } else if ($employee['employeeStatus'] == 'Terminated') {
+                                                    echo '<strong class="text-danger">Terminated</strong>';
+                                                } else {
+                                                    echo '<strong class="text-warning">'.$employee['employeeStatus'].'</strong>';
+                                                }
+                                            ?>
                                         </td>
                                         <td><?php echo $timeoff['policy_name']; ?></td>
                                         <?php
@@ -497,8 +529,11 @@ if (!empty($DT['Teams'])) {
     $('#filter_teams').select2({
         closeOnSelect: false
     });
+    //
     let employeeList = <?= json_encode($company_employees); ?>;
-
+    //
+    let employeeSids = <?= json_encode(array_column($company_employees, 'sid')); ?>;
+    //
     $('#filter_policy').select2({
         closeOnSelect: false
     });

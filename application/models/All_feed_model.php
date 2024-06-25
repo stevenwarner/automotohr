@@ -278,6 +278,68 @@ class all_feed_model extends CI_Model {
         }
     }
 
+    public function getQuestionType ($questionId) {
+        //
+        $this->db->select('question_type');
+        $this->db->where('sid', $questionId);
+        //
+        $record_obj = $this->db->get('portal_questions');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr['question_type'];
+        } else {
+            return '';
+        }
+
+    }
+
+    public function getJobQuestionnaireInfo ($questionId) {
+        //
+        $this->db->select('questionnaire_sid');
+        $this->db->where('sid', $questionId);
+        $this->db->limit(1);
+        //
+        $record_obj = $this->db->get('portal_questions');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            //
+            $this->db->select('sid, name');
+            $this->db->where('sid', $record_arr['questionnaire_sid']);
+            //
+            $record_obj = $this->db->get('portal_screening_questionnaires');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($record_arr)) {
+                return $record_arr;
+            } else {
+                return [];
+            }
+        } else {
+            return [];
+        }
+    }
+
+    public function getQuestionAnswerId ($questionId, $value) {
+        $this->db->select('sid');
+        $this->db->where('questions_sid', $questionId);
+        $this->db->where('score', $value);
+
+        $record_obj = $this->db->get('portal_question_option');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr['sid'];
+        } else {
+            return 0;
+        }
+    }
+
     function fetch_uid_from_job_sid($job_sid){
         $this->db->select('uid, publish_date');
         $this->db->where('job_sid', $job_sid);
@@ -717,8 +779,8 @@ class all_feed_model extends CI_Model {
 
     function insert_resume_log($resume_log_data){
         $this->db->insert('resume_request_logs', $resume_log_data);
-        _e($this->db->insert_id(), true);
     }
+    
     private function get_remarket_company_settings($job_list) {
         if($job_list['job_sid'] > 0){
             $this->db->select('status');
@@ -816,5 +878,290 @@ class all_feed_model extends CI_Model {
         }
         //
         return $returnArray;
+    }
+
+    function get_screening_questionnaire_by_id($sid) {
+        $this->db->select('name, employer_sid, passing_score, auto_reply_pass, email_text_pass, auto_reply_fail, email_text_fail');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('portal_screening_questionnaires');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }
+
+    function get_possible_score_of_questions($sid, $type) {
+        $result = 0;
+        
+        if($type == 'multilist') {
+            $this->db->select_sum('score');
+            $this->db->where('questions_sid', $sid);
+
+            $records_obj = $this->db->get('portal_question_option');
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+            
+
+            if(!empty($records_arr)){
+                $result = $records_arr[0]['score'];
+            }
+        } else {
+            $this->db->select_max('score');
+            $this->db->where('questions_sid', $sid);
+
+            $records_obj = $this->db->get('portal_question_option');
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+            
+
+            if(!empty($records_arr)){
+                $result = $records_arr[0]['score'];
+            }
+        }
+        
+        return $result;
+    }
+
+    function get_individual_question_details($sid) {
+        $this->db->select('value, score, result_status');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('portal_question_option');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $result = array();
+        
+        if(!empty($records_arr)){
+            $result = $records_arr[0];
+        }
+        
+        return $result;
+    }
+
+    function update_questionnaire_result($sid, $questionnaire, $q_passing, $total_score, $questionnaire_result = NULL) {
+        $update_data = array(   'questionnaire' => $questionnaire,
+                                'score' => $total_score,
+                                'passing_score' => $q_passing,
+                                'questionnaire_ip_address' => getUserIP(),
+                                'questionnaire_user_agent' => $_SERVER['HTTP_USER_AGENT'],
+                                'questionnaire_result' => $questionnaire_result
+                            );
+        
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_applicant_jobs_list', $update_data);
+    }
+
+    function insert_questionnaire_result($data) {
+        $this->db->insert('screening_questionnaire_results', $data);
+    }
+
+    public function processJobScreeningQuestionnaire (
+        $extraInfo,
+        $jobQuestions
+    ) {
+        //
+        $post_questionnaire_sid                             = $jobQuestions['questionnaire_sid'];
+        $post_screening_questionnaires                      = $this->get_screening_questionnaire_by_id($post_questionnaire_sid);
+        $questionnaire_serialize                            = '';
+        $total_score                                        = 0;
+        $total_questionnaire_score                          = 0;
+        $array_questionnaire                                = array();
+        $q_name                                             = $post_screening_questionnaires[0]['name'];
+        $q_send_pass                                        = $post_screening_questionnaires[0]['auto_reply_pass'];
+        $q_pass_text                                        = $post_screening_questionnaires[0]['email_text_pass'];
+        $q_send_fail                                        = $post_screening_questionnaires[0]['auto_reply_fail'];
+        $q_fail_text                                        = $post_screening_questionnaires[0]['email_text_fail'];
+        $overall_status                                     = 'Pass';
+        $is_string                                          = 0;
+        $screening_questionnaire_results                    = array();
+        $all_questions_ids                                  = $jobQuestions['all_questions_ids'];
+
+        foreach ($all_questions_ids as $value) {
+            $q_passing = 0;
+            $post_questions_sid = $value;
+            $caption = 'caption' . $value;
+            $type = 'type' . $value;
+            $answer = $jobQuestions[$type] . $value;
+            $questions_type = $jobQuestions[$type];
+            $my_question = '';
+            $individual_score = 0;
+            $individual_passing_score = 0;
+            $individual_status = 'Pass';
+            $result_status = array();
+        
+            if (isset($jobQuestions[$caption])) {
+                $my_question = $jobQuestions[$caption];
+            }
+
+            $my_answer = NULL;
+
+            if (isset($jobQuestions[$answer])) {
+                $my_answer = $jobQuestions[$answer];
+            }
+            
+            if($questions_type != 'string') { // get the question possible score
+                $q_passing = $this->get_possible_score_of_questions($post_questions_sid, $questions_type);
+            }
+
+            if($my_answer != NULL) { // It is required question           
+                if (is_array($my_answer)) {
+                    $answered = array();
+                    $answered_result_status = array();
+                    $answered_question_score = array();
+                    $total_questionnaire_score += $q_passing;
+                    $is_string = 1;
+                    
+                    foreach ($my_answer as $answers) {
+                            $result = explode('@#$', $answers);
+                            $a = $result[0];
+                            $answered_question_sid = $result[1];
+                            $question_details = $this->get_individual_question_details($answered_question_sid);
+                            
+                            if(!empty($question_details)) {
+                                $questions_score = $question_details['score'];
+                                $questions_result_status = $question_details['result_status'];
+                                $questions_result_value = $question_details['value'];
+                            }
+                            
+                            $score = $questions_score;
+                            $total_score += $questions_score;
+                            $individual_score += $questions_score;
+                            $individual_passing_score = $q_passing;
+                            $answered[] = $a;
+                            $result_status[] = $questions_result_status;
+                            $answered_result_status[] = $questions_result_status;
+                            $answered_question_score[] = $questions_score;
+                    }
+                } else {
+                    $result = explode('@#$', $my_answer);
+                    $total_questionnaire_score += $q_passing;
+                    $a = $result[0];
+                    $answered = $a;
+                    $answered_result_status = '';
+                    $answered_question_score = 0;
+
+                    if (isset($result[1])) {
+                        $answered_question_sid = $result[1];
+                        $question_details = $this->get_individual_question_details($answered_question_sid);
+
+                        if(!empty($question_details)) {
+                            $questions_score = $question_details['score'];
+                            $questions_result_status = $question_details['result_status'];
+                            $questions_result_value = $question_details['value'];
+                        }
+                        
+                        $is_string = 1;
+                        $score = $questions_score;
+                        $total_score += $questions_score;
+                        $individual_score += $questions_score;
+                        $individual_passing_score = $q_passing;
+                        $result_status[] = $questions_result_status;
+                        $answered_result_status = $questions_result_status;
+                        $answered_question_score = $questions_score;
+                    }
+                }
+                
+                if(!empty($result_status)) {
+                    if(in_array('Fail', $result_status)) {
+                        $individual_status = 'Fail';
+                        $overall_status = 'Fail';
+                    }
+                }
+            } else { // it is optional question
+                $answered = '';
+                $individual_passing_score = $q_passing;
+                $individual_score = 0;
+                $individual_status = 'Candidate did not answer the question';
+                $answered_result_status = '';
+                $answered_question_score = 0;
+            }
+
+            $array_questionnaire[$my_question] = array( 'answer' => $answered,
+                                                        'passing_score' => $individual_passing_score,
+                                                        'score' => $individual_score,
+                                                        'status' => $individual_status,
+                                                        'answered_result_status' => $answered_result_status,
+                                                        'answered_question_score' => $answered_question_score);  
+        } // this is the end of foreach
+
+
+        $questionnaire_result = $overall_status;
+        $datetime = date('Y-m-d H:i:s');
+        $remote_addr = getUserIP();
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+        $questionnaire_data = array('applicant_sid' => $extraInfo['applicantId'],
+                                    'applicant_jobs_list_sid' => $extraInfo['applicantJobsListId'],
+                                    'job_sid' => $extraInfo['jobId'],
+                                    'job_title' => $extraInfo['jobTitle'],
+                                    'job_type' => $extraInfo['jobType'],
+                                    'company_sid' => $extraInfo['companyId'],
+                                    'questionnaire_name' => $jobQuestions['q_name'],
+                                    'questionnaire' => $array_questionnaire,
+                                    'questionnaire_result' => $questionnaire_result,
+                                    'attend_timestamp' => $datetime,
+                                    'questionnaire_ip_address' => $remote_addr,
+                                    'questionnaire_user_agent' => $user_agent
+                                );
+        $questionnaire_serialize = serialize($questionnaire_data);
+        $array_questionnaire_serialize = serialize($array_questionnaire);
+
+        
+        $screening_questionnaire_results = array(   'applicant_sid' => $extraInfo['applicantId'],
+                                                    'applicant_jobs_list_sid' => $extraInfo['applicantJobsListId'],
+                                                    'job_sid' => $extraInfo['jobId'],
+                                                    'job_title' => $extraInfo['jobTitle'],
+                                                    'job_type' => $extraInfo['jobType'],
+                                                    'company_sid' => $extraInfo['companyId'],
+                                                    'questionnaire_name' => $jobQuestions['q_name'],
+                                                    'questionnaire' => $array_questionnaire_serialize,
+                                                    'questionnaire_result' => $questionnaire_result,
+                                                    'attend_timestamp' => $datetime,
+                                                    'questionnaire_ip_address' => $remote_addr,
+                                                    'questionnaire_user_agent' => $user_agent
+                                                );                                  
+                          
+        $this->update_questionnaire_result($extraInfo['applicantJobsListId'], $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
+        $this->insert_questionnaire_result($screening_questionnaire_results);;
+
+        $send_mail = false; // send email 
+        $from = FROM_EMAIL_INFO;
+        $fromName = $extraInfo['companyName'];
+        $mail_body = '';
+
+        if ($questionnaire_result == 'Pass' && (isset($q_send_pass) && $q_send_pass == '1') && !empty($q_pass_text)) { // send pass email
+            $send_mail = true;
+            $mail_body = $q_pass_text;
+        }
+
+        if ($questionnaire_result == 'Fail' && (isset($q_send_fail) && $q_send_fail == '1') && !empty($q_fail_text)) { // send fail email
+            $send_mail = true;
+            $mail_body = $q_fail_text;
+        }
+
+        if ($send_mail) { // get Applicant email address
+            $to = $this->job_screening_questionnaire_model->get_applicant_email($extraInfo['applicantId'], 'portal_job_applications');
+            $subject = $extraInfo['jobTitle'];
+            $applicant_data = $this->job_screening_questionnaire_model->get_applicant_details($extraInfo['applicantId']);
+            $applicant_fname = $applicant_data['first_name'];
+            $applicant_lname = $applicant_data['last_name'];
+
+            $mail_body = str_replace('{{company_name}}', ucwords($extraInfo['companyName']), $mail_body);
+            $mail_body = str_replace('{{applicant_name}}', ucwords($applicant_fname . ' ' . $applicant_lname), $mail_body);
+            $mail_body = str_replace('{{job_title}}', $extraInfo['jobTitle'], $mail_body);
+            $mail_body = str_replace('{{first_name}}', ucwords($applicant_fname), $mail_body);
+            $mail_body = str_replace('{{last_name}}', ucwords($applicant_lname), $mail_body);
+
+            $mail_body = str_replace('{{company-name}}', ucwords($extraInfo['companyName']), $mail_body);
+            $mail_body = str_replace('{{applicant-name}}', ucwords($applicant_fname . ' ' . $applicant_lname), $mail_body);
+            $mail_body = str_replace('{{job-title}}', $extraInfo['jobTitle'], $mail_body);
+            $mail_body = str_replace('{{first-name}}', ucwords($applicant_fname), $mail_body);
+            $mail_body = str_replace('{{last-name}}', ucwords($applicant_lname), $mail_body);
+
+            sendMail($from, $to, $subject, $mail_body, $fromName);
+            sendMail($from, 'mubashar@automotohr.com', $subject, $mail_body, $fromName);
+        }  
+          
+    }
+
+    function save_eeo_form($data) {
+        $this->db->insert('portal_eeo_form', $data);
     }
 }

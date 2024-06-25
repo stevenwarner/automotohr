@@ -2303,4 +2303,106 @@
             ->get("applicant_i9form")
             ->row_array();
     }
+
+    /**
+     * updates employee personal details to verification
+     * forms; W4, and I9
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @return array
+     */
+    public function updateProfileDataToVerificationDocuments(
+        int $companyId,
+        int $employeeId
+    ) {
+        // get the employee details
+        $employee = $this->db
+            ->select("
+                Location_State
+            ")
+            ->where([
+                "parent_sid" => $companyId,
+                "sid" => $employeeId
+            ])
+            ->get("users")
+            ->row_array();
+        // when no employee is found
+        if (!$employee) {
+            return ["errors" => [
+                "Employee not found."
+            ]];
+        }
+        // set array
+        $returnArray = [];
+        //
+        if (!$employee["Location_State"]) {
+            return ["errors" => ["State not set."]];
+        }
+        // load the hr model
+        $this->load->model(
+            "Hr_documents_management_model",
+            "hr_documents_management_model"
+        );
+        // get the i9 form
+        $i9 = $this->hr_documents_management_model
+            ->get_i9_form("employee", $employeeId);
+        //
+        if ($i9) {
+            // get the state code by id
+            $stateCode = getStateColumnById($employee["Location_State"], "state_code");
+            // check
+            if ($employee["Location_State"] && $i9["section1_state"] != $stateCode) {
+                // update state
+                $this->db
+                    ->where("sid", $i9["sid"])
+                    ->update("applicant_i9form", [
+                        "section1_state" => $stateCode
+                    ]);
+                // log as history
+                saveHistoryToProfile($employeeId, [
+                    "Location_State" => [
+                        "old" => getStateColumn(["state_code" => $i9["section1_state"]], "sid"),
+                        "new" => $employee["Location_State"]
+                    ]
+                ]);
+                //
+                $returnArray[] = "I9 updated.";
+            }
+        }
+
+        // get the w4 form
+        $w4 = $this->hr_documents_management_model
+            ->get_w4_form("employee", $employeeId);
+        //
+        if ($w4) {
+            // get the state code by id
+            $stateName = getStateColumnById($employee["Location_State"], "state_name");
+            // check
+            if ($employee["Location_State"] && $w4["state"] != $stateName) {
+                // update state
+                $updateArray = [];
+                $updateArray["state"] = $stateName;
+                //
+                if ($w4['user_consent'] == 1) {
+                    $updateArray["signature_timestamp"] = $w4['signature_timestamp'];
+                }
+                //
+                $this->db
+                    ->where("sid", $w4["sid"])
+                    ->update("form_w4_original", $updateArray);
+                // log as history
+                saveHistoryToProfile($employeeId, [
+                    "Location_State" => [
+                        "old" => getStateColumn(["state_name" => $w4["state"]], "sid"),
+                        "new" => $employee["Location_State"]
+                    ]
+                ]);
+                //
+                $returnArray[] = "w4 updated.";
+            }
+        }
+        //
+        return $returnArray;
+    }
 }

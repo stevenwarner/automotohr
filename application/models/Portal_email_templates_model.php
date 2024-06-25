@@ -103,6 +103,8 @@ class portal_email_templates_model extends CI_Model
         $templates = $result->result_array();
         // Free results from memory
         $result = $result->free_result();
+        //
+
         // If no difference found 
         // return false
         if (sizeof($templates)) {
@@ -167,6 +169,7 @@ class portal_email_templates_model extends CI_Model
 
         // Add Admin Templates to client
         $hr_documents_notification = $this->check_admin_template_exists(HR_DOCUMENTS_NOTIFICATION_EMS, $company_sid);
+
         if (empty($hr_documents_notification)) { // the template does not exists for following company, Please add it
             $admin_template_data = $this->get_admin_template_by_id(HR_DOCUMENTS_NOTIFICATION_EMS);
 
@@ -274,6 +277,31 @@ class portal_email_templates_model extends CI_Model
             }
         }
         // Add Admin Templates to Client end ***  End  ***
+
+
+        // Add Admin Templates to client end *** Start ***
+        $aysi = $this->check_admin_template_exists(ARE_YOU_STILL_INTERESTED, $company_sid);
+
+        if (empty($aysi)) { // the template does not exists for following company, Please add it
+            $admin_template_data = $this->get_admin_template_by_id(ARE_YOU_STILL_INTERESTED);
+
+            if (!empty($admin_template_data)) {
+                $data = array();
+                $data['template_code']                                          = str_replace(' ', '_', strtolower($admin_template_data['name']));
+                $data['company_sid']                                            = $company_sid;
+                $data['created']                                                = date('Y-m-d H:i:s');
+                $data['template_name']                                          = $admin_template_data['name'];
+                $data['from_name']                                              = '{{company_name}}';
+                $data['from_email']                                             = $admin_template_data['from_email'];
+                $data['subject']                                                = $admin_template_data['subject'];
+                $data['message_body']                                           = $admin_template_data['text'];
+                $data['enable_auto_responder']                                  = 0;
+                $data['admin_template_sid']                                     = $admin_template_data['sid'];
+                $this->db->insert("portal_email_templates", $data);
+            }
+        }
+        // Add Admin Templates to Client end ***  End  ***
+
     }
 
     function getCompanyName($company_sid)
@@ -341,6 +369,21 @@ class portal_email_templates_model extends CI_Model
         }
     }
 
+    function get_portal_email_template_by_Id($templateId)
+    {
+        $this->db->select('*');
+        $this->db->where('sid', $templateId);
+        $record_obj = $this->db->get('portal_email_templates');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
     function insert_email_template_attachment_record($data_to_insert)
     {
         $this->db->insert('portal_email_templates_attachments', $data_to_insert);
@@ -391,6 +434,47 @@ class portal_email_templates_model extends CI_Model
         }
 
         return $result;
+    }
+
+
+    function getApplicantDataByJobId($applicantJobListId, $companyId)
+    {
+        // Updated on: 29-04-2019
+        $this->db->select('
+            portal_job_applications.sid,
+            portal_job_applications.email,
+            portal_job_applications.first_name,
+            portal_job_applications.last_name,
+            portal_applicant_jobs_list.job_sid,
+            portal_job_applications.phone_number,
+            portal_job_applications.city,
+            portal_job_applications.resume,
+            portal_job_listings.Title,
+            portal_applicant_jobs_list.desired_job_title,
+            portal_job_applications.desired_job_title as d2,
+        ');
+        $this->db->where('portal_applicant_jobs_list.sid', $applicantJobListId);
+        $this->db->where('portal_applicant_jobs_list.company_sid', $companyId);
+        // Added on: 29-04-2019
+        $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid  = portal_job_applications.sid', 'inner');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+        $records_obj = $this->db->get('portal_applicant_jobs_list');
+        $record_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        //
+        if ($record_arr) {
+            //
+            $record_arr["job_title"] = "";
+            // set the job title
+            if ($record_arr["job_sid"]) {
+                $record_arr["job_title"] = $record_arr["Title"];
+            } elseif ($record_arr["desired_job_title"]) {
+                $record_arr["job_title"] = $record_arr["desired_job_title"];
+            } elseif ($record_arr["d2"]) {
+                $record_arr["job_title"] = $record_arr["d2"];
+            }
+        }
+        return $record_arr;
     }
 
     public function save_message($product_data)

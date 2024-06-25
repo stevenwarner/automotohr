@@ -83,7 +83,8 @@ class Employee_shifts extends Public_Controller
         // get the shifts
         $data["shifts"] = $this->shift_model->getShifts(
             $data["filter"],
-            [$employeeId]
+            [$employeeId],
+            true
         );
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");

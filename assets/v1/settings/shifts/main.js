@@ -26,6 +26,12 @@ $(function manageShifts() {
 	//
 	const mode = getSearchParam("mode") || "month";
 
+	//
+	let publishUnpublishSingleShiftId = "";
+	let publishUnpublishSingleShiftStatus = "";
+
+	let allShiftsId = "";
+
 	// apply date picker
 	$(".jsWeekDaySelect").daterangepicker({
 		opens: "center",
@@ -70,35 +76,40 @@ $(function manageShifts() {
 			.add(incrementDays, "days")
 			.format("MM/DD/YYYY");
 
-
 		if (mode == "month") {
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-				mode +
-				"&year=" +
-				picker.startDate.clone().format("YYYY") +
-				"&month=" +
-				picker.startDate.clone().format("MM")
+					mode +
+					"&year=" +
+					picker.startDate.clone().format("YYYY") +
+					"&month=" +
+					picker.startDate.clone().format("MM")
 			));
 		}
 
 		//
 		window.location.href = baseUrl(
 			"settings/shifts/manage?mode=" +
-			mode +
-			"&start_date=" +
-			startDate +
-			"&end_date=" +
-			endDate
+				mode +
+				"&start_date=" +
+				startDate +
+				"&end_date=" +
+				endDate
 		);
 	});
 	// navigate to previous dates
 	$(".jsNavigateLeft").click(function (event) {
 		event.preventDefault();
 
-		let filterFields = '';
-		if (filterTeam != '') {
-			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam + '&jobtitle=' + filterJobtitle
+		let filterFields = "";
+		if (filterTeam != "") {
+			filterFields =
+				"&employees=" +
+				filterEmployeesSid +
+				"&team=" +
+				filterTeam +
+				"&jobtitle=" +
+				filterJobtitle;
 		}
 
 		const startDate =
@@ -108,14 +119,15 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-				mode +
-				"&start_date=" +
-				startDate
-					.clone()
-					.subtract(mode === "week" ? 1 : 2, "week")
-					.format("MM/DD/YYYY") +
-				"&end_date=" +
-				startDate.clone().subtract(1, "day").format("MM/DD/YYYY") + filterFields
+					mode +
+					"&start_date=" +
+					startDate
+						.clone()
+						.subtract(mode === "week" ? 1 : 2, "week")
+						.format("MM/DD/YYYY") +
+					"&end_date=" +
+					startDate.clone().subtract(1, "day").format("MM/DD/YYYY") +
+					filterFields
 			));
 		} else {
 			//
@@ -123,11 +135,12 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-				mode +
-				"&year=" +
-				startDateObj.clone().format("YYYY") +
-				"&month=" +
-				startDateObj.clone().format("MM") + filterFields
+					mode +
+					"&year=" +
+					startDateObj.clone().format("YYYY") +
+					"&month=" +
+					startDateObj.clone().format("MM") +
+					filterFields
 			));
 		}
 	});
@@ -136,9 +149,15 @@ $(function manageShifts() {
 		event.preventDefault();
 		//
 
-		let filterFields = '';
-		if (filterTeam != '') {
-			filterFields = '&employees=' + filterEmployeesSid + '&team=' + filterTeam + '&jobtitle=' + filterJobtitle
+		let filterFields = "";
+		if (filterTeam != "") {
+			filterFields =
+				"&employees=" +
+				filterEmployeesSid +
+				"&team=" +
+				filterTeam +
+				"&jobtitle=" +
+				filterJobtitle;
 		}
 
 		const startDate =
@@ -160,15 +179,16 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-				mode +
-				"&start_date=" +
-				endDate.clone().format("MM/DD/YYYY") + filterFields +
-				"&end_date=" +
-				endDate
-					.clone()
-					.add(adder, "week")
-					.subtract(1, "day")
-					.format("MM/DD/YYYY")
+					mode +
+					"&start_date=" +
+					endDate.clone().format("MM/DD/YYYY") +
+					filterFields +
+					"&end_date=" +
+					endDate
+						.clone()
+						.add(adder, "week")
+						.subtract(1, "day")
+						.format("MM/DD/YYYY")
 			));
 		} else {
 			//
@@ -176,11 +196,12 @@ $(function manageShifts() {
 			//
 			return (window.location.href = baseUrl(
 				"settings/shifts/manage?mode=" +
-				mode +
-				"&year=" +
-				startDateObj.clone().format("YYYY") +
-				"&month=" +
-				startDateObj.clone().format("MM") + filterFields
+					mode +
+					"&year=" +
+					startDateObj.clone().format("YYYY") +
+					"&month=" +
+					startDateObj.clone().format("MM") +
+					filterFields
 			));
 		}
 	});
@@ -307,8 +328,8 @@ $(function manageShifts() {
 									html += "<p>";
 									html += $(
 										'.jsPageApplyTemplateEmployees[value="' +
-										i +
-										'"]'
+											i +
+											'"]'
 									)
 										.parent()
 										.text()
@@ -332,7 +353,7 @@ $(function manageShifts() {
 							_success(resp.msg + html, function () {
 								window.location.href = baseUrl(
 									"settings/shifts/manage" +
-									window.location.search
+										window.location.search
 								);
 							});
 						}
@@ -365,7 +386,6 @@ $(function manageShifts() {
 		applyTimePicker();
 	});
 
-
 	/**
 	 * mark as day off
 	 */
@@ -375,17 +395,17 @@ $(function manageShifts() {
 		const shiftId = $(this).data("id");
 		// generate html
 		alertify.confirm(
-			'Are You Sure?',
-			'Are you sure want to delete shifts?',
+			"Are You Sure?",
+			"Are you sure want to delete shifts?",
 			function () {
 				//
 				const formObj = new FormData();
 				// set the file object
 				formObj.append("id", shiftId);
-				// 
+				//
 				processCallWithoutContentType(
 					formObj,
-					'',
+					"",
 					"settings/shifts/singleshift/delete",
 					function (resp) {
 						// show the message
@@ -395,10 +415,8 @@ $(function manageShifts() {
 					}
 				);
 			},
-			function () {
-
-			}
-		)
+			function () {}
+		);
 	});
 
 	/**
@@ -731,8 +749,8 @@ $(function manageShifts() {
 									html += "<p>";
 									html += $(
 										'.jsPageApplyTemplateEmployees[value="' +
-										i +
-										'"]'
+											i +
+											'"]'
 									)
 										.parent()
 										.text()
@@ -756,7 +774,7 @@ $(function manageShifts() {
 							_success(resp.msg + html, function () {
 								window.location.href = baseUrl(
 									"settings/shifts/manage" +
-									window.location.search
+										window.location.search
 								);
 							});
 						}
@@ -809,12 +827,11 @@ $(function manageShifts() {
 						return _error("Please select at least one employee.");
 					}
 
-					//				
+					//
 					alertify.confirm(
-						'Are You Sure?',
-						'Are you sure want to delete shifts?',
+						"Are You Sure?",
+						"Are you sure want to delete shifts?",
 						function () {
-
 							processCallWithoutContentType(
 								formArrayToObj($(form).serializeArray()),
 								$(".jsPageCreateSingleShiftBtn"),
@@ -824,18 +841,14 @@ $(function manageShifts() {
 									_success(resp.msg, function () {
 										window.location.href = baseUrl(
 											"settings/shifts/manage" +
-											window.location.search
+												window.location.search
 										);
 									});
 								}
 							);
 						},
-						function () {
-
-						}
-					)
-
-
+						function () {}
+					);
 				},
 			});
 		});
@@ -909,8 +922,8 @@ $(function manageShifts() {
 									html += "<p>";
 									html += $(
 										'.jsPageApplyTemplateEmployees[value="' +
-										i +
-										'"]'
+											i +
+											'"]'
 									)
 										.parent()
 										.text()
@@ -934,7 +947,7 @@ $(function manageShifts() {
 							_success(resp.msg + html, function () {
 								window.location.href = baseUrl(
 									"settings/shifts/manage" +
-									window.location.search
+										window.location.search
 								);
 							});
 						}
@@ -1064,7 +1077,6 @@ $(function manageShifts() {
 
 	$(".js-filter-jobtitle").select2();
 
-
 	$(".jsSelect2").select2();
 
 	//Apply Filters
@@ -1095,7 +1107,8 @@ $(function manageShifts() {
 				employees +
 				"&team=" +
 				team +
-				"&jobtitle=" + jobtitle;
+				"&jobtitle=" +
+				jobtitle;
 		} else if (getSearchParam("start_date")) {
 			newSearchurl =
 				"settings/shifts/manage?mode=" +
@@ -1108,7 +1121,8 @@ $(function manageShifts() {
 				employees +
 				"&team=" +
 				team +
-				"&jobtitle=" + jobtitle;
+				"&jobtitle=" +
+				jobtitle;
 		} else {
 			newSearchurl =
 				"settings/shifts/manage?mode=" +
@@ -1117,7 +1131,8 @@ $(function manageShifts() {
 				employees +
 				"&team=" +
 				team +
-				"&jobtitle=" + jobtitle;
+				"&jobtitle=" +
+				jobtitle;
 		}
 
 		//
@@ -1162,12 +1177,10 @@ $(function manageShifts() {
 		return (window.location.href = baseUrl(newSearchurl));
 	});
 
-
 	//
 	let jobTitles = filterJobtitle.split(",");
-	$('#jobtitleId').val(jobTitles);
-	$('#jobtitleId').trigger('change');
-
+	$("#jobtitleId").val(jobTitles);
+	$("#jobtitleId").trigger("change");
 
 	/**
 	 * generates break h*ml
@@ -1252,5 +1265,372 @@ $(function manageShifts() {
 		html += "</div>";
 		//
 		return html;
+	}
+
+	/**
+	 * Publish Single Shift
+	 */
+	$(document).on(
+		"click",
+		".jsPublishSingleShiftBtn",
+		function (event) {
+			event.preventDefault();
+			publishUnpublishSingleShiftId = $(this).data("id");
+			publishUnpublishSingleShiftStatus = $(this).data("publish");
+			showConfirmSingleShift();
+		}
+	);
+
+	/**
+	 * UnPublish Single Shift
+	 */
+	$(document).on("click", ".jsUnpublishSingleShiftBtn", function (event) {
+		event.preventDefault();
+		publishUnpublishSingleShiftId = $(this).data("id");
+		publishUnpublishSingleShiftStatus = $(this).data("publish");
+		_confirm(
+			"Do you really want to unpublish the shift?",
+			function() {
+				unpublishShift(publishUnpublishSingleShiftId);
+			}
+		);
+	});
+
+	//
+	$(document).on(
+		"click",
+		".jsPublishSingleShiftBtnOk,.jsUnpublishSingleShiftBtnOkEmail",
+		function (event) {
+			event.preventDefault();
+
+			//
+
+			let msg = "";
+			let sendEmail = $(this).data("sendemail");
+
+			if (publishUnpublishSingleShiftStatus == 1) {
+				publishUnpublishSingleShiftStatus = 0;
+				msg = " Unpublish ";
+			} else {
+				publishUnpublishSingleShiftStatus = 1;
+				msg = " Publish ";
+			}
+
+			alertify.confirm(
+				"Are You Sure?",
+				"Are you sure want to " + msg + " the shift?",
+				function () {
+					//
+					const formObj = new FormData();
+
+					formObj.append("shiftId", publishUnpublishSingleShiftId);
+					formObj.append(
+						"publichStatus",
+						publishUnpublishSingleShiftStatus
+					);
+					formObj.append("sendEmail", sendEmail);
+
+					//
+					processCallWithoutContentType(
+						formObj,
+						"",
+						"settings/shifts/singleshift/public-status",
+						function (resp) {
+							// show the message
+							_success(resp.msg, function () {
+								window.location.reload();
+							});
+						}
+					);
+				},
+				function () {}
+			);
+		}
+	);
+
+	//
+	$(document).on("click", ".jsModalCancel2", function (event) {
+		alertify.genericDialog().close();
+	});
+
+	/**
+	 * Publish Multi Shift
+	 */
+	$(document).on("click", ".jsPublishMultiShiftBtn", function (event) {
+		event.preventDefault();
+		//
+		publishUnpublishSingleShiftId = $(this).data("ids");
+		allShiftsId = $(this).data("shiftsids");
+		showConfirm();
+	});
+
+	//
+	alertify.dialog(
+		"publishShift",
+		function () {
+			return {
+				setup: function () {
+					var settings = alertify.confirm().settings;
+					for (var prop in settings)
+						this.settings[prop] = settings[prop];
+					var setup = alertify.confirm().setup();
+					setup.buttons.push({
+						text: "Publish & Send Emails",
+						key: 67 /*c*/,
+						scope: "auxiliary",
+						className: "ajs-ok",
+					});
+					return setup;
+				},
+				settings: {
+					onPublishAndSendEmails: null,
+				},
+				callback: function (closeEvent) {
+					if (closeEvent.index == 2) {
+						if (
+							typeof this.get("onPublishAndSendEmails") ===
+							"function"
+						) {
+							returnValue = this.get(
+								"onPublishAndSendEmails"
+							).call(this, closeEvent);
+							if (typeof returnValue !== "undefined") {
+								closeEvent.cancel = !returnValue;
+							}
+						}
+					} else {
+						alertify.confirm().callback.call(this, closeEvent);
+					}
+				},
+			};
+		},
+		false,
+		"confirm"
+	);
+
+	/// invoke the custom dialog
+	function showConfirm() {
+		alertify.publishShift().setHeader("Confirmation");
+
+		alertify.publishShift("Are you sure want to publish shifts?").set({
+			onok: function () {
+				const formObj = new FormData();
+
+				formObj.append("shiftIds", publishUnpublishSingleShiftId);
+				formObj.append("publichStatus", 1);
+				formObj.append("sendEmail", 0);
+				//
+				processCallWithoutContentType(
+					formObj,
+					"",
+					"settings/shifts/multishift/public-status",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			onPublishAndSendEmails: function () {
+				publishShiftsEmailOption();
+			},
+			oncancel: function () {},
+			labels: {
+				ok: "Publish",
+			},
+		});
+	}
+
+	//
+	function publishShiftsEmailOption() {
+		showShiftEmailOption();
+	}
+
+	//
+	alertify.dialog(
+		"ShiftEmailOption",
+		function () {
+			var settings;
+		},
+		false,
+		"confirm"
+	);
+
+	function showShiftEmailOption() {
+		let publishBox = "";
+
+		publishBox += ' <div class="hr-fields-wrap">';
+		publishBox += ' <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+		publishBox +=
+			'<label class="control control--radio " style="margin-left: -20px;">Send Email To Effected Employees<input type="radio" name="shifts_email_selection" class="shiftemailselection" value="effected" checked>';
+		publishBox += '    <div class="control__indicator"></div>';
+		publishBox += "   </label>";
+		publishBox += "</div>";
+
+		publishBox += ' <div class="hr-fields-wrap">';
+		publishBox += ' <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+		publishBox +=
+			'<label class="control control--radio " style="margin-left: -20px;">Send Email To All Employees<input type="radio" name="shifts_email_selection" class="shiftemailselection" value="all">';
+		publishBox += '    <div class="control__indicator"></div>';
+		publishBox += "   </label>";
+		publishBox += "</div>";
+		publishBox += "<br> ";
+		publishBox += "  </div>";
+		publishBox += " <br>";
+
+		alertify.ShiftEmailOption(publishBox).set({
+			onok: function () {
+				let sendShiftsEmailOption = $(
+					"input[name='shifts_email_selection']:checked"
+				).val();
+
+				const formObj = new FormData();
+
+				formObj.append("shiftIds", publishUnpublishSingleShiftId);
+				formObj.append("publichStatus", 1);
+				formObj.append("sendEmail", 1);
+				formObj.append("sendShiftsEmailOption", sendShiftsEmailOption);
+				formObj.append("allShiftsId", allShiftsId);
+
+				//
+				processCallWithoutContentType(
+					formObj,
+					"",
+					"settings/shifts/multishift/public-status",
+					function (resp) {
+						// show the message
+						_success(resp.msg, function () {
+							window.location.reload();
+						});
+					}
+				);
+			},
+			oncancel: function () {},
+			labels: {
+				ok: "Send",
+			},
+		});
+	}
+
+	//
+	alertify.dialog(
+		"publishSingleShift",
+		function () {
+			var settings;
+
+			return {
+				setup: function () {
+					var settings = alertify.confirm().settings;
+					for (var prop in settings)
+						this.settings[prop] = settings[prop];
+					var setup = alertify.confirm().setup();
+
+					setup.buttons.push({
+						text: "Publish & Send Email",
+						key: 67 /*c*/,
+						scope: "auxiliary",
+						className: "ajs-ok",
+					});
+
+					return setup;
+				},
+				settings: {
+					onPublishAndSendEmails: null,
+				},
+				callback: function (closeEvent) {
+					if (closeEvent.index == 2) {
+						if (
+							typeof this.get("onPublishAndSendEmails") ===
+							"function"
+						) {
+							returnValue = this.get(
+								"onPublishAndSendEmails"
+							).call(this, closeEvent);
+							if (typeof returnValue !== "undefined") {
+								closeEvent.cancel = !returnValue;
+							}
+						}
+					} else {
+						alertify.confirm().callback.call(this, closeEvent);
+					}
+				},
+			};
+		},
+		false,
+		"confirm"
+	);
+
+	/// invoke the custom dialog
+	function showConfirmSingleShift() {
+		let msg = "";
+
+		if (publishUnpublishSingleShiftStatus == 1) {
+			publishUnpublishSingleShiftStatus = 0;
+			msg = " Unpublish ";
+		} else {
+			publishUnpublishSingleShiftStatus = 1;
+			msg = " Publish ";
+		}
+
+		alertify.publishSingleShift().setHeader("Confirmation");
+
+		alertify
+			.publishSingleShift()
+			.set("labels", { ok: msg, PublishAndSendEmails: msg });
+
+		alertify
+			.publishSingleShift("Are you sure want to " + msg + "  this shift?")
+			.set({
+				onok: function () {
+					publishShift(0);
+				},
+				onPublishAndSendEmails: function () {
+					publishShift(1);
+				},
+				labels: {
+					//'ok': 'Publish',
+				},
+			});
+	}
+
+	function publishShift(sendEmail) {
+		const formObj = new FormData();
+
+		formObj.append("shiftId", publishUnpublishSingleShiftId);
+		formObj.append("publichStatus", publishUnpublishSingleShiftStatus);
+		formObj.append("sendEmail", sendEmail);
+		//
+		processCallWithoutContentType(
+			formObj,
+			"",
+			"settings/shifts/singleshift/public-status",
+			function (resp) {
+				// show the message
+				_success(resp.msg, function () {
+					window.location.reload();
+				});
+			}
+		);
+	}
+	
+	function unpublishShift(shiftId) {
+		const formObj = new FormData();
+
+		formObj.append("shiftId", shiftId);
+		formObj.append("publichStatus", 0);
+		formObj.append("sendEmail", 1);
+		//
+		processCallWithoutContentType(
+			formObj,
+			"",
+			"settings/shifts/singleshift/public-status",
+			function (resp) {
+				// show the message
+				_success(resp.msg, function () {
+					window.location.reload();
+				});
+			}
+		);
 	}
 });

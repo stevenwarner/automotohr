@@ -15,61 +15,85 @@ $timeSheetName = "";
     <div class="panel-body">
         <form action="<?= current_url(); ?>" method="get">
             <div class="row">
+                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 custom-col">
+                    <div class="form-group">
+                        <label>
+                            Department
+                        </label>
+                        <select name="department" class="form-control">
+                            <?php if ($departments) { ?>
+                                <option value="all" <?php echo $filter["departments"] == "all" ? 'selected="selected"' : ''; ?>>All</option>
+                                <?php foreach ($departments as $department) { ?>
+                                    <option value="<?php echo $department['sid']; ?>" <?php echo isset($filter["departments"]) && $filter["departments"] ==  $department['sid'] ? 'selected="selected"' : ''; ?>><?php echo $department['name']; ?></option>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <option value="0">No Department Found</option>
+                            <?php } ?>    
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 custom-col">
+                    <div class="form-group">
+                        <label>
+                            Team
+                        </label>
+                        <select name="teams[]" class="form-control multipleSelect" multiple>
+                            <?php if ($teams) { ?>
+                                <option value="all" <?php echo in_array("all", $filter["teams"]) ? 'selected="selected"' : ''; ?>>All</option>
+                                <?php foreach ($teams as $team) { ?>
+                                    <option value="<?php echo $team['sid']; ?>" <?php echo in_array($team['sid'], $filter["teams"]) ? 'selected="selected"' : ''; ?>><?php echo $team['name']; ?></option>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <option value="0">No Team Found</option>
+                            <?php } ?>    
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 custom-col">
+                    <div class="form-group">
+                        <label>
+                            Job Title
+                        </label>
+                        <select name="jobTitle[]" class="form-control multipleSelect" multiple>
+                            <?php if ($jobTitles) { ?>
+                                <option value="all" <?php echo in_array("all", $filter["jobTitles"]) ? 'selected="selected"' : ''; ?>>All</option>
+                                <?php foreach ($jobTitles as $jobTitle) { ?>
+                                    <option value="<?php echo $jobTitle['title']; ?>" <?php echo in_array($jobTitle['title'], $filter["jobTitles"]) ? 'selected="selected"' : ''; ?>><?php echo $jobTitle['title']; ?></option>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <option value="0">No Job Title Found</option>
+                            <?php } ?> 
+                        </select>
+                    </div>
+                </div>     
+            </div>
+            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label>
-                            Select Employees
-                            <strong class="text-danger">*</strong>
+                            Employees
                         </label>
                         <select name="employees[]" class="form-control multipleSelect" multiple>
-                            <?php if ($employees) {
-                                foreach ($employees as $v0) {
-
-                                    if ($v0["userId"] == $filter["employeeId"]) {
-                                        $timeSheetName = remakeEmployeeName($v0);
-                                    }
-                            ?>
-                                    <option value="<?= $v0["userId"]; ?>" <?= $v0["userId"] == $filter["employeeId"] ? "selected" : ""; ?>><?= remakeEmployeeName($v0); ?></option>
-                            <?php
-                                }
-                            }
-                            ?>
+                            <?php if ($employees) { ?>
+                                <option value="all" <?php echo in_array("all", $filter["employees"]) ? 'selected="selected"' : ''; ?>>All</option>
+                                <?php foreach ($employees as $v0) { ?>
+                                    <option value="<?= $v0["userId"]; ?>" <?= in_array($v0["userId"], $filter["employees"]) ? "selected" : ""; ?>><?= remakeEmployeeName($v0); ?></option>
+                                <?php } ?>
+                            <?php } else { ?>
+                                <option value="0">No employee Found</option>
+                            <?php } ?>
                         </select>
                     </div>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-6">
                     <div class="form-group">
                         <label>
-                            Select Year
+                            Select date range
                             <strong class="text-danger">*</strong>
                         </label>
-                        <select name="year" class="form-control">
-                            <option <?= $filter["year"] === "2023" ? "selected" : ""; ?> value="2023">2023</option>
-                            <option <?= $filter["year"] === "2024" ? "selected" : ""; ?> value="2024">2024</option>
-                            <option <?= $filter["year"] === "2025" ? "selected" : ""; ?> value="2025">2025</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <label>
-                            Select Month
-                            <strong class="text-danger">*</strong>
-                        </label>
-                        <select name="month" class="form-control">
-                            <option <?= $filter["month"] === "01" ? "selected" : ""; ?> value="01">January</option>
-                            <option <?= $filter["month"] === "02" ? "selected" : ""; ?> value="02">February</option>
-                            <option <?= $filter["month"] === "03" ? "selected" : ""; ?> value="03">March</option>
-                            <option <?= $filter["month"] === "04" ? "selected" : ""; ?> value="04">April</option>
-                            <option <?= $filter["month"] === "05" ? "selected" : ""; ?> value="05">May</option>
-                            <option <?= $filter["month"] === "06" ? "selected" : ""; ?> value="06">June</option>
-                            <option <?= $filter["month"] === "07" ? "selected" : ""; ?> value="07">July</option>
-                            <option <?= $filter["month"] === "08" ? "selected" : ""; ?> value="08">August</option>
-                            <option <?= $filter["month"] === "09" ? "selected" : ""; ?> value="09">September</option>
-                            <option <?= $filter["month"] === "10" ? "selected" : ""; ?> value="10">October</option>
-                            <option <?= $filter["month"] === "11" ? "selected" : ""; ?> value="11">November</option>
-                            <option <?= $filter["month"] === "12" ? "selected" : ""; ?> value="12">December</option>
-                        </select>
+                        <input type="text" class="form-control jsDateRangePicker" readonly placeholder="MM/DD/YYYY - MM/DD/YYYY" name="date_range" value="<?= $filter["dateRange"] ?? ""; ?>" />
                     </div>
                 </div>
             </div>
@@ -102,13 +126,13 @@ $timeSheetName = "";
                 </strong>
                 <p class="mt-5">
                     <?= formatDateToDB(
-                        $filter["startDate"],
+                        $filter["startDateDB"],
                         DB_DATE,
                         DATE
                     ); ?>
                     -
                     <?= formatDateToDB(
-                        $filter["endDate"],
+                        $filter["endDateDB"],
                         DB_DATE,
                         DATE
                     ); ?>
@@ -119,138 +143,131 @@ $timeSheetName = "";
 
         <div class="panel-body">
             <div class="table-responsive">
-                <table class="table table-striped">
-                    <caption></caption>
-                    <thead>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead style="background-color: #fd7a2a;">
                         <tr>
-                            <th scope="col" class="bg-black">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" name="select_all" class="jsSelectAll" />
-                                    <div class="control__indicator"></div>
-                                </label>
+                            <th>Name</th>
+                            <th>
+                                Payroll Status
                             </th>
-
-                            <th scope="col" class="bg-black">
-                                Date
+                            <th>
+                                Payroll Information
                             </th>
-
-                            <th scope="col" class="bg-black">
-                                Period
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Worked Time
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Breaks
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Overtime
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Status
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Actions
-                            </th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $datesPool = getDatesBetweenDates($filter["startDate"], $filter["endDate"]);
-                        $totalWorkedTime =
-                            $totalBreakTime =
-                            $totalOvertime = 0;
-                        //
-                        foreach ($datesPool as $v0) {
-                            $attendance = $records[$v0["date"]] ?? [];
-
-                            if ($attendance) {
-                                $totalWorkedTime += $attendance["worked_time"];
-                                $totalBreakTime += $attendance["breaks"];
-                                $totalOvertime += $attendance["overtime"];
-                            }
-                        ?>
-                            <tr class="<?= $v0["date"] === getSystemDate("Y-m-d") ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <label class="control control--checkbox">
-                                        <input type="checkbox" name="individualSelect" class="<?= $attendance ? "jsSingleSelect" : ""; ?> " <?= $attendance ? 'value="' . $attendance["sid"] . '"' : "disabled"; ?> />
-                                        <div class="control__indicator"></div>
-                                    </label>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= $attendance && $attendance["clocked_in"] ?
-                                        reset_datetime([
-                                            "datetime" => $attendance["clocked_in"],
-                                            "from_format" => DB_DATE_WITH_TIME,
-                                            "format" => "h:i a",
-                                            "_this" => $this,
-                                            "from_timezone" => "UTC"
-                                        ]) : "Missing"; ?>
-                                    -
-                                    <?= $attendance && $attendance["clocked_out"] ? reset_datetime([
-                                        "datetime" => $attendance["clocked_out"],
-                                        "from_format" => DB_DATE_WITH_TIME,
-                                        "format" => "h:i a",
-                                        "_this" => $this,
-                                        "from_timezone" => "UTC"
-                                    ]) : "Missing"; ?>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= $attendance ? convertSecondsToTime($attendance["worked_time"]) : "0h"; ?>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= $attendance ? convertSecondsToTime($attendance["breaks"]) : "0h"; ?>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= $attendance ? convertSecondsToTime($attendance["overtime"]) : "0h"; ?>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100 text-<?= $attendance["is_approved"] ? "green" : "red"; ?>">
-                                    <strong>
-
-                                        <?= $attendance["is_approved"] ? "APPROVED" : "UNAPPROVED"; ?>
-                                    </strong>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?php if ($attendance) { ?>
-                                        <button class="btn btn-orange jsEditTimeSheet">
-                                            <i class="fa fa-edit" aria-hidden="true"></i>
-                                            &nbsp;
-                                            Edit
-                                        </button>
-                                    <?php } else { ?>
-                                        <button class="btn btn-orange jsAddTimeSheet">
-                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                            &nbsp;
-                                            Add
-                                        </button>
-                                    <?php } ?>
+                        <?php if (empty($filterEmployees)) { ?>
+                            <tr>
+                                <td colspan="4">
+                                    <span class="no-data">No Employee Payroll Found</span>
                                 </td>
                             </tr>
-                        <?php
-                        }
-                        ?>
+                        <?php } else { ?>
+                            <?php foreach ($filterEmployees as $employee) { ?>
+                                <tr>
+                                    <td>
+                                        <?=remakeEmployeeName($employee);?>
+                                    </td>
+                                    <td>
+                                        <?php if ($employee['clockArray']["shift_status"]['approved_count'] > 0 && $employee['clockArray']["shift_status"]['unapproved_count'] > 0) { ?>
+                                            <table class="table table-bordered table-condensed table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="col-xs-8 text-success">Approved Shifts</th>
+                                                        <td class="col-xs-4"><?= $employee['clockArray']["shift_status"]['approved_count']." Shift(s)"; ?></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="col-xs-8 text-danger">Unapproved Shifts</th>
+                                                        <td class="col-xs-4"><?= $employee['clockArray']["shift_status"]['unapproved_count']." Shift(s)"; ?></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        <?php } else if ($employee['clockArray']["shift_status"]['approved_count'] == 0 && $employee['clockArray']["shift_status"]['total_shifts'] > 0) { ?>
+                                            <table class="table table-bordered table-condensed table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="col-xs-8 text-danger">Unapproved Shifts</th>
+                                                        <td class="col-xs-4"><?= $employee['clockArray']["shift_status"]['unapproved_count']." Shift(s)"; ?></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        <?php } else if ($employee['clockArray']["shift_status"]['unapproved_count'] == 0 && $employee['clockArray']["shift_status"]['total_shifts'] > 0) { ?>  
+                                            <table class="table table-bordered table-condensed table-hover">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="col-xs-8 text-success">Approved Shifts</th>
+                                                        <td class="col-xs-4"><?= $employee['clockArray']["shift_status"]['approved_count']." Shift(s)"; ?></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>    
+                                        <?php } else { ?> 
+                                            <p>No shift found.</p> 
+                                        <?php } ?>           
+                                    </td>
+                                    <td>
+                                        <table class="table table-bordered table-condensed table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <th class="col-xs-4">Clocked Time</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['clocked_time'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Worked Time</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['worked_time'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Regular Time</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['regular_time'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? getWageFromTime($employee['clockArray']['regular_time'], $employee['clockArray']['normal_rate']) : "$0"; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Paid Break</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['paid_break_time'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Unpaid Break</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['unpaid_break_time'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Overtime</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['overtime'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? getWageFromTime($employee['clockArray']['overtime'], $employee['clockArray']['over_time_rate']) : "$0"; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Double Overtime</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['text']['double_overtime'] : "0h"; ?></td>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? getWageFromTime($employee['clockArray']['double_overtime'], $employee['clockArray']['double_over_time_rate']) : "$0"; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Paid Timeoff</th>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? $employee['clockArray']['paid_time_off']['total_days']." Day(s)" : "0 Day"; ?></td>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? getWageFromTime(($employee['clockArray']['paid_time_off']['total_hours'] * 60 * 60), $employee['clockArray']['normal_rate']) : "$0"; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="col-xs-4">Total</th>
+                                                    <td class="col-xs-4"></td>
+                                                    <td class="col-xs-4"><?= $employee['clockArray'] ? getTotalWageFromTime($employee['clockArray'], 'all') : "$0"; ?></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <?php if ($employee['clockArray']["shift_status"]['total_shifts'] != 0) { ?>
+                                            <a class="btn btn-orange" target="_blank" href="<?php echo base_url("attendance/timesheet")."?employees=".$employee['sid']."&date_range=".$filter["dateRange"]; ?>">
+                                                <i class="fa fa-eye"></i>
+                                                View Detail
+                                            </a>
+                                        <?php } ?>    
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        <?php } ?>
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black">
-                                <?= convertSecondsToTime($totalWorkedTime); ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= convertSecondsToTime($totalBreakTime); ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= convertSecondsToTime($totalOvertime); ?>
-                            </th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                        </tr>
-                    </tfoot>
                 </table>
             </div>
         </div>

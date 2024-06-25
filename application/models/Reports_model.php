@@ -2546,7 +2546,10 @@ class Reports_model extends CI_Model
             $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
             $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
-            $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid']);
+            $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid'], $v['parent_sid']);
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid']);
+            }
         endforeach;
 
         //
@@ -2571,6 +2574,7 @@ class Reports_model extends CI_Model
             ->from('users')
             ->where('users.terminated_status', 0)
             ->where('users.active', 1)
+            ->where('users.is_executive_admin', 0)
             ->where('users.parent_sid', $companyId);
 
         if ($employeeArray) :
@@ -2594,8 +2598,38 @@ class Reports_model extends CI_Model
         return $result ? $result->result_array() : [];
     }
 
-
-
+    //
+    private function getAssignedPerformanceDocumentForReport($employeeId)
+    {
+        //
+        $completedStatus = 'Not Assigned'; 
+        //
+        $this
+            ->load
+            ->model(
+                "v1/Employee_performance_evaluation_model",
+                "employee_performance_evaluation_model"
+            );
+        //
+        $assignPerformanceDocument = $this->employee_performance_evaluation_model->checkEmployeeAssignPerformanceDocument(
+            $employeeId
+        );
+        //
+        if ($assignPerformanceDocument) {
+            //
+            $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                $employeeId
+            );
+            //`                                                                 
+            if ($pendingPerformanceSection) {
+                $completedStatus = 'Not Completed';
+            } else {
+                $completedStatus = 'Completed';
+            }
+        }
+        //
+        return  $completedStatus; 
+    }
 
 
     //
@@ -2607,7 +2641,17 @@ class Reports_model extends CI_Model
         documents_assigned.document_title,
         documents_assigned.sid,
         documents_assigned.user_consent,
-        documents_assigned.confidential_employees
+        documents_assigned.confidential_employees,
+        documents_assigned.document_description,
+        documents_assigned.acknowledgment_required,
+        documents_assigned.download_required,
+        documents_assigned.signature_required,
+        documents_assigned.acknowledged,
+        documents_assigned.uploaded,
+        documents_assigned.downloaded,
+        documents_assigned.document_sid,
+        documents_assigned.status
+           
     ');
 
         $this->db
@@ -2615,11 +2659,126 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_type', 'employee')
             ->where('documents_assigned.company_sid', $companyId)
             ->where('documents_assigned.user_sid', $employeeId)
-            ->where('documents_assigned.status', 1);
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.archive', 0);
         //
         $result = $this->db->get();
         //
-        return $result ? $result->result_array() : [];
+
+        $data = $result->result_array();
+        if (!empty($data)) {
+
+            foreach ($data as $key => $val) {
+
+                $data[$key]['completedStatus'] = '';
+
+                if ($val['status'] != 1) {
+                    continue;
+                }
+                // Column to check
+                $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $val['document_description']) ? true : false;
+                //
+                if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $val['document_description']);
+                //
+                $is_document_completed = 0;
+                //
+                $is_magic_tag_exist = 0;
+                //
+                if (str_replace(EFFECT_MAGIC_CODE_LIST, '', $val['document_description']) != $val['document_description']) {
+                    $is_magic_tag_exist = 1;
+                }
+                // Check for uploaded manual dcoument
+                if ($val['document_sid'] == 0) {
+                    // continue;
+                    $data[$key]['completedStatus'] = 'No Action Required';
+                } else {
+                    //
+                    if ($this->isDocumentArchived($val["document_sid"])) {
+                        unset($data[$key]);
+                        continue;
+                    }
+                    //
+                    if ($val['acknowledgment_required'] || $val['download_required'] || $val['signature_required'] || $is_magic_tag_exist) {
+
+                        if ($val['acknowledgment_required'] == 1 && $val['download_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1 && $val['download_required'] == 1) {
+                            if ($is_magic_tag_exist == 1) {
+                                if ($val['uploaded'] == 1) {
+                                    $is_document_completed = 1;
+                                } else {
+                                    $is_document_completed = 0;
+                                }
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['acknowledged'] == 1 && $val['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['download_required'] == 1 && $val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['acknowledgment_required'] == 1) {
+                            if ($val['acknowledged'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['download_required'] == 1) {
+                            if ($val['downloaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($val['signature_required'] == 1) {
+                            if ($val['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($is_magic_tag_exist == 1) {
+                            if ($val['user_consent'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        }
+
+                        if ($is_document_completed == 1) {
+                            $data[$key]['completedStatus'] = 'Completed';
+                        } else {
+                            $data[$key]['completedStatus'] = 'Not Completed';
+                        }
+                    } else {
+                        $data[$key]['completedStatus'] = 'No Action Required';
+                    }
+                }
+            }
+        }
+
+
+        return $data ? array_values($data) : [];
+
+
+        //return $result ? $result->result_array() : [];
     }
 
 
@@ -2647,83 +2806,77 @@ class Reports_model extends CI_Model
     //
     function getAssignedi9DocumentForReport($employeeId, $companyId)
     {
-        $where = [
-            "company_sid" => $companyId,
-            "user_sid" => $employee_sid,
-            "user_type" => "employee",
-            "status" => 1,
-        ];
-        $status = $this->db
-        ->where($where)
-        ->count_all_results('applicant_i9form');
 
-        if ($status > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+
+        $this->db->select('user_consent');
+
+        $this->db
+            ->from('applicant_i9form')
+            ->where('company_sid', $companyId)
+            ->where('user_sid', $employeeId)
+            ->where('user_type', 'employee')
+            ->where('status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
     }
 
     //
     function getAssignedw9DocumentForReport($employeeId, $companyId)
     {
-        $where = [
-            "company_sid" => $companyId,
-            "user_sid" => $employee_sid,
-            "user_type" => "employee",
-            "status" => 1,
-        ];
-        $status = $this->db
-        ->where($where)
-        ->count_all_results('applicant_w9form');
 
-        if ($status > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+
+        $this->db->select('user_consent');
+
+        $this->db
+            ->from('applicant_w9form')
+            ->where('company_sid', $companyId)
+            ->where('user_sid', $employeeId)
+            ->where('user_type', 'employee')
+            ->where('status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
     }
 
     //
     function getAssignedw4DocumentForReport($employeeId, $companyId)
     {
-        $where = [
-            "company_sid" => $companyId,
-            "employer_sid" => $employee_sid,
-            "user_type" => "employee",
-            "status" => 1,
-        ];
-        $status = $this->db
-        ->where($where)
-        ->count_all_results('form_w4_original');
 
-        if ($status > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+        //
+        $this->db->select('user_consent');
+
+        $this->db
+            ->from('form_w4_original')
+            ->where('company_sid', $companyId)
+            ->where('employer_sid', $employeeId)
+            ->where('user_type', 'employee')
+            ->where('status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
     }
 
 
     //
     function getAssignedeeocDocumentForReport($employeeId)
     {
-        $where = [
-            "company_sid" => $companyId,
-            "application_sid" => $employee_sid,
-            "user_type" => "employee",
-            "is_latest" => 1,
-            "status" => 1,
-        ];
-        $status = $this->db
-        ->where($where)
-        ->count_all_results('portal_eeo_form');
 
-        if ($status > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
+        $this->db->select('last_completed_on');
+
+        $this->db
+            ->from('portal_eeo_form')
+            // ->where('company_sid', $companyId)
+            ->where('application_sid', $employeeId)
+            ->where('users_type', 'employee')
+            ->where('status', 1);
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
     }
 
 
@@ -2781,5 +2934,48 @@ class Reports_model extends CI_Model
         $a->free_result();
         //
         return $b;
+    }
+
+    public function isDocumentArchived($documentId)
+    {
+        return $this->db
+            ->where("sid", $documentId)
+            ->where("archive", 1)
+            ->count_all_results("documents_management");
+    }
+
+    public function getTerminatedEmployees($company_sids = NULL, $between = '', $limit = null, $start = null)
+    {
+        //
+        $this->db->select('terminated_employees.termination_reason');
+        $this->db->select('terminated_employees.termination_date');
+        $this->db->select('users.sid');
+        $this->db->select('users.first_name');
+        $this->db->select('users.last_name');
+        $this->db->select('users.access_level');
+        $this->db->select('users.timezone');
+        $this->db->select('users.is_executive_admin');
+        $this->db->select('users.pay_plan_flag');
+        $this->db->select('users.job_title');
+        $this->db->select('users.joined_at');
+        $this->db->select('users.rehire_date');
+        $this->db->select('users.department_sid');
+        //
+        $this->db->join('users', 'users.sid = terminated_employees.employee_sid', 'left');
+        $this->db->where('terminated_employees.employee_status', 1);
+        $this->db->where('users.parent_sid', $company_sids);
+        //
+        if ($between != '' && $between != NULL) {
+            $this->db->where($between);
+        }
+        //
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
+        }
+        //  
+        $this->db->order_by("terminated_employees.sid", "desc");
+        $terminatedEmployees = $this->db->get('terminated_employees')->result_array();
+        //
+        return $terminatedEmployees;
     }
 }

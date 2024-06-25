@@ -162,7 +162,7 @@ class App extends CI_Controller
         $this->load->view('v1/app/sitemap');
         $this->load->view($this->footer);
     }
-    
+
     /**
      * legal hub
      */
@@ -181,7 +181,7 @@ class App extends CI_Controller
         //
         $this->getCommon($data, "sitemap");
         // 
-        $data['pageContent'] = $pageContent; 
+        $data['pageContent'] = $pageContent;
         //
         $this->load->view($this->header, $data);
         $this->load->view('v1/app/legal');
@@ -749,5 +749,57 @@ class App extends CI_Controller
         }
         //
         return SendResponse(200, array_column($pageData, "state_name"));
+    }
+
+    /**
+     * Opt out of the EEOC
+     *
+     * @param int $eeoId
+     * @return json
+     */
+    public function processOptOut(int $eeoId)
+    {
+        //
+        $record = $this
+            ->db
+            ->select("users_type, application_sid")
+            ->where("sid", $eeoId)
+            ->get("portal_eeo_form")
+            ->row_array();
+        //
+        if (!$record) {
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "Failed to verify EEOC form."
+                    ]
+                ]
+            );
+        }
+        $this
+            ->db
+            ->where("sid", $eeoId)
+            ->update(
+                "portal_eeo_form",
+                [
+                    "is_opt_out" => 1,
+                    "is_expired" => 1,
+                    "last_completed_on" => getSystemDate()
+                ]
+            );
+
+        keepTrackVerificationDocument(
+            $record["application_sid"],
+            $record["users_type"],
+            'opt-out',
+            $eeoId,
+            'eeoc',
+            'Document Center'
+        );
+
+        return SendResponse(200, [
+            "message" => "You have successfully Opt-out of the EEOC."
+        ]);
     }
 }

@@ -384,6 +384,9 @@
                                         if (check_access_permissions_for_view($security_details, 'send_bulk_email')) { ?>
                                             <li><a href="javascript:void(0);" class="btn btn-success" id="send_bulk_email">Send Bulk Email</a></li>
                                         <?php } ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'send_still_interested_email')) { ?>
+                                            <li><a href="javascript:void(0);" class="btn btn-orange" id="send_still_interested_email">Are You Still Interested?</a></li>
+                                        <?php } ?>
                                         <!--                                        <li><a href="javascript:void(0);" class="btn btn-primary" id="send_candidate_email">Send Candidate Notification</a></li>-->
                                     </ul>
                                 </div>
@@ -482,14 +485,13 @@
                                         $employer_job['job_title'] .= ', ' . db_get_state_name($employer_job['Location_State'])['state_name'];
                                     }
                                     ?>
-
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
                                                                                                                         echo strtolower(preg_replace('/[^a-z]/i', '', $employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
                                                     <label class="control control--checkbox">
-                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $originalJobTitle; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list='<?php echo $employer_job['sid'] ?>' class="ej_checkbox applicant_sids">
+                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $originalJobTitle; ?>" data-job_id="<?php echo $employer_job["job_sid"]; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list='<?php echo $employer_job['sid'] ?>' class="ej_checkbox applicant_sids">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>
@@ -549,7 +551,7 @@
                                                     }
 
                                                     ?>
-                                                    <a href="javascript:void(0);" class="pull-right <?= empty($resume_name) ? 'aplicant-documents' : 'aplicant-notes-span'; ?>" onclick="show_resume_popup(this);" data-preview-url="<?php echo $employer_job["resume_direct_link"]; ?>" data-download-url="<?php echo base_url('hr_documents_management/download_upload_document') . '/' . $employer_job['resume']; ?>" data-fullname="<?php echo urldecode($upload_resume); ?>" data-file-name="<?php echo urldecode($resume_name); ?>" data-file-ext="<?php echo $resume_extension; ?>" data-document-title="<?php echo 'Resume For ' . $employer_job['job_title']; ?>" data-applicant-sid="<?php echo $employer_job['applicant_sid']; ?>" data-job-list-sid="<?php echo $employer_job['sid']; ?>" data-requested-job-sid="<?php echo $requested_job_sid; ?>" data-requested-job-type="<?php echo $requested_job_type; ?>" data-request_datetime="<?php echo $send_request_datetime; ?>">
+                                                    <a href="javascript:void(0);" class="pull-right <?= empty($resume_name) ? 'aplicant-documents' : 'aplicant-notes-span'; ?>" onclick="show_resume_popup(this);" data-preview-url="<?php echo $employer_job["resume_direct_link"]; ?>" data-download-url="<?php echo base_url('hr_documents_management/download_upload_document') . '/' . $employer_job['resume']; ?>" data-fullname="<?php echo ($employer_job['resume']); ?>" data-file-name="<?php echo urldecode($resume_name); ?>" data-file-ext="<?php echo $resume_extension; ?>" data-document-title="<?php echo 'Resume For ' . $employer_job['job_title']; ?>" data-applicant-sid="<?php echo $employer_job['applicant_sid']; ?>" data-job-list-sid="<?php echo $employer_job['sid']; ?>" data-requested-job-sid="<?php echo $requested_job_sid; ?>" data-requested-job-type="<?php echo $requested_job_type; ?>" data-request_datetime="<?php echo $send_request_datetime; ?>">
                                                         <i class="fa fa-file-text-o"></i>
                                                         <span class="btn-tooltip">Resume</span>
                                                     </a>
@@ -754,7 +756,8 @@
                                                 ?>
                                                 <div class="rating-score">
                                                     <div class="rating-col">
-                                                        <span class="text-left pull-left float_left"><a href="javascript:;" class="questionnaire-popup <?php echo (!empty($employer_job['manual_questionnaire_history']) || !empty($employer_job['questionnaire'])) ? 'text-blue' : 'text-success'; ?>" data-attr="<?= $employer_job["applicant_sid"]; ?>" data-job-sid="<?= $employer_job["job_sid"]; ?>" data-sid="<?= $employer_job["sid"]; ?>" onclick="fLaunchQuestionnaireModal(this)"><span class="float_left">Questionnaire Score:</span></a></span>
+                                                        <span class="text-left pull-left float_left">
+                                                            <a href="javascript:;" class="questionnaire-popup <?php echo (!empty($employer_job['manual_questionnaire_history']) || !empty($employer_job['questionnaire'])) ? 'text-blue' : 'text-success'; ?>" data-attr="<?= $employer_job["applicant_sid"]; ?>" data-job-sid="<?= $employer_job["job_sid"]; ?>" data-sid="<?= $employer_job["sid"]; ?>" onclick="fLaunchQuestionnaireModal(this)" style="<?php echo (!empty($employer_job['manual_questionnaire_history']) || !empty($employer_job['questionnaire'])) ? 'color:#00008B;' : ''; ?>"><span class="float_left">Questionnaire Score:</span></a></span>
                                                     </div>
                                                     <div class="rating-col">
                                                         <span class="pull-right">
@@ -810,7 +813,8 @@
                                                 <?php if (check_access_permissions_for_view($security_details, 'review_score')) { ?>
                                                     <div class="rating-score">
                                                         <div class="rating-col text-left">
-                                                            <a href="javascript:void(0);" onclick="fLaunchReviewModal(this)" class="text-left <?php echo ($employer_job['reviews_count'] > 0) ? 'text-blue' : 'text-success'; ?>" data-applicant-sid="<?= $employer_job["applicant_sid"]; ?>" data-applicant-email="<?= $employer_job["email"]; ?>" data-job-sid="<?= $employer_job["sid"]; ?>" data-document-title="Reviews For <?= $employer_job["first_name"]; ?> <?= $employer_job["last_name"]; ?>">Review Score<span class="btn-tooltip">Reviews</span></a>
+                                                            <a href="javascript:void(0);" onclick="fLaunchReviewModal(this)" class="text-left text-success" style="font-size: 14px; font-weight: 900; <?= $employer_job['reviews_count'] ? "color: #00008B;" : ""; ?>" data-applicant-sid="<?= $employer_job["applicant_sid"]; ?>" data-applicant-email="<?= $employer_job["email"]; ?>" data-job-sid="<?= $employer_job["sid"]; ?>" data-document-title="Reviews For <?= $employer_job["first_name"]; ?> <?= $employer_job["last_name"]; ?>">
+                                                                Review Score<span class="btn-tooltip">Reviews</span></a>
                                                         </div>
                                                         <div class="rating-col text-center">
                                                             <span class="pull-left"><?php echo ($employer_job['applicant_average_rating'] > 0) ? $employer_job['applicant_average_rating'] : '0'; ?> with <?php echo $employer_job['reviews_count']; ?> Review(s)</span>
@@ -1893,6 +1897,8 @@
         var requested_job_sid = $(source).attr('data-requested-job-sid');
         var requested_job_type = $(source).attr('data-requested-job-type');
 
+        let isPDF = false;
+
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
                 case 'doc':
@@ -1904,11 +1910,13 @@
                     document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Edocx&wdAccPdf=0';
                     break;
                 case 'pdf':
-                    iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=' + document_preview_url + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
                     break;
                 default:
-                    iframe_url = 'https://docs.google.com/gview?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname') + '&embedded=true';
+                    isPDF = true;
+                    iframe_url = 'https://docs.google.com/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname') + '&embedded=true';
                     document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + $(source).attr('data-fullname');
             }
 
@@ -1924,15 +1932,35 @@
                 request_message = '<p class="text-left">The last resume request was sent on <strong> ' + request_time + ' </strong></p>';
             }
 
+            if (isPDF) {
+                resume_content = '<iframe src="" id="preview_iframe" class="uploaded-file-preview jsCustomPreview"  style="width:100%; height:500px;" frameborder="0"></iframe>';
+                iframe_url = $(source).attr('data-fullname');
+
+                $.ajax({
+                        url: "<?= base_url("Testing/getFileBase64"); ?>",
+                        method: "POST",
+                        data: {
+                            fileName: iframe_url
+                        }
+                    })
+                    .done(function() {
+                        $(".jsCustomPreview").attr("src", "https://automotohrattachments.s3.amazonaws.com/" + encodeURIComponent(iframe_url));
+                    })
+            }
+
             $('#resume_modal_body').html(resume_content);
-            $("#resume_iframe").attr("src", iframe_url);
+            if (!isPDF) {
+                $("#resume_iframe").attr("src", iframe_url);
+            }
             $('#resume_modal_footer').html(footer_download_content);
             $('#resume_modal_footer').append(footer_print_content);
             $('#resume_modal_footer').append(footer_send_resume);
             $('#resume_modal_footer').append(request_message);
             $('#resume_modal_title').html(document_title);
             $('#show_applicant_resume').modal('show');
-            loadIframe(iframe_url, '#preview_iframe', true);
+            if (!isPDF) {
+                loadIframe(iframe_url, '#preview_iframe', true);
+            }
         } else {
 
             var request_message = '';
@@ -2511,6 +2539,7 @@
         $('.show-status-box').click(function() {
             $(this).next().show();
         });
+
 
         $('#send_rej_email').click(function() {
             if ($(".ej_checkbox:checked").size() > 0) {
@@ -3709,6 +3738,56 @@ $this->session->set_userdata('ats_params', $_SERVER['REQUEST_URI']);
     $("#fair-type").change(function() {
         $('#app-type').val('Job Fair');
     });
+</script>
+
+<script>
+    $(function() {
+        //
+        $('#send_still_interested_email').click(function() {
+            //
+            if ($(".ej_checkbox:checked").size() === 0) {
+                return _error(
+                    "Please select at least one applicant."
+                );
+            }
+
+            return _confirm(
+                'Do you confirm your intention to dispatch the message "Are You Still Interested"?',
+                sendEmailsToSelectedApplicants
+            );
+        });
+
+
+        function sendEmailsToSelectedApplicants() {
+            //
+            let selectedApplicantIds = [];
+            //
+            $('input[name="ej_check[]"]:checked').map(function() {
+                selectedApplicantIds.push(
+                    $(this).data('list')
+                );
+            });
+            $('#candidate-loader').show();
+            //
+            const formData = new FormData();
+            //
+            formData.append("applicant_ids", selectedApplicantIds);
+            //
+            $.ajax({
+                url: "<?= base_url() ?>send_manual_email/send_still_interested_email",
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'post',
+                data: formData,
+                success: function(response) {
+                    $('#candidate-loader').hide();
+                    _success('Success: Email sent to selected applicants.');
+                },
+                error: function() {}
+            });
+        }
+    })
 </script>
 
 <?php $this->load->view('iframeLoader'); ?>

@@ -703,7 +703,39 @@ define("ALLOWED_EXTENSIONS", "image/*, video/mp4, video/mov");
 // set email template for next day
 // shift reminder
 define("NEXT_DAY_SHIFT_REMINDER_EMAIL", 435);
-
+define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+//set Published Shifts BG Collor
+define("DB_UNPUBLISHED_SHIFTS", "#df8279");
+define("FONT_COLOR_UNPUBLISHED_SHIFTS", "#ffffff");
+
+//
+define("SHIFTS_PUBLISH_CONFIRMATION", 447);
+
+//
+define('EMPLOYEE_PERFORMANCE_EVALUATION_MODULE', 'employeeperformanceevaluation');
+define('PERFORMANCE_VERIFICATION_EMAIL', 448);
+
+
+define('W4_EXEMPTION_FROM_WITHHOLDING_24', 'You may claim exemption
+from withholding for 2024 if you meet both of the following
+conditions: you had no federal income tax liability in 2023
+and you expect to have no federal income tax liability in
+2024. You had no federal income tax liability in 2023 if (1)
+your total tax on line 24 on your 2023 Form 1040 or 1040-SR
+is zero (or less than the sum of lines 27, 28, and 29), or (2)
+you were not required to file a return because your income
+was below the filing threshold for your correct filing status. If
+you claim exemption, you will have no income tax withheld
+from your paycheck and may owe taxes and penalties when
+you file your 2024 tax return. To claim exemption from
+withholding, certify that you meet both of the conditions
+above by writing “Exempt” on Form W-4 in the space below
+Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not
+complete any other steps. You will need to submit a new
+Form W-4 by February 15, 2025');
+
+define('W4_YEAR_24', '2024');

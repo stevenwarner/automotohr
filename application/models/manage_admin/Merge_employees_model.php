@@ -60,8 +60,11 @@ class Merge_employees_model extends CI_Model
         //
         $secondary_employee = $this->get_employee_profile($secondary_employee_sid);
         $primary_employee = $this->get_employee_profile($primary_employee_sid);
-        //
-        $this->db->query("INSERT INTO deleted_users_by_merge SELECT * FROM users where sid = $secondary_employee_sid;");
+
+        if (!$this->db->where("sid", $secondary_employee_sid)->count_all_results("deleted_users_by_merge")) {
+            //
+            $this->db->query("INSERT INTO deleted_users_by_merge SELECT * FROM users where sid = $secondary_employee_sid;");
+        }
         //
         $data_to_update = $this->findDifference($primary_employee, $secondary_employee);
         //
@@ -264,7 +267,7 @@ class Merge_employees_model extends CI_Model
         $secondary_notes = $this->db->get('portal_misc_notes')->result_array();
         //
         if (count($secondary_notes) > 0) {
-                foreach ($secondary_notes as $secondary_check) {
+            foreach ($secondary_notes as $secondary_check) {
 
                 $primary_check = array();
                 //

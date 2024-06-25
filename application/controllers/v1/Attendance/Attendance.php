@@ -167,8 +167,8 @@ class Attendance extends Public_Controller
         //
         $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);
         $endDate = formatDateToDB($endDate, SITE_DATE, DB_DATE);
-        $data["filter"]['startDateDB'] = $startDate;
-        $data["filter"]['endDateDB'] = $endDate;
+        $data["filter"]['startDateDB'] = $data["startDate"] = $startDate;
+        $data["filter"]['endDateDB'] = $data["endDate"] = $endDate;
         $data['user_sid'] = 0;
         if ($data["filter"]["employeeId"]) {
             $data['user_sid'] = $data["filter"]["employeeId"];
@@ -212,7 +212,8 @@ class Attendance extends Public_Controller
                 $this->loggedInCompany["sid"]
             );   
         //  
-        // _e($data["clockArray"],true,true);
+        // echo $this->db->last_query();
+        // _e($data["employees"],true,true);
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");
@@ -229,9 +230,19 @@ class Attendance extends Public_Controller
         $data["employee"] = $this->loggedInEmployee;
         $data["session"] = checkAndGetSession("all");
 
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        $data["pageJs"] = [
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
         $this->setCommon("v1/plugins/select2/select2.min", "css");
         $this->setCommon("v1/plugins/select2/select2.min", "js");
-
+        $this->setCommon("v1/app/css/system", "css");
         $this->setCommon("v1/attendance/js/timesheets", "js");
         $this->getCommon($data, "timesheets");
 
@@ -242,35 +253,191 @@ class Attendance extends Public_Controller
         $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
         //
         $data["sidebarPath"] = $this->sidebarPath;
-        $data["mainContentPath"] = "v1/attendance/timesheets";
+        $data["mainContentPath"] = "v1/attendance/employees_timesheets";
         $this->load->model("v1/Attendance/Clock_model", "clock_model");
-
+        //
+        $defaultRange = getSystemDate(SITE_DATE) . ' - ' . getSystemDate(SITE_DATE);
+        $dateRange = $this->input->get("date_range") ?? $defaultRange;
+        $tmp = explode("-", $dateRange);
+        $startDate = trim($tmp[0]);
+        $endDate = trim($tmp[1]);
         // get todays date
+        //
         $data["filter"] = [
-            "employees" => $this->input->get("employees", true) ?? "",
-            "year" => $this->input->get("year", true) ?? getSystemDate("Y"),
-            "month" => $this->input->get("month", true) ?? getSystemDate("m"),
+            "employees" => $this->input->get("employees", true) ?? ["all"],
+            "departments" => $this->input->get("department", true) ?? "all",
+            "teams" => $this->input->get("teams", true) ?? ["all"],
+            "jobTitles" => $this->input->get("jobTitle", true) ?? ["all"],
         ];
-        $data["filter"]["startDate"] = $data["filter"]["year"] . "-" . $data["filter"]["month"] . "-01";
-        $data["filter"]["endDate"] = getSystemDate($data["filter"]["year"] . "-" . $data["filter"]["month"] . "-t");
-        $data["records"] = [];
-
-        if ($data["filter"]["employeeId"]) {
-            //
-            $data["records"] = $this->clock_model
-                ->getAttendanceWithinRange(
+        //
+        $startDate = formatDateToDB($startDate, SITE_DATE, DB_DATE);
+        $endDate = formatDateToDB($endDate, SITE_DATE, DB_DATE);
+        //
+        $data["filter"]['startDateDB'] = $data["startDate"] = $startDate;
+        $data["filter"]['endDateDB'] = $data["endDate"] = $endDate;
+        $data["filter"]["dateRange"] = $dateRange;
+        //
+        $data["filterEmployees"] = $this->clock_model
+                ->getFilterEmployees(
                     $this->loggedInCompany["sid"],
-                    $data["filter"]["employeeId"],
-                    $data["filter"]["startDate"],
-                    $data["filter"]["endDate"]
-                );
-        }
+                    $data["filter"]["employees"],
+                    $data["filter"]["teams"],
+                    $data["filter"]["departments"],
+                    $data["filter"]["jobTitles"]
+                );       
+        //
+        if ($data["filterEmployees"]) {
+            foreach ($data["filterEmployees"] as $ekey => $employee) {
+                // get the employee worked shifts
+                $clockArray = $this->clock_model->calculateTimeWithinRange(
+                    $employee['sid'],
+                    $startDate,
+                    $endDate
+                ); 
+                //
+                $data["filterEmployees"][$ekey]['clockArray'] = $clockArray;
+            }
+        }                
+        //
+        $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);
+        $data['departments'] = $this->clock_model->getDepartments($this->loggedInCompany["sid"]); 
+        $data['teams'] = $this->clock_model->getTeams($this->loggedInCompany["sid"], $data['departments']);
+        $data['jobTitles'] = $this->clock_model->getJobTitles();
+        //   
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
+    }
 
+    /**
+     * logged in employees locations
+     */
+    public function locations()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
 
-        $data["employees"] = $this->clock_model
-            ->getEmployees(
-                $this->loggedInCompany["sid"]
-            );
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/plugins/select2/select2.min", "css");
+        $this->setCommon("v1/plugins/select2/select2.min", "js");
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/locations", "js");
+        $this->getCommon($data, "employee_locations");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/employees_locations";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        //
+        $defaultDate = getSystemDate(SITE_DATE);
+        $selectedDate = $this->input->get("clocked_in_date") ?? $defaultDate;
+        //
+        $clockedInDate = formatDateToDB($selectedDate, SITE_DATE, DB_DATE);
+        //
+        $data["filter"] = [
+            "employees" => $this->input->get("employees", true) ?? ["all"]
+        ];
+        $data["filter"]['clockedInDate'] = $clockedInDate;
+        $data["filter"]['selectedDate'] = $selectedDate;
+        //
+        $data["markers"] = $this->clock_model
+                ->getClockedInEmployees(
+                    $this->loggedInCompany["sid"],
+                    $clockedInDate,
+                    $data["filter"]["employees"]
+                ); 
+        //        
+        // _e($data["markers"],true);   
+        $data["employees"] = $this->clock_model->getEmployees($this->loggedInCompany["sid"]);        
+        //           
+        $this->load->view("main/header", $data);
+        $this->load->view("v1/employer/main");
+        $this->load->view("main/footer");
+    }
+
+    public function location_detail()
+    {
+        //
+        onlyPlusAndPayPlanCanAccess();
+        //
+        $data["employee"] = $this->loggedInEmployee;
+        $data["session"] = checkAndGetSession("all");
+
+        // add plugins
+        $data["pageCSS"] = [
+            getPlugin("timepicker", "css"),
+            getPlugin("daterangepicker", "css"),
+        ];
+        //
+        $data["pageJs"] = [
+            // Google maps
+            "https://maps.googleapis.com/maps/api/js?key=" . getCreds("AHR")->GoogleAPIKey . "",
+            getPlugin("google_map", "js"),
+            getPlugin("validator", "js"),
+            getPlugin("timepicker", "js"),
+            getPlugin("daterangepicker", "js"),
+        ];
+
+        $this->setCommon("v1/plugins/ms_modal/main", "css");
+        $this->setCommon("v1/plugins/ms_modal/main", "js");
+        $this->setCommon("v1/app/css/system", "css");
+        $this->setCommon("v1/attendance/js/location_detail_1", "js");
+        $this->getCommon($data, "location_detail");
+
+        //
+        $data["load_view"] = false;
+        $data["sanitizedView"] = true;
+        $data["title"] = "Overview";
+        $data['security_details'] = db_get_access_level_details($this->loggedInEmployee["sid"]);
+        //
+        $data["sidebarPath"] = $this->sidebarPath;
+        $data["mainContentPath"] = "v1/attendance/location_detail";
+        $this->load->model("v1/Attendance/Clock_model", "clock_model");
+        //
+        $selectedDate = $this->input->get("date");
+        $employeeId = $this->input->get("sid");
+        //
+        $clockedInDate = formatDateToDB($selectedDate, SITE_DATE, DB_DATE);
+        $data['clockedInDate'] = $clockedInDate;
+        $data['employeeInfo'] = get_employee_profile_info($employeeId);
+        //
+        $data["history"] = $this->clock_model
+                ->getEmployeeLoginHistory(
+                    $employeeId,
+                    $clockedInDate,
+                ); 
+        //
+        // get the employee worked shifts
+        $data["clockArray"] = $this->clock_model->calculateTimeWithinRange(
+            $employeeId,
+            $clockedInDate,
+            $clockedInDate
+        ); 
+        //        
+        // _e($data["history"],true);           
+        //           
         $this->load->view("main/header", $data);
         $this->load->view("v1/employer/main");
         $this->load->view("main/footer");

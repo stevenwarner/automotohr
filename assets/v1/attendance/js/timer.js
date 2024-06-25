@@ -12,6 +12,10 @@ $(function markAttendance() {
 	 */
 	let initialDateDuration;
 	/**
+	 * holds the initial value
+	 */
+	let timeZone;
+	/**
 	 * holds the timer ref
 	 */
 	let timerREF;
@@ -117,6 +121,7 @@ $(function markAttendance() {
 					// check on break start time
 					if (
 						selectedBreak[0]["start_time"] &&
+						selectedBreak[0]["start_time"] != "" &&
 						moment() <
 							moment(selectedBreak[0]["start_time"], "hh:mm a")
 					) {
@@ -129,6 +134,7 @@ $(function markAttendance() {
 					// check the end time
 					if (
 						selectedBreak[0]["end_time"] &&
+						selectedBreak[0]["end_time"] != "" &&
 						moment() >
 							moment(selectedBreak[0]["end_time"], "hh:mm a")
 					) {
@@ -267,6 +273,7 @@ $(function markAttendance() {
 				} else {
 					initialDate = resp.clock_time;
 					initialDateDuration = resp.time;
+					timeZone = resp.timezone;
 					timerREF = setInterval(handleTimer, 1000);
 				}
 				//
@@ -291,8 +298,15 @@ $(function markAttendance() {
 	 * @param {string} latitude
 	 * @param {string} longitude
 	 * @param {number} jobSiteId
+	 * @param {bool} confirmed
 	 */
-	function markAttendance(eventType, latitude, longitude, jobSiteId) {
+	function markAttendance(
+		eventType,
+		latitude,
+		longitude,
+		jobSiteId,
+		confirmed
+	) {
 		// check if the call is already been made
 		if (XHR !== null) {
 			return;
@@ -302,15 +316,21 @@ $(function markAttendance() {
 			true
 		);
 		//
+		const passData = {
+			type: eventType,
+			latitude,
+			longitude,
+			job_site: jobSiteId,
+		};
+		// when confirmed
+		if (confirmed !== undefined) {
+			passData.confirmed = confirmed;
+		}
+		//
 		XHR = $.ajax({
 			url: baseUrl("v1/clock/mark"),
 			method: "POST",
-			data: JSON.stringify({
-				type: eventType,
-				latitude,
-				longitude,
-				job_site: jobSiteId,
-			}),
+			data: JSON.stringify(passData),
 			headers: { "content-type": "application/json" },
 		})
 			.always(function () {
@@ -318,7 +338,21 @@ $(function markAttendance() {
 				XHR = null;
 			})
 			.fail(handleErrorResponse)
-			.done(function () {
+			.done(function (resp) {
+				console.log(resp)
+				// check for confirmation
+				if (resp.confirm) {
+					return _confirm(resp.msg, function () {
+						markAttendance(
+							eventType,
+							latitude,
+							longitude,
+							jobSiteId,
+							true
+						);
+					});
+				}
+				//
 				_success("You have successfully " + getType(eventType) + ".");
 				fetchAttendance();
 			});
@@ -357,13 +391,15 @@ $(function markAttendance() {
 		}
 		// clock date
 		const clockDateObj = moment
-			.utc(initialDate)
+			.utc(initialDate).tz(timeZone)
 			.subtract(initialDateDuration, "seconds");
-		const todayDate = moment.utc();
+		const todayDate = moment.utc().tz(timeZone);
+		// const todayDate = moment.utc("2024-06-03 00:42:25");
+		console.log(todayDate);
 		// get the difference
 		const diff = todayDate.diff(clockDateObj);
 		//
-		const dt = moment(diff).utc();
+		const dt = moment(diff).utc().tz(timeZone);
 		//
 		$(".jsAttendanceClockHour").html(dt.format("HH"));
 		$(".jsAttendanceClockMinute").html(dt.format("mm"));
@@ -419,6 +455,7 @@ $(function markAttendance() {
 		} else if (state === "break_started") {
 			// show break end and clock out buttons
 			buttons += generateButton("break_end");
+			buttons += generateButton("clocked_out");
 		} else {
 			// show clock in
 			buttons += generateButton("clocked_in");
@@ -463,7 +500,7 @@ $(function markAttendance() {
 			html +=
 				'&nbsp;<button class="btn btn-yellow jsAttendanceBtn" data-type="break_ended">';
 			html += '	<i class="fa fa-stop csF16" aria-hidden="true"></i>';
-			html += "	&nbsp;Break end & clock in";
+			html += "	&nbsp;Break end";
 			html += "</button>";
 		}
 

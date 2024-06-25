@@ -691,4 +691,18 @@ class Users_model extends CI_Model
 
         return $this->db->count_all_results();
     }
+
+    function checkExecutiveAdmin($email)
+    {
+        if (
+            $this->db
+            ->where('email', $email)
+            ->where('active', 1)
+            ->count_all_results('executive_users')
+        ) {
+            return 'yes';
+        } else {
+            return 'no';
+        }
+    }
 }

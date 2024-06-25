@@ -121,10 +121,10 @@ class Merge_employees extends Admin_Controller
             'dependant_information' => $dependant_information,
             'license_information' => $license_information,
             'direct_deposit_information' => $bank_details,
-            'e_signature' => $e_signature_data,
+            'e_signature' => "",
             'eeoc' => $eeoc,
             'group' => "",
-            'documents' => $documents
+            'documents' => count($documents)
         ];
         //
         $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);

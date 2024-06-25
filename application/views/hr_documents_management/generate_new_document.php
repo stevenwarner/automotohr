@@ -45,17 +45,30 @@
                                                 <?php echo form_error('document_title'); ?>
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-xs-12">
-                                                <?php $field_id = 'document_description'; ?>
-                                                <?php $save_value = isset($document_info[$field_id]) ? html_entity_decode($document_info[$field_id]) : ''; ?>
-                                                <?php echo form_label('Document Content<span class="staric">*</span>', $field_id); ?>
-                                                <div style="margin-bottom:5px;"><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
-                                                <?php echo form_textarea($field_id, set_value($field_id, $save_value, false), ' class="invoice-fields ckeditor" id="' . $field_id . '"'); ?>
-                                                <?php echo form_error($field_id); ?>
+                                        <br/>
+                                        
+                                        <?php if($document_info["fillable_document_slug"]) { ?>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <?php $field_id = 'document_description'; ?>
+                                                    <?php $save_value = isset($document_info[$field_id]) ? html_entity_decode($document_info[$field_id]) : ''; ?>
+                                                    <?php echo form_label('Document Content<span class="staric">*</span>', $field_id); ?>
+                                                    <?php $this->load->view("v1/documents/fillable/{$document_info["fillable_document_slug"]}_preview");?>
+                                                    <?php echo form_textarea($field_id, set_value($field_id, $save_value, false), ' class="hidden" id="' . $field_id . '"'); ?>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <?php } else {?>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <?php $field_id = 'document_description'; ?>
+                                                    <?php $save_value = isset($document_info[$field_id]) ? html_entity_decode($document_info[$field_id]) : ''; ?>
+                                                    <?php echo form_label('Document Content<span class="staric">*</span>', $field_id); ?>
+                                                    <div style="margin-bottom:5px;"><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
+                                                    <?php echo form_textarea($field_id, set_value($field_id, $save_value, false), ' class="invoice-fields ckeditor" id="' . $field_id . '"'); ?>
+                                                    <?php echo form_error($field_id); ?>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
 
                                         <?php if (!empty($authorized_signature)) { ?>
                                             <div class="row">
@@ -64,8 +77,9 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
+                                        
 
-                                        <div class="row">
+                                        <div class="row <?=$document_info["fillable_document_slug"] ? "hidden" :"";?>">
                                             <div class="col-xs-12 margin-top">
                                                 <label>Include in Onboarding<span class="staric">*</span></label>
                                                 <div class="hr-select-dropdown">
@@ -80,7 +94,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row <?=$document_info["fillable_document_slug"] ? "hidden" :"";?>">
                                             <div class="col-xs-12">
                                                 <label>Acknowledgment Required</label>
                                                 <div class="hr-select-dropdown">
@@ -97,7 +111,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row <?=$document_info["fillable_document_slug"] ? "hidden" :"";?>">
                                             <div class="col-xs-12">
                                                 <label>Download Required</label>
                                                 <div class="hr-select-dropdown">
@@ -114,7 +128,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row">
+                                        <div class="row <?=$document_info["fillable_document_slug"] ? "hidden" :"";?>">
                                             <div class="col-xs-12">
                                                 <label>Signature Required</label>
                                                 <div class="hr-select-dropdown">
@@ -291,7 +305,7 @@
                                         <?php } ?>
 
                                         <?php if (isset($document_info['sid'])) { ?>
-                                            <div class="row">
+                                            <div class="row <?=$document_info["fillable_document_slug"] ? "hidden" :"";?>">
                                                 <div class="col-xs-12">
                                                     <label class="control control--checkbox font-normal">
                                                         Convert To Pay Plan

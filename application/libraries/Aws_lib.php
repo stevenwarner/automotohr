@@ -84,6 +84,16 @@ class Aws_lib
         return $result;
     }
 
+    /**
+     * Copy the object in S3
+     * @param array $options
+     * @return \Aws\Result|\Guzzle\Service\Resource\Model
+     */
+    public function copyObject($options)
+    {
+        return $this->s3->copyObject($options);
+    }
+
     public function delete_object($bucket, $keyname, $objectType)
     {
         if ($objectType == "file") {

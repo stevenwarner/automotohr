@@ -74,6 +74,8 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.eeoc_code');
         $this->db->select('portal_job_applications.uniform_top_size');
         $this->db->select('portal_job_applications.uniform_bottom_size');
+        $this->db->select('portal_job_applications.employee_number');
+
         //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');
@@ -1145,7 +1147,11 @@ class Hire_onboarding_applicant_model extends CI_Model
                     }
                 }
             }
-
+            //
+            $this->load->model('hr_documents_management_model');
+            //
+            $this->hr_documents_management_model->moveDocumentsHistory($sid, $hired_sid);
+            //
             return $records_arr;
         } else {
             return 0;
@@ -1280,6 +1286,10 @@ class Hire_onboarding_applicant_model extends CI_Model
 
                 //
                 $return_array['documents'] = $records_arr;
+                //
+                $this->load->model('hr_documents_management_model');
+                //
+                $this->hr_documents_management_model->moveDocumentsHistory($sid, $hired_sid);
             }
         }
         //
@@ -1496,6 +1506,12 @@ class Hire_onboarding_applicant_model extends CI_Model
 
         if (!empty($record_arr)) {
             $eeocOldSid = $record_arr[0]['sid'];
+
+            if (!$record_arr[0]["us_citizen"]) {
+                $record_arr[0]["is_opt_out"] = 1;
+                $record_arr[0]["last_completed_on"] = getSystemDate();
+                $record_arr[0]["is_expired"] = 1;
+            }
 
             unset($record_arr[0]['sid']);
             $record_arr[0]['users_type'] = 'employee';

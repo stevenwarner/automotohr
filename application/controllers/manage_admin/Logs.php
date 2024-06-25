@@ -427,7 +427,7 @@ class logs extends Admin_Controller
         }
     }
 
-    public function notification_email_log($email = 'all', $start_date = 'all', $end_date = 'all')
+    public function notification_email_log($from = 'all', $to_email = 'all', $start_date = 'all', $end_date = 'all')
     {
         $redirect_url = 'manage_admin';
         $function_name = 'notification_email_log';
@@ -438,7 +438,10 @@ class logs extends Admin_Controller
 
         $this->data['page_title'] = 'Notification Email Enquiries';
         $this->data['groups'] = $this->ion_auth->groups()->result();
-        $email = urldecode($email);
+        //
+        $from = urldecode($from);
+        $to_email = urldecode($to_email);
+        //
         if (!empty($start_date) && $start_date != 'all') {
             $start_date_db = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
         } else {
@@ -451,15 +454,15 @@ class logs extends Admin_Controller
             $end_date_db = null;
         }
 
-        $total_records = $this->logs_model->get_notification_email_logs($email, $start_date_db, $end_date_db, null, null, true);
+        $total_records = $this->logs_model->get_notification_email_logs($from, $to_email, $start_date_db, $end_date_db, null, null, true);
         $this->load->library('pagination');
-        $pagination_base = base_url('manage_admin/notification_email_log') . '/' . urlencode($email) . '/' .  urlencode($start_date) . '/' . urlencode($end_date);
+        $pagination_base = base_url('manage_admin/notification_email_log') . '/' . urlencode($from) . '/' . urlencode($to_email) . '/' .  urlencode($start_date) . '/' . urlencode($end_date);
 
         $records_per_page                                                       = PAGINATION_RECORDS_PER_PAGE;
-        $uri_segment                                                            = 6;
+        $uri_segment                                                            = 7;
         $keywords                                                               = '';
         $offset                                                                 = 0;
-        $page_number                                                            = ($this->uri->segment(6)) ? $this->uri->segment(6) : 1;
+        $page_number                                                            = ($this->uri->segment(7)) ? $this->uri->segment(7) : 1;
 
         if ($page_number > 1) {
             $offset                                                             = ($page_number - 1) * $records_per_page;
@@ -498,7 +501,7 @@ class logs extends Admin_Controller
         $this->data['current_page'] = $page_number;
         $this->data['from_records'] = $offset == 0 ? 1 : $offset;
         $this->data['to_records'] = $total_records < $records_per_page ? $total_records : $offset + $records_per_page;
-        $email_logs = $this->logs_model->get_notification_email_logs($email, $start_date_db, $end_date_db, $records_per_page, $offset, false);
+        $email_logs = $this->logs_model->get_notification_email_logs($from, $to_email, $start_date_db, $end_date_db, $records_per_page, $offset, false);
 
         $this->data['Flag'] = true;
         $this->data['logs'] = $email_logs;

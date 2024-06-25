@@ -8,6 +8,9 @@ $(function () {
 	$("#jsJobTitles").select2({ closeOnSelect: false });
 	$("#jsEmploymentTypes").select2({ closeOnSelect: false });
 	$("#jsNewHires").select2({ closeOnSelect: false });
+	$(".jsFilterEmployeeStatus").select2({
+		minimumResultsForSearch: -1,
+	});
 	//
 	$("#jsReportStartDate").datepicker({
 		format: "m/d/y",
@@ -82,13 +85,25 @@ $(function () {
 		}
 
 		//
+		// window.open(
+		// 	$(this).prop("href") +
+		// 		"/" +
+		// 		(selectedEmployees.length == 0 ||
+		// 		selectedEmployees.length == employeeList.length
+		// 			? "all"
+		// 			: selectedEmployees.join(",")) +
+		// 		"?start=" +
+		// 		startDate +
+		// 		"&end=" +
+		// 		endDate +
+		// 		"&token=" +
+		// 		sToken
+		// );
+		//
 		window.open(
 			$(this).prop("href") +
 				"/" +
-				(selectedEmployees.length == 0 ||
-				selectedEmployees.length == employeeList.length
-					? "all"
-					: selectedEmployees.join(",")) +
+				employeeSids.join(",") +
 				"?start=" +
 				startDate +
 				"&end=" +

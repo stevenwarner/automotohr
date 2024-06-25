@@ -38,10 +38,16 @@ class Testing extends CI_Controller
      */
     public function test()
     {
-        // load payroll model
-        $this->load->model("v1/Payroll/Copy_model", "copy_model");
-        //
-        $this->copy_model->copyCompanyEarningTypes(56885, 21);
+        $results = $this->db->select("sid")
+            ->get("portal_job_title_templates")
+            ->result_array();
+
+        foreach ($results as $v) {
+            $this->db->where("sid", $v["sid"])
+                ->update("portal_job_title_templates", [
+                    "color_code" => generateRandomColor()
+                ]);
+        }
     }
 
     /**
@@ -53,7 +59,7 @@ class Testing extends CI_Controller
         $this->load->model("v1/Payroll/Wage_model", "wage_model");
         //
         $this->wage_model->calculateEmployeeWage(
-            15753, 
+            15753,
             "2024-01-01",
             "2024-01-05"
         );
@@ -95,7 +101,8 @@ class Testing extends CI_Controller
         exit(count($employees) . " employees are synced!");
     }
 
-    public function syncEmployeeHomeAddress () {
+    public function syncEmployeeHomeAddress()
+    {
         $employees = $this->db
             ->select("employee_sid, gusto_uuid")
             ->where('gusto_home_address_uuid', NULL)
@@ -105,7 +112,7 @@ class Testing extends CI_Controller
         //
         if (!$employees) {
             exit("no employees found");
-        }  
+        }
         //
         $this->load->model("v1/Payroll_model", "payroll_model");
         //
@@ -129,12 +136,12 @@ class Testing extends CI_Controller
                         $employeeId,
                         "employee"
                     );
-                   
+
                 //
                 if ($companyStateForms['completed']) {
                     foreach ($companyStateForms['completed'] as $form) {
                         //
-                        _e($form,true);
+                        _e($form, true);
                         if ($form['title'] == "2020 W-4MN, Minnesota Employee Withholding Allowance/Exemption Certificate") {
                             if (!$employeeInfo['Location_Address']) {
                                 $employeeInfo['Location_Address'] = $form['form_data']['street_1'];
@@ -153,7 +160,7 @@ class Testing extends CI_Controller
                             }
                         }
                     }
-                }   
+                }
                 //
                 if ($companyStateForms['']) {
                     if (!$employeeInfo['Location_Address']) {
@@ -181,7 +188,6 @@ class Testing extends CI_Controller
                         $employeeInfo['Location_ZipCode'] = $w4FormInfo['zip'];
                     }
                 }
-                
             }
 
             //
@@ -221,7 +227,6 @@ class Testing extends CI_Controller
                         $employeeInfo['Location_ZipCode'] = $w4FormInfo['zip'];
                     }
                 }
-                
             }
 
             if (
@@ -236,7 +241,7 @@ class Testing extends CI_Controller
                 //
                 if ($i9FormInfo) {
                     if (!$employeeInfo['Location_Address']) {
-                        $employeeInfo['Location_Address'] = $i9FormInfo['section1_address'].' '.$i9FormInfo['section1_apt_number'];
+                        $employeeInfo['Location_Address'] = $i9FormInfo['section1_address'] . ' ' . $i9FormInfo['section1_apt_number'];
                     }
                     //
                     if (!$employeeInfo['Location_City']) {
@@ -283,18 +288,17 @@ class Testing extends CI_Controller
                     if (!$employeeInfo['Location_ZipCode']) {
                         $employeeInfo['Location_ZipCode'] = $fullEmploymentApplication['TextBoxAddressZIPFormer1'];
                     }
-                }    
-                
+                }
             }
 
-            _e($employeeInfo,true);
+            _e($employeeInfo, true);
             if (
                 $employeeInfo['Location_Address'] &&
                 $employeeInfo['Location_City'] &&
                 $employeeInfo['state_code'] &&
                 $employeeInfo['Location_ZipCode']
             ) {
-                
+
                 // sync employee address
                 $this->payroll_model->createEmployeeHomeAddress($employeeId, [
                     'street_1' => $employeeInfo['Location_Address'],
@@ -305,6 +309,330 @@ class Testing extends CI_Controller
                 ]);
             }
         }
-        _e("script process complete",true,true);  
+        _e("script process complete", true, true);
     }
+
+    // Time off 
+    public function timeOffHistoryMove($employeeSid)
+    {
+
+        $results = $this->db->select("*")
+            ->where("new_employee_sid", $employeeSid)
+            ->order_by('sid', 'Desc')
+            ->limit(1)
+            ->get("employees_transfer_log")
+            ->result_array();
+
+        if (empty($results)) {
+            echo "employee transfer log not found";
+        } else {
+
+            //
+            $adminId = getCompanyAdminSid($results[0]['to_company_sid']);
+            $previousEmployeeSid = $results[0]['previous_employee_sid'];
+            //
+            $this->load->model('timeoff_model');
+
+            $employeeRequests = $this->timeoff_model
+                ->getEmployeeRequestsPrevious(
+                    $previousEmployeeSid
+                );
+
+            //
+            if ($employeeRequests) {
+                foreach ($employeeRequests as $request) {
+                    //Get Ploicy Title
+                    $policyData = $this->timeoff_model
+                        ->getPreviousPlicyTitle(
+                            $request['company_sid'],
+                            $request['timeoff_policy_sid']
+                        );
+
+                    // Get Policy Id
+                    $newPolicyId = $this->timeoff_model
+                        ->getPreviousPlicySid(
+                            $results[0]['to_company_sid'],
+                            $policyData['title']
+                        );
+
+                    if (empty($newPolicyId)) {
+                        $policyDetails =
+                            $this->timeoff_model->getPolicyDetailsById($request['timeoff_policy_sid']);
+                        //
+                        unset($policyDetails['sid']);
+                        //
+                        $policyDetails['company_sid'] = $results[0]['to_company_sid'];
+                        $policyDetails['creator_sid'] = $adminId;
+                        $policyDetails['type_sid'] = $this->timeoff_model
+                            ->checkAndAddType(
+                                $policyDetails['type_sid'],
+                                $results[0]['to_company_sid']
+                            );
+                        $policyDetails['is_entitled_employee'] = 1;
+                        $policyDetails['assigned_employees'] = $employeeSid;
+
+                        // insert the policy
+                        $this->db->insert('timeoff_policies', $policyDetails);
+                        $newPolicyId['sid'] = $this->db->insert_id();
+                    }
+
+                    //
+                    $requestId = $request['sid'];
+                    $approvedBy = $request['approved_by'];
+                    //
+                    unset($request['sid']);
+                    //
+                    $request['company_sid'] = $results[0]['to_company_sid'];
+                    $request['employee_sid'] = $results[0]['new_employee_sid'];
+                    $request['timeoff_policy_sid'] = $newPolicyId['sid'];
+                    $request['creator_sid'] = $request['creator_sid'] ==  $results[0]['new_employee_sid'] ? $results[0]['new_employee_sid'] : $adminId;
+                    $request['approved_by'] = $request['approved_by'] ? $adminId : $request['approved_by'];
+                    //
+                    $whereArray = [
+                        'employee_sid' => $results[0]['new_employee_sid'],
+                        'timeoff_policy_sid' => $newPolicyId['sid'],
+                        'request_from_date' => $request['request_from_date'],
+                        'request_to_date' => $request['request_to_date'],
+                        'status' => $request['status']
+                    ];
+                    //
+                    if (!$this->db->where($whereArray)->count_all_results('timeoff_requests')) {
+                        //
+                        $this->db->insert(
+                            'timeoff_requests',
+                            $request
+                        );
+                        //
+                        if ($approvedBy) {
+                            //
+                            $newRequestId = $this->db->insert_id();
+                            //
+                            $comment = $this->timeoff_model
+                                ->getRequestApproverComment(
+                                    $requestId,
+                                    $approvedBy
+                                );
+                            // Insert the time off timeline
+                            $insertTimeline = array();
+                            $insertTimeline['request_sid'] = $newRequestId;
+                            $insertTimeline['employee_sid'] = $adminId;
+                            $insertTimeline['action'] = 'update';
+                            $insertTimeline['note'] = json_encode([
+                                'status' => $request['status'],
+                                'canApprove' => 1,
+                                'details' => [
+                                    'startDate' => $request['request_from_date'],
+                                    'endDate' => $request['request_to_date'],
+                                    'time' => $request['requested_time'],
+                                    'policyId' => $newPolicyId['sid'],
+                                    'policyTitle' => $this->db
+                                        ->select('title')
+                                        ->where('sid', $newPolicyId['sid'])
+                                        ->get('timeoff_policies')->row_array()['title'],
+                                ],
+                                'comment' => $comment
+                            ]);
+                            $insertTimeline['created_at'] = getSystemDate();
+                            $insertTimeline['updated_at'] = getSystemDate();
+                            $insertTimeline['is_moved'] = 0;
+                            $insertTimeline['comment'] = $comment;
+                            //
+                            $this->db->insert('timeoff_request_timeline', $insertTimeline);
+                        }
+                    }
+                }
+            }
+
+            echo "Done";
+        }
+    }
+
+
+    public function eeoc($employeeID)
+    {
+        $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employeeID, "employee");
+        _e($eeo_form_info, true, true);
+    }
+
+    public function checkTimeoff($employeeId, $companyId)
+    {
+        $this->db->select('
+            joined_at,
+            registration_date,
+            rehire_date,
+            user_shift_hours,
+            user_shift_minutes,
+            employee_status,
+            is_executive_admin,
+            employee_type,
+            terminated_status,
+            active
+        ')
+            ->order_by('first_name', 'ASC')
+            ->where('sid', $employeeId);
+        //
+        $a = $this->db->get('users');
+        $employee = $a->row_array();
+        $a->free_result();
+
+        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        //
+        $todayDate = date('Y-m-d', strtotime('now'));
+        //
+        $employeeAnniversaryDate = getEmployeeAnniversary($JoinedDate, $todayDate);
+
+        $this->load->model('timeoff_model');
+        $policies = $this->timeoff_model->getCompanyPoliciesWithAccruals($companyId);
+        //
+        foreach ($policies as $policy) {
+            _e($this->db->last_query(), true);
+            $balanceInMinutes = $this->timeoff_model->getEmployeeConsumedTimeByResetDateNew(
+                $policy['sid'],
+                $employeeId,
+                $employeeAnniversaryDate['lastAnniversaryDate'],
+                $employeeAnniversaryDate['upcomingAnniversaryDate']
+            );
+            //
+            _e($balanceInMinutes, true);
+        }
+        //
+        _e($employeeAnniversaryDate, true);
+        _e($JoinedDate, true, true);
+    }
+
+    function fixEmployeeMerge()
+    {
+        $this->db->select('
+            sid,
+            primary_employee_sid,
+            secondary_employee_sid,
+            primary_employee_profile_data,
+            secondary_employee_profile_data,
+            merge_at
+        ');
+        //
+        $this->db->group_start();
+        $this->db->where('secondary_employee_profile_data <>', NULL);
+        $this->db->or_where('secondary_employee_profile_data <>', '');
+        $this->db->or_where('secondary_employee_profile_data <>', 'a:0:{}');
+        $this->db->group_end();
+        //
+        $a = $this->db->get('employee_merge_history');
+        $mergeEmployees = $a->result_array();
+        $a->free_result();
+        //
+        $effectedEmployeeCount = 0;
+        $employeeFound = [];
+        $employeeNotFound = [];
+        //
+        if ($mergeEmployees) {
+            foreach ($mergeEmployees as $md) {
+                //
+                if (!empty($md['secondary_employee_profile_data']) && $md['secondary_employee_profile_data'] != 'a:0:{}') {
+                    $secondary_data = @unserialize($md['secondary_employee_profile_data']);
+                    //
+                    if ($secondary_data === false) {
+                        //
+                        $newData = '';
+                        //
+
+                        $this->db->select('*');
+                        $this->db->where('sid', $md['secondary_employee_sid']);
+                        //
+                        $b = $this->db->get('deleted_users_by_merge');
+                        $employeeData = $b->row_array();
+                        $b->free_result();
+                        //
+                        if ($employeeData) {
+                            $employeeFound[] = $md['secondary_employee_sid'];
+                            $newData = serialize($employeeData);
+                        } else {
+                            $employeeNotFound[] = $md['secondary_employee_sid'];
+                            $split = explode('s:9:"documents"', $md['secondary_employee_profile_data']);
+                            //
+                            $modifyData = @unserialize($split[0] . 's:9:"documents";a:0:{}}');
+                            //
+                            if ($modifyData !== false) {
+                                $newData = $split[0] . 's:9:"documents";a:0:{}}';
+                            } else {
+                                $split = explode('s:11:"e_signature";a:17:', $md['secondary_employee_profile_data']);
+                                $newData = $split[0] . 's:11:"e_signature";a:0:{}s:4:"eeoc";a:0:{}s:5:"group";a:0:{}s:9:"documents";a:0:{}}';
+                            }
+                            // 
+                        }
+                        //
+                        $effectedEmployeeCount++;
+                        $this->db->where("sid", $md["sid"])
+                            ->update("employee_merge_history", [
+                                "secondary_employee_profile_data" => $newData
+                            ]);
+
+                        //
+                    }
+                }
+            }
+        }
+        //
+        _e($effectedEmployeeCount, true);
+        _e(json_encode($employeeFound), true);
+        _e(json_encode($employeeNotFound), true, true);
+    }
+
+    public function getFileBase64()
+    {
+        $this->copyObject($this->input->post("fileName"));
+        echo 'success';
+    }
+
+    /**
+     * 
+     */
+    public function copyObject($fileName)
+    {
+        // load the AWS library
+        $this->load->library(
+            "Aws_lib",
+            '',
+            "aws_lib"
+        );
+
+        $meta = [
+            "ContentType" => "application/pdf",
+            "ContentDisposition" => "inline",
+            "logicByM" => "1"
+        ];
+
+        $options = [
+            'Bucket'     => AWS_S3_BUCKET_NAME,
+            'CopySource' => urlencode(AWS_S3_BUCKET_NAME . '/' . $fileName), // Source object
+            'Key'        => $fileName, // Destination object
+            'Metadata' => $meta,
+            "MetadataDirective" => "REPLACE",
+            "ContentType" => "application/pdf",
+            'ACL'        => 'public-read', // Optional: specify the ACL (access control list)
+        ];
+        //
+        $this->aws_lib->copyObject($options);
+
+        return urlencode($fileName);
+    }
+
+    public function addNewEmployeesIntoCompany ($companyId) {
+        // Load the fake employee library
+        $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
+        //
+        $employees = 
+            $this
+            ->fakeEmployees
+            ->init(5);
+        //
+        foreach($employees as $employee){
+            $employee['parent_sid'] = $companyId;
+            $employee['active'] = 1;
+            //
+            $this->db->insert('users', $employee);
+        }
+        //
+        _e("employee add successfully");
+    } 
 }

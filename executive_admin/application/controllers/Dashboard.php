@@ -252,8 +252,8 @@ class Dashboard extends CI_Controller
                 $url = base_url() . 'dashboard/change_password/' . $user_data["username"] . '/' . $user_data["activation_code"];
                 $emailTemplateBody = 'Dear ' . $user_data["username"] . ', <br>';
                 $emailTemplateBody = $emailTemplateBody . 'You can change your password by following the link below : ' . '<br>';
-                $emailTemplateBody = $emailTemplateBody . 'Your username is : ' . $user_data["username"] . '<br>';
-                $emailTemplateBody = $emailTemplateBody . '<a href="' . $url . '">Change Your Password</a><br><br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Your username is : ' . $user_data["username"] . '</strong><br><br>';
+                $emailTemplateBody = $emailTemplateBody . '<a href="' . $url . '" style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block">Change Your Password</a><br><br>';
                 $from = FROM_EMAIL_NOTIFICATIONS; //$emailTemplateData['from_email'];
                 $to = $email;
                 $subject = 'Password Recovery'; //$emailTemplateData['subject'];
@@ -269,7 +269,7 @@ class Dashboard extends CI_Controller
                     'subject' => $subject,
                     'email' => $to,
                     'message' => $body,
-                    'username' => $user_data['sid'],
+                    'username' => 0
                 );
                 $this->Users_model->save_email_logs($emailData);
             }
@@ -302,15 +302,51 @@ class Dashboard extends CI_Controller
             )
         );
 
+        $passwordRecoveryContent = getPageContent('executive_admin_password_recovery', false);
+
+        // meta titles
+        $data['limited_menu'] = true;
+        // js
+        $data['pageJs'] = [
+            "https://www.google.com/recaptcha/api.js"
+        ];
+        //
+        $data['pageCSS'] = [
+            'v1/app/plugins/bootstrap5/css/bootstrap.min',
+            'v1/app/plugins/fontawesome/css/all',
+            'v1/app/css/login',
+        ];
+        //
+        $data['appCSS'] = bundleCSS([
+            'v1/app/css/theme',
+            'v1/app/css/pages',
+        ], $this->css, "executive_admin_forgot_password", true);
+        //
+        $data['appJs'] = bundleJs([
+            'v1/app/js/jquery-1.11.3.min',
+            'v1/plugins/bootstrap5/js/bootstrap.bundle',
+            'js/jquery.validate.min',
+            "js/additional-methods.min",
+        ], $this->js, "executive_admin_forgot_password_common", true);
+
+        $data['appJs'] .= bundleJs([
+            'v1/app/js/pages/executive_forgot_password',
+        ], $this->js, "executive_admin_forgot_password", true);
+
+
         $this->form_validation->set_rules($config);
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i> ', '</p>');
 
         if ($this->form_validation->run() == FALSE) {
             $retrn = $this->Users_model->varification_user_key($user, $key);
-            $data['page_title'] = "Change Password";
-            $this->load->view('main/header', $data);
-            $this->load->view('users/change_password');
-            $this->load->view('main/footer');
+            $data['meta'] = $passwordRecoveryContent["page"]["meta"];
+            $data['passwordRecoveryContent'] = $passwordRecoveryContent;
+
+            $data["onlyJS"] = true;
+
+            $this->load->view($this->header, $data);
+            $this->load->view('v1/app/change_password');
+            $this->load->view($this->footer);
         } else {
             $password = $this->input->post('password');
             $re_password = $this->input->post('retypepassword');
@@ -548,6 +584,16 @@ class Dashboard extends CI_Controller
             $offset,
             $this->limit
         );
+        //
+        foreach ($users as $ukey => $user) {
+            if (isset($user["is_executive_admin"]) && $user["is_executive_admin"] == 1) {
+                $is_executive = $this->Users_model->checkExecutiveAdmin($user["user_email"]);
+                //
+                if ($is_executive == 'no') {
+                    unset($users[$ukey]);
+                }
+            } 
+        }
         //
         if (!sizeof($users)) {
             $this->resp['Response'] = 'No records found.';

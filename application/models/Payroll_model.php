@@ -1176,4 +1176,14 @@ class Payroll_model extends CI_Model{
 		->where('sid', $formId)
 		->update('payroll_employees_forms', $data_to_update);
 	}
+
+	public function getEmployeeFormInfoNew ($formId) {
+		$query = $this->db
+		->select('gusto_uuid')
+		->where('sid', $formId)
+		->get('gusto_employees_forms')
+		->row_array();
+		//
+		return $query;
+	}
 }

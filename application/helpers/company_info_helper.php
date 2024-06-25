@@ -115,8 +115,11 @@ if (!function_exists('get_form_view')) {
             $form_values['pre_form'] = $form_data;
             $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
 
-            if ($assign_on >= $compare_date) {
+            if ($assign_on >= $compare_date_2024) {
+                $view = $CI->load->view('form_w4/form_w4_2024_pdf', $form_values, TRUE);
+            } else if ($assign_on >= $compare_date) {
                 //  $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
                 $view = $CI->load->view('form_w4/form_w4_2023_pdf', $form_values, TRUE);
             } else {
@@ -147,8 +150,19 @@ if (!function_exists('get_form_view')) {
             }
             //
         } else if ($form == 'pw4') {
+
+
             $form_values['pre_form'] = $form_data;
-            $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
+            $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
+            $compare_date = date("Y-m-d", strtotime('2020-01-06'));
+            $compare_date_2024 = date("Y-m-d", strtotime('2024-01-01'));
+
+            if ($assign_on >= $compare_date_2024) {
+                $view = $CI->load->view('form_w4/form_w4_2024_pdf', $form_values, TRUE);
+
+            } else {
+                $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
+            }
         } else if ($form == 'pw9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
@@ -162,8 +176,6 @@ if (!function_exists('get_form_view')) {
 if (!function_exists('replace_tags_for_document')) {
     function replace_tags_for_document($company_sid, $user_sid = null, $user_type = null, $document_body, $document_sid = 0, $authorized_signature = 0, $signature_base64 = false, $forDownload = false, $autofill = 0)
     {
-
-
         $CI = &get_instance();
 
         //Get Company Info
@@ -301,7 +313,10 @@ if (!function_exists('replace_tags_for_document')) {
             'inital',
             'sign_date',
             'text',
-            'checkbox'
+            'checkbox',
+            'supervisor',
+            'department',
+            'last_day_of_work',
         );
 
         $date = date('M d Y');
@@ -521,6 +536,82 @@ if (!function_exists('replace_tags_for_document')) {
         $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
         $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name, $my_return);
         $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
+        // Fillable documents
+        $supervisor = "";
+        $department = "";
+        if (strtolower($user_type) == 'employee' && $user_sid != null) {
+            // load the model
+            $CI->load->model(
+                "Hr_documents_management_model",
+                "hr_documents_management_model"
+            );
+            // get the supervisor with department
+            $response = $CI
+                ->hr_documents_management_model
+                ->getEmployeeSupervisorAndDepartment($user_sid);
+            if ($response) {
+                if ($response["supervisor"]) {
+                    $supervisor = explode(",", $response["supervisor"]);
+                    $supervisor = $supervisor[0];
+                    $supervisor = getUserNameBySID($supervisor, false);
+                    $supervisor = $supervisor[0]["first_name"] . ' ' . $supervisor[0]["last_name"];
+                }
+
+                if ($response["name"]) {
+                    $department = $response["name"];
+                }
+            }
+        }
+        // notice of separation
+        $my_return = str_replace('{{employee_name}}', '<input type="text" class="form-control input-grey gray-background js_employee_name" name="employee_name" value="' . ($user_info["first_name"] . ' ' . $user_info["last_name"]) . '" />', $my_return);
+
+        $my_return = str_replace('{{employee_job_title}}', '<input type="text" class="form-control input-grey gray-background js_employee_job_title" name="employee_job_title" value="' . ($user_info["job_title"]) . '" />', $my_return);
+
+        $my_return = str_replace('{{supervisor}}', '<input type="text" class="form-control input-grey gray-background js_supervisor" name="supervisor" value="' . ($supervisor) . '" />', $my_return);
+
+        $my_return = str_replace('{{department}}', '<input type="text" class="form-control input-grey gray-background js_department" name="department" value="' . ($department) . '" />', $my_return);
+
+        $my_return = str_replace('{{last_day_of_work}}', '<input type="text" class="jsDatePicker form-control input-grey gray-background js_last_work_date" name="last_work_date" readonly />', $my_return);
+
+        $my_return = str_replace('{{reason_to_leave_company}}', '<textarea rows="5" class="form-control input-grey gray-background js_reason_to_leave_company" name="reason_to_leave_company"></textarea>', $my_return);
+
+        $my_return = str_replace('{{forwarding_information}}', '<textarea rows="5" class="form-control input-grey gray-background js_forwarding_information" name="forwarding_information"></textarea>', $my_return);
+
+        // notice of termination
+        $my_return = str_replace('{{is_termination_voluntary}}', '<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="yes"/> Yes<br /><input type="radio" name="is_termination_voluntary" class="js_is_termination_voluntary" value="no"/> No', $my_return);
+        $my_return = str_replace('{{property_returned}}', '<br /><input type="radio" name="property_returned" class="js_property_returned" value="yes"/> Yes<br /><input type="radio" name="property_returned" class="js_property_returned" value="no"/> No', $my_return);
+        $my_return = str_replace('{{reemploying}}', '<br /><input type="radio" name="reemploying" class="js_reemploying" value="yes"/> Yes<br /><input type="radio" name="reemploying" class="js_reemploying" value="no"/> No', $my_return);
+        // oral employee counselling report form
+        $my_return = str_replace('{{date_of_occurrence}}', '<input type="text" class="jsDatePicker form-control input-grey gray-background js_date_of_occurrence" name="date_of_occurrence" readonly />', $my_return);
+        $my_return = str_replace('{{summary_of_violation}}', '<textarea rows="5" class="form-control input-grey gray-background js_summary_of_violation" name="summary_of_violation"></textarea>', $my_return);
+        $my_return = str_replace('{{summary_of_corrective_plan}}', '<textarea rows="5" class="form-control input-grey gray-background js_summary_of_corrective_plan" name="summary_of_corrective_plan"></textarea>', $my_return);
+        $my_return = str_replace('{{follow_up_dates}}', '<textarea rows="5" class="form-control input-grey gray-background js_follow_up_dates" name="follow_up_dates"></textarea>', $my_return);
+        $my_return = str_replace('{{counselling_form_fields}}', $CI->load->view("v1/documents/fillable/partials/oral_employee_counselling_report_form_fields", [], true), $my_return);
+
+        //
+        $my_return = str_replace('{{employee_number}}', '<input type="text" class=" form-control input-grey gray-background js_employee_number" name="employee_number" />', $my_return);
+
+        $my_return = str_replace('{{q1}}', '<textarea rows="5" class="form-control input-grey gray-background js_q1" name="q1"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q2}}', '<textarea rows="5" class="form-control input-grey gray-background js_q2" name="q2"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q3}}', '<textarea rows="5" class="form-control input-grey gray-background js_q3" name="q3"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q4}}', '<textarea rows="5" class="form-control input-grey gray-background js_q4" name="q4"></textarea>', $my_return);
+
+        $my_return = str_replace('{{q5}}', '<textarea rows="5" class="form-control input-grey gray-background js_q5" name="q5"></textarea>', $my_return);
+
+        // status and payroll
+        $my_return = str_replace('{{fillable_rate}}', '<input type="checkbox" name="fillable_rate" class="js_fillable_rate" />', $my_return);
+        $my_return = str_replace('{{fillable_from_rate}}', '<div class="input-group"><div class="input-group-addon">$</div><input type="number" class="form-control input-grey gray-background js_fillable_from_rate" name="fillable_from_rate" /></div>', $my_return);
+        $my_return = str_replace('{{fillable_to_rate}}', '<div class="input-group"><div class="input-group-addon">$</div><input type="number" class="form-control input-grey gray-background js_fillable_to_rate" name="fillable_to_rate" /></div>', $my_return);
+
+        $my_return = str_replace('{{fillable_job}}', '<input type="checkbox" name="fillable_job" class="js_fillable_job" />', $my_return);
+        $my_return = str_replace('{{fillable_department}}', '<input type="checkbox" name="fillable_department" class="js_fillable_department" />', $my_return);
+        $my_return = str_replace('{{fillable_location}}', '<input type="checkbox" name="fillable_location" class="js_fillable_location" />', $my_return);
+        $my_return = str_replace('{{fillable_shift}}', '<input type="checkbox" name="fillable_shift" class="js_fillable_shift" />', $my_return);
+        $my_return = str_replace('{{fillable_other}}', '<input type="checkbox" name="fillable_other" class="js_fillable_other" />', $my_return);
+        $my_return = str_replace('{{fillable_all_reasons}}', $CI->load->view("v1/documents/fillable/partials/status_and_payroll_change_form_fields", [], true), $my_return);
 
         return $my_return;
     }
@@ -652,7 +743,7 @@ if (!function_exists('db_get_employee_profile')) {
     function db_get_employee_profile($emp_id)
     {
         $CI = &get_instance();
-        $CI->db->select('first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone');
         $CI->db->where('sid', $emp_id);
         return $CI->db->get('users')->result_array();
     }
@@ -3115,6 +3206,8 @@ if (!function_exists('getGroupOtherDocuments')) {
      */
     function getGroupOtherDocuments(array $group, bool $doCount = false)
     {
+        $stateForm = json_decode($group['state_forms_json']);
+
         //
         $documentArray = [];
         // check for I9
@@ -3152,6 +3245,11 @@ if (!function_exists('getGroupOtherDocuments')) {
         // check for occupational license
         if ($group['occupational_license'] == 1) {
             $documentArray[] = 'Occupational License Information';
+        }
+
+        // check for occupational license
+        if (!empty($stateForm) && $stateForm[0] == 1) {
+            $documentArray[] = 'State Forms';
         }
         //
         return $doCount ? count($documentArray) : $documentArray;
@@ -3221,5 +3319,35 @@ if (!function_exists("isCompanyVerifiedForPayroll")) {
                 "status" => "approved"
             ])
             ->count_all_results("gusto_companies");
+    }
+}
+
+
+if (!function_exists("getCompanyExtraColumn")) {
+    /**
+     * get the company extra column
+     *
+     * @param int $companyId
+     * @param string $column
+     * @return bool
+     */
+    function getCompanyExtraColumn(int $companyId, string $column)
+    {
+        // get CI
+        $CI = &get_instance();
+        // get the company extra fields
+        $result = $CI->db
+            ->select("extra_info")
+            ->where("sid", $companyId)
+            ->get("users")
+            ->row_array();
+        //
+        if (!$result || !$result['extra_info']) {
+            return "";
+        }
+        //
+        $data = unserialize($result["extra_info"]);
+        //
+        return $data[$column] ? $data[$column] : "";
     }
 }

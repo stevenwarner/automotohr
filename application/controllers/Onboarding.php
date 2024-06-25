@@ -182,6 +182,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -233,7 +234,7 @@ class Onboarding extends CI_Controller
                     //
                     if ($assigned_document['document_sid'] == 0) {
                         if ($assigned_document['status'] == 1 && $assigned_document['archive'] == 0) {
-                            if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            if ($assigned_document['pay_roll_catgory'] == 0) {
                                 $assigned_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_documents[] = $assigned_document;
@@ -244,7 +245,7 @@ class Onboarding extends CI_Controller
                                     unset($assigned_documents[$key]);
                                 }
                             }
-                        }    
+                        }
                     } else {
                         //
                         $assigned_document['archive'] = $assigned_document['archive'] == 1 || $assigned_document['company_archive'] == 1 ? 1 : 0;
@@ -267,7 +268,7 @@ class Onboarding extends CI_Controller
                             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                                 $document_body = $assigned_document['document_description'];
                                 $magic_codes = array('{{signature}}', '{{inital}}');
-    
+
                                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                     $is_magic_tag_exist = 1;
                                 }
@@ -337,12 +338,12 @@ class Onboarding extends CI_Controller
                                                 $is_document_completed = 0;
                                             }
                                         }
-    
+
                                         if ($is_document_completed > 0) {
-    
+
                                             if ($assigned_document['is_confidential'] == 0) {
                                                 if ($assigned_document['pay_roll_catgory'] == 0) {
-    
+
                                                     $signed_document_sids[] = $assigned_document['document_sid'];
                                                     $signed_documents[] = $assigned_document;
                                                     unset($assigned_documents[$key]);
@@ -359,7 +360,7 @@ class Onboarding extends CI_Controller
                                                 $uncompleted_payroll_documents[] = $assigned_document;
                                                 unset($assigned_documents[$key]);
                                             }
-    
+
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                         }
                                     } else {
@@ -383,7 +384,7 @@ class Onboarding extends CI_Controller
                                             }
                                             //
                                             $assigned_sids[] = $assigned_document['document_sid'];
-                                        } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                             $assigned_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_sids[] = $assigned_document['document_sid'];
                                             $no_action_required_documents[] = $assigned_document;
@@ -394,7 +395,7 @@ class Onboarding extends CI_Controller
                                                 unset($assigned_documents[$key]);
                                             }
                                         }
-                                    }    
+                                    }
                                 } else {
                                     $revoked_sids[] = $assigned_document['document_sid'];
                                 }
@@ -402,7 +403,7 @@ class Onboarding extends CI_Controller
                         } else if ($assigned_document['archive'] == 1) {
                             unset($assigned_documents[$key]);
                         }
-                    }    
+                    }
                 }
                 //
                 $data['history_doc_sids'] = $history_doc_sids;
@@ -4578,6 +4579,10 @@ class Onboarding extends CI_Controller
             $pp_flag = $data['session']['employer_detail']['pay_plan_flag'];
             $user_info = array();
 
+            //Removed pay plan 
+            $pp_flag = 0;
+            //
+
             switch ($user_type) {
                 case 'employee':
                     $data = employee_right_nav($user_sid);
@@ -4758,6 +4763,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
 
                             //
@@ -5028,6 +5034,164 @@ class Onboarding extends CI_Controller
                 //
                 $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
                 //
+
+
+                /// Group Docs
+                $active_groups = array();
+                $in_active_groups = array();
+                $group_ids = array();
+                $group_docs = array();
+                $document_ids = array();
+
+
+                $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
+
+                if (!empty($groups)) {
+                    foreach ($groups as $key => $group) {
+                        $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
+                        $groups[$key]['document_status'] = $document_status;
+                        $group_status = $group['status'];
+                        $group_sid = $group['sid'];
+                        $group_ids[] = $group_sid;
+                        $group_documents = $this->hr_documents_management_model->get_all_documents_in_group($group_sid, 0, $pp_flag);
+                        $otherDocuments = getGroupOtherDocuments($group);
+                        $otherDocumentCount = count($otherDocuments);
+
+                        if ($group_status) {
+                            $active_groups[] = array(
+                                'sid' => $group_sid,
+                                'name' => $group['name'],
+                                'sort_order' => $group['sort_order'],
+                                'description' => $group['description'],
+                                'created_date' => $group['created_date'],
+                                'w4' => $group['w4'],
+                                'w9' => $group['w9'],
+                                'i9' => $group['i9'],
+                                'eeoc' => $group['eeoc'],
+                                'direct_deposit' => $group['direct_deposit'],
+                                'drivers_license' => $group['drivers_license'],
+                                'occupational_license' => $group['occupational_license'],
+                                'emergency_contacts' => $group['emergency_contacts'],
+                                'dependents' => $group['dependents'],
+                                'documents_count' => count($group_documents) + $otherDocumentCount,
+                                'documents' => $group_documents,
+                                'other_documents' => $otherDocuments
+                            );
+                        } else {
+                            $in_active_groups[] = array(
+                                'sid' => $group_sid,
+                                'name' => $group['name'],
+                                'sort_order' => $group['sort_order'],
+                                'description' => $group['description'],
+                                'created_date' => $group['created_date'],
+                                'w4' => $group['w4'],
+                                'w9' => $group['w9'],
+                                'i9' => $group['i9'],
+                                'eeoc' => $group['eeoc'],
+                                'direct_deposit' => $group['direct_deposit'],
+                                'drivers_license' => $group['drivers_license'],
+                                'occupational_license' => $group['occupational_license'],
+                                'emergency_contacts' => $group['emergency_contacts'],
+                                'dependents' => $group['dependents'],
+                                'documents_count' => count($group_documents) + $otherDocumentCount,
+                                'documents' => $group_documents,
+                                'other_documents' => $otherDocuments
+                            );
+                        }
+                    }
+                }
+
+
+                if (!empty($group_ids)) {
+                    $group_docs = $this->hr_documents_management_model->get_distinct_group_docs($group_ids);
+                }
+
+                if (!empty($group_docs)) { // document are assigned to any group.
+                    foreach ($group_docs as $group_doc) {
+                        $document_ids[] = $group_doc['document_sid'];
+                    }
+                }
+
+                $data['active_groups'] = $active_groups;
+                $data['active_categories'] = $active_categories;
+                $data['in_active_groups'] = $in_active_groups;
+                $data['groups'] = $groups;
+                $data['assigned_sids'] = $all_assigned_sids;
+
+
+
+                $data['assigned_documents'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['assigned_documents'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+
+                $data['uncompleted_payroll_documents'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['uncompleted_payroll_documents'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+
+                $data['payroll_documents_sids'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['payroll_documents_sids'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //
+                $data['categories_documents_completed'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['categories_documents_completed'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //
+                $data['completed_offer_letter'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['completed_offer_letter'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //
+                $data['completed_payroll_documents'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['completed_payroll_documents'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //
+                $data['no_action_required_documents'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['no_action_required_documents'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //    
+                $data['no_action_required_payroll_documents'] =
+                    cleanAssignedDocumentsByPermission(
+                        $data['no_action_required_payroll_documents'],
+                        $data['session']['employer_detail'],
+                        $employeeDepartments
+                    );
+                //
+
+                $confidential_sids = array();
+                //
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_payroll_documents']) ? array_column($data['no_action_required_payroll_documents'], 'document_sid') : []);
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_documents']) ? array_column($data['no_action_required_documents'], 'document_sid') : []);
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['assigned_documents']) ? array_column($data['assigned_documents'], 'document_sid') : []);
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['completed_offer_letter']) ? array_column($data['completed_offer_letter'], 'document_sid') : []);
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['completed_payroll_documents']) ? array_column($data['completed_payroll_documents'], 'document_sid') : []);
+                $confidential_sids =  array_merge($confidential_sids, is_array($data['categories_documents_completed']) ? array_column($data['categories_documents_completed'], 'document_sid') : []);
+                //
+                $confidential_sids = array_flip($confidential_sids);
+                $data['confidential_sids'] = $confidential_sids;
+
+
+
+
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
                 $this->load->view('main/footer');
@@ -5077,6 +5241,7 @@ class Onboarding extends CI_Controller
                             $data_to_update['signature_base64'] = NULL;
                             $data_to_update['signature_initial'] = NULL;
                             $data_to_update['is_required'] = $document['is_required'];
+                            $data_to_update['fillable_document_slug'] = $document['fillable_document_slug'];
                             $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
                         } else {
                             $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
@@ -5095,6 +5260,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $this->input->post('document_description');
                             $data_to_insert['is_required'] = $document['is_required'];
+                            $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
 
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -8945,7 +9111,7 @@ class Onboarding extends CI_Controller
 
                     if (isset($_GET['submit']) && $_GET['submit'] == 'Download PDF') {
                         //$view = $this->load->view('form_w4/form_w4', $data, TRUE);
-                        $view = $this->load->view('form_w4/download_w4_2023', $data,TRUE);
+                        $view = $this->load->view('form_w4/download_w4_2023', $data, TRUE);
                         $this->pdfgenerator->generate($view, 'Form W4', true, 'A4');
                     }
 
@@ -9163,7 +9329,7 @@ class Onboarding extends CI_Controller
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
             if (!empty($onboarding_details)) {
-                redirect('forms/i9/user/section/applicant/'.$onboarding_details['applicant_sid'].'/applicant_onboarding');
+                redirect('forms/i9/user/section/applicant/' . $onboarding_details['applicant_sid'] . '/applicant_onboarding');
                 $data['onboarding_details'] = $onboarding_details;
                 $applicant_info = $onboarding_details['applicant_info'];
                 $data['applicant'] = $applicant_info;
@@ -9728,9 +9894,8 @@ class Onboarding extends CI_Controller
 
             $previous_form = $this->onboarding_model->get_original_w4_form('applicant', $applicant_sid);
             $data['pre_form'] = $previous_form;
-           // $this->load->view('form_w4/print_w4_form', $data);
+            // $this->load->view('form_w4/print_w4_form', $data);
             $this->load->view('form_w4/print_w4_2023', $data);
-
         } else {
             redirect('login', "refresh");
         }
@@ -9756,7 +9921,7 @@ class Onboarding extends CI_Controller
         }
         //
         if ($d[0] == "I9") {
-            redirect('forms/i9/user/section/applicant/'.$d[1].'/public_link');
+            redirect('forms/i9/user/section/applicant/' . $d[1] . '/public_link');
         }
         //
         $document = [];
@@ -11145,7 +11310,5 @@ class Onboarding extends CI_Controller
                     ]
                 );
         }
-
-       
     }
 }

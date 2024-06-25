@@ -2677,7 +2677,7 @@ if (!function_exists('getCompanyLocations')) {
         $callHeaders = [
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         $callHeaders = array_merge($callHeaders, $headers);
         //
@@ -3714,7 +3714,7 @@ if (!function_exists('updateOnboardEmployeeProfile')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -3764,7 +3764,7 @@ if (!function_exists('getEmployeeJobsFromGusto')) {
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -3819,7 +3819,7 @@ if (!function_exists('createEmployeeJobOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -3875,7 +3875,7 @@ if (!function_exists('updateEmployeeJobOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -3930,7 +3930,7 @@ if (!function_exists('updateEmployeeHomeAddressOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -3981,7 +3981,7 @@ if (!function_exists('getEmployeeHomeAddressFromGusto')) {
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4035,7 +4035,7 @@ if (!function_exists('updateEmployeeJobCompensation')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4086,7 +4086,7 @@ if (!function_exists('getEmployeeFederalTaxFromGusto')) {
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4140,7 +4140,7 @@ if (!function_exists('updateEmployeeFederalTaxOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4191,7 +4191,7 @@ if (!function_exists('getEmployeePaymentMethodFromGusto')) {
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4246,7 +4246,7 @@ if (!function_exists('updateEmployeePaymentMethodOnGusto')) {
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4301,7 +4301,7 @@ if (!function_exists('addEmployeeBankAccountToGusto')) {
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4352,7 +4352,7 @@ if (!function_exists('getCompanyOnboardStatusFromGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4402,7 +4402,7 @@ if (!function_exists('finishCompanyOnboardOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4452,7 +4452,7 @@ if (!function_exists('approveCompanyOnboardOnGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4503,7 +4503,7 @@ if (!function_exists('getEmployeeOnboardStatusFromGusto')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -4556,7 +4556,7 @@ if (!function_exists('finishEmployeeOnboardOnGusto')) {
                     'Authorization: Bearer ' . ($company['access_token']) . '',
                     'Accept: application/json',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );

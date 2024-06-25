@@ -47,6 +47,7 @@
             <thead>
                 <tr>
                     <th scope="col">Employee</th>
+                    <th scope="col">Employee Status</th>
                     <th scope="col">Policy</th>
                     <th scope="col">Time Taken</th>
                     <th scope="col">Start Date</th>

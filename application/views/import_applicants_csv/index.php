@@ -21,12 +21,12 @@
                                     </div>
                                     <div class="panel-body">
                                         <pre>
-<b>First Name, Last Name, E-Mail, Primary Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title</b><br>
-Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/jason_snow_resume.docx, https://yourwebsite.com/cover_letter/jason_snow_cover.docx, General Manager
-Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Manager Sales
-Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Technical Manager
-Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Office Assistant
-Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Team Lead
+<b>First Name, Last Name, Email, Primary Number, Street Address, City, Zipcode, State, Country, Profile Picture URL, Resume URL, Cover Letter URL, Job Title, Source, Date Applied,Status</b><br>
+Jason, Snow, jason@abc.com, +123456789, 123 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/jason_snow_resume.docx, https://yourwebsite.com/cover_letter/jason_snow_cover.docx, General Manager,Indeed,2020-01-24 12:50:56,Not Contacted Yet
+Albert, King, albert@example.com, +123456789, 98 Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Manager Sales,Indeed,2023-01-24 12:50:56,Not Contacted Yet
+Nathan, Quite, nathan@example.com, +1823212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Technical Manager,Other Website,2024-01-24 12:50:56,Submitted
+Allen, Knight, allen@example.com, +1223312129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Office Assistant,Indeed,2020-01-24 12:50:56,Not Contacted Yet
+Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, United States, https://yourwebsite.com/images/profile_picture.png, https://yourwebsite.com/resume/resume.docx, https://yourwebsite.com/cover_letter/cover.docx, Team Lead,Indeed,2020-01-24 12:50:56,Submitted
 </pre>
                                     </div>
                                 </div>
@@ -122,15 +122,24 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             lastNameTitles = <?= json_encode(array('lastname', 'lname')); ?>,
             firstNameTitles = <?= json_encode(array('firstname', 'fname')); ?>,
             coverLetterTitles = <?= json_encode(array('coverletter', 'coverletterurl')); ?>,
-            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber','primarynumber')); ?>,
+            phoneNumberTitles = <?= json_encode(array('phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber', 'primarynumber')); ?>,
             accessLevelTitles = <?= json_encode(array('accesslevel')); ?>,
             emailAddressTitles = <?= json_encode(array('email', 'emailaddress')); ?>,
             profilePictureTitles = <?= json_encode(array('profile', 'profilepicture', 'profilepictureurl')); ?>;
 
-            dateOfBirthTitles = <?= json_encode(array('dateofbirth', 'dob')); ?>;
-            socialSecurityNumberTitles = <?= json_encode(array('socialsecuritynumber', 'ssn')); ?>;
-            maritalStatusTitles = <?= json_encode(array('maritalstatus')); ?>;
-            genderTitles = <?= json_encode(array('gender')); ?>;
+        dateOfBirthTitles = <?= json_encode(array('dateofbirth', 'dob')); ?>;
+        socialSecurityNumberTitles = <?= json_encode(array('socialsecuritynumber', 'ssn')); ?>;
+        maritalStatusTitles = <?= json_encode(array('maritalstatus')); ?>;
+        genderTitles = <?= json_encode(array('gender')); ?>;
+
+
+
+        jobSourceTitles = <?= json_encode(array('Source', 'source', 'jobsource', 'JobSource', 'JobSource', 'jobsource')); ?>,
+            dateAppliedTitles = <?= json_encode(array('DateApplied', 'dateapplied', 'Dateapplied', 'dateApplied', 'AppliedDate', 'applieddate', 'appliedDate', 'Applieddate')); ?>;
+        statusAppliedTitles = <?= json_encode(array('Status', 'status')); ?>;
+
+        employeeNumberTitles = <?= json_encode(array('employeenumber', 'EmployeeNumber', 'Employeenumber', 'employeeNumber')); ?>,
+
 
 
 
@@ -321,6 +330,33 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             array = coverLetterTitles;
             for (i; i < len; i++)
                 if (index == array[i]) return 'cover_letter';
+
+            i = 0;
+            len = jobSourceTitles.length;
+            array = jobSourceTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'applicant_source';
+
+            i = 0;
+            len = dateAppliedTitles.length;
+            array = dateAppliedTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'date_applied';
+
+            i = 0;
+            len = statusAppliedTitles.length;
+            array = statusAppliedTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'status';
+
+                i = 0;
+            len = employeeNumberTitles.length;
+            array = employeeNumberTitles;
+            for (i; i < len; i++)
+                if (index == array[i]) return 'employee_number';
+   
+
+
             return -1;
         }
 

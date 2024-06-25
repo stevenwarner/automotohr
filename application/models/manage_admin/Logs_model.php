@@ -139,7 +139,7 @@ class logs_model extends CI_Model
         }
     }
 
-    public function get_notification_email_logs($email, $start_date, $end_date, $limit = null, $offset = null, $count_only = false)
+    public function get_notification_email_logs($from, $to_email, $start_date, $end_date, $limit = null, $offset = null, $count_only = false)
     {
         $this->db->select('*');
 
@@ -155,8 +155,12 @@ class logs_model extends CI_Model
             $this->db->limit($limit, $offset);
         }
 
-        if (!empty($email) && $email != 'all') {
-            $this->db->like('receiver', $email);
+        if (!empty($to_email) && $to_email != 'all') {
+            $this->db->like('receiver', $to_email);
+        }
+
+        if (!empty($from) && $from != 'all') {
+            $this->db->like('message', $from);
         }
 
         $this->db->order_by('sent_date', 'DESC');
@@ -170,6 +174,7 @@ class logs_model extends CI_Model
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
+            //
             return $records_arr;
         }
     }

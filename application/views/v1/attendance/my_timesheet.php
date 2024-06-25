@@ -242,6 +242,9 @@
                                         <?= convertSecondsToTime($totalOvertime); ?>
                                     </th>
                                     <th scope="col" class="bg-black"></th>
+                                    <?php if ($isEditAllowed) { ?>
+                                        <th scope="col" class="bg-black"></th>
+                                    <?php } ?>
                                 </tr>
                             </tfoot>
                         </table>

@@ -213,12 +213,13 @@ if (!function_exists('hasGustoErrors')) {
      * @return array
      */
     function hasGustoErrors($response)
-    {
+    {  
         // set errors array
         $errors = [
             'errors' => []
         ];
         // if it's a single error
+        //
         if (isset($response['message'])) {
             $errors['errors'][] = $response['message'];
         } elseif (isset($response['error'])) {
@@ -226,9 +227,13 @@ if (!function_exists('hasGustoErrors')) {
         } elseif (isset($response['errors']['invalid_grant'])) {
             $errors['errors'] = array_merge($errors['errors'], $response['errors']['invalid_grant']);
         } elseif (isset($response['errors'])) {
+            // _e($response['errors'],true,true);
             foreach ($response['errors'] as $err) {
                 //
-                if (isset($err['errors'])) {
+                
+                if (isset($err['error_key']) && $err['error_key'] == "states") {
+                    return getStateErrorList($err['errors']);
+                } elseif (isset($err['errors'])) {
                     foreach ($err['errors'] as $err0) {
                         $errors['errors'][] = $err0['message'];
                     }
@@ -247,6 +252,38 @@ if (!function_exists('hasGustoErrors')) {
         return $errors['errors'] ? $errors : [];
     }
 }
+
+if (!function_exists('getStateErrorList')) {
+    /**
+     * Parse Gusto errors
+     *
+     * Convert Gusto errors to AutomotoHR errors
+     * for handling errors
+     *
+     * @param mixed $response
+     * @return array
+     */
+    function getStateErrorList($response)
+    {
+        // set errors array
+        $errors = [
+            'errors' => []
+        ];
+        //
+        foreach ($response as $err) {
+            if ($err['error_key'] == 'questions') {
+                //
+                foreach ($err['errors'] as $err0) {
+                    foreach ($err0['errors'] as $err1) {
+                        $errors['errors'][] = $err1['message'];
+                    }
+                }
+            }
+        }
+        //
+        return $errors;
+    }
+}    
 
 if (!function_exists('getUrl')) {
     /**
@@ -276,7 +313,9 @@ if (!function_exists('getUrl')) {
         $urls['createAdminOnGusto'] = "v1/companies/$key/admins";
         $urls['createSignatory'] = "v1/companies/$key/signatories";
         $urls['createCompanyLocationOnGusto'] = "v1/companies/$key/locations";
+        $urls['updateCompanyLocationOnGusto'] = "v1/locations/$key";
         $urls['createEmployeeOnGusto'] = "v1/companies/$key/employees";
+        $urls['getCompanyEarningWage'] = "v1/companies/$key/earned_wage_access";
         // for sync purpose
         $urls['getFederalTax'] = "v1/companies/$key/federal_tax_details";
         $urls['getIndustry'] = "v1/companies/$key/industry_selection";
@@ -306,6 +345,7 @@ if (!function_exists('getUrl')) {
         $urls['getEmployeeJobs'] = "v1/employees/$key1/jobs";
         // flow urls
         $urls['updateEmployeePersonalDetails'] = "v1/employees/$key1";
+        $urls['createEmployeeWorkAddress'] = "v1/employees/$key1/work_addresses";
         $urls['getEmployeeWorkAddress'] = "v1/employees/$key1/work_addresses";
         $urls['updateEmployeeWorkAddress'] = "v1/work_addresses/$key1";
         $urls['updateEmployeeJob'] = "v1/jobs/$key1";
@@ -462,7 +502,7 @@ if (!function_exists('createPartnerCompany')) {
                 CURLOPT_HTTPHEADER => array(
                     'Authorization: Token ' . (getCreds("AHR")->GUSTO->DEMO->API_TOKEN) . '',
                     'Content-Type: application/json',
-                    'X-Gusto-API-Version: 2023-04-01'
+                    'X-Gusto-API-Version: 2024-03-01'
                 )
             ]
         );
@@ -485,7 +525,7 @@ if (!function_exists('getAdminsFromGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -536,7 +576,7 @@ if (!function_exists('createAdminOnGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -587,7 +627,7 @@ if (!function_exists('agreeToServiceAgreementFromGusto')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         // make call to Gusto
         $response =  makeCall(
@@ -642,7 +682,7 @@ if (!function_exists('gustoCall')) {
             'Authorization: Bearer ' . ($company['access_token']) . '',
             'Content-Type: application/json',
             'Accept: application/json',
-            'X-Gusto-API-Version: 2023-04-01'
+            'X-Gusto-API-Version: 2024-03-01'
         ];
         //
         $curlOptions = [

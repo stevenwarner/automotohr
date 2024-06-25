@@ -363,6 +363,13 @@ class Direct_deposit extends Public_Controller
                         'direct_deposit',
                         $user_sid
                     );
+                    $this->load->model('v1/Payroll_model', 'payroll_model');
+                    //
+                    $this
+                        ->payroll_model
+                        ->syncEmployeePaymentMethod(
+                            $user_sid
+                        );
                 }
             }
 

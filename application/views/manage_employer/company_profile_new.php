@@ -554,6 +554,38 @@
                             </div>
                         <?php } ?>
 
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>Shifts </h3>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Send shift reminder emails<small class="help_text">Activating this functionality will result in the issuance of reminder notification emails for the upcoming day shift.</small>
+                                    <input class="" type="checkbox" id="shift_reminder_email_for_next_day" name="shift_reminder_email_for_next_day" value="1" <?php echo ($company['shift_reminder_email_for_next_day'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>Company Week off days</h3>
+                            </div>
+                            <div class="form-group autoHeight">
+                                <select name="week_off_days[]" class="jsMultipleSelect" multiple>
+                                    <option <?= in_array("1", $company["week_off_days"]) ? "selected" : ""; ?> value="1">Monday</option>
+                                    <option <?= in_array("2", $company["week_off_days"]) ? "selected" : ""; ?> value="2">Tuesday</option>
+                                    <option <?= in_array("3", $company["week_off_days"]) ? "selected" : ""; ?> value="3">Wednesday</option>
+                                    <option <?= in_array("4", $company["week_off_days"]) ? "selected" : ""; ?> value="4">Thursday</option>
+                                    <option <?= in_array("5", $company["week_off_days"]) ? "selected" : ""; ?> value="5">Friday</option>
+                                    <option <?= in_array("6", $company["week_off_days"]) ? "selected" : ""; ?> value="6">Saturday</option>
+                                    <option <?= in_array("7", $company["week_off_days"]) ? "selected" : ""; ?> value="7">Sunday</option>
+                                </select>
+                            </div>
+                        </div>
+
 
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
@@ -832,4 +864,9 @@
     <?php if (IS_TIMEZONE_ACTIVE) { ?>
         $('#company_timezone').select2();
     <?php } ?>
+
+
+    $(".jsMultipleSelect").select2({
+        closeOnSelect: false
+    });
 </script>

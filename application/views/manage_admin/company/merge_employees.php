@@ -286,9 +286,9 @@ foreach ($companies as $company)
                         ref.close();
                     })
                     .fail(function(xhr, code) {
-                        alert(
-                            code
-                        );
+                        // alert(
+                        //     code
+                        // );
                     })
                     .done(function() {
                         alertify.alert('Success', 'You have successfully merged the employees.', function() {

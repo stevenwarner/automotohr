@@ -60,7 +60,7 @@
     <?= $appCSS ?? ""; ?>
     <?= bundleCSS([
         "v1/app/css/global",
-    ], "public/v1/app/", "global", false); ?>
+    ], "public/v1/app/", "global", true); ?>
 
 <body>
     <div class="wrapper-outer">

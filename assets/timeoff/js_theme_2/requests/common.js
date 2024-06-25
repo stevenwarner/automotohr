@@ -6,6 +6,7 @@ let cmnOBJ = {
             employerId: employerId,
             employeeId: employeeId,
             public: 0,
+            all: 0,
         }
     },
     Policies: {
@@ -26,7 +27,8 @@ fetchPolicies();
 
 
 // Employees
-function fetchEmployees() {
+function fetchEmployees(employeeStatus) {
+    cmnOBJ.Employees.Main.all = employeeStatus === undefined ? 0 : employeeStatus;
     $.post(handlerURL, cmnOBJ.Employees.Main, function(resp) {
         //
         if (resp.Redirect === true) {
@@ -49,7 +51,13 @@ function fetchEmployees() {
         rows += '<option value="all">All</option>';
         //
         window.timeoff.employees.map(function(v) {
-            rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) + '</option>';
+            let status = "";
+			if (v.terminated_status === "1") {
+				status = " - Terminated";
+			} else if (v.active === "0") {
+				status = " - Deactivated";
+			}
+            rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) +status+ '</option>';
         });
         //
         $('#js-employee-add').html(rows);

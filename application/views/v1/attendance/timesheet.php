@@ -1,3 +1,91 @@
+<style>
+    .attendance_reports_main
+    {
+        display: flex;
+        gap: 10px;
+        padding: 0 10px;
+        transition: 0.4s;
+    }
+
+    .attendance_report_item
+    {
+        width: 221px;
+        height: 112px;
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+    } 
+
+
+    
+    .attendance_report_line
+    {
+        width: 20px;
+        border: 1px solid #007B55;
+        margin: 0;
+    }
+
+    .attendance_report_details
+    {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .attendance_reports_main li
+    {
+        list-style-type: none;
+    }
+
+    .attendance_report_content h3
+    {
+        color: #000;
+        text-transform: capitalize;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .attendance_report_content p
+    {
+        color: #000;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .regular_time 
+    {
+        background-color: #00AB551F;
+    }
+
+    .paid_break_time 
+    {
+        background-color: #7A091614;
+    }
+
+    .over_time 
+    {
+        background-color: #FFAB0014;
+    }
+
+    .double_over_time 
+    {
+        background-color: #00B8D91F;
+    }
+
+    .paid_time_off 
+    {
+        background-color: #919EAB14; 
+    }
+
+    .total_paid 
+    {
+        background-color: #8224E314;
+    }
+</style>
 <?php
 $timeSheetName = "";
 ?>
@@ -24,6 +112,8 @@ $timeSheetName = "";
                         <select name="employees" class="form-control">
                             <option value="0"></option>
                             <?php if ($employees) {
+
+                                
                                 foreach ($employees as $v0) {
 
                                     if ($v0["userId"] == $filter["employeeId"]) {
@@ -91,202 +181,8 @@ $timeSheetName = "";
             </h2>
         </div>
 
-
         <div class="panel-body">
-            <!--  -->
-            <div class="row">
-                <div class="col-sm-12 text-right">
-                    <?php if ($records) { ?>
-                        <button class="btn btn-green jsApproveTimeSheet">
-                            Approve
-                        </button>
-
-                        <button class="btn btn-red jsUnApproveTimeSheet">
-                            UnApproved
-                        </button>
-                    <?php } ?>
-                </div>
-            </div>
-            <br>
-            <div class="table-responsive">
-                <table class="table">
-                    <caption></caption>
-                    <thead>
-                        <tr>
-                            <th scope="col" class="bg-black">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" name="select_all" class="jsSelectAll" />
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </th>
-
-                            <th scope="col" class="bg-black">
-                                Date
-                            </th>
-
-                            <th scope="col" class="bg-black">
-                                Period
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Worked Time
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Regular Time
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Paid Breaks
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Unpaid Breaks
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Overtime
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Double Overtime
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Status
-                            </th>
-                            <th scope="col" class="bg-black">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $datesPool = getDatesBetweenDates($filter["startDateDB"], $filter["endDateDB"]);
-                        $totalWorkedTime =
-                            $totalBreakTime =
-                            $totalOvertime = 0;
-                        //
-                        $employeeTodayDate = getSystemDateInLoggedInPersonTZ(DB_DATE);
-                        //
-                        foreach ($datesPool as $v0) {
-                            $attendance = $records[$v0["date"]] ?? [];
-                            $processedData = $clockArray['periods'][$v0["date"]] ?? [];
-                            $leave = $leaves && $leaves[$v0["date"]] ? $leaves[$v0["date"]] :  [];
-                            if ($attendance) {
-                                $totalWorkedTime += $attendance["worked_time"];
-                                $totalBreakTime += $attendance["breaks"];
-                                $totalOvertime += $attendance["overtime"];
-                            }
-                        ?>
-                            <tr class="<?= $v0["date"] === $employeeTodayDate ? "bg-success" : ""; ?>" data-date="<?= $v0["date"]; ?>" data-id="<?= $attendance ? $attendance["sid"] : "0"; ?>">
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <label class="control control--checkbox">
-                                        <input type="checkbox" name="individualSelect" class="<?= $attendance ? "jsSingleSelect" : ""; ?> " <?= !$leave && $attendance ? 'value="' . $attendance["sid"] . '"' : "disabled"; ?> />
-                                        <div class="control__indicator"></div>
-                                    </label>
-                                </td>
-                                <td class="csVerticalAlignMiddle mh-100">
-                                    <?= formatDateToDB($v0["date"], DB_DATE, DATE); ?>
-                                </td>
-                                <?php if (!$leave) { ?>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $attendance && $attendance["clocked_in"] ?
-                                            formatDateToDB(
-                                                $attendance["clocked_in"],
-                                                DB_DATE_WITH_TIME,
-                                                "h:i a"
-                                            ) : "Missing"; ?>
-                                        -
-                                        <?= $attendance && $attendance["clocked_out"] ? formatDateToDB(
-                                            $attendance["clocked_out"],
-                                            DB_DATE_WITH_TIME,
-                                            "h:i a"
-                                        )  : "Missing"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['clocked_time'] : "0h"; ?> 
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['regular_time'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['paid_break_time'] : "0h"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['unpaid_break_time'] : "0h"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['overtime'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?= $processedData ? $processedData['text']['double_overtime'] : "0h"; ?> <br> <?= $processedData ? getWageFromTime($processedData['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100 text-<?= $attendance["is_approved"] ? "green" : "red"; ?>">
-                                        <strong>
-
-                                            <?= $attendance["is_approved"] ? "APPROVED" : "UNAPPROVED"; ?>
-                                        </strong>
-                                    </td>
-                                    <td class="csVerticalAlignMiddle mh-100">
-                                        <?php if ($attendance) { ?>
-                                            <button class="btn btn-blue jsViewTimeSheet">
-                                                <i class="fa fa-edit" aria-hidden="true"></i>
-                                                &nbsp;
-                                                History
-                                            </button>
-                                            <?php if ($attendance["is_approved"] == 0) { ?>
-                                                <button class="btn btn-orange jsEditTimeSheet">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i>
-                                                    &nbsp;
-                                                    Edit
-                                                </button>
-                                            <?php } ?>
-                                        <?php } else { ?>
-                                            <button class="btn btn-orange jsAddTimeSheet">
-                                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                &nbsp;
-                                                Add
-                                            </button>
-                                        <?php } ?>
-                                    </td>
-                                <?php } else { ?>
-                                    <td class="csVerticalAlignMiddle text-center mh-100" colspan="6">
-                                        <strong class="text-primary">
-                                            Time off - <?= $leave["title"]; ?>
-                                        </strong>
-                                        <?php if ($leave["reason"]) { ?>
-                                            <p><?= $leave["reason"] ?></p>
-                                        <?php } ?>
-                                    </td>
-                                <?php } ?>
-                            </tr>
-                        <?php
-                        }
-                        ?>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['clocked_time'] : "0h"; ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['regular_time'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['regular_time'], $clockArray['normal_rate']) : "$0"; ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['paid_break_time'] : "0h"; ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['unpaid_break_time'] : "0h"; ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['overtime'], $clockArray['over_time_rate']) : "$0"; ?>
-                            </th>
-                            <th scope="col" class="bg-black">
-                                <?= $clockArray ? $clockArray['text']['double_overtime'] : "0h"; ?> / <?= $clockArray ? getWageFromTime($clockArray['double_overtime'], $clockArray['double_over_time_rate']) : "$0"; ?>
-                            </th>
-                            <th scope="col" class="bg-black"></th>
-                            <th scope="col" class="bg-black"></th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+            <?php $this->load->view('v1/users/payroll/partials/employee_payroll_detail'); ?>
         </div>
     </div>
 

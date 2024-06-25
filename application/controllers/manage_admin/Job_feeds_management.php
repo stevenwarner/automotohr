@@ -1,6 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Job_feeds_management extends Admin_Controller{
+class Job_feeds_management extends Admin_Controller
+{
 
     private $indeedProductIds;
     private $ziprecruiterProductIds;
@@ -61,10 +62,10 @@ class Job_feeds_management extends Admin_Controller{
                     $this->job_feeds_management_model->update_jobs_to_feed($jobs_to_feed_sid, $company_sid, $product_sid, $job_sid, $data_to_update);
                     // Set Xml Job
                     $this->addUpdateXML(
-                        $job_sid, 
-                        $company_sid, 
-                        $product_sid, 
-                        $jobs_to_feed_sid, 
+                        $job_sid,
+                        $company_sid,
+                        $product_sid,
+                        $jobs_to_feed_sid,
                         $data_to_update['activation_date']
                     );
 
@@ -103,7 +104,7 @@ class Job_feeds_management extends Admin_Controller{
 
                     $this->job_feeds_management_model->insert_invoice_track_initial_record($data_to_insert);
 
-                    $this->session->set_flashdata('message', '<strong>Success</strong> Product "' . $product_info['name'] . '" Successfully Refunded!' );
+                    $this->session->set_flashdata('message', '<strong>Success</strong> Product "' . $product_info['name'] . '" Successfully Refunded!');
 
                     redirect('manage_admin/job_feeds_management', 'refresh');
 
@@ -113,7 +114,7 @@ class Job_feeds_management extends Admin_Controller{
 
                     $this->job_feeds_management_model->set_read_status($pending_job_sid, 1);
 
-                    $this->session->set_flashdata('message', '<strong>Success</strong> Read Status Successfully Updated!' );
+                    $this->session->set_flashdata('message', '<strong>Success</strong> Read Status Successfully Updated!');
 
                     redirect('manage_admin/job_feeds_management', 'refresh');
                     break;
@@ -122,7 +123,7 @@ class Job_feeds_management extends Admin_Controller{
 
                     $this->job_feeds_management_model->set_read_status($pending_job_sid, 0);
 
-                    $this->session->set_flashdata('message', '<strong>Success</strong> Read Status Successfully Updated!' );
+                    $this->session->set_flashdata('message', '<strong>Success</strong> Read Status Successfully Updated!');
 
                     redirect('manage_admin/job_feeds_management', 'refresh');
                     break;
@@ -151,11 +152,11 @@ class Job_feeds_management extends Admin_Controller{
         if ($this->form_validation->run() == false) {
             $this->render('manage_admin/job_feeds_management/jobs_active_on_feeds');
         } else {
-
         }
     }
 
-    public function refunded_requests(){
+    public function refunded_requests()
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'job_feeds_management';
@@ -175,7 +176,6 @@ class Job_feeds_management extends Admin_Controller{
         if ($this->form_validation->run() == false) {
             $this->render('manage_admin/job_feeds_management/refunded_jobs_to_feed_requests');
         } else {
-
         }
     }
 
@@ -193,12 +193,12 @@ class Job_feeds_management extends Admin_Controller{
      * @return VOID
      */
     function addUpdateXML(
-        $jobSid, 
+        $jobSid,
         $companySid,
         $productSid,
         $jobsToFeedSid,
         $activationDate
-    ){
+    ) {
         //
         $this->load->model('job_listings_visibility_model');
         $formpost = array();
@@ -207,15 +207,16 @@ class Job_feeds_management extends Admin_Controller{
 
         $deleteXmlJob = FALSE;
         // Organic is 0 then delete job row
-        if((int)$formpost['organic_feed'] === 0 || 
+        if (
+            (int)$formpost['organic_feed'] === 0 ||
             !$this->job_listings_visibility_model->isMainCompany($jobSid)
         ) $deleteXmlJob = TRUE;
         //
-       $uid = $jobSid;
+        $uid = $jobSid;
         // Check for Approval Job Management check
-        if((int)$this->job_listings_visibility_model->isApprovalManagementActive($companySid) === 1 && (int)$this->job_listings_visibility_model->isJobApproved($jobSid) != 1) $deleteXmlJob = TRUE;
+        if ((int)$this->job_listings_visibility_model->isApprovalManagementActive($companySid) === 1 && (int)$this->job_listings_visibility_model->isJobApproved($jobSid) != 1) $deleteXmlJob = TRUE;
         // Delete the job from XML
-        if($deleteXmlJob){
+        if ($deleteXmlJob) {
             $this->job_listings_visibility_model->deleteXMlJobById($jobSid);
             return;
         }
@@ -224,8 +225,11 @@ class Job_feeds_management extends Admin_Controller{
         //
         $result = $this->job_listings_visibility_model->getUidOfJob($companySid, $jobSid);
         //
-        if($result === 0) $uid = $jobSid;
-        else{ $uid = $result['uid']; $formpost['publish_date'] = $result['publish_date']; }
+        if ($result === 0) $uid = $jobSid;
+        else {
+            $uid = $result['uid'];
+            $formpost['publish_date'] = $result['publish_date'];
+        }
         //
         $companyPortal = $this->job_listings_visibility_model->getPortalDetails($companySid);
         //
@@ -240,22 +244,22 @@ class Job_feeds_management extends Admin_Controller{
         $formpost['JobRequirements'] = $this->job_listings_visibility_model->getJobColumnById($jobSid, 'JobRequirements');
         $formpost['SalaryType'] = $this->job_listings_visibility_model->getJobColumnById($jobSid, 'JobRequirements');
         //
-        if(in_array($productSid, $this->indeedProductIds))
-        $this->indeedOrganicDB(
-            $formpost, 
-            $uid, 
-            $companySid, 
-            $companyPortal, 
-            $jobSid
-        );
-        if(in_array($productSid, $this->ziprecruiterProductIds))
-        $this->zipRecruiterOrganicDB(
-            $formpost, 
-            $uid, 
-            $companySid, 
-            $companyPortal, 
-            $jobSid
-        );
+        if (in_array($productSid, $this->indeedProductIds))
+            $this->indeedOrganicDB(
+                $formpost,
+                $uid,
+                $companySid,
+                $companyPortal,
+                $jobSid
+            );
+        if (in_array($productSid, $this->ziprecruiterProductIds))
+            $this->zipRecruiterOrganicDB(
+                $formpost,
+                $uid,
+                $companySid,
+                $companyPortal,
+                $jobSid
+            );
     }
 
 
@@ -272,27 +276,27 @@ class Job_feeds_management extends Admin_Controller{
      * @return VOID
      */
     private function indeedOrganicDB(
-        $formpost, 
+        $formpost,
         $uid,
-        $companySid, 
-        $companyPortal, 
+        $companySid,
+        $companyPortal,
         $jobSid
-    ){
+    ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->indeedProductIds);
-        if((int)$is_product_purchased === 0){
+        if ((int)$is_product_purchased === 0) {
             // Update xml job indeed check to 0
-            $this->job_listings_visibility_model->updateXmlJob( 
-                array( 'is_indeed_job' => 0 ), 
-                array( 'job_sid' => $jobSid ) 
+            $this->job_listings_visibility_model->updateXmlJob(
+                array('is_indeed_job' => 0),
+                array('job_sid' => $jobSid)
             );
             return;
         }
         // Check if job exists in database
         $xmlJobId = $this->job_listings_visibility_model->getXmlJobId($jobSid);
         // If not found then insert
-        if(!$xmlJobId){
-            $insertDataArray = array( 'job_sid' => $jobSid, 'is_indeed_job' => 1 );
+        if (!$xmlJobId) {
+            $insertDataArray = array('job_sid' => $jobSid, 'is_indeed_job' => 1);
             $xmlJobId = $this->job_listings_visibility_model->insertXmlJob($insertDataArray);
         }
         //
@@ -307,7 +311,7 @@ class Job_feeds_management extends Admin_Controller{
             $this
         );
         // Update
-        $this->job_listings_visibility_model->updateXmlJob( array( 'company_sid' => $companySid, 'job_content' => $job, 'is_indeed_job' => 1, 'is_ziprecruiter_job' => 0 ), array( 'sid' => $xmlJobId ) );
+        $this->job_listings_visibility_model->updateXmlJob(array('company_sid' => $companySid, 'job_content' => $job, 'is_indeed_job' => 1, 'is_ziprecruiter_job' => 0), array('sid' => $xmlJobId));
     }
 
     /**
@@ -323,27 +327,27 @@ class Job_feeds_management extends Admin_Controller{
      * @return VOID
      */
     private function zipRecruiterOrganicDB(
-        $formpost, 
+        $formpost,
         $uid,
-        $companySid, 
-        $companyPortal, 
+        $companySid,
+        $companyPortal,
         $jobSid
-    ){
+    ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->ziprecruiterProductIds);
-        if((int)$is_product_purchased === 0){
+        if ((int)$is_product_purchased === 0) {
             // Update xml job indeed check to 0
-            $this->job_listings_visibility_model->updateXmlJob( 
-                array( 'is_ziprecruiter_job' => 0 ), 
-                array( 'job_sid' => $jobSid ) 
+            $this->job_listings_visibility_model->updateXmlJob(
+                array('is_ziprecruiter_job' => 0),
+                array('job_sid' => $jobSid)
             );
             return;
         }
         // Check if job exists in database
         $xmlJobId = $this->job_listings_visibility_model->getXmlJobId($jobSid);
         // If not found then insert
-        if(!$xmlJobId){
-            $insertDataArray = array( 'job_sid' => $jobSid, 'is_ziprecruiter_job' => 1 );
+        if (!$xmlJobId) {
+            $insertDataArray = array('job_sid' => $jobSid, 'is_ziprecruiter_job' => 1);
             $xmlJobId = $this->job_listings_visibility_model->insertXmlJob($insertDataArray);
         }
         //
@@ -358,6 +362,26 @@ class Job_feeds_management extends Admin_Controller{
             $this
         );
         // Update
-        $this->job_listings_visibility_model->updateXmlJob( array( 'company_sid' => $companySid, 'job_content' => $job, 'is_ziprecruiter_job' => 1, 'is_indeed_job' => 0  ), array( 'sid' => $xmlJobId ) );
+        $this->job_listings_visibility_model->updateXmlJob(array('company_sid' => $companySid, 'job_content' => $job, 'is_ziprecruiter_job' => 1, 'is_indeed_job' => 0), array('sid' => $xmlJobId));
+    }
+
+    /**
+     * generate Indeed access tokens
+     */
+    public function generateIndeedToken()
+    {
+        // load library
+        $this->load->library("Indeed_lib");
+
+        $response = $this->indeed_lib->generateAccessToken();
+        //
+        if (isset($response["error"])) {
+            $this->session->set_flashdata("indeed_error", $response["error"]);
+        } else {
+            //
+            $this->session->set_flashdata("indeed_success", "Access token has been generated successfully.");
+        }
+        //
+        return redirect("manage_admin/job_feeds_management");
     }
 }

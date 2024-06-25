@@ -737,7 +737,6 @@ class Job_details extends CI_Model {
 
             return $result_arr;
         }
-
         // Set defaut jobs array
         $automotive_group_companies = $jobs_list = array();
 
@@ -763,6 +762,8 @@ class Job_details extends CI_Model {
             ->join('users', 'users.sid = automotive_group_companies.company_sid', 'left')
             ->where('automotive_group_companies.automotive_group_sid', $automotive_group_sid)
             ->where('automotive_group_companies.company_sid <> 0', null)
+            ->where('users.active', 1)
+
             ->get();
             $automotive_group_companies = $result->result_array();
             $result = $result->free_result();
@@ -826,31 +827,35 @@ class Job_details extends CI_Model {
             $approval_status = $has_job_approval_rights['has_job_approval_rights'];
 
         $this->db
-        ->select('*')
+        ->select('portal_job_listings.*')
         ->from('portal_job_listings')
-        ->where('active', 1)
-        ->where('published_on_career_page', 1)
-        ->where('user_sid', $company_sid)
-        ->order_by('sid', 'desc');
+        ->where('portal_job_listings.active', 1)
+        ->where('portal_job_listings.published_on_career_page', 1)
+        ->where('portal_job_listings.user_sid', $company_sid)
+        ->where('users.active', 1)
+        ->join('users', 'users.sid = portal_job_listings.user_sid', 'left')
 
-        if ($approval_status == 1) $this->db->where('approval_status', 'approved');
+        ->order_by('portal_job_listings.sid', 'desc');
+        
+
+        if ($approval_status == 1) $this->db->where('portal_job_listings.approval_status', 'approved');
 
         // For filter records
         if(sizeof($filter_array)){
             if (strtolower($filter_array['country']) != 'all' && intval($filter_array['country']) != 0)
-                $this->db->where('Location_Country', $filter_array['country']);
+                $this->db->where('portal_job_listings.Location_Country', $filter_array['country']);
 
             if (strtolower($filter_array['state']) != 'all' && intval($filter_array['state']) != 0)
-                $this->db->where('Location_State', $filter_array['state']);
+                $this->db->where('portal_job_listings.Location_State', $filter_array['state']);
 
             if (strtolower($filter_array['city']) != 'all')
-                $this->db->like('Location_City', $filter_array['city']);
+                $this->db->like('portal_job_listings.Location_City', $filter_array['city']);
 
             if (strtolower($filter_array['categoryId']) != 'all'  && intval($filter_array['categoryId']) != 0)
-                $this->db->like('JobCategory', $filter_array['categoryId']);
+                $this->db->like('portal_job_listings.JobCategory', $filter_array['categoryId']);
 
             if (strtolower($filter_array['keyword']) != 'all')
-                $this->db->like('Title', $filter_array['keyword']);
+                $this->db->like('portal_job_listings.Title', $filter_array['keyword']);
         }
 
         if($payper_active){
@@ -1070,7 +1075,11 @@ class Job_details extends CI_Model {
     }
     function get_all_company_jobs_ams($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $career_site_company_sid = array(), $limit = null, $offset = null, $count_record = false) {
         //        echo $country.' - '.$state.' - '.$city.' - '.$categoryId.' - '.$keyword.'';
-                $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
+                $this->db->select('portal_job_listings.*, 
+                users.CompanyName, users.YouTubeVideo, 
+                users.Logo, users.ContactName, 
+                users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, 
+                portal_employer.domain_type, users.has_job_approval_rights');
                 $this->db->where('portal_job_listings.active', 1);
                 $this->db->where('portal_job_listings.organic_feed', 1);
                 $this->db->where('portal_job_listings.published_on_career_page', 1);

@@ -1153,4 +1153,195 @@ class Copy_employees_model extends CI_Model
             ->get('timeoff_policies')
             ->result_array();
     }
+
+    public function getAssignedDocumentId (int $companyId, array $document)
+    {
+        //
+        $documentId = 0;
+        //
+        $record = $this->db
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->where('sid', $document['document_sid'])
+            ->get('documents_management')
+            ->row_array();
+        //
+        if (!$record) {
+            //
+            $result = $this->db
+                 ->select('sid')
+                 ->where('company_sid', $companyId)
+                 ->where('document_title', $document['document_title'])
+                 ->where('document_type', $document['document_type'])
+                 ->get('documents_management')
+                 ->row_array();
+            //     
+            if ($result) {
+                $documentId = $result['sid'];
+            } else {
+                
+                // Fetch document details
+                $result = $this->db
+                    ->select('*')
+                    ->where('sid', $document['document_sid'])
+                    ->get('documents_management');
+                //
+                $documentNew = $result->row_array();
+                $result = $result->free_result();
+                //
+                if(!sizeof($documentNew)) return $documentId;
+                //
+                $fromCompanyId = $documentNew['company_sid'];
+                //
+                unset(
+                    $documentNew['sid'],
+                    $documentNew['date_created']
+                );
+                //
+                $documentNew['employer_sid'] = 0;
+                $documentNew['unique_key'] = generateRandomString(32);
+                $documentNew['company_sid'] = $companyId;
+                //
+                if($documentNew['document_type'] == 'uploaded'){
+                    
+                    // Re-upload file to AWS
+                    $basePath = ROOTPATH.'assets/tmp/'.strtolower(preg_replace('/\s+/', '_', $documentNew['company_sid'])).'-document/';
+                    $fileName = generateRandomString(3).'-'.$documentNew['uploaded_document_s3_name'];
+                    $filePath = $basePath.$fileName;
+                    if(!file_exists($basePath)) mkdir($basePath, 0777, true);
+                    @file_put_contents($filePath, @file_get_contents(AWS_S3_BUCKET_URL.$documentNew['uploaded_document_s3_name']));
+                    //
+                    downloadFileFromAWS($filePath, AWS_S3_BUCKET_URL.$documentNew['uploaded_document_s3_name']);
+                    // Upload file to AWS
+                    $this->load->library('aws_lib');
+                    $options = [
+                        'Bucket' => AWS_S3_BUCKET_NAME,
+                        'Key' => $fileName,
+                        'Body' => file_get_contents($filePath),
+                        'ACL' => 'public-read',
+                        'ContentType' => getMimeType($filePath)
+                    ];
+                    //
+                    if ($options['Body'] == '') {
+                        return $documentId;
+                    }
+                    //
+                    $this->aws_lib->put_object($options);
+                    $documentNew['uploaded_document_s3_name'] = $fileName;
+                    unlink($filePath);
+                }
+                //
+                $this->db->insert('documents_management', $documentNew);
+                $documentId = $this->db->insert_id();
+                
+                
+                $insertArray = array();
+                $insertArray['admin_sid'] = 1;
+                $insertArray['to_company_sid'] = $companyId;
+                $insertArray['new_document_sid'] = $documentId;
+                $insertArray['from_company_sid'] = $fromCompanyId;
+                $insertArray['document_sid'] = $document['document_sid'];
+                //
+                $this->db->insert('copy_document_track', $insertArray);
+            }        
+        } else if ($record) {
+            $documentId = $record['sid'];
+        }
+        //
+        return $documentId;
+    }
+
+    public function getAssignedOfferLetterId (int $companyId, array $document)
+    {
+        //
+        $offerLetterId = 0;
+        //
+        $record = $this->db
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->where('sid', $document['document_sid'])
+            ->get('offer_letter')
+            ->row_array();
+        //
+        if (!$record) {
+            //
+            $result = $this->db
+                 ->select('sid')
+                 ->where('company_sid', $companyId)
+                 ->where('letter_name', $document['document_title'])
+                 ->where('letter_type', $document['offer_letter_type'])
+                 ->get('offer_letter')
+                 ->row_array();
+            //     
+            if ($result) {
+                $offerLetterId = $result['sid'];
+            } else {
+                // Fetch document details
+                $result = $this->db
+                    ->select('*')
+                    ->where('sid', $document['document_sid'])
+                    ->get('offer_letter');
+                //
+                $offerLetterNew = $result->row_array();
+                $result = $result->free_result();
+                //
+                if(!sizeof($offerLetterNew)) return $offerLetterId;
+                //
+                $fromCompanyId = $offerLetterNew['company_sid'];
+                //
+                unset(
+                    $offerLetterNew['sid'],
+                    $offerLetterNew['signers']
+                );
+                //
+                $offerLetterNew['employer_sid'] = 0;
+                $offerLetterNew['company_sid'] = $companyId;
+                //
+                if($offerLetterNew['document_type'] == 'uploaded'){
+                    // Re-upload file to AWS
+                    $basePath = ROOTPATH.'assets/tmp/'.strtolower(preg_replace('/\s+/', '_', $offerLetterNew['company_sid'])).'-document/';
+                    $fileName = generateRandomString(3).'-'.$offerLetterNew['uploaded_document_s3_name'];
+                    $filePath = $basePath.$fileName;
+                    if(!file_exists($basePath)) mkdir($basePath, 0777, true);
+                    @file_put_contents($filePath, @file_get_contents(AWS_S3_BUCKET_URL.$offerLetterNew['uploaded_document_s3_name']));
+                    //
+                    downloadFileFromAWS($filePath, AWS_S3_BUCKET_URL.$offerLetterNew['uploaded_document_s3_name']);
+                    // Upload file to AWS
+                    $this->load->library('aws_lib');
+                    $options = [
+                        'Bucket' => AWS_S3_BUCKET_NAME,
+                        'Key' => $fileName,
+                        'Body' => file_get_contents($filePath),
+                        'ACL' => 'public-read',
+                        'ContentType' => getMimeType($filePath)
+                    ];
+                    //
+                    if($options['Body'] == ''){
+                        return $offerLetterId;
+                    }
+                    //
+                    $this->aws_lib->put_object($options);
+                    $offerLetterNew['uploaded_document_s3_name'] = $fileName;
+                    unlink($filePath);
+                }
+                $this->db->insert('offer_letter', $offerLetterNew);
+                $offerLetterId = $this->db->insert_id();
+                
+                //
+                $insertArray = array();
+                $insertArray['admin_sid'] = 1;
+                $insertArray['to_company_sid'] = $companyId;
+                $insertArray['new_document_sid'] = $offerLetterId;
+                $insertArray['from_company_sid'] = $fromCompanyId;
+                $insertArray['document_sid'] = $document['document_sid'];
+                $insertArray['document_type'] = 'offer_letter';
+                //
+                $this->db->insert('copy_document_track', $insertArray);
+            }    
+        } else if ($record) {
+            $offerLetterId = $record['sid'];
+        }
+        //
+        return $offerLetterId;
+    }
 }

@@ -6,14 +6,16 @@
         <!--  -->
         <div class="row">
             <div class="col-sm-2">
-                <div class="figure">
-                    <?php if (isset($loggedInPersonDetails['profile_picture']) && !empty($loggedInPersonDetails['profile_picture'])) { ?>
-                        <div class="contasiner-fig">
-                            <img class="img-responsive  cs-radius" src="<?= getImageURL($loggedInPersonDetails['profile_picture']); ?>" alt="profile picture">
-                        </div>
-                    <?php } else { ?>
-                        <span><?php echo substr($loggedInPersonDetails['first_name'], 0, 1) . substr($loggedInPersonDetails['last_name'], 0, 1); ?></span>
-                    <?php } ?>
+                <div class="emp-info-box">
+                    <div class="figure">
+                        <?php if (isset($loggedInPersonDetails['profile_picture']) && !empty($loggedInPersonDetails['profile_picture'])) { ?>
+                            <div class="contasiner-fig">
+                                <img class="img-responsive  cs-radius" src="<?= getImageURL($loggedInPersonDetails['profile_picture']); ?>" alt="profile picture" style="height: 143px">
+                            </div>
+                        <?php } else { ?>
+                            <span><?php echo substr($loggedInPersonDetails['first_name'], 0, 1) . substr($loggedInPersonDetails['last_name'], 0, 1); ?></span>
+                        <?php } ?>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-6">

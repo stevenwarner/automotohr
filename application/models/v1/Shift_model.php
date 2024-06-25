@@ -57,6 +57,7 @@ class Shift_model extends CI_Model
             notes,
             job_sites,
             breaks_json,
+            is_published,
             ")
             ->where("company_sid", $companyId)
             ->where("sid", $shiftId)
@@ -358,7 +359,7 @@ class Shift_model extends CI_Model
      * @param array $employeeIds
      * @return array
      */
-    public function getShifts(array $filter, array $employeeIds): array
+    public function getShifts(array $filter, array $employeeIds, $publishedOnly = false): array
     {
         //
         if (empty($employeeIds)) {
@@ -366,7 +367,7 @@ class Shift_model extends CI_Model
         }
 
         $this->db
-            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites")
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,is_published")
             ->where_in("employee_sid", $employeeIds);
 
         if ($filter["mode"] === "month") {
@@ -385,13 +386,20 @@ class Shift_model extends CI_Model
                 ->where("shift_date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE))
                 ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
         }
-
         //
+        if ($publishedOnly == true) {
+            $this->db->where("cl_shifts.is_published", 1);
+        }
+
         $records = $this->db
             ->get("cl_shifts")
             ->result_array();
         //
         if ($records) {
+            // extract employee ids
+            $employeeIds = array_column($records, "employee_sid");
+            // get the job color codes by employees jobs
+            $employeesJobColorCodes = $this->getEmployeesJobColor($employeeIds);
             //
             $employees = [];
             //
@@ -401,7 +409,8 @@ class Shift_model extends CI_Model
                     $employees[$v0["employee_sid"]] = [
                         "totalTimeText" => '0h',
                         "totalTime" => 0,
-                        "dates" => []
+                        "dates" => [],
+                        "jobColor" => $employeesJobColorCodes[$v0["employee_sid"]] ?? "#eeeeee"
                     ];
                 }
                 //
@@ -414,6 +423,9 @@ class Shift_model extends CI_Model
                         $v0["shift_date"] . ' ' . $v0["start_time"],
                         $v0["shift_date"] . ' ' . $v0["end_time"],
                     ),
+                    "is_published" => $v0["is_published"],
+                    "shift_date" => $v0["shift_date"],
+
                 ];
                 //
                 $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
@@ -467,7 +479,7 @@ class Shift_model extends CI_Model
             $records = $holidays;
         }
         //
-        return array_merge($records, getSundaysAndSaturdays($startDate, $endDate));
+        return array_merge($records, getCompanyOffDaysDatesWithinRange($startDate, $endDate, getCompanyExtraColumn($companyId, "week_off_days")));
     }
 
     /**
@@ -520,7 +532,8 @@ class Shift_model extends CI_Model
             $records = $holidays;
         }
 
-        $offs = getSundaysAndSaturdays($startDate, $endDate);
+        // get company off days
+        $offs = getCompanyOffDaysDatesWithinRange($startDate, $endDate, getCompanyExtraColumn($companyId, "week_off_days"));
         foreach ($offs as $date) {
             if (!$records[$date]) {
                 $records[$date] = [
@@ -952,7 +965,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Copied the shift to the selected employees." . (
+                "msg" => "You have successfully copied the shift to the selected employees." . (
                     $employeesAlreadyExists ? "<p>However, the below employees already have shifts.</p>" : ""
                 ),
                 "list" => $employeesAlreadyExists
@@ -989,7 +1002,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Deleted the shifts to the selected employees."
+                "msg" => "You have successfully deleted the shifts of the selected employees."
             ]
         );
     }
@@ -1007,7 +1020,7 @@ class Shift_model extends CI_Model
         return SendResponse(
             200,
             [
-                "msg" => "You have successfully Deleted the shift to the selected employee."
+                "msg" => "You have successfully deleted the shift of the selected employee."
             ]
         );
     }
@@ -1026,6 +1039,8 @@ class Shift_model extends CI_Model
             ->where('employee_sid', $employeeId)
             ->where('shift_date >= ', $startDate)
             ->where('shift_date <= ', $endDate)
+            ->where('is_published', 1)
+
             ->count_all_results('cl_shifts');
     }
 
@@ -1206,7 +1221,7 @@ class Shift_model extends CI_Model
         );
         //
         if ($records) {
-            foreach($records as $index => $v0) {
+            foreach ($records as $index => $v0) {
                 $records[$index]["breaks"] = convertToList(
                     json_decode(
                         $v0["breaks_json"],
@@ -1217,6 +1232,220 @@ class Shift_model extends CI_Model
             }
         }
         //
+        return $records;
+    }
+
+    /**
+     * get the employee job colors
+     *
+     * @param array $employeeIds
+     * @return array
+     */
+    private function getEmployeesJobColor(array $employeeIds): array
+    {
+        //
+        $result =
+            $this->db
+            ->select("portal_job_title_templates.color_code")
+            ->select("users.sid")
+            ->join(
+                "portal_job_title_templates",
+                "
+                    LOWER(REGEXP_REPLACE(portal_job_title_templates.title, '[^a-zA-Z]', '')) = 
+                    LOWER(REGEXP_REPLACE(users.job_title, '[^a-zA-Z]', ''))
+                ",
+                "inner"
+            )
+            ->where_in("users.sid", $employeeIds)
+            ->get("users")
+            ->result_array();
+        //
+        if (!$result) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($result as $v) {
+            $ra[$v["sid"]] = $v["color_code"];
+        }
+        //
+        return $ra;
+    }
+
+    /**
+     * get shift by employee id and date
+     *
+     * @param int    $employeeId
+     * @param string $clockedDate
+     * @param bool   $convertToSeconds If false then hours will be returned otherwise seconds
+     * @return int
+     */
+    public function getEmployeeShiftByDateAndId(int $employeeId, string $clockedDate, bool $convertToSeconds = false)
+    {
+        // get the shift
+        $record = $this->db
+            ->select("
+                start_time,
+                end_time
+            ")
+            ->where([
+                "employee_sid" => $employeeId,
+                "shift_date" => $clockedDate,
+                // "is_published" => 1, // enable this check when publish work is live
+            ])
+            ->get("cl_shifts")
+            ->row_array();
+        // when no record found
+        if (!$record) {
+            return 0;
+        }
+        // set start date and time
+        $startDateTime = $clockedDate . " " . $record["start_time"];
+        $endDateTime = $clockedDate . " " . $record["end_time"];
+        // get the difference
+        $duration = $this->attendance_lib
+            ->getDurationInMinutes(
+                $startDateTime,
+                $endDateTime
+            );
+        //
+        return $convertToSeconds ? $duration : $duration / 60 / 60;
+    }
+
+
+
+
+    //
+    public function SingleShiftPublishStatusChange(int $companyId, array $post)
+    {
+
+        $shiftId = $post['shiftId'];
+        $data['is_published'] = $post['publichStatus'];
+
+        $this->db->where('company_sid',  $companyId);
+        $this->db->where('sid',  $shiftId);
+        $this->db->update('cl_shifts', $data);
+    }
+
+
+    //
+    public function SingleMultiPublishStatusChange(int $companyId, array $post)
+    {
+
+        $shiftIds = explode(',', $post['shiftIds']);
+        $data['is_published'] = $post['publichStatus'];
+
+        $this->db->where('company_sid',  $companyId);
+        $this->db->where_in('sid',  $shiftIds);
+        $this->db->update('cl_shifts', $data);
+    }
+
+
+    //
+    public function getShiftsById($companyId, $shiftId)
+    {
+        // get the shift
+        $record = $this->db
+            ->select(
+                "cl_shifts.employee_sid,
+                cl_shifts.shift_date,
+                cl_shifts.start_time,
+                cl_shifts.end_time,
+                cl_shifts.breaks_json,
+                cl_shifts.breaks_count,
+                 users.first_name,
+                 users.last_name,
+                  users.email
+                "
+            )
+            ->join(
+                "users",
+                "users.sid = cl_shifts.employee_sid",
+                "inner"
+            )
+            ->where_in("cl_shifts.sid", $shiftId)
+            ->where("cl_shifts.company_sid", $companyId)
+            ->get("cl_shifts")
+            ->result_array();
+
+        return $record;
+    }
+
+    //
+    public function getShiftsForCalendar(
+
+        $company_id,
+        $employer_detail,
+        $calendarStartDate,
+        $calendarEndDate
+    ) {
+        //
+        $this->db
+            ->select("
+            sid,
+            employee_sid,
+            shift_date,
+            start_time,
+            end_time,
+            job_sites,
+            breaks_json,
+            breaks_count
+        ");
+        //
+        $this->db
+            ->where("shift_date >= ", $calendarStartDate)
+            ->where("shift_date <= ", $calendarEndDate)
+            ->where("is_published", 1)
+            ->where("company_sid", $company_id);
+        //
+        if (!isPayrollOrPlus()) {
+            $this->db->where("employee_sid", $employer_detail['sid']);
+        }
+        //
+        $records = $this->db
+            ->get("cl_shifts")
+            ->result_array();
+        //
+        if ($records) {
+            //
+            $jobColors = $this->getEmployeesJobColor(
+                array_column(
+                    $records,
+                    "employee_sid"
+                )
+            );
+
+            foreach ($records as $key => $val) {
+                $result = $this->db
+                    ->select(getUserFields())
+                    ->from('users')
+                    ->where('sid', $val['employee_sid'])
+                    ->where('active', 1)
+                    ->where('terminated_status', 0)
+                    ->where('is_executive_admin', 0)
+                    ->where('parent_sid', $company_id)
+                    ->limit(1)
+                    ->get()
+                    ->row_array();
+                
+                if (!$result) {
+                    unset($records[$key]);
+                    continue;
+                }
+
+                $records[$key]['title'] = remakeEmployeeName($result);
+                $records[$key]['start'] = $val['shift_date'];
+                $records[$key]['end'] = $val['shift_date'];
+                $records[$key]['color'] =  $jobColors[$result["userId"]] ?? '#af4200';
+                $records[$key]['status'] = '';
+                $records[$key]['img'] = getImageURL(
+                    $result["image"]
+                );
+                $records[$key]['requests'] = 0;
+                $records[$key]['type'] = 'shifts';
+            }
+        }
         return $records;
     }
 }

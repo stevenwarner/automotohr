@@ -316,7 +316,7 @@
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                             <div class="form-group autoheight">
-                                                <label>1. Enter an estimate of your 2020 itemized deductions (from Schedule A (Form 1040 or 1040-SR)). Such deductions may include qualifying home mortgage interest, charitable contributions, state and local taxes (up to $10,000), and medical expenses in excess of 7.5% of your income</label>
+                                                <label>1. Enter an estimate of your 2024 itemized deductions (from Schedule A (Form 1040 or 1040-SR)). Such deductions may include qualifying home mortgage interest, charitable contributions, state and local taxes (up to $10,000), and medical expenses in excess of 7.5% of your income</label>
                                                 <input type="text" value="<?php echo !empty($pre_form) && isset($pre_form['dw_input_1']) ? $pre_form['dw_input_1']: ''?>" name="dw_input_1" class="form-control" />
                                             </div>
                                         </div>
@@ -324,9 +324,9 @@
                                             <div class="form-group autoheight">
                                                 <label>2. Enter: </label>
                                                 <p>
-                                                    &nbsp;&nbsp;• $24,000 if you’re married filing jointly or qualifying widow(er)<br>
-                                                    &nbsp;&nbsp;• $18,000 if you’re head of household<br>
-                                                    &nbsp;&nbsp;• $12,000 if you’re single or married filing separately
+                                                    &nbsp;&nbsp;• $29,200 if you’re married filing jointly or qualifying widow(er)<br>
+                                                    &nbsp;&nbsp;• $21,900 if you’re head of household<br>
+                                                    &nbsp;&nbsp;• $14,600 if you’re single or married filing separately
                                                 </p>
                                                 <input type="text" value="<?php echo !empty($pre_form) && isset($pre_form['dw_input_2']) ? $pre_form['dw_input_2']: ''?>" name="dw_input_2" class="form-control" />
                                             </div>

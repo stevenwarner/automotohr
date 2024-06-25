@@ -276,6 +276,7 @@ class Export_csv_model extends CI_Model
         $this->db->select('portal_job_listings.Title');
         $this->db->select('portal_job_applications.union_member');
         $this->db->select('portal_job_applications.union_name');
+        $this->db->select('portal_job_applications.employee_number');
 
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 

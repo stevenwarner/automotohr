@@ -990,15 +990,25 @@ $(function () {
                 success: function (resp) {
                     ml(false, `request${request_sid}`);
                     if (resp.Status === true) {
-                        alertify.confirm(
-                            'Please Confirm',
-                            resp.message,
-                            function () {
-                                //
-                                sendUpdateStatusRequest(obj);
-                            }, function () {
-                                // ml(true, 'editModalLoader');
-                            });
+                        if (resp.code == 1) {
+                            alertify.confirm(
+                                'Please Confirm',
+                                resp.message,
+                                function () {
+                                    //
+                                    sendUpdateStatusRequest(obj);
+                                }, function () {
+                                    // ml(true, 'editModalLoader');
+                                });
+                        } else if (resp.code == 2) {
+                            alertify.alert(
+                                'CONFLICT!',
+                                resp.message,
+                                function () {
+                                    return true;
+                                }
+                            )
+                        }         
                     } else {
                         //
                         sendUpdateStatusRequest(obj);

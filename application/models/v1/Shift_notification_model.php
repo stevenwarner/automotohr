@@ -32,6 +32,10 @@ class Shift_notification_model extends CI_Model
         if (!$employeeIds) {
             return ["errors" => ["No employees selected."]];
         }
+        // check if company allows email reminder
+        if ($companyId && !$this->enabledNotificationEmails($companyId)) {
+            return ["errors" => ["Company disabled email reminder emails."]];
+        }
         // get next day shift
         $tomorrowDate = getSystemDate(DB_DATE, "tomorrow");
         // get the employees
@@ -91,9 +95,12 @@ class Shift_notification_model extends CI_Model
         // get company job sites
         $this->load->model("v1/Job_sites_model", "job_sites_model");
         //
+        $companyNotifications = [];
+        //
         $companyJobSites = [];
         //
         foreach ($companyIds as $v0) {
+            $companyNotifications[$v0] = $this->enabledNotificationEmails($v0);
             //
             $tmp
                 = $this->job_sites_model->get($v0);
@@ -103,8 +110,14 @@ class Shift_notification_model extends CI_Model
                 $companyJobSites[$v0][$v1["sid"]] = $v1;
             }
         }
+        $skipped = 0;
         //
         foreach ($records as $v0) {
+            // check if company allows email reminder
+            if (!$companyNotifications[$v0["parent_sid"]]) {
+                $skipped++;
+                continue;
+            }
             // set replacement array
             $ra = [];
             $ra["shift_date"] = formatDateToDB(
@@ -177,6 +190,33 @@ class Shift_notification_model extends CI_Model
             );
         }
 
-        return ["success" => true];
+        return [
+            "total" => count($records),
+            "skipped" => $skipped
+        ];
+    }
+
+    /**
+     * check the notification
+     *
+     * @param int $companyId
+     * @return bool
+     */
+    private function enabledNotificationEmails(int $companyId): bool
+    {
+        // get the company extra fields
+        $result = $this->db
+            ->select("extra_info")
+            ->where("sid", $companyId)
+            ->get("users")
+            ->row_array();
+        //
+        if (!$result || !$result['extra_info']) {
+            return 0;
+        }
+        //
+        $data = unserialize($result["extra_info"]);
+        //
+        return $data["shift_reminder_email_for_next_day"] ?? 0;
     }
 }

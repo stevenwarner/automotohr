@@ -84,7 +84,7 @@
                                                     $group_doc_name = $group_doc_name . "&rarr; State Forms<br>";
                                                 }
 
-                                                $groups_dociments = get_all_group_documents($group['sid']);
+                                                $groups_dociments = get_all_group_documents($group['sid'], true);
 
                                                 if (!empty($groups_dociments)) {
 

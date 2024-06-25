@@ -41,7 +41,7 @@ class Import_applicants_csv extends Public_Controller
                 $firstNameTitles = array('first_name', 'firstName', 'first-name', 'FirstName', 'FName', 'First Name'); // for first_name
                 $lastNameTitles = array('last_name', 'lastName', 'last-name', 'LastName', 'LName', 'last name'); //for last_name
                 $emailAddressTitles = array('email', 'email_address', 'emailAddress', 'email-address', 'EmailAddress', 'Email', 'E-Mail', 'e-mail');
-                $phoneNumberTitles = array('phone_number', 'phoneNumber', 'phone-number', 'PhoneNumber', 'Phone', 'Contact Number', 'Contact','PrimaryNumber'); //for PhoneNumber
+                $phoneNumberTitles = array('phone_number', 'phoneNumber', 'phone-number', 'PhoneNumber', 'Phone', 'Contact Number', 'Contact', 'PrimaryNumber'); //for PhoneNumber
                 $addressTitles = array('address', 'Address', 'Street Address'); // for Location_Address
                 $cityTitles = array('city', 'City'); // for Location_city
                 $zipCodeTitles = array('zip_code', 'zipCode', 'zip-code', 'ZipCode', 'zip'); // for Location_ZipCode
@@ -266,6 +266,9 @@ class Import_applicants_csv extends Public_Controller
                     $insertArray['gender'] = isset($v0['gender']) ? trim($v0['gender']) : NULL;
 
 
+                    //
+                    $insertArray['employee_number'] = isset($v0['employee_number']) ? trim($v0['employee_number']) : '';
+
 
                     // Check for state
                     if (isset($v0['state'])) {
@@ -308,12 +311,56 @@ class Import_applicants_csv extends Public_Controller
                     $insertArray['employer_sid'] = $companyId;
                     $insertArray['date_applied'] = date("Y-m-d H:i:s", strtotime('now'));
                     // _e($insertArray, true);
+
+                    $applicant_jobs_list_data['applicant_source'] = isset($v0['applicant_source']) ? trim(ucwords(strtolower($v0['applicant_source']))) : NULL;
+
+                    if (isset($v0['date_applied']) && !empty($v0['date_applied']) && $v0['date_applied'] != NULL && preg_match('/[0-9]{2}/', $v0['date_applied'])) {
+
+                        $formatForDate = 'Y-m-d H:i:s';
+                        //
+                        $dateApplied = explode(' -', $v0['date_applied']);
+                        //
+                        $applicant_jobs_list_data['date_applied'] = date("Y-m-d H:i:s",strtotime($dateApplied[0]));
+                        // $applicant_jobs_list_data['date_applied'] = formatDateToDB($dateApplied[0], $formatForDate);
+                        $insertArray['date_applied'] = $applicant_jobs_list_data['date_applied'];
+                    } else {
+                        $applicant_jobs_list_data['date_applied'] = date("Y-m-d H:i:s", strtotime('now'));
+                        $insertArray['date_applied'] = date("Y-m-d H:i:s", strtotime('now'));
+                    }
+
+                    $applicantStatuses = [
+                        'Not Contacted Yet' => 'notcontactedyet',
+                        'Left Message' => 'leftmessage',
+                        'Contacted' => 'contacted',
+                        'Candidate Responded' => 'candidateresponded',
+                        'Interviewing' => 'interviewing',
+                        'Submitted' => 'submitted',
+                        'Qualifying' => 'qualifying',
+                        'Ready to Hire' => 'readytohire',
+                        'do_not_hire' => 'donothire',
+                        'Offered Job' => 'offeredjob',
+                        'Client Declined' => 'clientdeclined',
+                        'Not In Consideration' => 'notinconsideration',
+                        'Future Opportunity' => 'futureopportunity'
+                    ];
+
+                    if (isset($v0['status']) && !empty($v0['status']) && $v0['status'] != NULL) {
+                        $jobStatus = preg_replace('/\s+/', '', strtolower($v0['status']));
+                        $jobStatusValue = array_search($jobStatus, $applicantStatuses);
+                        if ($jobStatusValue != '') {
+                            $applicant_jobs_list_data['status'] = $jobStatusValue;
+                        } else {
+                            $applicant_jobs_list_data['status'] = $status;
+                        }
+                    } else {
+                        $applicant_jobs_list_data['status'] = $status;
+                    }
+
                     //
                     $applicantId = $this->import_csv_model->insert_new_applicant($companyId, $insertArray['email'], $insertArray);
                     $applicant_jobs_list_data['portal_job_applications_sid'] = $applicantId;
-                    $applicant_jobs_list_data['status'] = $status;
                     $applicant_jobs_list_data['status_sid'] = $status_sid;
-                    $applicant_jobs_list_data['applicant_source'] = 'csv imported data';
+                    // $applicant_jobs_list_data['applicant_source'] = 'csv imported data';
                     $applicant_jobs_list_data['applicant_type'] = 'Manual Candidate';
                     $applicant_jobs_list_data['job_sid'] = '0';
                     //

@@ -95,7 +95,7 @@ class Timeoff_model extends CI_Model
      * 
      * @return Array
      */
-    function getCompanyEmployees($companySid, $employerId = false)
+    function getCompanyEmployees($companySid, $employerId = false, int $employeeStatus = 0)
     {
         //
         $ses = $this->session->userdata('logged_in')['employer_detail'];
@@ -117,14 +117,20 @@ class Timeoff_model extends CI_Model
             pay_plan_flag,
             joined_at,
             registration_date,
-            rehire_date
+            rehire_date,
+            terminated_status,
+            active,
         ')
             ->from('users')
             ->where('parent_sid', $companySid)
-            ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->where('terminated_status', 0)
             ->order_by('first_name', 'ASC');
+        // include terminated and inactive people 
+        if ($employeeStatus === 0) {
+            $this->db
+                ->where('active', 1)
+                ->where('terminated_status', 0);
+        }
         if (!empty($ids)) $this->db->where_in('sid', $ids);
 
         $result = $this->db->get();
@@ -1948,15 +1954,17 @@ class Timeoff_model extends CI_Model
             user_shift_hours,
             user_shift_minutes,
             employee_status,
-            employee_type
+            employee_type,
+             terminated_status,
+            active,
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
             ->where('sid', $employeeId);
         //
         if (!$includeArchived) {
-            $this->db->where('active', 1)
-                ->where('terminated_status', 0);
+            // $this->db->where('active', 1)
+            // ->where('terminated_status', 0);
         }
         //
         $a = $this->db->get('users');
@@ -2680,15 +2688,15 @@ class Timeoff_model extends CI_Model
             user_shift_minutes
         ')
             ->where('parent_sid', $companyId)
-            ->where('sid', $employeeId)
-            ->where('active', 1)
-            ->where('terminated_status', 0);
+            ->where('sid', $employeeId);
+        // ->where('active', 1)
+        // ->where('terminated_status', 0);
         //
         $a = $this->db->get('users');
         $employee = $a->row_array();
         $a->free_result();
         //
-        if (empty($employee)) return $r;
+        if (empty($employee)) return [];
         //
         $settings = $this->getSettings($companyId);
         //
@@ -3178,6 +3186,8 @@ class Timeoff_model extends CI_Model
             users.joined_at,
             users.registration_date,
             users.rehire_date,
+            users.terminated_status,
+            users.active,
             timeoff_policies.title,
             timeoff_policies.policy_category_type as categoryType,
             ' . (getUserFields()) . '
@@ -3246,6 +3256,15 @@ class Timeoff_model extends CI_Model
                 $this->db->group_end();
             }
         }
+
+        // check and add the employee status
+        if ($post["filter"]["employeeStatus"]) {
+            $this->db->where(getTheWhereFromEmployeeStatus($post["filter"]["employeeStatus"]));
+        } else {
+            $this->db->where('users.active', 1)
+                ->where('users.terminated_status', 0);
+        }
+
         //
         $requests = $this->db->get('timeoff_requests')
             ->result_array();
@@ -3630,7 +3649,9 @@ class Timeoff_model extends CI_Model
             user_shift_minutes,
             employee_status,
             is_executive_admin,
-            employee_type
+            employee_type,
+            terminated_status,
+            active
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -5559,7 +5580,7 @@ class Timeoff_model extends CI_Model
 
 
     //
-    function getEmployeesWithDepartmentAndTeams($companyId, $employees = 'all', $departments = 'all', $teams = 'all')
+    function getEmployeesWithDepartmentAndTeams($companyId, $employees = 'all', $departments = 'all', $teams = 'all', $employeeStatus = 0)
     {
         //
         $this->db->select('
@@ -5577,7 +5598,9 @@ class Timeoff_model extends CI_Model
             employee_number,
             joined_at,
             registration_date,
-            rehire_date
+            rehire_date,
+            active,
+            terminated_status,
         ');
 
         // echo '<pre>';
@@ -5599,8 +5622,17 @@ class Timeoff_model extends CI_Model
         }
 
         $this->db->where('parent_sid', $companyId);
-        $this->db->where('active', 1);
-        $this->db->where('terminated_status', 0);
+
+        if ($employeeStatus == 0) {
+
+            $this->db->where('active', 1);
+            $this->db->where('terminated_status', 0);
+        } else {
+            $this->db
+                ->where(
+                    getTheWhereFromEmployeeStatus($employeeStatus)
+                );
+        }
         $this->db->order_by('first_name', 'ASC');
         // Get employees
         $a = $this->db->get('users');
@@ -6070,7 +6102,6 @@ class Timeoff_model extends CI_Model
         $records_obj = $this->db->get('timeoff_requests');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
         $return_data = array();
 
         if (!empty($records_arr)) {
@@ -6119,6 +6150,8 @@ class Timeoff_model extends CI_Model
         u.registration_date,
         u.joined_at,
         u.rehire_date,
+        u.active,
+        u.terminated_status,
     ')
             ->from('timeoff_requests tr')
             ->join('timeoff_policies tp', 'tp.sid = tr.timeoff_policy_sid')
@@ -6133,7 +6166,6 @@ class Timeoff_model extends CI_Model
         }
 
         if (!empty($filter_policy) && $filter_policy != 'all') {
-
             $this->db->where_in('tr.timeoff_policy_sid', $filter_policy);
         }
 
@@ -6346,7 +6378,6 @@ class Timeoff_model extends CI_Model
             $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
             //
             if (!empty($joiningDate)) {
-                echo $joiningDate;
                 $b[$k]['joining_date'] = $joiningDate;
             } else {
                 $b[$k]['joining_date'] = "N/A";
@@ -6531,17 +6562,25 @@ class Timeoff_model extends CI_Model
             registration_date,
             rehire_date,
             employee_status,
-            employee_type
+            employee_type, terminated_status,
+            active,
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $post['companyId'])
-            ->where('active', 1)
             ->where('is_executive_admin', 0)
-            ->limit($post['offset'], $post['inset'])
-            ->where('terminated_status', 0);
+            ->limit($post['offset'], $post['inset']);
         //
         if (!empty($inIds)) $this->db->where_in('sid', $inIds);
         if ($post['filter']['employees'] != '' && $post['filter']['employees'] != 'all') $this->db->where('sid', $post['filter']['employees']);
+        //
+        if ($post["filter"]["all"]) {
+            $this->db->where(getTheWhereFromEmployeeStatus($post["filter"]["all"]));
+        } else {
+            $this->db->where([
+                "users.active" => 1,
+                "users.terminated_status" => 0,
+            ]);
+        }
         //
         $a = $this->db->get('users');
         $employees = $a->result_array();
@@ -7198,11 +7237,103 @@ class Timeoff_model extends CI_Model
                 if ($v1["date"] >= $startDate && $v1["date"] <= $endDate) {
                     $returnArray[$v1["date"]] = [
                         "reason" => $v0["reason"],
-                        "title" => $v0["title"],
+                        "title" => $v0["title"]
                     ];
                 }
             }
         }
+        return $returnArray;
+    }
+
+    /**
+     * Get the employees time off within dates
+     * 
+     * @param int $employeeId
+     * @param string $startDate
+     * @param string $endDate
+     */
+    public function getEmployeePaidTimeOffsInRange(
+        int $employeeId,
+        string $startDate,
+        string $endDate
+    ): array {
+        // get the timeoffs ids within range
+        $records = $this->db
+            ->select("
+            timeoff_requests.request_from_date,
+            timeoff_requests.request_to_date,
+            timeoff_requests.reason,
+            timeoff_policies.title,
+            timeoff_requests.timeoff_days
+        ")
+            ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
+            ->where("timeoff_policies.policy_category_type", 1)
+            ->where("timeoff_requests.employee_sid", $employeeId)
+            ->group_start()
+            ->group_start()
+            ->where('timeoff_requests.request_from_date <=', $startDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date >=', $startDate)
+            ->where('timeoff_requests.request_to_date <=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('timeoff_requests.request_from_date <=', $endDate)
+            ->where('timeoff_requests.request_to_date >=', $startDate)
+            ->group_end()
+            ->group_end()
+            ->where('timeoff_requests.status', 'approved')
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return [];
+        }
+
+        $returnArray = [
+            "polices" => [],
+            "total_hours" => 0
+        ];
+
+        foreach ($records as $record) {
+            $timeoffDays = json_decode($record['timeoff_days'], true)['days'];
+            //
+            foreach ($timeoffDays as $dayInfo) {
+                $timeoffDate = DateTime::createFromFormat('m-d-Y', $dayInfo['date'])->format('Y-m-d');
+                //
+                if ($timeoffDate >= $startDate && $timeoffDate <= $endDate) {
+                    if (!$returnArray['polices'][$record['title']]) {
+                        $returnArray['polices'][$record['title']] = [
+                            'title' => $record['title'],
+                            'hours' => ($dayInfo['time'] / 60),
+                            'day_count' => 1,
+                            'days' => [
+                                [
+                                    'date' => $timeoffDate,
+                                    'hours' => ($dayInfo['time'] / 60)
+                                ]
+                            ]
+                        ];
+                    } else {
+                        $returnArray['polices'][$record['title']]['hours'] += ($dayInfo['time'] / 60);
+                        $returnArray['polices'][$record['title']]['day_count'] += 1;
+                        $returnArray['polices'][$record['title']]['days'][] = [
+                            'date' => $timeoffDate,
+                            'hours' => ($dayInfo['time'] / 60)
+                        ];
+                    }
+                    //
+                    $returnArray['total_hours'] += ($dayInfo['time'] / 60);
+                    $returnArray['total_days'] += 1;
+                    //
+                }
+            }
+        }
+        //
         return $returnArray;
     }
 
@@ -7392,5 +7523,353 @@ class Timeoff_model extends CI_Model
         $records_arr = $records_obj->result_array();
 
         return $records_arr;
+    }
+
+    //
+    public function getEmployeeRequestsPrevious(int $employeeId)
+    {
+        //
+        return $this->db
+            ->where('employee_sid', $employeeId)
+            ->get('timeoff_requests')
+            ->result_array();
+    }
+
+
+    //
+    public function getPreviousPlicyTitle(int $companyId, int $policyId)
+    {
+        //
+        return $this->db
+            ->select('title')
+            ->where('company_sid', $companyId)
+            ->where('sid', $policyId)
+            ->get('timeoff_policies')
+            ->row_array();
+    }
+
+    //
+    public function getPreviousPlicySid(int $companyId, string $title)
+    {
+        //
+        return $this->db
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->where('title', $title)
+            ->get('timeoff_policies')
+            ->row_array();
+    }
+
+    //
+    function checkEmployeeTimeoffRequestExist($employeeSid, $startDate, $endDate, $time)
+    {
+        //
+        $response = [
+            'message' => 'No timeoff already exist on same date.',
+            'code' => 1
+        ];
+        //
+        $records = $this->db
+            ->select("
+            request_from_date,
+            request_to_date,
+            status,
+            timeoff_days
+        ")
+            ->where("employee_sid", $employeeSid)
+            ->group_start()
+            ->group_start()
+            ->where('request_from_date <=', $startDate)
+            ->where('request_to_date >=', $startDate)
+            ->where('request_from_date <=', $endDate)
+            ->where('request_to_date >=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('request_from_date >=', $startDate)
+            ->where('request_to_date <=', $endDate)
+            ->group_end()
+            ->or_group_start()
+            ->where('request_from_date <=', $endDate)
+            ->where('request_to_date >=', $startDate)
+            ->group_end()
+            ->group_end()
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return $response;
+        }
+        //
+        $conflictCount = 0;
+        $conflictStatus = 'pending';
+        $newMessage = '<strong>You have {{conflict_count}} conflicts with time off requests:</strong><br><br>';
+        $alreadyAppliedTime = [];
+        $shortLeaveStatus = false;
+        $shortLeaveText = '';
+        //
+        foreach ($records as $v0) {
+            //
+            $timeoffDays = json_decode($v0['timeoff_days'], true)['days'];
+            //
+            foreach ($timeoffDays as $v1) {
+                //
+                if (!isset($alreadyAppliedTime[$v1["date"]])) {
+                    $alreadyAppliedTime[$v1["date"]] = $v1["time"];
+                } else {
+                    $alreadyAppliedTime[$v1["date"]] = $alreadyAppliedTime[$v1["date"]] + $v1["time"];
+                }
+                //
+                // $requestDate = DateTime::createfromformat('m-d-Y', $v1["date"])->format('Y-m-d');
+                $requestDate = checkAndFixDateFormat($v1["date"],'Y-m-d');
+                //
+                if ($requestDate >= $startDate && $requestDate <= $endDate) {
+                    //
+                    foreach ($time['days'] as $day) {
+                        //
+                        if ($day['date'] == $v1["date"]) {
+                            //
+                            if ($v1["time"] >= 480 || ($v1["time"] + $day['time']) > 480) {
+                                //
+                                $conflictCount++;
+                                //
+                                if ($v0['status'] == 'approved') {
+                                    $conflictStatus = 'approved';
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE) . ' ' . ($v1["time"] / 60) . ' hours (<span class="text-success"><b>' . strtoupper($v0['status']) . '</b></span>)<br>';
+                                } else {
+                                    $newMessage .= formatDateToDB($requestDate, DB_DATE, DATE) . ' ' . ($v1["time"] / 60) . ' hours (<span class="text-warning"><b>' . strtoupper($v0['status']) . '</b></span>)<br>';
+                                }
+                                //
+                            } else if ($v1['time'] < 480) {
+                                if ($v0['status'] == 'approved') {
+                                    $conflictStatus = 'approved';
+                                    $shortLeaveText .= formatDateToDB($requestDate, DB_DATE, DATE) . ' ' . ($v1["time"] / 60) . ' hours (<span class="text-success"><b>' . strtoupper($v0['status']) . '</b></span>)<br>';
+                                } else {
+                                    $shortLeaveText .= formatDateToDB($requestDate, DB_DATE, DATE) . ' ' . ($v1["time"] / 60) . ' hours (<span class="text-warning"><b>' . strtoupper($v0['status']) . '</b></span>)<br>';
+                                }
+                                //
+                                if ($alreadyAppliedTime[$v1["date"]] >= 480) {
+                                    $conflictCount++;
+                                    $shortLeaveStatus = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //
+        if ($shortLeaveStatus) {
+            $newMessage .= $shortLeaveText;
+        }
+        //
+        if ($conflictCount > 0) {
+            //
+            if ($conflictStatus == 'approved') {
+                $newMessage = '<strong class="text-danger">You can not create this time off request due to following conflict(s).</strong><br><br>' . $newMessage;
+            } else {
+                $newMessage = $newMessage . '<br><br><b>Do you still want to continue?</b>';
+            }
+            //
+            $response = [
+                'message' => str_replace('{{conflict_count}}', $conflictCount, $newMessage),
+                'code' => 2,
+                'conflictStatus' => $conflictStatus
+            ];
+        }
+
+        //
+        return $response;
+    }
+
+    //
+    function checkRequestAlreadyApproved($requestId)
+    {
+        //
+        $timeOff = $this->db
+            ->select("
+            employee_sid,
+            request_from_date,
+            request_to_date,
+            requested_time
+        ")
+            ->where("sid", $requestId)
+            ->get("timeoff_requests")
+            ->row_array();
+        //
+        $response = [
+            'message' => 'No timeoff approved on same date.',
+            'code' => 1
+        ];
+        //
+        $records = $this->db
+            ->select("
+            sid,
+            requested_time
+        ")
+            ->where("employee_sid", $timeOff['employee_sid'])
+            ->where('request_from_date', $timeOff['request_from_date'])
+            ->where('request_to_date', $timeOff['request_to_date'])
+            ->where('status', 'approved')
+            ->where('sid <>', $requestId)
+            ->get("timeoff_requests")
+            ->result_array();
+
+        //
+        if (!$records) {
+            return $response;
+        }
+        //
+        $previousTime = 0;
+        //
+        if (count($records) > 1) {
+            foreach ($records as $request) {
+                $previousTime = $previousTime + $request['requested_time'];
+            }
+        } else {
+            $previousTime = $records[0]['requested_time'];
+        }
+        //
+        if ($previousTime < 480 && ($timeOff['requested_time'] + $previousTime) <= 480) {
+            return $response;
+        } else {
+            $info = $this->fetchRequestHistoryInfo($records[0]['sid']);
+            //
+            $response = [
+                'message' => 'Another time off request by <b>' . getUserNameBySID($timeOff['employee_sid']) . '</b> for same date(s) already has been approved by <b>' . getUserNameBySID($info['employee_sid']) . '</b>.',
+                'code' => 2
+            ];
+            //
+            return $response;
+        }
+    }
+
+
+    //
+    function setHolidays($companyId)
+    {
+
+        $this->db
+            ->from('timeoff_holidays')
+            ->where('company_sid', $companyId)
+            ->where('holiday_year', date('Y'));
+
+        //
+        $holidaysCount = $this->db->count_all_results();
+
+
+        if ($holidaysCount == 0) {
+
+            // Get public holidays
+            $publicHolidays = getCurrentYearHolidaysFromGoogle();
+            //
+            $ph = [];
+            //
+            if ($publicHolidays) {
+                foreach ($publicHolidays as $holiday) {
+                    $ph[preg_replace('/[^a-zA-Z]/', '', strtolower(trim($holiday['holiday_title'])))] = $holiday;
+                }
+            }
+            //
+            $holidays = $this->findAndGetCompanyHolidays($companyId);
+            //
+            $nf = [
+                'found' => 0,
+                'notFound' => 0
+            ];
+            //
+            if (empty($holidays)) {
+                // No holiday of companies are found
+                foreach ($publicHolidays as $pb) {
+                    $ins = [];
+                    //
+                    $ins['company_sid'] = $companyId;
+                    $ins['creator_sid'] = getCompanyAdminSid($companyId);
+                    $ins['holiday_year'] = $pb["holiday_year"];
+                    $ins['holiday_title'] = $pb["holiday_title"];
+                    $ins['from_date'] = $pb['from_date'];
+                    $ins['to_date'] = $pb['from_date'];
+                    $ins['event_link'] = $pb['event_link'];
+                    $ins['status'] = $pb["status"];
+                    $ins['is_public'] = 1;
+                    $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                    //
+                    $this->db->insert('timeoff_holidays', $ins);
+                }
+            } else {
+                //
+                $year = date('Y', strtotime('now'));
+                $lastYear = date('Y', strtotime('-1 year'));
+                //
+                foreach ($holidays as $holiday) {
+                    //
+                    $title = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($holiday['holiday_title'])));
+                    //
+                    $doExists = $this->db
+                        ->where([
+                            'holiday_title' => $holiday['holiday_title'],
+                            'company_sid' => $holiday['company_sid'],
+                            'holiday_year' => $year
+                        ])
+                        ->count_all_results('timeoff_holidays');
+                    //
+                    if (
+                        $doExists
+                    ) {
+                        $nf['found']++;
+                        continue;
+                    }
+                    //
+                    $ins = $holiday;
+                    //
+                    unset($ins['sid'], $ins['created_at'], $ins['updated_at']);
+                    //
+                    $ins['holiday_year'] = $year;
+                    $ins['created_at'] = $ins['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    //
+                    if (isset($ph[$title])) {
+                        $ins['from_date'] = $ph[$title]['from_date'];
+                        $ins['to_date'] = $ph[$title]['to_date'];
+                    } else {
+                        $ins['from_date'] = preg_replace("/$lastYear/", $year, $ins['from_date']);
+                        $ins['to_date'] = preg_replace("/$lastYear/", $year, $ins['to_date']);
+                    }
+                    //
+                    $this->db->insert('timeoff_holidays', $ins);
+                    //
+                    $nf['notFound']++;
+                }
+            }
+            //
+        }
+    }
+
+    /**
+     * get the company holidays
+     *
+     * @param int $companyId
+     * @return array
+     */
+    private function findAndGetCompanyHolidays(int $companyId): array
+    {
+        // get last year of company
+        $record = $this->db
+            ->where("company_sid", $companyId)
+            ->order_by("holiday_year", "DESC")
+            ->limit(1)
+            ->get("timeoff_holidays")
+            ->row_array();
+        //
+        if (!$record) {
+            return [];
+        }
+        // Get all companies
+        return $this->db
+            ->where([
+                "company_sid" => $companyId,
+                "holiday_year" => $record["holiday_year"]
+            ])
+            ->get('timeoff_holidays')
+            ->result_array();
     }
 }

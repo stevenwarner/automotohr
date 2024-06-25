@@ -119,13 +119,11 @@ $(function () {
 			cOBJ.fromAdmin = 0;
 		}
 		//
-		ml(true, currentLoader);
-		//
 		$.post(
 			handlerURL,
 			Object.assign(
 				{
-					action: "create_timeoff",
+					action: "check_timeoff_request",
 					companyId: companyId,
 					employerId: employerId,
 					employeeId: selectedEmployeeId,
@@ -133,24 +131,64 @@ $(function () {
 				cOBJ
 			),
 			(resp) => {
-				if (resp.Status === false) {
-					ml(false, currentLoader);
-					alertify.alert("WARNING!", resp.Response, () => {});
-					return;
-				}
-				//
-				ml(false, currentLoader);
-				//
-				alertify.alert("SUCCESS!", resp.Response, () => {
-					$(".jsModalCancel").removeAttr("data-ask");
-					$(".jsModalCancel").trigger("click");
-					window.location.reload();
-				});
-				//
-				return;
+                if (resp.Response.code == 2) {
+                    if (resp.Response.conflictStatus == 'approved') {
+                        alertify.alert('Conflict!', resp.Response.message, () => { });
+                        return;
+                    } else {
+                        alertify.confirm(
+                            resp.Response.message,
+                            () => {
+                                saveTimeOffRequest(cOBJ);
+                            },
+                            () => {
+                                return;
+                            }
+                        ).set('labels', {
+                            ok: 'Yes',
+                            cancel: 'NO'
+                        }).set(
+                            'title', 'Conflict!'
+                        );
+                    }
+                } else if (resp.Response.code == 1) {
+                    saveTimeOffRequest(cOBJ);
+                }
 			}
 		);
+		//
 	});
+
+	function saveTimeOffRequest (cOBJ) {
+		//
+        ml(true, currentLoader);
+        //
+        $.post(
+            handlerURL, Object.assign({
+                action: 'create_timeoff',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId
+            }, cOBJ),
+            (resp) => {
+                if (resp.Status === false) {
+                    ml(false, currentLoader);
+                    alertify.alert('WARNING!', resp.Response, () => { });
+                    return;
+                }
+                //
+                ml(false, currentLoader);
+                //
+                alertify.alert('SUCCESS!', resp.Response, () => {
+                    $('.jsModalCancel').removeAttr('data-ask');
+                    $('.jsModalCancel').trigger('click');
+                    window.location.reload();
+                });
+                //
+                return;
+            }
+        );
+    }
 
 	//
 	$(document).on("click", ".jsCreateRequest", function (e) {

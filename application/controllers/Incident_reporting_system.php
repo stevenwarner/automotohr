@@ -9,34 +9,42 @@ class Incident_reporting_system extends Public_Controller
         $this->load->library("pagination");
         $this->load->model('incident_reporting_model');
         $this->load->model('notification_emails_model');
+        //
+        if (!checkIfAppIsEnabled('incidents')) {
+            redirect(base_url('dashboard'), "refresh");
+        }
     }
 
     public function index()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
 
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['title'] = 'Incident Reporting System';
-            $types = $this->incident_reporting_model->get_incident_types_company_specific($company_sid);
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data['title'] = 'Incident Reporting System';
+                $types = $this->incident_reporting_model->get_incident_types_company_specific($company_sid);
 
-            foreach ($types as $key => $value) {
-                if ($value['count'] == 0) {
-                    unset($types[$key]);
+                foreach ($types as $key => $value) {
+                    if ($value['count'] == 0) {
+                        unset($types[$key]);
+                    }
                 }
-            }
 
-            $data['types'] = $types;
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $data['employee'] = $data['session']['employer_detail'];
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/index_old');
-            $this->load->view('main/footer');
+                $data['types'] = $types;
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $data['employee'] = $data['session']['employer_detail'];
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/index_old');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }  
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -256,22 +264,26 @@ class Incident_reporting_system extends Public_Controller
     public function incident_reported()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
 
-            $data['title'] = 'Insident Reported';
-            $incidents_reported = $this->incident_reporting_model->get_incident_reported_by_company_specific($company_sid, $employer_sid);
-            $data['incidents_reported'] = $incidents_reported;
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $data['employee'] = $data['session']['employer_detail'];
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/incident_reported');
-            $this->load->view('main/footer');
+                $data['title'] = 'Insident Reported';
+                $incidents_reported = $this->incident_reporting_model->get_incident_reported_by_company_specific($company_sid, $employer_sid);
+                $data['incidents_reported'] = $incidents_reported;
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $data['employee'] = $data['session']['employer_detail'];
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/incident_reported');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }     
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -280,33 +292,37 @@ class Incident_reporting_system extends Public_Controller
     public function view_incident_reported($id)
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            $data['employee'] = $data["session"]["employer_detail"];
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                $data['employee'] = $data["session"]["employer_detail"];
 
-            $company_sid = $data["session"]["company_detail"]["sid"];
-            $employer_sid = $data["session"]["employer_detail"]["sid"];
-            $data['id'] = $id;
-            $reported_incident = $this->incident_reporting_model->get_reported_incident($id);
-            $reported_by = $this->incident_reporting_model->get_incident_reported_by($id);
+                $company_sid = $data["session"]["company_detail"]["sid"];
+                $employer_sid = $data["session"]["employer_detail"]["sid"];
+                $data['id'] = $id;
+                $reported_incident = $this->incident_reporting_model->get_reported_incident($id);
+                $reported_by = $this->incident_reporting_model->get_incident_reported_by($id);
 
-            $data['reported_incident'] = $reported_incident;
-            $data['reported_by'] = $reported_by[0]['first_name'] . ' ' . $reported_by[0]['last_name'];
-            $data['reported_on'] = $reported_by[0]['current_date'];
-            $data['sub_title'] = $reported_by[0]['incident_name'];
-            $data['report_type'] = $reported_by[0]['report_type'];
-            $data['incident_type_id'] = $reported_by[0]['incident_type_id'];
-            $data['incident_reporting_sid'] = $reported_by[0]['id'];
-            $data['reported_by_sid'] = $reported_by[0]['employer_sid'];
-            $data['reported_by'] = $reported_by[0]['first_name'] . ' ' . $reported_by[0]['last_name'];
-            $data['reported_date'] = $reported_by[0]['current_date'];
-            $data['title'] = 'Reported Incident';
+                $data['reported_incident'] = $reported_incident;
+                $data['reported_by'] = $reported_by[0]['first_name'] . ' ' . $reported_by[0]['last_name'];
+                $data['reported_on'] = $reported_by[0]['current_date'];
+                $data['sub_title'] = $reported_by[0]['incident_name'];
+                $data['report_type'] = $reported_by[0]['report_type'];
+                $data['incident_type_id'] = $reported_by[0]['incident_type_id'];
+                $data['incident_reporting_sid'] = $reported_by[0]['id'];
+                $data['reported_by_sid'] = $reported_by[0]['employer_sid'];
+                $data['reported_by'] = $reported_by[0]['first_name'] . ' ' . $reported_by[0]['last_name'];
+                $data['reported_date'] = $reported_by[0]['current_date'];
+                $data['title'] = 'Reported Incident';
 
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/view_reported_incident');
-            $this->load->view('main/footer');
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/view_reported_incident');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }      
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -622,22 +638,26 @@ class Incident_reporting_system extends Public_Controller
     public function list_incidents()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $data['employee'] = $data["session"]["employer_detail"];
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $data['employee'] = $data["session"]["employer_detail"];
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
 
-            $company_sid = $data["session"]["company_detail"]["sid"];
-            $employer_sid = $data["session"]["employer_detail"]["sid"];
-            $data['title'] = "Your Incidents";
-            $incidents = $this->incident_reporting_model->view_incidents($company_sid, $employer_sid);
-            $data['incidents'] = $incidents;
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/list_employee_incidents_old');
-            $this->load->view('main/footer');
+                $company_sid = $data["session"]["company_detail"]["sid"];
+                $employer_sid = $data["session"]["employer_detail"]["sid"];
+                $data['title'] = "Your Incidents";
+                $incidents = $this->incident_reporting_model->view_incidents($company_sid, $employer_sid);
+                $data['incidents'] = $incidents;
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/list_employee_incidents_old');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }    
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -1037,47 +1057,51 @@ class Incident_reporting_system extends Public_Controller
     public function assigned_incidents()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
 
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['title'] = 'Assigned Incidents';
-            $responded = array();
-            $closed    = array();
-            $read_only = array();
-            $pending   = array();
-            $assigned_incidents = array();
-            $assigned_incidents = $this->incident_reporting_model->assigned_incidents_new_flow($employer_sid, $company_sid);
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data['title'] = 'Assigned Incidents';
+                $responded = array();
+                $closed    = array();
+                $read_only = array();
+                $pending   = array();
+                $assigned_incidents = array();
+                $assigned_incidents = $this->incident_reporting_model->assigned_incidents_new_flow($employer_sid, $company_sid);
 
-            if (!empty($assigned_incidents)) {
-                foreach ($assigned_incidents as $incident) {
-                    if ($incident['incident_status'] == 'Closed') {
-                        $closed[] = $incident;
-                    } elseif ($incident['incident_status'] == 'Responded' || $incident['incident_status'] == 'RequireFeedback') {
-                        $responded[] = $incident;
-                    } elseif ($incident['report_type'] == 'anonymous') {
-                        // $read_only[] = $incident;
-                        $pending[] = $incident;
-                    } elseif ($incident['incident_status'] == 'Pending') {
-                        $pending[] = $incident;
+                if (!empty($assigned_incidents)) {
+                    foreach ($assigned_incidents as $incident) {
+                        if ($incident['incident_status'] == 'Closed') {
+                            $closed[] = $incident;
+                        } elseif ($incident['incident_status'] == 'Responded' || $incident['incident_status'] == 'RequireFeedback') {
+                            $responded[] = $incident;
+                        } elseif ($incident['report_type'] == 'anonymous') {
+                            // $read_only[] = $incident;
+                            $pending[] = $incident;
+                        } elseif ($incident['incident_status'] == 'Pending') {
+                            $pending[] = $incident;
+                        }
                     }
                 }
-            }
 
-            $data['assigned_incidents'] = $assigned_incidents;
-            $data['closed'] = $closed;
-            $data['responded'] = $responded;
-            $data['read_only'] = $read_only;
-            $data['pending'] = $pending;
-            $data['employee'] = $data['session']['employer_detail'];
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/assigned_incidents');
-            $this->load->view('main/footer');
+                $data['assigned_incidents'] = $assigned_incidents;
+                $data['closed'] = $closed;
+                $data['responded'] = $responded;
+                $data['read_only'] = $read_only;
+                $data['pending'] = $pending;
+                $data['employee'] = $data['session']['employer_detail'];
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/assigned_incidents');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }      
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -2330,22 +2354,26 @@ class Incident_reporting_system extends Public_Controller
     public function safety_check_list()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['title'] = 'Safety CheckList';
-            $types = $this->incident_reporting_model->get_incident_types_company_specific_safety_sheets($company_sid);
-            $data['checklists'] = $types;
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $data['employee'] = $data['session']['employer_detail'];
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/incident_reporting/sefety_checklist');
-            $this->load->view('main/footer');
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data['title'] = 'Safety CheckList';
+                $types = $this->incident_reporting_model->get_incident_types_company_specific_safety_sheets($company_sid);
+                $data['checklists'] = $types;
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $data['employee'] = $data['session']['employer_detail'];
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/incident_reporting/sefety_checklist');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }    
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -2484,22 +2512,26 @@ class Incident_reporting_system extends Public_Controller
     public function safety_checklist()
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['title'] = 'Safety Checklist';
-            $safety_checklists = $this->incident_reporting_model->get_submitted_safety_checklist();
-            $data['safety_checklists'] = $safety_checklists;
-            $data['employee'] = $data['session']['employer_detail'];
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/safety_sheets/safety_checklist_listing');
-            $this->load->view('main/footer');
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data['title'] = 'Safety Checklist';
+                $safety_checklists = $this->incident_reporting_model->get_submitted_safety_checklist();
+                $data['safety_checklists'] = $safety_checklists;
+                $data['employee'] = $data['session']['employer_detail'];
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/safety_sheets/safety_checklist_listing');
+                $this->load->view('main/footer');
+            } else {
+                redirect(base_url('dashboard'), "refresh");
+            }    
         } else {
             redirect(base_url('login'), 'refresh');
         }
@@ -2508,46 +2540,50 @@ class Incident_reporting_system extends Public_Controller
     public function view_safety_checklist($sid)
     {
         if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
-            $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
-            $data['title'] = 'Safety Checklist';
-            $checklist = $this->incident_reporting_model->view_submitted_safety_checklist($sid);
-            $unserialize_checklist = unserialize($checklist[0]['submitted_checklist']);
-            $question = array();
-            $answer = array();
+            if (checkIfAppIsEnabled('incidents')) {
+                $data['session'] = $this->session->userdata('logged_in');
+                $security_sid = $data['session']['employer_detail']['sid'];
+                $security_details = db_get_access_level_details($security_sid);
+                $data['security_details'] = $security_details;
+                // check_access_permissions($security_details, 'dashboard', 'incident_reporting_system');
+                $company_sid = $data['session']['company_detail']['sid'];
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data['title'] = 'Safety Checklist';
+                $checklist = $this->incident_reporting_model->view_submitted_safety_checklist($sid);
+                $unserialize_checklist = unserialize($checklist[0]['submitted_checklist']);
+                $question = array();
+                $answer = array();
 
-            if ($checklist[0]['type'] == 'submitted') {
-                foreach ($unserialize_checklist as $key => $value) {
-                    if ($value['Question'] == 'full-name') {
-                        $userName = $value['Answer'];
-                    } else {
-                        array_push($question, $value['Question']);
-                        array_push($answer, $value['Answer']);
+                if ($checklist[0]['type'] == 'submitted') {
+                    foreach ($unserialize_checklist as $key => $value) {
+                        if ($value['Question'] == 'full-name') {
+                            $userName = $value['Answer'];
+                        } else {
+                            array_push($question, $value['Question']);
+                            array_push($answer, $value['Answer']);
+                        }
                     }
+
+                    $data['questions'] = $question;
+                    $data['answer'] = $answer;
+                    $data['submitted_userName'] = $userName;
+                } else {
+                    $userName = $this->incident_reporting_model->submitted_checklist_user($checklist[0]['submitted_by']);
+                    $data['submitted_userName'] = $userName[0]['username'];
+                    $data['uploaded_checklist'] = $checklist[0]['uploaded_checklist'];
                 }
 
-                $data['questions'] = $question;
-                $data['answer'] = $answer;
-                $data['submitted_userName'] = $userName;
+                $data['sub_title'] = $checklist[0]['submitted_checklist_name'];
+                $data['submitted_time'] = $checklist[0]['submitted_time'];
+                $data['submitted_type'] = $checklist[0]['type'];
+                $load_view = check_blue_panel_status(false, 'self');
+                $data['load_view'] = $load_view;
+                $this->load->view('main/header', $data);
+                $this->load->view('manage_employer/safety_sheets/view_safety_checklist');
+                $this->load->view('main/footer');
             } else {
-                $userName = $this->incident_reporting_model->submitted_checklist_user($checklist[0]['submitted_by']);
-                $data['submitted_userName'] = $userName[0]['username'];
-                $data['uploaded_checklist'] = $checklist[0]['uploaded_checklist'];
-            }
-
-            $data['sub_title'] = $checklist[0]['submitted_checklist_name'];
-            $data['submitted_time'] = $checklist[0]['submitted_time'];
-            $data['submitted_type'] = $checklist[0]['type'];
-            $load_view = check_blue_panel_status(false, 'self');
-            $data['load_view'] = $load_view;
-            $this->load->view('main/header', $data);
-            $this->load->view('manage_employer/safety_sheets/view_safety_checklist');
-            $this->load->view('main/footer');
+                redirect(base_url('dashboard'), "refresh");
+            }      
         } else {
             redirect(base_url('login'), 'refresh');
         }

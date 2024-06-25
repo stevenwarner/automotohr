@@ -87,6 +87,7 @@ class Main extends Public_Controller
             $post["latitude"] = $latLon["lat"];
             $post["longitude"] = $latLon["lng"];
         }
+        _e($post,true,true);
         //
         $this->clock_model->markAttendance(
             $this->loggedInCompany["sid"],
@@ -102,8 +103,8 @@ class Main extends Public_Controller
     {
         $get = $this->input->get(null, true);
         // set start date
-        $startDate = $get["start_date"] ?? getSystemDate(SITE_DATE, "-7 days");
-        $endDate = $get["end_date"] ?? getSystemDate(SITE_DATE);
+        $startDate = $get["start_date"] ?? getSystemDateInLoggedInPersonTZ(SITE_DATE, "-7 days");
+        $endDate = $get["end_date"] ?? getSystemDateInLoggedInPersonTZ(SITE_DATE);
         //
         $this->clock_model
             ->getWorkedHoursForGraph(

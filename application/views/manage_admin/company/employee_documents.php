@@ -100,7 +100,11 @@
                                                                                                             echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
 
                                                                                                             if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                                echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                                                echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                                    $document["assigned_date"],
+                                                                                                                    DB_DATE_WITH_TIME,
+                                                                                                                    DATE_WITH_TIME
+                                                                                                                );
                                                                                                             }
                                                                                                         ?>
                                                                                                     </td>
@@ -176,11 +180,11 @@
                                                                                                 }
 
                                                                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($document['assigned_date']));
+                                                                                                    echo "<br><b>Assigned On: </b>" . formatDateToDB($document['assigned_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                                                                 }
 
                                                                                                 if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($document['signature_timestamp']));
+                                                                                                    echo "<br><b>Signed On: </b>" . formatDateToDB($document['signature_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                                                                 } else {
                                                                                                     echo "<br><b>Signed On: </b> N/A";
                                                                                                 }
@@ -245,11 +249,19 @@
                                                                                                     echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
 
                                                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                        echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                            $document["assigned_date"],
+                                                                                                            DB_DATE_WITH_TIME,
+                                                                                                            DATE
+                                                                                                        );
                                                                                                     }
 
                                                                                                     if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                                        echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                                        echo "<br><b>Signed On: </b>" . formatDateToDB(
+                                                                                                            $document["signature_timestamp"],
+                                                                                                            DB_DATE_WITH_TIME,
+                                                                                                            DATE
+                                                                                                        );
                                                                                                     } else {
                                                                                                         echo "<br><b>Signed On: </b> N/A";
                                                                                                     }
@@ -277,7 +289,11 @@
                                                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
 
                                                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                                        echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                            $document["assigned_date"],
+                                                                                                            DB_DATE_WITH_TIME,
+                                                                                                            DATE_WITH_TIME
+                                                                                                        );
                                                                                                     }
                                                                                                 ?>
                                                                                             </td>
@@ -332,11 +348,19 @@
                                                                                                 echo $document['title'];
 
                                                                                                 if (isset($document['assign_date']) && $document['assign_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assign_date'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                    echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                        $document["assign_date"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 }
 
                                                                                                 if (isset($document['sign_date']) && $document['sign_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['sign_date'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                                    echo "<br><b>Signed On: </b>" . formatDateToDB(
+                                                                                                        $document["sign_date"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 } else {
                                                                                                     echo "<br><b>Signed On: </b> N/A";
                                                                                                 }
@@ -392,11 +416,19 @@
                                                                                                 echo $document['document_type'];
 
                                                                                                 if (isset($document['assigned_at']) && $document['assigned_at'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_at'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                    echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                        $document["assigned_at"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 }
 
                                                                                                 if (isset($document['sign_date']) && $document['sign_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['sign_date'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                                    echo "<br><b>Signed On: </b>" . formatDateToDB(
+                                                                                                        $document["sign_date"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 } else {
                                                                                                     echo "<br><b>Signed On: </b> N/A";
                                                                                                 }
@@ -482,11 +514,19 @@
                                                                                                                 echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
 
                                                                                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                                    echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                                        $document["assigned_date"],
+                                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                                        DATE
+                                                                                                                    );
                                                                                                                 }
 
                                                                                                                 if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                                                    echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                                                    echo "<br><b>Signed On: </b>" . formatDateToDB(
+                                                                                                                        $document["signature_timestamp"],
+                                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                                        DATE
+                                                                                                                    );
                                                                                                                 } else {
                                                                                                                     echo "<br><b>Signed On: </b> N/A";
                                                                                                                 }
@@ -570,11 +610,19 @@
                                                                                                 echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
 
                                                                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
+                                                                                                    echo "<br><b>Assigned On: </b>" . formatDateToDB(
+                                                                                                        $document["assigned_date"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 }
 
                                                                                                 if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                                    echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
+                                                                                                    echo "<br><b>Signed On: </b>" . formatDateToDB(
+                                                                                                        $document["signature_timestamp"],
+                                                                                                        DB_DATE_WITH_TIME,
+                                                                                                        DATE
+                                                                                                    );
                                                                                                 } else {
                                                                                                     echo "<br><b>Signed On: </b> N/A";
                                                                                                 }

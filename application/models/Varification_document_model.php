@@ -232,8 +232,10 @@ class Varification_document_model extends CI_Model
             portal_applicant_jobs_list.portal_job_applications_sid as sid
         ')
             ->where('portal_applicant_jobs_list.company_sid', $companySid)
+            ->group_start()
             ->where('portal_applicant_jobs_list.archived', 1)
             ->or_where('portal_job_applications.hired_status', 1)
+            ->group_end()
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
             ->get('portal_applicant_jobs_list');
         //

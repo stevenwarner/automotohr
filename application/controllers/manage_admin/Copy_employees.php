@@ -90,7 +90,7 @@ class Copy_employees extends Admin_Controller
         }
 
         $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50, $employee_sortby, $employee_sort_orderby, $employee_keyword);
-        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid, $employee_keyword);
+        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $employee_keyword);
 
         if (empty($company_employees)) {
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
@@ -155,7 +155,7 @@ class Copy_employees extends Admin_Controller
 
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
-            if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
+            if ($employee["email"] && $this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) {
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
                 //
@@ -223,10 +223,10 @@ class Copy_employees extends Admin_Controller
                     'dependant_information' => $dependant_information,
                     'license_information' => $license_information,
                     'direct_deposit_information' => $bank_details,
-                    'e_signature' => $e_signature_data,
+                    'e_signature' => "",
                     'eeoc' => $eeoc,
                     'group' => "",
-                    'documents' => $documents
+                    'documents' => count($documents)
                 ];
                 //
                 $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
@@ -501,14 +501,19 @@ class Copy_employees extends Admin_Controller
 
                 if (!empty($assigned_documents)) {
                     foreach ($assigned_documents as $key => $assigned_document) {
+                        //
                         $insert_assigned_document = array();
-
+                        //
                         foreach ($assigned_document as $key => $value) {
                             $insert_assigned_document[$key] = $value;
                         }
-
+                        //
+                        $documentID = $this->copy_employees_model->getAssignedDocumentId($to_company, $assigned_document);
+                        //
                         $insert_assigned_document['company_sid'] = $to_company;
                         $insert_assigned_document['user_sid'] = $new_employee_sid;
+                        $insert_assigned_document['document_sid'] = $documentID;
+                        //
                         unset($insert_assigned_document['sid']);
                         unset($insert_assigned_document['acknowledgment_required']);
                         unset($insert_assigned_document['download_required']);
@@ -527,13 +532,17 @@ class Copy_employees extends Admin_Controller
                 if (!empty($assigned_offer_letters)) {
                     foreach ($assigned_offer_letters as $key => $offer_letter) {
                         $insert_offer_letter = array();
-
+                        //
                         foreach ($offer_letter as $key => $value) {
                             $insert_offer_letter[$key] = $value;
                         }
-
+                        //
+                        $offerLetterID = $this->copy_employees_model->getAssignedOfferLetterId($to_company, $offer_letter);
+                        //
                         $insert_offer_letter['company_sid'] = $to_company;
                         $insert_offer_letter['user_sid'] = $new_employee_sid;
+                        $insert_offer_letter['document_sid'] = $offerLetterID;
+                        //
                         unset($insert_offer_letter['sid']);
                         unset($insert_offer_letter['acknowledgment_required']);
                         unset($insert_offer_letter['download_required']);
@@ -944,7 +953,8 @@ class Copy_employees extends Admin_Controller
                         'employee_sid' => $destinationEmployeeId,
                         'timeoff_policy_sid' => $newPolicyId,
                         'request_from_date' => $request['request_from_date'],
-                        'request_to_date' => $request['request_to_date']
+                        'request_to_date' => $request['request_to_date'],
+                        'status' => $request['status'],
                     ];
                     //
                     if (!$this->db->where($whereArray)->count_all_results('timeoff_requests')) {
@@ -1226,13 +1236,17 @@ class Copy_employees extends Admin_Controller
         if (!empty($assigned_documents)) {
             foreach ($assigned_documents as $key => $assigned_document) {
                 $insert_assigned_document = array();
-
+                //
                 foreach ($assigned_document as $key => $value) {
                     $insert_assigned_document[$key] = $value;
                 }
-
+                //
+                $documentID = $this->copy_employees_model->getAssignedDocumentId($to_company, $assigned_document);
+                //
                 $insert_assigned_document['company_sid'] = $to_company;
                 $insert_assigned_document['user_sid'] = $new_employee_sid;
+                $insert_assigned_document['document_sid'] = $documentID;
+                //
                 unset($insert_assigned_document['sid']);
                 unset($insert_assigned_document['acknowledgment_required']);
                 unset($insert_assigned_document['download_required']);
@@ -1251,13 +1265,17 @@ class Copy_employees extends Admin_Controller
         if (!empty($assigned_offer_letters)) {
             foreach ($assigned_offer_letters as $key => $offer_letter) {
                 $insert_offer_letter = array();
-
+                //
                 foreach ($offer_letter as $key => $value) {
                     $insert_offer_letter[$key] = $value;
                 }
-
+                //
+                $offerLetterID = $this->copy_employees_model->getAssignedOfferLetterId($to_company, $offer_letter);
+                //
                 $insert_offer_letter['company_sid'] = $to_company;
                 $insert_offer_letter['user_sid'] = $new_employee_sid;
+                $insert_offer_letter['document_sid'] = $offerLetterID;
+                //
                 unset($insert_offer_letter['sid']);
                 unset($insert_offer_letter['acknowledgment_required']);
                 unset($insert_offer_letter['download_required']);

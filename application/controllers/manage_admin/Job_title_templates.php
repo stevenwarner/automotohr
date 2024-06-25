@@ -40,6 +40,7 @@ class Job_title_templates extends Admin_Controller
         if ($action == 'save_job_title_template') {
             $sid = $this->input->post('sid');
             $title = $this->input->post('title');
+            $color_code = $this->input->post('color_code');
             $complynetJobTitle = $this->input->post('complynet_job_title');
             $sortOrder = $this->input->post('sort_order');
 
@@ -51,7 +52,7 @@ class Job_title_templates extends Admin_Controller
 
             if ($this->form_validation->run() === FALSE) {
             } else {
-                $this->Job_title_templates_model->SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder);
+                $this->Job_title_templates_model->SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder, $color_code);
                 redirect('manage_admin/job_title_templates');
             }
         } else if ($action == 'delete_job_listing_template') {

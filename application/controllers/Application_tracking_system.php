@@ -153,6 +153,12 @@ class Application_tracking_system extends Public_Controller
                 $employers_details  = $data['session']['employer_detail'];
                 $employer_sid       = $employers_details['sid'];
                 saveApplicantOnboardingStatusLog($sid, $employer_sid, $status, $oldStatus);
+                // load indeed library
+                $this->load->model("indeed_model");
+                $this->indeed_model->pushTheApplicantStatus(
+                    $status,
+                    $sid
+                );
                 echo 'Done';
                 exit;
             }
@@ -161,6 +167,12 @@ class Application_tracking_system extends Public_Controller
                 $sid                                                            = $_REQUEST['id'];
                 $status                                                         = $_REQUEST['status'];
                 $this->application_tracking_system_model->change_current_status($sid, $status, $company_sid, 'portal_manual_candidates'); // function name changed with new pararmeter!
+                // load indeed library
+                $this->load->model("indeed_model");
+                $this->indeed_model->pushTheApplicantStatus(
+                    $status,
+                    $sid
+                );
                 echo 'Done';
                 exit;
             }
@@ -513,7 +525,7 @@ class Application_tracking_system extends Public_Controller
             $data['employer_jobs']                                              = $applicants;
             $data['employer_sid']                                               = $employer_sid;
             $data['jobs_approval_module_status']                                = $this->job_approval_rights_model->GetModuleStatus($company_sid, 'jobs');
-            $questionnaires                                                     = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid); //Getting questionnaires of company
+            $questionnaires                                                     = $this->application_tracking_system_model->get_all_questionnaires_by_employer($company_sid, 'job'); //Getting questionnaires of company
             $data['questionnaires']                                             = $questionnaires;
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_sid);
 

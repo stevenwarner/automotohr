@@ -695,11 +695,29 @@ class Dashboard extends Public_Controller
                     getSystemDate("Y-m-01"),
                     getSystemDate("Y-m-t")
                 );
+                
             $data["mySubordinatesCount"] = $this->shift_model
                 ->getMySubordinates(
                     $employer_id,
                     true
                 );
+            //
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
+                //
+                $pendingVerificationPerformanceSectionOne =
+                    $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
+                        $employer_id,
+                        1
+                    );
+                //
+                $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;
+            }
 
             //
             $this->load->view('main/header', $data);
@@ -1164,6 +1182,30 @@ class Dashboard extends Public_Controller
                     $employer_id,
                     true
                 );
+            //
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                $this
+                    ->load
+                    ->model(
+                        "v1/Employee_performance_evaluation_model",
+                        "employee_performance_evaluation_model"
+                    );
+                //
+                $pendingVerificationPerformanceSectionOne =
+                    $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
+                        $employer_id,
+                        1
+                    );
+                //
+                $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;
+                //
+                $pendingPerformanceDocument =
+                    $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                        $employer_id
+                    );
+                //
+                $data['documents_count'] = $data['documents_count'] + $pendingPerformanceDocument ? 1 : 0;   
+            } 
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
