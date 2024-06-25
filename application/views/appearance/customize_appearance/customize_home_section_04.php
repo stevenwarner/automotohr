@@ -63,7 +63,16 @@
                                             </div>
                                             <div class="row">
                                                 <input type="hidden" id="old_upload_video" name="old_upload_video" value="<?php echo $pre_source == 'upload' ? $job_fair_data['video_id'] : ''; ?>">
-
+                                                <?php 
+                                                    //
+                                                    $previous_video_id = "";
+                                                    //
+                                                    if (isset($section_04_meta['video']) && trim($section_04_meta['video']) != '') {
+                                                        $previous_video_id = "https://www.youtube.com/watch?v=".$section_04_meta['video'];
+                                                    } else if (isset($section_04_meta['vimeo_video']) && trim($section_04_meta['vimeo_video']) != '') {
+                                                        $previous_video_id = "https://vimeo.com/".$section_04_meta['vimeo_video'];
+                                                    }
+                                                ?>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="yt_vm_video_container">
                                                     <label for="YouTube_Video_Section_04" id="label_youtube">Youtube Video URL <span class="staric">*</span></label>
                                                     <label for="Vimeo_Video_Section_04" id="label_vimeo" style="display: none">Vimeo Video <span class="staric">*</span></label>
