@@ -57,7 +57,7 @@ $('.jsViewPoliciesBtn').click(function (e) {
 
 $(document).on('click', '.js-to-step', function (e) {
     //
-   
+
     e.preventDefault();
     //
     ml(true, 'policy');
@@ -96,6 +96,7 @@ $(document).on('click', '.js-to-step', function (e) {
         return;
     }
     //
+
     $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
     $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
     $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
@@ -139,9 +140,15 @@ $(document).on('click', '.js-step-tab', function (e) {
     //
     let step = $(this).data('step'),
         type = $(this).data('type');
+
+    if (type == 'clone') {
+        page = 'clone';
+    }
+
     //
     if (!isStepCompleted(1, type)) { step = 1; } else if (!isStepCompleted(2, type)) { step = 2; } else if (!isStepCompleted(3, type)) { step = 3; } else if (!isStepCompleted(4, type)) { step = 4; } else if (!isStepCompleted(5, type)) { step = 5; } else if (!isStepCompleted(6, type)) { step = 6; } else if (!isStepCompleted(7, type)) { step = 7; }
     // else if(!isStepCompleted(8, type)){ step = 8; }
+
     //
     $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
     $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
@@ -210,7 +217,7 @@ function fetchCategories() {
             rows += `<option value="${v.type_id}">${v.type_name}</option>`;
         });
         //
-        $('#js-category-add, #js-category-edit, #js-category-reset').html(rows);
+        $('#js-category-add, #js-category-edit, #js-category-reset,#js-category-edit-clone').html(rows);
     });
 }
 
@@ -744,6 +751,7 @@ function isStepCompleted(step, type) {
     //
     if (page == 'add' || type == 'add') return window.timeoff.stepCompletedAdd(step);
     else if (page == 'edit' || type == 'edit') return window.timeoff.stepCompletedEdit(step);
+    else if (page == 'clone' || type == 'clone') return window.timeoff.stepCompletedEditClone(step);
     else if (page == 'reset' || type == 'reset') return window.timeoff.stepCompletedReset(step);
 }
 
@@ -861,6 +869,8 @@ function finalStep(type) {
     //
     if (page == 'add' || type == 'add') return window.timeoff.finalStepCompletedAdd(getStep());
     else if (page == 'edit' || type == 'edit') return window.timeoff.finalStepCompletedEdit(getStep());
+    else if (page == 'clone' || type == 'clone') return window.timeoff.finalStepCompletedEditClone(getStep());
+
     else if (page == 'reset' || type == 'reset') return window.timeoff.finalStepCompletedReset(getStep());
 }
 
@@ -989,8 +999,8 @@ function loadAddPage() {
     $('#js-plan-box-add').find('ul').html('');
     $('#js-plan-area-add').html('');
     $('.jsPlanArea').html('');
-     // Set default accural check
-     $('#js-accrual-default-flow-add').prop('checked', true);
+    // Set default accural check
+    $('#js-accrual-default-flow-add').prop('checked', true);
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
@@ -1061,6 +1071,7 @@ function loadEditPage() {
     // Set policy types
     $('#js-category-edit').select2();
     $('#js-category-edit').select2('val', 0);
+
     // Set policy title
     $('#js-policy-title-edit').val('');
     // Set sort order
@@ -1259,5 +1270,313 @@ function loadResetPage() {
     });
 
     //
+
     window.timeoff.startPolicyEditProcess();
+
 }
+
+
+
+
+
+
+
+
+function loadResetPageClone() {
+    // Reset view
+    // Set policy types
+    $('#js-category-reset').select2().prop('disabled', true);
+    $('#js-category-reset').select2('val', 0);
+    // Set policy title
+    $('#js-policy-title-reset').val('').prop('disabled', true);
+    // Set sort order
+    $('#js-sort-order-reset').val(1).prop('disabled', true);
+    // Set employees
+    $('#js-employee-reset').select2().prop('disabled', true);
+    $('#js-employee-reset').select2('val', 0);
+    $('#js-employee-reset').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-employee-reset').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    //
+    $('#js-employee-type-reset').select2();
+    $('#js-employee-type-reset').select2('val', 'all');
+    // Set approver check
+    $('#js-approver-check-reset').prop('checked', false).prop('disabled', true);
+    // Set archive check
+    $('#js-archive-check-reset').prop('checked', false).prop('disabled', true);
+    // Set include check
+    $('#js-include-check-reset').prop('checked', true).prop('disabled', true);
+    // Set accrual method
+    // $('#js-accrual-method-reset').select2({minimumResultsForSearch: -1});
+    // $('#js-accrual-method-reset').select2('val', 'days_per_year');
+    // $('#js-accrual-method-reset').trigger('change');
+    // Set accrual time
+    $('#js-accrual-time-reset').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-time-reset').select2('val', 'none');
+    $('#js-accrual-time-reset').trigger('change');
+    // Set accrual frquency
+    $('#js-accrual-frequency-reset').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-frequency-reset').select2('val', 'none');
+    $('#js-accrual-frequency-reset').trigger('change');
+    $('#js-accrual-frequency-val-reset').val(1);
+    // Set accrual rate
+    $('#js-accrual-rate-reset').val(0);
+    $('#js-accrual-rate-type-reset option[value="days"]').prop('selected', true);
+    // Set accrual minimum worked time
+    $('#js-minimum-applicable-hours-reset').val(0);
+    $('.js-minimum-applicable-time-reset[value="hours"]').prop('checked', true).trigger('click');
+    // Set carryover
+    $('#js-carryover-cap-check-reset').select2({ minimumResultsForSearch: -1 });
+    $('#js-carryover-cap-check-reset').select2('val', 'no');
+    $('#js-carryover-cap-check-reset').trigger('change');
+    $('#js-carryover-cap-reset').val(0);
+    // Set negative balance
+    $('#js-accrual-balance-reset').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-balance-reset').select2('val', 'no');
+    $('#js-accrual-balance-reset').trigger('change');
+    $('#js-maximum-balance-reset').val(0);
+    setTimeout(() => {
+        // Set policy applicable date
+        $('.js-hire-date-reset[value="hireDate"]').prop('checked', true);
+        $('.jsImplementDateBox-reset').hide();
+        // Set policy reset date
+        $('.js-policy-reset-date-reset[value="policyDate"]').prop('checked', true).trigger('change');
+    }, 0);
+    // New hire
+    $('#js-accrue-new-hire-reset').val(0);
+    $('#js-newhire-prorate-reset').val(0);
+    // Policy applicable date
+    $('#js-custom-date-reset').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeYear: true,
+        changeMonth: true,
+        onSelect: (d) => {
+            if (d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-reset').show();
+            else $('#js-applicable-date-text-reset').hide();
+        }
+    });
+    // Policy reset date
+    $('#js-custom-reset-date-reset').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeYear: true,
+        changeMonth: true,
+    });
+
+    //
+
+    window.timeoff.startPolicyCloneProcess();
+
+}
+
+
+
+// Clone policy page
+function loadClonePage() {
+    localStorage.clear();
+    //
+    page = 'clone';
+    // Show loader
+    ml(true, 'policy');
+    // Hide all other pages
+    $('.js-page').fadeOut(0);
+    // Show page
+    $('#js-page-clone').fadeIn(500);
+    // Check if categories and employees are loaded
+    if (
+        window.timeoff.categories === undefined ||
+        window.timeoff.employees === undefined
+    ) {
+        setTimeout(loadClonePage, 2000);
+        return;
+    }
+
+
+
+    // Reset view
+    //
+    $('#js-policy-type-edit-clone').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-edit-clone').select2('val', 1);
+    // Set policy types
+    $('#js-category-edit-clone').select2();
+    $('#js-category-edit-clone').select2('val', 0);
+    // Set policy title
+    $('#js-policy-title-edit-clone').val('');
+    // Set sort order
+    $('#js-sort-order-edit-clone').val(1);
+    // Set employees
+    $('#js-employee-edit-clone').select2();
+    $('#js-employee-edit-clone').select2('val', 0);
+    $('#js-employee-edit-clone').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-employee-edit-clone').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    // Set employees
+    $('#js-approvers-list-edit-clone').select2();
+    $('#js-approvers-list-edit-clone').select2('val', 0);
+    $('#js-approvers-list-edit-clone').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-approvers-list-edit-clone').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    //
+    $('#js-employee-type-edit-clone').select2();
+    $('#js-employee-type-edit-clone').select2('val', 'all');
+
+    //Add by Alee on 4 Apr 2021
+    $('#js-off-days-edit-clone').select2({ closeOnSelect: false });
+    $('#js-off-days-edit-clone').select2('val', null);
+    // Set approver check
+    $('#js-approver-check-edit-clone').prop('checked', false);
+    // Set archive check
+    $('#js-archive-check-edit-clone').prop('checked', false);
+    // Set include check
+    $('#js-include-check-edit-clone').prop('checked', true);
+    // Set accrual method
+    // $('#js-accrual-method-edit').select2({minimumResultsForSearch: -1});
+    // $('#js-accrual-method-edit').select2('val', 'days_per_year');
+    // $('#js-accrual-method-edit').trigger('change');
+    // Set accrual time
+    $('#js-accrual-time-edit-clone').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-time-edit-clone').select2('val', 'none');
+    $('#js-accrual-time-edit-clone').trigger('change');
+    // Set accrual frquency
+    $('#js-accrual-frequency-edit-clone').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-frequency-edit-clone').select2('val', 'none');
+    $('#js-accrual-frequency-edit-clone').trigger('change');
+    $('#js-accrual-frequency-val-edit-clone').val(1);
+    // Set accrual rate
+    $('#js-accrual-rate-edit-clone').val(0);
+    $('#js-accrual-rate-type-edit-clone option[value="days"]').prop('selected', true);
+    // Set accrual minimum worked time
+    $('#js-minimum-applicable-hours-edit-clone').val(0);
+    $('.js-minimum-applicable-time-edit[value="hours"]').prop('checked', true).trigger('click');
+    // Set carryover
+    $('#js-carryover-cap-check-edit-clone').select2({ minimumResultsForSearch: -1 });
+    $('#js-carryover-cap-check-edit-clone').select2('val', 'no');
+    $('#js-carryover-cap-check-edit-clone').trigger('change');
+    $('#js-carryover-cap-edit-clone').val(0);
+    // Set negative balance
+    $('#js-accrual-balance-edit-clone').select2({ minimumResultsForSearch: -1 });
+    $('#js-accrual-balance-edit-clone').select2('val', 'no');
+    $('#js-accrual-balance-edit-clone').trigger('change');
+    $('#js-maximum-balance-edit-clone').val(0);
+    setTimeout(() => {
+        // Set policy applicable date
+        $('.js-hire-date-edit[value="hireDate"]').prop('checked', true);
+        $('.jsImplementDateBox-edit').hide();
+        // Set policy reset date
+        $('.js-policy-reset-date-edit[value="policyDate"]').prop('checked', true).trigger('change');
+    }, 0);
+    // New hire
+    $('#js-accrue-new-hire-edit-clone').val(0);
+    $('#js-newhire-prorate-edit-clone').val(0);
+    // Plans
+    $('#js-plan-box-edit-clone').show();
+    $('#js-plan-box-edit-clone').find('ul').html('');
+    $('#js-plan-area-edit-clone').html('');
+    $('.jsPlanArea').html('');
+    // Set default accural check
+    $('#js-accrual-default-flow-edit-clone').prop('checked', true);
+    // Show hionts
+    $('.js-hint').hide(0);
+    // Policy applicable date
+    $('#js-custom-date-edit-clone').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeYear: true,
+        changeMonth: true,
+        onSelect: (d) => {
+            if (d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-edit-clone').show();
+            else $('#js-applicable-date-text-edit-clone').hide();
+        }
+    });
+    // Policy reset date
+    $('#js-custom-reset-date-edit-clone').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeYear: true,
+        changeMonth: true,
+    });
+    // Hide all tabs
+    $('.js-step').hide();
+    $('.js-step[data-step="1"]').show();
+    //
+    // $('.jsEditResetCheckbox').bootstrapToggle('on');
+    $('.js-step-tab[data-type="edit"]').parent().removeClass('active');
+    $('.js-step-tab[data-type="edit"][data-step="1"]').parent().addClass('active');
+    $('.js-step-tab[data-type="reset"]').parent().removeClass('active');
+    $('.js-step-tab[data-type="reset"][data-step="1"]').parent().addClass('active');
+    //
+    loadResetPageClone();
+    $(".jsEditResetCheckbox[data-type='cp']").trigger('click');
+}
+
+
+$(document).on('click', '.js-to-step-clone', function (e) {
+    //
+    e.preventDefault();
+    //
+    ml(true, 'policy');
+    //
+    let step = $(this).closest('div').data('step'),
+        type = $(this).closest('div').data('type');
+    //
+    page = 'clone';
+
+    if (step === 1) {
+        $('#js-step-bar-add').hide();
+        //
+        let templateId = $('.js-template-add:checked').val();
+        //
+        if (templateId === undefined) {
+            alertify.alert('WARNING!', 'Please, select a template.', () => { });
+            ml(false, 'policy');
+            return;
+        }
+        //
+        if (templateId != 0) {
+            loadTemplate(
+                templateId
+            );
+        }
+        //
+        $('#js-step-bar-add').show();
+    } else {
+        //
+        if (step === 8) {
+            //
+            redirectPage = false;
+            finalStep(type);
+            return;
+        }
+
+
+        if (!isStepCompleted(step - 1, type)) { step = step - 1; }
+    }
+
+    //
+    if (step === 8) {
+        //
+        redirectPage = false;
+        finalStep(type);
+        return;
+    }
+    //
+    $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
+    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
+    $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
+    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
+    //
+    $(`.js-step[data-type="${type}"]`).fadeOut(0);
+    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+    //
+    $('body, html').animate({ scrollTop: 0 }, 0);
+    //
+    ml(false, 'policy');
+});

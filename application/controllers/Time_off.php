@@ -2758,6 +2758,108 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
+
+                case "create_policy_clone":
+                    // Check if policy name already exists
+
+                    $doPolicyExists = $this->timeoff_model->policyExists(
+                     
+                        $post['title'],
+                        $post['companyId']
+                    );
+
+                    //
+                    if ($doPolicyExists) {
+                        $this->res['Response'] = "The policy title is already in use. Please, use a different policy title.";
+                        $this->res['Code'] = 'POLICYEXISTS';
+                        $this->resp();
+                    }
+                    // Set employees
+                    $entitledEmployees = NULL;
+                    //
+                    if (!is_array($post['entitledEmployees'])) {
+                        $entitledEmployees = explode(',', $post['entitledEmployees']);
+                    } else $entitledEmployees = $post['entitledEmployees'];
+                    //
+                    if (in_array('all', $entitledEmployees)) $entitledEmployees = 'all';
+                    else $entitledEmployees = implode(',', $entitledEmployees);
+                    // Set Accruals
+                    $accruals = [];
+                    $accruals['method'] = $post['method'];
+                    $accruals['time'] = $post['time'];
+                    $accruals['frequency'] = $post['frequency'];
+                    $accruals['frequencyVal'] = $post['frequencyVal'];
+                    $accruals['rate'] = $post['rate'];
+                    $accruals['rateType'] = $post['rateType'];
+                    $accruals['applicableTime'] = $post['applicableTime'];
+                    $accruals['applicableTimeType'] = $post['applicableTimeType'];
+                    $accruals['carryOverCheck'] = $post['carryOverCheck'];
+                    $accruals['carryOverType'] = $post['carryOverType'];
+                    $accruals['carryOverVal'] = $post['carryOverVal'];
+                    $accruals['carryOverCycle'] = !empty($post['carryOverCycle']) ? $post['carryOverCycle'] : 0;
+                    $accruals['negativeBalanceCheck'] = $post['negativeBalanceCheck'];
+                    $accruals['negativeBalanceType'] = $post['negativeBalanceType'];
+                    $accruals['negativeBalanceVal'] = $post['negativeBalanceVal'];
+                    $accruals['applicableDate'] = $post['applicableDate'];
+                    $accruals['applicableDateType'] = $post['applicableDateType'];
+                    $accruals['resetDate'] = $post['resetDate'];
+                    $accruals['resetDateType'] = $post['resetDateType'];
+                    $accruals['newHireTime'] = $post['newHireTime'];
+                    $accruals['newHireTimeType'] = $post['newHireTimeType'];
+                    $accruals['newHireRate'] = $post['newHireRate'];
+                    $accruals['employeeTypes'] = $post['employeeTypes'];
+                    $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
+                    $accruals['defaultFlow'] = $post['accuralDefaultFlow'];
+                    // Set policy insert array
+                    $in = [];
+                    //
+                    $in['company_sid'] = $post['companyId'];
+                    $in['type_sid'] = $post['type'];
+                    $in['creator_sid'] = $post['employerId'];
+                    $in['title'] = $post['title'];
+                    $in['assigned_employees'] = $entitledEmployees;
+                    $in['note'] = NULL;
+                    $in['is_default'] = 0;
+                    $in['for_admin'] = $post['approver'];
+                    $in['is_archived'] = $post['deactivate'];
+                    $in['is_included'] = $post['include'];
+                    $in['is_esst'] = $post['isESST'];
+                    $in['is_unlimited'] = $post['rate'] == 0 ? 1 : 0;
+                    $in['creator_type'] = 'employee';
+                    $in['status'] = 1;
+                    $in['sort_order'] = $post['order'];
+                    $in['fmla_range'] = NULL;
+                    $in['accruals'] = json_encode($accruals);
+                    $in['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
+                    $in['reset_policy'] = $in['accruals'];
+                    $in['off_days'] = implode(',', $post['offDays']);
+                    $in['is_entitled_employee'] = $post['isEntitledEmployees'];
+                    $in['policy_category_type'] = $post['policy_category_type'];
+                    $in['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
+                   
+                    //
+                    $policyId = $this->timeoff_model->insertPolicy($in);
+                    //
+                    if (!$policyId) {
+                        $this->res['Response'] = "Something went wrong while adding the policy. Please, try again in a few moments.";
+                        $this->res['Code'] = "INSERTFAILED";
+                        $this->resp();
+                    }
+                    // Lets save who created the policy
+                    $in = [];
+                    $in['policy_sid'] = $policyId;
+                    $in['employee_sid'] = $post['employerId'];
+                    $in['action'] = 'create';
+                    $in['note'] = '{}';
+                    //
+                    $this->timeoff_model->insertPolicyHistory($in);
+                    //
+                    $this->res['Response'] = 'You have successfully cloned a policy with the title <b>"' . (stripcslashes($post['title'])) . '"</b>.';
+                    $this->res['Code'] = "SUCCESS";
+                    $this->res['Status'] = true;
+                    $this->resp();
+                    break;
+
                 // Update policy
             case "update_policy":
                 // Check if policy name already exists

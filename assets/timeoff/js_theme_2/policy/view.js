@@ -728,6 +728,7 @@ $(function () {
 		rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
 		rows += `            <span class="pull-right">`;
+		rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-clone-row-btn" title="Clone Policy" placement="top"><i class="fa fa-clone"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsAllowedPolicyEmployees" title="Policy applicable employee(s)" placement="top"><i class="fa fa-users"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsManagePolicy" title="Manage Policy" placement="top"><i class="fa fa-cog"></i></span>`;
 		rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistoryBtn" title="History" placement="top"><i class="fa fa-history"></i></span>`;

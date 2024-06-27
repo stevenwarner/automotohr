@@ -11,9 +11,13 @@
 
             <!-- Add  -->
             <?php $this->load->view('timeoff/partials/policies/new_add'); ?>
-            
+
             <!-- Edit  -->
             <?php $this->load->view('timeoff/partials/policies/new_edit'); ?>
+
+            <!-- Clone  -->
+            <?php $this->load->view('timeoff/partials/policies/clone'); ?>
+
         </div>
     </div>
 </div>
