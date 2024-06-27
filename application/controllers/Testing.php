@@ -617,16 +617,17 @@ class Testing extends CI_Controller
         return urlencode($fileName);
     }
 
-    public function addNewEmployeesIntoCompany ($companyId) {
+    public function addNewEmployeesIntoCompany($companyId)
+    {
         // Load the fake employee library
         $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
         //
-        $employees = 
+        $employees =
             $this
             ->fakeEmployees
             ->init(5);
         //
-        foreach($employees as $employee){
+        foreach ($employees as $employee) {
             $employee['parent_sid'] = $companyId;
             $employee['active'] = 1;
             //
@@ -634,5 +635,168 @@ class Testing extends CI_Controller
         }
         //
         _e("employee add successfully");
-    } 
+    }
+
+    function payroll()
+    {
+        $payrollInfo = [
+            [
+                "payroll_deadline" => "2024-02-18T22:00:00Z",
+                "check_date" => "2024-02-22",
+                "off_cycle" => false,
+                "external" => false,
+                "processed" => true,
+                "processed_date" => "2024-02-18",
+                "calculated_at" => "2024-02-18T12:00:00Z",
+                "payroll_uuid" => "b50e611d-8f3d-4f24-b001-46675f7b5777",
+                "company_uuid" => "6bf7807c-a5a0-4f4d-b2e7-3fbb4b2299fb",
+                "created_at" => "2024-02-01T22:00:00Z",
+                "pay_period" => [
+                    "start_date" => "2024-02-01",
+                    "end_date" => "2024-02-15",
+                    "pay_schedule_uuid" => "00ebc4a4-ec88-4435-8f45-c505bb63e501"
+                ],
+                "totals" => [
+                    "company_debit" => "121747.71",
+                    "net_pay_debit" => "79283.80",
+                    "tax_debit" => "42463.91",
+                    "reimbursement_debit" => "0.00",
+                    "child_support_debit" => "0.00",
+                    "reimbursements" => "0.00",
+                    "net_pay" => "81752.94",
+                    "gross_pay" => "130635.89",
+                    "employee_bonuses" => "0.00",
+                    "employee_commissions" => "18536.37",
+                    "employee_cash_tips" => "0.00",
+                    "employee_paycheck_tips" => "0.00",
+                    "additional_earnings" => "0.00",
+                    "owners_draw" => "0.00",
+                    "check_amount" => "2469.14",
+                    "employer_taxes" => "6917.19",
+                    "employee_taxes" => "35546.72",
+                    "benefits" => "0.00",
+                    "employee_benefits_deductions" => "13336.23",
+                    "deferred_payroll_taxes" => "0.00",
+                    "other_deductions" => "240.00"
+                ]
+            ],
+            [
+                "payroll_deadline" => "2024-02-28T12:00:00Z",
+                "check_date" => "2024-03-01",
+                "off_cycle" => false,
+                "external" => false,
+                "processed" => true,
+                "processed_date" => "2024-02-28T12:00:00Z",
+                "calculated_at" => "2024-02-28",
+                "payroll_uuid" => "b50e611d-8f3d-4f24-b001-46675f7b5777",
+                "company_uuid" => "6bf7807c-a5a0-4f4d-b2e7-3fbb4b2299fb",
+                "created_at" => "2022-02-01T22:00:00Z",
+                "pay_period" => [
+                    "start_date" => "2024-02-16",
+                    "end_date" => "2024-03-01",
+                    "pay_schedule_uuid" => "00ebc4a4-ec88-4435-8f45-c505bb63e501"
+                ],
+                "totals" => [
+                    "company_debit" => "121747.71",
+                    "net_pay_debit" => "79283.80",
+                    "tax_debit" => "42463.91",
+                    "reimbursement_debit" => "0.00",
+                    "child_support_debit" => "0.00",
+                    "reimbursements" => "0.00",
+                    "net_pay" => "81752.94",
+                    "gross_pay" => "130635.89",
+                    "employee_bonuses" => "0.00",
+                    "employee_commissions" => "18536.37",
+                    "employee_cash_tips" => "0.00",
+                    "employee_paycheck_tips" => "0.00",
+                    "additional_earnings" => "0.00",
+                    "owners_draw" => "0.00",
+                    "check_amount" => "2469.14",
+                    "employer_taxes" => "6917.19",
+                    "employee_taxes" => "35546.72",
+                    "benefits" => "0.00",
+                    "employee_benefits_deductions" => "13336.23",
+                    "deferred_payroll_taxes" => "0.00",
+                    "other_deductions" => "240.00"
+                ]
+            ],
+            [
+                "payroll_deadline" => "2024-04-28T22:00:00Z",
+                "check_date" => "2024-05-01",
+                "off_cycle" => false,
+                "external" => false,
+                "processed" => true,
+                "processed_date" => "2024-04-28T22:00:00Z",
+                "calculated_at" => "2024-04-28",
+                "payroll_uuid" => "b50e611d-8f3d-4f24-b001-46675f7b5777",
+                "company_uuid" => "6bf7807c-a5a0-4f4d-b2e7-3fbb4b2299fb",
+                "created_at" => "2022-04-01T22:00:00Z",
+                "pay_period" => [
+                    "start_date" => "2024-04-16",
+                    "end_date" => "2024-05-01",
+                    "pay_schedule_uuid" => "00ebc4a4-ec88-4435-8f45-c505bb63e501"
+                ],
+                "totals" => [
+                    "company_debit" => "121747.71",
+                    "net_pay_debit" => "79283.80",
+                    "tax_debit" => "42463.91",
+                    "reimbursement_debit" => "0.00",
+                    "child_support_debit" => "0.00",
+                    "reimbursements" => "0.00",
+                    "net_pay" => "81752.94",
+                    "gross_pay" => "130635.89",
+                    "employee_bonuses" => "0.00",
+                    "employee_commissions" => "18536.37",
+                    "employee_cash_tips" => "0.00",
+                    "employee_paycheck_tips" => "0.00",
+                    "additional_earnings" => "0.00",
+                    "owners_draw" => "0.00",
+                    "check_amount" => "2469.14",
+                    "employer_taxes" => "6917.19",
+                    "employee_taxes" => "35546.72",
+                    "benefits" => "0.00",
+                    "employee_benefits_deductions" => "13336.23",
+                    "deferred_payroll_taxes" => "0.00",
+                    "other_deductions" => "240.00"
+                ]
+            ]
+        ];
+
+        foreach ($payrollInfo as $payroll) {
+            $ins = [];
+            $ins['check_date'] = $payroll['check_date'];
+            $ins['payroll_deadline'] = $payroll['payroll_deadline'];
+            $ins['processed'] = $payroll['processed'];
+            $ins['processed_date'] = $payroll['processed_date'];
+            $ins['calculated_at'] = $payroll['calculated_at'];
+            $ins['last_changed_by'] = 15717;
+            $ins['is_late_payroll'] =  0;
+            $ins['company_sid'] = 15708;
+            $ins['gusto_uuid'] = $payroll['payroll_uuid'];
+            $ins['start_date'] = $payroll['pay_period']['start_date'];
+            $ins['end_date'] = $payroll['pay_period']['end_date'];
+            $ins['gusto_pay_schedule_uuid'] = $payroll['pay_period']['pay_schedule_uuid'];
+            $ins['calculated_at'] = $payroll['calculated_at'];
+            $ins['totals'] = json_encode($payroll['totals']);
+            $ins['updated_at'] = getSystemDate();
+            $ins['created_at'] = getSystemDate();
+            // insert it
+            // $this->db->insert('payrolls.regular_payrolls', $ins);
+        }
+
+        $this->db
+            ->select('
+                sid,
+                start_date,
+                end_date,
+                check_date,
+                totals
+            ');
+        //
+        $records = $this->db
+            ->get('payrolls.regular_payrolls')
+            ->result_array();
+        //    
+        _e($records, true, true);
+    }
 }

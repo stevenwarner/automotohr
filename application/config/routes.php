@@ -2344,3 +2344,6 @@ $route["attendance/my/timesheet"]["get"] = "v1/Attendance/api/My/timesheet";
 $route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/My/getMyTodaysFootprints";
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["get"] = "v1/Attendance/api/My/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["post"] = "v1/Attendance/api/My/processTimeSheetDetails/$1/$2";
+
+// General Ledger
+$route["general_ledger/(:any)/(:any)"] = "General_ledger/index/$1/$2";

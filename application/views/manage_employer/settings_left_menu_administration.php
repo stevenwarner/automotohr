@@ -237,5 +237,15 @@
                 </a>
             </li>
         <?php } ?>
+        <?php if (isPayrollOrPlus(true)) { ?>
+            <li>
+                <a <?= uri_string() === "general_ledger" ? 'class="active"' : ""; ?> href="<?php echo base_url('general_ledger'); ?>">
+                    <figure>
+                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    </figure>
+                    General Ledger
+                </a>
+            </li>
+        <?php } ?>
     </ul>
 </div>

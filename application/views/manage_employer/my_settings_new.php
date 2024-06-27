@@ -293,12 +293,23 @@
                                             <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
                                                 <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
                                             <?php } ?>
+                                            <?php if (!$isCompanyOnPayroll && isPayrollOrPlus(true)) { ?>
+                                                <li><a href="javascript:void(0)" class="jsCreatePartnerCompanyBtn" data-cid="<?= $session['company_detail']['sid']; ?>">General Ledger</a></li>
+                                            <?php } ?>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->
                                             <li>
                                                 <a href="<?= base_url("attendance/dashboard"); ?>">
                                                     Attendance Management
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+                                        <?php if (isPayrollOrPlus(true)) { ?>
+                                            <!-- Attendance module settings -->
+                                            <li>
+                                                <a href="<?= base_url("general_ledger"); ?>">
+                                                    General Ledger
                                                 </a>
                                             </li>
                                         <?php } ?>
