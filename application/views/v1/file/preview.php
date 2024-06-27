@@ -8,7 +8,7 @@ if (in_array($ext, ["png", "jpg", "jpeg", "gif"])) {
                 <source src="' . (AWS_S3_BUCKET_URL . $key) . '" type="video/mp4">
                 Your browser does not support the video tag.
             </video>';
-} elseif (in_array($ext, ["doc", "docx", "ppt", "pptx", "xls", "xlsx", "csv"])) {
+} elseif (in_array($ext, ["doc", "docx", "ppt", "pptx", "xls", "xlsx"])) {
     $url = '<iframe class="jsDocumentPreviewFrame" style="width: 100%; height: 700px;" src="https://view.officeapps.live.com/op/view.aspx?src=' . (AWS_S3_BUCKET_URL . $key) . '"></iframe>';
 } else {
     $url = '<iframe class="jsDocumentPreviewFrame" style="width: 100%; height: 700px;" src="https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $key) . '&embedded=true"></iframe>';
