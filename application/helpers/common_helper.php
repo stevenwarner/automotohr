@@ -760,7 +760,6 @@ if (!function_exists('generate_image_compressed')) {
     function generate_image_compressed($source_image_path, $thumbnail_image_path)
     {
         ImageJPEG(ImageCreateFromString(file_get_contents($source_image_path)), $thumbnail_image_path, 75);
-        
     }
 }
 
@@ -17011,5 +17010,23 @@ if (!function_exists('get_company_departments_teams_dropdown')) {
 
         //
         return $id ? $select : $departments;
+    }
+}
+
+
+//
+if (!function_exists('sanitizeFile')) {
+
+    function sanitizeFile($fileString)
+    {
+        $string = urldecode($fileString);
+
+        $ext = pathinfo($string)['extension'];
+        $filename = pathinfo($string)['filename'];
+
+        $name = preg_replace('/[^A-Za-z0-9\-]/', '', $filename);
+        $fileDetails['name'] = strtolower($name) . "." . $ext;
+        $fileDetails['s3Name'] = "prod_" . strtolower($name) . "." . $ext;
+        return $fileDetails;
     }
 }

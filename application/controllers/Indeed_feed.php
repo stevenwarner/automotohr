@@ -192,6 +192,7 @@ class Indeed_feed extends CI_Controller
 
     public function indeedPostUrl()
     {
+
         // error_reporting(E_ALL);
         //
         $this->addLastRead(9);
@@ -239,22 +240,32 @@ class Indeed_feed extends CI_Controller
                 $filePath = FCPATH . "assets/temp_files/"; //making Directory to store
                 $fileName = $data['applicant']['resume']['file']['fileName'];
 
+
                 if (isset($fileName)) {
                     if (!file_exists($filePath)) {
                         mkdir($filePath, 0777);
                     }
 
-                    $pdf = fopen($filePath . $fileName, 'w'); //Write data back to pdf file
+
+                    // Sanitize  File
+                    $fileDetails = sanitizeFile($fileName);
+
+                    $pdf = fopen($filePath . $fileDetails['s3Nam'], 'w'); //Write data back to pdf file
                     fwrite($pdf, $pdf_decoded);
                     fclose($pdf); //close output file
 
-                    $resume = generateRandomString(6) . "_" . $fileName;
+                    $resume = generateRandomString(6) . "_" . $fileDetails['s3Nam'];
                     $aws = new AwsSdk();
-                    $aws->putToBucket($resume, $filePath . $fileName, AWS_S3_BUCKET_NAME); //uploading file to AWS
+
+                    if (!empty($fileDetails['s3Nam'])) {
+                        $aws->putToBucket($resume, $filePath . $fileDetails['s3Nam'], AWS_S3_BUCKET_NAME); //uploading file to AWS
+                    }
+
+                    // $aws->putToBucket($resume, $filePath . $fileName, AWS_S3_BUCKET_NAME); //uploading file to AWS
                     $applicationData['resume'] = $resume;
                     $insert_data_primary['resume'] = $resume;
                     $applicant_resume = $resume;
-                    unlink('/' . DOC_ROOT . 'assets/temp_files/' . $fileName);
+                    unlink('/' . DOC_ROOT . 'assets/temp_files/' . $fileDetails['s3Nam']);
                 }
             }
 
