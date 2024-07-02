@@ -203,7 +203,7 @@ class Hr_documents_management extends Public_Controller
                         $documentDescription =
                             checkAndGetDocumentDescription(
                                 $document_sid,
-                                $this->input->post('document_description'),
+                                $this->input->post('document_description') ?? '',
                                 true
                             );
 

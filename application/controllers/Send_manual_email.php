@@ -469,9 +469,16 @@ class Send_manual_email extends Public_Controller
         foreach ($employee_ids as $employee_id) {
 
             $employee_data  = $this->portal_email_templates_model->get_employee_data($employee_id, $company_sid);
-
             //
-            $toArray = array($company_name, $today, $employee_data['first_name'], $employee_data['last_name'], $employee_data['job_title'], $employee_data['first_name'] . ' ' . $employee_data['last_name'], $employee_data['email']);
+            $toArray = array(
+                $company_name,
+                $today,
+                $employee_data['first_name'],
+                $employee_data['last_name'],
+                $employee_data['job_title'],
+                $employee_data['first_name'] . ' ' . $employee_data['last_name'],
+                $employee_data['email']
+            );
             $subject = $post_subject;
             $body    = $post_body;
             replace_magic_quotes($subject, $fromArray, $toArray);
@@ -482,9 +489,9 @@ class Send_manual_email extends Public_Controller
 
             $from_name                    = $company_name;
             $message_data                 = array();
-            $message_data['to_id']        = $employee_data['email'];
+            // $message_data['to_id']        = $employee_data['email'];
+            // $message_data['to_type']      = 'employee';
             $message_data['from_type']    = 'employer';
-            $message_data['to_type']      = 'employee';
             $message_data['users_type']   = 'employee';
             $message_data['subject']      = $subject;
             $message_data['message']      = $body;
@@ -502,13 +509,32 @@ class Send_manual_email extends Public_Controller
                 . $secret_key . '</div>';
 
 
-            if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
-                $file        = explode(".", $_FILES['message_attachment']['name']);
-                $file_name   = str_replace(" ", "-", $file[0]);
-                $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
-                $aws         = new AwsSdk();
-                $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
-                $message_data['attachment'] = $messageFile;
+            // Save to PM
+            $message_data['to_id'] = $employee_data['sid'];
+            $message_data['to_type'] = 'employer';
+            // set the body
+            $message_data['message'] = $body;
+
+            if ($_FILES['message_attachment']) {
+                foreach ($_FILES["message_attachment"]["name"] as $k0 => $v0) {
+                    // set the details
+                    $fileArray = [
+                        "name" => $_FILES["message_attachment"]["name"][$k0],
+                        "type" => $_FILES["message_attachment"]["type"][$k0],
+                        "tmp_name" => $_FILES["message_attachment"]["tmp_name"][$k0],
+                        "error" => $_FILES["message_attachment"]["error"][$k0],
+                        "size" => $_FILES["message_attachment"]["size"][$k0],
+                    ];
+
+                    $file        = explode(".", $fileArray['name']);
+                    $file_name   = str_replace(" ", "-", $file[0]);
+                    $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
+                    $aws         = new AwsSdk();
+                    $aws->putToBucket($messageFile, $fileArray['tmp_name'], AWS_S3_BUCKET_NAME);
+                    $message_data['attachment'] .= $messageFile.",";
+                }
+
+                $message_data['attachment'] = rtrim($message_data['attachment'], ",");
 
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
@@ -519,13 +545,16 @@ class Send_manual_email extends Public_Controller
                 );
                 save_email_log_common($emailData);
 
-                sendMailWithAttachment(REPLY_TO, $employee_data['email'], $subject, $autoemailbody, $from_name, $_FILES['message_attachment'], $from_name);
+                sendMailWithAttachment(REPLY_TO, $employee_data['email'], $subject, $autoemailbody, $from_name, $_FILES['message_attachment'], $from_name, true);
             } else {
 
                 log_and_sendEmail(REPLY_TO, $employee_data['email'], $subject, $autoemailbody, $from_name);
             }
 
-            $sent_flag = true;
+            // load the model
+            $this->load->model('message_model');
+            // saves it into the database
+            $this->message_model->save_message($message_data);
         }
     }
 

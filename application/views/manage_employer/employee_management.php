@@ -668,7 +668,16 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <input type="file" name="message_attachment" id="message_attachment" class="image">
                                         <a href="javascript:;">Choose File</a>
                                     </div>
+                                    <button class="btn btn-link jsAdditionalAttachmentBtn">
+                                        <i class="fa fa-plus-circle"></i>
+                                        &nbsp;
+                                        Add Attachments
+                                    </button>
                                 </li>
+
+                                <div class="jsAdditionalAttachmentsContainer"></div>
+
+
                                 <li class="form-col-100 autoheight">
                                     <div class="message-action-btn">
                                         <input type="submit" value="Send Message" id="send-message-email" class="submit-btn" onclick="bulk_email_form_validate()">
@@ -1075,9 +1084,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         $('.temp-attachment').hide();
     }
 
+    var additionalAttachmentsCount = 1;
+
 
     $('#send_bulk_email').click(function() {
         var butt = $(this);
+        additionalAttachmentsCount = 1;
+        $(".jsAdditionalAttachmentsContainer").html("");
 
         if ($(".ej_checkbox:checked").size() > 0) {
             if (butt.attr("id") == "ej_controll_mark") {
@@ -1120,7 +1133,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     minlength: "Please enter few characters"
                 }
             },
-            submitHandler: function() {
+            submitHandler: function(form) {
                 var ids = [{}];
                 var counter = 0;
 
@@ -1128,13 +1141,16 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     ids[counter++] = $(this).val();
                 });
 
-
                 var file_data = $('#message_attachment').prop('files')[0];
                 var subject = ($('#bulk_email_subject').val()).trim();
                 var message = ($('#bulk_email_message').val()).trim();
                 var template = $('#template').val();
                 var form_data = new FormData();
-                form_data.append('message_attachment', file_data);
+                form_data.append('message_attachment[]', file_data);
+                $(".jsAttachmentsFiles").map(function() {
+                    form_data.append('message_attachment[]',
+                        $(this).prop("files")[0]);
+                })
                 form_data.append('subject', subject);
                 form_data.append('ids', ids);
                 form_data.append('action', 'bulk_email');
@@ -1164,6 +1180,52 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
             }
         });
     }
+
+
+    $(".jsAdditionalAttachmentBtn").click(function(event) {
+        event.preventDefault();
+
+        $(".jsAdditionalAttachmentsContainer").append(
+            generateAttachmentUI()
+        )
+    });
+
+    $(document).on("click", ".jsAdditionalAttachmentsRowRemove", function(event) {
+        event.preventDefault();
+        const id = $(this).data('id')
+        $(`.jsAdditionalAttachmentsRow${id}`).remove()
+    });
+
+
+    function generateAttachmentUI() {
+        const rowId = additionalAttachmentsCount;
+        const cls = `jsAdditionalAttachmentsRow${rowId}`;
+        additionalAttachmentsCount++;
+        return `
+         <li class="form-col-100 autoheight ${cls}">
+            <label>Additional Attachments ${rowId}</label>
+            <div class="upload-file invoice-fields">
+                <span class="selected-file">No file selected</span>
+                <input type="file" class="jsAttachmentsFiles" name="jsAttachementsFile${rowId}" class="image" />
+                <a href="javascript:;">Choose File</a>
+            </div>
+            <button class="btn btn-link text-red jsAdditionalAttachmentsRowRemove" data-id="${rowId}">
+            <i class="fa fa-trash"></i>
+            &nbsp;
+            Remove Attachment
+            </button>
+        </li>
+        `;
+    }
+
+    $(document).on('change', '.jsAttachmentsFiles', function() {
+        var fileName = $(this).val();
+        if (fileName.length > 0) {
+            $(this).prev().html(fileName.substring(0, 45));
+        } else {
+            $(this).prev().html('No file selected');
+        }
+    });
 
 
     $(document).on('click', '#send_bulk_email_login', function(e) {
