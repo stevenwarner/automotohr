@@ -2346,4 +2346,7 @@ $route["v1/clock/timesheet/my/(:num)/(:any)"]["get"] = "v1/Attendance/api/My/get
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["post"] = "v1/Attendance/api/My/processTimeSheetDetails/$1/$2";
 
 // General Ledger
+$route["general_ledger/payroll_detail/(:any)"] = "General_ledger/getPayrollDetail/$1";
 $route["general_ledger/(:any)/(:any)"] = "General_ledger/index/$1/$2";
+$route["general_ledger/(:any)/(:any)/(:any)"] = "General_ledger/actionHandler/$1/$2/$3";
+$route["import_general_ledger"] = "General_ledger/importLedger";

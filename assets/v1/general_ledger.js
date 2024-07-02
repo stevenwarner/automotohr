@@ -1,5 +1,8 @@
 //
 $(function () {
+    //
+    let XHR = null;
+    //
 	$('#jsStartDate').daterangepicker({
         singleDatePicker: true,
         showDropdowns: true,
@@ -45,4 +48,44 @@ $(function () {
 
         $('#btn_apply_filters').attr('href', url);
     }
+
+    $(".jsViewDetail").click(function (event) {
+		//
+		event.preventDefault();
+        var id = $(this).data("id");
+        var date = $(this).data("date");
+		//
+		showTimeSheetModal(id, date)
+	});
+
+    function showTimeSheetModal(id, date) {
+		//
+		Modal(
+			{
+				Id: "jsPayrollDetail",
+				Loader: "jsPayrollDetailLoader",
+				Title: "Payroll detail for " + date,
+				Body: '<div id="jsPayrollDetailBody"></div>',
+			},
+			getDetails(id)
+		);
+	}
+
+    function getDetails(id) {
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		XHR = $.ajax({
+			url: baseUrl("general_ledger/payroll_detail/" + id),
+			method: "get",
+		})
+			.always(function () {
+				XHR = null;
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsPayrollDetailBody").html(resp.view);
+                ml(false, "jsPayrollDetailLoader");
+			});
+	}
 });

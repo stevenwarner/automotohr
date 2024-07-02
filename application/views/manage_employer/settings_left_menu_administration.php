@@ -246,6 +246,14 @@
                     General Ledger
                 </a>
             </li>
+            <!-- <li>
+                <a <?= uri_string() === "import_general_ledger" ? 'class="active"' : ""; ?> href="<?php echo base_url('import_general_ledger'); ?>">
+                    <figure>
+                        <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                    </figure>
+                    Import General Ledger
+                </a>
+            </li> -->
         <?php } ?>
     </ul>
 </div>

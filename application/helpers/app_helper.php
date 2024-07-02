@@ -2368,8 +2368,7 @@ if (!function_exists("getFile")) {
         $plugins = [];
         // set alertify plugin
         $plugins["alertify"] = [
-            "css" =>
-            main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
+            "css" => main_url("public/v1/plugins/alertifyjs/css/alertify.min.css?v=3.0"),
             "js" =>   main_url("public/v1/plugins/alertifyjs/alertify.min.js?v=3.0")
         ];
         // set alertify plugin
@@ -2398,9 +2397,14 @@ if (!function_exists("getFile")) {
 
         // set select2
         $plugins["select2"] = [
-            "css" =>
-            main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
+            "css" => main_url("public/v1/plugins/select2/css/select2.min.css?v=3.0"),
             "js" =>   main_url("public/v1/plugins/select2/select2.min.js?v=3.0")
+        ];
+
+        // set mFileUploader
+        $plugins["mFileUploader"] = [
+            "css" => main_url("assets/mFileUploader/index.min.css?v=3.0"),
+            "js" => main_url("assets/mFileUploader/index.min.js?v=3.0")
         ];
         //
         return $plugins[$index][$type] ?? "";

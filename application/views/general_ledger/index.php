@@ -51,18 +51,18 @@
                                 <div class="box-view reports-filtering">
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="form-group">
-                                                <form method="post" id="export" name="export">
-                                                    <label class="control control--checkbox pull-left">
-                                                        Pull Applicant Source In Export
-                                                        <input type="checkbox" value="1" name="embed-source" class="pull-right" checked>
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                    <input type="submit" name="submit" class="submit-btn pull-right" value="Export" />
-                                                </form>
-                                                <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
+                                            <div class="pull-right">
+                                                <a href="<?= $url.'/export'; ?>" target="_blank" class="btn btn-success btn-sm" >
+                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                    Export CSV
+                                                </a>
+                                                <a href="<?= $url.'/print'; ?>" target="_blank" class="btn btn-success btn-sm">
                                                     <i class="fa fa-print" aria-hidden="true"></i>
                                                     Print
+                                                </a>
+                                                <a href="<?= $url.'/download'; ?>" target="_blank" class="btn btn-success btn-sm">
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                    Download
                                                 </a>
                                             </div>
                                         </div>
@@ -89,9 +89,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Date</th>
-                                                            <th>Account Type</th>
-                                                            <th>Debit</th>
-                                                            <th>Credit</th>
+                                                            <th class="text-center">Account Type</th>
+                                                            <th class="text-center">Debit</th>
+                                                            <th class="text-center">Credit</th>
+                                                            <th class="text-center">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -105,16 +106,30 @@
                                                                         <?php echo $ledger['type']; ?>
                                                                     </td>
                                                                     <td>
-                                                                        <?php echo $ledger['debit']; ?>
+                                                                        <?php echo _a($ledger['debit']); ?>
                                                                     </td>
                                                                     <td>
-                                                                        <?php echo $ledger['creedit']; ?>
+                                                                        <?php echo _a(0); ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <a href="javascript:;" class="btn btn-success btn-sm" data-id="<?=$ledger['sid']?>" data-date="<?=$ledger['date']?>" title="View Detail">
+                                                                            <i class="fa fa-eye" aria-hidden="true"></i>    
+                                                                            View
+                                                                        </a>
+                                                                        <a href="javascript:;" class="btn btn-success btn-sm jsViewDetail" data-id="<?=$ledger['sid']?>" data-date="<?=$ledger['date']?>" title="View Detail">
+                                                                            <i class="fa fa-building" aria-hidden="true"></i>    
+                                                                            Company Detail
+                                                                        </a>
+                                                                        <a href="javascript:;" class="btn btn-success btn-sm" data-id="<?=$ledger['sid']?>" data-date="<?=$ledger['date']?>" title="View Detail">
+                                                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                                                            Employes Detail
+                                                                        </a>
                                                                     </td>
                                                                 </tr>
                                                             <?php } ?>
                                                         <?php } else { ?>
                                                             <tr>
-                                                                <td class="text-center" colspan="4">
+                                                                <td class="text-center" colspan="5">
                                                                     <div class="no-data">No general ledger found.</div>
                                                                 </td>
                                                             </tr>

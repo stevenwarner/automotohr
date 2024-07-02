@@ -306,12 +306,17 @@
                                             </li>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true)) { ?>
-                                            <!-- Attendance module settings -->
+                                            <!-- general ledger -->
                                             <li>
                                                 <a href="<?= base_url("general_ledger"); ?>">
                                                     General Ledger
                                                 </a>
                                             </li>
+                                            <!-- <li>
+                                                <a href="<?= base_url("import_general_ledger"); ?>">
+                                                    Import General Ledger
+                                                </a>
+                                            </li> -->
                                         <?php } ?>
                                     </ul>
                                 </article>
@@ -319,7 +324,7 @@
                             <?php $function_names = array('appearance', 'career_logo_management', 'seo_tags', 'embedded_code', 'portal_widget', 'xml_export', 'domain_management', 'social_links', 'talent_network_content_configuration', 'manage_career_page_maintenance_mode'); ?>
                             <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
                                 <article class="setting-box">
-                                    <h2>Career Page Configuration</h2>
+                                    <h2>Careper Page Configuration</h2>
                                     <div class="description-text">
                                         <p>Technical Configurations related to your Career Page.</p>
                                     </div>
