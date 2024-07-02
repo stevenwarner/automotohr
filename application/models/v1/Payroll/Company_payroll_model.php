@@ -122,6 +122,8 @@ class Company_payroll_model extends Base_payroll_model
                 "company_sid"
             ]
         );
+        // to make sure the admin is set
+        $this->syncAdmins();
         // check and add company checklist
         $this->checkAndSetChecklist();
         //
@@ -283,7 +285,7 @@ class Company_payroll_model extends Base_payroll_model
         $this->gustoToStoreBenefits();
         // // // sync industry
         $this->gustoToStoreIndustry();
-        // // sync bank accounts
+        // sync bank accounts
         $this->gustoToStoreBankAccounts();
         // // sync signatories
         $this->gustoToStoreSignatories();
@@ -291,6 +293,84 @@ class Company_payroll_model extends Base_payroll_model
         $this->gustoToStoreForms();
         // sync minimum wages
         $this->gustoToStoreMinimumWages();
+    }
+
+    /**
+     * Create a new bank account
+     * on Gusto
+     * @param array $data
+     * @return array
+     */
+    public function dataToGustoBankAccount(
+        array $data
+    ) {
+        //
+        $request = [
+            "routing_number" => $data["routing_number"],
+            "account_number" => $data["account_number"],
+            "account_type" => $data["account_type"],
+        ];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "bank_accounts",
+                $this->gustoCompany,
+                $request,
+                "POST"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        //
+        if (!$response) {
+            return ["errors" => ["Something went wrong."]];
+        }
+        //
+        $dataArray = [];
+        $dataArray['gusto_uuid'] = $response['uuid'];
+        $dataArray['account_type'] = $response['account_type'];
+        $dataArray['routing_number'] = $response['routing_number'];
+        $dataArray['hidden_account_number'] = $response['hidden_account_number'];
+        $dataArray['verification_status'] = $response['verification_status'];
+        $dataArray['verification_type'] = $response['verification_type'];
+        $dataArray['plaid_status'] = $response['plaid_status'] ?? null;
+        $dataArray['last_cached_balance'] = $response['last_cached_balance'] ?? null;
+        $dataArray['balance_fetched_date'] = $response['balance_fetched_date'] ?? null;
+        $dataArray['name'] = $response['name'];
+        $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
+        $dataArray['is_active'] = 1;
+        $dataArray['created_at'] =
+            $dataArray['updated_at'] = getSystemDate();
+        //
+        $this
+            ->db
+            ->where(
+                "company_sid",
+                $this->gustoCompany["company_sid"]
+            )
+            ->update(
+                "gusto_company_bank_accounts",
+                [
+                    "is_active" => 0
+                ]
+            );
+        //
+        $this
+            ->db
+            ->insert(
+                "gusto_company_bank_accounts",
+                $dataArray
+            );
+        //
+        return [
+            "message" => "You have successfully created a new bank account."
+        ];
     }
 
     /**
@@ -465,7 +545,7 @@ class Company_payroll_model extends Base_payroll_model
      * @param string $column Optional
      */
     public function setCompanyDetails(
-        int $companyId,
+        string $companyId,
         string $column = "company_sid"
     ) {
         //
@@ -479,7 +559,9 @@ class Company_payroll_model extends Base_payroll_model
                 $column
             );
         //
-        $this->initialize($companyId);
+        $this->initialize(
+            $this->gustoCompany["company_sid"]
+        );
     }
 
     /**
@@ -1745,6 +1827,7 @@ class Company_payroll_model extends Base_payroll_model
      */
     private function gustoToStoreBankAccounts()
     {
+        $this->verifyBankAccounts();
         //
         $response = $this
             ->lb_gusto
@@ -1783,6 +1866,7 @@ class Company_payroll_model extends Base_payroll_model
             $dataArray['balance_fetched_date'] = $v0['balance_fetched_date'] ?? null;
             $dataArray['name'] = $v0['name'];
             $dataArray['updated_at'] = $systemDateTime;
+            $dataArray['is_active'] = 1;
             //
             $whereArray = [
                 'company_sid' => $this->gustoCompany["company_sid"],
@@ -1839,6 +1923,7 @@ class Company_payroll_model extends Base_payroll_model
             ])
             ->where([
                 "gusto_uuid is null" => null,
+                "is_active" => 1,
                 "company_sid" =>
                 $this->gustoCompany["company_sid"]
             ])
@@ -1890,6 +1975,7 @@ class Company_payroll_model extends Base_payroll_model
         $dataArray['last_cached_balance'] = $response['last_cached_balance'] ?? null;
         $dataArray['balance_fetched_date'] = $response['balance_fetched_date'] ?? null;
         $dataArray['name'] = $response['name'];
+        $dataArray['is_active'] = 1;
         $dataArray['company_sid'] = $this->gustoCompany["company_sid"];
         $dataArray['updated_at'] = getSystemDate();
         //
@@ -1919,6 +2005,7 @@ class Company_payroll_model extends Base_payroll_model
             ])
             ->where([
                 "gusto_uuid is not null" => null,
+                "is_active" => 1,
                 "company_sid" =>
                 $this->gustoCompany["company_sid"]
             ])
@@ -2108,7 +2195,7 @@ class Company_payroll_model extends Base_payroll_model
         $systemDateTime = getSystemDate();
         //
         foreach ($response as $v0) {
-           
+
             //
             $dataArray = [];
             $dataArray['gusto_uuid'] = $v0['uuid'];
@@ -2127,7 +2214,7 @@ class Company_payroll_model extends Base_payroll_model
             ];
             //
             $this->gustoCompany["other_uuid"]
-            = $v0["uuid"];
+                = $v0["uuid"];
             //
             $gustoFormPDF =
                 $this

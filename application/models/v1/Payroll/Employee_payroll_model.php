@@ -549,37 +549,34 @@ class Employee_payroll_model extends Base_payroll_model
             return false;
         }
         //
-        foreach ($response as $v0) {
+        $ins = [
+            "employee_sid" => $this->gustoEmployee["employee_sid"],
+            "gusto_uuid" => $response["uuid"],
+            "gusto_version" => $response["version"],
+            "gusto_location_uuid" => $response["location_uuid"],
+            "effective_date" => $response["effective_date"],
+            "active" => $response["active"],
+            "street_1" => $response["street_1"],
+            "street_2" => $response["street_2"],
+            "city" => $response["city"],
+            "state" => $response["state"],
+            "zip" => $response["zip"],
+            "country" => $response["country"],
+            "is_work_address" => 1,
+            "created_at" => getSystemDate(),
+            "updated_at" => getSystemDate(),
+        ];
+        //
+        $this
+            ->db
+            ->insert(
+                "gusto_companies_employees_work_addresses",
+                $ins
+            );
+        ///
+        if ($this->db->insert_id()) {
             //
-            $ins = [
-                "employee_sid" => $this->gustoEmployee["employee_sid"],
-                "gusto_uuid" => $v0["uuid"],
-                "gusto_version" => $v0["version"],
-                "gusto_location_uuid" => $v0["location_uuid"],
-                "effective_date" => $v0["effective_date"],
-                "active" => $v0["active"],
-                "street_1" => $v0["street_1"],
-                "street_2" => $v0["street_2"],
-                "city" => $v0["city"],
-                "state" => $v0["state"],
-                "zip" => $v0["zip"],
-                "country" => $v0["country"],
-                "is_work_address" => 1,
-                "created_at" => getSystemDate(),
-                "updated_at" => getSystemDate(),
-            ];
-            //
-            $this
-                ->db
-                ->insert(
-                    "gusto_companies_employees_work_addresses",
-                    $ins
-                );
-            ///
-            if ($this->db->insert_id()) {
-                //
-                $this->updateEmployeeChecklist("work_address");
-            }
+            $this->updateEmployeeChecklist("work_address");
         }
     }
 

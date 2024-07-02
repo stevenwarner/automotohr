@@ -386,6 +386,16 @@
             </li>
         <?php } ?>
 
+        <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(PAYROLL)) { ?>
+            <!-- Company bank accounts -->
+            <li>
+                <a href="<?= base_url("settings/company/accounts"); ?>">
+                    <figure><i class="fa fa-bank"></i></figure>
+                    Company Bank accounts
+                </a>
+            </li>
+        <?php } ?>
+
     </ul>
 </div>
 <div class="dash-box service-contacts hidden-xs">

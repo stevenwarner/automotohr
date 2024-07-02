@@ -59,8 +59,8 @@ class Company_payroll extends CI_Controller
             ->company_payroll_model
             ->startCreatePartnerCompany(
                 $companyId,
-                [68, 69]
-                // $this->input->post("employees", true)
+                // [68, 69]
+                $this->input->post("employees", true)
             );
         //
         if (isset($response['errors'])) {
@@ -152,7 +152,6 @@ class Company_payroll extends CI_Controller
                 $companyId,
                 $post
             );
-
         //
         if ($response["errors"]) {
             return SendResponse(400, $errors);

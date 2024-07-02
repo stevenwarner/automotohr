@@ -306,6 +306,15 @@
                                                 </a>
                                             </li>
                                         <?php } ?>
+
+                                        <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(PAYROLL)) { ?>
+                                            <!-- Company bank accounts -->
+                                            <li>
+                                                <a href="<?= base_url("settings/company/accounts"); ?>">
+                                                    Company Bank accounts
+                                                </a>
+                                            </li>
+                                        <?php } ?>
                                     </ul>
                                 </article>
                             <?php } ?>

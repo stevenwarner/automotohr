@@ -1716,9 +1716,6 @@ $route['lms/courses/emailReminder/(:any)'] = 'v1/Courses/emailReminder/$1';
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';
 $route['hr/document/hybrid/download/(:any)'] = 'Hr_documents_management/downloadHybridDocument/$1';
 //
-$route['payroll/gusto/managepayment/(:num)'] = 'gusto/Gusto_payroll/managePayment/$1';
-
-//
 $route['add_dependant_information_donthave'] = 'dependents/add_dependant_information_donthave';
 $route['add_dependant_information_donthave/(:any)'] = 'dependents/add_dependant_information_donthave/$1';
 $route['add_dependant_information_donthave/(:any)/(:any)'] = 'dependents/add_dependant_information_donthave/$1/$2';
@@ -2026,22 +2023,7 @@ $route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clear
  */
 $route['sa/payrolls/(:num)']['get'] = 'v1/sa/Payrolls/index/$1';
 // sync with Gusto
-$route['sa/payrolls/company/(:num)/sync']['get'] = 'v1/sa/Payrolls/syncCompanyWithGusto/$1';
-$route['sa/payrolls/company/(:num)/setup_payroll']['get'] = 'v1/sa/Payrolls/setupCompanyPayroll/$1';
-$route['sa/payrolls/company/(:num)/payment/configuration']['post'] = 'v1/sa/Payrolls/updatePaymentConfiguration/$1';
-$route['sa/payrolls/company/(:num)/primary/admin']['post'] = 'v1/sa/Payrolls/updatePrimaryAdmin/$1';
-$route['sa/payrolls/company/(:num)/bank/verify']['get'] = 'v1/sa/Payrolls/verifyCompanyBankAccount/$1';
-$route['sa/payrolls/company/(:num)/verify']['POST'] = 'v1/sa/Payrolls/verifyCompany/$1';
-//
-$route['sa/payrolls/company/(:num)/admins/manage']['get'] = 'v1/sa/Payrolls/manageAdmins/$1';
-$route['sa/payrolls/company/(:num)/admins/add']['get'] = 'v1/sa/Payrolls/addAdmin/$1';
 $route['sa/payrolls/company/(:num)/mode']['post'] = 'v1/sa/Payrolls/updateMode/$1';
-// set up clair
-$route['sa/payrolls/clair/(:num)']['get'] = 'v1/sa/Payrolls/setupClair/$1';
-// set up health insurance
-$route['sa/payrolls/health-insurance/(:num)']['get'] = 'v1/sa/Payrolls/setupHealthInsurance/$1';
-
-
 
 //
 $route['hr_documents_management/print_download_hybird_document_resource_center/(:num)'] = 'hr_documents_management/print_download_hybird_document_resource_center/$1';
@@ -2281,3 +2263,12 @@ $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
 
 //
 $route["payrolls/sync"]["get"] = "Settings/showPayrollSyncMessage";
+
+// CRON for payroll company
+$route["payrolls/processQueue"]["cli"] = "v1/payrolls/Cron_company_payroll/queue";
+
+// Company bank account
+$route["settings/company/accounts"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/listing";
+$route["settings/company/accounts/add"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/getAddPage";
+$route["settings/company/accounts/add"]["post"] =
+"v1/Settings/BankAccounts/Company_bank_accounts/processAddPage";

@@ -228,6 +228,7 @@
 <script src="<?= main_url("public/v1/plugins/bootstrap/js/bootstrap.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment.min.js?v=3.0"); ?>"></script>
 <script src="<?= main_url("public/v1/plugins/moment/moment-timezone.min.js?v=3.0"); ?>"></script>
+<script src="<?= main_url('public/v1/plugins/ms_modal/main.js?v=3.0') ?>"></script>
 <!-- JS Bundles -->
 <?= $pageJs ? GetScripts($pageJs) : ""; ?>
 <?= bundleJs([

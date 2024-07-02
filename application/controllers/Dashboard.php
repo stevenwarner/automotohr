@@ -658,19 +658,25 @@ class Dashboard extends Public_Controller
 
             // check and add payroll scripts
             if (checkIfAppIsEnabled(PAYROLL)) {
-                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
+                // set the payroll checks
+                $data["payrollChecks"] = [
+                    "isCompanyOnPayroll" => isCompanyLinkedWithGusto($company_id),
+                    "isTermsAgreed" => hasAcceptedPayrollTerms($company_id),
+                    "isEmployeeOnPayroll" => isEmployeeOnPayroll($company_id),
+                    "isSyncInProgress" => checkIfSyncingInProgress(),
+                ];
+                //
+                if (!$data["payrollChecks"]["isTermsAgreed"]) {
                     $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
+                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/partner/create'], 'public/v1/js/payroll/', 'setup-company', true);
                 }
-                if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/company_onboard'], 'public/v1/js/payroll/', 'setup-company', true);
-                }
-
                 // for payroll
-                if (isCompanyLinkedWithGusto($company_id) && isEmployeeOnPayroll($employer_id)) {
+                if ($data["payrollChecks"]["isEmployeeOnPayroll"]) {
                     // load up the model
                     $this->load->model('v1/Pay_stubs_model', 'pay_stubs_model');
                     //
-                    $data['employeePayStubsCount'] = $this->pay_stubs_model
+                    $data['employeePayStubsCount'] = $this
+                        ->pay_stubs_model
                         ->getMyPayStubsCount($employer_id);
                 }
             }

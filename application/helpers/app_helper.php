@@ -443,26 +443,6 @@ if (!function_exists('getUserStartDate')) {
     }
 }
 
-if (!function_exists('isEmployeeOnPayroll')) {
-    /**
-     * Check employee on payroll
-     * 
-     * @param int $employeeId
-     * @return int
-     */
-    function isEmployeeOnPayroll(int $employeeId)
-    {
-        // get CI instance
-        $CI = &get_instance();
-        // check
-        return $CI->db
-            ->where([
-                'employee_sid' => $employeeId
-            ])
-            ->count_all_results('gusto_companies_employees');
-    }
-}
-
 if (!function_exists('isCompanyApprovedForPayroll')) {
     /**
      * Check employee on payroll
@@ -661,44 +641,6 @@ if (!function_exists('portalFormI9Tracker')) {
         $dataToSave['body'] = json_encode($body);
         //
         get_instance()->db->insert('portal_form_i9_tracker', $dataToSave);
-    }
-}
-
-if (!function_exists('isCompanyLinkedWithGusto')) {
-    /**
-     * Check company already onboard
-     *
-     * @param int $companyId
-     * @return bool
-     */
-    function isCompanyLinkedWithGusto(int $companyId): bool
-    {
-        //
-        return (bool)get_instance()->db
-            ->where([
-                'company_sid' => $companyId
-            ])
-            ->count_all_results('gusto_companies');
-    }
-}
-
-if (!function_exists('hasAcceptedPayrollTerms')) {
-    /**
-     * Check company already onboard
-     *
-     * @param int $companyId
-     * @return bool
-     */
-    function hasAcceptedPayrollTerms(int $companyId): bool
-    {
-        //
-        return (bool) get_instance()->db
-            ->where('is_ts_accepted is not null', null, null)
-            ->where('is_ts_accepted', 1)
-            ->where([
-                'company_sid' => $companyId
-            ])
-            ->count_all_results('gusto_companies');
     }
 }
 
@@ -3869,5 +3811,25 @@ if (!function_exists("getExtensionFromMimeType")) {
         ];
 
         return isset($mimeToExt[$mimeType]) ? "." . $mimeToExt[$mimeType] : ".pdf";
+    }
+}
+
+if (!function_exists("maskBankAccount")) {
+    /**
+     * mask the bank account number
+     *
+     * @param string $bankAccountNumber
+     * @param int    $digitsLength Optional
+     * Default 4
+     * @return string
+     * XXXXX6789
+     */
+    function maskBankAccount(
+        string $bankAccountNumber,
+        int $digitsLength = 4
+    ): string
+    {
+        // set the pad length
+        return str_repeat("X", strlen($bankAccountNumber) - $digitsLength) . substr($bankAccountNumber, -$digitsLength);
     }
 }
