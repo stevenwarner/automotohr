@@ -1328,7 +1328,7 @@ class Employee_management extends Public_Controller
 
                 $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
                 $to_id = $data['id'];
-                $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
+                $rawMessages = $this->application_tracking_system_model->getSentMessagesForEmployees($to_id);
                 //
 
                 if (!empty($rawMessages)) {

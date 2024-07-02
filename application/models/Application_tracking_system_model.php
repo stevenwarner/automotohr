@@ -1659,6 +1659,12 @@ class Application_tracking_system_model extends CI_Model
         return $result;
     }
 
+    function getSentMessagesForEmployees($to_id)
+    {
+        $result = $this->db->query('SELECT * FROM `private_message`  WHERE `to_id` = "' . $to_id . '" AND `job_id` is null AND `outbox` = 1 UNION SELECT * FROM `private_message` WHERE `from_id` = "' . $to_id . '"  AND `job_id` is null AND `outbox` = 0 ORDER BY id DESC')->result_array();
+        return $result;
+    }
+
     function getEmployerDetail($employer_id)
     {
         $this->db->where('sid', $employer_id);
