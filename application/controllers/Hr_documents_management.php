@@ -203,7 +203,7 @@ class Hr_documents_management extends Public_Controller
                         $documentDescription =
                             checkAndGetDocumentDescription(
                                 $document_sid,
-                                $this->input->post('document_description'),
+                                $this->input->post('document_description') ? $this->input->post('document_description') : '',
                                 true
                             );
 
@@ -13120,7 +13120,7 @@ class Hr_documents_management extends Public_Controller
         $data['company_sid'] = $company_sid;
         $data['token'] = $token == null || $token == 0 ? time() : $token;
         //
-        
+
         $this->load->view('download_bulk_documents', $data);
     }
 

@@ -987,11 +987,11 @@ class Private_messages extends Public_Controller
                                 . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                 . $secret_key . '</div>';
 
-                            if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
+                            if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {  
                                 $file = explode(".", $_FILES['message_attachment']['name']);
                                 $file_name = str_replace(" ", "-", $file[0]);
                                 $messageFile = $file_name . '-' . generateRandomString(6) . '.' . $file[1];
-
+                             
                                 if ($_FILES['message_attachment']['size'] == 0) {
                                     $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                                     redirect('private_messages', 'refresh');

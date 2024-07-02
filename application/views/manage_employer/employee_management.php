@@ -661,19 +661,33 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         }
                                     } ?>
                                 </li>
-                                <li class="form-col-100 autoheight">
-                                    <label>Additional Attachments</label>
+
+
+                                <li class="form-col-100 autoheight" id="dynamicattachment">
+                                    <label><a href="javascript:;" onclick="addattachmentblock(); return false;" class="add">+ Additional Attachments</a></label>
                                     <div class="upload-file invoice-fields">
                                         <span class="selected-file">No file selected</span>
-                                        <input type="file" name="message_attachment" id="message_attachment" class="image">
+                                        <input type="file" name="message_attachment[]" id="message_attachment" class="image message_attachments">
                                         <a href="javascript:;">Choose File</a>
                                     </div>
                                 </li>
+
+
+
                                 <li class="form-col-100 autoheight">
                                     <div class="message-action-btn">
                                         <input type="submit" value="Send Message" id="send-message-email" class="submit-btn" onclick="bulk_email_form_validate()">
                                     </div>
                                 </li>
+
+
+
+
+
+
+
+
+
                                 <div class="custom_loader">
                                     <div id="loader" class="loader" style="display: none">
                                         <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
@@ -690,6 +704,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript">
     function deactivate_single_employee(id) {
@@ -1129,7 +1144,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                 });
 
 
-                var file_data = $('#message_attachment').prop('files')[0];
+                //  var file_data = $('#message_attachment').prop('files')[0];
+
+                var file_data = $('.message_attachments').prop('files');
+
+                //var file_data =  $("[name='message_attachment']");
+
                 var subject = ($('#bulk_email_subject').val()).trim();
                 var message = ($('#bulk_email_message').val()).trim();
                 var template = $('#template').val();
@@ -1306,4 +1326,35 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         let id = $(this).closest('tr').data('id');
         $('.jsToggleTable' + id).toggle();
     });
+
+
+
+
+
+    $(document).on('change', '.image', function() {
+        var fileName = $(this).val();
+        if (fileName.length > 0) {
+            $(this).prev().html(fileName.substring(0, 45));
+        } else {
+            $(this).prev().html('No file selected');
+        }
+    });
+
+
+
+    //
+    var i = 1;
+
+    function addattachmentblock() {
+        var container_id = "message_attachment_container" + i;
+        var id = "message_attachment" + i;
+        $('#dynamicattachment').after('<li id="' + i + '"> <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3" style="margin-bottom: 5px;margin-top: 10px;padding-left: 0px;"><b class="btn btn-danger text-center" onclick="deleteAnswerBlock(' + i + '); return false;">Delete</b></div> <br><div class="col-lg-9 col-md-9 col-xs-12 col-sm-8 upload-file invoice-fields"><span class="selected-file">No file selected</span><input type="file" name="message_attachment[]" id="' + id + '" class="image message_attachments"><a href="javascript:;">Choose File</a></div></li>');
+
+        i++;
+    }
+
+    function deleteAnswerBlock(id) {
+        console.log('Delete it: ' + id);
+        $('#' + id).remove();
+    }
 </script>

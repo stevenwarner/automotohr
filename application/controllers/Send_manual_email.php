@@ -502,7 +502,36 @@ class Send_manual_email extends Public_Controller
                 . $secret_key . '</div>';
 
 
+
+            // Save to Messages Box
+            $this->load->model('message_model');
+            $message_data['to_id'] = $employee_data['sid'];
+            $message_data['to_type'] = 'employer';
+            $message_data['contact_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
+            $to_email = $employee_data['email'];
+            $first_name = $employee_data['first_name'];
+            $last_name = $employee_data['last_name'];
+            $job_title = $employee_data['job_title'];
+
+            $company_name;
+            $today;
+            $company_detail['Location_Address'];
+            $company_detail['PhoneNumber'];
+            $company_detail['WebSite'];
+            $toArray = array($company_name, $today, $first_name, $last_name, $job_title,  ' ', $to_email, $company_detail['Location_Address'], $company_detail['PhoneNumber'], $company_detail['WebSite']);
+
+
+            replace_magic_quotes($subject, $fromArray, $toArray);
+            replace_magic_quotes($body, $fromArray, $toArray);
+            $body .= $attach_body;
+
+            $message_data['message'] = $body;
+            $message_data['subject'] = $subject;
+
+
             if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
+
+
                 $file        = explode(".", $_FILES['message_attachment']['name']);
                 $file_name   = str_replace(" ", "-", $file[0]);
                 $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
@@ -520,9 +549,13 @@ class Send_manual_email extends Public_Controller
                 save_email_log_common($emailData);
 
                 sendMailWithAttachment(REPLY_TO, $employee_data['email'], $subject, $autoemailbody, $from_name, $_FILES['message_attachment'], $from_name);
+
+                $this->message_model->save_message($message_data);
             } else {
 
                 log_and_sendEmail(REPLY_TO, $employee_data['email'], $subject, $autoemailbody, $from_name);
+
+                $this->message_model->save_message($message_data);
             }
 
             $sent_flag = true;
