@@ -62,7 +62,7 @@ class Company_bank_accounts extends Public_Controller
             ],
             "public/v1/js/settings/bank_accounts/",
             'company_bank_accounts',
-            false
+            true
         );
         // get the bank accounts
         $data["bankAccounts"] = $this
@@ -172,8 +172,23 @@ class Company_bank_accounts extends Public_Controller
             ),
             "created_at" => $systemDateTime,
             "updated_at" => $systemDateTime,
+            "is_active" => 1,
             "name" => $post["jsBankName"],
         ];
+        //
+        $this
+            ->db
+            ->where(
+                "company_sid",
+                $companyId
+            )
+            ->update(
+                "gusto_company_bank_accounts",
+                [
+                    "is_active" => 0,
+                    "updated_at" => $systemDateTime
+                ]
+            );
         //
         $this
             ->db
@@ -187,6 +202,45 @@ class Company_bank_accounts extends Public_Controller
             [
                 "message" =>
                 "You have successfully created a new bank account."
+            ]
+        );
+    }
+
+    public function processDelete(int $companyBankId)
+    {
+        // set company id
+        $companyId = $this->sessionDetails["company_detail"]["sid"];
+        // check if the bank account is primary
+        if (
+            $this->db
+            ->where("company_sid", $companyId)
+            ->where("is_active", 1)
+            ->where("sid", $companyBankId)
+            ->count_all_results("gusto_company_bank_accounts")
+        ) {
+            // check if there was a bank exists
+            return SendResponse(
+                400,
+                [
+                    "errors" => [
+                        "This is the company's default account, which cannot be deleted."
+                    ]
+                ]
+            );
+        }
+        //
+        $this
+            ->db
+            ->where("sid", $companyBankId)
+            ->delete(
+                "gusto_company_bank_accounts"
+            );
+        //
+        return SendResponse(
+            200,
+            [
+                "message" =>
+                "You have successfully deleted the company bank account."
             ]
         );
     }

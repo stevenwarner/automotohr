@@ -357,7 +357,8 @@ class Company_payroll_model extends Base_payroll_model
             ->update(
                 "gusto_company_bank_accounts",
                 [
-                    "is_active" => 0
+                    "is_active" => 0,
+                    "updated_at" => getSystemDate()
                 ]
             );
         //

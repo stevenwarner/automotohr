@@ -66,7 +66,7 @@
                                         <?php if ($bankAccounts) {
                                             foreach ($bankAccounts as $v0) {
                                         ?>
-                                                <tr class="bg-<?= $v0["is_active"] == 1 ? "success" : "danger"; ?>">
+                                                <tr class="bg-<?= $v0["is_active"] == 1 ? "success" : "danger"; ?>" data-id="<?= $v0["sid"]; ?>">
                                                     <td class="csVerticalAlignMiddle">
                                                         <?= $v0["name"]; ?>
                                                     </td>
@@ -91,10 +91,14 @@
                                                         <?= $v0["is_active"] == 1 ? "Active" : "Inactive"; ?>
                                                     </td>
                                                     <td class="csVerticalAlignMiddle">
-                                                        <button class="btn btn-danger text-medium">
+                                                        <?php if($v0["is_active"]) { ?>
+                                                            -
+                                                        <?php } else {?>
+                                                        <button class="btn btn-danger text-medium jsCompanyBankAccountDeleteBtn">
                                                             <i class="fa fa-times-circle"></i>
                                                             Delete
                                                         </button>
+                                                        <?php } ?>
                                                     </td>
                                                 </tr>
                                             <?php

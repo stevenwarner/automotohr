@@ -23,6 +23,18 @@ $(function CompanyBankAccounts() {
 		);
 	});
 
+	$(document).on("click", ".jsCompanyBankAccountDeleteBtn", function (event) {
+		event.preventDefault();
+		const eventId = $(this).closest("tr").data("id");
+		const _this = $(this);
+		return _confirm(
+			"Do you really want to delete this bank account?",
+			function () {
+				deleteTheRow(eventId, callButtonHook(_this, true));
+			}
+		);
+	});
+
 	function loadAddView(btnREF) {
 		if (XHR !== null) {
 			XHR.abort();
@@ -101,6 +113,21 @@ $(function CompanyBankAccounts() {
 					$("#jsCompanyBankAccount .jsModalCancel").click();
 					window.location.refresh();
 				});
+			});
+	}
+
+	function deleteTheRow(eventId, btnREF) {
+		//
+		$.ajax({
+			url: baseUrl("settings/company/accounts/" + eventId),
+			method: "DELETE",
+		})
+			.always(function () {
+				callButtonHook(btnREF, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.message, window.location.refresh);
 			});
 	}
 });

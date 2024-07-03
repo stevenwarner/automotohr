@@ -2271,4 +2271,6 @@ $route["payrolls/processQueue"]["cli"] = "v1/payrolls/Cron_company_payroll/queue
 $route["settings/company/accounts"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/listing";
 $route["settings/company/accounts/add"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/getAddPage";
 $route["settings/company/accounts/add"]["post"] =
-"v1/Settings/BankAccounts/Company_bank_accounts/processAddPage";
+  "v1/Settings/BankAccounts/Company_bank_accounts/processAddPage";
+$route["settings/company/accounts/(:num)"]["delete"] =
+  "v1/Settings/BankAccounts/Company_bank_accounts/processDelete/$1";
