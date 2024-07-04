@@ -204,6 +204,7 @@ class Job_listings extends Public_Controller
             } else {
                 $formpost                                                       = $this->input->post(NULL, TRUE);
 
+
                 if (!isset($formpost['interview_questionnaire_sid']) || $formpost['interview_questionnaire_sid'] == '') {
                     $formpost['interview_questionnaire_sid'] = 0;
                 }
@@ -435,7 +436,9 @@ class Job_listings extends Public_Controller
                 }
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
-                if ($listing_data["organic_feed"] == 1) {
+
+
+                if ($listing_data["organic_feed"] == 1 && $listing_data['approval_status'] == 'approved') {
                     // load the indeed model
                     $this->load->model("Indeed_model", "indeed_model");
                     $this->indeed_model->addJobToQueue(
@@ -1076,8 +1079,8 @@ class Job_listings extends Public_Controller
                     $this->load->view('main/footer');
                 } else {
                     $formpost = $this->input->post(NULL, TRUE);
-                    
-                   $altertextarea = $formpost['JobDescription'] = $this->input->post('JobDescription', false);
+
+                    $altertextarea = $formpost['JobDescription'] = $this->input->post('JobDescription', false);
                     $formpost['JobRequirements'] = $this->input->post('JobRequirements', false);
                     $previous_active = isset($formpost['listing_status_old']) ? $formpost['listing_status_old'] : '';
                     unset($formpost['listing_status_old']);
