@@ -727,7 +727,7 @@ class Indeed_model extends CI_Model
                 "indeed_job_queue",
                 [
                     "job_sid" => $jobId,
-                    "log_sid" => null,
+                    "log_sid" => 0,
                     "is_processed" => 0,
                     "is_expired" => 0,
                     "has_errors" => 0,
@@ -974,7 +974,7 @@ class Indeed_model extends CI_Model
         return $this
             ->db
             ->where([
-                "is_processing" => 0,
+                "is_expired" => 0,
                 "is_processed" => 0,
             ])
             ->order_by("sid", "ASC")

@@ -1076,7 +1076,8 @@ class Job_listings extends Public_Controller
                     $this->load->view('main/footer');
                 } else {
                     $formpost = $this->input->post(NULL, TRUE);
-                    $altertextarea = $formpost['JobDescription'] = $this->input->post('JobDescription', false);
+                    
+                   $altertextarea = $formpost['JobDescription'] = $this->input->post('JobDescription', false);
                     $formpost['JobRequirements'] = $this->input->post('JobRequirements', false);
                     $previous_active = isset($formpost['listing_status_old']) ? $formpost['listing_status_old'] : '';
                     unset($formpost['listing_status_old']);
@@ -1972,6 +1973,7 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) Activated.';
                 } elseif ($action == 'deactive') {
+
                     $this->dashboard_model->deactive($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);

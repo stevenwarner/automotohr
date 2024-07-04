@@ -187,6 +187,10 @@ class Dashboard_model extends CI_Model
 
     function deactive($id)
     {
+
+
+        
+
         $this->listing_tracking($id, 'Job De-Activated');
         $data = array();
         $data['active'] = 0;
@@ -206,6 +210,59 @@ class Dashboard_model extends CI_Model
             $this->db->where('job_sid', $id);
         }
         $this->db->update('portal_job_listings_feeds_data', $data);
+
+
+
+        // Update indeed Job Quee
+        $this->db->select('job_sid');
+
+        if (is_array($id)) {
+            $this->db->where_in('job_sid', $id);
+        } else {
+            $this->db->where('job_sid', $id);
+        }
+
+
+        $this->db->where('is_processed', 0);
+        $this->db->from('indeed_job_queue');
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->result_array();
+
+        $indeedJobIds = array_column($records_arr, 'job_sid');
+
+
+        if (is_array($id)) {
+
+            foreach ($id as $jobId) {
+
+                if (in_array($jobId, $indeedJobIds)) {
+
+                    $updatedata['is_processed'] = 1;
+                    $this->db->where('job_sid', $jobId);
+                    $this->db->where('is_processed', 0);
+                    $this->db->update('indeed_job_queue', $updatedata);
+                } else {
+                    $insertdata['job_sid'] = $jobId;
+                    $insertdata['is_processed'] = 0;
+                    $insertdata['is_expired'] = 1;
+
+                    $this->db->insert('indeed_job_queue', $insertdata);
+                }
+            }
+        } else {
+
+            if (in_array($id, $indeedJobIds)) {
+
+                $updatedata['is_processed'] = 1;
+                $this->db->where('job_sid', $id);
+                $this->db->where('is_processed', 0);
+                $this->db->update('indeed_job_queue', $updatedata);
+            } else {
+                $insertdata['job_sid'] = $id;
+                $insertdata['is_processed'] = 1;
+                $this->db->insert('indeed_job_queue', $insertdata);
+            }
+        }
     }
 
     function active($id)
