@@ -617,16 +617,17 @@ class Testing extends CI_Controller
         return urlencode($fileName);
     }
 
-    public function addNewEmployeesIntoCompany ($companyId) {
+    public function addNewEmployeesIntoCompany($companyId)
+    {
         // Load the fake employee library
         $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
         //
-        $employees = 
+        $employees =
             $this
             ->fakeEmployees
             ->init(5);
         //
-        foreach($employees as $employee){
+        foreach ($employees as $employee) {
             $employee['parent_sid'] = $companyId;
             $employee['active'] = 1;
             //
@@ -634,5 +635,122 @@ class Testing extends CI_Controller
         }
         //
         _e("employee add successfully");
-    } 
+    }
+
+
+
+
+    //
+    public function graphQl()
+    {
+
+        $jobs = '';
+
+        $replaceArray = [
+            '\title' => "Title1",
+            '\description' => html_escape(
+                preg_replace("/\s+/", "", nl2br("descc"))
+            ),
+            '\country' => "country_code1",
+            '\cityRegionPostal' => 'city1' . ", " . "state_code1" . " " . 'zipcode1',
+            '\currency' => 'USD',
+            '\minimumMinor' => "salary1",
+            '\maximumMinor' => "salary2",
+            '\period' => "type1",
+            '\companyName' => "CompanyName1",
+            '\sourceName' => "CompanyName2",
+            '\sourceType' => 'Employer1',
+            '\contactName' => "contactName1",
+            '\contactEmail' => "contactEmail1",
+            '\jobPostingId' => "uuid1",
+            '\datePublished' => "publishDate1",
+            '\url' => "http://example.com/careers/job1.html",
+        ];
+
+
+        //    
+        $title = $replaceArray['\title'] != '' ? 'title: "\title"' : '';
+        $description = $replaceArray['\description'] != '' ? 'description: "\description"' : '';
+        $country = $replaceArray['\country'] != '' ? 'country: "\country"' : '';
+        $cityRegionPostal = $replaceArray['\cityRegionPostal'] != '' ? 'cityRegionPostal: "\cityRegionPostal"' : '';
+        $companyName = $replaceArray['\companyName'] != '' ? 'companyName: "\companyName"' : '';
+        $sourceName = $replaceArray['\sourceName'] != '' ? 'sourceName: "\sourceName"' : '';
+        $sourceType = $replaceArray['\sourceType'] != '' ? 'sourceType: "\sourceType"' : '';
+        $contactName = $replaceArray['\contactName'] != '' ? 'contactName: "\contactName"' : '';
+        $contactEmail = $replaceArray['\contactEmail'] != '' ? 'contactEmail: "\contactEmail"' : '';
+        $jobPostingId = $replaceArray['\jobPostingId'] != '' ? 'jobPostingId: "\jobPostingId"' : '';
+        $datePublished = $replaceArray['\datePublished'] != '' ? 'datePublished: "\datePublished"' : '';
+        $url = $replaceArray['\url'] != '' ? 'url: "\url"' : '';
+
+        //
+        $JobDetail = '
+    {
+        body: {
+            ' . $title .
+            $description
+            . 'location: {' .
+            $country .
+            $cityRegionPostal
+            . ' }
+            benefits: []
+            
+        }
+        metadata: {
+            jobSource: {' .
+            $companyName .
+            $sourceName .
+            $sourceType . '
+            }
+            ' .
+            $jobPostingId .
+            $datePublished .
+            $url . '
+        }
+
+         contacts: [{
+                contactType: ["contact"]
+                contactInfo: {
+                    ' . $contactName .
+
+            $contactEmail . '
+
+                }
+            }]
+     
+    }';
+
+
+
+
+        // replace the variables
+        $jobs .= str_replace(
+            array_keys($replaceArray),
+            $replaceArray,
+            $JobDetail
+        );
+
+
+        // set the call
+        $query = '
+mutation {
+    createSourcedJobPostings(
+        input: {
+            jobPostings: [
+                \jobs
+            ]
+        }
+    ) {
+    results {
+        jobPosting {
+            sourcedPostingId
+        }
+    }
+    }
+}';
+
+        // replace variables
+        $query = str_replace("\jobs", $jobs, $query);
+
+        _e($query, true);
+    }
 }
