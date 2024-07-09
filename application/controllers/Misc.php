@@ -1050,7 +1050,7 @@ class Misc extends CI_Controller
 
         try {
             $response = $payment->create($apiContext);
-            $logArray['response_json'] = $response;
+            $logArray['response_json'] = json_encode($response);
             $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
@@ -1063,7 +1063,7 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
-            $logArray['response_json'] = $payment;
+            $logArray['response_json'] = json_encode($payment);
             $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
@@ -1174,7 +1174,7 @@ class Misc extends CI_Controller
         // The return object contains the state.
         try {
             $response = $payment->create($apiContext);
-            $logArray['response_json'] = $response;
+            $logArray['response_json'] = json_encode($response);
             $this->saveLog($logArray);
             return $payment;
         } catch (PayPal\Exception\PayPalConnectionException $ex) {
@@ -1187,7 +1187,7 @@ class Misc extends CI_Controller
                 "error_code" => $error_code,
                 "error_message" => $message  // Filtering by MerchantId set during CreateCreditCard.
             );
-            $logArray['response_json'] = $payment;
+            $logArray['response_json'] = json_encode($payment);
             $this->saveLog($logArray);
             return $payment;
         } catch (Exception $ex) {
