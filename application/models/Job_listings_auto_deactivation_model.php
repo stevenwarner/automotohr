@@ -47,15 +47,15 @@ class Job_listings_auto_deactivation_model extends CI_Model
 
     function active_jobs_with_expiry($today_end_str)
     {
-       
+
         $this->db->select('
-           portal_job_listings.*,
+            portal_job_listings.*,
             users.CompanyName,
             users.has_applicant_approval_rights
         ');
 
 
-        $lastDate = date('Y-m-d h:i:s', strtotime($today_end_str. "-7 days"));
+        $lastDate = date('Y-m-d h:i:s', strtotime($today_end_str . "-7 days"));
 
         $this->db->group_start();
         $this->db->where('portal_job_listings.expiration_date !=', NULL);
@@ -63,7 +63,7 @@ class Job_listings_auto_deactivation_model extends CI_Model
         $this->db->where('portal_job_listings.expiration_date >=', $lastDate);
         $this->db->group_end();
 
-       $this->db->where('portal_job_listings.active', 1);
+        $this->db->where('portal_job_listings.active', 1);
         $this->db->join('users', 'users.sid = portal_job_listings.user_sid', 'inner');
 
         $jobs_obj = $this->db->get('portal_job_listings');

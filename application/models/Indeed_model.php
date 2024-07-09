@@ -974,7 +974,7 @@ class Indeed_model extends CI_Model
         return $this
             ->db
             ->where([
-                "is_expired" => 0,
+                "is_processing" => 0,
                 "is_processed" => 0,
             ])
             ->order_by("sid", "ASC")
