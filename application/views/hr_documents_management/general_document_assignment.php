@@ -169,13 +169,15 @@
                 'occupational_license': 'Occupational License Information',
                 'emergency_contacts': 'Emergency Contacts',
                 'dependents': 'Dependents',
+
+
             };
             let typeToUrl = {
                 'direct_deposit': `direct_deposit/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'drivers_license': `drivers_license_info/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'occupational_license': `occupational_license_info/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'emergency_contacts': `emergency_contacts/<?= $user_type; ?>/<?= $user_sid; ?>`,
-                'dependents': `dependants/<?= $user_type; ?>/<?= $user_sid; ?>`
+                'dependents': `dependants/<?= $user_type; ?>/<?= $user_sid; ?>`,
 
             };
             var defaultRequires = <?= json_encode([
@@ -626,7 +628,7 @@
                         notCompletedDocs += `
                         <tr class="jsGeneralRowNotCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replaceAll(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
+                                ${v.document_type.replaceAll(/_/g, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')+v.assigned_by_name}
                             </td>
                             <td class="text-center">
