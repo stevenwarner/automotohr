@@ -600,6 +600,8 @@ class Indeed_model extends CI_Model
             $screeningQuestionnaire = $this->indeed_model
                 ->getCandidateQuestionnaireByJobId($jobId);
             // when no questionnaire is available
+
+
             if (!$screeningQuestionnaire && !$demographicQuestions) {
                 //
                 return false;
@@ -616,6 +618,7 @@ class Indeed_model extends CI_Model
                 "schemaVersion" => "1.0",
             ];
             // check and set screening screeningQuestionnaire
+            
             if ($screeningQuestionnaire && !$this->checkQuestionAreValidForIndeed($screeningQuestionnaire)) {
                 $questionArray["screenerQuestions"] = [
                     "questions" => $screeningQuestionnaire
@@ -627,6 +630,7 @@ class Indeed_model extends CI_Model
                     "questions" => $demographicQuestions
                 ];
             }
+
             // write the file data
             fwrite($handler, json_encode($questionArray));
             // close the file stream
@@ -694,6 +698,7 @@ class Indeed_model extends CI_Model
             }
         }
         //
+
         return $result;
     }
 
@@ -1024,4 +1029,22 @@ class Indeed_model extends CI_Model
             ->get("portal_job_listings")
             ->row_array();
     }
+
+    //
+
+public function markIsprocessing($sId){
+
+
+    $updateArray['is_processing']=1;
+
+    $this->db
+    ->where("sid", $sId)
+    ->update(
+        "indeed_job_queue",
+        $updateArray
+    );
+}
+
+
+
 }

@@ -18,6 +18,7 @@ class Indeed_cron extends CI_Controller
     public function jobSync()
     {
         // load the model
+
         $this->load->model("Indeed_model", "indeed_model");
         // check if we can moved forward
         if ($this->indeed_model->checkQueue()) {
@@ -25,7 +26,7 @@ class Indeed_cron extends CI_Controller
         }
         $this->load->model("all_feed_model");
         // get the jobs
-        $jobsInQueue = $this->indeed_model->getQueueJobs(1);
+        $jobsInQueue = $this->indeed_model->getQueueJobs(10);
         // when there is no jobs in queue
         if (!$jobsInQueue) {
             echo "No job found.";
@@ -38,12 +39,19 @@ class Indeed_cron extends CI_Controller
         //
         $jobs = '';
         // loop through the jobs
+
+        $expiredJobsUid = "";
+
+
         foreach ($jobsInQueue as $v) {
+
+
             // set the job id
             $jobId = $v["job_sid"];
             // get the job details
             $jobDetails = $this->indeed_model
                 ->getJobDetailsForIndeed($jobId);
+
             // delete the job from queue when no job is found
             // or company is not paid or inactive
             if (!$jobDetails) {
@@ -65,6 +73,15 @@ class Indeed_cron extends CI_Controller
                     ->deleteJobToQueue($jobId);
                 continue;
             }
+
+
+
+            //
+
+            //$this->indeed_model->markIsprocessing($v['sid']);
+
+
+
             //
             $contactName = $jobDetails['contact_name'];
             $contactPhone = $jobDetails['contact_phone'];
@@ -85,7 +102,11 @@ class Indeed_cron extends CI_Controller
             if ($indeedDetails['Email']) {
                 $contactEmail = $indeedDetails['Email'];
             }
-            $contactEmail = "test@automotohr.com";
+
+            if ($contactEmail == '' || $contactEmail == null) {
+                $contactEmail = "test@automotohr.com";
+            }
+
 
             // handle the job UUID
             $uuid = $jobId;
@@ -185,6 +206,19 @@ class Indeed_cron extends CI_Controller
                 }
             }
 
+
+            //
+            $companyName = '';
+
+            if ($jobDetails["CompanyName"] != '' || $jobDetails["CompanyName"] != null) {
+
+                $companyName = $jobDetails["CompanyName"];
+            } else {
+                $companyName = getCompanyNameBySid($companyId);
+            }
+
+
+
             $replaceArray = [
                 '\title' => $jobDetails["Title"],
                 '\description' => html_escape(
@@ -196,8 +230,8 @@ class Indeed_cron extends CI_Controller
                 '\minimumMinor' => $salary["salary"],
                 '\maximumMinor' => $salary["salary"],
                 '\period' => $salary["type"],
-                '\companyName' => $jobDetails["CompanyName"],
-                '\sourceName' => $jobDetails["CompanyName"],
+                '\companyName' => $companyName,
+                '\sourceName' => $companyName,
                 '\sourceType' => 'Employer',
                 '\contactName' => $contactName,
                 '\contactEmail' => $contactEmail,
@@ -258,11 +292,19 @@ class Indeed_cron extends CI_Controller
             GRAPHQL;
 
             // replace the variables
-            $jobs .= str_replace(
-                array_keys($replaceArray),
-                $replaceArray,
-                $singleJob
-            );
+            if ($v['is_expired'] == 0) {
+
+                $jobs .= str_replace(
+                    array_keys($replaceArray),
+                    $replaceArray,
+                    $singleJob
+                );
+            }
+
+            //
+            if ($v['is_expired'] == 1) {
+                $expiredJobsUid .= '{ sourcedPostingId: "' . $uuid . '" },';
+            }
         }
 
         // set the call
@@ -284,10 +326,6 @@ class Indeed_cron extends CI_Controller
         }
         GRAPHQL;
         // replace variables
-        $query = str_replace("\jobs", $jobs, $query);
-
-
-        _e($query, true, true);
 
         // load library
         $this->load->library(
@@ -295,14 +333,53 @@ class Indeed_cron extends CI_Controller
             "",
             "indeed_lib"
         );
-        //
-        $response = $this->indeed_lib->jobSyncApi($query);
 
-        if ($response["errors"]) {
-            // revert the effected jobs
+        if ($jobs != '') {
+            $query = str_replace("\jobs", $jobs, $query);
+
+            //
+            $response = $this->indeed_lib->jobSyncApi($query);
+
+            if ($response["errors"]) {
+                // revert the effected jobs
+            }
+
+            _e($response, true);
         }
 
-        _e($response, true);
+
+        //Expired Jobs
+
+        if ($expiredJobsUid != '') {
+
+            //
+            $expireJobquery = <<<'GRAPHQL'
+        mutation {
+            expireSourcedJobsBySourcedPostingId(
+                input: {
+                    jobs: [
+                         \jobsExpired
+                    ]
+                }
+            ) {
+            results {
+                jobPosting {
+                    sourcedPostingId
+                }
+            }
+            }
+        }
+        GRAPHQL;
+
+            $expiredJobquery = str_replace("\jobsExpired", rtrim($expiredJobsUid, ','), $expireJobquery);
+
+            _e($expiredJobquery, true, true);
+            $response = $this->indeed_lib->jobSyncApi($expiredJobquery);
+
+            if ($response["errors"]) {
+                // revert the effected jobs
+            }
+        }
     }
 }
 
