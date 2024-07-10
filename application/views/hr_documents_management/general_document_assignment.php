@@ -169,19 +169,13 @@
                 'occupational_license': 'Occupational License Information',
                 'emergency_contacts': 'Emergency Contacts',
                 'dependents': 'Dependents',
-                'emergency_contact': 'Emergency Contacts',
-                'direct_deposit_information': 'Direct Deposit Information',
-
-
             };
             let typeToUrl = {
                 'direct_deposit': `direct_deposit/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'drivers_license': `drivers_license_info/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'occupational_license': `occupational_license_info/<?= $user_type; ?>/<?= $user_sid; ?>`,
                 'emergency_contacts': `emergency_contacts/<?= $user_type; ?>/<?= $user_sid; ?>`,
-                'dependents': `dependants/<?= $user_type; ?>/<?= $user_sid; ?>`,
-                'emergency_contact': `emergency_contacts/<?= $user_type; ?>/<?= $user_sid; ?>`,
-                'direct_deposit_information': `direct_deposit/<?= $user_type; ?>/<?= $user_sid; ?>`,
+                'dependents': `dependants/<?= $user_type; ?>/<?= $user_sid; ?>`
 
             };
             var defaultRequires = <?= json_encode([
@@ -533,10 +527,10 @@
                         t1[v.document_type] = v;
                     });
                     //
-                    if (t1['direct_deposit'] === undefined && t1['direct_deposit_information'] === undefined) t1['direct_deposit'] = getDefaultObj('direct_deposit');
+                    if (t1['direct_deposit'] === undefined) t1['direct_deposit'] = getDefaultObj('direct_deposit');
                     if (t1['drivers_license'] === undefined) t1['drivers_license'] = getDefaultObj('drivers_license');
                     if (t1['occupational_license'] === undefined) t1['occupational_license'] = getDefaultObj('occupational_license');
-                    if (t1['emergency_contacts'] === undefined && t1['emergency_contact'] === undefined) t1['emergency_contacts'] = getDefaultObj('emergency_contacts');
+                    if (t1['emergency_contacts'] === undefined) t1['emergency_contacts'] = getDefaultObj('emergency_contacts');
                     if (t1['dependents'] === undefined) t1['dependents'] = getDefaultObj('dependents');
                    
                     //
@@ -632,7 +626,7 @@
                         notCompletedDocs += `
                         <tr class="jsGeneralRowNotCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replaceAll(/_/g, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
+                                ${v.document_type.replaceAll(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')+v.assigned_by_name}
                             </td>
                             <td class="text-center">
