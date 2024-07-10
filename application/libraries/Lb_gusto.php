@@ -757,6 +757,9 @@ class Lb_gusto
             "v1/employees/{$key1}/forms/{$key2}/pdf";
 
         // Employees
+        // employees
+        $urls["get_employee_profile"] =
+            "v1/employees/{$key1}";
         // work_addresses
         $urls["work_addresses"] =
             "v1/employees/{$key1}/work_addresses";
@@ -796,6 +799,19 @@ class Lb_gusto
         // garnishments
         $urls["garnishments"] =
             "v1/employees/{$key1}/garnishments";
+
+        // update_job
+        $urls["update_job"] =
+            "v1/jobs/{$key1}";
+        // update compensations
+        $urls["update_compensations"] =
+            "v1/compensations/{$key1}";
+        // update_employee_home_address
+        $urls["update_employee_home_address"] =
+            "v1/home_addresses/{$key1}";
+        // update_employee_profile
+        $urls["update_employee_profile"] =
+            "v1/employees/{$key1}";
 
         // Payrolls
         // payroll_blockers

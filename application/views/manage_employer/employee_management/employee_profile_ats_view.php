@@ -1972,16 +1972,12 @@ if (checkIfAppIsEnabled('timeoff')) {
         CKEDITOR.replace('applicantMessage');
         var myid = $('#state_id').html();
         if (myid) {
-            //console.log('I am IN');
-            //console.log('My ID: '+myid);
-
             setTimeout(function() {
                 $("#country").change();
             }, 1000);
 
             setTimeout(function() {
-                //console.log('I am in');
-                $('#state').val(myid);
+                $('#state').val(myid.trim());
             }, 2000);
         }
 

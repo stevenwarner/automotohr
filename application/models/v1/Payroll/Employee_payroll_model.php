@@ -11,11 +11,18 @@ loadUpModel("v1/Payroll/Base_payroll_model", "base_payroll_model");
 class Employee_payroll_model extends Base_payroll_model
 {
 
+    private $employeeOldData;
+
+
+    private $dataToStoreEvents;
+
     /**
      * main function
      */
     public function __construct()
     {
+        $this->employeeOldData = [];
+        $this->setDataToStoreEvents();
     }
 
     /**
@@ -41,6 +48,22 @@ class Employee_payroll_model extends Base_payroll_model
             );
         //
         $this->initialize($companyId);
+        return $this;
+    }
+
+    /**
+     * set employee data before update
+     *
+     * @param array $employeeOldData
+     * @return reference
+     */
+    public function setEmployeeOldData(
+        array $employeeOldData
+    ) {
+        //
+        $this->employeeOldData =
+            $employeeOldData;
+        return $this;
     }
 
     /**
@@ -100,6 +123,99 @@ class Employee_payroll_model extends Base_payroll_model
         // sync forms
         $this->gustoToStoreForms();
     }
+
+    /**
+     * Set employee array
+     *
+     * @param int $employeeId
+     */
+    public function setEmployee(int $employeeId)
+    {
+        //
+        $this->getGustoLinkedEmployeeDetails(
+            $employeeId,
+            [
+                "employee_sid"
+            ]
+        );
+        return $this;
+    }
+
+    /**
+     * Update store to Gusto employee
+     *
+     * @param array $events
+     * @return array
+     */
+    public function dataStoreToGustoEmployeeFlow(
+        array $events
+    ) {
+        // loop through the events
+        foreach ($events as $event) {
+            // get the event
+            $eventToBeCalled = $this->dataToStoreEvents[$event];
+            // call the event
+            $this->$eventToBeCalled();
+        }
+        return $this;
+    }
+
+    /**
+     * Update store to Gusto employee
+     * job & compensation
+     *
+     * @method dataStoreToGustoEmployeeCompensation
+     * @method dataStoreToGustoEmployeeJob
+     */
+    public function dataStoreToGustoEmployeeJobAndCompensationFlow()
+    {
+        // get the job and compensation
+        // gusto uuids details
+        $this->loadGustoJobAndCompensationIds();
+        // update compensation
+        $this->dataStoreToGustoEmployeeCompensation();
+        // update job title
+        $this->dataStoreToGustoEmployeeJob();
+    }
+
+    /**
+     * Update store to Gusto employee
+     * home address
+     *
+     * @method dataStoreToGustoEmployeeCompensation
+     * @method dataStoreToGustoEmployeeJob
+     */
+    public function dataStoreToGustoEmployeeHomeAddressFlow()
+    {
+        // get the employee
+        // gusto uuids details
+        $this->loadGustoEmployeeHomeAddressIds();
+        // check and set employee home address
+        if (!$this->gustoIdArray["employee_home_address"]) {
+            $this->storeToGustoHA();
+        } else {
+            $this->dataStoreToGustoEmployeeHomeAddress();
+        }
+    }
+
+    /**
+     * Update store to Gusto employee
+     * home address
+     *
+     * @method dataStoreToGustoEmployeeCompensation
+     * @method dataStoreToGustoEmployeeJob
+     */
+    public function dataStoreToGustoEmployeeProfileFlow()
+    {
+        $this->dataStoreToGustoEmployeeProfile();
+    }
+
+
+
+
+    /******************************************************************* */
+    // Private Events
+    /******************************************************************* */
 
     /**
      * sync work address
@@ -184,9 +300,48 @@ class Employee_payroll_model extends Base_payroll_model
             "city" => $record["Location_City"],
             "state_code" => $record["state_code"],
             "zip" => $record["Location_ZipCode"],
-            "country_code" => $record["country_name"] || "USA",
+            "country_code" => "USA",
             "errors" => $errors,
         ];
+    }
+
+    /**
+     * get the employee profile
+     *
+     * @param int $employeeId
+     * @return array
+     */
+    private function getEmployeeProfile(
+        int $employeeId
+    ): array {
+        $record = $this
+            ->db
+            ->select([
+                "users.first_name",
+                "users.last_name",
+                "users.middle_name",
+                "users.email",
+                "users.dob",
+                "users.ssn",
+            ])
+            ->where(
+                "users.sid",
+                $employeeId
+            )
+            ->limit(1)
+            ->get("users")
+            ->row_array();
+        //
+        $record["errors"] = [];
+        $record["middle_name"] = ucwords(
+            substr(
+                $record["middle_name"],
+                0,
+                1
+            )
+        );
+        // set return array
+        return $record;
     }
 
     /**
@@ -431,7 +586,7 @@ class Employee_payroll_model extends Base_payroll_model
         $request = [
             "first_name" => $record["first_name"],
             "last_name" => $record["last_name"],
-            "middle_initial" => substr($record["middle_name"], 0, 1),
+            "middle_initial" => ucwords(substr($record["middle_name"], 0, 1)),
             "date_of_birth" => $record["dob"],
             "email" => $record["email"],
             "ssn" => $record["ssn"],
@@ -2496,6 +2651,470 @@ class Employee_payroll_model extends Base_payroll_model
             'status' => 'revoke',
             'documentId' => $record['sid'],
             'documentType' => 'direct_deposit'
+        ];
+    }
+
+    /**
+     * Update Compensation
+     */
+    private function dataStoreToGustoEmployeeCompensation()
+    {
+        //
+        if (!$this->gustoIdArray["compensation"]) {
+            return ["errors" => [
+                "Gusto UUID / Version is not found."
+            ]];
+        }
+        // get the latest compensation
+        $compensation = $this
+            ->getEmployeeCompensation();
+        //
+        if ($compensation["errors"]) {
+            return ["errors" => $compensation["errors"]];
+        }
+        //
+        unset($compensation["errors"]);
+        // check if changed
+        if (!$this->needToUpdate(
+            $compensation,
+            $this->gustoIdArray["compensation"]["data"]
+        )) {
+            return ["errors" => ["Nothing has changed."]];
+        }
+
+        // set request
+        $request = [
+            "version" => $this->gustoIdArray["compensation"]["gusto_version"],
+            "rate" => $compensation["rate"],
+            "payment_unit" => $compensation["payment_unit"],
+            "flsa_status" => $compensation["flsa_status"],
+            "adjust_for_minimum_wage" => (bool)$compensation["adjust_for_minimum_wage"],
+            "minimum_wages" => $compensation["minimum_wages"],
+        ];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoIdArray["compensation"]["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "update_compensations",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            if (strpos($errors["errors"][0], GUSTO_OUT_OF_DATE_VERSION) !== false) {
+                $this->gustoToStoreJobsAndCompensations();
+                $this->dataStoreToGustoEmployeeCompensation();
+            }
+            return $errors;
+        }
+        if (!$response) {
+            return ["errors" => "No response from Gusto."];
+        }
+        //
+        $this->gustoToStoreJobsAndCompensations();
+    }
+
+    /**
+     * Update Compensation
+     */
+    private function dataStoreToGustoEmployeeJob()
+    {
+        //
+        if (!$this->gustoIdArray["job"]) {
+            return ["errors" => [
+                "Gusto UUID / Version is not found."
+            ]];
+        }
+        // get the latest compensation
+        $record = $this
+            ->getEmployeeJobWithCompensation();
+        //
+        if ($record["errors"]) {
+            return ["errors" => $record["errors"]];
+        }
+        //
+        unset($record["errors"]);
+        // check if changed
+        if (!$this->needToUpdate(
+            $record,
+            $this->gustoIdArray["job"]["data"]
+        )) {
+            return ["errors" => ["Nothing has changed."]];
+        }
+        // set request
+        $request = [
+            "version" => $this->gustoIdArray["job"]["gusto_version"],
+            "title" => $record["title"],
+            "hire_date" => $record["hire_date"],
+        ];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoIdArray["job"]["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "update_job",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            if (strpos($errors["errors"][0], GUSTO_OUT_OF_DATE_VERSION) !== false) {
+                $this->gustoToStoreJobsAndCompensations();
+                $this->dataStoreToGustoEmployeeJob();
+            }
+            return $errors;
+        }
+        if (!$response) {
+            return ["errors" => "No response from Gusto."];
+        }
+        //
+        $this->gustoToStoreJobsAndCompensations();
+    }
+
+    /**
+     * Update Home address
+     */
+    private function dataStoreToGustoEmployeeHomeAddress()
+    {
+        //
+        if (!$this->gustoIdArray["employee_home_address"]) {
+            return ["errors" => [
+                "Gusto UUID / Version is not found."
+            ]];
+        }
+        $record = $this->getEmployeeAddress(
+            $this->gustoEmployee["employee_sid"]
+        );
+        //
+        if ($record["errors"]) {
+            return ["errors" => $record["errors"]];
+        }
+        //
+        unset($record["errors"]);
+        // check if changed
+        if (!$this->needToUpdate(
+            $record,
+            $this->gustoIdArray["employee_home_address"]["data"]
+        )) {
+            return ["errors" => ["Nothing has changed."]];
+        }
+        // set request
+        $request = [
+            "version" => $this->gustoIdArray["employee_home_address"]["gusto_version"],
+            "street_1" => $record["street_1"],
+            "street_2" => $record["street_2"],
+            "city" => $record["city"],
+            "state" => $record["state_code"],
+            "zip" => $record["zip"],
+        ];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoIdArray["employee_home_address"]["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "update_employee_home_address",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            if (strpos($errors["errors"][0], GUSTO_OUT_OF_DATE_VERSION) !== false) {
+                $this->gustoToStoreHA();
+                $this->dataStoreToGustoEmployeeHomeAddress();
+            }
+            return $errors;
+        }
+        if (!$response) {
+            return ["errors" => "No response from Gusto."];
+        }
+        //
+        $this->gustoToStoreHA();
+    }
+
+
+    /**
+     * Update employee profile
+     */
+    private function dataStoreToGustoEmployeeProfile()
+    {
+        //
+        if (!$this->gustoEmployee["gusto_uuid"]) {
+            return ["errors" => [
+                "Gusto UUID / Version is not found."
+            ]];
+        }
+        $record = $this->getEmployeeProfile(
+            $this->gustoEmployee["employee_sid"]
+        );
+        //
+        if ($record["errors"]) {
+            return ["errors" => $record["errors"]];
+        }
+        //
+        unset($record["errors"]);
+        // check if changed
+        if (!$this->needToUpdate(
+            $record,
+            $this->employeeOldData
+        )) {
+            return ["errors" => ["Nothing has changed."]];
+        }
+
+        // set request
+        $request = $record;
+        $request["version"] = $this->gustoEmployee["gusto_version"];
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "update_employee_profile",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            if (strpos($errors["errors"][0], GUSTO_OUT_OF_DATE_VERSION) !== false) {
+                $this->gustoToStoreEmployeeProfile();
+                $this->dataStoreToGustoEmployeeProfile();
+            }
+            return $errors;
+        }
+        if (!$response) {
+            return ["errors" => "No response from Gusto."];
+        }
+        //
+        $this->gustoToStoreEmployeeProfile();
+    }
+
+    /**
+     * loads the job and compensation
+     * Gusto UUIDs and versions
+     *
+     * @return bool
+     */
+    private function loadGustoJobAndCompensationIds(): bool
+    {
+        // get the job and compensation ids
+        $record = $this
+            ->db
+            ->select([
+                "gusto_uuid",
+                "gusto_version",
+                "hire_date",
+                "title",
+                "current_compensation_uuid",
+            ])
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->limit(1)
+            ->get("gusto_employees_jobs")
+            ->row_array();
+        //
+        if (!$record) {
+            return false;
+        }
+        //
+        $this->gustoIdArray["job"] = [
+            "gusto_uuid" => $record["gusto_uuid"],
+            "gusto_version" => $record["gusto_version"],
+            "data" => [
+                "title" => $record["title"],
+                "hire_date" => $record["hire_date"],
+            ]
+        ];
+        // get the compensation version
+        $compensation = $this
+            ->db
+            ->select([
+                "gusto_version",
+                "rate",
+                "payment_unit",
+                "flsa_status",
+                "effective_date",
+                "adjust_for_minimum_wage",
+                "minimum_wages",
+            ])
+            ->where(
+                "gusto_uuid",
+                $record["current_compensation_uuid"]
+            )
+            ->limit(1)
+            ->get("gusto_employees_jobs_compensations")
+            ->row_array();
+        //
+        if (!$record) {
+            return false;
+        }
+        //
+        $this->gustoIdArray["compensation"] = [
+            "gusto_uuid" => $record["current_compensation_uuid"],
+            "gusto_version" => $compensation["gusto_version"],
+            "data" => [
+                "rate" => $compensation["rate"],
+                "payment_unit" => $compensation["payment_unit"],
+                "flsa_status" => $compensation["flsa_status"],
+                "effective_date" => $compensation["effective_date"],
+                "adjust_for_minimum_wage" => $compensation["adjust_for_minimum_wage"],
+                "minimum_wages" => json_decode($compensation["minimum_wages"], true),
+            ]
+        ];
+        //
+        return true;
+    }
+
+    /**
+     * loads employee home address
+     * Gusto UUIDs and versions
+     *
+     * @return bool
+     */
+    private function loadGustoEmployeeHomeAddressIds(): bool
+    {
+        // get the job and compensation ids
+        $record = $this
+            ->db
+            ->select([
+                "gusto_uuid",
+                "gusto_version",
+                "street_1",
+                "street_2",
+                "city",
+                "state",
+                "zip",
+                "country",
+            ])
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->where("active", 1)
+            ->where("is_work_address", 0)
+            ->limit(1)
+            ->get("gusto_companies_employees_work_addresses")
+            ->row_array();
+        //
+        if (!$record) {
+            return false;
+        }
+        //
+        $this->gustoIdArray["employee_home_address"] = [
+            "gusto_uuid" => $record["gusto_uuid"],
+            "gusto_version" => $record["gusto_version"],
+            "data" => [
+                "street_1" => $record["street_1"],
+                "street_2" => $record["street_2"],
+                "city" => $record["city"],
+                "state" => $record["state"],
+                "zip" => $record["zip"],
+                "country" => $record["country"],
+            ]
+        ];
+        //
+        return true;
+    }
+
+
+    /**
+     * sync work address
+     * Gusto to Store
+     */
+    private function gustoToStoreEmployeeProfile()
+    {
+        //
+        $this->gustoCompany["other_uuid"] =
+            $this->gustoEmployee["gusto_uuid"];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "get_employee_profile",
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return false;
+        }
+        //
+        if (!$response) {
+            return false;
+        }
+        //
+        $upd = [
+            "gusto_version" => $response["version"],
+            "updated_at" => getSystemDate(),
+        ];
+
+        if ($response["onboarding_status"] == "onboarding_completed") {
+            $upd["is_onboarded"] =
+                $upd["compensation_details"] =
+                $upd["personal_details"] =
+                $upd["work_address"] =
+                $upd["home_address"] =
+                $upd["federal_tax"] =
+                $upd["state_tax"] = 1;
+        }
+        //
+        $this
+            ->db
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->update(
+                "gusto_companies_employees",
+                $upd
+            );
+    }
+
+    /**
+     * set the events
+     */
+    private function setDataToStoreEvents()
+    {
+        $this->dataToStoreEvents = [
+            "job_and_compensation" =>
+            "dataStoreToGustoEmployeeJobAndCompensationFlow",
+            "home_address" =>
+            "dataStoreToGustoEmployeeHomeAddressFlow",
+            "profile" => "dataStoreToGustoEmployeeProfileFlow",
         ];
     }
 }

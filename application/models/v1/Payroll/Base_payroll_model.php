@@ -22,12 +22,20 @@ class Base_payroll_model extends CI_Model
     protected $gustoEmployee;
 
     /**
+     * holds the gusto extra uuids
+     * @var array
+     */
+    protected $gustoIdArray;
+
+    /**
      * Inherit the parent class methods on call
      */
     public function __construct()
     {
         // call the parent constructor
         parent::__construct();
+        //
+        $this->gustoIdArray = [];
     }
 
     /**
@@ -167,5 +175,16 @@ class Base_payroll_model extends CI_Model
             ->where($column, $employeeId)
             ->get('gusto_companies_employees')
             ->row_array();
+    }
+
+    /**
+     * check if the data is changed or not
+     * @param array $oldData
+     * @param array $newArray
+     * @return array
+     */
+    protected function needToUpdate(array $oldData, array $newData): array
+    {
+        return array_diff($oldData, $newData);
     }
 }

@@ -709,3 +709,6 @@ define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+// set the Gusto out of dae version keyword
+define("GUSTO_OUT_OF_DATE_VERSION", "out-of-date");

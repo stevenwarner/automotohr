@@ -1905,21 +1905,30 @@ class Employee_management extends Public_Controller
                     }
                     //
                     if (checkIfAppIsEnabled(PAYROLL)) {
-                        //
-                        $this->load->model("v1/Payroll_model", "payroll_model");
-                        //
-                        $this->payroll_model->handleRateUpdateFromProfile(
-                            $sid
+                        // load the company model
+                        // Call the model
+                        $this->load->model(
+                            "v1/Payroll/Employee_payroll_model",
+                            "employee_payroll_model"
                         );
                         //
-                        $this->payroll_model
-                            ->handleUserUpdate(
-                                $sid
-                            );
-                        //
-                        if ($data_to_insert["payment_method"] === "direct_deposit") {
-                            $this->payroll_model->syncEmployeePaymentMethod($sid);
-                        }
+                        $this
+                            ->employee_payroll_model
+                            ->setEmployeeOldData([
+                                "first_name" => $employee_detail["first_name"],
+                                "middle_initial" => ucwords(substr($employee_detail["middle_name"], 0, 1)),
+                                "last_name" => $employee_detail["last_name"],
+                                "date_of_birth" => $employee_detail["dob"],
+                                "email" => $employee_detail["email"],
+                                "ssn" => $employee_detail["ssn"],
+                            ])
+                            ->setCompanyDetails($company_id)
+                            ->setEmployee($sid)
+                            ->dataStoreToGustoEmployeeFlow([
+                                "job_and_compensation",
+                                "home_address",
+                                "profile"
+                            ]);
                     }
                     // Profile save intercept
                     $this->handleProfileChange(
@@ -1929,12 +1938,6 @@ class Employee_management extends Public_Controller
                         $data_to_insert
                     );
 
-                    // Check and Update employee basic profile info
-                    $this->checkAndUpdateProfileInfo(
-                        $sid,
-                        $employee_detail,
-                        $data_to_insert
-                    );
                     //
                     $complynetResponse = false;
 
@@ -1951,7 +1954,7 @@ class Employee_management extends Public_Controller
                         ]);
 
                         // update employee department on complynet
-                        if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
+                        if ($employee_detaiql['department_sid'] != $data_to_insert['department_sid']) {
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);
                         }
                     }
@@ -3878,71 +3881,6 @@ class Employee_management extends Public_Controller
                 return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
         }
         return false;
-    }
-
-    private function checkAndUpdateProfileInfo(
-        $employeeId,
-        $employeeDetail,
-        $dataToInsert
-    ) {
-        // New employee profile data
-        $newProfileData = [];
-        $newProfileData['first_name'] = $dataToInsert['first_name'];
-        $newProfileData['last_name'] = $dataToInsert['last_name'];
-        $newProfileData['dob'] = $dataToInsert['dob'];
-        $newProfileData['email'] = $dataToInsert['email'];
-        $newProfileData['ssn'] = $dataToInsert['ssn'];
-        //
-        // Old employee profile data
-        $oldProfileData = [];
-        $oldProfileData['first_name'] = $employeeDetail['first_name'];
-        $oldProfileData['last_name'] = $employeeDetail['last_name'];
-        $oldProfileData['email'] = $employeeDetail['email'];
-        $oldProfileData['ssn'] = $employeeDetail['ssn'];
-        $oldProfileData['dob'] = $employeeDetail['dob'];
-        //
-        $profileDifference = $this->findDifference($oldProfileData, $newProfileData);
-        //
-        if ($profileDifference['profile_changed'] == 1) {
-            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
-            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'profile');
-        }
-        //
-        // New employee address data
-        $newAddressData = [];
-        $newAddressData['Location_Address'] = $dataToInsert['Location_Address'];
-        $newAddressData['Location_City'] = $dataToInsert['Location_City'];
-        $newAddressData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
-        $newAddressData['Location_State'] = $dataToInsert['Location_State'];
-        //
-        // Old employee address data
-        $oldAddressData = [];
-        $oldAddressData['Location_Address'] = $employeeDetail['Location_Address'];
-        $oldAddressData['Location_City'] = $employeeDetail['Location_City'];
-        $oldAddressData['Location_State'] = $employeeDetail['Location_State'];
-        $oldAddressData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
-        //
-        $addressDifference = $this->findDifference($oldAddressData, $newAddressData);
-        //
-        if ($addressDifference['profile_changed'] == 1) {
-            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
-            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'address');
-        }
-        //
-        // New employee payment method
-        $newPaymentData = [];
-        $newPaymentData['payment_method'] = $dataToInsert['payment_method'];
-        //
-        // Old employee payment method
-        $oldPaymentData = [];
-        $oldPaymentData['payment_method'] = $employeeDetail['payment_method'];
-        //
-        $paymentMethodDifference = $this->findDifference($oldPaymentData, $newPaymentData);
-        //
-        if ($paymentMethodDifference['profile_changed'] == 1) {
-            $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
-            $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'payment_method');
-        }
     }
 
     /**
