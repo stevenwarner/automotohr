@@ -859,6 +859,9 @@ class Lb_gusto
         // sign_employee_form
         $urls["sign_employee_form"] =
             "v1/employees/{$key1}/forms/{$key2}/sign";
+        // update_state_taxes
+        $urls["update_state_taxes"] =
+            "v1/employees/{$key1}/state_taxes";
 
         // Payrolls
         // payroll_blockers

@@ -201,10 +201,72 @@ class Employee_federal_form_payroll_model extends Base_payroll_model
         //
         $passData = ['state' => $result['state_code'], 'questions' => array_values($questionsObj)];
 
-        _e($passData);
-        die("sdas");
+        return $this->updateEmployeeStateTax($passData);
+    }
 
-        return $this->updateEmployeeStateTax($result["user_sid"], $passData);
+    /**
+     * update employee's state tax from Gusto
+     *
+     * @param array $data
+     */
+    public function updateEmployeeStateTax(
+        array $data
+    ): array {
+        //
+        $this->gustoCompany['other_uuid'] =
+            $this->gustoEmployee['gusto_uuid'];
+        // set request
+        $request = [
+            'states' => [$data]
+        ];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "update_state_taxes",
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        if (!$response) {
+            return $this
+                ->lb_gusto
+                ->getEmptyResponse();
+        }
+        //
+        foreach ($response as $tax) {
+            //
+            $whereArray = [
+                'employee_sid' =>
+                $this->gustoEmployee["employee_sid"],
+                'state_code' => $tax['state']
+            ];
+            //
+            $dataArray = [];
+            $dataArray['state_code'] = $tax['state'];
+            $dataArray['file_new_hire_report'] = $tax['file_new_hire_report'];
+            $dataArray['is_work_state'] = $tax['is_work_state'];
+            $dataArray['questions_json'] = json_encode($tax['questions']);
+            $dataArray['updated_at'] = getSystemDate();
+            // update
+            $this->db
+                ->where($whereArray)
+                ->update('gusto_employees_state_tax', $dataArray);
+        }
+        //
+        return $this
+            ->lb_gusto
+            ->getSuccessResponse(
+                $response
+            );
     }
 
     /**
