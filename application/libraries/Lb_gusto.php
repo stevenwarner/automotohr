@@ -608,13 +608,13 @@ class Lb_gusto
                 ]
             ]);
         }
-        // Check for auth error
+        // acknowledged changes
         if ($info['http_code'] == '204') {
             $response = json_encode([
                 'success' => true
             ]);
         }
-        // Check for auth error
+        // acknowledged
         if ($info['http_code'] == '202') {
             $response = json_encode([
                 'success' => true

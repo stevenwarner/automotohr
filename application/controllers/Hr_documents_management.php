@@ -16838,6 +16838,26 @@ class Hr_documents_management extends Public_Controller
             $employeeId,
             $dataToUpdate
         );
+
+        //
+        if (checkIfAppIsEnabled(PAYROLL)) {
+            // load the company model
+            // Call the model
+            $this->load->model(
+                "v1/Payroll/Employee_federal_form_payroll_model",
+                "employee_federal_form_payroll_model"
+            );
+            //
+            $this
+                ->employee_federal_form_payroll_model
+                ->setCompanyDetails($session["company_detail"]["sid"])
+                ->setEmployee($employeeId)
+                ->dataToStoreEmployeeStateFormFlow(
+                    $formId
+                );
+
+                die("In it");
+        }
         if (checkIfAppIsEnabled(PAYROLL)) {
             //
             if ($stateFormId == 1) {
