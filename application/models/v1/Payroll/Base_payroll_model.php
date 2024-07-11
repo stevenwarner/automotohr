@@ -26,6 +26,12 @@ class Base_payroll_model extends CI_Model
      * @var array
      */
     protected $gustoIdArray;
+    
+    /**
+     * holds the employee update events
+     * @var array
+     */
+    protected $dataToStoreEvents;
 
     /**
      * Inherit the parent class methods on call
@@ -36,6 +42,8 @@ class Base_payroll_model extends CI_Model
         parent::__construct();
         //
         $this->gustoIdArray = [];
+        //
+        $this->setDataToStoreEvents();
     }
 
     /**
@@ -186,5 +194,27 @@ class Base_payroll_model extends CI_Model
     protected function needToUpdate(array $oldData, array $newData): array
     {
         return array_diff($oldData, $newData);
+    }
+
+    /**
+     * set the events
+     */
+    protected function setDataToStoreEvents()
+    {
+        // set the empty
+        $this->dataToStoreEvents = [];
+        // Employee_payroll_model
+        // set job and compensation event
+        $this->dataToStoreEvents["job_and_compensation"] =
+        "dataStoreToGustoEmployeeJobAndCompensationFlow";
+        // set home address event
+        $this->dataToStoreEvents["home_address"] =
+        "dataStoreToGustoEmployeeHomeAddressFlow";
+        // set profile event
+        $this->dataToStoreEvents["profile"] =
+        "dataStoreToGustoEmployeeProfileFlow";
+        // set w4 form event
+        $this->dataToStoreEvents["w4_form"] =
+        "dataStoreToGustoEmployeeW4FormFlow";
     }
 }

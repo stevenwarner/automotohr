@@ -1954,7 +1954,7 @@ class Employee_management extends Public_Controller
                         ]);
 
                         // update employee department on complynet
-                        if ($employee_detaiql['department_sid'] != $data_to_insert['department_sid']) {
+                        if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);
                         }
                     }

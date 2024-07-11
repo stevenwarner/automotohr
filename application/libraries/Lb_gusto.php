@@ -511,6 +511,50 @@ class Lb_gusto
     }
 
     /**
+     * get the empty response
+     */
+    public function getEmptyResponse(): array
+    {
+        return [
+            "errors" => [
+                "Empty response from Gusto."
+            ]
+        ];
+    }
+
+    /**
+     * get the success response
+     *
+     * @param array $gustoResponse
+     * @return array
+     */
+    public function getSuccessResponse(
+        array $gustoResponse
+    ): array {
+        $response = [
+            "success" => true,
+            "message" => "You have successfully performed the event.",
+            "response" => []
+        ];
+        // when multiple output
+        if ($gustoResponse[0]) {
+            foreach ($gustoResponse as $v0) {
+                $response["response"][] = [
+                    "gusto_uuid" => $v0["uuid"] ?? null,
+                    "gusto_version" => $v0["version"] ?? null,
+                ];
+            }
+        } else { // for single output
+            $response["response"][] = [
+                "gusto_uuid" => $gustoResponse["uuid"] ?? null,
+                "gusto_version" => $gustoResponse["version"] ?? null,
+            ];
+        }
+        // return the response
+        return $response;
+    }
+
+    /**
      * make call to Gusto
      *
      * @param string $url
@@ -812,6 +856,9 @@ class Lb_gusto
         // update_employee_profile
         $urls["update_employee_profile"] =
             "v1/employees/{$key1}";
+        // sign_employee_form
+        $urls["sign_employee_form"] =
+            "v1/employees/{$key1}/forms/{$key2}/sign";
 
         // Payrolls
         // payroll_blockers

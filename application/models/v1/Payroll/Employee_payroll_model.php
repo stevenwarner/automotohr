@@ -13,16 +13,12 @@ class Employee_payroll_model extends Base_payroll_model
 
     private $employeeOldData;
 
-
-    private $dataToStoreEvents;
-
     /**
      * main function
      */
     public function __construct()
     {
         $this->employeeOldData = [];
-        $this->setDataToStoreEvents();
     }
 
     /**
@@ -551,6 +547,20 @@ class Employee_payroll_model extends Base_payroll_model
         $this->syncPaymentMethod();
         // // sync forms
         $this->syncForms();
+        // check if federal form assigned
+        if (
+            $this
+            ->db
+            ->where([
+                "user_type" => "employee",
+                "employer_sid" => $this->gustoEmployee["employee_sid"],
+                "status" => 1,
+                "user_consent" => 1
+            ])
+            ->count_all_results("form_w4_original")
+        ) {
+            $this->signFederalForm();
+        }
 
         return true;
     }
@@ -1841,6 +1851,85 @@ class Employee_payroll_model extends Base_payroll_model
         return true;
     }
 
+    /**
+     * Sign the federal form on Gusto
+     */
+    public function signFederalForm()
+    {
+        $form = $this->db
+            ->select('gusto_uuid, sid')
+            ->where(
+                "employee_sid",
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->where('form_name', 'US_W-4')
+            ->get('gusto_employees_forms')
+            ->row_array();
+        //
+        if (!$form) {
+            return false;
+        }
+        // get employee name
+        $userInfo = $this->db
+            ->select('first_name, last_name')
+            ->where(
+                'sid',
+                $this->gustoEmployee["employee_sid"]
+            )
+            ->get('users')
+            ->row_array();
+        //
+        $this->gustoCompany['other_uuid'] =
+            $this->gustoEmployee["gusto_uuid"];
+        $this->gustoCompany['other_uuid_2'] =
+            $form['gusto_uuid'];
+        $request = [
+            'signature_text' => (ucwords(trim($userInfo['first_name'] . ' ' . $userInfo['last_name']))),
+            'agree' => "true",
+            'signed_by_ip_address' => getUserIP(),
+        ];
+        // response
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                'sign_employee_form',
+                $this->gustoCompany,
+                $request,
+                "PUT"
+            );
+        //
+        $errors = $this
+            ->lb_gusto
+            ->hasGustoErrors($response);
+        //
+        if ($errors) {
+            return $errors;
+        }
+        if (!$response) {
+            return [
+                "errors" => [
+                    "No response from Gusto."
+                ]
+            ];
+        }
+        //
+        $this->db
+            ->where('sid', $form['sid'])
+            ->update(
+                'gusto_employees_forms',
+                [
+                    'requires_signing' => $response['requires_signing'],
+                    'draft' => $response['draft'],
+                    'year' => $response['year'],
+                    'quarter' => $response['quarter'],
+                    'signed_at' => getSystemDate(),
+                    'updated_at' => getSystemDate()
+                ]
+            );
+        //
+        return true;
+    }
+
     // ---------------------------------------------------
     // sync state tax
     // ---------------------------------------------------
@@ -2498,6 +2587,8 @@ class Employee_payroll_model extends Base_payroll_model
             $ins['description'] = $v0['description'];
             $ins['requires_signing'] = $v0['requires_signing'];
             $ins['draft'] = $v0['draft'];
+            $ins['year'] = $v0['year'];
+            $ins['quarter'] = $v0['quarter'];
             $ins['updated_at'] = getSystemDate();
 
             // we need to check the current status of w4
@@ -3102,20 +3193,6 @@ class Employee_payroll_model extends Base_payroll_model
                 "gusto_companies_employees",
                 $upd
             );
-    }
-
-    /**
-     * set the events
-     */
-    private function setDataToStoreEvents()
-    {
-        $this->dataToStoreEvents = [
-            "job_and_compensation" =>
-            "dataStoreToGustoEmployeeJobAndCompensationFlow",
-            "home_address" =>
-            "dataStoreToGustoEmployeeHomeAddressFlow",
-            "profile" => "dataStoreToGustoEmployeeProfileFlow",
-        ];
     }
 }
 

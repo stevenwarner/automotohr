@@ -408,6 +408,25 @@ class Form_w4 extends Public_Controller
                         $type
                     );
                 }
+                //
+                if ($type === 'employee' && checkIfAppIsEnabled(PAYROLL)) {
+                    // load the company model
+                    // Call the model
+                    $this->load->model(
+                        "v1/Payroll/Employee_federal_form_payroll_model",
+                        "employee_federal_form_payroll_model"
+                    );
+                    //
+                    $response = $this
+                        ->employee_federal_form_payroll_model
+                        ->setCompanyDetails($company_sid)
+                        ->setEmployee($employer_sid)
+                        ->dataToStoreEmployeeW4FormFlow();
+
+                    _e($response);
+
+                    die("sadas");
+                }
 
                 // check for payroll
                 if ($type === 'employee' && checkIfAppIsEnabled(PAYROLL) && isEmployeeOnPayroll($employer_sid)) {
