@@ -528,6 +528,6 @@ class Direct_deposit extends Public_Controller
             ->setEmployee($employeeId)
             ->dataToStoreEmployeeDirectDepositFlow();
         //
-        return SendResponse(200, ["success" => true];)
+        return SendResponse(200, ["success" => true]);
     }
 }
