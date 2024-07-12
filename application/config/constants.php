@@ -709,3 +709,14 @@ define("ARE_YOU_STILL_INTERESTED", 436);
 
 // set database timezone
 define("DB_TIMEZONE", "UTC"); // just for clock in module
+
+
+
+//
+if ($_SERVER['HTTP_HOST'] == 'automotohr.local') {
+  define('STORE_DOMAIN_FOR_INDEED', 'http://automotohr.local');
+  define('STORE_FULL_URL_SSL_FOR_INDEED', 'http://automotohr.local/');
+} else {
+  define('STORE_DOMAIN_FOR_INDEED', 'automotohr.com');
+  define('STORE_FULL_URL_SSL_FOR_INDEED', STORE_PROTOCOL_SSL . 'www.' . STORE_DOMAIN . '/');
+}

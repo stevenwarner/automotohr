@@ -452,4 +452,56 @@ class Indeed_lib
                 $log
             );
     }
+
+
+
+    //
+    public function jobSyncApi(
+        $jobBody
+    ) {
+
+         $requestWrap =  '{"query":'.json_encode($jobBody).'}';
+
+        // get the access token
+        $accessToken = $this->getAccessToken();
+        // when no access token found
+        if (!$accessToken) {
+            return ["error" => "Failed to retrieve access token."];
+        }
+
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = $requestWrap;
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Authorization: Bearer {$accessToken}"
+        ];
+        // make the call
+        $response = $this->makeCall(
+            "https://apis.indeed.com/graphql",
+            "POST",
+            $options
+        );
+
+       // when error occurred
+        if ($response["errors"]) {
+            // check for auth error
+            if ($response["resultArray"]["errors"][0]["extensions"]["code"] == "UNAUTHENTICATED") {
+                // regenerate the token
+                $this->generateAccessToken();
+                // recall
+                return $this->jobSyncApi($jobBody);
+            }
+            return ["error" => $response["errors"]];
+        }
+        // check for errors
+        if ($response["resultArray"]["data"]["partnerDisposition"]["send"]["failedDispositions"]) {
+            return ["error" => "Failed to Create Job on Indeed."];
+        }
+        //
+        return $response;
+    }
 }

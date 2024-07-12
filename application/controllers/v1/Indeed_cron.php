@@ -9,7 +9,6 @@ class Indeed_cron extends CI_Controller
         parent::__construct();
     }
 
-
     /**
      * Cron job to push the jobs to Indeed
      *
@@ -26,22 +25,37 @@ class Indeed_cron extends CI_Controller
         }
         $this->load->model("all_feed_model");
         // get the jobs
-        $jobsInQueue = $this->indeed_model->getQueueJobs(10);
+        $jobsInQueue = $this->indeed_model->getQueueJobs(10, false);
+
         // when there is no jobs in queue
         if (!$jobsInQueue) {
             echo "No job found.";
             exit(0);
         }
+
+
+        //$this->indeed_model->markIsprocessing($v['sid']);
+
         // set the default portal data
         $companiesPortalData = [];
         // set default company indeed information
         $companyIndeedContactDetails = [];
         //
         $jobs = '';
+
+        // load library
+        $this->load->library(
+            "Indeed_lib",
+            "",
+            "indeed_lib"
+        );
+
+
+        $createMultipleJobs = true;
         // loop through the jobs
 
-        $expiredJobsUid = "";
 
+        $bulkPostJobIds = [];
 
         foreach ($jobsInQueue as $v) {
 
@@ -75,17 +89,9 @@ class Indeed_cron extends CI_Controller
             }
 
 
-
             //
-
-            //$this->indeed_model->markIsprocessing($v['sid']);
-
-
-
-            //
-            $contactName = $jobDetails['contact_name'];
-            $contactPhone = $jobDetails['contact_phone'];
-            $contactEmail = $jobDetails['contact_email'];
+            $contactName = clean($jobDetails['contact_name']);
+            $contactEmail = clean($jobDetails['contact_email']);
             // Check for company indeed details
             $indeedDetails = $companyIndeedContactDetails[$companyId] ??
                 $this->indeed_model->GetCompanyIndeedDetails($companyId, $jobId);
@@ -93,11 +99,11 @@ class Indeed_cron extends CI_Controller
             $companyIndeedContactDetails[$companyId] = $indeedDetails;
 
             // update the contact details
-            if ($indeedDetails['Name']) {
-                $contactName = $indeedDetails['Name'];
+            if (clean($indeedDetails['Name'])) {
+                $contactName = clean($indeedDetails['Name']);
             }
-            if ($indeedDetails['Phone']) {
-                $contactPhone = $indeedDetails['Phone'];
+            if (clean($indeedDetails['Phone'])) {
+                $contactPhone = clean($indeedDetails['Phone']);
             }
             if ($indeedDetails['Email']) {
                 $contactEmail = $indeedDetails['Email'];
@@ -118,6 +124,22 @@ class Indeed_cron extends CI_Controller
                 $publishDate = $feedData['publish_date'];
             }
 
+
+
+            //Expired Jobs
+            if ($v['is_expired'] == 1) {
+                $sourcedPostingId = $this->indeed_model->getSourcedPostingId($uuid);
+
+                $sourcedPostingId = '{ sourcedPostingId: "' . $sourcedPostingId . '" }';
+                if ($sourcedPostingId != '') {
+                    $this->expiredJobs($sourcedPostingId, $uuid);
+                }
+                continue;
+            }
+
+
+
+
             // convert publish date
             $publishDate = formatDateToDB(
                 $publishDate,
@@ -125,18 +147,15 @@ class Indeed_cron extends CI_Controller
                 "Y-m-d\TH:i\Z"
             );
 
-            $jobDesc = StripFeedTags(nl2br($jobDetails['JobDescription']));
+            $jobDesc = clean(StripFeedTags(nl2br($jobDetails['JobDescription'])));
             $country['country_code'] = "US";
             $state['state_name'] = "";
             $city = "";
             $zipcode = "";
             $salary = "";
-            $jobType = "";
-
-
             //
             if (isset($jobDetails['JobRequirements']) && $jobDetails['JobRequirements'] != null) {
-                $jobDesc .= '<br><br>Job Requirements:<br>' . StripFeedTags($jobDetails['JobRequirements']);
+                $jobDesc .= '<br><br>Job Requirements:<br>' . clean(StripFeedTags($jobDetails['JobRequirements']));
             }
             //
             if (isset($jobDetails['Location_Country']) && $jobDetails['Location_Country'] != null) {
@@ -148,7 +167,7 @@ class Indeed_cron extends CI_Controller
             }
             //
             if (isset($jobDetails['Location_City']) && $jobDetails['Location_City'] != null) {
-                $city = $jobDetails['Location_City'];
+                $city = clean($jobDetails['Location_City']);
             }
             //
             if (isset($jobDetails['Location_ZipCode']) && $jobDetails['Location_ZipCode'] != null) {
@@ -159,40 +178,6 @@ class Indeed_cron extends CI_Controller
                 $salary = $jobDetails['Salary'];
             }
 
-            //
-            if (
-                isset($jobDetails['JobType']) && $jobDetails['JobType'] != null
-            ) {
-                $jobDetails['JobType'] = trim($jobDetails['JobType']);
-                if (
-                    $jobDetails['JobType'] == 'Full Time'
-                ) {
-                    $jobType = "Full Time";
-                } elseif ($jobDetails['JobType'] == 'Part Time') {
-                    $jobType = "Part Time";
-                } elseif ($jobDetails['JobType'] == 'Seasonal') {
-                    $jobType = "Seasonal";
-                }
-            }
-
-
-            //
-            $JobCategorys = $jobDetails['JobCategory'];
-            //
-            if ($JobCategorys != null) {
-                $cat_id = explode(
-                    ',',
-                    $JobCategorys
-                );
-                $job_category_array = array();
-                //
-                foreach ($cat_id as $id) {
-                    $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
-                    $job_category_array[] = $job_cat_name[0]['value'];
-                }
-
-                $job_category = implode(', ', $job_category_array);
-            }
 
             //
             $salary = remakeSalary($salary, $jobDetails['SalaryType']);
@@ -202,7 +187,7 @@ class Indeed_cron extends CI_Controller
             if ($jobDetails["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($companyId)) {
                 //
                 if ($this->indeed_model->saveQuestionIntoFile($jobId, $companyId, true)) {
-                    $jobQuestionnaireUrl = STORE_FULL_URL_SSL . "indeed/$uuid/jobQuestions.json";
+                    $jobQuestionnaireUrl = STORE_FULL_URL_SSL_FOR_INDEED . "indeed/$uuid/jobQuestions.json";
                 }
             }
 
@@ -212,18 +197,16 @@ class Indeed_cron extends CI_Controller
 
             if ($jobDetails["CompanyName"] != '' || $jobDetails["CompanyName"] != null) {
 
-                $companyName = $jobDetails["CompanyName"];
+                $companyName = clean($jobDetails["CompanyName"]);
             } else {
                 $companyName = getCompanyNameBySid($companyId);
             }
 
-
-
             $replaceArray = [
-                '\title' => $jobDetails["Title"],
-                '\description' => html_escape(
+                '\title' => clean($jobDetails["Title"]),
+                '\description' => clean(html_escape(
                     preg_replace("/\s+/", "", nl2br($jobDesc))
-                ),
+                )),
                 '\country' => $country["country_code"],
                 '\cityRegionPostal' => $city . ", " . $state["state_code"] . " " . $zipcode,
                 '\currency' => 'USD',
@@ -239,75 +222,42 @@ class Indeed_cron extends CI_Controller
                 '\datePublished' => $publishDate,
                 '\url' => STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uuid,
                 '\apiToken' => '56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781',
-                '\postUrl' => STORE_FULL_URL . "/indeed_feed/indeedPostUrl",
+                '\postUrl' => STORE_DOMAIN_FOR_INDEED . "/indeed_feed/indeedPostUrl",
                 '\applyQuestions' => $jobQuestionnaireUrl ? 'applyQuestions: "' . $jobQuestionnaireUrl . '"' : "",
                 '\resumeRequired' => "NO",
                 '\phoneRequired' => "YES",
+                '\contactPhone' => $contactPhone,
+
             ];
 
-            // create a job
-            $singleJob = <<<'GRAPHQL'
-            {
-                body: {
-                    title: "\title"
-                    description: "\description"
-                    location: {
-                        country: "\country"
-                        cityRegionPostal: "\cityRegionPostal"
-                    }
-                    benefits: []
-                    salary: {
-                        currency: "\currency"
-                        minimumMinor: \minimumMinor
-                        maximumMinor: \maximumMinor
-                        period: "\period"
-                    }
-                }
-                metadata: {
-                    jobSource: {
-                        companyName: "\companyName"
-                        sourceName: "\sourceName"
-                        sourceType: "\sourceType"
-                    }
-                    contacts: {
-                        contactType: "contact"
-                        contactInfo: {
-                            contactName: "\contactName"
-                            contactEmail: "\contactEmail"
-                        }
-                    }
-                    jobPostingId: "\jobPostingId"
-                    datePublished: "\datePublished"
-                    url: "\url"
-                }
-                applyMethod: {
-                    indeedApply: {
-                        apiToken: "\apiToken"
-                        postUrl: "\postUrl"
-                        \applyQuestions
-                        phoneRequired: YES
-                    }
-                }
-            }
-            GRAPHQL;
 
-            // replace the variables
-            if ($v['is_expired'] == 0) {
-
-                $jobs .= str_replace(
-                    array_keys($replaceArray),
-                    $replaceArray,
-                    $singleJob
-                );
-            }
-
-            //
-            if ($v['is_expired'] == 1) {
-                $expiredJobsUid .= '{ sourcedPostingId: "' . $uuid . '" },';
+            // create single job
+            if ($createMultipleJobs == false) {
+                $jobs = $this->createJobBody($replaceArray);
+                //
+                $this->setcreateJobCall($jobs, $uuid);
+                continue;
+            } else {
+                $jobs .= $this->createJobBody($replaceArray);
+                //  bulkPostJobIds
+                array_push($bulkPostJobIds, $uuid);
             }
         }
 
-        // set the call
+        // set the call For MultiJob 
+        if ($createMultipleJobs == true) {
+            $this->setcreateJobCall($jobs, $bulkPostJobIds);
+        }
+
+        echo "Done";
+    }
+
+
+
+    //
+    private function setcreateJobCall($jobs, $jobSid)
+    {
+
         $query = <<<'GRAPHQL'
         mutation {
             createSourcedJobPostings(
@@ -325,36 +275,116 @@ class Indeed_cron extends CI_Controller
             }
         }
         GRAPHQL;
-        // replace variables
 
-        // load library
-        $this->load->library(
-            "Indeed_lib",
-            "",
-            "indeed_lib"
-        );
+        //
+        $query = str_replace("\jobs", $jobs, $query);
 
-        if ($jobs != '') {
-            $query = str_replace("\jobs", $jobs, $query);
+        $response = $this->indeed_lib->jobSyncApi($query);
 
-            //
-            $response = $this->indeed_lib->jobSyncApi($query);
-
-            if ($response["errors"]) {
-                // revert the effected jobs
+        //
+        if (!empty($response['error'])) {
+            $postingData['errors'] = json_encode($response['error']);
+            if (is_array($jobSid)) {
+                $postingData['job_id'] = $jobSid[0];
+            } else {
+                $postingData['job_id'] = $jobSid;
             }
 
-            _e($response, true);
+            $this->indeed_model->saveIndeedJobPostingResponse($postingData);
         }
 
+        if (!empty($response['resultArray']['data']['createSourcedJobPostings']['results'])) {
 
-        //Expired Jobs
+            $i = 0;
 
-        if ($expiredJobsUid != '') {
+            foreach ($response['resultArray']['data']['createSourcedJobPostings']['results'] as $resultdata) {
 
-            //
-            $expireJobquery = <<<'GRAPHQL'
+                if (!empty($resultdata)) {
+
+                    foreach ($resultdata as $rowJobPosting) {
+
+                        $postingData['sourced_posting_Id'] = $rowJobPosting['sourcedPostingId'];
+                        $postingData['errors'] = '';
+                        if (is_array($jobSid)) {
+                            $postingData['job_id'] = $jobSid[$i];
+                        } else {
+                            $postingData['job_id'] = $jobSid;
+                        }
+
+                        $this->indeed_model->saveIndeedJobPostingResponse($postingData);
+                        $i++;
+                    }
+                }
+            }
+        }
+    }
+
+    //
+    private function createJobBody($replaceArray)
+    {
+
+        $singleJob = <<<'GRAPHQL'
+        {
+            body: {
+                title: "\title"
+                description: "\description"
+                location: {
+                    country: "\country"
+                    cityRegionPostal: "\cityRegionPostal"
+                }
+                benefits: []
+                salary: {
+                    currency: "\currency"
+                    minimumMinor: \minimumMinor
+                    maximumMinor: \maximumMinor
+                    period: "\period"
+                }
+            }
+            metadata: {
+                jobSource: {
+                    companyName: "\companyName"
+                    sourceName: "\sourceName"
+                    sourceType: "\sourceType"
+                }
+                contacts: {
+                    contactType: "contact"
+                    contactInfo: {
+                        contactName: "\contactName"
+                        contactEmail: "\contactEmail"
+                    }
+                }
+                jobPostingId: "\jobPostingId"
+                datePublished: "\datePublished"
+                url: "\url"
+            }
+            applyMethod: {
+                indeedApply: {
+                    apiToken: "\apiToken"
+                    postUrl: "\postUrl"
+                    \applyQuestions
+                    phoneRequired: YES
+                }
+            }
+        }
+        GRAPHQL;
+
+        $jobs = str_replace(
+            array_keys($replaceArray),
+            $replaceArray,
+            $singleJob
+        );
+
+        return  $jobs;
+    }
+
+
+    //
+    private function expiredJobs($expiredJobsUid, $jobSid)
+    {
+
+        $expireJobquery = <<<'GRAPHQL'
         mutation {
+        jobsIngest {
             expireSourcedJobsBySourcedPostingId(
                 input: {
                     jobs: [
@@ -363,26 +393,43 @@ class Indeed_cron extends CI_Controller
                 }
             ) {
             results {
-                jobPosting {
-                    sourcedPostingId
-                }
+                    trackingKey
             }
             }
         }
+        }
         GRAPHQL;
 
-            $expiredJobquery = str_replace("\jobsExpired", rtrim($expiredJobsUid, ','), $expireJobquery);
+        $expiredJobquery = str_replace("\jobsExpired", rtrim($expiredJobsUid, ','), $expireJobquery);
 
-            _e($expiredJobquery, true, true);
-            $response = $this->indeed_lib->jobSyncApi($expiredJobquery);
+        $response = $this->indeed_lib->jobSyncApi($expiredJobquery);
 
-            if ($response["errors"]) {
-                // revert the effected jobs
+        if (!empty($response['error'])) {
+            $postingData['errors'] = json_encode($response['error']);
+            $this->indeed_model->updateIndeedJobPostingResponse($postingData, $jobSid);
+        }
+
+        if (!empty($response['resultArray']['data']['jobsIngest']['expireSourcedJobsBySourcedPostingId'])) {
+
+            foreach ($response['resultArray']['data']['jobsIngest']['expireSourcedJobsBySourcedPostingId'] as $resultdata) {
+
+                if (!empty($resultdata)) {
+
+                    foreach ($resultdata as $rowJobPosting) {
+
+                        $postingData['tracking_Key'] = $rowJobPosting['trackingKey'];
+                        $postingData['updated_at'] = date('Y-m-d H:i:s');
+
+                        $this->indeed_model->updateIndeedJobPostingResponse($postingData, $jobSid);
+                    }
+                }
             }
         }
     }
 }
 
+
+//
 if (!function_exists('remakeSalary')) {
     function remakeSalary($salary, $jobType)
     {

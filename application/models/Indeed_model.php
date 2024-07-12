@@ -618,7 +618,7 @@ class Indeed_model extends CI_Model
                 "schemaVersion" => "1.0",
             ];
             // check and set screening screeningQuestionnaire
-            
+
             if ($screeningQuestionnaire && !$this->checkQuestionAreValidForIndeed($screeningQuestionnaire)) {
                 $questionArray["screenerQuestions"] = [
                     "questions" => $screeningQuestionnaire
@@ -974,20 +974,23 @@ class Indeed_model extends CI_Model
      * @return array
      */
     public function getQueueJobs(
-        int $numberOfJobs = 1
+        int $numberOfJobs = 1,
+        bool $expiredJobs = true
     ): array {
-        return $this
-            ->db
-            ->where([
-                "is_processing" => 0,
-                "is_processed" => 0,
-            ])
-            ->order_by("sid", "ASC")
-            ->limit($numberOfJobs)
-            ->get(
-                "indeed_job_queue"
-            )
-            ->result_array();
+
+
+        $this->db->where("is_processing", 0);
+        $this->db->where("is_processed", 0);
+
+        if ($expiredJobs == true) {
+            $this->db->where("is_expired", 0);
+        }
+
+        $this->db->order_by("sid", "ASC");
+        $this->db->limit($numberOfJobs);
+        return $this->db->get(
+            "indeed_job_queue"
+        )->result_array();
     }
 
     /**
@@ -1032,19 +1035,93 @@ class Indeed_model extends CI_Model
 
     //
 
-public function markIsprocessing($sId){
+    public function markIsprocessing($sId)
+    {
+
+        $updateArray['is_processing'] = 1;
+
+        $this->db
+            ->where("sid", $sId)
+            ->update(
+                "indeed_job_queue",
+                $updateArray
+            );
+    }
+
+    //
+    public function saveIndeedJobPostingResponse($insertArray)
+
+    {
+
+       //
+        $recordCount= $this
+            ->db
+            ->where([
+                "job_id" => $insertArray['job_id']
+            ])
+            ->count_all_results(
+                "job_posting_indeed_response"
+            );
 
 
-    $updateArray['is_processing']=1;
+        if ($recordCount > 0) {
 
-    $this->db
-    ->where("sid", $sId)
-    ->update(
-        "indeed_job_queue",
-        $updateArray
-    );
-}
+            $insertArray['updated_at'] = date('Y-m-d H:i:s');
+
+            $this->db
+                ->where("job_id", $insertArray['job_id'])
+                ->update(
+                    "job_posting_indeed_response",
+                    $insertArray
+                );
+        } else {
+            $this->db->insert('job_posting_indeed_response', $insertArray);
+        }
+
+        //
+        if ($insertArray['errors'] == '') {
+
+            $updateArray['is_processing'] = 0;
+            $updateArray['is_processed'] = 1;
+
+            $this->db
+                ->where("job_sid", $insertArray['job_id'])
+                ->update(
+                    "indeed_job_queue",
+                    $updateArray
+                );
+        }
+    }
 
 
+    //
+    public function  getSourcedPostingId($sId)
+    {
+        $result = $this->db
+            ->select('sourced_posting_Id')
+            ->where('job_id', $sId)
+            ->get('job_posting_indeed_response');
+        //
+        $record = $result->row_array();
 
+        if (!empty($record)) {
+
+            return $record['sourced_posting_Id'];
+        } else {
+            return '';
+        }
+    }
+
+
+    //
+    public function updateIndeedJobPostingResponse($updateArray, $jobId)
+
+    {
+        $this->db
+            ->where("job_id", $jobId)
+            ->update(
+                "job_posting_indeed_response",
+                $updateArray
+            );
+    }
 }
