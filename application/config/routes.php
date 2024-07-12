@@ -2274,3 +2274,7 @@ $route["settings/company/accounts/add"]["post"] =
   "v1/Settings/BankAccounts/Company_bank_accounts/processAddPage";
 $route["settings/company/accounts/(:num)"]["delete"] =
   "v1/Settings/BankAccounts/Company_bank_accounts/processDelete/$1";
+
+// direct deposit push to Gusto for an employee
+$route["direct_deposit/(:num)/push"]["post"] =
+  "Direct_deposit/push/$1";

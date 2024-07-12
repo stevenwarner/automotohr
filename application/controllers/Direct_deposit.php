@@ -352,40 +352,17 @@ class Direct_deposit extends Public_Controller
                     $this->input->post('user_sid', true),
                     $this->session->userdata('logged_in')['employer_detail']['sid']
                 );
-
-                // for payroll
-                if (isEmployeeOnPayroll($this->input->post('user_sid', true))) {
-                    // run payroll set up
-                    // for now just sign the document
-                    $this->load->model('v1/Documents_management_model', 'documents_management_model');
-                    //
-                    $this->documents_management_model->checkAndSignDocument(
-                        'direct_deposit',
-                        $user_sid
-                    );
-                    $this->load->model('v1/Payroll_model', 'payroll_model');
-                    //
-                    $this
-                        ->payroll_model
-                        ->syncEmployeePaymentMethod(
-                            $user_sid
-                        );
-                }
             }
 
             $this->direct_deposit_model->set_user_extra_info($user_type, $user_sid, $company_sid, $employee_number);
 
             if ($record_sid != 0) {
-
-                // fetch old record and save it into history table start
-                $update_by_sid = $session['employer_detail']['sid'];
-                $old_record = $this->direct_deposit_model->getDDI($user_type, $user_sid, $company_sid);
-                $old_bank_record = $old_record[0];
-                unset($old_bank_record['sid']);
-                $old_bank_record['bank_account_details_sid'] = $record_sid;
-                $old_bank_record['update_by_sid'] = $update_by_sid;
-                $this->direct_deposit_model->insert_bank_detail_history($old_bank_record);
-                // fetch old record and save it into history table end
+                // transfer the record into database
+                $this
+                    ->direct_deposit_model
+                    ->moveCurrentDirectDepositToHistory(
+                        $record_sid
+                    );
 
                 $data_to_update = array();
                 $data_to_update['company_sid'] = $company_sid;
@@ -412,12 +389,6 @@ class Direct_deposit extends Public_Controller
                 $data_to_update['updated_by'] = $updated_by;
 
                 $this->direct_deposit_model->updateDDA($data_to_update, $record_sid);
-
-                $this->checkAndUpdateBankDetail(
-                    $user_sid,
-                    $old_bank_record,
-                    $data_to_update
-                );
             } else {
                 $data_to_insert = array();
                 $data_to_insert['company_sid'] = $company_sid;
@@ -476,35 +447,6 @@ class Direct_deposit extends Public_Controller
         }
     }
 
-    private function checkAndUpdateBankDetail(
-        $employeeId,
-        $previousDetail,
-        $newDetail
-    ) {
-
-        // New employee profile data
-        $newBankData = [];
-        $newBankData['account_type'] = $dataToInsert['account_type'];
-        $newBankData['account_number'] = $dataToInsert['account_number'];
-        $newBankData['routing_transaction_number'] = $dataToInsert['routing_transaction_number'];
-        $newBankData['financial_institution_name'] = $dataToInsert['financial_institution_name'];
-        //
-        // Old employee profile data
-        $oldBankData = [];
-        $oldBankData['account_type'] = $previousDetail['account_type'];
-        $oldBankData['account_number'] = $previousDetail['account_number'];
-        $oldBankData['routing_transaction_number'] = $previousDetail['routing_transaction_number'];
-        $oldBankData['financial_institution_name'] = $previousDetail['financial_institution_name'];
-        //
-        $profileDifference = $this->findDifference($oldBankData, $newBankData);
-        //
-        if ($profileDifference['profile_changed'] == 1) {
-            // want to discuss with mubashir
-            // $this->load->model("gusto/Gusto_payroll_model", "gusto_payroll_model");
-            // $this->gusto_payroll_model->updateGustoEmployeInfo($employeeId, 'bank_detail');
-        }
-    }
-
     /**
      * 
      */
@@ -555,5 +497,38 @@ class Direct_deposit extends Public_Controller
         } else {
             echo false;
         }
+    }
+
+    /**
+     * send the direct deposit to Gusto
+     */
+    public function push(int $employeeId)
+    {
+
+        if (!checkIfAppIsEnabled(PAYROLL)) {
+            return SendResponse(
+                200,
+                [
+                    "success" => true
+                ]
+            );
+        }
+        //
+        $session = $this->session->userdata("logged_in");
+        // load the company model
+        // Call the model
+        $this->load->model(
+            "v1/Payroll/Employee_direct_deposit_payroll_model",
+            "employee_direct_deposit_payroll_model"
+        );
+        //
+        $response = $this
+            ->employee_direct_deposit_payroll_model
+            ->setCompanyDetails($session["company_detail"]["sid"])
+            ->setEmployee($employeeId)
+            ->dataToStoreEmployeeDirectDepositFlow();
+
+        _e($response);
+        die("sdas");
     }
 }

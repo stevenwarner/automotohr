@@ -59,14 +59,22 @@ class Lb_gusto
     /**
      * get company admins from Gusto
      *
+     * @param string $event
      * @param array $company
+     * @param array $request Optional
+     * Default = []
+     * @param string $requestType Optional
+     * Default -> GET
+     * @param bool $checkForErrors Optional
+     * Default -> false
      * @return array
      */
     public function gustoCall(
         string $event,
         array $company,
         array $request = [],
-        string $requestType = "GET"
+        string $requestType = "GET",
+        bool $checkForErrors = false
     ): array {
         // set call headers
         $callHeaders = [
@@ -118,7 +126,8 @@ class Lb_gusto
                     $event,
                     $company,
                     $request,
-                    $requestType
+                    $requestType,
+                    $checkForErrors
                 );
             } else {
                 return [
@@ -130,6 +139,28 @@ class Lb_gusto
                 ];
             }
         } else {
+            // check if we are checking errors as well
+            if ($checkForErrors) {
+                // check if any error occurred
+                $errors = $this->hasGustoErrors(
+                    $response
+                );
+                // only triggers if there are any errors
+                if ($errors) {
+                    // check for version error
+                    if ($this->isVersionError($errors)) {
+                        // return the version error
+                        return ["version_error" => true];
+                    }
+                    // send the actual errors
+                    return $errors;
+                }
+                // check for empty response
+                if (!$response) {
+                    // send the proper error
+                    return $this->getEmptyResponse();
+                }
+            }
             // pass actual response
             return $response;
         }
@@ -555,6 +586,20 @@ class Lb_gusto
     }
 
     /**
+     * check if version error occurred
+     *
+     * @param array $errors
+     * @return bool
+     */
+    public function isVersionError($errors): bool
+    {
+        return strpos(
+            $errors["errors"][0],
+            GUSTO_OUT_OF_DATE_VERSION
+        ) !== false;
+    }
+
+    /**
      * make call to Gusto
      *
      * @param string $url
@@ -862,6 +907,9 @@ class Lb_gusto
         // update_state_taxes
         $urls["update_state_taxes"] =
             "v1/employees/{$key1}/state_taxes";
+        // update_employee_bank_account
+        $urls["update_employee_bank_account"] =
+            "v1/employees/{$key1}/bank_accounts/{$key2}";
 
         // Payrolls
         // payroll_blockers
