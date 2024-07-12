@@ -260,11 +260,11 @@
                     <div class="row">
                         <div class="col-md-6 col-xs-12">
                             <label class="csF16">Department</label>
-                            <p class="dummy-invoice-fields"><?= GetVal($department_name); ?></p>
+                            <p class="dummy-invoice-fields"><?= isset($departmentTeamInfo) && !empty($departmentTeamInfo['name']) ? GetVal($departmentTeamInfo['name']) : ''; ?></p>
                         </div>
                         <div class="col-md-6 col-xs-12">
                             <label class="csF16">Teams</label>
-                            <p class="dummy-invoice-fields"><?= GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
+                            <p class="dummy-invoice-fields"><?= isset($departmentTeamInfo) && !empty($departmentTeamInfo['team_name']) ? GetVal($departmentTeamInfo['team_name']) : ''; ?></p>
                         </div>
                     </div>
                     <?php if (IS_NOTIFICATION_ENABLED == 1 && $phone_sid != '') { ?>

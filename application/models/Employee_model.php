@@ -2405,4 +2405,43 @@
         //
         return $returnArray;
     }
+
+    function getEmployeeDepartmentAndTeam($employerId)
+    {
+        $this->db->select('
+            departments_management.sid,
+            departments_management.name,
+            departments_team_management.sid as team_sid,
+            departments_team_management.name as team_name
+        ');
+        //
+        $this->db->where('departments_employee_2_team.employee_sid', $employerId);
+        $this->db->where('departments_team_management.is_deleted', 0);
+        $this->db->where('departments_management.is_deleted', 0);
+
+        //
+        $this->db->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner');
+        $this->db->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner');
+        //
+        $this->db->order_by('departments_employee_2_team.id', 'DESC');
+        $this->db->limit(1);
+
+        $records_obj = $this->db->get('departments_employee_2_team');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        //
+        if (!$records_arr) {
+            $data_to_update = array();
+            $data_to_update['team_sid'] = 0;
+            $data_to_update['department_sid'] = 0;
+            //
+            $this->db->where('sid', $employerId);
+            $this->db->update('users', $data_to_update);
+        }
+        //
+        return $records_arr;
+    }
+}
+function deleteDepartmentEmployeesFromUsers($sid, $type)
+{
 }
