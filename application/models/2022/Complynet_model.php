@@ -1614,6 +1614,9 @@ class Complynet_model extends CI_Model
         //
         // Get Employee Complynet department
         $complynetEmployeeDepartmentId = $this->getComplyNetEmployeeDepartment($passArray['oldEmployeeId']);
+        if (!$complynetEmployeeDepartmentId) {
+            return false;
+        }
         //
         $whereArray = [];
         $whereArray['departments_employee_2_team.employee_sid'] = $passArray['oldEmployeeId'];

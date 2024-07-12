@@ -505,8 +505,10 @@ class Department_management extends Public_Controller
             $data_to_update['deleted_date'] = date('Y-m-d H:i:s');
             if ($type == 'department') {
                 $this->department_management_model->update_department($sid, $data_to_update);
+                $this->department_management_model->deleteDepartment($sid);
             } else if ($type == 'team') {
                 $this->department_management_model->update_team($sid, $data_to_update);
+                $this->department_management_model->deleteTeam($sid);
             }
             //
             $this->handleApproverArchiveLogic($sid, $type);
@@ -761,10 +763,10 @@ class Department_management extends Public_Controller
             $departmentIds[] = ['id' => $actionId, 'type' => 1];
             // Lets fetch all teams
             $records =
-            $this->db->select('sid')
-            ->where('department_sid', $actionId)
-            ->get('departments_team_management')
-            ->result_array();
+                $this->db->select('sid')
+                ->where('department_sid', $actionId)
+                ->get('departments_team_management')
+                ->result_array();
             //
             if ($records) {
                 foreach ($records as $record) {

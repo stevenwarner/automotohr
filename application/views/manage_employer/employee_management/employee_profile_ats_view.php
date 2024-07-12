@@ -383,7 +383,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                                 if (!empty($dt['teams'])) {
                                                                     foreach ($dt['teams'] as $dtt) {
                                                                 ?>
-                                                                        <option value="<?= $dtt['id']; ?>" <?= in_array($dtt['id'], explode(',',  $employer['team_sid'])) ? 'selected' : ''; ?>><?= $dtt['name']; ?></option>
+                                                                        <option value="<?= $dtt['id']; ?>" <?= in_array($dtt['id'], explode(',', $departmentTeamInfo['team_sid'])) ? 'selected' : ''; ?>><?= $dtt['name']; ?></option>
                                                         <?php
                                                                     }
                                                                 }
@@ -1980,8 +1980,8 @@ if (checkIfAppIsEnabled('timeoff')) {
             }, 1000);
 
             setTimeout(function() {
-                //console.log('I am in');
-                $('#state').val(myid);
+                //
+                $('#state').val(myid.trim);
             }, 2000);
         }
 

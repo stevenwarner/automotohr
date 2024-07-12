@@ -1235,41 +1235,9 @@ class Employee_management extends Public_Controller
                     $this
                 );
 
-                if ($data['employer']['department_sid'] > 0) {
-                    $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
-                    $data['department_name'] = $department_name;
-                }
-                if ($data['employer']['team_sid'] > 0) {
-                    $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
-                    $data['team_name'] = $team_name;
-                }
-
-                if (isset($data['team_name']) && $data['team_name'] == '') {
-                    // Fetch employee team and department
-                    $t = $this->employee_model->fetch_department_teams($employer_id);
-                    if (sizeof($t)) {
-                        $data['employer']['department_sid'] = $t['department_sid'];
-                        $data['employer']['team_sid'] = $t['team_sid'];
-                        //
-                        $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
-                        $data['department_name'] = $department_name;
-                        $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
-                        $data['team_name'] = $team_name;
-                    }
-                }
-
-                if (empty($data['employer']['employee_number']) || $data['employer']['employee_number'] == '') {
-                    $data['employer']['employee_number'] = $sid;
-                }
-
-                $employee_assign_team = $this->employee_model->fetch_employee_assign_teams($employer_id);
-                $data['team_names'] = [];
-                $data['team_sids'] = [];
-                if (!empty($employee_assign_team)) {
-                    $data['team_names'] = $employee_assign_team['team_names'];
-                    $data['team_sids'] = $employee_assign_team['team_sids'];
-                }
-
+                $data['departmentTeamInfo'] = $this
+                ->employee_model
+                ->getEmployeeDepartmentAndTeam($data['employer']['sid']);
                 if (empty($data['employer'])) { // Employer does not exists - throw error
                     $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
                     redirect('employee_management', 'refresh');

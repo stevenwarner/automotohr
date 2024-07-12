@@ -234,12 +234,11 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Department</label>
-            <p class="dummy-invoice-fields"><?= isset($department_name) && !empty($department_name) ? GetVal($department_name) : ''; ?></p>
+            <p class="dummy-invoice-fields"><?= isset($departmentTeamInfo) && !empty($departmentTeamInfo['name']) ? GetVal($departmentTeamInfo['name']) : ''; ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Teams</label>
-            <?php $team_name = isset($team_name) && !empty($team_name) ? $team_name : ''; ?>
-            <p class="dummy-invoice-fields"><?= GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
+            <p class="dummy-invoice-fields"><?= isset($departmentTeamInfo) && !empty($departmentTeamInfo['team_name']) ? GetVal($departmentTeamInfo['team_name']) : ''; ?></p>
         </div>
     </div>
     <br>
