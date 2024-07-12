@@ -55,8 +55,6 @@ class Dashboard extends Public_Controller
             $applicant_approval_module_status                                   = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
 
             $data['EmsStatus'] = getCompanyEmsStatusBySid($company_id, false);
-
-
             if (check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
 
                 // $configuration  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
@@ -180,6 +178,7 @@ class Dashboard extends Public_Controller
                 // _e($today_end, true);
                 // _e($this_month_start, true);
                 // _e($this_month_end, true, true);
+                
                 $eventCount                                                     = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
                 $eventCountToday                                                = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
                 $data['eventCount']                                             = $eventCount;
@@ -592,7 +591,7 @@ class Dashboard extends Public_Controller
                 'daily' => $this->em->getEmployeeInformationChange($company_id, 'daily'),
                 'week' => $this->em->getEmployeeInformationChange($company_id, 'week'),
                 'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
-            ];
+            ]; 
             // set default js
             $data['PageScripts'] = [];
             $data['incident_count'] = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
@@ -685,6 +684,7 @@ class Dashboard extends Public_Controller
                     "employee"
                 );
 
+                
             $data['documents_count'] += count($companyStateForms["not_completed"]);
 
             // load shifts model
@@ -719,6 +719,15 @@ class Dashboard extends Public_Controller
                 $data["pendingVerificationPerformanceDocument"] = $pendingVerificationPerformanceSectionOne;
             }
 
+            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+                //
+                $data["awaitingShiftRequests"] = $this->shift_model->getAwaitingSwapShiftsByUserId($employer_id);
+                //
+                if (isPayrollOrPlus()) {
+                    $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
+                }    
+            }    
+                
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -1206,6 +1215,15 @@ class Dashboard extends Public_Controller
                 //
                 $data['documents_count'] = $data['documents_count'] + $pendingPerformanceDocument ? 1 : 0;   
             } 
+
+            if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+                //
+                $data["awaitingShiftRequests"] = $this->shift_model->getAwaitingSwapShiftsByUserId($employer_id);
+                //
+                if (isPayrollOrPlus()) {
+                    $data["awaitingShiftsApprovals"] = $this->shift_model->getAwaitingSwapShiftsApprovals();
+                }    
+            }
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');

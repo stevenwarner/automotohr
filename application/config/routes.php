@@ -2260,6 +2260,7 @@ $route["manage_admin/indeed/disposition/status/map"]["get"] =
 $route["manage_admin/indeed/disposition/status/map"]["post"] =
   "manage_admin/Indeed_disposition_status_map/saveListing";
 
+
 //Manage Admin Employees Termination Report
 $route['manage_admin/reports/employees_termination_report/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1';
 $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)'] = 'manage_admin/reports/employees_termination_report/index/$1/$2/$3';
@@ -2344,3 +2345,28 @@ $route["attendance/my/timesheet"]["get"] = "v1/Attendance/api/My/timesheet";
 $route["v1/clock/my/footprints/today"]["get"] = "v1/Attendance/api/My/getMyTodaysFootprints";
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["get"] = "v1/Attendance/api/My/getTimeSheetDetails/$1/$2";
 $route["v1/clock/timesheet/my/(:num)/(:any)"]["post"] = "v1/Attendance/api/My/processTimeSheetDetails/$1/$2";
+
+//Shifts Trade
+$route["settings/shifts/trade"]["get"] = "Settings/shiftsTrade";
+$route["settings/shifts/tradeshifts"]["post"] = "Settings/processTradeShifts";
+$route["settings/shifts/tradeshiftscancel"]["post"] = "Settings/processTradeShiftsCancel";
+
+$route["settings/shifts/mytrade"]["get"] = "Settings/myShiftsTrade";
+$route["settings/shifts/my_trade_change_status"]["post"] = "Settings/processMyShiftsChangeStatus";
+
+//
+$route["shifts/trade"]["get"] = "v1/Shifts/Employee_shifts/shiftsTrade";
+$route["shifts/myTrade"]["get"] = "v1/Shifts/Employee_shifts/myShiftsTrade";
+$route["settings/page/(:any)/(:num)/(:any)"]["get"] = "Settings/getPageBySlug/$1/$2/$3";
+$route['settings/handler'] = 'Settings/handler';
+
+$route["settings/shifts/tradeshiftsapprove"]["post"] = "Settings/processTradeShiftsApprove";
+$route["settings/shifts/tradeshiftsreject"]["post"] = "Settings/processTradeShiftsReject";
+
+$route['swap_shift_confirm/(:any)/(:any)/(:any)'] = 'v1/Shifts/Employee_shifts/swapShiftConfirm/$1/$2/$3';
+
+//
+$route["settings/shifts/get_employee_list"]["post"] = "Settings/processGetEmployeeList";
+$route["settings/shifts/send_shift"]["post"] = "Settings/processSendShift";
+
+

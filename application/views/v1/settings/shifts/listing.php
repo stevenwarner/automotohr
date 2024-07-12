@@ -71,6 +71,7 @@ foreach ($monthDates as $monthDate) {
                                 <i class="fa fa-cogs" aria-hidden="true"></i>
                                 &nbsp;Manage Shift Templates
                             </a>
+                         
                         </div>
                     </div>
                     <br />
@@ -147,6 +148,9 @@ foreach ($monthDates as $monthDate) {
                                             <i class="fa fa-filter" aria-hidden="true"></i>
                                             Filters
                                         </button>
+
+
+
                                     </div>
                                 </div>
 
@@ -289,6 +293,7 @@ foreach ($monthDates as $monthDate) {
                                                                             $totalHoursInSeconds += $employeeShift["totalTime"];
                                                                         ?>
                                                                             <div class="schedule-item" data-id="<?= $employeeShift["sid"]; ?>" style="background: <? echo $employeeShift["is_published"] == 0 ? DB_UNPUBLISHED_SHIFTS : $bgColor; ?> ; color: <? echo $employeeShift["is_published"] == 0 ? FONT_COLOR_UNPUBLISHED_SHIFTS : ''; ?>" title="<?= $employee["job_title"]; ?>" placement="top">
+
                                                                                 <?php if ($employeeShift["job_sites"] && $employeeShift["job_sites"][0]) { ?>
                                                                                     <span class="circle circle-orange"></span>
                                                                                 <?php } ?>
