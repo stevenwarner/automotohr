@@ -1971,10 +1971,11 @@ if (checkIfAppIsEnabled('timeoff')) {
 
         CKEDITOR.replace('applicantMessage');
         var myid = $('#state_id').html();
-        if (myid) {
-            //console.log('I am IN');
-            //console.log('My ID: '+myid);
+        
+        myid = myid.trim();
 
+        if (myid) {
+        
             setTimeout(function() {
                 $("#country").change();
             }, 1000);

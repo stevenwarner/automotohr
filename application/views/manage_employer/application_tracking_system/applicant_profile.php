@@ -1528,11 +1528,11 @@ if ($_ssv) {
                                                             ?>
                                                             <?php if ($attachments) { ?>
                                                                 <li>
-                                                                     <?php foreach($attachments as $attachment) {?>
-                                                                    <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
-                                                                        <i class="fa fa-download"></i>
-                                                                        <span class="btn-tooltip">Download File</span>
-                                                                    </a>
+                                                                    <?php foreach ($attachments as $attachment) { ?>
+                                                                        <a class="action-btn" href="<?php echo AWS_S3_BUCKET_URL . $attachment; ?>">
+                                                                            <i class="fa fa-download"></i>
+                                                                            <span class="btn-tooltip">Download File</span>
+                                                                        </a>
                                                                     <?php } ?>
                                                                 </li>
                                                             <?php } ?>
@@ -1912,6 +1912,8 @@ if ($_ssv) {
 
     $(document).ready(function() {
         var myid = $('#state_id').html();
+
+        myid = myid.trim();
 
         setTimeout(function() {
             $("#country").change();
