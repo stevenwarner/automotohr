@@ -522,13 +522,12 @@ class Direct_deposit extends Public_Controller
             "employee_direct_deposit_payroll_model"
         );
         //
-        $response = $this
+        $this
             ->employee_direct_deposit_payroll_model
             ->setCompanyDetails($session["company_detail"]["sid"])
             ->setEmployee($employeeId)
             ->dataToStoreEmployeeDirectDepositFlow();
-
-        _e($response);
-        die("sdas");
+        //
+        return SendResponse(200, ["success" => true];)
     }
 }
