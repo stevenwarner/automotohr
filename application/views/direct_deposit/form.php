@@ -373,10 +373,18 @@ for ($i = 0; $i < 1; $i++) {
                 $('.js-account-percentage-addon').text('%')
                 $('.js-deposit_type').val('percentage');
 
+                $('#DT_remaining_amount_msg_0').text('');
+
+
             } else if ($(this).val() == "amount") {
                 $(".js-DDT").text("Dollar amount to be deposited to this account:");
                 $('.js-account-percentage-addon').text('$')
                 $('.js-deposit_type').val('amount');
+
+                if ($('#DTV_1').val() != '' && $('#DTV_1').val() != '0') {
+                    $('#DT_remaining_amount_msg_0').text('Note: Amount $' + $('#DTV_0').val() + ' will deposit to Account1 and any remaining amount will deposit to account 2');
+                }
+
 
             }
 
@@ -387,9 +395,14 @@ for ($i = 0; $i < 1; $i++) {
         //
         $('#DTV_0').change(function(e) {
             let depositType = $('#deposit_type_0').val();
-            if (depositType == 'amount') {
-                $('#DT_remaining_amount_msg_0').text('The remaining amout will be transfered to Account 2');
+            let account__amount = $('#DTV_0').val();
 
+            if (depositType == 'amount' && $('#DTV_1').val() != '' && $('#DTV_1').val() != '0') {
+                $('#DT_remaining_amount_msg_0').text('Note: Amount $' + account__amount + ' will deposit to Account1 and any remaining amount will deposit to account 2');
+            }
+
+            if ((depositType == 'amount' )&& (account__amount == '' || account__amount == '0')) {
+                $('#DT_remaining_amount_msg_0').text('');
             }
 
 
@@ -668,6 +681,8 @@ for ($i = 0; $i < 1; $i++) {
                 }
 
                 //               
+              
+
                 let totlaPercentage = parseFloat(megaOBJ[0]['accountPercentage']) + parseFloat(megaOBJ[1]['accountPercentage']);
 
                 if (megaOBJ[0]['depositType'] == 'percentage' && megaOBJ[1]['depositType'] == 'percentage') {
@@ -679,16 +694,8 @@ for ($i = 0; $i < 1; $i++) {
                         record_error = 1;
                     }
 
-
                 }
 
-
-                if (!totlaPercentage) {
-                    alertify.alert('Ensure that a deposited amount is numeric.').set({
-                        title: "WARNING !"
-                    });
-                    record_error = 1;
-                }
 
             }
 
@@ -711,6 +718,7 @@ for ($i = 0; $i < 1; $i++) {
 
 
                 if (!totlaPercentage) {
+
                     alertify.alert('Ensure that a deposited amount is numeric.').set({
                         title: "WARNING !"
                     });
@@ -722,12 +730,9 @@ for ($i = 0; $i < 1; $i++) {
             //  if (obj_length == (el + 1) && record_error == 0) {
 
             if (record_error == 0) {
-
                 form_data = megaOBJ;
                 submit_form_data();
             }
-
-
 
         }
 
@@ -903,7 +908,19 @@ for ($i = 0; $i < 1; $i++) {
     if ($data[0]['deposit_type'] == 'amount' && $data[1]['deposit_type'] == 'amount') {
         $msgNote = "Note:  Amount $" . $data[0]['account_percentage'] . " will deposit to Account1 and $" . $data[1]['account_percentage'] . " will deposit to Account 2";
     ?>
-        $("#js-Multi-account-msg").text('<?php echo $msgNote; ?>');
+        $("#js-Multi-account-msg-").text('<?php echo $msgNote; ?>');
+
+    <?php
+    }
+    ?>
+
+
+
+    <?php
+    if ($data[0]['deposit_type'] == 'amount' && $data[1]['deposit_type'] == 'amount') {
+        $msgNote = "Note:  Amount $" . $data[0]['account_percentage'] . " will deposit to Account1 and any remaining amount will deposit to account 2";
+    ?>
+        $("#DT_remaining_amount_msg_0").text('<?php echo $msgNote; ?>');
 
     <?php
     }
