@@ -331,10 +331,13 @@ class Company_model extends CI_Model
                         'departments' => [],
                         'teams' => []
                     ];
+                    //
+                    $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
+                    $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
                 }
                 //
-                $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
-                $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
+                // $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
+                // $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
             }
             //
             $employeeDepartmentTeams = $tmp;
