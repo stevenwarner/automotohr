@@ -841,6 +841,15 @@ class Indeed_model extends CI_Model
                 "success" => "The job is successfully updated to the queue."
             ];
         }
+        // update the record
+        $this->db
+            ->where("job_sid", $jobId)
+            ->update(
+                "indeed_job_queue",
+                [
+                    "is_expired" => 0,
+                ]
+            );
         //
         return [
             "success" => "The job was already ready to be processed."

@@ -148,11 +148,19 @@ class Job_approval_management extends Public_Controller
                             $approval_management_email_notification             = 0;
 
                             if ($job_listing_data["organic_feed"] == 1 && $status === "approved") {
-                                $this->indeed_model->updateJobToQueue(
-                                    $jobId,
-                                    $company_sid,
-                                    $status
-                                );
+                                $this
+                                    ->indeed_model
+                                    ->updateJobToQueue(
+                                        $jobId,
+                                        $company_sid,
+                                        $status
+                                    );
+                            } elseif ($job_listing_data["organic_feed"] == 1 && $status === "rejected") {
+                                $this
+                                    ->indeed_model
+                                    ->expireJobToQueue(
+                                        $jobId
+                                    );
                             }
 
                             if (!empty($notifications_status)) {
