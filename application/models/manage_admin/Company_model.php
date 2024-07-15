@@ -307,11 +307,16 @@ class Company_model extends CI_Model
             departments_team_management.name,
             departments_employee_2_team.employee_sid
         ")
-            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
-            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+            // ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+            // ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+
+            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner')
+            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+            //
             ->where('departments_management.is_deleted', 0)
             ->where('departments_team_management.is_deleted', 0)
             ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+            ->order_by('departments_employee_2_team.id', 'DESC')
             ->get('departments_employee_2_team')
             ->result_array();
         //
