@@ -617,16 +617,17 @@ class Testing extends CI_Controller
         return urlencode($fileName);
     }
 
-    public function addNewEmployeesIntoCompany ($companyId) {
+    public function addNewEmployeesIntoCompany($companyId)
+    {
         // Load the fake employee library
         $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
         //
-        $employees = 
+        $employees =
             $this
             ->fakeEmployees
             ->init(5);
         //
-        foreach($employees as $employee){
+        foreach ($employees as $employee) {
             $employee['parent_sid'] = $companyId;
             $employee['active'] = 1;
             //
@@ -634,5 +635,67 @@ class Testing extends CI_Controller
         }
         //
         _e("employee add successfully");
-    } 
+    }
+
+    public function fixDepartmentAndTeam()
+    {
+        $this->db->select('distinct(employee_sid)');
+        $records_obj = $this->db->get('departments_employee_2_team');
+        $employees = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        if ($employees) {
+            foreach ($employees as $key => $employee) {
+                //
+                $this->db->select('
+                    departments_management.sid,
+                    departments_team_management.sid as team_sid,
+                ');
+                //
+                $this->db->where('departments_employee_2_team.employee_sid', $employee["employee_sid"]);
+                $this->db->where('departments_team_management.is_deleted', 0);
+                $this->db->where('departments_management.is_deleted', 0);
+
+                //
+                $this->db->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid', 'inner');
+                $this->db->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner');
+                //
+                $this->db->order_by('departments_employee_2_team.id', 'DESC');
+                $this->db->limit(1);
+
+                $records_obj = $this->db->get('departments_employee_2_team');
+                $departmentTeamInfo = $records_obj->row_array();
+                $records_obj->free_result();
+                //
+                //
+                if ($departmentTeamInfo) {
+                    //
+                    // delete all records
+                    $this->db
+                        ->where('employee_sid', $employee["employee_sid"])
+                        ->delete('departments_employee_2_team');
+                    // 
+                    // insert latest record
+                    $this->db->insert('departments_employee_2_team', array(
+                        'department_sid' => $departmentTeamInfo['sid'],
+                        'team_sid' => $departmentTeamInfo['team_sid'],
+                        'employee_sid' => $employee["employee_sid"]
+                    ));
+                    // 
+                    // update department and team ids into users 
+                    $data_to_update = array();
+                    $data_to_update['team_sid'] = $departmentTeamInfo['team_sid'];
+                    $data_to_update['department_sid'] = $departmentTeamInfo['sid'];
+                    //
+                    $this->db->where('sid', $employee["employee_sid"]);
+                    $this->db->update('users', $data_to_update);
+                }
+                //
+                
+            }
+        }
+        //
+        echo "script end";
+        //
+    }
 }
