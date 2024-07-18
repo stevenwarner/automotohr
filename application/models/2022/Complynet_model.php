@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+
+use Twilio\Rest\Preview\TrustedComms;
+
+defined('BASEPATH') || exit('No direct script access allowed');
 
 /**
  * ComplyNet
@@ -2338,5 +2342,69 @@ class Complynet_model extends CI_Model
         // delete above departments jobRolls
         $this->db->where('complynet_department_sid', $departmentId);
         $this->db->delete('complynet_jobRole');
+    }
+
+
+    //
+
+    function pendingComplynetUpdate($sid, $departmentId)
+    {
+        $pendingComplynet = $this->db
+            ->select('pending_complynet_update,parent_sid,complynet_job_title')
+            ->where('sid', $sid)->get('users')->row_array();
+
+        if ($pendingComplynet['pending_complynet_update'] == 1) {
+            if (isCompanyOnComplyNet($pendingComplynet['parent_sid'])) {
+                //
+                $this->load->model('manage_admin/company_model');
+
+
+                $departments = $this->getComplyNetLinkedDepartmentById(
+                    $departmentId
+                );
+
+
+                if ($departments == 0) {
+                    // Create Department on Complynet
+                    $this->syncDepartments(
+                        $pendingComplynet['parent_sid']
+                    );
+                }
+
+                //
+                if ($departmentId != 0) {
+                    $departmentRecord =
+                        $this->db
+                        ->select('complynet_department_sid')
+                        ->where([
+                            'department_sid' => $departmentId
+                        ])
+                        ->get('complynet_departments')
+                        ->row_array();
+
+                    if (!empty($departmentRecord['complynet_department_sid'])) {
+
+                        
+                        $this->getAndSetJobRoleId(
+                            $departmentRecord['complynet_department_sid'],
+                            $pendingComplynet['complynet_job_title']
+                        );
+                        
+
+                    }
+                }
+
+
+
+                //  call 
+                // transferEmployeeToAnotherLocation
+
+                /*
+                $data['pending_complynet_update'] = 0;
+                $this->db->where('sid', $sid);
+                $this->db->update('users', $data);
+*/
+            }
+        }
     }
 }

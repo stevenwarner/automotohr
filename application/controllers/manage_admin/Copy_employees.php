@@ -114,6 +114,7 @@ class Copy_employees extends Admin_Controller
 
     public function copy_companies_employees()
     {
+
         check_access_permissions(db_get_admin_access_level_details($this->ion_auth->user()->row()->id), 'manage_admin', 'copy_applicants');
 
         if (!$this->input->is_ajax_request() || $this->input->method(true) !== 'POST' || !sizeof($this->input->post())) {
@@ -317,9 +318,21 @@ class Copy_employees extends Admin_Controller
                 //
                 $this->load->model('2022/Complynet_model', 'complynet_model');
                 //
-                $this->complynet_model->manageEmployee($passArray);
 
-                echo json_encode($resp);
+
+
+                // $this->complynet_model->manageEmployee($passArray);
+                // echo json_encode($resp);
+
+                //Set pending complynet update
+
+                $this->db
+                    ->where('sid', $primary_employee_sid)
+                    ->where('parent_sid', $to_company)
+                    ->update('users', [
+                        'pending_complynet_update' => 1
+                    ]);
+
             } else {
 
                 $user_to_insert = array();
@@ -812,11 +825,24 @@ class Copy_employees extends Admin_Controller
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
                 //
+
+
+                /*
                 $this->load->model('2022/Complynet_model', 'complynet_model');
                 //
                 $this->complynet_model->manageEmployee($passArray);
                 //
                 echo json_encode($resp);
+               */
+
+                //Set pending complynet update
+
+                $this->db
+                    ->where('sid', $new_employee_sid)
+                    ->where('parent_sid', $to_company)
+                    ->update('users', [
+                        'pending_complynet_update' => 1
+                    ]);
             }
         }
     }
@@ -893,7 +919,7 @@ class Copy_employees extends Admin_Controller
                     $list[] = $destinationEmployeeId;
                     $list = array_unique($list);
                     $list = implode(',', $list);
-            
+
                     // update the list
                     $this->db
                         ->where('sid', $newPolicyId)
@@ -901,7 +927,7 @@ class Copy_employees extends Admin_Controller
                             'assigned_employees' => $list
                         ]);
                     //
-                    $isAddedHistory = "yes";    
+                    $isAddedHistory = "yes";
                 }
             } else if ($policyDetails['is_entitled_employee'] == 0) {
                 if ($policyDetails['assigned_employees'] == 0 || $policyDetails['assigned_employees'] == 'all') {
@@ -912,7 +938,7 @@ class Copy_employees extends Admin_Controller
                             'assigned_employees' => $destinationEmployeeId,
                         ]);
                     //
-                    $isAddedHistory = "yes";      
+                    $isAddedHistory = "yes";
                 }
             }
             // 
