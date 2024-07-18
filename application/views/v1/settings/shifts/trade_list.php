@@ -83,7 +83,7 @@
                                         </li>
 
                                         <li class="active-tab">
-                                            <a href="javascript:void(0)" data-key="awaiting confirmation" class="jsReportTab">Pending <br><span id="jsPendingRequests"></span></a>
+                                            <a href="javascript:void(0)" data-key="confirmed" class="jsReportTab">Pending <br><span id="jsPendingRequests"></span></a>
                                         </li>
                                         <li class="active-tab">
                                             <a href="javascript:void(0)" data-key="approved" class="jsReportTab">Approved <br><span id="jsApprovedRequests"></span></a>
@@ -95,53 +95,56 @@
                                 </div>
                             </div>
 
-
-                            <div class="col-sm-12 text-right" style="padding-right: 0px;">
-                                <button class="btn btn-red jsAdminRejectTradeShifts">
-                                    Reject requests
-                                </button>
-                                <button class="btn btn-orange jsAdminApproveTradeShifts">
-                                    Approve Requests
-                                </button>
-                            </div>
-
-                            <!-- Active Tab -->
-                            <div class="active-content">
-                                <!-- Pagination Top -->
-                                <div class="js-ip-pagination mb10"></div>
-                                <div class="row">
-                                    <div class="col-lg-12">
-
-                                        <div class="table-responsive">
-                                            <table class="table table-striped table-condensed pto-policy-table csCustomTableHeader">
-                                                <thead style="background-color: #fd7a2a;" class="js-table-head">
-                                                    <tr>
-                                                        <th style="width:5%">
-                                                            <label class="control control--checkbox" style="margin-bottom: 20px;">
-                                                                <input type="checkbox" name="checkit[]" id="check_all">
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </th>
-                                                        <th style="width:20%">Shift</th>
-                                                        <th style="width:20%">Status</th>
-                                                        <th style="width:10%">Requested At</th>
-                                                        <th style="width:25%">From Employee</th>
-                                                        <th style="width:25%">To Employee</th>
-                                                        <th style="width:20%;padding-right: 30px;" class="text-right">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="js-data-area">
-                                                    <tr class="js-error-row"></tr>
-                                                </tbody>
-                                            </table>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <h2 class="text-medium panel-heading-text">
+                                                &nbsp;
+                                                <strong id="jsTableHeading">
+                                                    Shifts
+                                                </strong>
+                                            </h2>
                                         </div>
 
+                                        <div class="col-sm-6 text-right" id="jsApprovedRejectBtn">
+                                            <button class="btn btn-red jsAdminRejectTradeShifts">
+                                                Reject requests
+                                            </button>
+                                            <button class="btn btn-orange jsAdminApproveTradeShifts">
+                                                Approve Requests
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                <hr />
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover table-striped">
+                                            <!-- <table class="table table-striped table-condensed pto-policy-table csCustomTableHeader"> -->
+                                            <thead style="background-color: #fd7a2a;" class="js-table-head">
+                                                <tr>
+                                                    <th style="width:5%">
+                                                        <label class="control control--checkbox" style="margin-bottom: 20px;">
+                                                            <input type="checkbox" name="checkit[]" id="check_all">
+                                                            <div class="control__indicator"></div>
+                                                        </label>
+                                                    </th>
+                                                    <th style="width:20%">Shift</th>
+                                                    <th style="width:20%">Status</th>
+                                                    <th style="width:10%">Requested At</th>
+                                                    <th style="width:25%">From Employee</th>
+                                                    <th style="width:25%">To Employee</th>
+                                                    <th style="width:20%;padding-right: 30px;" class="text-right">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="js-data-area">
+                                                <tr class="js-error-row"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

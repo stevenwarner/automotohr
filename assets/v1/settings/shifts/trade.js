@@ -89,7 +89,7 @@ $(function shiftsTrade() {
 
 			alertify.confirm(
 				'Are You Sure?',
-				'Are you sure want to cancel shifts swap?',
+				'Are you sure you want to cancel the shift swap?',
 				function () {
 					//
 					const formObj = new FormData();
@@ -140,7 +140,7 @@ $(function shiftsTrade() {
 
 		alertify.confirm(
 			'Are You Sure?',
-			'Are you sure want to cancel shifts swap?',
+			'Are you sure you want to cancel the shift swap?',
 			function () {
 				//
 				const formObj = new FormData();
@@ -198,7 +198,7 @@ $(function shiftsTrade() {
 					//
 					alertify.confirm(
 						'Are You Sure?',
-						'Are you sure want to shifts swap?',
+						'Are you sure you want to swap shifts?',
 						function () {
 							const formObj = new FormData();
 							// set the file object
@@ -335,7 +335,7 @@ $(function shiftsTrade() {
 
 		alertify.confirm(
 			'Are You Sure?',
-			'Are you sure want to Reject shifts?',
+			'Are you sure want to reject shifts?',
 			function () {
 				//
 				const formObj = new FormData();
@@ -410,7 +410,7 @@ $(function shiftsTrade() {
 
 		alertify.confirm(
 			'Are You Sure?',
-			'Are you sure want to Approve shifts request?',
+			'Are you sure want to approve shift swap request?',
 			function () {
 				//
 				const formObj = new FormData();
@@ -455,7 +455,7 @@ $(function shiftsTrade() {
 
 			alertify.confirm(
 				'Are You Sure?',
-				'Are you sure want to Approve shifts request?',
+				'Are you sure want to approve shift swap requests?',
 				function () {
 					//
 					const formObj = new FormData();
@@ -502,7 +502,7 @@ $(function shiftsTrade() {
 
 		alertify.confirm(
 			'Are You Sure?',
-			'Are you sure want to Reject shifts request?',
+			'Are you sure want to reject shift swap request?',
 			function () {
 				//
 				const formObj = new FormData();
@@ -546,7 +546,7 @@ $(function shiftsTrade() {
 		if (shiftsArrayIds.length > 0) {
 			alertify.confirm(
 				'Are You Sure?',
-				'Are you sure want to Reject shifts request?',
+				'Are you sure want to reject shift swap requests?',
 				function () {
 					//
 					const formObj = new FormData();
@@ -785,7 +785,7 @@ $(function shiftsTrade() {
 		let rows = '';
 		//
 		if (resp.Data.length == 0) {
-			$('#js-data-area').html(`<tr><td colspan="6"><p class="alert alert-info text-center">No Request found.</p></td></tr>`);
+			$('#js-data-area').html(`<tr><td colspan="7"><p class="alert alert-info text-center">No Request found.</p></td></tr>`);
 			ml(false, 'requests');
 			return;
 		}
@@ -795,6 +795,22 @@ $(function shiftsTrade() {
 		$("#jsPendingRequests").html('(' + resp.pendingRequests + ')');
 		$("#jsApprovedRequests").html('(' + resp.approvedRequests + ')');
 		$("#jsRejectedRequests").html('(' + resp.rejectedRequests + ')');
+		//
+		if ((resp.requestsType == 'all' || resp.requestsType == 'confirmed') &&  resp.pendingRequests > 0) {
+			$("#jsApprovedRejectBtn").show();
+		} else {
+			$("#jsApprovedRejectBtn").hide();
+		}
+		//
+		if (resp.requestsType == 'all') {
+			$("#jsTableHeading").text("All Approval(s)");
+		} else if (resp.requestsType == 'confirmed') {
+			$("#jsTableHeading").text("Pending Approval(s)");
+		} else if (resp.requestsType == 'approved') {
+			$("#jsTableHeading").text("Approved Approval(s)");
+		} else {
+			$("#jsTableHeading").text("Rejected Approval(s)");
+		}
 
 		$.each(resp.Data, function (i, v) {
 			//

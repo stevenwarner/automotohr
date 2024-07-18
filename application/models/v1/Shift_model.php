@@ -1559,53 +1559,40 @@ class Shift_model extends CI_Model
     //
     public function cancelShiftsTradeRequest($shiftIds, $data)
     {
-
-
-        $shiftsRecord = $this->getShiftsRequestById($shiftIds, '', $data['to_employee_sid']);
-
+        //
+        $shiftsRecord = $this->getShiftsRequestById($shiftIds);
+        //
         $data['updated_by'] = checkAndGetSession("employee")["sid"];
-
+        //
         foreach ($shiftsRecord as $dataRow) {
             unset($dataRow['sid']);
+            //
             $this->db
                 ->insert("cl_shifts_request_history", $dataRow);
-
+            //
+            // update shift to new employee
             if ($data['request_status'] == 'approved') {
                 $dataShift['employee_sid'] = $dataRow['to_employee_sid'];
                 $this->db
                     ->where("sid", $dataRow['shift_sid'])
                     ->update("cl_shifts", $dataShift);
             }
-       
-
             //
             if ($dataRow['request_type'] == 'open' && $data['request_status'] == 'approved') {
-
-                $dataReject = [];
-                $dataReject['request_status'] = 'admin rejected';
-                $dataReject['admin_sid'] = $data['admin_sid'];
-                $dataReject['updated_at'] = $data['updated_at'];
-                $dataReject['updated_by'] = $data['updated_by'];
-
-                $this->db
-                    ->where_in("shift_sid", $shiftIds)
-                    ->where("to_employee_sid!=", $data['to_employee_sid'])
-                    ->update("cl_shifts_request", $dataReject);
-
                 //
                 $this->db
                     ->where_in("shift_sid", $shiftIds)
                     ->where("to_employee_sid", $data['to_employee_sid'])
                     ->update("cl_shifts_request", $data);
-            } else { 
+            } else {
                 //
                 $this->db->where_in("shift_sid", $shiftIds);
                 //
-                if ($data['updated_by'] == $dataRow['from_employee_sid']) {
-                    $this->db->where("from_employee_sid", $data['to_employee_sid']);
-                } else {
-                    $this->db->where("to_employee_sid", $data['to_employee_sid']);
-                }
+                // if ($data['updated_by'] == $dataRow['from_employee_sid']) {
+                //     $this->db->where("from_employee_sid", $data['to_employee_sid']);
+                // } else {
+                //     $this->db->where("to_employee_sid", $data['to_employee_sid']);
+                // }
                 //
                 $this->db->update("cl_shifts_request", $data);
             }
@@ -1649,7 +1636,7 @@ class Shift_model extends CI_Model
     public function getAwaitingSwapShiftsByUserId(int $employeeId)
     {
         //
-        $this->db->where("company_sid", checkAndGetSession("company")['sid']);
+        $this->db->where("to_employee_sid", $employeeId);
         $this->db->where("request_status", 'awaiting confirmation');
         $requestCount = $this->db->count_all_results('cl_shifts_request');
         //
@@ -1692,7 +1679,7 @@ class Shift_model extends CI_Model
     }
 
     //
-    public function getEmployeesOnLeave(array $leaveDate, int $companyId): array
+    public function getEmployeesOnLeaveOld(array $leaveDate, int $companyId): array
     {
         //
         $this->db
@@ -1706,6 +1693,61 @@ class Shift_model extends CI_Model
             ->result_array();
 
         return $records;
+    }
+
+    //
+    public function getEmployeesOnLeave(array $leaveDate, int $companyId): array
+    {
+        $employeesIds = [];
+        //
+        foreach ($leaveDate as $date) {
+            $this->db
+                ->select("employee_sid")
+                ->group_start()
+                ->where('timeoff_requests.request_from_date <=', $date)
+                ->where('timeoff_requests.request_to_date >=', $date)
+                ->group_end()
+                ->where("status", 'approved')
+                ->where("company_sid", $companyId);
+            //
+            $records = $this->db
+                ->get("timeoff_requests")
+                ->result_array();
+
+            //
+            foreach ($records as $row) {
+                if (!in_array($row['employee_sid'], $employeesIds)) {
+                    array_push($employeesIds, $row['employee_sid']);
+                }
+            }
+        }
+        //
+        return $employeesIds;
+    }
+
+    public function getEmployeesWithShifts(array $leaveDate, int $companyId): array
+    {
+        $employeesIds = [];
+        //
+        foreach ($leaveDate as $date) {
+            $this->db
+                ->select("employee_sid")
+                ->where("is_published", 1)
+                ->where("shift_date", $date);
+            //
+            $records = $this->db
+                ->get("cl_shifts")
+                ->result_array();
+
+            //
+            foreach ($records as $row) {
+                if (!in_array($row['employee_sid'], $employeesIds)) {
+                    array_push($employeesIds, $row['employee_sid']);
+                }
+            }
+        }
+        //
+        return $employeesIds;
     }
 
     //
@@ -1761,13 +1803,18 @@ class Shift_model extends CI_Model
         //
         if (!empty($records)) {
             foreach ($records as $key => $row) {
-                $records[$key]['from_employee'] = getUserNameBySID($row['from_employee_sid']);
-                $records[$key]['to_employee'] = getUserNameBySID($row['to_employee_sid']);
-                $records[$key]['created_at'] = $row['created_at'] != '' ? date_with_time($row['created_at']) : ' - ';
-                $records[$key]['shift_date'] = $row['shift_date'] != '' ? date_with_time($row['shift_date']) : ' - ';
-                $records[$key]['start_time'] = formatDateToDB($row["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($row["end_time"], "H:i:s", "h:i a");
-                $records[$key]['request_status'] = $row["request_status"] != '' ? ucwords($row["request_status"]) : ' - ';
-                $records[$key]['updated_at'] = $row['updated_at'] != '' ? date_with_time($row['updated_at']) : ' - ';
+                //
+                if ($row["request_status"] == "approved" || $row["request_status"] == "admin rejected" || $row["request_status"] == "confirmed") {
+                    $records[$key]['from_employee'] = getUserNameBySID($row['from_employee_sid']);
+                    $records[$key]['to_employee'] = getUserNameBySID($row['to_employee_sid']);
+                    $records[$key]['created_at'] = $row['created_at'] != '' ? date_with_time($row['created_at']) : ' - ';
+                    $records[$key]['shift_date'] = $row['shift_date'] != '' ? date_with_time($row['shift_date']) : ' - ';
+                    $records[$key]['start_time'] = formatDateToDB($row["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($row["end_time"], "H:i:s", "h:i a");
+                    $records[$key]['request_status'] = $row["request_status"] != '' ? ucwords($row["request_status"]) : ' - ';
+                    $records[$key]['updated_at'] = $row['updated_at'] != '' ? date_with_time($row['updated_at']) : ' - ';
+                } else {
+                    unset($records[$key]);
+                }
             }
         }
         //
@@ -1779,7 +1826,22 @@ class Shift_model extends CI_Model
     public function getSwapShiftsRequestById($shiftIds, $shiftStatus = '')
     {
         //
-        $this->db->select("cl_shifts.sid, cl_shifts.employee_sid, cl_shifts.shift_date, cl_shifts.start_time, cl_shifts.end_time,cl_shifts_request.request_status,cl_shifts_request.to_employee_sid,cl_shifts_request.created_at,,cl_shifts_request.from_employee_sid,cl_shifts_request.shift_sid,cl_shifts_request.updated_at,cl_shifts_request.updated_by,cl_shifts_request.admin_sid");
+        $this->db->select("
+            cl_shifts.sid, 
+            cl_shifts.employee_sid, 
+            cl_shifts.shift_date, 
+            cl_shifts.start_time, 
+            cl_shifts.end_time,
+            cl_shifts_request.request_status,
+            cl_shifts_request.to_employee_sid,
+            cl_shifts_request.created_at,
+            cl_shifts_request.company_sid,
+            cl_shifts_request.from_employee_sid
+            ,cl_shifts_request.shift_sid, 
+            cl_shifts_request.updated_at,
+            cl_shifts_request.updated_by,
+            cl_shifts_request.admin_sid
+        ");
         $this->db->where_in("cl_shifts_request.shift_sid", $shiftIds);
 
         if ($shiftStatus != '') {
@@ -1800,6 +1862,7 @@ class Shift_model extends CI_Model
                 $fromEmployeeData = getUserNameBySID($row['from_employee_sid'], false);
                 $toEmployeeData = getUserNameBySID($row['to_employee_sid'], false);
                 $updatedEmployeeData = getUserNameBySID($row['updated_by'], false);
+                $companyName = getCompanyNameBySid($row['company_sid']);
 
                 $records[$key]['from_employee'] = $fromEmployeeData[0]['first_name'] . ' ' . $fromEmployeeData[0]['last_name'];
                 $records[$key]['to_employee'] = $toEmployeeData[0]['first_name'] . ' ' . $toEmployeeData[0]['last_name'];
@@ -1811,6 +1874,8 @@ class Shift_model extends CI_Model
                 $records[$key]['from_employee_email'] = $fromEmployeeData[0]['email'];
                 $records[$key]['to_employee_email'] = $toEmployeeData[0]['email'];
                 $records[$key]['updated_by'] = $updatedEmployeeData[0]['first_name'] . ' ' . $updatedEmployeeData[0]['last_name'];
+                $records[$key]['companyName'] = $companyName;
+                $records[$key]['companyId'] = $row['company_sid'];
             }
         }
 

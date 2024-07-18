@@ -12666,6 +12666,33 @@ if (!function_exists('getCompanyAdminSid')) {
 }
 
 
+if (!function_exists('getCompanyAdminPlusList')) {
+    function getCompanyAdminPlusList($companyId)
+    {
+        $response = [];
+        //
+        $CI = &get_instance();
+        $CI->db->select('sid, first_name, last_name, email');
+        $CI->db->where('access_level', 'Admin');
+        $CI->db->group_start();
+        $CI->db->where('access_level_plus', 1);
+        $CI->db->or_where('pay_plan_flag', 1);
+        $CI->db->group_end();
+        $CI->db->where('terminated_status', 0);
+        $CI->db->where('parent_sid', $companyId);
+        $CI->db->where('archived', 0);
+        //
+        $admin_plus = $CI->db->get('users')->result_array();
+
+        if ($admin_plus) {
+            $response = $admin_plus; 
+        }
+
+        return $response;
+    }
+}
+
+
 
 // Accrual to text
 function getAccrualText($accrualOBJ, $isNewHire = false)

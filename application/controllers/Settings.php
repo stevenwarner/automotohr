@@ -5986,8 +5986,10 @@ class Settings extends Public_Controller
         $shiftsDate = array_column($shiftsData, 'shift_date');
 
         $employeesOnLeave = $this->shift_model->getEmployeesOnLeave($shiftsDate, $session["company_detail"]["sid"]);
+        $employeesWithShifts = $this->shift_model->getEmployeesWithShifts($shiftsDate, $session["company_detail"]["sid"]);
 
-        $data["employeesOnLeave"] = array_column($employeesOnLeave, 'employee_sid');
+        $data["employeesOnLeave"] = array_unique(array_merge($employeesOnLeave, $employeesWithShifts));
+        //
         $data["employees"] = $this->shift_model->getCompanyEmployeesForShiftSwap($session["company_detail"]["sid"], $session["employer_detail"]["sid"]);
 
         return SendResponse(200, [
@@ -6026,46 +6028,17 @@ class Settings extends Public_Controller
         $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_AWAITING_CONFIRMATION);
         $emailTemplateToEmployee = $emailTemplateFromEmployee;
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
-
-        $companyId = $session['company_detail']['sid'];
-
-        $company_data = get_company_data($companyId);
-
+        $company_data = $session['company_detail'];
+        //
         foreach ($requestsData as $requestRow) {
-
-
             //
-            $adminList = getActiveAdmin($companyId);
-
-            foreach ($adminList as $adminRow) {
-                $adminName = $adminRow['first_name'] . ' ' . $adminRow['last_name'];
-                $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $adminName, true);
-
-                $from = $emailTemplateFromEmployee['from_email'];
-                $to = $adminRow['email'];
-                $subject = $emailTemplateFromEmployee['subject'];
-                $from_name = $emailTemplateFromEmployee['from_name'];
-                $body = EMAIL_HEADER
-                    . $emailTemplateBodyFromEmployee
-                    . EMAIL_FOOTER;
-
-                if ($_SERVER['SERVER_NAME'] != 'localhost') {
-
-                    sendMail($from, $to, $subject, $body, $from_name);
-                }
-                //
-                $emailData = array(
-                    'date' => date('Y-m-d H:i:s'),
-                    'subject' => $subject,
-                    'email' => $to,
-                    'message' => $body,
-                );
-                save_email_log_common($emailData);
-            }
-
+            $fromName = checkAndGetSession("employer_detail")['first_name'] . ' ' . checkAndGetSession("employer_detail")['first_name'];
             //
             if ($requestRow['to_employee_sid'] != '') {
-
+                //
+                $emailTemplateToEmployee['text'] = str_replace('{{to_employee_name}}', $requestRow['to_employee'], $emailTemplateToEmployee['text']);
+                $emailTemplateToEmployee['text'] = str_replace('{{from_employee_name}}', $requestRow['updated_by'], $emailTemplateToEmployee['text']);
+                //
                 $emailTemplateBodyToEmployee = $this->shiftSwapEmailTemplate($emailTemplateToEmployee['text'], $requestRow, $company_data, $requestRow['to_employee']);
 
                 $from = $emailTemplateToEmployee['from_email'];
@@ -6075,13 +6048,12 @@ class Settings extends Public_Controller
                 $body = EMAIL_HEADER
                     . $emailTemplateBodyToEmployee
                     . EMAIL_FOOTER;
-
+                //
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
-
                     sendMail($from, $to, $subject, $body, $from_name);
                 }
+                //
                 //saving email to logs
-
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
                     'subject' => $subject,
@@ -6094,7 +6066,7 @@ class Settings extends Public_Controller
 
 
         return SendResponse(200, [
-            "msg" => "You have successfully request to swap shift."
+            "msg" => "You have successfully sent a request to swap your shift."
         ]);
     }
 
@@ -6204,40 +6176,55 @@ class Settings extends Public_Controller
         $shiftStatus = $post['shiftstatus'];
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
-
         //
-
         $data_update_request = [];
-        $shiftIds = $shiftIds;
         $data_update_request['request_status'] = $shiftStatus;
         $data_update_request['updated_at'] = getSystemDate();
-
         $data_update_request['to_employee_sid'] = $loggedInEmployee['sid'];
-
+        //
         $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
-
+        //
         // send mail
-        $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_APPROVED_REJECTED);
-        $emailTemplateToEmployee = $emailTemplateFromEmployee;
+        //
+        if ($shiftStatus == 'rejected') {
+            $this->sendEmailToEmployee($shiftIds);
+            
+        } else if ($shiftStatus == 'confirmed') {
+            
+            $this->sendEmailToAdmin($shiftIds);
+        }
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully " . $shiftStatus . " Request."
+        ]);
+    }
+
+    function sendEmailToEmployee ($shiftIds) {
+        //
+        $companyDetail = checkAndGetSession("company_detail");
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
-        $company_data = get_company_data($companyId);
+        //
         foreach ($requestsData as $requestRow) {
-
-
+            //
+            $emailTemplate = get_email_template(SHIFTS_SWAP_EMPLOYEE_REJECTION);
+            //
             if ($requestRow['from_employee_sid'] != '') {
-
-                $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $requestRow['from_employee']);
-
-                $from = $emailTemplateFromEmployee['from_email'];
+                //
+                $emailTemplate['text'] = str_replace('{{company_name}}', $companyDetail['CompanyName'], $emailTemplate['text']);
+                $emailTemplate['text'] = str_replace('{{to_employee}}', $requestRow['to_employee'], $emailTemplate['text']);
+                $emailTemplate['text'] = str_replace('{{from_employee}}', $requestRow['from_employee'], $emailTemplate['text']);
+                //
+                $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplate['text'], $requestRow, $companyDetail, $requestRow['from_employee']);
+                //
+                $from = $emailTemplate['from_email'];
                 $to = $requestRow['from_employee_email'];
-                $subject = $emailTemplateFromEmployee['subject'];
-                $from_name = $emailTemplateFromEmployee['from_name'];
+                $subject = $emailTemplate['subject'];
+                $from_name = $emailTemplate['from_name'];
                 $body = EMAIL_HEADER
                     . $emailTemplateBodyFromEmployee
                     . EMAIL_FOOTER;
-
+                //
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
-
                     sendMail($from, $to, $subject, $body, $from_name);
                 }
                 //
@@ -6248,13 +6235,59 @@ class Settings extends Public_Controller
                     'message' => $body,
                 );
                 save_email_log_common($emailData);
+                //
             }
         }
+    }
 
-
-        return SendResponse(200, [
-            "msg" => "You have successfully " . $shiftStatus . " Request."
-        ]);
+    function sendEmailToAdmin ($shiftIds) {
+        //
+        $companyDetail = checkAndGetSession("company_detail");
+        $adminList = getCompanyAdminPlusList($companyDetail['sid']);
+        $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
+        //
+        if ($adminList) {
+            foreach ($adminList as $admin) {
+                $adminName = $admin['first_name'] . " " . $admin['last_name'];
+                //
+                foreach ($requestsData as $requestRow) {
+                    //
+                    $requestRow['admin_id'] = $admin['sid'];
+                    //
+                    $emailTemplate = get_email_template(SHIFTS_SWAP_ADMIN_APPROVAL);
+                    //
+                    if ($requestRow['from_employee_sid'] != '') {
+                        //
+                        $emailTemplate['text'] = str_replace('{{admin_name}}', $adminName, $emailTemplate['text']);
+                        $emailTemplate['text'] = str_replace('{{to_employee}}', $requestRow['to_employee'], $emailTemplate['text']);
+                        $emailTemplate['text'] = str_replace('{{from_employee}}', $requestRow['from_employee'], $emailTemplate['text']);
+                        //
+                        $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplate['text'], $requestRow, $requestRow['companyName'], $requestRow['from_employee'], true);
+                        //
+                        $from = $emailTemplate['from_email'];
+                        $to = $admin['email'];
+                        $subject = $emailTemplate['subject'];
+                        $from_name = $emailTemplate['from_name'];
+                        $body = EMAIL_HEADER
+                            . $emailTemplateBodyFromEmployee
+                            . EMAIL_FOOTER;
+                        //
+                        if ($_SERVER['SERVER_NAME'] != 'localhost') {
+                            sendMail($from, $to, $subject, $body, $from_name);
+                        }
+                        //
+                        $emailData = array(
+                            'date' => date('Y-m-d H:i:s'),
+                            'subject' => $subject,
+                            'email' => $to,
+                            'message' => $body,
+                        );
+                        save_email_log_common($emailData);
+                        //
+                    }
+                }
+            }
+        }    
     }
 
     /**
@@ -6292,18 +6325,19 @@ class Settings extends Public_Controller
             case "get_requests":
                 //
                 $data = $this->shift_model->getSwapShiftsRequest($post);
-
-
+                //
+                $this->res['requestsType'] = $post['type'];
+                //
                 $post['type'] = 'all';
-
+                //
                 $allData = $this->shift_model->getSwapShiftsRequest($post);
-
+                //
                 $allRequests = 0;
                 $pendingRequests = 0;
                 $approvedRequests = 0;
                 $rejectedRequests = 0;
                 foreach ($allData as $row) {
-                    if ($row['request_status'] == 'Awaiting Confirmation') {
+                    if ($row['request_status'] == 'Confirmed') {
                         $pendingRequests++;
                     } else if ($row['request_status'] == 'Approved') {
                         $approvedRequests++;
@@ -6312,14 +6346,12 @@ class Settings extends Public_Controller
                     }
                     $allRequests++;
                 }
-
-
+                //
                 $this->res['allRequests'] = $allRequests;
                 $this->res['pendingRequests'] = $pendingRequests;
                 $this->res['rejectedRequests'] = $rejectedRequests;
                 $this->res['approvedRequests'] = $approvedRequests;
-
-
+                // 
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;
@@ -6342,42 +6374,37 @@ class Settings extends Public_Controller
     //
     public function processTradeShiftsApprove()
     {
-
         //
         $session = $this->session->userdata('logged_in');
         $employeeId = $session['employer_detail']['sid'];
         $companyId = $session["company_detail"]["sid"];
-
+        //
         $post = $this->input->post(null, true);
         $shiftIds = explode(',', $post['shiftids']);
         $toEmployeeid = $post['toEmployeeId'];
-
-
+        //
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
         //
         $data_update_request = [];
-        $shiftIds = $shiftIds;
         $data_update_request['request_status'] = 'approved';
         $data_update_request['admin_sid'] = $employeeId;
-        $data_update_request['to_employee_sid'] = $toEmployeeid;
-
-
         $data_update_request['updated_at'] = getSystemDate();
-
+        //
         $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
-
+        //
         // send mail
-        $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_APPROVED_REJECTED);
+        $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_APPROVED);
         $emailTemplateToEmployee = $emailTemplateFromEmployee;
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds, 'approved');
-        $company_data = get_company_data($companyId);
+        $company_data = $session["company_detail"];
+        //
         foreach ($requestsData as $requestRow) {
-
+            //
             if ($requestRow['from_employee_sid'] != '') {
-
+                //
                 $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $requestRow['from_employee']);
-
+                //
                 $from = $emailTemplateFromEmployee['from_email'];
                 $to = $requestRow['from_employee_email'];
                 $subject = $emailTemplateFromEmployee['subject'];
@@ -6399,7 +6426,7 @@ class Settings extends Public_Controller
                 );
                 save_email_log_common($emailData);
             }
-
+            //
             if ($requestRow['to_employee_sid'] != '') {
 
                 $emailTemplateBodyToEmployee = $this->shiftSwapEmailTemplate($emailTemplateToEmployee['text'], $requestRow, $company_data, $requestRow['to_employee']);
@@ -6416,7 +6443,7 @@ class Settings extends Public_Controller
 
                     sendMail($from, $to, $subject, $body, $from_name);
                 }
-                //saving email to logs
+                //
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
                     'subject' => $subject,
@@ -6440,38 +6467,33 @@ class Settings extends Public_Controller
         //
         $session = $this->session->userdata('logged_in');
         $employeeId = $session['employer_detail']['sid'];
-
+        //
         $post = $this->input->post(null, true);
         $shiftIds = explode(',', $post['shiftids']);
-
         $toEmployeeid = $post['toEmployeeId'];
-
+        //
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
-
         //
         $data_update_request = [];
-        $shiftIds = $shiftIds;
         $data_update_request['request_status'] = 'admin rejected';
         $data_update_request['admin_sid'] = $employeeId;
-        $data_update_request['to_employee_sid'] = $toEmployeeid;
-
         $data_update_request['updated_at'] = getSystemDate();
-
-
+        //
         $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
-
+        //
         // send mail
-        $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_APPROVED_REJECTED);
+        $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_REJECTED);
         $emailTemplateToEmployee = $emailTemplateFromEmployee;
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
-        $company_data = get_company_data($companyId);
+        $company_data = $session["company_detail"];
+        //
         foreach ($requestsData as $key => $requestRow) {
 
             if ($requestRow['from_employee_sid'] != '') {
-
+                //
                 $emailTemplateBodyFromEmployee = $this->shiftSwapEmailTemplate($emailTemplateFromEmployee['text'], $requestRow, $company_data, $requestRow['from_employee']);
-
+                //
                 $from = $emailTemplateFromEmployee['from_email'];
                 $to = $requestRow['from_employee_email'];
                 $subject = $emailTemplateFromEmployee['subject'];
@@ -6523,7 +6545,7 @@ class Settings extends Public_Controller
 
 
         return SendResponse(200, [
-            "msg" => "You have successfully Rejected Request."
+            "msg" => "You have successfully rejected the swap shift request."
         ]);
     }
 
@@ -6533,20 +6555,25 @@ class Settings extends Public_Controller
         if (!$replacementArray) {
             return $emailTemplateBody;
         }
-        if ($isAdmin != true) {
-            $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/reject' . '" target="_blank">Reject</a>';
+        //
+        if ($isAdmin == true) {
+            $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['admin_id'] . '/admin_reject' . '" target="_blank">Reject</a>';
             //
-            $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/confirm' . '" target="_blank">Confirm</a>';
+            $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['admin_id'] . '/admin_approve' . '" target="_blank">Approve</a>';
+        } else {
+            $reject_shift = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/employee_reject' . '" target="_blank">Reject</a>';
+            //
+            $confirm_shift = '<a style="background-color: #fd7a2a; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'swap_shift_confirm/' . $replacementArray['shift_sid'] . '/' . $replacementArray['to_employee_sid'] . '/employee_approve' . '" target="_blank">Approve</a>';
         }
+        //
         $emailTemplateBody = str_replace('{{employee_name}}', $employeeName, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_date}}', $replacementArray['shift_date'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_time}}', $replacementArray['start_time'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_status}}', $replacementArray['request_status'], $emailTemplateBody);
-        $emailTemplateBody = str_replace('{{company_name}}', $company_data['company_name'], $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{company_name}}', $company_data['CompanyName'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{shift_status_by}}', $replacementArray['updated_by'], $emailTemplateBody);
-
         $emailTemplateBody = str_replace('{{reject_shift}}', $reject_shift, $emailTemplateBody);
-        $emailTemplateBody = str_replace('{{confirm_shift}}', $confirm_shift, $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{approve_shift}}', $confirm_shift, $emailTemplateBody);
 
         return $emailTemplateBody;
     }
@@ -6650,7 +6677,7 @@ class Settings extends Public_Controller
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
 
         $companyId = $session['company_detail']['sid'];
-        $company_data = get_company_data($companyId);
+        $company_data = $session['company_detail'];
 
         $shiftsArray = [];
         foreach ($requestsData as $requestRow) {

@@ -20,7 +20,7 @@
                                 <i class="fa fa-users" aria-hidden="true"></i>
                                 &nbsp;My Team Shifts
                             </a>
-                            <a href="<?= base_url("shifts/mytrade"); ?>" class="btn btn-orange">
+                            <a href="<?= base_url("shifts/myTrade"); ?>" class="btn btn-orange">
                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                 &nbsp;Shifts Swap Requests
                             </a>
@@ -118,15 +118,20 @@
                                                 ?>
                                                     <tr>
                                                         <td>
-                                                            <label class="control control--checkbox">
-                                                                <input type="checkbox" name="checkit[]" value="<?php echo $rowShift["sid"]; ?>" class="my_checkbox" data-status='<?php echo $rowShift["request_status"] ?>' <?php echo $disabled ?>>
-                                                                <div class="control__indicator"></div>
-                                                            </label>
+                                                            <?php if ($rowShift['shift_date'] > date('Y-m-d', strtotime('now'))) { ?>
+                                                                <label class="control control--checkbox">
+                                                                    <input type="checkbox" name="checkit[]" value="<?php echo $rowShift["sid"]; ?>" class="my_checkbox" data-status='<?php echo $rowShift["request_status"] ?>' <?php echo $disabled ?>>
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            <?php } ?>    
                                                         </td>
 
                                                         <td style="vertical-align: middle;">
+                                                            <?php echo $rowShift['shift_date']; ?><br>
                                                             <?php echo date_with_time($rowShift['shift_date']); ?><br>
                                                             <?php echo formatDateToDB($rowShift["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($rowShift["end_time"], "H:i:s", "h:i a"); ?>
+                                                            $video['video_start_date']
+                                                            <!-- <= date('Y-m-d', strtotime('now')) -->
                                                         </td>
                                                         <td style="vertical-align: middle;">
                                                             <?php echo $rowShift["request_status"] != '' ? ucwords($rowShift["request_status"]) : ' - '; ?> <br>
@@ -144,16 +149,17 @@
                                                         </td>
                                                         <td>
                                                             <div class="col-sm-12 text-right">
-
-                                                                <?php if ($rowShift["request_status"] != '' && $rowShift["request_status"] != 'approved' && $rowShift["request_status"] != 'cancelled') { ?>
-                                                                    <button class="btn btn-red jsCancelTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
-                                                                        Cancel
-                                                                    </button>
-                                                                <?php } ?>
-                                                                <?php if ($rowShift["request_status"] == '' || $rowShift["request_status"] == 'cancelled' || $rowShift["request_status"] == 'rejected') { ?>
-                                                                    <button class="btn btn-orange jsTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
-                                                                        Swap
-                                                                    </button>
+                                                                <?php if ($rowShift['shift_date'] > date('Y-m-d', strtotime('now'))) { ?>
+                                                                    <?php if ($rowShift["request_status"] == 'confirmed' || $rowShift["request_status"] == 'awaiting confirmation') { ?>
+                                                                        <button class="btn btn-red jsCancelTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
+                                                                            Cancel
+                                                                        </button>
+                                                                    <?php } ?>
+                                                                    <?php if ($rowShift["request_status"] == '' || $rowShift["request_status"] == 'cancelled' || $rowShift["request_status"] == 'rejected') { ?>
+                                                                        <button class="btn btn-orange jsTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
+                                                                            Swap
+                                                                        </button>
+                                                                    <?php } ?>
                                                                 <?php } ?>
                                                             </div>
                                                         </td>
