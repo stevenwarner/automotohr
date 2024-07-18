@@ -756,6 +756,15 @@
 
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
+                                                if (isset($isOnComplyNet["errors"])) {
+                                                    ?>
+                                                    <li>
+                                                        <label>ComplyNet Status:</label>
+                                                        <div class="hr-field-wrap">
+                                                            <?= implode("<br>", $isOnComplyNet["errors"]); ?>
+                                                        </div>
+                                                    </li>
+                                                <?php } else {
                                                 //
                                                 if (!empty($isOnComplyNet)) { ?>
                                                     <li>
@@ -765,7 +774,7 @@
                                                         </div>
                                                     </li>
                                                 <?php
-                                                }
+                                                }}
                                                 ?>
                                                 <li>
                                                     <?php echo form_label('', ''); ?>

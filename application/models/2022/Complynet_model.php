@@ -2339,4 +2339,155 @@ class Complynet_model extends CI_Model
         $this->db->where('complynet_department_sid', $departmentId);
         $this->db->delete('complynet_jobRole');
     }
+
+
+    /**
+     * check employee department
+     * and team, and job role in
+     * destination company
+     *
+     * @param array $passArray
+     */
+    public function checkAndTransferEmployee(array $passArray)
+    {
+        // check the source company employee
+        if (
+            !$this
+                ->db
+                ->where('employee_sid', $passArray['oldEmployeeId'])
+                ->count_all_results('complynet_employees')
+        ) {
+            return false;
+        }
+        // check the destination company as well
+        if (!isCompanyOnComplyNet($passArray["newCompanyId"])) {
+            return false;
+        }
+        // check the destination company employee
+        if (
+            $this
+            ->db
+            ->where('employee_sid', $passArray['newEmployeeId'])
+            ->count_all_results('complynet_employees')
+        ) {
+            return false;
+        }
+        // add as new transfer
+        return $this->checkAndMarkEmployeeAsTransferLater($passArray);
+    }
+
+    /**
+     * check employee is on
+     * complynet is source company
+     *
+     * @param array $passArray
+     * @param bool  $forceMark Optional
+     * default true
+     * @return bool
+     */
+    public function checkAndMarkEmployeeAsTransferLater(
+        array $passArray,
+        bool $forceMark = true
+    ) {
+        // check the destination company as well
+        if (!isCompanyOnComplyNet($passArray["newCompanyId"])) {
+            return false;
+        }
+        // check
+        if (
+            !$this
+                ->db
+                ->where('employee_sid', $passArray['oldEmployeeId'])
+                ->count_all_results('complynet_employees')
+        ) {
+            return false;
+        }
+        //
+        if ($forceMark) {
+            $this
+                ->db
+                ->where(
+                    "sid",
+                    $passArray["newEmployeeId"]
+                )
+                ->update(
+                    "users",
+                    [
+                        "pending_complynet_update" => 1
+                    ]
+                );
+        }
+        //
+        return true;
+    }
+
+    /**
+     * check employee is on
+     * complynet is source company
+     *
+     * @param int $employeeId
+     * @param int $companyId
+     * @return bool
+     */
+    public function checkAndStartTransferEmployeeProcess(
+        int $employeeId,
+        int $companyId
+    ) {
+        // check the company
+        if (!isCompanyOnComplyNet($companyId)) {
+            return false;
+        }
+        // check
+        if (
+            !$this
+                ->db
+                ->where('sid', $employeeId)
+                ->where('pending_complynet_update', 1)
+                ->count_all_results('users')
+        ) {
+            return false;
+        }
+        // get the merge history
+        $record = $this
+            ->db
+            ->select([
+                "from_company_sid",
+                "previous_employee_sid",
+            ])
+            ->where([
+                "to_company_sid" => $companyId,
+                "new_employee_sid" => $employeeId,
+            ])
+            ->get("employees_transfer_log")
+            ->row_array();
+        // something went wrong
+        // later add email notification
+        if (!$record) {
+            return false;
+        }
+        // make pass array
+        $passArray = [
+            'newCompanyId' => $companyId,
+            'newEmployeeId' => $employeeId,
+            'oldEmployeeId' => $record['previous_employee_sid'],
+            'oldCompanyId' => $record['from_company_sid']
+        ];
+        // make the transfer
+        $this->transferEmployeeToAnotherLocation($passArray);
+        // update the flag
+        $this
+            ->db
+            ->where(
+                "sid",
+                $passArray["newEmployeeId"]
+            )
+            ->update(
+                "users",
+                [
+                    "pending_complynet_update" => 0
+                ]
+            );
+        //
+        return true;
+    }
 }

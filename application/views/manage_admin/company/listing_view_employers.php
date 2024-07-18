@@ -219,12 +219,19 @@
                                                                                                                                         } ?>
                                                                             <?php
                                                                             $isOnComplyNet = getComplyNetEmployeeCheck($value, 1, 1, true);
-                                                                            //
-                                                                            if (!empty($isOnComplyNet)) {
-                                                                                echo '<b>ComplyNet Status: </b><br>' . $isOnComplyNet;
-                                                                            }
-                                                                            if (!in_array(getComplyNetEmployeeCheck($value, 1, 1, false), ['Not on ComplyNet', ''])) {
-                                                                                echo '<b>ComplyNet Link: </b><br><a href="' . (base_url('cn/redirect/' . ($value['sid']) . '')) . '" class="btn btn-success">Show Page</a><br />';
+
+                                                                            if (isset($isOnComplyNet["errors"])) {
+                                                                                echo "<b>ComplyNet: </b><br />";
+                                                                                echo implode("<br>", $isOnComplyNet["errors"]);
+
+                                                                            } else {
+                                                                                //
+                                                                                if (!empty($isOnComplyNet)) {
+                                                                                    echo '<b>ComplyNet Status: </b><br>' . $isOnComplyNet;
+                                                                                }
+                                                                                if (!in_array(getComplyNetEmployeeCheck($value, 1, 1, false), ['Not on ComplyNet', ''])) {
+                                                                                    echo '<b>ComplyNet Link: </b><br><a href="' . (base_url('cn/redirect/' . ($value['sid']) . '')) . '" class="btn btn-success">Show Page</a><br />';
+                                                                                }
                                                                             }
                                                                             ?>
                                                                         </td>

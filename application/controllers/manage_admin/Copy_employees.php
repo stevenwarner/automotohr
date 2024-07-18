@@ -314,10 +314,18 @@ class Copy_employees extends Admin_Controller
 
                     $this->transferEmployeeTimeOff($secondary_employee_sid, $primary_employee_sid, $from_company, $to_company, $managePolicies);
                 }
-                //
+                // load complynet model
                 $this->load->model('2022/Complynet_model', 'complynet_model');
-                //
-                $this->complynet_model->manageEmployee($passArray);
+                // check if department / team exists
+                // only then transfer the employee
+                // as in case of merge the profile
+                // could have the department/team
+                // or job title
+                $this
+                    ->complynet_model
+                    ->checkAndTransferEmployee(
+                        $passArray
+                    );
 
                 echo json_encode($resp);
             } else {
@@ -811,10 +819,15 @@ class Copy_employees extends Admin_Controller
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
-                //
+                // load complynet model
                 $this->load->model('2022/Complynet_model', 'complynet_model');
-                //
-                $this->complynet_model->manageEmployee($passArray);
+                // mark the employee as pending transfer
+                // only if the employee is on ComplyNet
+                $this
+                    ->complynet_model
+                    ->checkAndMarkEmployeeAsTransferLater(
+                        $passArray
+                    );
                 //
                 echo json_encode($resp);
             }
@@ -893,7 +906,7 @@ class Copy_employees extends Admin_Controller
                     $list[] = $destinationEmployeeId;
                     $list = array_unique($list);
                     $list = implode(',', $list);
-            
+
                     // update the list
                     $this->db
                         ->where('sid', $newPolicyId)
@@ -901,7 +914,7 @@ class Copy_employees extends Admin_Controller
                             'assigned_employees' => $list
                         ]);
                     //
-                    $isAddedHistory = "yes";    
+                    $isAddedHistory = "yes";
                 }
             } else if ($policyDetails['is_entitled_employee'] == 0) {
                 if ($policyDetails['assigned_employees'] == 0 || $policyDetails['assigned_employees'] == 'all') {
@@ -912,7 +925,7 @@ class Copy_employees extends Admin_Controller
                             'assigned_employees' => $destinationEmployeeId,
                         ]);
                     //
-                    $isAddedHistory = "yes";      
+                    $isAddedHistory = "yes";
                 }
             }
             // 

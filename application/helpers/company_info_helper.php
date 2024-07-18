@@ -159,7 +159,6 @@ if (!function_exists('get_form_view')) {
 
             if ($assign_on >= $compare_date_2024) {
                 $view = $CI->load->view('form_w4/form_w4_2024_pdf', $form_values, TRUE);
-
             } else {
                 $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
             }
@@ -2950,7 +2949,7 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
      * @param int $payPlanPlus
      * @param int $accessLevelPlus
      * @param bool $showButton Optional
-     * @return string
+     * @return string|array
      */
     function getComplyNetEmployeeCheck(
         array $employee,
@@ -2963,6 +2962,18 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
         }
         //
         $CI = &get_instance();
+        // check for pending transfer
+        if (
+            $CI
+            ->db
+            ->where([
+                "sid" => $employee["sid"],
+                "pending_complynet_update" => 1
+            ])
+            ->count_all_results("users")
+        ) {
+            return ["errors" => ["Please assign a department/team/job title to employee to complete the transfer on ComplyNet."]];
+        }
         //
         if ($CI->db->where('employee_sid', $employee['sid'])->count_all_results('complynet_employees')) {
             return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';

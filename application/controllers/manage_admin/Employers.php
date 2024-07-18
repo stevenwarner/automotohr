@@ -500,11 +500,17 @@ class employers extends Admin_Controller
             //
             $teamId = $this->input->post('teamId');
             handleEmployeeDepartmentAndTeam($sid, $teamId);
-
+            //
+            $this->load->model('2022/complynet_model', 'complynet_model');
+            // check if employee is ready for transfer
+            $this
+                ->complynet_model
+                ->checkAndStartTransferEmployeeProcess(
+                    $sid,
+                    $oldData["parent_sid"]
+                );
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
-                //
-                $this->load->model('2022/complynet_model', 'complynet_model');
                 //
                 $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
                     'first_name' => $oldData['first_name'],
@@ -1333,11 +1339,11 @@ class employers extends Admin_Controller
                         // Delete inserted record because gusto error
                         $this->company_model->deleteEmployeeStatus($rowId);
                         //
-                        $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                        $this->session->set_flashdata('message', '<b>Error:</b> ' . $response['errors'][0]['message'] . '!');
                         redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
                     }
                 }
-            }    
+            }
 
             if ($status == 9) {
                 $data_transfer_log_update['to_company_sid'] = $company_detail[0]['sid'];
@@ -1497,7 +1503,7 @@ class employers extends Admin_Controller
                         );
                         //
                         if (isset($response['errors'])) {
-                            $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                            $this->session->set_flashdata('message', '<b>Error:</b> ' . $response['errors'][0]['message'] . '!');
                             redirect(base_url('manage_admin/employers/EmployeeStatusDetail/' . $sid), 'refresh');
                         }
                     }
