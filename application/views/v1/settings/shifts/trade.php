@@ -130,8 +130,6 @@
                                                             <?php echo $rowShift['shift_date']; ?><br>
                                                             <?php echo date_with_time($rowShift['shift_date']); ?><br>
                                                             <?php echo formatDateToDB($rowShift["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($rowShift["end_time"], "H:i:s", "h:i a"); ?>
-                                                            $video['video_start_date']
-                                                            <!-- <= date('Y-m-d', strtotime('now')) -->
                                                         </td>
                                                         <td style="vertical-align: middle;">
                                                             <?php echo $rowShift["request_status"] != '' ? ucwords($rowShift["request_status"]) : ' - '; ?> <br>
