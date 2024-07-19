@@ -1823,7 +1823,7 @@ class Shift_model extends CI_Model
 
 
     //
-    public function getSwapShiftsRequestById($shiftIds, $shiftStatus = '')
+    public function getSwapShiftsRequestById($shiftIds, $shiftStatus = '', $toEmployeeId = 0)
     {
         //
         $this->db->select("
@@ -1836,8 +1836,8 @@ class Shift_model extends CI_Model
             cl_shifts_request.to_employee_sid,
             cl_shifts_request.created_at,
             cl_shifts_request.company_sid,
-            cl_shifts_request.from_employee_sid
-            ,cl_shifts_request.shift_sid, 
+            cl_shifts_request.from_employee_sid,
+            cl_shifts_request.shift_sid, 
             cl_shifts_request.updated_at,
             cl_shifts_request.updated_by,
             cl_shifts_request.admin_sid
@@ -1846,6 +1846,10 @@ class Shift_model extends CI_Model
 
         if ($shiftStatus != '') {
             $this->db->where("cl_shifts_request.request_status", $shiftStatus);
+        }
+
+        if ($toEmployeeId > 0) {
+            $this->db->where("cl_shifts_request.to_employee_sid", $toEmployeeId);
         }
 
         $this->db->join(
@@ -1885,7 +1889,6 @@ class Shift_model extends CI_Model
     //
     public function updateShiftsTradeRequest($shiftId, $toEmployeeId, $data)
     {
-
         $requestData = $this->db
             ->select("
             request_type
@@ -1893,15 +1896,16 @@ class Shift_model extends CI_Model
             ->where("shift_sid", $shiftId)
             ->get("cl_shifts_request")
             ->row_array();
-
-
+        //
         $this->db
             ->where("shift_sid", $shiftId)
             ->where("to_employee_sid", $toEmployeeId)
             ->update("cl_shifts_request", $data);
-
-        if ($requestData['request_type'] == 'open') {
+        //
+        if ($data['request_status'] == 'confirmed' && $requestData['request_type'] == 'open') {
+            //
             $data['request_status'] = 'rejected';
+            //
             $this->db
                 ->where("shift_sid", $shiftId)
                 ->where("to_employee_sid!=", $toEmployeeId)

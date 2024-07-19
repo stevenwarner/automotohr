@@ -309,6 +309,7 @@ class Employee_shifts extends Public_Controller
         if ($action == 'admin_approve' || $action == 'admin_reject')  {
             //
             $shiftRecord = $this->shift_model->getSwapShiftsRequestById($shiftId, 'confirmed');
+            // _e($shiftRecord,true,true);
             //
             if (empty($shiftRecord)) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Shift Request is not available !');
@@ -326,7 +327,7 @@ class Employee_shifts extends Public_Controller
                     $templateId = SHIFTS_SWAP_ADMIN_REJECTED;
                 }    
                 //
-                $this->shift_model->updateShiftsTradeRequest($shiftId, $toEmployeeId, $data);
+                $this->shift_model->updateShiftsTradeRequest($shiftId, $shiftRecord[0]['to_employee_sid'], $data);
                 //
                 // send mail
                 $emailTemplateFromEmployee = get_email_template($templateId);
@@ -394,7 +395,7 @@ class Employee_shifts extends Public_Controller
 
         if ($action == 'employee_approve' || $action == 'employee_reject')  {
             //
-            $shiftRecord = $this->shift_model->getSwapShiftsRequestById($shiftId, 'awaiting confirmation');
+            $shiftRecord = $this->shift_model->getSwapShiftsRequestById($shiftId, 'awaiting confirmation', $toEmployeeId);
             //
             if (empty($shiftRecord)) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Shift Request is not available !');
@@ -405,11 +406,11 @@ class Employee_shifts extends Public_Controller
                 if ($action == 'employee_approve') {
                     $data['request_status'] = 'confirmed';
                     $message = 'Swap shift request is approved successfully!';
-                    $this->sendEmailToAdmin($shiftId);
+                    $this->sendEmailToAdmin($shiftId, $toEmployeeId);
                 }   else {
                     $data['request_status'] = 'rejected';
                     $message = 'Swap shift request is rejected successfully!';
-                    $this->sendEmailToEmployee($shiftId);
+                    $this->sendEmailToEmployee($shiftId, $toEmployeeId);
                 }    
                 //
                 $this->shift_model->updateShiftsTradeRequest($shiftId, $toEmployeeId, $data);
@@ -477,9 +478,9 @@ class Employee_shifts extends Public_Controller
         return $emailTemplateBody;
     }
 
-    function sendEmailToEmployee ($shiftId) {
+    function sendEmailToEmployee ($shiftId, $toEmployeeId) {
         //
-        $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftId);
+        $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftId, '', $toEmployeeId);
         //
         foreach ($requestsData as $requestRow) {
             //
@@ -516,11 +517,11 @@ class Employee_shifts extends Public_Controller
         }
     }
 
-    function sendEmailToAdmin ($shiftId) {
+    function sendEmailToAdmin ($shiftId, $toEmployeeId) {
         //
-        $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftId);
+        $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftId, '',$toEmployeeId);
         $adminList = getCompanyAdminPlusList($requestsData[0]['companyId']);
-        //
+        //,
         if ($adminList) {
             foreach ($adminList as $admin) {
                 $adminName = $admin['first_name'] . " " . $admin['last_name'];
