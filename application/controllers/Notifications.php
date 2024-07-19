@@ -151,7 +151,7 @@ class Notifications extends Public_Controller
             if ($awaitingShiftsRequests > 0) {
                 $data[] = [
                     'count' => $awaitingShiftsRequests,
-                    'link' => 'shifts/myTrade',
+                    'link' => base_url('shifts/myTrade'),
                     'title' => 'Shifts Swap Requests'
                 ];
             }
@@ -162,7 +162,7 @@ class Notifications extends Public_Controller
                 if ($awaitingShiftsApprovals > 0) {
                     $data[] = [
                         'count' => $awaitingShiftsApprovals,
-                        'link' => 'settings/shifts/trade',
+                        'link' => base_url('settings/shifts/trade'),
                         'title' => 'Shifts Swap Approvals'
                     ];
                 }
