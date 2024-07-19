@@ -2270,8 +2270,8 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
 
 //
-$route["settings/shifts/singleshift/public-status"]["post"] = "Settings/processSingleShiftPublicStatus";
-$route["settings/shifts/multishift/public-status"]["post"] = "Settings/processMultiShiftPublicStatus";
+$route["settings/shifts/singleshift/public-status"]["post"] = "Settings/processSingleShiftPublishStatus";
+$route["settings/shifts/multishift/public-status"]["post"] = "Settings/processMultiShiftPublishStatus";
 
 
 /**

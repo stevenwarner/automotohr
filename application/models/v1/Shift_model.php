@@ -1350,7 +1350,7 @@ class Shift_model extends CI_Model
     {
 
         $shiftId = $post['shiftId'];
-        $data['is_published'] = $post['publichStatus'];
+        $data['is_published'] = $post['publishStatus'];
 
         $this->db->where('company_sid',  $companyId);
         $this->db->where('sid',  $shiftId);
@@ -1363,7 +1363,7 @@ class Shift_model extends CI_Model
     {
 
         $shiftIds = explode(',', $post['shiftIds']);
-        $data['is_published'] = $post['publichStatus'];
+        $data['is_published'] = $post['publishStatus'];
 
         $this->db->where('company_sid',  $companyId);
         $this->db->where_in('sid',  $shiftIds);
@@ -1901,6 +1901,13 @@ class Shift_model extends CI_Model
             ->where("shift_sid", $shiftId)
             ->where("to_employee_sid", $toEmployeeId)
             ->update("cl_shifts_request", $data);
+        //
+        if ($data['request_status'] == 'approved') {
+            $dataShift['employee_sid'] = $toEmployeeId;
+            $this->db
+                ->where("sid", $shiftId)
+                ->update("cl_shifts", $dataShift);
+        }    
         //
         if ($data['request_status'] == 'confirmed' && $requestData['request_type'] == 'open') {
             //

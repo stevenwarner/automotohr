@@ -1320,7 +1320,7 @@ $(function manageShifts() {
 
 					formObj.append("shiftId", publishUnpublishSingleShiftId);
 					formObj.append(
-						"publichStatus",
+						"publishStatus",
 						publishUnpublishSingleShiftStatus
 					);
 					formObj.append("sendEmail", sendEmail);
@@ -1412,7 +1412,7 @@ $(function manageShifts() {
 				const formObj = new FormData();
 
 				formObj.append("shiftIds", publishUnpublishSingleShiftId);
-				formObj.append("publichStatus", 1);
+				formObj.append("publishStatus", 1);
 				formObj.append("sendEmail", 0);
 				//
 				processCallWithoutContentType(
@@ -1484,7 +1484,7 @@ $(function manageShifts() {
 				const formObj = new FormData();
 
 				formObj.append("shiftIds", publishUnpublishSingleShiftId);
-				formObj.append("publichStatus", 1);
+				formObj.append("publishStatus", 1);
 				formObj.append("sendEmail", 1);
 				formObj.append("sendShiftsEmailOption", sendShiftsEmailOption);
 				formObj.append("allShiftsId", allShiftsId);
@@ -1594,7 +1594,7 @@ $(function manageShifts() {
 		const formObj = new FormData();
 
 		formObj.append("shiftId", publishUnpublishSingleShiftId);
-		formObj.append("publichStatus", publishUnpublishSingleShiftStatus);
+		formObj.append("publishStatus", publishUnpublishSingleShiftStatus);
 		formObj.append("sendEmail", sendEmail);
 		//
 		processCallWithoutContentType(
@@ -1614,7 +1614,7 @@ $(function manageShifts() {
 		const formObj = new FormData();
 
 		formObj.append("shiftId", shiftId);
-		formObj.append("publichStatus", 0);
+		formObj.append("publishStatus", 0);
 		formObj.append("sendEmail", 1);
 		//
 		processCallWithoutContentType(

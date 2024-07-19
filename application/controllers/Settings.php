@@ -4157,6 +4157,7 @@ class Settings extends Public_Controller
             $data["filter"],
             $employeeIds
         );
+        //
         // load time off model
         $this->load->model("timeoff_model", "timeoff_model");
         // get the leaves
@@ -5689,7 +5690,7 @@ class Settings extends Public_Controller
     }
 
     //
-    public function processSingleShiftPublicStatus()
+    public function processSingleShiftPublishStatus()
     {
         // check and generate error for session
         $session = checkAndGetSession();
@@ -5730,7 +5731,7 @@ class Settings extends Public_Controller
             );
         }
 
-        $msg = $post['publichStatus'] == 1 ? " Published " : " Unpublished ";
+        $msg = $post['publishStatus'] == 1 ? " Published " : " Unpublished ";
 
         return SendResponse(
             200,
@@ -5741,7 +5742,7 @@ class Settings extends Public_Controller
     }
 
     //
-    public function processMultiShiftPublicStatus()
+    public function processMultiShiftPublishStatus()
     {
         // check and generate error for session
         $session = checkAndGetSession();
@@ -5770,7 +5771,7 @@ class Settings extends Public_Controller
 
 
             $shiftPublishStatus = '';
-            if ($post['publichStatus'] == 0) {
+            if ($post['publishStatus'] == 0) {
                 $shiftPublishStatus = 'Unpublished';
             } else {
                 $shiftPublishStatus = 'Published';
