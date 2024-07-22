@@ -197,6 +197,7 @@ $(function i9Form() {
 				.val()
 				.trim(),
 			section1_address: $('[name="section1_address"]').val().trim(),
+			section1_apt_number: $('[name="section1_apt_number"]').val().trim(),
 			section1_city_town: $('[name="section1_city_town"]').val().trim(),
 			section1_state: $(".section1_state option:selected").val(),
 			section1_zip_code: $('[name="section1_zip_code"]').val().trim(),

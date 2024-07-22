@@ -313,16 +313,16 @@
                             <div style="width: 100%;" class="border-bottom">
                                 <div style="display:inline-block;">
                                     <span><strong>(a)</strong> First name and middle initial</span>
-                                    <input class="plane-input" type="text" value="<?php echo !empty($pre_form['first_name']) ? $pre_form['first_name'] : '' ?> <?php echo !empty($pre_form['middle_name']) ? $pre_form['middle_name'] : '' ?>" readonly style="border: none; font-weight: bold; display: block;" />
+                                    <input class="plane-input" type="text" value="<?php echo !empty($pre_form['first_name']) ? $pre_form['first_name'] : '' ?> <?php echo !empty($pre_form['middle_name']) ? $pre_form['middle_name'] : '' ?>" readonly style="width: 100%; border: none; font-weight: bold; display: block;" />
                                 </div>
                                 <div style="width: 50%; float:right; border-left: 1px solid #000; padding-left: 5px;">
                                     <span>Last name</span>
-                                    <input class="plane-input" type="text" value="<?php echo !empty($pre_form['last_name']) ? $pre_form['last_name'] : '' ?>" readonly style="border: none; font-weight: bold; display: block;" />
+                                    <input class="plane-input" type="text" value="<?php echo !empty($pre_form['last_name']) ? $pre_form['last_name'] : '' ?>" readonly style="width: 100%; border: none; font-weight: bold; display: block;" />
                                 </div>
                             </div>
                             <div style="width: 100%;" class="border-bottom">
                                 <span>Address</span>
-                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['home_address']) ? $pre_form['home_address'] : '' ?>" readonly style="border: none; font-weight: bold; display: block;" />
+                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['home_address']) ? $pre_form['home_address'] : '' ?>" readonly style="width: 100%; border: none; font-weight: bold; display: block;" />
                             </div>
                             <div style="width: 100%;" class="border-bottom">
                                 <span>City or town, state, and ZIP code</span>
@@ -342,7 +342,7 @@
                         <td class="border-bottom" style="width: 22%;">
                             <div class="border-bottom">
                                 <strong><span>(b) Social security number</span></strong>
-                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['ss_number']) ? $pre_form['ss_number'] : '' ?>" readonly style="border: none; font-weight: bold; display: block;" />
+                                <input class="plane-input" type="text" value="<?php echo !empty($pre_form['ss_number']) ? $pre_form['ss_number'] : '' ?>" readonly style="width: 100%; border: none; font-weight: bold; display: block;" />
                             </div>
                             <div>
                                 <strong style="font-size: 8px;">▶ Does your name match the name on your social security card?</strong>
