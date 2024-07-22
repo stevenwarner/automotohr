@@ -316,6 +316,7 @@ class Copy_employees extends Admin_Controller
                 }
                 // load complynet model
                 $this->load->model('2022/Complynet_model', 'complynet_model');
+
                 // check if department / team exists
                 // only then transfer the employee
                 // as in case of merge the profile
@@ -326,6 +327,10 @@ class Copy_employees extends Admin_Controller
                     ->checkAndTransferEmployee(
                         $passArray
                     );
+
+                //
+             //   $this->complynet_model->manageEmployee($passArray);
+
 
                 echo json_encode($resp);
             } else {
@@ -821,6 +826,7 @@ class Copy_employees extends Admin_Controller
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';
                 // load complynet model
                 $this->load->model('2022/Complynet_model', 'complynet_model');
+
                 // mark the employee as pending transfer
                 // only if the employee is on ComplyNet
                 $this
@@ -828,6 +834,10 @@ class Copy_employees extends Admin_Controller
                     ->checkAndMarkEmployeeAsTransferLater(
                         $passArray
                     );
+
+                //
+            //    $this->complynet_model->manageEmployee($passArray);
+
                 //
                 echo json_encode($resp);
             }
