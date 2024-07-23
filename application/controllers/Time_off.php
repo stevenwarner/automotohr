@@ -3917,6 +3917,7 @@ class Time_off extends Public_Controller
                     $post['fromDate'] = DateTime::createfromformat('m/d/Y', $post['fromDate'])->format('Y-m-d');
                 }
                 //
+               
                 $policies = $this->timeoff_model->getEmployeePoliciesByDate(
                     $post['companyId'],
                     $post['employeeId'],
@@ -7676,7 +7677,14 @@ class Time_off extends Public_Controller
                 }
                 //
 
-                $joiningDate = get_employee_latest_joined_date($row["registration_date"], $row["joined_at"], "", false);
+
+                if ($row['employee_type'] == 'fulltime') {
+
+                    $joiningDate = $employee['employment_date'];
+                } else {
+                    $joiningDate = get_employee_latest_joined_date($row["registration_date"], $row["joined_at"], "", false);
+                }
+
                 //
                 if (empty($joiningDate)) {
                     $joiningDate = 'N/A';

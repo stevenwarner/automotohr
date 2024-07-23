@@ -1957,6 +1957,8 @@ class Timeoff_model extends CI_Model
             employee_type,
              terminated_status,
             active,
+            employment_date
+
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -1982,8 +1984,13 @@ class Timeoff_model extends CI_Model
         $balances = $this->getBalances($companyId);
         //
         $r = [];
-        //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        // fulltime
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
         //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
@@ -2102,7 +2109,8 @@ class Timeoff_model extends CI_Model
             user_shift_hours,
             user_shift_minutes,
             employee_status,
-            employee_type
+            employee_type,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -2126,7 +2134,14 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
+
         //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
@@ -2937,7 +2952,8 @@ class Timeoff_model extends CI_Model
             user_shift_hours,
             user_shift_minutes,
             employee_status,
-            employee_type
+            employee_type,
+            employment_date
         ')
             ->where('parent_sid', $companyId)
             ->where('sid', $employeeId)
@@ -2958,8 +2974,15 @@ class Timeoff_model extends CI_Model
         $policies = $this->getCompanyPoliciesWithAccruals($companyId, true, $policyIds);
         $balances = $this->getBalances($companyId);
 
-        //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
+
+
         //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
@@ -3651,7 +3674,8 @@ class Timeoff_model extends CI_Model
             is_executive_admin,
             employee_type,
             terminated_status,
-            active
+            active,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -3682,7 +3706,14 @@ class Timeoff_model extends CI_Model
         $balances = $this->getBalances($companyId);
         // Fetch employee policies
         //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
+
         //
         $balance =
             $this->getBalanceOfEmployee(
@@ -4180,7 +4211,8 @@ class Timeoff_model extends CI_Model
             user_shift_hours,
             user_shift_minutes,
             employee_status,
-            employee_type
+            employee_type,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -4204,7 +4236,14 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
+
         //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
@@ -5029,7 +5068,8 @@ class Timeoff_model extends CI_Model
             registration_date,
             rehire_date,
             employee_status,
-            employee_type
+            employee_type,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -5053,7 +5093,14 @@ class Timeoff_model extends CI_Model
         //
         $r = [];
         //
-        $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+
+        if ($employee['employee_type'] == 'fulltime') {
+
+            $JoinedDate = $employee['employment_date'];
+        } else {
+            $JoinedDate = get_employee_latest_joined_date($employee['registration_date'], $employee['joined_at'], $employee['rehire_date']);
+        }
+
         //
         $employeeId = $employee['userId'];
         $employementStatus = $employee['employee_status'];
@@ -6152,6 +6199,9 @@ class Timeoff_model extends CI_Model
         u.rehire_date,
         u.active,
         u.terminated_status,
+        u.employment_date,
+        u.employee_type
+
     ')
             ->from('timeoff_requests tr')
             ->join('timeoff_policies tp', 'tp.sid = tr.timeoff_policy_sid')
@@ -6352,7 +6402,9 @@ class Timeoff_model extends CI_Model
                  profile_picture as img,
                  employee_number,
                  registration_date,
-                 rehire_date
+                 rehire_date,
+                 employment_date,
+                 employee_type
              ')
                 ->from('users')
                 ->where('sid', $v['employee_sid'])
@@ -6375,7 +6427,15 @@ class Timeoff_model extends CI_Model
             $b[$k]['employee_number'] = $a->row_array()['employee_number'];
 
             //
-            $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
+
+            if ($a->row_array()["employee_type"] == 'fulltime') {
+
+                $joiningDate = $a->row_array()["employment_date"];
+            } else {
+                $joiningDate = get_employee_latest_joined_date($a->row_array()["registration_date"], $a->row_array()["joined_at"], "", false);
+            }
+
+
             //
             if (!empty($joiningDate)) {
                 $b[$k]['joining_date'] = $joiningDate;
@@ -6564,6 +6624,7 @@ class Timeoff_model extends CI_Model
             employee_status,
             employee_type, terminated_status,
             active,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $post['companyId'])
@@ -6617,7 +6678,16 @@ class Timeoff_model extends CI_Model
                 ];
             } else {
                 //
-                $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+
+                if ($v['employee_type'] == 'fulltime') {
+
+                    $JoinedDate = $v['employment_date'];
+                } else {
+                    $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+                }
+
+
+
                 //
                 // Fetch employee policies
                 $r['Balances'][] =
@@ -6768,7 +6838,8 @@ class Timeoff_model extends CI_Model
             registration_date,
             rehire_date,
             employee_status,
-            employee_type
+            employee_type,
+            employment_date
         ')
             ->order_by('first_name', 'ASC')
             ->where('parent_sid', $companyId)
@@ -6793,7 +6864,15 @@ class Timeoff_model extends CI_Model
                 $v['rehire_date']
             );
             //
-            $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+
+            if ($v['employee_type'] == 'fulltime') {
+
+                $JoinedDate = $v['employment_date'];
+            } else {
+                $JoinedDate = get_employee_latest_joined_date($v['registration_date'], $v['joined_at'], $v['rehire_date']);
+            }
+
+
             //
             $employeeTimeoffInfo =
                 $this->getBalanceOfEmployee(
@@ -7621,7 +7700,7 @@ class Timeoff_model extends CI_Model
                 }
                 //
                 // $requestDate = DateTime::createfromformat('m-d-Y', $v1["date"])->format('Y-m-d');
-                $requestDate = checkAndFixDateFormat($v1["date"],'Y-m-d');
+                $requestDate = checkAndFixDateFormat($v1["date"], 'Y-m-d');
                 //
                 if ($requestDate >= $startDate && $requestDate <= $endDate) {
                     //
