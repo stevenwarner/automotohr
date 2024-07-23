@@ -2441,4 +2441,51 @@
         //
         return $records_arr;
     }
+
+
+
+    //
+
+    public function setEmploymentData($sid = '', $changeFrom = '', $employerSid = 0)
+    {
+
+        //
+        $this->db->select("sid,registration_date,joined_at,rehire_date,employment_date");
+        $this->db->where('sid', $sid);
+        $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
+        $this->db->where('employee_type', 'fulltime');
+        $this->db->where('employment_date', null);
+        $this->db->where('is_executive_admin', 0);
+
+        $employeeRow = $this->db->get("users")->row_array();
+
+        if (!empty($employeeRow)) {
+
+            $latestDate = get_employee_latest_joined_date(
+                $employeeRow['registration_date'],
+                $employeeRow['joined_at'],
+                $employeeRow['rehire_date'],
+                false
+            );
+
+            // Update User Employment Date
+            $this->db->where("sid", $employeeRow["sid"])
+                ->update("users", [
+                    "employment_date" => $latestDate
+                ]);
+
+            //Save Histroy
+            $historyArray['employment_date'] = array('old' => $employeeRow['employment_date'], 'new' => $latestDate);
+
+            $insertHistory['user_sid'] = $employeeRow['sid'];
+            $insertHistory['employer_sid'] = $employerSid;
+            $insertHistory['history_type'] = 'profile';
+            $insertHistory['created_at'] = getSystemDate();
+            $insertHistory['change_from'] = $changeFrom;
+            $insertHistory['profile_data'] = json_encode($historyArray);
+
+            $this->db->insert('profile_history', $insertHistory);
+        }
+    }
 }

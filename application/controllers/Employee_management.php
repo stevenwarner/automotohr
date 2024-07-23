@@ -1203,6 +1203,11 @@ class Employee_management extends Public_Controller
                 $data['main_employer_id'] = $security_sid;
                 // synced the details
                 $this->employee_model->syncEmployeeDetailsToProfile($employer_id);
+
+
+                // Set Employment Date
+                $this->employee_model->setEmploymentData($employer_id, 'profile', $security_sid);
+
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
                 //
                 if (!empty($data['employer']['full_employment_application'])) {
@@ -1236,8 +1241,8 @@ class Employee_management extends Public_Controller
                 );
 
                 $data['departmentTeamInfo'] = $this
-                ->employee_model
-                ->getEmployeeDepartmentAndTeam($data['employer']['sid']);
+                    ->employee_model
+                    ->getEmployeeDepartmentAndTeam($data['employer']['sid']);
                 if (empty($data['employer'])) { // Employer does not exists - throw error
                     $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
                     redirect('employee_management', 'refresh');
@@ -1516,6 +1521,8 @@ class Employee_management extends Public_Controller
                     $data['PageScripts'] = [
                         ['1.0.2', '2022/js/employee_profile/main']
                     ];
+
+
                     //
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
@@ -1858,6 +1865,13 @@ class Employee_management extends Public_Controller
                         $data_to_insert,
                         $sid
                     );
+
+                    //
+                    if ($this->input->post('employment_date')) {
+                        $data_to_insert['employment_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('employment_date', true))->format('Y-m-d');
+                    }
+
+
 
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
@@ -3970,6 +3984,11 @@ class Employee_management extends Public_Controller
             $newCompareData['union_name'] = '';
         }
 
+
+        $newCompareData['employment_date'] = $dataToInsert['employment_date'];
+
+
+
         // Old Data
         $oldCompareData = [];
         $oldCompareData['first_name'] = $employeeDetail['first_name'];
@@ -4018,6 +4037,7 @@ class Employee_management extends Public_Controller
         $oldCompareData['union_member'] = $employeeDetail['union_member'];
         $oldCompareData['union_name'] = $employeeDetail['union_name'];
 
+        $oldCompareData['employment_date'] = $employeeDetail['employment_date'];
 
 
         //

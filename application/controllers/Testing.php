@@ -617,16 +617,17 @@ class Testing extends CI_Controller
         return urlencode($fileName);
     }
 
-    public function addNewEmployeesIntoCompany ($companyId) {
+    public function addNewEmployeesIntoCompany($companyId)
+    {
         // Load the fake employee library
         $this->load->library('fake_employees/Fake_employees', null, 'fakeEmployees');
         //
-        $employees = 
+        $employees =
             $this
             ->fakeEmployees
             ->init(5);
         //
-        foreach($employees as $employee){
+        foreach ($employees as $employee) {
             $employee['parent_sid'] = $companyId;
             $employee['active'] = 1;
             //
@@ -634,5 +635,60 @@ class Testing extends CI_Controller
         }
         //
         _e("employee add successfully");
-    } 
+    }
+
+
+
+
+
+
+    public function getEmploymentData($sid = '', $changeFrom = '', $employerSid = 0)
+    {
+
+        //
+        $this->db->select("sid,registration_date,joined_at,rehire_date,employment_date");
+        if ($sid != '') {
+            $this->db->where('sid', $sid);
+        }
+        $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
+        $this->db->where('employee_type', 'fulltime');
+        $this->db->where('employment_date', null);
+        $this->db->where('is_executive_admin', 0);
+        $employees = $this->db->get("users")->result_array();
+
+        if (!empty($employees)) {
+            foreach ($employees as $employeeRow) {
+
+                $latestDate = get_employee_latest_joined_date(
+                    $employeeRow['registration_date'],
+                    $employeeRow['joined_at'],
+                    $employeeRow['rehire_date'],
+                    false
+                );
+
+                // Update User Employment Date
+                $this->db->where("sid", $employeeRow["sid"])
+                    ->update("users", [
+                        "employment_date" => $latestDate
+                    ]);
+
+
+                //Save Histroy
+                $historyArray['employment_date'] = array('old' => $employeeRow['employment_date'], 'new' => $latestDate);
+
+                $insertHistory['user_sid'] = $employeeRow['sid'];
+                $insertHistory['employer_sid'] = $employerSid;
+                $insertHistory['history_type'] = 'profile';
+                $insertHistory['created_at'] = getSystemDate();
+                $insertHistory['change_from'] = $changeFrom;
+                $insertHistory['profile_data'] = json_encode($historyArray);
+
+                $this->db->insert('profile_history', $insertHistory);
+            }
+        }
+
+
+        echo "All Done";
+    }
 }

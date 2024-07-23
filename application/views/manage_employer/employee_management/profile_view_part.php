@@ -193,7 +193,24 @@
                 <?= GetVal($rehireDate); ?>
             </p>
         </div>
+
         <div class="col-md-6 col-xs-12">
+            <label class="csF16">Employment Date</label>
+            <?php
+            $employmentDate = $employer['employment_date'] != NULL && $employer['employment_date'] != '0000-00-00' ? date_with_time($employer['employment_date']) : '';
+            ?>
+            <p class="dummy-invoice-fields">
+                <?= GetVal($employmentDate); ?>
+            </p>
+        </div>
+       
+
+
+    </div <!-- -->
+    <br>
+
+    <div class="row">
+    <div class="col-md-6 col-xs-12">
             <label class="csF16">Linkedin Profile URL</label>
             <?php if (isset($employer["linkedin_profile_url"])) { ?>
                 <p class="dummy-invoice-fields"><a href="<?= $employer["linkedin_profile_url"]; ?>" target="_blank"><?= $employer["linkedin_profile_url"]; ?></a>
@@ -202,8 +219,9 @@
                 <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_PhoneNumber']); ?></p>
             <?php } ?>
         </div>
-    </div <!-- -->
+    </div>
     <br>
+
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Secondary Email</label>
