@@ -3728,12 +3728,32 @@ class Settings extends Public_Controller
             $ins['frequency'] = 'Twice per month';
             $ins['day_1'] = $post["day_1"];
             $ins['day_2'] = $post["day_2"];
-        } else if ($post["pay_frequency"] === "Monthly") {
+        } elseif ($post["pay_frequency"] === "Monthly") {
             $ins['day_1'] = $post["pay_day"];
         } else {
             $ins['day_1'] = null;
             $ins['day_2'] = null;
         }
+        // load the schedule model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Company_schedule_payroll_model",
+                "company_schedule_payroll_model"
+            );
+        // push it to Gusto
+        $response = $this
+            ->company_schedule_payroll_model
+            ->setCompanyDetails(
+                $loggedInCompany["sid"]
+            )
+            ->addCompanySchedule(
+                $ins
+            );
+        _e($response);
+
+        die;
+
         // get the company details
         $companyGustoDetails =  getCompanyDetailsForGusto($loggedInCompany["sid"]);
         //

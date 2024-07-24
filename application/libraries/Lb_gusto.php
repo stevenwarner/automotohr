@@ -841,6 +841,9 @@ class Lb_gusto
         // signatories
         $urls["signatories"] =
             "v1/companies/{$key}/signatories";
+        // company_onboarding_status
+        $urls["company_onboarding_status"] =
+            "v1/companies/{$key}/onboarding_status";
         // employee_form_pdf
         $urls["employee_form_pdf"] =
             "v1/employees/{$key1}/forms/{$key2}/pdf";
@@ -916,11 +919,12 @@ class Lb_gusto
         $urls["payroll_blockers"] =
             "v1/companies/{$key}/payrolls/blockers";
 
-
-
-        // Payrolls
+        // earning types
         $urls["earning_types"] =
             "v1/companies/{$key}/earning_types";
+        // company_pay_schedules
+        $urls["company_pay_schedules"] =
+            "v1/companies/{$key}/pay_schedules";
 
 
 

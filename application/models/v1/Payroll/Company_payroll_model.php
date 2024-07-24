@@ -269,9 +269,7 @@ class Company_payroll_model extends Base_payroll_model
      */
     public function syncGustoToStore()
     {
-        // sync the payroll blockers
-        $this->gustoToStorePayrollBlockers();
-        // // // add the missing gusto uuid
+        // // add the missing gusto uuid
         $this->gustoToCompanyAdmins();
         // // // // sync the address
         $this->gustoToStoreAddress();
@@ -293,6 +291,10 @@ class Company_payroll_model extends Base_payroll_model
         $this->gustoToStoreForms();
         // sync minimum wages
         $this->gustoToStoreMinimumWages();
+        // sync the company onboard status
+        $this->gustoToStoreOnboardStatus();
+        // sync the payroll blockers
+        $this->gustoToStorePayrollBlockers();
     }
 
     /**
@@ -563,6 +565,62 @@ class Company_payroll_model extends Base_payroll_model
         $this->initialize(
             $this->gustoCompany["company_sid"]
         );
+    }
+
+    /**
+     * get the payroll company status
+     */
+    public function gustoToStoreOnboardStatus()
+    {
+        // check if we need to check it or not
+        if (
+            !$this
+                ->db
+                ->where([
+                    "status" => "pending",
+                    "company_sid" =>
+                    $this->gustoCompany["company_sid"]
+                ])
+                ->count_all_results("gusto_companies")
+        ) {
+            return false;
+        }
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                "company_onboarding_status",
+                $this->gustoCompany,
+                [],
+                "GET",
+                true
+            );
+        //
+        if ($response["errors"]) {
+            return $response["errors"];
+        }
+        //
+        if (!$response["onboarding_completed"]) {
+            return false;
+        }
+        // set insert array
+        $updateArray = [
+            "status" => "approved",
+            "updated_at" => getSystemDate()
+        ];
+
+        $this
+            ->db
+            ->where(
+                "company_sid",
+                $this->gustoCompany["company_sid"]
+            )
+            ->update(
+                "gusto_companies",
+                $updateArray
+            );
+
+        return true;
     }
 
     /**
