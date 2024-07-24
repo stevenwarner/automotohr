@@ -2373,17 +2373,14 @@ class Complynet_model extends CI_Model
             return false;
         }
 
-        // add as new transfer
         // check job title and department
         $departmenData = getEmployeeDepartmentAndTeams($passArray['newEmployeeId']);
 
         if (!empty($departmenData['departments']) && !empty($departmenData['teams'])) {
-
             $employee = $this->getemployeeComplyNetJobTitle($passArray['newEmployeeId']);
-
             if (!empty($employee['complynet_job_title'])) {
-                updateEmployeeDepartmentToComplyNet($passArray['newEmployeeId'], $passArray["newCompanyId"]);
-                updateEmployeeJobRoleToComplyNet($passArray['newEmployeeId'], $passArray["newCompanyId"]);
+                // add as new transfer
+                return $this->transferEmployeeToAnotherLocation($passArray);
             }
         } else {
             return $this->checkAndMarkEmployeeAsTransferLater($passArray);

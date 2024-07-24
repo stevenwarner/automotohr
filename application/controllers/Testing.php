@@ -636,11 +636,4 @@ class Testing extends CI_Controller
         _e("employee add successfully");
     } 
 
-
-public function abc(){
-    $mydata=getEmployeeDepartmentAndTeams(22);
-    _e($mydata,true,true);
-}
-
-
 }
