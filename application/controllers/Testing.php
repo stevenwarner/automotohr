@@ -652,7 +652,8 @@ class Testing extends CI_Controller
         }
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where('employee_type', 'fulltime');
+        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
         $employees = $this->db->get("users")->result_array();

@@ -2448,27 +2448,27 @@
 
     public function setEmploymentData($sid = '', $changeFrom = '', $employerSid = 0)
     {
-
         //
         $this->db->select("sid,registration_date,joined_at,rehire_date,employment_date");
         $this->db->where('sid', $sid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where('employee_type', 'fulltime');
+        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
-
+        //
         $employeeRow = $this->db->get("users")->row_array();
-
+        //
         if (!empty($employeeRow)) {
-
+            //
             $latestDate = get_employee_latest_joined_date(
                 $employeeRow['registration_date'],
                 $employeeRow['joined_at'],
                 $employeeRow['rehire_date'],
                 false
             );
-
+            //
             // Update User Employment Date
             $this->db->where("sid", $employeeRow["sid"])
                 ->update("users", [
