@@ -2382,6 +2382,7 @@ class Complynet_model extends CI_Model
                 // add as new transfer
                 return $this->transferEmployeeToAnotherLocation($passArray);
             }
+            return false;
         } else {
             return $this->checkAndMarkEmployeeAsTransferLater($passArray);
         }
