@@ -2266,6 +2266,7 @@ $route["payrolls/sync"]["get"] = "Settings/showPayrollSyncMessage";
 
 // CRON for payroll company
 $route["payrolls/processQueue"]["cli"] = "v1/payrolls/Cron_company_payroll/queue";
+$route["payrolls/syncUnprocessedRegularPayrolls"]["get"] = "v1/payrolls/Cron_company_payroll/syncUnprocessedRegularPayrolls";
 
 // Company bank account
 $route["settings/company/accounts"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/listing";

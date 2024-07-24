@@ -92,14 +92,20 @@ class Lb_gusto
         if ($requestType === "POST" || $requestType === "PUT") {
             $curlOptions[CURLOPT_POSTFIELDS] = json_encode($request);
         }
+        // set the url
+        $url = $this->getUrl(
+            $event,
+            $company['gusto_uuid'],
+            $company['other_uuid'] ?? '',
+            $company['other_uuid_2'] ?? '',
+        );
+        // check if GET call we need to attach params
+        if ($requestType === "GET" && $request) {
+            $url .= "?" . (implode('&', $request));
+        }
         // make call to Gusto
         $response =  $this->makeCall(
-            $this->getUrl(
-                $event,
-                $company['gusto_uuid'],
-                $company['other_uuid'] ?? '',
-                $company['other_uuid_2'] ?? '',
-            ),
+            $url,
             $curlOptions
         );
         // auth failed needs to generate new tokens
@@ -918,13 +924,15 @@ class Lb_gusto
         // payroll_blockers
         $urls["payroll_blockers"] =
             "v1/companies/{$key}/payrolls/blockers";
-
         // earning types
         $urls["earning_types"] =
             "v1/companies/{$key}/earning_types";
         // company_pay_schedules
         $urls["company_pay_schedules"] =
             "v1/companies/{$key}/pay_schedules";
+        // unprocessed_payrolls
+        $urls["unprocessed_payrolls"] =
+            "v1/companies/{$key}/payrolls";
 
 
 

@@ -26,7 +26,7 @@ class Base_payroll_model extends CI_Model
      * @var array
      */
     protected $gustoIdArray;
-    
+
     /**
      * holds the employee update events
      * @var array
@@ -206,15 +206,66 @@ class Base_payroll_model extends CI_Model
         // Employee_payroll_model
         // set job and compensation event
         $this->dataToStoreEvents["job_and_compensation"] =
-        "dataStoreToGustoEmployeeJobAndCompensationFlow";
+            "dataStoreToGustoEmployeeJobAndCompensationFlow";
         // set home address event
         $this->dataToStoreEvents["home_address"] =
-        "dataStoreToGustoEmployeeHomeAddressFlow";
+            "dataStoreToGustoEmployeeHomeAddressFlow";
         // set profile event
         $this->dataToStoreEvents["profile"] =
-        "dataStoreToGustoEmployeeProfileFlow";
+            "dataStoreToGustoEmployeeProfileFlow";
         // set w4 form event
         $this->dataToStoreEvents["w4_form"] =
-        "dataStoreToGustoEmployeeW4FormFlow";
+            "dataStoreToGustoEmployeeW4FormFlow";
+    }
+
+    /**
+     * get all companies on payroll with
+     * mode
+     *
+     * @param array $columns
+     * @return array
+     */
+    public function getAllCompaniesOnGusto(
+        array $columns = ["company_sid"]
+    ): array {
+        return $this
+            ->db
+            ->select($columns)
+            ->get("gusto_companies")
+            ->result_array();
+    }
+
+    /**
+     * get payroll blockers
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getPayrollBlockers(
+        int $companyId
+    ): array {
+        $record = $this
+            ->db
+            ->select([
+                "blocker_json",
+                "updated_at"
+            ])
+            ->where(
+                "company_sid",
+                $companyId
+            )
+            ->limit(1)
+            ->get("payrolls.payroll_blockers")
+            ->row_array();
+        //
+        if (!$record) {
+            return [];
+        }
+        //
+        $record["blocker_json"] = json_decode(
+            $record["blocker_json"],
+            true
+        );
+        return $record["blocker_json"] ? $record : [];
     }
 }

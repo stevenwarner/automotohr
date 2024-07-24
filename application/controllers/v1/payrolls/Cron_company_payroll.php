@@ -48,6 +48,39 @@ class Cron_company_payroll extends CI_Controller
     }
 
     /**
+     * get unprocessed payrolls and update them
+     */
+    public function syncUnprocessedRegularPayrolls()
+    {
+        // load the regular model
+        $this
+            ->load
+            ->model(
+                "v1/Payroll/Regular_payroll_model",
+                "regular_payroll_model"
+            );
+        // get all the companies on payroll
+        $companies = $this
+            ->regular_payroll_model
+            ->getAllCompaniesOnGusto();
+        //
+        if (!$companies) {
+            exit("No companies found.");
+        }
+        // iterate through the companies
+        foreach ($companies as $v0) {
+            $this
+                ->regular_payroll_model
+                ->setCompanyDetails(
+                    $v0["company_sid"]
+                )
+                ->syncUnprocessedRegularPayrolls();
+        }
+
+        _e($companies);
+    }
+
+    /**
      * executes the job
      *
      * @param array $job
