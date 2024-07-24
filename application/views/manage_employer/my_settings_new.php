@@ -244,26 +244,7 @@
                                             <li><a href="<?php echo base_url('company/documents/secure/listing'); ?>">Company Secure Document Upload</a></li>
                                         <?php } ?>
 
-                                        <?php if (
-                                            isPayrollOrPlus()
-                                            && checkIfAppIsEnabled(PAYROLL)
-                                        ) { ?>
-                                            <li>
-                                                <a href="<?= base_url("schedules"); ?>">
-                                                    Company Pay Schedules
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="<?= base_url("schedules/employees"); ?>">
-                                                    Employees Pay Schedules
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="<?= base_url("minimum_wages"); ?>">
-                                                    Company Minimum Wages
-                                                </a>
-                                            </li>
-                                        <?php } ?>
+                                      
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(SCHEDULE_MODULE)) { ?>
                                             <li>
                                                 <a href="<?= base_url("overtimerules"); ?>">
@@ -312,6 +293,21 @@
                                             <li>
                                                 <a href="<?= base_url("settings/company/accounts"); ?>">
                                                     Company Bank accounts
+                                                </a>
+                                            </li>
+                                             <li>
+                                                <a href="<?= base_url("schedules"); ?>">
+                                                    Company Pay Schedules
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("schedules/employees"); ?>">
+                                                    Employees Pay Schedules
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="<?= base_url("minimum_wages"); ?>">
+                                                    Company Minimum Wages
                                                 </a>
                                             </li>
                                         <?php } ?>

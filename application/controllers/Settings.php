@@ -3498,7 +3498,7 @@ class Settings extends Public_Controller
     public function schedules(string $status = "active")
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(PAYROLL)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3533,7 +3533,7 @@ class Settings extends Public_Controller
     public function addSchedule()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(PAYROLL)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3542,7 +3542,7 @@ class Settings extends Public_Controller
         $loggedInCompany = checkAndGetSession("company_detail");
         // set default data
         $data = [];
-        $data["title"] = "Add Company Pay Schedule | " . (STORE_NAME);
+        $data["title"] = "Add a Company Pay Schedule | " . (STORE_NAME);
         $data["sanitizedView"] = true;
         $data["loggedInEmployee"] = $loggedInEmployee;
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($loggedInCompany["sid"]);
@@ -3576,7 +3576,7 @@ class Settings extends Public_Controller
     public function editSchedule(int $scheduleId)
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(PAYROLL)) {
             $this->session->set_flashdata("message", "<strong>Error!</strong> Access denied.");
             return redirect("dashboard");
         }
@@ -3630,7 +3630,7 @@ class Settings extends Public_Controller
     public function getScheduleDeadlineDate(string $firstPayDate)
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(PAYROLL)) {
             return SendResponse(
                 400,
                 [
@@ -3671,7 +3671,7 @@ class Settings extends Public_Controller
     public function processSchedule()
     {
         // check if plus or don't have access to the module
-        if (!isPayrollOrPlus(true)) {
+        if (!isPayrollOrPlus(true) || !checkIfAppIsEnabled(PAYROLL)) {
             return SendResponse(
                 400,
                 [

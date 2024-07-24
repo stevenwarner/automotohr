@@ -111,6 +111,10 @@
                                             </div>
                                     <?php
                                         }
+                                    } else {
+                                        $this->load->view("v1/no_data", [
+                                            "message" => "No company pay schedules found."
+                                        ]);
                                     } ?>
                                 </div>
 
