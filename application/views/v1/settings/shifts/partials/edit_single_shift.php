@@ -167,6 +167,13 @@
                         &nbsp;Unpublish Shift
                     </button>
                 <?php } ?>
+                
+                <?php if ($shiftHistoryCount > 0) { ?>
+                    <button class="btn btn-orange jsPageSingleShifthistory" type="button" data-shiftid="<?php echo $shift['sid']; ?>">
+                        <i class="fa fa-history" aria-hidden="true"></i>
+                        &nbsp;View History
+                    </button>
+                <?php } ?>
 
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>

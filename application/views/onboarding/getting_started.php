@@ -1044,6 +1044,45 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </div>
                             </div>
 
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('shifts/myTrade'); ?>">
+                                        <div class="link-box bg-redish full-width bg-orange">
+                                            <h2>Shift Swap Requests</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date" style="margin-top: -30px;;">
+                                                <span><?= $awaitingShiftRequests ?? 0; ?><sub>Pending</sub></span>
+
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>Show Details</h3>
+                                                <span>&nbsp;</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <?php if (isPayrollOrPlus()) { ?>
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="widget-box">
+                                        <a href="<?php echo base_url('settings/shifts/trade'); ?>">
+                                            <div class="link-box bg-redish full-width bg-orange">
+                                                <h2>Shift Swap Approvals</h2>
+                                                <div><span>&nbsp;</span></div>
+                                                <div class="current-date" style="margin-top: -30px;;">
+                                                    <span><?= $awaitingShiftsApprovals ?? 0; ?><sub>Pending</sub></span>
+
+                                                </div>
+                                                <div class="status-panel">
+                                                    <h3>Show Details</h3>
+                                                    <span>&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php } ?>
                         <?php endif; ?>
 
                         <?php if (checkIfAppIsEnabled('performanceevaluation')) { ?>

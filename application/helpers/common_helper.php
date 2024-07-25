@@ -12666,6 +12666,33 @@ if (!function_exists('getCompanyAdminSid')) {
 }
 
 
+if (!function_exists('getCompanyAdminPlusList')) {
+    function getCompanyAdminPlusList($companyId)
+    {
+        $response = [];
+        //
+        $CI = &get_instance();
+        $CI->db->select('sid, first_name, last_name, email');
+        $CI->db->where('access_level', 'Admin');
+        $CI->db->group_start();
+        $CI->db->where('access_level_plus', 1);
+        $CI->db->or_where('pay_plan_flag', 1);
+        $CI->db->group_end();
+        $CI->db->where('terminated_status', 0);
+        $CI->db->where('parent_sid', $companyId);
+        $CI->db->where('archived', 0);
+        //
+        $admin_plus = $CI->db->get('users')->result_array();
+
+        if ($admin_plus) {
+            $response = $admin_plus; 
+        }
+
+        return $response;
+    }
+}
+
+
 
 // Accrual to text
 function getAccrualText($accrualOBJ, $isNewHire = false)
@@ -17011,5 +17038,29 @@ if (!function_exists('get_company_departments_teams_dropdown')) {
 
         //
         return $id ? $select : $departments;
+    }
+}
+
+
+
+if (!function_exists('getActiveAdmin')) {
+    function getActiveAdmin($company_sid)
+    {
+        $CI = &get_instance();
+
+        $CI->db->select('
+            sid, first_name, last_name, middle_name, nick_name,
+            email, PhoneNumber, dob, job_title, access_level, access_level_plus,
+            Location_Address, Location_Address_2, Location_City, Location_State,
+            Location_City, Location_ZipCode, Location_Country,ssn
+        ');
+        $where = array(
+            'parent_sid' => $company_sid,
+            'active' => 1,
+            'is_executive_admin'  => 0,
+            'terminated_status' => 0,
+            'access_level' =>'Admin'
+        );
+        return $CI->db->get_where('users', $where)->result_array();
     }
 }

@@ -739,3 +739,11 @@ complete any other steps. You will need to submit a new
 Form W-4 by February 15, 2025');
 
 define('W4_YEAR_24', '2024');
+
+define('SHIFTS_SWAP_ADMIN_REJECTED', 439); 
+define('SHIFTS_SWAP_AWAITING_CONFIRMATION', 440); 
+define('SHIFTS_SWAP_EMPLOYEE_REJECTION', 449);
+define('SHIFTS_SWAP_ADMIN_APPROVAL', 450);
+define('SHIFTS_SWAP_ADMIN_APPROVED', 451);
+
+
