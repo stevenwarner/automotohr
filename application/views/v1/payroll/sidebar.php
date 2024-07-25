@@ -167,9 +167,9 @@ $sideBarUrls = [
                 <?php if (isPayrollOrPlus()) : ?>
                     <!-- Payrolls -->
                     <li>
-                        <a <?php if (uri_string() === 'payrolls/dashboard') {
+                        <a <?php if (uri_string() === 'payroll/dashboard') {
                                 echo 'class="active"';
-                            } ?> href="<?php echo base_url('payrolls/dashboard'); ?>">
+                            } ?> href="<?php echo base_url('payroll/dashboard'); ?>">
                             <figure><i class="fa fa-home"></i></figure>Payroll Dashboard
                         </a>
                     </li>

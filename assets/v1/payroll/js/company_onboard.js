@@ -426,7 +426,7 @@ $(function createPartnerCompany() {
 	function createPartnerCompany() {
 		//
 		XHR = $.ajax({
-			url: window.location.origin + "/payroll/cpc/7/" + companyId,
+			url: window.location.origin + "/payroll/company/7/" + companyId,
 			method: "POST",
 			data: {
 				employees: selectedEmployees,

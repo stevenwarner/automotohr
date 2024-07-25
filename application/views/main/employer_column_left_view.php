@@ -371,7 +371,7 @@
                     </a></li>
             <?php } ?>
             <?php if ($isCompanyOnPayroll && $isTermsAgreed && !checkIfSyncingInProgress()) { ?>
-                <li><a href="<?= base_url('payrolls/dashboard'); ?>">
+                <li><a href="<?= base_url('payroll/dashboard'); ?>">
                         <figure><i class="fa fa-cogs"></i></figure>Payroll Dashboard
                     </a></li>
             <?php } ?>

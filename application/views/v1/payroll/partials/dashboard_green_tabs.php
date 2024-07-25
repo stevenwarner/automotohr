@@ -77,13 +77,13 @@
                         <i class="fa fa-calendar-o" aria-hidden="true"></i>
                     </figure>
                     <h2 class="post-title">
-                        <a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a>
+                        <a href="<?= base_url('payroll/dashboard'); ?>">Payroll Dashboard</a>
                     </h2>
                     <div class="count-box" style="font-size: 12px">
                         <small style="font-size: 12px"></small>
                     </div>
                     <div class="button-panel">
-                        <a href="<?= base_url('payrolls/dashboard'); ?>" class="site-btn">View Dashboard</a>
+                        <a href="<?= base_url('payroll/dashboard'); ?>" class="site-btn">View Dashboard</a>
                     </div>
                 </div>
             </div>

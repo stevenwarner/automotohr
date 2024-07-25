@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
-loadUpModel('v1/Payroll_base_model', 'Payroll_base_model');
+loadUpModel('payroll_base_model', 'Payroll_base_model');
 /**
  * Regular payroll model
  * 

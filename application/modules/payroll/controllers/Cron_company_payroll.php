@@ -107,7 +107,7 @@ class Cron_company_payroll extends CI_Controller
         // load the company model
         // Call the model
         $this->load->model(
-            "v1/Payroll/Company_payroll_model",
+            "payroll/Company_payroll_model",
             "company_payroll_model"
         );
         //
@@ -180,7 +180,7 @@ class Cron_company_payroll extends CI_Controller
         // load the company model
         // Call the model
         $this->load->model(
-            "v1/Payroll/Employee_payroll_model",
+            "payroll/Employee_payroll_model",
             "employee_payroll_model"
         );
         //
@@ -204,7 +204,7 @@ class Cron_company_payroll extends CI_Controller
     private function runPayrollEvents()
     {
         $this->load->model(
-            "v1/Payroll/Company_payroll_model",
+            "payroll/Company_payroll_model",
             "company_payroll_model"
         );
         //

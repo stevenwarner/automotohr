@@ -920,7 +920,7 @@
 
                                                             <?php if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
                                                                 <li>
-                                                                    <a href="<?= base_url('payrolls/dashboard'); ?>">
+                                                                    <a href="<?= base_url('payroll/dashboard'); ?>">
                                                                         <figure><i class="fa fa-dollar" aria-hidden="true"></i></figure>
                                                                         Payroll Dashboard
                                                                     </a>

@@ -48,3 +48,24 @@
   | Examples:	my-controller/index	-> my_controller/index
   |		my-controller/my-method	-> my_controller/my_method
  */
+
+
+ $route['payroll/company/(:num)/requirements'] =
+  'Company_payroll/checkCompanyRequirements/$1';
+
+  $route['payroll/company/7/(:num)'] =
+  'Company_payroll/createPartnerCompanyProcess/$1';
+
+  $route['payroll/cpc/(:num)/(:num)'] =
+  'Create_partner_company/getCreatePartnerCompanyPage/$1/$2';
+
+  $route['payroll/agreement/(:num)']['get'] =
+  'Company_payroll/getCompanyAgreement/$1';
+  
+  $route['payroll/agreement/(:num)']['post'] =
+  'Company_payroll/signCompanyAgreement/$1';
+
+  $route['payroll/dashboard']['get'] = 
+  'Dashboard/index';
+  
+  $route["payroll/processQueue"]["get"] = "Cron_company_payroll/queue";

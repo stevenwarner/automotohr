@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
-loadUpModel("v1/Payroll/Base_payroll_model", "base_payroll_model");
+loadUpModel("payroll/Base_payroll_model", "base_payroll_model");
 /**
  * Employee payroll model
  * 
@@ -531,6 +531,7 @@ class Employee_payroll_model extends Base_payroll_model
                 "employee_sid"
             ]
         );
+        if (!$this->gustoEmployee['gusto_uuid']) {return false;}
         // sync work address
         $this->syncWorkAddress();
         // sync home address

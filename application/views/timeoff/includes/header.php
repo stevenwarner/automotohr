@@ -166,7 +166,7 @@ foreach ($tabs as $tab) {
                     $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
                     if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
 
-                        <li><a href="<?= base_url("payrolls/dashboard"); ?>"> Payroll Dashboard</a></li>
+                        <li><a href="<?= base_url("payroll/dashboard"); ?>"> Payroll Dashboard</a></li>
                     <?php } ?>
 
                 </ul>

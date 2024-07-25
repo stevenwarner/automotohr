@@ -19,7 +19,7 @@ class Company_payroll extends CI_Controller
         parent::__construct();
         // Call the model
         $this->load->model(
-            "v1/Payroll/Company_payroll_model",
+            "payroll/Company_payroll_model",
             "company_payroll_model"
         );
     }

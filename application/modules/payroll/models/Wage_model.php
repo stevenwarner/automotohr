@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
-loadUpModel('v1/Payroll_model', 'Payroll_model');
+loadUpModel('payroll/Payrolls_model', 'Payroll_model');
 /**
  * Copy payroll model
  * 

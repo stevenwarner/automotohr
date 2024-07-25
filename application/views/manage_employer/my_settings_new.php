@@ -276,7 +276,7 @@
                                                 <li><a href="javascript:void(0)" class="jsServiceAgreement" data-cid="<?= $session['company_detail']['sid']; ?>">Payroll Service Agreement</a></li>
                                             <?php } ?>
                                             <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
-                                                <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
+                                                <li><a href="<?= base_url('payroll/dashboard'); ?>">Payroll Dashboard</a></li>
                                             <?php } ?>
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>

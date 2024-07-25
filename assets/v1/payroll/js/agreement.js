@@ -106,7 +106,7 @@ $(function serviceAgreement() {
 	function getAgreement() {
 		//
 		XHR = $.ajax({
-			url: window.location.origin + "/payrolls/agreement/" + companyId,
+			url: window.location.origin + "/payroll/agreement/" + companyId,
 			method: "GET",
 		})
 			.success(function (resp) {
@@ -125,7 +125,7 @@ $(function serviceAgreement() {
 		_ml(true, `${modalId}Loader`);
 		//
 		XHR = $.ajax({
-			url: window.location.origin + "/payrolls/agreement/" + companyId,
+			url: window.location.origin + "/payroll/agreement/" + companyId,
 			method: "POST",
 			data: passOBJ,
 		})

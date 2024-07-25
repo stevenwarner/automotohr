@@ -309,7 +309,7 @@
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                                                     <label>&nbsp;</label>
-                                                    <a href="<?php echo base_url("payrolls/dashboard/".$userType."/".$userId); ?>" class="btn btn-black btn-block">
+                                                    <a href="<?php echo base_url("payroll/dashboard/".$userType."/".$userId); ?>" class="btn btn-black btn-block">
                                                         Clear Filter
                                                     </a>
                                                 </div>

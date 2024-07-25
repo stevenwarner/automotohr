@@ -369,7 +369,7 @@
                         </div>
                         <div class="panel-footer text-right">
                             <!-- cancel -->
-                            <a href="<?= base_url('payrolls/dashboard'); ?>" class="btn csW csBG4 csF16">
+                            <a href="<?= base_url('payroll/dashboard'); ?>" class="btn csW csBG4 csF16">
                                 <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
                                 &nbsp;Cancel
                             </a>

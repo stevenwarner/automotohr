@@ -8,7 +8,7 @@
             $isTermsAgreed = hasAcceptedPayrollTerms($session['company_detail']['sid']);
             if ($isCompanyOnPayroll && $isTermsAgreed && isPayrollOrPlus()) { ?>
                 <div class="p10">
-                    <a href="<?= base_url("payrolls/dashboard"); ?>" class="btn btn-orange " style="width: 100%;" title="" placement="top" data-original-title="Payroll">Payroll</a>
+                    <a href="<?= base_url("payroll/dashboard"); ?>" class="btn btn-orange " style="width: 100%;" title="" placement="top" data-original-title="Payroll">Payroll</a>
                 </div>
             <?php } ?>
 
