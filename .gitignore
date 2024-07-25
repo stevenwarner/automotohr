@@ -20,6 +20,7 @@ assets/admin
 assets/tmp
 assets/performance_management/videos
 assets/performance_management/videos/*
+assets/shifts_ics_files
 
 # Exclude system folder
 #system
