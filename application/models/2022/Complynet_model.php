@@ -2372,8 +2372,22 @@ class Complynet_model extends CI_Model
         ) {
             return false;
         }
-        // add as new transfer
-        return $this->checkAndMarkEmployeeAsTransferLater($passArray);
+        //
+        // check job title and department
+        $departmenData = getEmployeeDepartmentAndTeams($passArray['newEmployeeId']);
+        //
+        if (!empty($departmenData['departments']) && !empty($departmenData['teams'])) {
+            //
+            $employee = $this->getemployeeComplyNetJobTitle($passArray['newEmployeeId']);
+            //
+            if (!empty($employee['complynet_job_title'])) {
+                // add as new transfer
+                return $this->transferEmployeeToAnotherLocation($passArray);
+            }
+            return false;
+        } else {
+            return $this->checkAndMarkEmployeeAsTransferLater($passArray);
+        }
     }
 
     /**

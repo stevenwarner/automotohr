@@ -637,19 +637,15 @@ class Testing extends CI_Controller
         _e("employee add successfully");
     }
 
-
-
-
-
-
     public function getEmploymentData($sid = '', $changeFrom = '', $employerSid = 0)
     {
-
         //
         $this->db->select("sid,registration_date,joined_at,rehire_date,employment_date");
+        //
         if ($sid != '') {
             $this->db->where('sid', $sid);
         }
+        //
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
         $this->db->where_in('employee_type', ['fulltime','full-time']);
@@ -657,7 +653,7 @@ class Testing extends CI_Controller
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
         $employees = $this->db->get("users")->result_array();
-
+        //
         if (!empty($employees)) {
             foreach ($employees as $employeeRow) {
 
@@ -688,8 +684,7 @@ class Testing extends CI_Controller
                 $this->db->insert('profile_history', $insertHistory);
             }
         }
-
-
+        //
         echo "All Done";
     }
 }
