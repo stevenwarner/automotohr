@@ -57,7 +57,7 @@ $('.jsViewPoliciesBtn').click(function (e) {
 
 $(document).on('click', '.js-to-step', function (e) {
     //
-   
+
     e.preventDefault();
     //
     ml(true, 'policy');
@@ -163,6 +163,54 @@ $('#js-add-policy-btn').click((e) => {
     //
     $('#NonEntitledEmployeesadd').prop('checked', true);
 });
+
+
+
+//
+$(document).on('click', '.js-employee-accrual-settings', function (e) {
+    //
+    e.preventDefault();
+    //
+    ml(true, 'policy');
+    //
+    let step = $(this).data('step'),
+        type = $(this).data('type');
+
+
+    //
+    $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
+    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
+    $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
+    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
+    //
+    $(`.js-step[data-type="${type}"]`).fadeOut(0);
+    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+    //
+    ml(false, 'policy');
+
+});
+
+
+
+//
+$(document).on('click', '.js-add-employee-accrual-settings', function (e) {
+    //
+    e.preventDefault();
+    //
+    ml(true, 'policy');
+    //
+    let step = $(this).data('step'),
+        type = $(this).data('type');
+
+    //
+    $(`.js-step[data-type="${type}"]`).fadeOut(0);
+    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+    //
+    ml(false, 'policy');
+
+});
+
+
 
 //
 function getTypeNames(ids) {
@@ -989,8 +1037,8 @@ function loadAddPage() {
     $('#js-plan-box-add').find('ul').html('');
     $('#js-plan-area-add').html('');
     $('.jsPlanArea').html('');
-     // Set default accural check
-     $('#js-accrual-default-flow-add').prop('checked', true);
+    // Set default accural check
+    $('#js-accrual-default-flow-add').prop('checked', true);
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
@@ -1260,4 +1308,5 @@ function loadResetPage() {
 
     //
     window.timeoff.startPolicyEditProcess();
+
 }

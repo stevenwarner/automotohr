@@ -769,6 +769,169 @@
                             <button class="btn btn-orange js-to-step">Save & Finish</button>
                         </div>
                     </div>
+
+
+
+                    <!-- Step 8 - Employee Accrual Settings -->
+                    <div class="js-step" data-type="add" data-step="8">
+                        <!-- Policy Type - Edit -->
+                        <div class="row mb10 csRow" id="js-policy-categories-add">
+                            <div class="col-md-12 offset-md-3 text-right">
+                                <button class="btn btn-orange js-add-employee-accrual-settings" data-type="add" data-step="9">Add Employee</button>
+                            </div>
+                            <div class="col-md-12 offset-md-3">
+
+                                <table class="table table-bordered table-hover table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee Name</th>
+                                            <th>Accrual</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="js-employees-list-show-area">
+
+                                        <?php if (!empty($employeesAccrualSettings)) { ?>
+                                            <tr class="js-tr">
+                                                <td class="js-employee-name">Erin Gray (Employee ) [Lab]</td>
+                                                <td class="js-employee-email">sdfsdfsd</td>
+                                                <td>
+                                                    dgdsgdfgdg
+                                                </td>
+                                            </tr>
+                                        <?php } else { ?>
+                                            <tr>
+                                                <td colspan="3">Not Found</td>
+                                            </tr>
+                                        <?php } ?>
+
+                                    </tbody>
+                                </table>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="js-step" data-type="add" data-step="9">
+                        <!-- Policy Type - Edit -->
+                        <div class="row mb10 csRow" id="js-policy-categories-add">
+                            
+                            <div class="col-md-12 offset-md-3">
+
+
+                            <div class="row mb10 csRow">
+                            <div class="col-sm-6">
+                                <!--  -->
+                                <div>
+                                    <h5 class="timeline-title allowed-time-off-title-custom">
+                                        <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="minimum-hours"></i>
+                                    </h5>
+                                    <div class="js-hint js-hint-minimum-hours">
+                                        <?php echo $get_policy_item_info['minimum_applicable_hours_info']; ?></div>
+                                    <div>
+                                        <label class="control control--radio">
+                                            Hours &nbsp;&nbsp;
+                                            <input type="radio" name="js-minimum-applicable-time-add" class="js-minimum-applicable-time-add" checked="true" value="hours" />
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio">
+                                            Days &nbsp;&nbsp;
+                                            <input type="radio" name="js-minimum-applicable-time-add" class="js-minimum-applicable-time-add" value="days" />
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio">
+                                            Months &nbsp;&nbsp;
+                                            <input type="radio" name="js-minimum-applicable-time-add" class="js-minimum-applicable-time-add" value="months" />
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                        <label class="control control--radio">
+                                            Years &nbsp;&nbsp;
+                                            <input type="radio" name="js-minimum-applicable-time-add" class="js-minimum-applicable-time-add" value="years" />
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                    </div>
+                                    <div style="margin-top: 5px;">
+                                        <input class="invoice-fields" name="template" id="js-minimum-applicable-hours-add" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb10 csRow js-hider-add">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <h5 class="timeline-title allowed-time-off-title-custom">
+                                        <?php echo $get_policy_item_info['accrual_rate_label']; ?><span class="cs-required">*</span>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="rate"></i>
+                                    </h5>
+                                    <div class="js-hint js-hint-rate">
+                                        <?php echo $get_policy_item_info['accrual_rate_info']; ?></div>
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <input class="form-control" name="template" id="js-accrual-rate-add" autocomplete="off" />
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <select class="form-control jsTimeTypeSelect-add" id="js-accrual-rate-type-add">
+                                                <option value="days">Day(s)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <small id="jsFormula-add"></small>
+                                </div>
+
+                                <div class="row mb10">
+                                    <div class="col-sm-6 col-xs-12">
+                                        <div class="">
+                                            <label class="control control--checkbox">
+                                                <input type="checkbox" id="js-accrual-default-flow-add" />
+                                                <?php echo $get_policy_item_info['allowed_accrual_default_flow_label']; ?>
+                                                <span class="control__indicator"></span>
+                                            </label>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="default-flow"></i>
+                                            <div class="js-hint js-hint-default-flow"><?php echo $get_policy_item_info['allowed_accrual_default_flow_info']; ?></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--  -->
+                                <div class="row mb10 csRow">
+                                    <div class="col-lg-12">
+                                        <h4 class="timeline-title allowed-time-off-title-custom csHeading">
+                                            <?php echo $get_policy_item_info['accruals_plans_label']; ?>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="plans"></i>
+                                            <span class="pull-right">
+                                                <button class="btn btn-orange js-plan-btn-add" data-type="add" style="margin-top: -5px;"><i class="fa fa-plus"></i>&nbsp; Add
+                                                    Plan</button>
+                                            </span>
+                                        </h4>
+                                        <div class="js-hint js-hint-plans">
+                                            <?php echo $get_policy_item_info['accrual_plans']; ?></div>
+                                    </div>
+                                </div>
+
+                                <!--  -->
+                                <div class="row mb10 csRow js-hider-add">
+                                    <!-- Plans area -->
+                                    <div class="col-sm-12 col-xs-12 jsPlanArea" id="js-plan-area-add"></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        </div>
+
+
+
+
+                            </div>
+                        </div>
+                        
+                    </div>
+
                 </div>
             </div>
         </div>
