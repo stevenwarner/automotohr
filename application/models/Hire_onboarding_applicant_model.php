@@ -500,12 +500,14 @@ class Hire_onboarding_applicant_model extends CI_Model
 
     }
 
-    function get_applicant_private_message($email, $hired_id)
+    function get_applicant_private_message($email, $hired_id, $applicant_sid)
     {
+
         $this->db->select('*');
         $this->db->where('to_id', $email);
-        $this->db->where('users_type', 'applicant');
+        $this->db->where('job_id', $applicant_sid);
         $result = $this->db->get('private_message')->result_array();
+
         if (count($result) > 0) {
             foreach ($result as $info) {
                 $insert_private_message = array(

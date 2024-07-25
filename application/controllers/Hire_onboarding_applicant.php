@@ -313,7 +313,7 @@ class Hire_onboarding_applicant extends CI_Controller
             $applicant_misc_notes = $this->hire_onboarding_applicant_model->get_applicant_misc_notes($applicant_sid, $employee_result);
 
             // 7) private_message
-            $applicant_private_message = $this->hire_onboarding_applicant_model->get_applicant_private_message($applicant_email, $employee_result);
+            $applicant_private_message = $this->hire_onboarding_applicant_model->get_applicant_private_message($applicant_email, $employee_result,$applicant_sid);
 
             // 8) portal_applicant_rating
             $applicant_rating = $this->hire_onboarding_applicant_model->get_applicant_rating($applicant_sid, $employee_result);
