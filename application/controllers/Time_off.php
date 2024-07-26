@@ -313,9 +313,7 @@ class Time_off extends Public_Controller
         $data['theme'] = $this->theme;
         //
         $data['get_policy_item_info'] = get_policy_item_info();
-        $data['employeesAccrualSettings'] = [];
-
-
+        $data['employeesAccrualSettings'] = $this->timeoff_model->getEmployeeAccuralSettings($data['session']['company_detail']['sid']);
         //
         $this->load->view('main/header', $data);
 
@@ -2516,10 +2514,12 @@ class Time_off extends Public_Controller
     function handler()
     {
         // Check for ajax request
+
         if (!$this->input->is_ajax_request()) $this->resp();
         ///
         $post = $this->input->post(NULL, TRUE);
         // Check post size and action
+
 
         if (!sizeof($post) || !isset($post['action'])) $this->resp();
         if (!isset($post['companyId']) || $post['companyId'] == '') $this->resp();
@@ -6403,6 +6403,68 @@ class Time_off extends Public_Controller
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed';
+                $this->resp();
+                break;
+
+            case 'add-employee-accural-settings':
+                //
+                $insert_data['company_id'] = $post['companyId'];
+                $insert_data['employee_id'] = $post['employeeId'];
+                $insert_data['employer_id'] = $post['employerId'];
+                $insert_data['employee_minimum_applicable_hours'] = $post['employeeMinimumApplicableHours'];
+                $insert_data['employee_minimum_applicable_time'] = $post['employeeMinimumApplicableTimeAdd'];
+
+                $this->timeoff_model->addEmployeeAccuralSettings($insert_data);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Employee Accural Settings Saved Sucessfully';
+                $this->resp();
+                break;
+
+            case 'get_company_employees_for_accrual_settings':
+                // Check if policy already exists for current company
+                $employees = $this->timeoff_model->getCompanyEmployeesForAccrualSettings(
+                    $post['companyId'],
+                    $post['employerId'],
+                    $post["all"] ?? 0
+                );
+
+                if (!sizeof($employees)) {
+                    $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s) from "Create employee" page.';
+                    $this->resp();
+                }
+                //
+                $this->res['Data'] = $employees;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
+
+            case 'update-employee-accural-settings':
+                //
+                $update_data['employee_minimum_applicable_hours'] = $post['employeeMinimumApplicableHours'];
+                $update_data['employee_minimum_applicable_time'] = $post['employeeMinimumApplicableTimeAdd'];
+                $sid = $post['sid'];
+              
+                $this->timeoff_model->updateEmployeeAccuralSettings($update_data, $sid);
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Employee Accural Settings Updated Sucessfully';
+                $this->resp();
+                break;
+
+            case 'delete-employee-accural-settings':
+                // Check if policy already exists for current company
+                $employees = $this->timeoff_model->deleteEmployeeAccuralSettings(
+                    $post['sid']
+                );
+                //
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Employee Accural Settings Deleted Sucessfully';
                 $this->resp();
                 break;
         }
