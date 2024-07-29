@@ -134,10 +134,8 @@ $(function shiftsTrade() {
 	$(".jsCancelTradeShift").click(function (event) {
 		// prevent the event from happening
 		event.preventDefault();
-
-		let shiftsArrayIds = [];
-		let shiftId = $(this).data('shiftid');
-
+		var id = $(this).data('id');
+		var employee = $(this).data('employee');
 		alertify.confirm(
 			'Are You Sure?',
 			'Are you sure you want to cancel the shift swap?',
@@ -145,13 +143,13 @@ $(function shiftsTrade() {
 				//
 				const formObj = new FormData();
 				// set the file object
-				shiftsArrayIds.push(shiftId);
-				formObj.append("shiftids", shiftsArrayIds);
+				formObj.append("shiftId", id);
+				formObj.append("employeeId", employee);
 				// 
 				processCallWithoutContentType(
 					formObj,
 					'',
-					"settings/shifts/tradeshiftscancel",
+					"settings/shifts/trade_single_shift_cancel",
 					function (resp) {
 						// show the message
 						_success(resp.msg, function () {
@@ -862,6 +860,161 @@ $(function shiftsTrade() {
 
 		//
 		ml(false, 'requests');
+	}
+
+	$(".jsSwapMyShift").click(function (event) {
+		// prevent the event from happening
+		event.preventDefault();
+		///
+		makePage("Send Shift", "send_shift_new", 0, function () {
+			// hides the loader
+			ml(false, modalLoader);
+			//
+			$(".jsSelect2").select2();
+			$(".js-filter-jobtitle").select2();
+
+
+			$("#jssendShiftId").val(sendShiftId);
+			$("#jssendShiftDate").val(shiftDate);
+
+
+			$(".jsSelectAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", true);
+			});
+			$(".jsRemoveAll").click(function (event) {
+				event.preventDefault();
+				$(".jsPageApplyTemplateEmployees").prop("checked", false);
+			});
+
+			validatorRef = $("#jsPageCreateSingleShiftForm").validate({
+				rules: {
+					start_time: { required: true, timeIn12Format: true },
+					end_time: { required: true, timeIn12Format: true },
+				},
+				errorPlacement: function (error, element) {
+					if ($(element).parent().hasClass("input-group")) {
+						$(element).parent().after(error);
+					} else {
+						$(element).after(error);
+					}
+				},
+				submitHandler: function (form) {
+					$(form).serializeArray();
+
+					const passObj = {
+						start_date: $("#shift_date_from").val(),
+						end_date: $("#shift_date_to").val(),
+						employees: [],
+					};
+
+					//
+					$(".jsPageApplyTemplateEmployees:checked").map(function () {
+						passObj.employees.push($(this).val());
+					});
+
+					if (!passObj.start_date.length) {
+						return _error("Please select From Date.");
+					}
+					if (!passObj.end_date.length) {
+						return _error("Please select To Date.");
+					}
+
+					if (!passObj.employees.length) {
+						return _error("Please select at least one employee.");
+					}
+
+					//
+					processCallWithoutContentType(
+						formArrayToObj($(form).serializeArray()),
+						$(".jsPageCreateSingleShiftBtn"),
+						"settings/shifts/multyshift/apply",
+						function (resp) {
+							//
+							let html = "";
+							// check the keys
+							if (Object.keys(resp.list).length > 0) {
+								//
+								$.each(resp.list, function (i, v) {
+									html += "<p>";
+									html += $(
+										'.jsPageApplyTemplateEmployees[value="' +
+										i +
+										'"]'
+									)
+										.parent()
+										.text()
+										.trim();
+									html +=
+										" has already shift on the following dates;";
+									html += "</p>";
+									v.dates.map(function (v0) {
+										html +=
+											"<span>" +
+											moment(v0, "YYYY-MM-DD").format(
+												"MM/DD/YYYY"
+											) +
+											"</span>, ";
+									});
+									html += "<br />";
+									html += "<br />";
+								});
+							}
+							// show the message
+							_success(resp.msg + html, function () {
+								window.location.href = baseUrl(
+									"settings/shifts/manage" +
+									window.location.search
+								);
+							});
+						}
+					);
+				},
+			});
+		});
+
+	});
+
+	/**
+	 * generates the modal
+	 * @param {string} pageTitle
+	 * @param {string} pageSlug
+	 * @param {number} pageId
+	 * @param {function} cb
+	 */
+	function makePage(pageTitle, pageSlug, pageId, cb) {
+		Modal(
+			{
+				Id: modalId,
+				Title: pageTitle,
+				Body: '<div id="' + modalBody + '"></div>',
+				Loader: modalLoader,
+			},
+			function () {
+				// fetchPage(pageSlug, pageId, cb);
+				params = "params?dateFilter=" + $(".jsDateRangePicker").val();
+				callUrl = baseUrl("settings/page/" + pageSlug + "/" + pageId + "/" + params);
+
+				// check if call is already made
+				if (XHR !== null) {
+					// abort the call
+					XHR.abort();
+				}
+				// make a new call
+				XHR = $.ajax({
+					url: callUrl,
+					method: "GET",
+				})
+					.always(function () {
+						XHR = null;
+					})
+					.fail(handleErrorResponse)
+					.done(function (resp) {
+						// load the new body
+						$("#" + modalBody).html(resp.view);
+					});
+			}
+		);
 	}
 
 

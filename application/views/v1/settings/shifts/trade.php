@@ -72,12 +72,15 @@
                                         <h2 class="text-medium panel-heading-text">
                                             &nbsp;
                                             <strong>
-                                                Shifts
+                                                Swap Shifts
                                             </strong>
                                         </h2>
                                     </div>
                                     <?php if ($employeeShifts) { ?>
                                         <div class="col-sm-6 text-right">
+                                            <button class="btn btn-red jsSwapMyShift">
+                                                Swap Request
+                                            </button>
                                             <button class="btn btn-red jsCancelTradeShifts">
                                                 Cancel requests
                                             </button>
@@ -127,7 +130,6 @@
                                                         </td>
 
                                                         <td style="vertical-align: middle;">
-                                                            <?php echo $rowShift['shift_date']; ?><br>
                                                             <?php echo date_with_time($rowShift['shift_date']); ?><br>
                                                             <?php echo formatDateToDB($rowShift["start_time"], "H:i:s", "h:i a") . ' - ' . formatDateToDB($rowShift["end_time"], "H:i:s", "h:i a"); ?>
                                                         </td>
@@ -149,7 +151,7 @@
                                                             <div class="col-sm-12 text-right">
                                                                 <?php if ($rowShift['shift_date'] > date('Y-m-d', strtotime('now'))) { ?>
                                                                     <?php if ($rowShift["request_status"] == 'confirmed' || $rowShift["request_status"] == 'awaiting confirmation') { ?>
-                                                                        <button class="btn btn-red jsCancelTradeShift" data-shiftid="<?php echo $rowShift["sid"]; ?>">
+                                                                        <button class="btn btn-red jsCancelTradeShift" data-id="<?php echo $rowShift["sid"]; ?>" data-employee="<?php echo $rowShift["to_employee_sid"]; ?>">
                                                                             Cancel
                                                                         </button>
                                                                     <?php } ?>

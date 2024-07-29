@@ -581,6 +581,7 @@ $(function manageShifts() {
 	 * @returns
 	 */
 	function getEndDate(startDate) {
+		
 		let endDate = "";
 
 		if (mode === "week") {
@@ -1010,6 +1011,7 @@ $(function manageShifts() {
 
 	//
 	function applyDatePicker() {
+		//
 		$("#shift_date_from").daterangepicker({
 			opens: "center",
 			singleDatePicker: true,
@@ -1026,7 +1028,7 @@ $(function manageShifts() {
 			singleDatePicker: true,
 			showDropdowns: true,
 			autoApply: true,
-			startDate: getEndDate(),
+			startDate: getEndDate(getStartDate()),
 			locale: {
 				format: "MM/DD/YYYY",
 			},
@@ -1050,7 +1052,7 @@ $(function manageShifts() {
 			singleDatePicker: true,
 			showDropdowns: true,
 			autoApply: true,
-			startDate: getEndDate(),
+			startDate: getEndDate(getStartDate()),
 			locale: {
 				format: "MM/DD/YYYY",
 			},
@@ -1792,7 +1794,8 @@ $(function manageShifts() {
 			.fail(handleErrorResponse)
 			.done(function (resp) {
 				//
-
+				$("#jsEmployeeShiftSwapSection").removeClass('hidden');
+				$("#jsEmployeeShiftSwapButtons").removeClass('hidden');
 				let html = "";
 
 				$.each(resp.list, function (i, v) {
@@ -1896,4 +1899,11 @@ $(function manageShifts() {
 
 		});
 	}
+
+	$('body').on('click', '.jsSendSwapShiftRequest', function () {
+		var shiftId = $(this).data("id");
+		var shiftDate = $(this).data('date');
+		//
+		callToCreateBoxSendShifts(shiftId,shiftDate);
+	});
 });

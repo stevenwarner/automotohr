@@ -6006,12 +6006,11 @@ class Settings extends Public_Controller
         $post = $this->input->post(null, true);
         $shiftIds = explode(',', $post['shiftids']);
         $toEmployeeSid = $post['employeeid'];
-
+        //
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
-
+        //
         $data["shiftsData"] = $this->shift_model->getShiftsByShiftId($shiftIds);
-
         //
         foreach ($data["shiftsData"] as $rowShifts) {
             $data_insert_request = [];
@@ -6070,6 +6069,24 @@ class Settings extends Public_Controller
         ]);
     }
 
+    //
+    public function processTradeSingleShiftsCancel () {
+        //
+        $session = checkAndGetSession();
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        $post = $this->input->post(null, true);
+        $shiftId = $post['shiftId'];
+        $employeeId = $post['employeeId'];
+        //
+        // load schedule model
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $this->shift_model->cancelSingleSwapRequest($shiftId, $employeeId);
+        //
+        return SendResponse(200, [
+            "msg" => "You have successfully cancelled Request."
+        ]);
+    }
 
     //
     public function processTradeShiftsCancel()
@@ -6081,17 +6098,11 @@ class Settings extends Public_Controller
 
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
-
         //
-        $data_update_request = [];
-        $shiftIds = $shiftIds;
-        $data_update_request['request_status'] = 'cancelled';
-        $data_update_request['updated_at'] = getSystemDate();
-        $data_update_request['to_employee_sid'] = $loggedInEmployee['sid'];
-        $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
-
+        $this->shift_model->cancelMultiSwapRequest($shiftIds);
+        //
         return SendResponse(200, [
-            "msg" => "You have successfully cancelled Request."
+            "msg" => "You have successfully cancelled Requests."
         ]);
     }
 
@@ -6605,6 +6616,39 @@ class Settings extends Public_Controller
         ]);
     }
 
+    private function pageSendShiftNew(string $pageSlug, int $employeeId): array
+    {
+        // check and generate error for session
+        $session = checkAndGetSession();
+        $loggedInEmployee = checkAndGetSession("employer_detail");
+        //
+        $tmp = explode("-", $_GET['dateFilter']);
+        $startDate = formatDateToDB(trim($tmp[0]), SITE_DATE, DB_DATE);
+        $endDate = formatDateToDB(trim($tmp[1]), SITE_DATE, DB_DATE);
+        // get todays date
+        $data["filter"] = [
+            "startDate" => $startDate,
+            "endDate" => $endDate
+        ];
+        _e($data["filter"],true,true);
+        // load schedule model
+        $this->load->model("v1/Shift_template_model", "shift_template_model");
+        $this->load->model("v1/Shift_model", "shift_model");
+        //
+        $data["employees"] = $this->shift_model->getCompanyEmployeesOnly($session["company_detail"]["sid"]);
+        $data["employeeShifts"] = $this->shift_model->getEmployeeShifts($data["filter"], $loggedInEmployee['sid']);
+        _e($data["employeeShifts"],true,true);
+
+        // load break model
+
+        $data['company_sid'] = $session["company_detail"]["sid"];
+
+        return SendResponse(200, [
+            "view" => $this->load->view("v1/settings/shifts/partials/send_shift", $data, true),
+            "data" => $data["return"] ?? []
+        ]);
+    }
+
     //
     public function processGetEmployeeList()
     {
@@ -6658,8 +6702,15 @@ class Settings extends Public_Controller
 
         // load schedule model
         $this->load->model("v1/Shift_model", "shift_model");
-
+        //
+        // publish this shift first
+        $this->shift_model->publishShiftById($shiftIds);
+        //
         $data["shiftsData"] = $this->shift_model->getShiftsByShiftId($shiftIds);
+        //
+        if (isPayrollOrPlus(true)) {
+            $this->shift_model->cancelMultiSwapRequest($shiftIds);
+        }
         //
         foreach ($data["shiftsData"] as $rowShifts) {
 

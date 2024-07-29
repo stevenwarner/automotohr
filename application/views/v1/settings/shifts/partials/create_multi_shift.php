@@ -15,7 +15,7 @@
                             From Date
                             <strong class="text-red">*</strong>
                         </label>
-                        <input type="text" class="form-control datepicker hasDatepicker" name="shift_date_from" id="shift_date_from" />
+                        <input type="text" class="form-control" name="shift_date_from" id="shift_date_from" />
                     </div>
                     <div class="col-sm-4">
                         <label class="text-medium">

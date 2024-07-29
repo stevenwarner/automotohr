@@ -4,7 +4,7 @@
             <div class="panel-heading">
                 <h2 class="text-medium panel-heading-text weight-6">
                     <i class="fa fa-save text-orange" aria-hidden="true"></i>
-                    Send Shift to Employees
+                    Employees Filters
                 </h2>
             </div>
             <div class="panel-body" style="min-height: 100px;">
@@ -42,7 +42,7 @@
 
         <!-- -->
 
-        <div class="panel panel-default">
+        <div class="panel panel-default hidden" id="jsEmployeeShiftSwapSection">
             <div class="panel-heading">
                 <h2 class="text-medium panel-heading-text">
                     <i class="fa fa-save text-orange" aria-hidden="true"></i>
@@ -68,10 +68,10 @@
             </div>
         </div>
 
-        <div class="panel-footer text-right">
+        <div class="panel-footer text-right hidden" id="jsEmployeeShiftSwapButtons">
             <button class="btn btn-orange jsSendShiftNotification">
-                <i class="fa fa-save" aria-hidden="true"></i>
-                &nbsp;Send Shift
+                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                &nbsp;Send Swap Shift Request
             </button>
             <button class="btn btn-black jsModalCancel" type="button">
                 <i class="fa fa-times-circle" aria-hidden="true"></i>

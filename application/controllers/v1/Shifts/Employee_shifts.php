@@ -168,7 +168,7 @@ class Employee_shifts extends Public_Controller
         $data["pageCSS"] = [
             getPlugin("timepicker", "css"),
             getPlugin("daterangepicker", "css"),
-
+            getPlugin("select2", "css"),
             getPlugin("alertify", "css"),
             "v1/plugins/ms_modal/main"
         ];
@@ -176,7 +176,7 @@ class Employee_shifts extends Public_Controller
             getPlugin("alertify", "js"),
             getPlugin("validator", "js"),
             getPlugin("additionalMethods", "js"),
-
+            getPlugin("select2", "js"),
             getPlugin("timepicker", "js"),
             getPlugin("daterangepicker", "js"),
 

@@ -175,6 +175,10 @@
                     </button>
                 <?php } ?>
 
+                <button class="btn btn-orange jsSendSwapShiftRequest" data-id="<?php echo $shift['sid']; ?>" data-date="<?= $shift['shift_date']; ?>">
+                    <i class="fa fa-exchange" aria-hidden="true"></i>
+                    &nbsp;Swap Shift
+                </button>
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">
                     <i class="fa fa-save" aria-hidden="true"></i>
                     &nbsp;Update Shift

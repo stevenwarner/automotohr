@@ -102,7 +102,7 @@
 
             <button class="btn btn-orange jsPageCreateSingleShiftAndSendBtn" type="button">
                     <i class="fa fa-save" aria-hidden="true"></i>
-                    &nbsp;Create and Send Shift
+                    &nbsp;Create and Swap Shift
                 </button>
 
                 <button class="btn btn-orange jsPageCreateSingleShiftBtn">

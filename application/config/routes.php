@@ -2349,6 +2349,7 @@ $route["v1/clock/timesheet/my/(:num)/(:any)"]["post"] = "v1/Attendance/api/My/pr
 //Shifts Trade
 $route["settings/shifts/trade"]["get"] = "Settings/shiftsTrade";
 $route["settings/shifts/tradeshifts"]["post"] = "Settings/processTradeShifts";
+$route["settings/shifts/trade_single_shift_cancel"]["post"] = "Settings/processTradeSingleShiftsCancel";
 $route["settings/shifts/tradeshiftscancel"]["post"] = "Settings/processTradeShiftsCancel";
 
 $route["settings/shifts/mytrade"]["get"] = "Settings/myShiftsTrade";
