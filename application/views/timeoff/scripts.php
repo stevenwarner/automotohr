@@ -124,9 +124,9 @@ let
 
     <?php if(in_array('policies', $this->uri->segment_array())): ?>
         <!-- For policies -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=3.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=31.0"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_2/policy/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=3.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=3.1"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/policy/add'.( $GLOBALS['minified_version'] ).'.js');?>?v=31.1"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_2/policy/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=3.1"></script>
     <?php endif; ?>
 

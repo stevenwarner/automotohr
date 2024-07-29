@@ -1247,7 +1247,7 @@ class Time_off extends Public_Controller
         }
         //
         $data['company_employees'] = $company_employees;
-        
+
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
         $data['theme'] = $this->theme;
         //
@@ -2737,6 +2737,23 @@ class Time_off extends Public_Controller
 
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
+
+                //
+                if (!empty($post['employeeAccuralSettings'])) {
+                    foreach ($post['employeeAccuralSettings'] as $ettingsRow) {
+                        $insertArray['company_id'] = $post['companyId'];
+                        $insertArray['employee_id'] = $ettingsRow['employee_id'];
+                        $insertArray['employer_id'] = $post['employerId'];
+                        $insertArray['employee_minimum_applicable_hours'] = $ettingsRow['employee_minimum_applicable_Hours'];
+                        $insertArray['employee_minimum_applicable_time'] = $ettingsRow['employee_minimum_applicable_time'];
+                        $insertArray['policy_id'] = $policyId;
+                        $this->timeoff_model->addEmployeeAccuralSettings($insertArray);
+                    }
+                }
+
+
+
+
                 //
                 if (!$policyId) {
                     $this->res['Response'] = "Something went wrong while adding the policy. Please, try again in a few moments.";
@@ -3917,7 +3934,7 @@ class Time_off extends Public_Controller
                     $post['fromDate'] = DateTime::createfromformat('m/d/Y', $post['fromDate'])->format('Y-m-d');
                 }
                 //
-               
+
                 $policies = $this->timeoff_model->getEmployeePoliciesByDate(
                     $post['companyId'],
                     $post['employeeId'],
@@ -3931,11 +3948,11 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
                 break;
-            
+
             case "check_timeoff_request":
                 $request_from_date = DateTime::createfromformat('m/d/Y', $post['startDate'])->format('Y-m-d');
                 $request_to_date = DateTime::createfromformat('m/d/Y', $post['endDate'])->format('Y-m-d');
-                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date,$post['dateRows']);
+                $response = $this->timeoff_model->checkEmployeeTimeoffRequestExist($post['employeeId'], $request_from_date, $request_to_date, $post['dateRows']);
                 //
                 $this->res['Response'] = $response;
                 $this->res['Status'] = TRUE;
@@ -6403,6 +6420,26 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed';
                 $this->resp();
                 break;
+
+                //
+            case 'get_company_employees_for_accrual_settings':
+                $employees = $this->timeoff_model->getCompanyEmployeesForAccrualSettings(
+                    $post['companyId'],
+                    $post['employerId'],
+                    $post["all"] ?? 0
+                );
+
+                if (!sizeof($employees)) {
+                    $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s) from "Create employee" page.';
+                    $this->resp();
+                }
+                //
+                $this->res['Data'] = $employees;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
         }
         //
         $this->resp();
@@ -7753,11 +7790,11 @@ class Time_off extends Public_Controller
                     $status = $processRequest['requestData']['status'];
                     //
                     if ($status == 'approved') {
-                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')'.',';
+                        $rows .= 'APPROVED' . ' (' . strip_tags($processRequest['requestData']['request_status']) . ')' . ',';
                     } else if ($status == 'rejected') {
-                        $rows .= 'REJECTED (PENDING)'.',';
+                        $rows .= 'REJECTED (PENDING)' . ',';
                     } else if ($status == 'pending') {
-                        $rows .= 'PENDING (PENDING)'.',';
+                        $rows .= 'PENDING (PENDING)' . ',';
                     }
                     $rows  .=  $joiningDate . ',' . $rehireDate;
 
@@ -7766,19 +7803,19 @@ class Time_off extends Public_Controller
             }
         }
 
-        $outputFile = $companyHeader. PHP_EOL;
-        $outputFile .= $header_row. PHP_EOL;
-        $outputFile .= $rows. PHP_EOL;
+        $outputFile = $companyHeader . PHP_EOL;
+        $outputFile .= $header_row . PHP_EOL;
+        $outputFile .= $rows . PHP_EOL;
 
         //
-        $fileName = 'employees_time_off/Company_Name:'.str_replace(" ", "_", $data['session']['company_detail']['CompanyName'])."/Generated_By:". $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] ."/Report_Period:".$period."/Generated_Date:". date('Y_m_d-H:i:s') . '.csv';
+        $fileName = 'employees_time_off/Company_Name:' . str_replace(" ", "_", $data['session']['company_detail']['CompanyName']) . "/Generated_By:" . $data['session']['employer_detail']['first_name'] . '_' . $data['session']['employer_detail']['last_name'] . "/Report_Period:" . $period . "/Generated_Date:" . date('Y_m_d-H:i:s') . '.csv';
 
         header('Pragma: public');     // required
         header('Expires: 0');         // no cache
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
         header('Content-Type: text/csv');  // Add the mime type from Code igniter.
-        header('Content-Disposition: attachment; filename="'.$fileName.'"');  // Add the file name
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');  // Add the file name
         header('Content-Transfer-Encoding: binary');
         header('Content-Length: ' . strlen($outputFile)); // provide file size
         header('Connection: close');

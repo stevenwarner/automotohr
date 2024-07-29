@@ -769,6 +769,133 @@
                             <button class="btn btn-orange js-to-step">Save & Finish</button>
                         </div>
                     </div>
+
+
+                    <!-- Step 9 - Employee Accural Settings List -->
+                    <div class="js-step" data-type="add" data-step="9">
+                        <div class="col-md-12 offset-md-3 text-right">
+                            <button class="btn btn-orange js-add-employee-accrual-settings js-step-tab" data-type="add" data-step="10">Add Employee</button>
+                        </div>
+
+                        <table class="table table-bordered table-hover table-striped" id="employeeaccuraltable">
+                            <thead>
+                                <tr>
+                                    <th>Employee Name</th>
+                                    <th>Accrual</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody >
+
+                                <?php if (!empty($employeesAccrualSettings)) {
+
+                                    foreach ($employeesAccrualSettings as $rowSettings) {
+
+                                        $employee_data = array(
+                                            'first_name' => $rowSettings['first_name'],
+                                            'last_name' => $rowSettings['last_name'],
+                                            'access_level' => $rowSettings['access_level'],
+                                            'access_level_plus' => $rowSettings['access_level_plus'],
+                                            'is_executive_admin' => $rowSettings['is_executive_admin'],
+                                            'pay_plan_flag' => $rowSettings['pay_plan_flag'],
+                                            'job_title' => $rowSettings['job_title']
+                                        );
+                                ?>
+                                        <tr class="js-tr">
+                                            <td class="js-employee-name"> <?php echo remakeEmployeeName($employee_data); ?></td>
+                                            <td class="js-employee-email">Minimum applicable time <?php echo $rowSettings['employee_minimum_applicable_hours'] ?> <?php echo $rowSettings['employee_minimum_applicable_time'] ?> </td>
+                                            <td>
+                                                <button class="btn btn-danger btn-theme js-employee-accural-setting-delete" data-id="<?php echo $rowSettings['sid'] ?>">Delete</button>
+                                                <button class="btn btn-orange js-employee-accural-setting-edit" data-id="<?php echo $rowSettings['sid'] ?>" data-employeeid="<?php echo $rowSettings['employee_id'] ?>" data-minimumhours="<?php echo $rowSettings['employee_minimum_applicable_hours'] ?>" data-minimumtime="<?php echo $rowSettings['employee_minimum_applicable_time'] ?>">Edit</button>
+                                            </td>
+                                        </tr>
+                                    <?php }
+                                } else { ?>
+                                    <tr>
+                                        <td colspan="3">Not Found</td>
+                                    </tr>
+                                <?php } ?>
+
+                            </tbody>
+                        </table>
+
+
+
+
+                    </div>
+
+
+
+                    <!-- Step 10 - Employee Accural Settings Add -->
+                    <div class="js-step" data-type="add" data-step="10">
+                        <div class="col-md-12 offset-md-3">
+
+                            <div class="row mb10 csRow" id="js-accrual-employee-add-div">
+                                <div class="col-sm-6">
+                                    <div>
+                                        <h5 class="timeline-title allowed-time-off-title-custom">
+                                            Employees
+                                        </h5>
+
+                                        <select class="invoice-fields" name="template[]" id="js-accrual-employee-add">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 offset-md-3">
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6">
+                                    <!--  -->
+                                    <div>
+                                        <h5 class="timeline-title allowed-time-off-title-custom">
+                                            <?php echo $get_policy_item_info['minimum_applicable_time_label']; ?>
+                                            <i class="fa fa-question-circle" data-hint="js-hint" data-target="minimum-hours"></i>
+                                        </h5>
+                                        <div class="js-hint js-hint-minimum-hours">
+                                            <?php echo $get_policy_item_info['minimum_applicable_hours_info']; ?></div>
+                                        <div>
+                                            <label class="control control--radio">
+                                                Hours &nbsp;&nbsp;
+                                                <input type="radio" name="js-minimum-applicable-time-add1" class="js-employee-minimum-applicable-time-add" checked="true" value="hours" />
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                            <label class="control control--radio">
+                                                Days &nbsp;&nbsp;
+                                                <input type="radio" name="js-minimum-applicable-time-add1" class="js-employee-minimum-applicable-time-add" value="days" />
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                            <label class="control control--radio">
+                                                Months &nbsp;&nbsp;
+                                                <input type="radio" name="js-minimum-applicable-time-add1" class="js-employee-minimum-applicable-time-add" value="months" />
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                            <label class="control control--radio">
+                                                Years &nbsp;&nbsp;
+                                                <input type="radio" name="js-minimum-applicable-time-add1" class="js-employee-minimum-applicable-time-add" value="years" />
+                                                <div class="control__indicator"></div>
+                                            </label>
+                                        </div>
+                                        <div style="margin-top: 5px;">
+                                            <input class="invoice-fields" name="template" id="js-employee-minimum-applicable-hours-add" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="js-step-buttons" data-type="add" data-step="9">
+                                <hr />
+                                <button class="btn btn-black btn-theme js-cancel-employee-settings">Cancel</button>
+                                <button class="btn btn-orange js-employee-accrual-save">Save</button>
+                            </div>
+                        </div>
+
+                   </div>
+
+
                 </div>
             </div>
         </div>

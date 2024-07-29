@@ -12,7 +12,7 @@ $(function () {
         approverList: [],
         deactivate: 0,
         include: 1,
-        isESST:0,
+        isESST: 0,
         employeeTypes: [],
         method: 'none',
         time: 'none',
@@ -36,7 +36,8 @@ $(function () {
         newHireTime: 0,
         newHireTimeType: 0,
         newHireRate: 0,
-        plans: []
+        plans: [],
+        employeeAccuralSettings: []
     };
     //
     window.timeoff.stepCompletedAdd = stepCompletedAdd;
@@ -424,6 +425,69 @@ $(function () {
 
         return false;
     }
+
+
+
+
+    //
+    var employeeAccrualSettingArray = [];
+
+    $(document).on('click', '.js-employee-accrual-save', function (e) {
+        e.preventDefault();
+        //
+
+        let employeeMinimumApplicableHours = $("#js-employee-minimum-applicable-hours-add").val(),
+            employeeMinimumApplicableTimeAdd = $(".js-employee-minimum-applicable-time-add:checked").val(),
+            employeeId = $("#js-accrual-employee-add").val(),
+            employeeName = $("#js-accrual-employee-add option:selected").text()
+
+
+        if (employeeId === null || employeeId === '') {
+            alertify.alert('WARNING!', 'Please, select employee.', () => { });
+            return false;
+        }
+        if (employeeMinimumApplicableHours === '') {
+
+            alertify.alert('WARNING!', 'Please, enter minimum applicable time .', () => { });
+            return false;
+        }
+
+        // ml(true, 'policy');
+
+        policyOBJ.employeeAccuralSettings.push(
+            {
+                employee_id: employeeId,
+                employee_minimum_applicable_Hours: employeeMinimumApplicableHours,
+                employee_minimum_applicable_time: employeeMinimumApplicableTimeAdd
+            }
+        );
+
+        saveStep(policyOBJ);
+       
+        let tblrow = '';
+        tblrow += '<tr class="js-tr">';
+        tblrow += '<td class="js-employee-name">' + employeeName + '</td>';
+        tblrow += '<td class="js-employee-email">Minimum applicable time ' + employeeMinimumApplicableHours + ' ' + employeeMinimumApplicableTimeAdd + ' </td>';
+        tblrow += '<td><button class="btn btn-danger btn-theme js-employee-accural-setting-delete" data-id="">Delete</button>';
+        tblrow += '<button class="btn btn-orange js-employee-accural-setting-edit" data-id="" data-employeeid="" data-minimumhours="" data-minimumtime="">Edit</button>';
+        tblrow += '</td>';
+        tblrow += '</tr > ';
+
+        alertify.alert('SUCESS!', 'Employee accural settings are saved.', () => {
+            $("#js-accrual-employee-add option[value='" + employeeId + "']").remove();
+            $('#js-accrual-employee-add').select2('val', '');
+    
+            $("#js-employee-minimum-applicable-hours-add").val('');
+            $('.js-employee-minimum-applicable-time-add[value="hours"]').prop('checked', true);
+            $('#employeeaccuraltable').append(tblrow);
+
+        });
+
+        //
+        return true;
+
+    });
+
 
     //
     function finalStepCompletedAdd(policy) {

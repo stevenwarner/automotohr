@@ -7945,4 +7945,95 @@ class Timeoff_model extends CI_Model
             ->get('timeoff_holidays')
             ->result_array();
     }
+
+    //
+    function getCompanyEmployeesForAccrualSettings($companySid, $employerId = false, int $employeeStatus = 0)
+    {
+        //
+        $employeeAccuralSettings = $this->getEmployeeAccuralSettings($companySid);
+        if (!empty($employeeAccuralSettings)) {
+            $employeeHaveSettings = array_column($employeeAccuralSettings, 'employee_id');
+        }
+
+        $this->db
+            ->select('sid as user_id, 
+            employee_number, 
+            email, 
+            first_name, 
+            timezone, 
+            last_name, 
+            job_title, 
+            is_executive_admin, 
+            concat(first_name," ",last_name) as full_name, 
+            profile_picture as image, 
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            joined_at,
+            registration_date,
+            rehire_date,
+            terminated_status,
+            active,
+        ')
+            ->from('users')
+            ->where('parent_sid', $companySid)
+            ->where('is_executive_admin', 0)
+            ->order_by('first_name', 'ASC');
+        // include terminated and inactive people 
+        if ($employeeStatus === 0) {
+            $this->db
+                ->where('active', 1)
+                ->where('terminated_status', 0);
+        }
+
+        if (!empty($employeeHaveSettings)) $this->db->where_not_in('sid', $employeeHaveSettings);
+
+        $result = $this->db->get();
+        //
+        $employees = $result->result_array();
+        $result = $result->free_result();
+        //
+        if (!empty($employees)) {
+            foreach ($employees as $index => $employee) {
+                $employees[$index]['anniversary_text'] = get_user_anniversary_date(
+                    $employee['joined_at'],
+                    $employee['registration_date'],
+                    $employee['rehire_date']
+                );
+            }
+        }
+        return $employees;
+    }
+
+    //
+    public function getEmployeeAccuralSettings($companyId)
+    {
+
+        $result = $this->db
+            ->select('employee_accural_settings.*,
+            users.first_name,
+            users.last_name,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.pay_plan_flag,
+            users.job_title
+        ')
+            ->from('employee_accural_settings')
+            ->join('users', 'users.sid = employee_accural_settings.employee_id', 'inner')
+            ->where('employee_accural_settings.company_id', $companyId)
+            ->get();
+        //
+        return $result->result_array();
+    }
+
+    public function addEmployeeAccuralSettings($insertArray)
+    {
+
+        $this->db
+            ->insert(
+                'employee_accural_settings',
+                $insertArray
+            );
+    }
 }

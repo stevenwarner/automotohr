@@ -57,7 +57,7 @@ $('.jsViewPoliciesBtn').click(function (e) {
 
 $(document).on('click', '.js-to-step', function (e) {
     //
-   
+
     e.preventDefault();
     //
     ml(true, 'policy');
@@ -140,19 +140,52 @@ $(document).on('click', '.js-step-tab', function (e) {
     let step = $(this).data('step'),
         type = $(this).data('type');
     //
-    if (!isStepCompleted(1, type)) { step = 1; } else if (!isStepCompleted(2, type)) { step = 2; } else if (!isStepCompleted(3, type)) { step = 3; } else if (!isStepCompleted(4, type)) { step = 4; } else if (!isStepCompleted(5, type)) { step = 5; } else if (!isStepCompleted(6, type)) { step = 6; } else if (!isStepCompleted(7, type)) { step = 7; }
-    // else if(!isStepCompleted(8, type)){ step = 8; }
+
     //
-    $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
-    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
-    $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
-    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
-    //
-    $(`.js-step[data-type="${type}"]`).fadeOut(0);
-    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
-    //
-    ml(false, 'policy');
+    if (step == 9) {
+
+        $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
+        $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
+        //
+        $(`.js-step[data-type="${type}"]`).fadeOut(0);
+        $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+
+
+        ml(false, 'policy');
+    } else if(step == 10){
+
+        $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
+        $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
+        //
+        $(`.js-step[data-type="${type}"]`).fadeOut(0);
+        $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+
+        ml(false, 'policy');
+
+    }
+      
+    else {
+
+        if (!isStepCompleted(1, type)) { step = 1; } else if (!isStepCompleted(2, type)) { step = 2; } else if (!isStepCompleted(3, type)) { step = 3; } else if (!isStepCompleted(4, type)) { step = 4; } else if (!isStepCompleted(5, type)) { step = 5; } else if (!isStepCompleted(6, type)) { step = 6; } else if (!isStepCompleted(7, type)) { step = 7; }
+
+        // else if(!isStepCompleted(8, type)){ step = 8; }
+        //
+        $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
+        $(`.js-step-tab[data-type="${type}"]`).find('i').remove();
+        $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).append('<i class="fa fa-long-arrow-right"></i>');
+        //
+        $(`.js-step[data-type="${type}"]`).fadeOut(0);
+        $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
+        //
+        ml(false, 'policy');
+    }
 });
+
 
 //
 $('#js-add-policy-btn').click((e) => {
@@ -163,6 +196,54 @@ $('#js-add-policy-btn').click((e) => {
     //
     $('#NonEntitledEmployeesadd').prop('checked', true);
 });
+
+//
+
+// Employees
+function fetchEmployeesForAccrualSettings() {
+
+    let postSettings = Object.assign({}, {
+        action: 'get_company_employees_for_accrual_settings',
+        companyId: companyId,
+        employeeId: employeeId,
+        employerId: employerId,
+        public: 0
+    });
+    $.post(handlerURL, postSettings, function (resp) {
+        //
+        if (resp.Redirect === true) {
+            alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                window.location.reload();
+            });
+            return;
+        }
+        //
+        if (resp.Status === false) {
+            console.log('Failed to load employees.');
+            resp.Data = [];
+            // return;
+        }
+        //
+        window.timeoff.employees = resp.Data;
+        //
+        let rows = '';
+        //
+        rows += '<option value="">Please Select</option>';
+        //
+        window.timeoff.employees.map(function (v) {
+            rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) + '</option>';
+        });
+
+        $('#js-accrual-employee-add').html(rows);
+        $('#js-accrual-employee-add').select2();
+
+    });
+}
+
+
+fetchEmployeesForAccrualSettings();
+
+
 
 //
 function getTypeNames(ids) {
@@ -989,8 +1070,8 @@ function loadAddPage() {
     $('#js-plan-box-add').find('ul').html('');
     $('#js-plan-area-add').html('');
     $('.jsPlanArea').html('');
-     // Set default accural check
-     $('#js-accrual-default-flow-add').prop('checked', true);
+    // Set default accural check
+    $('#js-accrual-default-flow-add').prop('checked', true);
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
