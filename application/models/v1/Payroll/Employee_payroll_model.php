@@ -207,7 +207,59 @@ class Employee_payroll_model extends Base_payroll_model
     }
 
 
-
+    /**
+     * get payroll employees
+     */
+    public function getPayrollEmployees(
+        int $companyId,
+        bool $useIndex = false,
+        int $limit = 0
+    ): array {
+        //
+        $this->db
+            ->select(
+                getUserFields() . 'is_onboarded'
+            )
+            ->join('users', 'users.sid = gusto_companies_employees.employee_sid', 'inner')
+            ->where('gusto_companies_employees.company_sid', $companyId);
+        //
+        if ($limit !== 0) {
+            $this->db->limit($limit);
+        }
+        //
+        $records = $this
+            ->db
+            ->order_by('gusto_companies_employees.is_onboarded', 'ASC')
+            ->get('gusto_companies_employees')
+            ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $employee) {
+            //
+            $tmp[$employee['userId']] = [
+                'name' => remakeEmployeeName(
+                    $employee
+                ),
+                'is_onboard' => $employee['is_onboarded'],
+                'id' => $employee['userId'],
+                "paymentMethodIsDirectDeposit" => $this
+                    ->checkIfEmployeePMIsDD(
+                        $employee["userId"]
+                    )
+            ];
+        }
+        //
+        if (!$useIndex) {
+            $tmp = array_values($tmp);
+        }
+        //
+        return $tmp;
+    }
 
     /******************************************************************* */
     // Private Events
@@ -3193,6 +3245,23 @@ class Employee_payroll_model extends Base_payroll_model
                 "gusto_companies_employees",
                 $upd
             );
+    }
+
+    /**
+     * get DD status of an employee
+     *
+     * @param string $employeeId
+     * @return int
+     */
+    private function checkIfEmployeePMIsDD(int $employeeId): int
+    {
+        // check if the employees payment method is Direct deposit
+        return $this->db
+            ->where([
+                "employee_sid" => $employeeId,
+                "type" => "Direct Deposit"
+            ])
+            ->count_all_results("gusto_employees_payment_method");
     }
 }
 

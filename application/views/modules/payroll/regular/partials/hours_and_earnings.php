@@ -22,9 +22,9 @@
                         </div>
                     </div>
                     <!--  -->
-                    <div class="panel panel-success">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="csF16 csW" style="margin: 0">
+                            <h1 class="panel-heading-text text-large">
                                 <strong>Regular Payroll</strong>
                             </h1>
                         </div>
@@ -67,13 +67,13 @@
                             </div>
                             <br />
                             <!-- Text -->
-                            <h1 class="csF16">
+                            <h1 class="text-large">
                                 <strong>
                                     Hours and additional earnings
                                 </strong>
                             </h1>
-                            <p class="csF16">Update your employees' hours, reimbursements, and additional earnings below.</p>
-                            <p class="csF16">To pay your employees with direct deposit on <strong><?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?></strong>, you'll need to run payroll by <strong>4:00pm PDT</strong> on <strong><?= formatDateToDB($regularPayroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DATE); ?></strong>. If you miss this deadline, your employees' direct deposit will be delayed.</p>
+                            <p class="text-small">Update your employees' hours, reimbursements, and additional earnings below.</p>
+                            <p class="text-small">To pay your employees with direct deposit on <strong><?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?></strong>, you'll need to run payroll by <strong>4:00pm PDT</strong> on <strong><?= formatDateToDB($regularPayroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DATE); ?></strong>. If you miss this deadline, your employees' direct deposit will be delayed.</p>
 
                             <hr />
                             <div class="table-responsive">
@@ -81,29 +81,29 @@
                                     <caption></caption>
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="csW csBG4">
+                                            <th scope="col" class="">
                                                 <label class="control control--checkbox">
                                                     <input type="checkbox" name="jsSelectAll" class="jsSelectAll" value="all" />
                                                     <div class="control__indicator" style="margin-top: -11px;"></div>
                                                 </label>
                                             </th>
-                                            <th scope="col" class="csW csBG4">
-                                                Employees (2)
+                                            <th scope="col" class="">
+                                                Employees
                                             </th>
-                                            <th scope="col" class="csW csBG4">
+                                            <th scope="col" class="">
                                                 Regular Hours (RH)<br />
                                                 Overtime (OT/DOT)
                                             </th>
-                                            <th scope="col" class="csW csBG4">
+                                            <th scope="col" class="">
                                                 Additional<br />
                                                 Earnings
                                             </th>
-                                            <th scope="col" class="csW csBG4">
+                                            <th scope="col" class="">
                                                 Gross Pay (GP)<br />
                                                 Reimbursement (R)<br />
                                                 Payment Method
                                             </th>
-                                            <th scope="col" class="csW csBG4">
+                                            <th scope="col" class="">
                                                 Actions
                                             </th>
                                         </tr>
@@ -114,6 +114,7 @@
                             </div>
 
                         </div>
+                        <div class="panel-footer hidden jsRegularPayrollPanel text-right"></div>
                     </div>
                     <!-- loader -->
                     <?php $this->load->view('v1/loader', ['id' => 'jsPageLoader']); ?>

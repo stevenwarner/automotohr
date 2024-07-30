@@ -817,9 +817,7 @@ class Lb_gusto
         // forms_pdf
         $urls["forms_pdf"] =
             "v1/forms/{$key1}/pdf";
-        // company_benefits
-        $urls["company_benefits"] =
-            "v1/companies/{$key}/company_benefits";
+
         // bank_accounts
         $urls["bank_accounts"] =
             "v1/companies/{$key}/bank_accounts";
@@ -921,6 +919,18 @@ class Lb_gusto
             "v1/employees/{$key1}/bank_accounts/{$key2}";
 
         // Payrolls
+        // payroll_prepare
+        $urls["payroll_prepare"] =
+            "v1/companies/{$key}/payrolls/{$key1}/prepare";
+        // payroll_update
+        $urls["payroll_update"] =
+            "v1/companies/{$key}/payrolls/{$key1}";
+        // payroll_get
+        $urls["payroll_get"] =
+            "v1/companies/{$key}/payrolls/{$key1}";
+        // calculate_update
+        $urls["calculate_update"] =
+            "v1/companies/{$key}/payrolls/{$key1}/calculate";
         // payroll_blockers
         $urls["payroll_blockers"] =
             "v1/companies/{$key}/payrolls/blockers";
@@ -933,6 +943,17 @@ class Lb_gusto
         // unprocessed_payrolls
         $urls["unprocessed_payrolls"] =
             "v1/companies/{$key}/payrolls";
+        // Company benefits
+        // company_benefits
+        $urls["company_benefits"] =
+            "v1/companies/{$key}/company_benefits";
+        // update_company_benefit
+        $urls["update_company_benefit"] =
+            "v1/company_benefits/{$key1}";
+        // employee_benefits
+        $urls["update_employee_benefit"] =
+            "v1/employee_benefits/{$key1}";
+
 
 
 

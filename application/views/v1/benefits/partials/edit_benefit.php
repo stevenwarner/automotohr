@@ -7,10 +7,10 @@
             <form action="">
                 <!--  -->
                 <div class="form-group">
-                    <label class="csF16">
+                    <label class="text-medium">
                         Name <strong class="text-danger">*</strong>
                     </label>
-                    <p class="csF12 text-danger">
+                    <p class="text-small text-danger">
                         <strong>
                             <em>
                                 The description of the company benefit.For example, a company may offer multiple benefits with for Medical Insurance. The description would show something more specific like “Kaiser Permanente” or “Blue Cross/ Blue Shield”.
@@ -21,7 +21,7 @@
                 </div>
                 <!--  -->
                 <div class="form-group">
-                    <label class="csF16">
+                    <label class="text-medium">
                         Benefit type <strong class="text-danger">*</strong>
                     </label>
                     <select class="form-control jsType" disabled>
@@ -36,10 +36,10 @@
                 </div>
                 <!--  -->
                 <div class="form-group">
-                    <label class="csF16">
+                    <label class="text-medium">
                         Employer taxes
                     </label>
-                    <p class="csF12 text-danger">
+                    <p class="text-small text-danger">
                         <strong>
                             <em>
                                 Whether the employer is subject to pay employer taxes when an employee is on leave. Only applicable to third party sick pay benefits.
@@ -53,10 +53,10 @@
                 </div>
                 <!--  -->
                 <div class="form-group">
-                    <label class="csF16">
+                    <label class="text-medium">
                         Employee w2
                     </label>
-                    <p class="csF12 text-danger">
+                    <p class="text-small text-danger">
                         <strong>
                             <em>
                                 Whether the employer is subject to file W-2 forms for an employee on leave. Only applicable to third party sick pay benefits.
@@ -70,10 +70,10 @@
                 </div>
                 <!--  -->
                 <div class="form-group">
-                    <label class="csF16">
+                    <label class="text-medium">
                         Active
                     </label>
-                    <p class="csF12 text-danger">
+                    <p class="text-small text-danger">
                         <strong>
                             <em>
                                 Whether this benefit is active for employee participation.
@@ -89,12 +89,12 @@
         </div>
         <div class="panel-footer text-right">
             <input type="hidden" class="jsKey" value="<?= $benefit['sid']; ?>" />
-            <button class="btn csW csBG4 csF16 jsModalCancel">
-                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+            <button class="btn btn-black jsModalCancel">
+                <i class="fa fa-times-circle" aria-hidden="true"></i>
                 &nbsp;Cancel
             </button>
-            <button class="btn csW csBG3 csF16 jsUpdateBenefit">
-                <i class="fa fa-save csF16" aria-hidden="true"></i>
+            <button class="btn btn-orange jsUpdateBenefit">
+                <i class="fa fa-save" aria-hidden="true"></i>
                 &nbsp;Save
             </button>
         </div>

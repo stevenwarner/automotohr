@@ -1881,35 +1881,6 @@ $route['payrolls/external/tax-liabilities/confirm']['get'] =
 // confirm tax liabilities
 $route['payrolls/external/tax-liabilities/confirm']['put'] =
   'v1/payrolls/External/finishTaxLiabilities';
-
-// Regular payroll routes
-$route['payrolls/regular']['get'] =
-  'v1/payrolls/regular/index';
-// Regular single payroll routes
-$route['payrolls/regular/(:num)']['get'] =
-  'v1/payrolls/regular/single/$1';
-// Submit
-// submit regular payroll
-$route['payrolls/regular/(:num)/submit']['put'] =
-  'v1/payrolls/regular/submitPayroll/$1';
-// cancel regular payroll
-$route['payrolls/regular/(:num)/cancel']['put'] =
-  'v1/payrolls/regular/cancelPayroll/$1';
-
-// Regular single payroll routes
-$route['payrolls/regular/(:num)/(:any)']['get'] =
-  'v1/payrolls/regular/single/$1/$2';
-// Hours and earnings
-// Regular single payroll update employees routes
-$route['payrolls/regular/(:num)/prepare']['post'] =
-  'v1/payrolls/regular/preparePayrollForUpdate/$1';
-// get regular payroll step 1 view
-$route['payrolls/regular/(:num)/view/1']['get'] =
-  'v1/payrolls/regular/getRegularPayrollStep1/$1';
-// save regular payroll step 1
-$route['payrolls/regular/(:num)/save/1']['post'] =
-  'v1/payrolls/regular/saveRegularPayrollStep1/$1';
-
 // Time off
 // get regular payroll step 2 view
 $route['payrolls/regular/(:num)/view/2']['get'] =
@@ -1957,25 +1928,7 @@ $route['sa/benefits/add']['post'] = "manage_admin/Benefits/saveBenefit";
 $route['sa/benefits/(:num)']['get'] = "manage_admin/Benefits/generateEditBenefitView/$1";
 $route['sa/benefits/(:num)']['post'] = "manage_admin/Benefits/updateBenefit/$1";
 
-// Company benefits
-$route['benefits']['get'] = "v1/Company_benefits/index";
-$route['benefits/all']['get'] = "v1/Company_benefits/generateBenefitsView";
-// add
-$route['benefits/add']['get'] = "v1/Company_benefits/generateAddView";
-$route['benefits/add']['post'] = "v1/Company_benefits/createBenefit";
-// edit
-$route['benefits/edit/(:num)']['get'] = "v1/Company_benefits/generateEditView/$1";
-$route['benefits/edit/(:num)']['post'] = "v1/Company_benefits/updateBenefit/$1";
-// delete
-$route['benefits/(:num)']['delete'] = "v1/Company_benefits/deleteBenefit/$1";
-// employees
-$route['benefits/employees/(:num)']['get'] = "v1/Company_benefits/generateBenefitEmployeesView/$1";
-$route['benefits/edit/(:num)/employees']['post'] = "v1/Company_benefits/updateBenefitEmployees/$1";
 //
-$route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/generateBenefitEmployeesListingView/$1";
-$route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
-$route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
-$route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";
 // to be removed
 $route['payrolls/start_fresh']['get'] = "v1/Company_benefits/flushPayroll";
 
@@ -2261,13 +2214,6 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
 
 
-//
-$route["payrolls/sync"]["get"] = "Settings/showPayrollSyncMessage";
-
-// CRON for payroll company
-$route["payrolls/processQueue"]["cli"] = "v1/payrolls/Cron_company_payroll/queue";
-$route["payrolls/syncUnprocessedRegularPayrolls"]["get"] = "v1/payrolls/Cron_company_payroll/syncUnprocessedRegularPayrolls";
-
 // Company bank account
 $route["settings/company/accounts"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/listing";
 $route["settings/company/accounts/add"]["get"] = "v1/Settings/BankAccounts/Company_bank_accounts/getAddPage";
@@ -2279,3 +2225,77 @@ $route["settings/company/accounts/(:num)"]["delete"] =
 // direct deposit push to Gusto for an employee
 $route["direct_deposit/(:num)/push"]["post"] =
   "Direct_deposit/push/$1";
+
+
+
+/**
+ * Payroll routes
+ * @version 1.0
+ */
+
+// CRON for payroll company
+$route["payrolls/processQueue"]["cli"]
+  = "v1/payrolls/Cron_company_payroll/queue";
+$route["payrolls/syncUnprocessedRegularPayrolls"]["cli"]
+  = "v1/payrolls/Cron_company_payroll/syncUnprocessedRegularPayrolls";
+
+// sync message
+$route["payrolls/sync"]["get"] = "Settings/showPayrollSyncMessage";
+
+/*******************************************
+ * Regular payroll routes
+ *******************************************/
+// list all payrolls
+$route['payrolls/regular']['get'] =
+  'v1/payrolls/regular/index';
+// Regular single payroll routes
+$route['payrolls/regular/(:num)']['get'] =
+  'v1/payrolls/regular/single/$1';
+// Regular single calculting
+$route['payrolls/regular/stage/(:num)/(:any)']['get'] =
+  'v1/payrolls/regular/getPayrollStage/$1/$2';
+// revert
+$route['payrolls/regular/discard/(:num)']['post'] =
+  'v1/payrolls/regular/discardPayrollChanges/$1';
+// Submit
+// // submit regular payroll
+// $route['payrolls/regular/(:num)/submit']['put'] =
+//   'v1/payrolls/regular/submitPayroll/$1';
+// // cancel regular payroll
+// $route['payrolls/regular/(:num)/cancel']['put'] =
+//   'v1/payrolls/regular/cancelPayroll/$1';
+
+// AJAX calls
+// // get regular payroll step 1 view
+$route['payrolls/regular/(:num)/view/1']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep1/$1';
+// save regular payroll step 1
+$route['payrolls/regular/(:num)/save/1']['post'] =
+  'v1/payrolls/regular/saveRegularPayrollStep1/$1';
+// $route['payrolls/regular/(:num)/(:any)']['get'] =
+// 'v1/payrolls/regular/single/$1/$2';
+// // Hours and earnings
+// // Regular single payroll update employees routes
+// $route['payrolls/regular/(:num)/prepare']['post'] =
+//   'v1/payrolls/regular/preparePayrollForUpdate/$1';
+
+
+// Benefits
+$route['benefits']['get'] = "v1/Company_benefits/index";
+$route['benefits/all']['get'] = "v1/Company_benefits/generateBenefitsView";
+// add
+$route['benefits/add']['get'] = "v1/Company_benefits/generateAddView";
+$route['benefits/add']['post'] = "v1/Company_benefits/createBenefit";
+// edit
+$route['benefits/edit/(:num)']['get'] = "v1/Company_benefits/generateEditView/$1";
+$route['benefits/edit/(:num)']['post'] = "v1/Company_benefits/updateBenefit/$1";
+// delete
+$route['benefits/(:num)']['delete'] = "v1/Company_benefits/deleteBenefit/$1";
+// employees
+$route['benefits/employees/(:num)']['get'] = "v1/Company_benefits/generateBenefitEmployeesView/$1";
+$route['benefits/edit/(:num)/employees']['post'] = "v1/Company_benefits/updateBenefitEmployees/$1";
+//
+$route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/generateBenefitEmployeesListingView/$1";
+$route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
+$route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
+$route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";

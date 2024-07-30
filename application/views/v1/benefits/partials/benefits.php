@@ -33,24 +33,24 @@
                             </strong>
                         </td>
                         <td class="vam text-right">
-                            <button class="btn btn-warning csF16 jsEditBenefit">
-                                <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                            <button class="btn btn-warning jsEditBenefit">
+                                <i class="fa fa-edit" aria-hidden="true"></i>
                                 &nbsp;Edit benefit
                             </button>
                             <?php if (!$value['employee_count']) { ?>
-                                <button class="btn btn-warning csF16 jsEditEmployeesBenefit" data-id="<?= $value['sid'] ?>">
-                                    <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                <button class="btn btn-warning jsEditEmployeesBenefit" data-id="<?= $value['sid'] ?>">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
                                     &nbsp;Edit employees
                                 </button>
                             <?php } else { ?>
-                                <button class="btn btn-warning csF16 jsBenefitEmployeesListing">
-                                    <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                <button class="btn btn-warning jsBenefitEmployeesListing">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
                                     &nbsp;Edit employees
                                 </button>
                             <?php } ?>
                             <?php if (!$value['employee_count']) { ?>
-                                <button class="btn btn-danger csF16 jsDeleteBenefit">
-                                    <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+                                <button class="btn btn-danger jsDeleteBenefit">
+                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
                                     &nbsp;Delete
                                 </button>
                             <?php } ?>

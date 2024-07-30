@@ -585,3 +585,27 @@ if (typeof convertSecondsToTime === "undefined") {
 		return hours + "h" + (minutes > 0 ? " " + minutes + "m" : "");
 	}
 }
+
+if (typeof _cur === "undefined") {
+	/**
+	 * converts a number to currency
+	 * @param {int} numberWithoutSymbol
+	 */
+	function _cur(numberWithoutSymbol, convertToNumber = false) {
+		return numberWithoutSymbol
+			? convertToNumber
+				? numberWithCommas(parseFloat(numberWithoutSymbol).toFixed(2))
+				: parseFloat(numberWithoutSymbol).toFixed(2)
+			: numberWithoutSymbol;
+	}
+}
+
+if (typeof numberWithCommas === "undefined") {
+	/**
+	 * converts a number to currency
+	 * @param {int} numberWithoutSymbol
+	 */
+	function numberWithCommas(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+}

@@ -90,15 +90,14 @@
                     </select>
                 </div>
             </form>
-
         </div>
         <div class="panel-footer text-right">
-            <button class="btn csW csBG4 csF16 jsModalCancel">
-                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+            <button class="btn btn-black jsModalCancel">
+                <i class="fa fa-times-circle" aria-hidden="true"></i>
                 &nbsp;Cancel
             </button>
-            <button class="btn csW csBG3 csF16 jsSaveBenefit">
-                <i class="fa fa-save csF16" aria-hidden="true"></i>
+            <button class="btn btn-orange jsSaveBenefit">
+                <i class="fa fa-save" aria-hidden="true"></i>
                 &nbsp;Save
             </button>
         </div>

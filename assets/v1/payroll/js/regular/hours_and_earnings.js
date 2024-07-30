@@ -20,8 +20,8 @@ $(function regularPayrollsHoursAndEarnings() {
 		//
 		event.preventDefault();
 		//
-		$(this).addClass("dn");
-		$(this).parent().find(".jsBoxField").removeClass("dn");
+		$(this).addClass("hidden");
+		$(this).parent().find(".jsBoxField").removeClass("hidden");
 	});
 	/**
 	 * Additional earning
@@ -30,8 +30,8 @@ $(function regularPayrollsHoursAndEarnings() {
 		//
 		event.preventDefault();
 		//
-		$(this).find("button").addClass("dn");
-		$(this).find(".jsBoxField").removeClass("dn");
+		$(this).find("button").addClass("hidden");
+		$(this).find(".jsBoxField").removeClass("hidden");
 		//
 		showAdditionalEarningBox($(this).closest("tr").data("id"));
 	});
@@ -47,13 +47,13 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsRegularHoursBox")
 			.find(".jsBoxSwitch")
-			.removeClass("dn");
+			.removeClass("hidden");
 		//
 		$(this)
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsRegularHoursBox")
 			.find(".jsBoxField")
-			.addClass("dn");
+			.addClass("hidden");
 	});
 
 	// Regular hours
@@ -67,13 +67,13 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsOvertimeBox")
 			.find(".jsBoxSwitch")
-			.removeClass("dn");
+			.removeClass("hidden");
 		//
 		$(this)
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsOvertimeBox")
 			.find(".jsBoxField")
-			.addClass("dn");
+			.addClass("hidden");
 	});
 
 	// Regular hours
@@ -87,13 +87,13 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsDoubleOvertimeBox")
 			.find(".jsBoxSwitch")
-			.removeClass("dn");
+			.removeClass("hidden");
 		//
 		$(this)
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsDoubleOvertimeBox")
 			.find(".jsBoxField")
-			.addClass("dn");
+			.addClass("hidden");
 	});
 
 	// Regular hours
@@ -107,13 +107,13 @@ $(function regularPayrollsHoursAndEarnings() {
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsBonusBox")
 			.find(".jsBoxSwitch")
-			.removeClass("dn");
+			.removeClass("hidden");
 		//
 		$(this)
 			.closest("tr.jsRegularPayrollEmployeeRow")
 			.find(".jsBonusBox")
 			.find(".jsBoxField")
-			.addClass("dn");
+			.addClass("hidden");
 	});
 
 	// Regular hours
@@ -267,7 +267,7 @@ $(function regularPayrollsHoursAndEarnings() {
 			total += parseFloat($(this).val().trim() || 0);
 		});
 		//
-		$(".jsReimbursementTotal").text("$" + total);
+		$(".jsReimbursementTotal").text("$" + _cur(total, true));
 	});
 
 	// remove reimbursement
@@ -320,14 +320,14 @@ $(function regularPayrollsHoursAndEarnings() {
 			"reimbursement"
 		]["amount"] = parseFloat(obj.total);
 		//
-		payroll["employees"][employeeId]["v1"]["reimbursements"] = obj;
+		payroll["employees"][employeeId]["data"]["reimbursement_json"] = obj;
 		//
 		$(".jsModalCancel").trigger("click");
 		//
 		if (obj.total != 0) {
 			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
 				.find(".jsReimburmentTotal")
-				.text("R $" + parseFloat(obj.total));
+				.text("R $" + _cur(obj.total, true));
 			$('.jsRegularPayrollEmployeeRow[data-id="' + employeeId + '"]')
 				.find(".jsReimbursementTotalBox")
 				.removeClass("hidden");
@@ -408,22 +408,22 @@ $(function regularPayrollsHoursAndEarnings() {
 			},
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.message, function () {
 					ml(
 						true,
 						"jsPageLoader",
 						"Please wait while we are generating a view."
 					);
 					window.location.href = baseUrl(
-						"payrolls/regular/" + payrollId + "/timeoff"
+						"payrolls/regular/" + payrollId + "/review"
 					);
 				});
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				XHR = null;
-				ml(false, "jsPageLoader");
 			});
 	});
 
@@ -443,7 +443,14 @@ $(function regularPayrollsHoursAndEarnings() {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				//
 				payrollEmployees = resp.employees;
 				payroll = resp.payroll;
@@ -453,36 +460,33 @@ $(function regularPayrollsHoursAndEarnings() {
 				if (payroll) {
 					//
 					let rows = "";
-					rows += "<tr>";
-					rows += '	<td colspan="6" class="vam text-right">';
 					rows +=
 						'		<a href="' +
 						baseUrl("payrolls/regular") +
-						'" class="btn csW csBG4 csF16">';
+						'" class="btn btn-black">';
 					rows +=
-						'			<i class="fa fa-times-circle csF16" aria-hidden="true"></i>';
+						'			<i class="fa fa-times-circle " aria-hidden="true"></i>';
 					rows += "			&nbsp;Cancel";
 					rows += "		</a>";
 					rows +=
-						'		<button class="btn csW csBG3 csF16 jsRegularPayrollStep1Save">';
+						'		<button class="btn btn-red jsRegularPayrollStep1Save">';
+					rows +=
+						'			<i class="fa fa-refresh csF16" aria-hidden="true"></i>';
+					rows += "			&nbsp;Discard";
+					rows += "		</button>";
+					rows +=
+						'		<button class="btn btn-orange jsRegularPayrollStep1Save">';
 					rows +=
 						'			<i class="fa fa-save csF16" aria-hidden="true"></i>';
-					rows += "			&nbsp;Save & continue";
+					rows += "			&nbsp;Save & Calculate";
 					rows += "		</button>";
-					rows += "	</td>";
-					rows += "</tr>";
 					//
-					$("tfoot").html(rows);
+					$(".jsRegularPayrollPanel")
+						.html(rows)
+						.removeClass("hidden");
 					//
 					setView();
 				}
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				//
-				XHR = null;
-				//
-				ml(false, "jsPageLoader");
 			});
 	}
 
@@ -492,67 +496,50 @@ $(function regularPayrollsHoursAndEarnings() {
 	function setView() {
 		// loop through the rows
 		$(".jsRegularPayrollEmployeeRow").map(function () {
-			//
+			// get employee id
 			const employeeId = $(this).data("id");
-			//
+			// get the employee
 			const payrollEmployee = payroll["employees"][employeeId];
+			// check if employee exists
 			if (payrollEmployee) {
-				// for regular hours
-				$(this)
-					.find(".jsRegularHoursText")
-					.text(
-						`${payrollEmployee.hourly_compensations.regular_hours.hours} hrs`
-					);
-				//
-				$(this)
-					.find(".jsRegularHoursValue")
-					.val(
-						payrollEmployee.hourly_compensations.regular_hours.hours
-					);
-
+				// set regular hours
+				setEmployeeRowSegment(
+					$(this),
+					"jsRegularHoursText",
+					"jsRegularHoursValue",
+					payrollEmployee.hourly_compensations.regular_hours.hours
+				);
+				// check and set overtime
 				if (payrollEmployee.hourly_compensations.overtime) {
-					// for overtime
-					$(this)
-						.find(".jsOvertimeText")
-						.text(
-							`${payrollEmployee.hourly_compensations.overtime.hours} hrs`
-						);
-					//
-					$(this)
-						.find(".jsOvertimeValue")
-						.val(
-							`${payrollEmployee.hourly_compensations.overtime.hours}`
-						);
+					setEmployeeRowSegment(
+						$(this),
+						"jsOvertimeText",
+						"jsOvertimeValue",
+						payrollEmployee.hourly_compensations.overtime.hours
+					);
 				}
-				// for double overtime
+				// check and set double overtime
 				if (payrollEmployee.hourly_compensations.double_overtime) {
-					$(this)
-						.find(".jsDoubleOvertimeText")
-						.text(
-							`${payrollEmployee.hourly_compensations.double_overtime.hours} hrs`
-						);
-					//
-					$(this)
-						.find(".jsDoubleOvertimeValue")
-						.val(
-							`${payrollEmployee.hourly_compensations.double_overtime.hours}`
-						);
+					setEmployeeRowSegment(
+						$(this),
+						"jsDoubleOvertimeText",
+						"jsDoubleOvertimeValue",
+						payrollEmployee.hourly_compensations.double_overtime
+							.hours
+					);
 				}
+				// check and set bonus
 				if (payrollEmployee.fixed_compensations.bonus) {
-					// for bonus
-					$(this)
-						.find(".jsBonusText")
-						.text(
-							`B $${payrollEmployee.fixed_compensations.bonus.amount}`
-						);
-					//
-					$(this)
-						.find(".jsBonusValue")
-						.val(
-							`${payrollEmployee.fixed_compensations.bonus.amount}`
-						);
+					// set regular hours
+					setEmployeeRowSegment(
+						$(this),
+						"jsBonusText",
+						"jsBonusValue",
+						payrollEmployee.fixed_compensations.bonus.amount,
+						"Bonus $"
+					);
 				}
-				// payment method
+				// set payment method
 				$(this)
 					.find(
 						'.jsPaymentMethod option[value="' +
@@ -564,31 +551,32 @@ $(function regularPayrollsHoursAndEarnings() {
 				let fixedCompensationTotal = 0;
 				// for fixed compensations
 				$.each(payrollEmployee["fixed_compensations"], function (i, v) {
-					if (
-						i != "bonus" &&
-						i.match("timeoff") === null &&
-						i != "reimbursement"
-					) {
+					if (i != "bonus" && i != "reimbursement") {
 						fixedCompensationTotal += parseFloat(v.amount);
 					}
 				});
+				// set additional earnings
+				setEmployeeRowSegment(
+					$(this),
+					"jsAdditionalEarningText",
+					"jsAdditionalEarningValue",
+					fixedCompensationTotal,
+					"AE $"
+				);
 				//
-				$(this)
-					.find(".jsAdditionalEarningText")
-					.text("AE $" + parseFloat(fixedCompensationTotal));
-				$(this)
-					.find(".jsAdditionalEarningValue")
-					.val(fixedCompensationTotal);
-				//
-				if (payrollEmployee.v1.reimbursements.total != 0) {
-					$(this)
-						.find(".jsReimburmentTotal")
-						.text(
-							"R $" +
-								parseFloat(
-									payrollEmployee.v1.reimbursements.total
-								)
-						);
+				if (
+					payrollEmployee.data &&
+					payrollEmployee.data.reimbursement_json &&
+					payrollEmployee.data.reimbursement_json.total != 0
+				) {
+					// set additional earnings
+					setEmployeeRowSegment(
+						$(this),
+						"jsReimburmentTotal",
+						"",
+						payrollEmployee.data.reimbursement_json.total,
+						"R $"
+					);
 					$(this)
 						.find(".jsReimbursementTotalBox")
 						.removeClass("hidden");
@@ -602,7 +590,10 @@ $(function regularPayrollsHoursAndEarnings() {
 						.removeClass("hidden");
 				}
 				// skip payroll
-				if (payrollEmployee.excluded) {
+				if (
+					payrollEmployee.excluded &&
+					payrollEmployee.excluded !== "false"
+				) {
 					$(this)
 						.find(".jsSkipEmployeeFromPayroll")
 						.addClass("hidden");
@@ -623,6 +614,28 @@ $(function regularPayrollsHoursAndEarnings() {
 				setSingleView(employeeId);
 			}
 		});
+	}
+
+	/**
+	 * populate data on segment
+	 * @param {*} pointer
+	 * @param {*} pointer2
+	 * @param {*} value
+	 * @param {*} prefix
+	 */
+	function setEmployeeRowSegment(_this, pointer, pointer2, value, prefix) {
+		if (pointer && _this.find(`.${pointer}`).length) {
+			// for regular hours
+			if (prefix) {
+				_this.find(`.${pointer}`).text(`${prefix}${_cur(value)}`);
+			} else {
+				_this.find(`.${pointer}`).text(`${_cur(value)} hrs`);
+			}
+		}
+		if (pointer2 && _this.find(`.${pointer2}`).length) {
+			//
+			_this.find(`.${pointer2}`).val(value);
+		}
 	}
 
 	/**
@@ -683,7 +696,7 @@ $(function regularPayrollsHoursAndEarnings() {
 		//
 		amountToShow += parseFloat(fixedCompensationTotal);
 		// limit to 2 digits
-		amountToShow = amountToShow.toFixed(2);
+		amountToShow = _cur(amountToShow, true);
 		// append time
 		ref.find(".jsShowTotal").text(`$${amountToShow}`);
 	}
@@ -757,9 +770,9 @@ $(function regularPayrollsHoursAndEarnings() {
 		// save and close button
 		rows += '<div class="form-group text-right">';
 		rows +=
-			'<button class="btn csW csBG4 csF16 jsModalCancel">Cancel</button>&nbsp;';
+			'<button class="btn btn-black jsModalCancel">Cancel</button>&nbsp;';
 		rows +=
-			'<button class="btn csW csBG3 csF16 jsSaveAdditionalEarningsBtn" data-id="' +
+			'<button class="btn btn-orange jsSaveAdditionalEarningsBtn" data-id="' +
 			employeeId +
 			'">Save</button>';
 		rows += "</div>";
@@ -808,10 +821,15 @@ $(function regularPayrollsHoursAndEarnings() {
 			function () {
 				//
 				$(".jsReimbursementTotal").text(
-					`$${parseFloat(
-						payroll["employees"][employeeId]["v1"][
-							"reimbursements"
-						]["total"] || 0
+					`$${_cur(
+						(payroll["employees"][employeeId]["data"][
+							"reimbursement_json"
+						] &&
+							payroll["employees"][employeeId]["data"][
+								"reimbursement_json"
+							]["total"]) ||
+							0,
+						true
 					)}`
 				);
 				//
@@ -830,7 +848,8 @@ $(function regularPayrollsHoursAndEarnings() {
 		let rows = "";
 		// get employee reimbursements
 		const reimbursements =
-			payroll["employees"][employeeId]["v1"]["reimbursements"];
+			payroll["employees"][employeeId]["data"]["reimbursement_json"] ||
+			[];
 
 		// helping material
 		rows += '<br /><p class="csF16 text-danger">';
@@ -866,7 +885,7 @@ $(function regularPayrollsHoursAndEarnings() {
 		rows += '		<div class="row">';
 		rows += '			<div class="col-sm-12 col-xs-12 text-center">';
 		rows +=
-			'				<button class="btn csW csBG3 jsAddReimbursement" data-id="' +
+			'				<button class="btn btn-orange jsAddReimbursement" data-id="' +
 			employeeId +
 			'">Add reimbursement</button>';
 		rows += "			</div>";
@@ -892,9 +911,9 @@ $(function regularPayrollsHoursAndEarnings() {
 		rows += '		<div class="row">';
 		rows += '			<div class="col-sm-12 col-xs-12 text-right">';
 		rows +=
-			'<button class="btn csW csBG4 csF16 jsModalCancel">Cancel</button>&nbsp;';
+			'<button class="btn btn-black jsModalCancel">Cancel</button>&nbsp;';
 		rows +=
-			'<button class="btn csW csBG3 csF16 jsSaveReimbursementBtn" data-id="' +
+			'<button class="btn btn-orange jsSaveReimbursementBtn" data-id="' +
 			employeeId +
 			'">Save</button>';
 		rows += "			</div>";

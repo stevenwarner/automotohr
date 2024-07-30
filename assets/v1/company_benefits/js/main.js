@@ -183,11 +183,11 @@ $(function () {
 			employees: [],
 			employee_deductions: 0,
 			company_contribution: 0,
-			company_contribution_annual_maximum: '',
-			limit_option: '',
-			catch_up: 'false',
-			coverage_amount: '',
-			coverage_salary_multiplier: '0.00',
+			company_contribution_annual_maximum: "",
+			limit_option: "",
+			catch_up: "false",
+			coverage_amount: "",
+			coverage_salary_multiplier: "0.00",
 			deduction_reduces_taxable_income: null,
 		};
 		// get the selected employees
@@ -199,7 +199,11 @@ $(function () {
 		// get the company contributions
 		obj.company_contribution = $(".jsCompanyContribution").val().trim();
 		// get the company contributions
-		obj.company_contribution_annual_maximum = $(".jsCompanyContributionAnnualMaximum").val().trim();
+		obj.company_contribution_annual_maximum = $(
+			".jsCompanyContributionAnnualMaximum"
+		)
+			.val()
+			.trim();
 		// get the company contributions
 		obj.limit_option = $(".jsCompanyLimitOption").val().trim();
 		// get the company contributions
@@ -207,9 +211,15 @@ $(function () {
 		// get the company contributions
 		obj.coverage_amount = $(".jsCoverageAmount").val().trim();
 		// get the company contributions
-		obj.coverage_salary_multiplier = $(".jsCoverageSalaryMultiplier").val().trim();
+		obj.coverage_salary_multiplier = $(".jsCoverageSalaryMultiplier")
+			.val()
+			.trim();
 		// get the company contributions
-		obj.deduction_reduces_taxable_income = $(".jsDeductionReducesTaxableIncome option:selected").val().trim();
+		obj.deduction_reduces_taxable_income = $(
+			".jsDeductionReducesTaxableIncome option:selected"
+		)
+			.val()
+			.trim();
 		//
 		if (!obj.employee_deductions && !obj.company_contribution) {
 			return _error(
@@ -285,12 +295,19 @@ $(function () {
 			employee_deductions: $(".jsDeduction").val().trim() || 0,
 			company_contribution: $(".jsCompanyContribution").val().trim() || 0,
 			active: $(".jsActive option:selected").val(),
-			company_contribution_annual_maximum: $(".jsCompanyContributionAnnualMaximum").val().trim() || 0,
+			company_contribution_annual_maximum:
+				$(".jsCompanyContributionAnnualMaximum").val().trim() || 0,
 			limit_option: $(".jsCompanyLimitOption").val().trim(),
 			catch_up: $(".jsCompanyCatchUp option:selected").val().trim(),
 			coverage_amount: $(".jsCoverageAmount").val().trim(),
-			coverage_salary_multiplier: $(".jsCoverageSalaryMultiplier").val().trim(),
-			deduction_reduces_taxable_income: $(".jsDeductionReducesTaxableIncome option:selected").val().trim()
+			coverage_salary_multiplier: $(".jsCoverageSalaryMultiplier")
+				.val()
+				.trim(),
+			deduction_reduces_taxable_income: $(
+				".jsDeductionReducesTaxableIncome option:selected"
+			)
+				.val()
+				.trim(),
 		};
 		//
 		const errorsArray = [];
@@ -346,12 +363,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsBenefitArea").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsBenefitArea").html(resp.view);
 			});
 	}
 
@@ -365,12 +382,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsAddBenefitModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsAddBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsAddBenefitModalBody").html(resp.view);
 			});
 	}
 
@@ -397,15 +414,15 @@ $(function () {
 			data: obj,
 			cache: false,
 		})
-			.success(function (resp) {
-				loadView();
-				$(".jsModalCancel").trigger("click");
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
 				ml(false, "jsAddBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				$(".jsModalCancel").trigger("click");
+				_success(resp.message);
 			});
 	}
 
@@ -421,12 +438,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsEditBenefitModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEditBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsEditBenefitModalBody").html(resp.view);
 			});
 	}
 
@@ -454,15 +471,15 @@ $(function () {
 			data: obj,
 			cache: false,
 		})
-			.success(function (resp) {
-				loadView();
-				$(".jsModalCancel").trigger("click");
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
 				ml(false, "jsEditBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				$(".jsModalCancel").trigger("click");
+				_success(resp.message);
 			});
 	}
 
@@ -488,14 +505,14 @@ $(function () {
 			method: "DELETE",
 			cache: false,
 		})
-			.success(function (resp) {
-				loadView();
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				_success(resp.message);
 			});
 	}
 
@@ -511,12 +528,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsEditEmployeeBenefitModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEditEmployeeBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsEditEmployeeBenefitModalBody").html(resp.view);
 			});
 	}
 
@@ -544,15 +561,15 @@ $(function () {
 			data: obj,
 			cache: false,
 		})
-			.success(function (resp) {
-				loadView();
-				$(".jsModalCancel").trigger("click");
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
 				ml(false, "jsEditEmployeeBenefitModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				$(".jsModalCancel").trigger("click");
+				_success(resp.message);
 			});
 	}
 
@@ -568,12 +585,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsEmployeeBenefitListingModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEmployeeBenefitListingModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsEmployeeBenefitListingModalBody").html(resp.view);
 			});
 	}
 
@@ -595,12 +612,12 @@ $(function () {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$("#jsEmployeeBenefitListingModalBody").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEmployeeBenefitListingModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$("#jsEmployeeBenefitListingModalBody").html(resp.view);
 			});
 	}
 
@@ -626,14 +643,14 @@ $(function () {
 			cache: false,
 			employeeBenefitId,
 		})
-			.success(function (resp) {
-				loadView();
-				loadEmployeeBenefitListingView(benefitId);
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEmployeeBenefitListingModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				loadEmployeeBenefitListingView(benefitId);
+				_success(resp.message);
 			});
 	}
 
@@ -655,14 +672,14 @@ $(function () {
 			method: "DELETE",
 			cache: false,
 		})
-			.success(function (resp) {
-				loadView();
-				loadEmployeeBenefitListingView(resp.key);
-				_success(resp.msg);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				ml(false, "jsEmployeeBenefitListingModalLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				loadView();
+				loadEmployeeBenefitListingView(resp.key);
+				_success(resp.message);
 			});
 	}
 

@@ -21,31 +21,50 @@
                             </div>
                         </div>
                     </div>
-
                     <!--  -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="panel-heading-text text-medium">
-                                <strong>Company benefits</strong>
+                            <h1 class="panel-heading-text text-large">
+                                <strong>Regular Payroll</strong>
                             </h1>
                         </div>
                         <div class="panel-body">
                             <!--  -->
                             <div class="row">
-                                <div class="col-sm-12 text-right">
-                                    <button class="btn btn-orange jsAddBenefit">
-                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                        &nbsp;Add benefit
-                                    </button>
+                                <div class="col-sm-12">
+                                    <p class="csF16">
+                                        <strong>Pay period: </strong>
+                                        <?= formatDateToDB($regularPayroll['start_date'], DB_DATE, DATE); ?> -
+                                        <?= formatDateToDB($regularPayroll['end_date'], DB_DATE, DATE); ?>
+                                    </p>
+                                    <p class="csF16">
+                                        <strong>Check date: </strong>
+                                        <?= formatDateToDB($regularPayroll['check_date'], DB_DATE, DATE); ?>
+                                    </p>
+                                    <p class="csF16">
+                                        <strong>Deadline date: </strong>
+                                        <?= formatDateToDB($regularPayroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DATE); ?>4:00pm PDT
+                                    </p>
+                                    <p class="csF16">
+                                        <strong>Status: </strong>
+                                        Calculating
+                                    </p>
                                 </div>
                             </div>
-                            <br>
+                            <br />
+
                             <!--  -->
-                            <div id="jsBenefitArea"></div>
+                            <div class="alert alert-info text-center">
+                                <p>
+                                    The current payroll is being calculated. Please wait, this might take a few minutes.
+                                </p>
+
+                            </div>
+
+
                         </div>
                     </div>
-
-                    <!--  -->
+                    <!-- loader -->
                     <?php $this->load->view('v1/loader', ['id' => 'jsPageLoader']); ?>
                 </div>
             </div>

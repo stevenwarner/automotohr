@@ -3,57 +3,49 @@ $(function regularPayrolls() {
 	 * XHR holder
 	 */
 	let XHR = null;
+
 	//
-	$(".jsExternalPayrollDelete").click(function (event) {
+	$(document).on("click", ".jsDiscardPayrollChanges", function (event) {
 		//
 		event.preventDefault();
 		//
-		const externalPayrollId = $(this).closest("tr").data("id");
+		const regularPayrollId = $(this).data("key");
+		const ref = $(this);
 		//
 		return _confirm(
-			"<p>Do you really want to delete this external payroll?<p><br /><p>This action is not revertible. However, you can re-add this external payroll.</p>",
+			"<p>Do you really want to discard changes?<p><br /><p>This action will flush all the employees data set for this payroll and is not revertible. However, you can re-add this payroll.</p>",
 			function () {
-				startProcessOfExternalPayrollDeletion(externalPayrollId);
+				discardPayrollChanges(regularPayrollId, ref);
 			}
 		);
 	});
 
 	/**
-	 * start the process of external payroll deletion
-	 * @param {int} dataOBJ
+	 * start the process of regular payroll revert
+	 * @param {int} regularPayrollId
 	 */
-	function startProcessOfExternalPayrollDeletion(externalPayrollId) {
+	function discardPayrollChanges(regularPayrollId, btnRef) {
 		// check if XHR is already in progress
 		if (XHR !== null) {
 			return false;
 		}
-		//
-		ml(true, "jsPageLoader");
+		const _btn = callButtonHook(btnRef, true);
 		//
 		XHR = $.ajax({
-			url: baseUrl("payrolls/external/" + externalPayrollId + ""),
-			method: "DELETE",
+			url: baseUrl("payrolls/regular/discard/" + regularPayrollId + ""),
+			method: "POST",
 		})
-			.success(function (resp) {
-				return _success(resp.message, function () {
-					window.location.reload();
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
-				ml(false, "jsPageLoader");
+				callButtonHook(_btn, false);
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.message, function () {
+					window.location.reload();
+				});
 			});
 	}
-
-	//
-	$(".jsDatePicker").datepicker({
-		format: "mm/dd/yyyy",
-		changeYear: true,
-		changeMonth: true,
-	});
-	//
-	ml(false, "jsPageLoader");
 });

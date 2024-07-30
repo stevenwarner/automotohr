@@ -324,5 +324,20 @@ class Webhook_model extends CI_Model
         if ($this->post["verification_token"]) {
             $this->verifyHook("payroll", $this->post);
         }
+        // load regular payroll model
+        $this->load->model(
+            "v1/Payroll/Regular_payroll_model",
+            "regular_payroll_model"
+        );
+        // capture payroll calculate event
+        if ($this->post["event_type"] === "payroll.calculated") {
+            // step one get the payroll from
+            // Gusto
+            $this
+                ->regular_payroll_model
+                ->gustoToStorePayrollById(
+                    $this->post["entity_uuid"]
+                );
+        }
     }
 }

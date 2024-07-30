@@ -1777,9 +1777,10 @@ if (!function_exists('getDueDate')) {
         $currentDateObj = new DateTime();
         //
         $diff = $currentDateObj->diff($dateTimeObj);
-
         //
-        return $diff->format(($diff->invert ? '-' : '') . "%d days");
+        return $diff->format("%d") != "0"
+            ? $diff->format(($diff->invert ? '-' : '') . "%d days")
+            : "0 days";
     }
 }
 
@@ -3827,9 +3828,79 @@ if (!function_exists("maskBankAccount")) {
     function maskBankAccount(
         string $bankAccountNumber,
         int $digitsLength = 4
-    ): string
-    {
+    ): string {
         // set the pad length
         return str_repeat("X", strlen($bankAccountNumber) - $digitsLength) . substr($bankAccountNumber, -$digitsLength);
+    }
+}
+
+
+
+if (!function_exists('getPaymentUnitType')) {
+    /**
+     * get job compensation text
+     *
+     * @param string $paymentUnit
+     * @return string
+     */
+    function getPaymentUnitType(string $paymentUnit): string
+    {
+        //
+        $flsaStatus = 'Paid by the hour';
+        //
+        if ($paymentUnit === 'Exempt') {
+            $flsaStatus = 'Salary/No overtime';
+        } elseif ($paymentUnit === 'Salaried Nonexempt') {
+            $flsaStatus = 'Salary/with overtime';
+        }
+
+
+        return $flsaStatus;
+    }
+}
+
+
+if (!function_exists('getReason')) {
+    /**
+     * get reason for Gusto
+     *
+     * @param string $reason
+     * @return string
+     */
+    function getReason(string $reason): string
+    {
+        // get reason
+        $reasonsArray = [];
+        $reasonsArray['bonus'] = 'Bonus';
+        $reasonsArray['corrections'] = 'Correction';
+        $reasonsArray['dismissed-employee'] = 'Dismissed employee';
+        $reasonsArray['transition'] = 'Transition from old pay schedule';
+        //
+        return $reasonsArray[$reason] ?? 'Bonus';
+    }
+}
+
+if (!function_exists("stringToFunc")) {
+    /**
+     * convert text to camel case
+     *
+     * @param string $str
+     * @return string
+     */
+    function stringToFunc(string $str): string
+    {
+        return lcfirst(
+            preg_replace(
+                "/\s/",
+                "",
+                ucwords(
+                    preg_replace(
+                        "/[^a-z]/i",
+                        " ",
+                        $str
+                    )
+                )
+            )
+        );
     }
 }
