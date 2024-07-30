@@ -6422,7 +6422,7 @@ class Timeoff_model extends CI_Model
 
             //
 
-            if ($a->row_array()["employee_type"] == 'fulltime') {
+            if ($a->row_array()['employment_date'] && ($a->row_array()['employee_type'] == 'fulltime' || $a->row_array()['employee_type'] == 'full-time')) {
 
                 $joiningDate = $a->row_array()["employment_date"];
             } else {
@@ -6673,7 +6673,7 @@ class Timeoff_model extends CI_Model
             } else {
                 //
 
-                if ($v['employee_type'] == 'fulltime') {
+                if ($v['employment_date'] && ($v['employee_type'] == 'fulltime' || $v['employee_type'] == 'full-time')) {
 
                     $JoinedDate = $v['employment_date'];
                 } else {
@@ -6859,7 +6859,7 @@ class Timeoff_model extends CI_Model
             );
             //
 
-            if ($v['employee_type'] == 'fulltime') {
+            if ($v['employment_date'] && ($v['employee_type'] == 'fulltime' || $v['employee_type'] == 'full-time')) {
 
                 $JoinedDate = $v['employment_date'];
             } else {
