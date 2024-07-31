@@ -427,20 +427,17 @@ $(function () {
     }
 
 
-
-
     //
     var employeeAccrualSettingArray = [];
 
     $(document).on('click', '.js-employee-accrual-save', function (e) {
         e.preventDefault();
         //
-
         let employeeMinimumApplicableHours = $("#js-employee-minimum-applicable-hours-add").val(),
             employeeMinimumApplicableTimeAdd = $(".js-employee-minimum-applicable-time-add:checked").val(),
             employeeId = $("#js-accrual-employee-add").val(),
-            employeeName = $("#js-accrual-employee-add option:selected").text()
-
+            employeeName = $("#js-accrual-employee-add option:selected").text(),
+            oldEmployeeId = $("#js-old-employee-id").val()
 
         if (employeeId === null || employeeId === '') {
             alertify.alert('WARNING!', 'Please, select employee.', () => { });
@@ -453,33 +450,48 @@ $(function () {
         }
 
         // ml(true, 'policy');
+        if (policyOBJ.employeeAccuralSettings.length >= 1) {
 
-        policyOBJ.employeeAccuralSettings.push(
-            {
-                employee_id: employeeId,
-                employee_minimum_applicable_Hours: employeeMinimumApplicableHours,
-                employee_minimum_applicable_time: employeeMinimumApplicableTimeAdd
+            if (oldEmployeeId != '') {
+                policyOBJ.employeeAccuralSettings.forEach(function (employee) {
+                    if (employee.employee_id == oldEmployeeId) {
+                        employee.employee_minimum_applicable_Hours = employeeMinimumApplicableHours;
+                        employee.employee_minimum_applicable_time = employeeMinimumApplicableTimeAdd;
+                        employee.employee_name = employeeName;
+                        employee.employee_id = employeeId
+                    }
+                });
+            } else {
+                policyOBJ.employeeAccuralSettings.push(
+                    {
+                        employee_id: employeeId,
+                        employee_name: employeeName,
+                        employee_minimum_applicable_Hours: employeeMinimumApplicableHours,
+                        employee_minimum_applicable_time: employeeMinimumApplicableTimeAdd
+                    }
+                );
             }
-        );
+
+        } else {
+
+            policyOBJ.employeeAccuralSettings.push(
+                {
+                    employee_id: employeeId,
+                    employee_name: employeeName,
+                    employee_minimum_applicable_Hours: employeeMinimumApplicableHours,
+                    employee_minimum_applicable_time: employeeMinimumApplicableTimeAdd
+                }
+            );
+        }
+
+
+        manageEmployeedropdown(policyOBJ);
 
         saveStep(policyOBJ);
-       
-        let tblrow = '';
-        tblrow += '<tr class="js-tr">';
-        tblrow += '<td class="js-employee-name">' + employeeName + '</td>';
-        tblrow += '<td class="js-employee-email">Minimum applicable time ' + employeeMinimumApplicableHours + ' ' + employeeMinimumApplicableTimeAdd + ' </td>';
-        tblrow += '<td><button class="btn btn-danger btn-theme js-employee-accural-setting-delete" data-id="">Delete</button>';
-        tblrow += '<button class="btn btn-orange js-employee-accural-setting-edit" data-id="" data-employeeid="" data-minimumhours="" data-minimumtime="">Edit</button>';
-        tblrow += '</td>';
-        tblrow += '</tr > ';
 
         alertify.alert('SUCESS!', 'Employee accural settings are saved.', () => {
-            $("#js-accrual-employee-add option[value='" + employeeId + "']").remove();
-            $('#js-accrual-employee-add').select2('val', '');
-    
             $("#js-employee-minimum-applicable-hours-add").val('');
             $('.js-employee-minimum-applicable-time-add[value="hours"]').prop('checked', true);
-            $('#employeeaccuraltable').append(tblrow);
 
         });
 
@@ -488,6 +500,124 @@ $(function () {
 
     });
 
+
+    //Employee Accurla Settings Local Delete
+    $(document).on("click", ".js-employee-accural-setting-delete-local",
+        function () {
+            let empId = $(this).data('id');
+
+            alertify.confirm('Do you really want to delete this accrual settings?', () => {
+                $(this).closest('tr').remove();
+                policyOBJ.employeeAccuralSettings.splice(empId, 1);
+            }).set('labels', {
+                ok: 'Yes',
+                cancel: 'No'
+            });
+        }
+    );
+
+
+    //Employee Accurla Settings Local Update
+    $(document).on("click", ".js-employee-accural-setting-edit-local",
+        function () {
+            let empId = $(this).data('id');
+
+            $("#js-employee-minimum-applicable-hours-add").val(policyOBJ.employeeAccuralSettings[empId]['employee_minimum_applicable_Hours']);
+            $('.js-employee-minimum-applicable-time-add[value="' + policyOBJ.employeeAccuralSettings[empId]['employee_minimum_applicable_time'] + '"]').prop('checked', true);
+
+            $("#js-old-employee-id").val(policyOBJ.employeeAccuralSettings[empId]['employee_id']);
+
+
+            var employeeExists = ($('#js-accrual-employee-add option[value=' + policyOBJ.employeeAccuralSettings[empId]['employee_id'] + ']').length > 0);
+
+            if (!employeeExists) {
+                $('#js-accrual-employee-add').append("<option value='" + policyOBJ.employeeAccuralSettings[empId]['employee_id'] + "'>" + policyOBJ.employeeAccuralSettings[empId]['employee_name'] + "</option>");
+                $('#js-accrual-employee-add').select2('val', policyOBJ.employeeAccuralSettings[empId]['employee_id']);
+            }
+
+
+            $(".js-employee-accrual-save").html('Update');
+            $(`.js-step-tab[data-type="add"]`).parent('li').removeClass('active');
+            $(`.js-step-tab[data-type="add"][data-step="10"]`).parent('li').addClass('active');
+            $(`.js-step-tab[data-type="add"]`).find('i').remove();
+            //
+            $(`.js-step[data-type="add"]`).fadeOut(0);
+            $(`.js-step[data-type="add"][data-step="10"]`).fadeIn(300);
+        }
+    );
+
+
+    //
+    $(document).on("click", ".js-add-employee-accrual-settings",
+        function () {
+            $("#js-old-employee-id").val('');
+            $("#js-old-employee-id-edit").val('');
+            manageEmployeedropdown(policyOBJ);
+        }
+    );
+
+    //
+    $(document).on("click", ".js-cancel-employee-accrual-settings",
+        function () {
+
+            $("#js-old-employee-id").val('');
+
+            $(`.js-step-tab[data-type="add"]`).parent('li').removeClass('active');
+            $(`.js-step-tab[data-type="add"][data-step="9"]`).parent('li').addClass('active');
+            $(`.js-step-tab[data-type="add"]`).find('i').remove();
+            $(`.js-step-tab[data-type="add"][data-step="9"]`).append('<i class="fa fa-long-arrow-right"></i>');
+            //
+            $(`.js-step[data-type="add"]`).fadeOut(0);
+            $(`.js-step[data-type="add"][data-step="9"]`).fadeIn(300);
+
+        }
+    );
+
+
+    //
+    $(document).on("click", ".js-employee-accural-settings-list",
+        function () {
+            $('table#employeeaccuraltable tr.js-tr-temp').remove();
+            $("#js-old-employee-id").text('');
+            $(".js-employee-accrual-save").html('Save');
+            makeEmployeeAccuralSettingsTable(policyOBJ);
+
+        }
+    );
+
+    //
+    function manageEmployeedropdown(policyOBJ) {
+        policyOBJ.employeeAccuralSettings.forEach(function (employeeAccuralSetting) {
+            $("#js-accrual-employee-add option[value='" + employeeAccuralSetting.employee_id + "']").remove();
+            $('#js-accrual-employee-add').select2('val', '');
+        });
+    }
+
+    //
+    function makeEmployeeAccuralSettingsTable(policyOBJ) {
+
+        //  tempId = policyOBJ.employeeAccuralSettings.length - 1;
+        let tblrow = '';
+        let recordId = 0;
+        if (policyOBJ.employeeAccuralSettings.length >= 1) {
+            policyOBJ.employeeAccuralSettings.forEach(function (employee) {
+
+                tblrow += '<tr class="js-tr-temp">';
+                tblrow += '<td class="js-employee-name">' + employee.employee_name + '</td>';
+                tblrow += '<td class="js-employee-email">Minimum applicable time ' + employee.employee_minimum_applicable_Hours + ' ' + employee.employee_minimum_applicable_time + ' </td>';
+                tblrow += '<td><button class="btn btn-danger btn-theme js-employee-accural-setting-delete-local" data-id="' + recordId + '">Delete</button>&nbsp;';
+                tblrow += '<button class="btn btn-orange js-employee-accural-setting-edit-local" data-id="' + recordId + '" data-employeeid="" data-minimumhours="" data-minimumtime="">Edit</button>';
+                tblrow += '</td>';
+                tblrow += '</tr > ';
+
+                recordId++;
+
+            });
+        }
+
+        $('#employeeaccuraltable').append(tblrow);
+
+    }
 
     //
     function finalStepCompletedAdd(policy) {

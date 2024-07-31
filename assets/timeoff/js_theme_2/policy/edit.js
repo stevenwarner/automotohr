@@ -19,7 +19,7 @@ $(function () {
             approverList: [],
             deactivate: 0,
             include: 1,
-            isESST:0,
+            isESST: 0,
             method: 'yearly',
             time: 'none',
             frequency: 'none',
@@ -48,6 +48,29 @@ $(function () {
             Policies: {
                 Main: {
                     action: 'get_single_policy_by_id',
+                    companyId: companyId,
+                    employerId: employerId,
+                    employeeId: employeeId,
+                    public: 0,
+                }
+            },
+            employeeAccrualSettings: {
+                Main: {
+                    action: 'get_employee_accrual_settings_by_id',
+                    companyId: companyId,
+                    employerId: employerId,
+                    employeeId: employeeId,
+                    public: 0,
+                },
+                Delete: {
+                    action: 'delete_employee_accrual_settings_by_id',
+                    companyId: companyId,
+                    employerId: employerId,
+                    employeeId: employeeId,
+                    public: 0,
+                },
+                getRow: {
+                    action: 'get_employee_accrual_settings_by_rowid',
                     companyId: companyId,
                     employerId: employerId,
                     employeeId: employeeId,
@@ -459,7 +482,119 @@ $(function () {
         ml(true, 'policy');
         //
         loadEditPage();
+
+
+        //
+        let postSettings = Object.assign({}, {
+            action: 'get_company_employees_for_accrual_settings',
+            companyId: companyId,
+            employeeId: employeeId,
+            employerId: employerId,
+            public: 0,
+            policyId: policyId
+
+
+        });
+        $.post(handlerURL, postSettings, function (resp) {
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                console.log('Failed to load employees.');
+                resp.Data = [];
+                // return;
+            }
+            //
+            window.timeoff.employees = resp.Data;
+            //
+            let rows = '';
+            //
+            rows += '<option value="">Please Select</option>';
+            //
+            window.timeoff.employees.map(function (v) {
+                rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) + '</option>';
+            });
+
+            $('#js-accrual-employee-edit').html(rows);
+            $('#js-accrual-employee-edit').select2();
+
+        });
+
     });
+
+
+    //
+    $(document).on('click', '.js-employee-accrual-save-update', function (e) {
+        e.preventDefault();
+        //
+
+        let employeeMinimumApplicableHours = $("#js-employee-minimum-applicable-hours-edit").val(),
+            employeeMinimumApplicableTimeAdd = $(".js-employee-minimum-applicable-time-edit:checked").val(),
+            employeeId = $("#js-accrual-employee-edit").val(),
+            employeeName = $("#js-accrual-employee-edit option:selected").text(),
+            oldEmployeeId = $("#js-old-employee-id-edit").val()
+
+
+        if (employeeId === null || employeeId === '') {
+            alertify.alert('WARNING!', 'Please, select employee.', () => { });
+            return false;
+        }
+        if (employeeMinimumApplicableHours === '') {
+
+            alertify.alert('WARNING!', 'Please, enter minimum applicable time .', () => { });
+            return false;
+        }
+
+        // ml(true, 'policy');
+
+
+        let postSettings = Object.assign({}, {
+            action: 'add_company_employees_for_accrual_settings',
+            companyId: companyId,
+            employeeId: employeeId,
+            employerId: employerId,
+            public: 0,
+            policyId: policyId,
+            employeeMinimumApplicableTimeAdd: employeeMinimumApplicableTimeAdd,
+            employeeMinimumApplicableHours: employeeMinimumApplicableHours,
+            oldEmployeeId:oldEmployeeId
+
+        });
+
+
+        $.post(handlerURL, postSettings, function (resp) {
+            //
+            if (resp.Redirect === true) {
+                alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
+                    window.location.reload();
+                });
+                return;
+            }
+            //
+            if (resp.Status === false) {
+                console.log('Failed to add settings.');
+                resp.Data = [];
+            }
+            //
+            alertify.alert('SUCESS!', 'Employee accural settings are saved.', () => {
+                $("#js-employee-minimum-applicable-hours-edit").val('');
+                $('.js-employee-minimum-applicable-time-edit[value="hours"]').prop('checked', true);
+                $("#js-accrual-employee-edit option[value='" + employeeId + "']").remove();
+                $('#js-accrual-employee-edit').select2('val', '');
+            });
+
+
+        });
+
+
+    });
+
+
 
     //
     $('#js-policy-title-edit').keyup(function () {
@@ -596,7 +731,7 @@ $(function () {
         $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);
-        
+
         if (policy.approver == 1) {
             $('#js-approvers-list-edit').select2('val', policy.approverList ? policy.approverList.split(',') : []);
         }
@@ -649,10 +784,10 @@ $(function () {
         $('#js-step-bar-edit').show();
         //
         $("#js-accrual-default-flow-edit").prop(
-			"checked",
-			policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
-				: false
-		);
+            "checked",
+            policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
+                : false
+        );
         //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
@@ -769,9 +904,26 @@ $(function () {
         //
         setNewHireAccrual('edit');
         setNewHireAccrual('reset');
+
         //
         ml(false, 'policy');
     }
+
+
+    //
+    $(document).on("click", ".js-employee-accural-settings-list-edit",
+        function () {
+
+            $.post(handlerURL, Object.assign(cmnOBJ.employeeAccrualSettings.Main, { policyId: policyId }), (resp) => {
+
+                $('table#employeeaccuraltableedit tr.js-tr-db').remove();
+
+                makeEmployeeAccuralSettingsTableEdit(resp.Data);
+
+            });
+
+        }
+    );
 
     //
     function getSinglePolicy(policyId) {
@@ -781,6 +933,107 @@ $(function () {
             });
         });
     }
+
+    //
+    function makeEmployeeAccuralSettingsTableEdit(employeeAccuralSettings) {
+
+        let tblrow = '';
+        let recordId = 0;
+        if (employeeAccuralSettings.length >= 1) {
+            employeeAccuralSettings.forEach(function (employee) {
+
+                tblrow += '<tr class="js-tr-db">';
+                tblrow += '<td class="js-employee-name">' + employee.first_name + ' ' + employee.last_name + ' ' + remakeEmployeeName(employee, false) + '</td>';
+                tblrow += '<td class="js-employee-email">Minimum applicable time ' + employee.employee_minimum_applicable_hours + ' ' + employee.employee_minimum_applicable_time + ' </td>';
+                tblrow += '<td><button class="btn btn-danger btn-theme js-employee-accural-setting-delete-db" data-id="' + employee.sid + '">Delete</button>&nbsp;';
+                tblrow += '<button class="btn btn-orange js-employee-accural-setting-edit-db" data-id="' + employee.sid + '" data-employeeid="" data-minimumhours="" data-minimumtime="">Edit</button>';
+                tblrow += '</td>';
+                tblrow += '</tr > ';
+                recordId++;
+
+            });
+        }
+
+        $('#employeeaccuraltableedit').append(tblrow);
+
+    }
+
+    //
+    $(document).on("click", ".js-employee-accural-setting-delete-db",
+        function () {
+            let sId = $(this).data('id');
+
+            alertify.confirm('Do you really want to delete this accrual settings?', () => {
+
+                $.post(handlerURL, Object.assign(cmnOBJ.employeeAccrualSettings.Delete, { sId: sId }), (resp) => {
+                    res(resp);
+                });
+
+                $(this).closest('tr').remove();
+
+
+            }).set('labels', {
+                ok: 'Yes',
+                cancel: 'No'
+            });
+        }
+    );
+
+
+
+    //
+    $(document).on("click", ".js-employee-accural-setting-edit-db",
+        function () {
+            let sId = $(this).data('id');
+
+
+            $.post(handlerURL, Object.assign(cmnOBJ.employeeAccrualSettings.getRow, { sId: sId }), (resp) => {
+                console.log(resp);
+                $('.js-employee-minimum-applicable-time-edit[value="' + resp.Data.employee_minimum_applicable_time + '"]').prop('checked', true);
+                $("#js-employee-minimum-applicable-hours-edit").val(resp.Data.employee_minimum_applicable_hours);
+                $("#js-old-employee-id-edit").val(resp.Data.employee_id);
+
+                var employeeExists = ($('#js-accrual-employee-edit option[value=' + resp.Data.employee_id + ']').length > 0);
+
+                if (!employeeExists) {
+                    $('#js-accrual-employee-edit').append("<option value='" + resp.Data.employee_id + "'>" + resp.Data.first_name + ' ' + resp.Data.last_name + ' ' + remakeEmployeeName(resp.Data, false) + "</option>");
+                    $('#js-accrual-employee-edit').select2('val', resp.Data.employee_id);
+                }
+
+            });
+
+
+            $(".js-employee-accrual-save-update").html('Update');
+            $(`.js-step-tab[data-type="edit]`).parent('li').removeClass('active');
+            $(`.js-step-tab[data-type="edit"][data-step="10"]`).parent('li').addClass('active');
+            $(`.js-step-tab[data-type="edit"]`).find('i').remove();
+            //
+            $(`.js-step[data-type="edit"]`).fadeOut(0);
+            $(`.js-step[data-type="edit"][data-step="10"]`).fadeIn(300);
+          
+
+        }
+    );
+
+
+    //
+    $(document).on("click", ".js-cancel-employee-accrual-settings-edit",
+        function () {
+            $("#js-old-employee-id-edit").val('');
+
+            $(`.js-step-tab[data-type="edit"]`).parent('li').removeClass('active');
+            $(`.js-step-tab[data-type="edit"][data-step="9"]`).parent('li').addClass('active');
+            $(`.js-step-tab[data-type="edit"]`).find('i').remove();
+            $(`.js-step-tab[data-type="edit"][data-step="9"]`).append('<i class="fa fa-long-arrow-right"></i>');
+            //
+            $(`.js-step[data-type="edit"]`).fadeOut(0);
+            $(`.js-step[data-type="edit"][data-step="9"]`).fadeIn(300);
+
+        }
+    );
+
+
+
 
     // Handles back and forth clicks
     function stepCompletedEdit(step) {
@@ -844,7 +1097,7 @@ $(function () {
             policyOBJ.rate = getField('#js-accrual-rate-edit');
             // Set policy rate type
             policyOBJ.rateType = getField('#js-accrual-rate-type-edit option:selected');
-            
+
             // Set policy minimum aplicable type
             policyOBJ.applicableTimeType = getField('.js-minimum-applicable-time-edit:checked');
             // Set policy minimum aplicable time

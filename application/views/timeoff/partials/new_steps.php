@@ -15,7 +15,7 @@
         <li><a href="javascript:void(0)" data-type="<?=$stepType;?>" data-step="5" class="js-step-tab">Applicable Date</a></li>
         <li><a href="javascript:void(0)" data-type="<?=$stepType;?>" data-step="6" class="js-step-tab">Reset Date</a></li>
         <li><a href="javascript:void(0)" data-type="<?=$stepType;?>" data-step="7" class="js-step-tab">New Hire</a></li>
-        <li><a href="javascript:void(0)" data-type="<?=$stepType;?>" data-step="9" class="js-step-tab">Employee Accrual Setting</a></li>
+        <li><a href="javascript:void(0)" data-type="<?=$stepType;?>" data-step="9" class="js-step-tab js-employee-accural-settings-list js-employee-accural-settings-list-edit">Employee Accrual Setting</a></li>
 
     </ul>
 </div>

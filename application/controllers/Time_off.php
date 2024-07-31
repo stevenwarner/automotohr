@@ -3023,6 +3023,59 @@ class Time_off extends Public_Controller
                 $this->resp();
                 break;
 
+            case 'get_employee_accrual_settings_by_id':
+                // 
+                $employeeAccrualSettings = $this->timeoff_model->getEmployeeAccuralSettings(
+                    $post['policyId']
+                );
+
+                //
+                if (empty($employeeAccrualSettings)) {
+                    $this->res['Response'] = 'We are unable to find the requested policy.';
+                    $this->res['Code'] = 'NOTFOUND';
+                    $this->resp();
+                }
+                //
+                $this->res['Data'] = $employeeAccrualSettings;
+                $this->res['Status'] = true;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
+
+            case 'get_employee_accrual_settings_by_rowid':
+                // 
+                $employeeAccrualSettings = $this->timeoff_model->getEmployeeAccuralSettingsByRowId(
+                    $post['sId']
+                );
+
+                //
+                if (empty($employeeAccrualSettings)) {
+                    $this->res['Response'] = 'We are unable to find the requested policy.';
+                    $this->res['Code'] = 'NOTFOUND';
+                    $this->resp();
+                }
+                //
+                $this->res['Data'] = $employeeAccrualSettings;
+                $this->res['Status'] = true;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
+
+            case 'delete_employee_accrual_settings_by_id':
+                // 
+                $this->timeoff_model->deleteEmployeeAccuralSettings(
+                    $post['sId']
+                );
+
+                //
+                $this->res['Status'] = true;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
+
             case "get_policy_request":
                 //
                 $company_employees = $this->timeoff_model->getEmployeesWithDepartmentAndTeams($post['companyId']);
@@ -6425,14 +6478,38 @@ class Time_off extends Public_Controller
             case 'get_company_employees_for_accrual_settings':
                 $employees = $this->timeoff_model->getCompanyEmployeesForAccrualSettings(
                     $post['companyId'],
-                    $post['employerId'],
-                    $post["all"] ?? 0
+                    $post['policyId']
                 );
 
                 if (!sizeof($employees)) {
-                    $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s) from "Create employee" page.';
+                    $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s)';
                     $this->resp();
                 }
+                //
+                $this->res['Data'] = $employees;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;
+
+
+            case 'add_company_employees_for_accrual_settings':
+
+                $insertArray['company_id'] = $post['companyId'];
+                $insertArray['employee_id'] = $post['employeeId'];
+                $insertArray['employer_id'] = $post['employerId'];
+                $insertArray['employee_minimum_applicable_hours'] = $post['employeeMinimumApplicableHours'];
+                $insertArray['employee_minimum_applicable_time'] = $post['employeeMinimumApplicableTimeAdd'];
+                $insertArray['policy_id'] = $post['policyId'];
+
+                if ($post['oldEmployeeId'] == '') {
+                    $this->timeoff_model->addEmployeeAccuralSettings($insertArray);
+                } else {
+                    $oldEmployeeId = $post['oldEmployeeId'];
+                    $this->timeoff_model->updateEmployeeAccuralSettings($insertArray,$oldEmployeeId);
+                }
+
                 //
                 $this->res['Data'] = $employees;
                 $this->res['Code'] = 'SUCCESS';

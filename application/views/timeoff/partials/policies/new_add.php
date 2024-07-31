@@ -785,7 +785,7 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody >
+                            <tbody>
 
                                 <?php if (!empty($employeesAccrualSettings)) {
 
@@ -811,19 +811,13 @@
                                         </tr>
                                     <?php }
                                 } else { ?>
-                                    <tr>
-                                        <td colspan="3">Not Found</td>
-                                    </tr>
+                                    
                                 <?php } ?>
 
                             </tbody>
                         </table>
 
-
-
-
                     </div>
-
 
 
                     <!-- Step 10 - Employee Accural Settings Add -->
@@ -878,7 +872,10 @@
                                             </label>
                                         </div>
                                         <div style="margin-top: 5px;">
+
                                             <input class="invoice-fields" name="template" id="js-employee-minimum-applicable-hours-add" autocomplete="off" />
+                                            <input class="invoice-fields" name="oldemployeeid" id="js-old-employee-id" autocomplete="off" value="" type="hidden" />
+
                                         </div>
                                     </div>
                                 </div>
@@ -888,12 +885,12 @@
                         <div class="col-sm-6">
                             <div class="js-step-buttons" data-type="add" data-step="9">
                                 <hr />
-                                <button class="btn btn-black btn-theme js-cancel-employee-settings">Cancel</button>
+                                <button class="btn btn-black btn-theme js-cancel-employee-accrual-settings">Cancel</button>
                                 <button class="btn btn-orange js-employee-accrual-save">Save</button>
                             </div>
                         </div>
 
-                   </div>
+                    </div>
 
 
                 </div>

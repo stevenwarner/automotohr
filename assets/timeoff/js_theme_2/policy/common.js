@@ -139,7 +139,6 @@ $(document).on('click', '.js-step-tab', function (e) {
     //
     let step = $(this).data('step'),
         type = $(this).data('type');
-    //
 
     //
     if (step == 9) {
@@ -152,9 +151,12 @@ $(document).on('click', '.js-step-tab', function (e) {
         $(`.js-step[data-type="${type}"]`).fadeOut(0);
         $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
 
-
         ml(false, 'policy');
-    } else if(step == 10){
+    } else if (step == 10) {
+
+        $("#js-employee-minimum-applicable-hours-add").val('');
+        $('.js-employee-minimum-applicable-time-add[value="hours"]').prop('checked', true);
+       
 
         $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
         $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
@@ -167,7 +169,7 @@ $(document).on('click', '.js-step-tab', function (e) {
         ml(false, 'policy');
 
     }
-      
+
     else {
 
         if (!isStepCompleted(1, type)) { step = 1; } else if (!isStepCompleted(2, type)) { step = 2; } else if (!isStepCompleted(3, type)) { step = 3; } else if (!isStepCompleted(4, type)) { step = 4; } else if (!isStepCompleted(5, type)) { step = 5; } else if (!isStepCompleted(6, type)) { step = 6; } else if (!isStepCompleted(7, type)) { step = 7; }
@@ -235,7 +237,7 @@ function fetchEmployeesForAccrualSettings() {
         });
 
         $('#js-accrual-employee-add').html(rows);
-        $('#js-accrual-employee-add').select2();
+        $('#js-accrual-employee-add').select2();      
 
     });
 }
@@ -1250,6 +1252,8 @@ function loadEditPage() {
     $('.js-step-tab[data-type="edit"][data-step="1"]').parent().addClass('active');
     $('.js-step-tab[data-type="reset"]').parent().removeClass('active');
     $('.js-step-tab[data-type="reset"][data-step="1"]').parent().addClass('active');
+
+
     //
     loadResetPage();
     $(".jsEditResetCheckbox[data-type='cp']").trigger('click');

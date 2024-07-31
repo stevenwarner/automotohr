@@ -7947,10 +7947,11 @@ class Timeoff_model extends CI_Model
     }
 
     //
-    function getCompanyEmployeesForAccrualSettings($companySid, $employerId = false, int $employeeStatus = 0)
+    function getCompanyEmployeesForAccrualSettings($companySid, $policyId = 0)
     {
         //
-        $employeeAccuralSettings = $this->getEmployeeAccuralSettings($companySid);
+        $employeeAccuralSettings = $this->getEmployeeAccuralSettings($policyId);
+
         if (!empty($employeeAccuralSettings)) {
             $employeeHaveSettings = array_column($employeeAccuralSettings, 'employee_id');
         }
@@ -7980,11 +7981,9 @@ class Timeoff_model extends CI_Model
             ->where('is_executive_admin', 0)
             ->order_by('first_name', 'ASC');
         // include terminated and inactive people 
-        if ($employeeStatus === 0) {
             $this->db
                 ->where('active', 1)
                 ->where('terminated_status', 0);
-        }
 
         if (!empty($employeeHaveSettings)) $this->db->where_not_in('sid', $employeeHaveSettings);
 
@@ -8006,7 +8005,7 @@ class Timeoff_model extends CI_Model
     }
 
     //
-    public function getEmployeeAccuralSettings($companyId)
+    public function getEmployeeAccuralSettings($policyId)
     {
 
         $result = $this->db
@@ -8021,12 +8020,12 @@ class Timeoff_model extends CI_Model
         ')
             ->from('employee_accural_settings')
             ->join('users', 'users.sid = employee_accural_settings.employee_id', 'inner')
-            ->where('employee_accural_settings.company_id', $companyId)
+            ->where('employee_accural_settings.policy_id', $policyId)
             ->get();
         //
         return $result->result_array();
     }
-
+    //
     public function addEmployeeAccuralSettings($insertArray)
     {
 
@@ -8036,4 +8035,53 @@ class Timeoff_model extends CI_Model
                 $insertArray
             );
     }
+
+    //
+    public function deleteEmployeeAccuralSettings($sid)
+    {
+
+        $this->db
+            ->where('sid', $sid)
+            ->delete('employee_accural_settings');
+    }
+
+    //
+
+    public function getEmployeeAccuralSettingsByRowId($sId)
+    {
+
+        $result = $this->db
+            ->select('employee_accural_settings.*,
+            users.first_name,
+            users.last_name,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.pay_plan_flag,
+            users.job_title
+        ')
+            ->from('employee_accural_settings')
+            ->join('users', 'users.sid = employee_accural_settings.employee_id', 'inner')
+            ->where('employee_accural_settings.sid', $sId)
+            ->get();
+        //
+        return $result->row_array();
+    }
+
+//
+    public function updateEmployeeAccuralSettings($updateArray,$oldEmployeeId)
+    {
+
+               $this->db
+            ->where('employee_id', $oldEmployeeId)
+            ->where('policy_id', $updateArray['policy_id'])
+
+            ->update(
+                'employee_accural_settings',
+                $updateArray
+            );
+    }
+
+
+
 }

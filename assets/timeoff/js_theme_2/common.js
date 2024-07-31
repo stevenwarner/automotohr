@@ -29,13 +29,12 @@ $(".jsCalendarView").click(function (e) {
 		{
 			Id: "calendarModal",
 			Title: "Calendar",
-			Body: `<iframe src="${baseURL}calendar/my_events/iframe${
-				window.location.pathname.match(
-					/(lms)|(employee_management_system)|(dashboard)/gi
-				) !== null
-					? "/ems"
-					: ""
-			}" width="100%" height="${$(window).height() - 90}"></iframe>`,
+			Body: `<iframe src="${baseURL}calendar/my_events/iframe${window.location.pathname.match(
+				/(lms)|(employee_management_system)|(dashboard)/gi
+			) !== null
+				? "/ems"
+				: ""
+				}" width="100%" height="${$(window).height() - 90}"></iframe>`,
 			Loader: "jsCalendarLoader",
 		},
 		() => {
@@ -227,10 +226,10 @@ function getAccrualPlans(type, same) {
 		r.push(
 			type == "edit-reset" || same !== undefined
 				? {
-						plan_title: l.accrualType,
-						accrual_rate: l.accrualRate,
-						accrual_type_m: l.accrualTypeM,
-				  }
+					plan_title: l.accrualType,
+					accrual_rate: l.accrualRate,
+					accrual_type_m: l.accrualTypeM,
+				}
 				: l
 		);
 	});
@@ -267,23 +266,20 @@ function Modal(options, cb) {
                     ${options.Title}
                     </span>
                     <span class="csModalButtonWrap">
-                    ${
-						options.Buttons !== undefined &&
-						options.Buttons.length !== 0
-							? options.Buttons.join("")
-							: ""
-					}
-                        <button class="btn btn-black jsModalCancel" ${
-							options.Ask === undefined ? "" : 'data-ask="no"'
-						} title="Close this window">Cancel</button>
+                    ${options.Buttons !== undefined &&
+			options.Buttons.length !== 0
+			? options.Buttons.join("")
+			: ""
+		}
+                        <button class="btn btn-black jsModalCancel" ${options.Ask === undefined ? "" : 'data-ask="no"'
+		} title="Close this window">Cancel</button>
                     </span>
                     <div class="clearfix"></div>
                 </h3>
             </div>
             <div class="csModalBody">
-                <div class="csIPLoader jsIPLoader" data-page="${
-					options.Loader
-				}"><i class="fa fa-circle-o-notch fa-spin"></i></div>
+                <div class="csIPLoader jsIPLoader" data-page="${options.Loader
+		}"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                 ${options.Body}
             </div>
             <div class="clearfix"></div>
@@ -333,6 +329,7 @@ $(document).on("click", ".jsModalCancel", (e) => {
 		$("#ui-datepicker-div").remove();
 	}
 });
+
 
 // Pagination
 // Pagination
@@ -445,12 +442,12 @@ function load_pagination(limit, list_size, target_ref, page_type) {
 	// append showing of records
 	targetShowing.html(
 		"<p>Showing " +
-			(page_array.start_index + 1) +
-			" - " +
-			(page_array.end_index != -1 ? page_array.end_index + 1 : 1) +
-			" of " +
-			obj["count"] +
-			"</p>"
+		(page_array.start_index + 1) +
+		" - " +
+		(page_array.end_index != -1 ? page_array.end_index + 1 : 1) +
+		" of " +
+		obj["count"] +
+		"</p>"
 	);
 }
 // Paginate logic
@@ -702,8 +699,8 @@ function remakeRangeRowsEdit(d1, d2, target, data) {
 				(ld !== undefined && ld.partial == "fullday"
 					? 'checked="true"'
 					: ld == undefined
-					? 'checked="true"'
-					: "") +
+						? 'checked="true"'
+						: "") +
 				" />";
 			rows += '                <span class="control__indicator"></span>';
 			rows += "            </label>";
@@ -944,8 +941,8 @@ function getRequestedDays(target, slug) {
 			alertify.alert(
 				"WARNING!",
 				"Please, add request time for date <b>" +
-					$(this).data("date") +
-					"</b>.",
+				$(this).data("date") +
+				"</b>.",
 				function () {
 					return;
 				}
@@ -966,10 +963,10 @@ function getRequestedDays(target, slug) {
 			partial: $(this)
 				.find(
 					'input[name="' +
-						i +
-						"_day_type_" +
-						slug.replace(/-/, "") +
-						'"]:checked'
+					i +
+					"_day_type_" +
+					slug.replace(/-/, "") +
+					'"]:checked'
 				)
 				.val(),
 			time: time.requestedMinutes,
@@ -1004,10 +1001,10 @@ function getTimeInMinutes(typo) {
 		)
 			? 0
 			: parseInt(
-					$("#js-request-days" + typo + "")
-						.val()
-						.trim()
-			  );
+				$("#js-request-days" + typo + "")
+					.val()
+					.trim()
+			);
 	}
 	if ($("#js-request-hours" + typo + "").length !== 0) {
 		format += "H,";
@@ -1020,10 +1017,10 @@ function getTimeInMinutes(typo) {
 		)
 			? 0
 			: parseInt(
-					$("#js-request-hours" + typo + "")
-						.val()
-						.trim()
-			  );
+				$("#js-request-hours" + typo + "")
+					.val()
+					.trim()
+			);
 	}
 	if ($("#js-request-minutes" + typo + "").length !== 0) {
 		format += "M,";
@@ -1036,10 +1033,10 @@ function getTimeInMinutes(typo) {
 		)
 			? 0
 			: parseInt(
-					$("#js-request-minutes" + typo + "")
-						.val()
-						.trim()
-			  );
+				$("#js-request-minutes" + typo + "")
+					.val()
+					.trim()
+			);
 	}
 	//
 	if (format == "D:H:M")
@@ -1180,7 +1177,7 @@ function get_array_from_minutes(fromMinutes, employeeShiftTime, format) {
 			returnArray[format]["hours"] +
 			" hour" +
 			(returnArray[format]["hours"] > 1 ||
-			returnArray[format]["hours"] == 0
+				returnArray[format]["hours"] == 0
 				? "s"
 				: "") +
 			" & ";
@@ -1189,7 +1186,7 @@ function get_array_from_minutes(fromMinutes, employeeShiftTime, format) {
 			returnArray[format]["minutes"] +
 			" minute" +
 			(returnArray[format]["minutes"] > 1 ||
-			returnArray[format]["minutes"] == 0
+				returnArray[format]["minutes"] == 0
 				? "s"
 				: "") +
 			" & ";
@@ -1220,9 +1217,8 @@ async function whoIsOnOffToday() {
                 href="${baseURL}employee_profile/${emp.userId}" 
                 target="_blank"
                 class="jsOffEmployees"
-                data-content="<span>${emp.first_name} ${
-			emp.last_name
-		}<br /><span>${remakeEmployeeName(emp, false)}</span></span>"
+                data-content="<span>${emp.first_name} ${emp.last_name
+			}<br /><span>${remakeEmployeeName(emp, false)}</span></span>"
             >
                 <img src="${getImageURL(emp.image)}" class="csRadius50" />
             </a>
@@ -1231,14 +1227,13 @@ async function whoIsOnOffToday() {
 		// For mobile
 		m_rows += `
             <li>
-                <a  href="${baseURL}employee_profile/${
-			emp.userId
-		}" style="width: auto; height: auto;" >
+                <a  href="${baseURL}employee_profile/${emp.userId
+			}" style="width: auto; height: auto;" >
                     <div class="employee-info">
                         <figure>
                             <img src="${getImageURL(
-								emp.image
-							)}" class="img-circle emp-image" />
+				emp.image
+			)}" class="img-circle emp-image" />
                         </figure>
                         <div class="text">
                             <h4>${emp.first_name} ${emp.last_name} </h4>
@@ -1389,8 +1384,8 @@ function setUpcomingTimeOffs(employeeId) {
 		resp.Data.map(function (to) {
 			//
 			var startDate = moment(to.request_from_date, "YYYY-MM-DD").format(
-					timeoffDateFormat
-				),
+				timeoffDateFormat
+			),
 				endDate = moment(to.request_to_date, "YYYY-MM-DD").format(
 					timeoffDateFormat
 				);
