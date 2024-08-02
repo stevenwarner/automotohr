@@ -39,7 +39,7 @@ class Payroll extends CI_Controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
         //
-        $this->createMinifyFiles = true;
+        $this->createMinifyFiles = false;
     }
 
     public function dashboard()
@@ -2622,7 +2622,12 @@ class Payroll extends CI_Controller
         // check for session out
         $this->checkSessionStatus($session);
         // verify employee and get the employee companyId
-        $response = $this->payroll_model->onboardEmployee($employeeId, $session['company_detail']['sid']);
+        // $response = $this->payroll_model->onboardEmployee($employeeId, $session['company_detail']['sid']);
+        // _e($response,true,true);
+        // Call the model
+        $this->load->model("v1/Payroll/Employee_payroll_model", "employee_payroll_model");
+        //
+        $response = $this->employee_payroll_model->syncEmployeeByID($employeeId, $session['company_detail']['sid']);
         //
         return SendResponse(
             $response['errors'] ? 400 : 200,

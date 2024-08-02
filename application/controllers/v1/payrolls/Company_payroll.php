@@ -145,7 +145,7 @@ class Company_payroll extends CI_Controller
         if ($errors) {
             return SendResponse(400, ['errors' => $errors]);
         }
-
+        //
         $response = $this
             ->company_payroll_model
             ->signCompanyAgreement(

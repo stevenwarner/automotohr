@@ -25,7 +25,7 @@ class External extends Public_controller
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
         // Call the model
-        $this->load->model("v1/External_payroll_model", "external_payroll_model");
+        $this->load->model("v1/Payroll/External_payroll_model", "external_payroll_model");
         // set the logged in user id
         $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
         // set path to CSS file

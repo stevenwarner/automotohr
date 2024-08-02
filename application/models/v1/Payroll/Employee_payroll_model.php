@@ -18,6 +18,7 @@ class Employee_payroll_model extends Base_payroll_model
      */
     public function __construct()
     {
+        parent::__construct();
         $this->employeeOldData = [];
     }
 
@@ -75,6 +76,21 @@ class Employee_payroll_model extends Base_payroll_model
                 $this->onboardEmployee($v0);
             }
         }
+    }
+
+    /**
+     * Sync employee by sid
+     *
+     * @param int $employeeId
+     */
+    public function syncEmployeeByID($employeeId, $companyId)
+    {
+        //
+        $this->setCompanyDetails(
+            $companyId
+        );
+        //
+        return $this->onboardEmployee($employeeId);
     }
 
     /**
@@ -146,6 +162,9 @@ class Employee_payroll_model extends Base_payroll_model
     public function dataStoreToGustoEmployeeFlow(
         array $events
     ) {
+        if (!$this->gustoEmployee) {
+            return $this;
+        }
         // loop through the events
         foreach ($events as $event) {
             // get the event
@@ -574,7 +593,11 @@ class Employee_payroll_model extends Base_payroll_model
                 ->where("employee_sid", $employeeId)
                 ->count_all_results("gusto_companies_employees")
         ) {
-            $this->createEmployee($employeeId);
+            $gustoEmployee = $this->createEmployee($employeeId);
+            //
+            if ($gustoEmployee['errors']) {
+                return $gustoEmployee;
+            }
         }
         //
         $this->getGustoLinkedEmployeeDetails(
@@ -583,6 +606,15 @@ class Employee_payroll_model extends Base_payroll_model
                 "employee_sid"
             ]
         );
+        //
+        if (
+            !$this
+                ->db
+                ->where("employee_sid", $employeeId)
+                ->count_all_results("gusto_companies_employees")
+        ) {
+            return ;
+        }
         // sync work address
         $this->syncWorkAddress();
         // sync home address
@@ -613,17 +645,20 @@ class Employee_payroll_model extends Base_payroll_model
         ) {
             $this->signFederalForm();
         }
-
-        return true;
+        //
+        $gustoEmployee = $this->getGustoLinkedEmployeeDetails(
+            $employeeId
+        );
+        //
+        return ['employee' => $gustoEmployee];
     }
 
     /**
      * check if employee exists
      *
      * @param int $employeeId
-     * @return bool
      */
-    private function createEmployee(int $employeeId): bool
+    private function createEmployee(int $employeeId)
     {
         // get the employee information
         $record = $this
@@ -669,7 +704,8 @@ class Employee_payroll_model extends Base_payroll_model
             ->hasGustoErrors($response);
         //
         if ($errors || !$response) {
-            return false;
+            // return false;
+            return $errors;
         }
         //
         $ins = [

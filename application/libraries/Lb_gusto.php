@@ -928,6 +928,28 @@ class Lb_gusto
         // payroll_get
         $urls["payroll_get"] =
             "v1/companies/{$key}/payrolls/{$key1}";
+
+        // External payroll calls
+        // create external payroll
+        $urls['createExternalPayroll'] = "v1/companies/$key/external_payrolls";
+        // get external payroll
+        $urls['getExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // delete external payroll
+        $urls['deleteExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // get tax suggestions
+        $urls['getExternalPayrollTaxSuggestions'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
+        // update
+        $urls['updateExternalPayroll'] = "v1/companies/$key/external_payrolls/$key1";
+        // calculate
+        $urls['calculateExternalPayrollTaxes'] = "v1/companies/$key/external_payrolls/$key1/calculate_taxes";
+        // get tax liabilities
+        $urls['getExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities";
+        // update tax liabilities
+        $urls['updateExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities";
+        // confirm tax liabilities
+        $urls['confirmExternalPayrollTaxLiabilities'] = "v1/companies/$key/external_payrolls/tax_liabilities/finish";
+
+
         // calculate_update
         $urls["calculate_update"] =
             "v1/companies/{$key}/payrolls/{$key1}/calculate";

@@ -58,6 +58,7 @@ $(function onboardEmployee() {
 	});
 
 	function startOnboardingProcess() {
+		//
 		// check if all employees are onboard
 		if (employeeIds[current] === undefined) {
 			$("#jsPayrollAddEmployeesModal .jsModalCancel").trigger("click");
@@ -96,7 +97,6 @@ $(function onboardEmployee() {
 			.fail(handleErrorResponse)
 			.always(function () {
 				XHR = null;
-				_ml(false, "jsPayrollAddEmployeesModalLoader");
 			});
 	}
 

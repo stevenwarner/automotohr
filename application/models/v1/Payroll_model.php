@@ -280,6 +280,15 @@ class Payroll_model extends CI_Model
                 //
                 if (!$employee['dob']) {
                     $missingFields[] = 'Date Of Birth';
+                } 
+                //
+                $date = new DateTime($employee['dob']);
+                $now = new DateTime();
+                $interval = $now->diff($date);
+                $age = $interval->y;
+                //
+                if ($age < 14) {
+                    $missingFields[] = 'Under Age';
                 }
                 //
                 if (!$employee['email']) {
