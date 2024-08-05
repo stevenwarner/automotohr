@@ -907,7 +907,15 @@ class Application_tracking_system extends Public_Controller
                     $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
                     $user_data['dob'] = $DOB;
                 }
+
                 //
+                if ($date_of_birth != '' && underAge($user_data['dob'])) {
+                    $this->session->set_flashdata("message", "<b>Error:</b> " . UNDER_AGE_MESSAGE);
+                    redirect("applicant_profile/" . $app_id . '/' . $job_list_sid, "location");
+                }
+
+
+
                 $notified_by = $this->input->post('notified_by');
                 //
                 if (!empty($notified_by)) {
@@ -2805,4 +2813,6 @@ class Application_tracking_system extends Public_Controller
             ]
         );
     }
+
+   
 }

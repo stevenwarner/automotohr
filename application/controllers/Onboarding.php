@@ -2182,6 +2182,16 @@ class Onboarding extends CI_Controller
                     $data_to_save['users_type'] = 'applicant';
                     $data_to_save['license_type'] = 'occupational';
                     $data_to_save['license_details'] = serialize($data_to_serialize);
+
+
+                    //
+                    if (!empty($this->input->post('dob')) && $this->input->post('dob') != null) {
+                        if (underAge(formatDateToDB($this->input->post('dob'), 'm/d/Y', DB_DATE))) {
+                            $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                            redirect('onboarding/general_information/' . $unique_sid, 'refresh');
+                        }
+                    }
+
                     $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
 
                     if ($license_file != 'error' && !empty($license_file)) {
@@ -2233,6 +2243,15 @@ class Onboarding extends CI_Controller
                     $data_to_save['users_type'] = 'applicant';
                     $data_to_save['license_type'] = 'drivers';
                     $data_to_save['license_details'] = serialize($data_to_serialize);
+
+                    //
+                    if (!empty($this->input->post('dob')) && $this->input->post('dob') != null) {
+                        if (underAge(formatDateToDB($this->input->post('dob'), 'm/d/Y', DB_DATE))) {
+                            $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                            redirect('onboarding/general_information/' . $unique_sid, 'refresh');
+                        }
+                    }
+
                     //
                     if (!preg_match(XSYM_PREG, $this->input->post('dob')))
                         $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;

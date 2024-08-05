@@ -1608,9 +1608,17 @@ class Employee_management extends Public_Controller
                         }
                     }
 
+
                     $extra_info = serialize($extra_info_arr);
                     $date_of_birth = $this->input->post('DOB');
                     $gender = $this->input->post('gender');
+
+                    //
+                    if ($date_of_birth != '' && underAge(formatDateToDB($date_of_birth, 'm-d-Y', DB_DATE))) {
+                        $this->session->set_flashdata("message", "<b>Error:</b> " . UNDER_AGE_MESSAGE);
+                        redirect("employee_profile/" . $sid, "location");
+                    }
+
 
                     //
                     $teamId = $this->input->post('department', true);
@@ -2499,6 +2507,12 @@ class Employee_management extends Public_Controller
                     }
                     //
                     $data['dob'] = $DOB;
+
+                    if (underAge($data['dob'])) {
+                        $this->session->set_flashdata("message", "<b>Error:</b> " . UNDER_AGE_MESSAGE);
+                        redirect("my_profile/", "location");
+                    }
+    
                 }
 
                 //

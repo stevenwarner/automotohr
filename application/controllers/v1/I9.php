@@ -173,7 +173,7 @@ class I9 extends Public_Controller
             [
                 'field' => 'section1_date_of_birth',
                 'label' => 'Date of birth',
-                'rules' => $rules
+                'rules' => $rules . '|callback_check_age'
             ],
             [
                 'field' => 'section1_social_security_number',
@@ -244,7 +244,10 @@ class I9 extends Public_Controller
         }
         // set rules array
         $this->form_validation->set_rules($ruleArray);
+
+
         // run validation
+
         if ($this->form_validation->run() === false) {
             return SendResponse(
                 400,
@@ -281,6 +284,8 @@ class I9 extends Public_Controller
                 SITE_DATE,
                 DB_DATE
             ) : null;
+
+
         //
         $updateArray['section1_today_date'] = $updateArray['section1_today_date']
             ? formatDateToDB(
@@ -852,7 +857,7 @@ class I9 extends Public_Controller
             [
                 'field' => 'section1_date_of_birth',
                 'label' => 'Date of birth',
-                'rules' => $rules
+                'rules' => $rules.'|callback_check_age'
             ],
             [
                 'field' => 'section1_social_security_number',
@@ -1116,7 +1121,7 @@ class I9 extends Public_Controller
         // form is assigned
         //
         $data = [];
-       
+
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         // no need to check in this Module as Dashboard will be available to all
@@ -1313,5 +1318,19 @@ class I9 extends Public_Controller
                 'message' => 'You have successfully updated the section 1 of I9 form .',
             ]
         );
+    }
+
+
+    //
+    public function check_age($section1_date_of_birth)
+    {
+        if (underAge(formatDateToDB($section1_date_of_birth, 'm/d/Y', DB_DATE))) {
+
+            $this->form_validation->set_message('check_age', UNDER_AGE_MESSAGE);
+
+            return false;
+        } else {
+            return true;
+        }
     }
 }

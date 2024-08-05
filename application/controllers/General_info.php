@@ -200,6 +200,14 @@ class General_info extends Public_Controller
                             $data_to_save['license_file'] = $license_file;
                         }
 
+                        //
+                        if (!empty($this->input->post('dob')) && $this->input->post('dob') != null) {
+                            if (underAge(formatDateToDB($this->input->post('dob'), 'm/d/Y', DB_DATE))) {
+                                $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                                redirect('general_info', 'refresh');
+                            }
+                        }
+
                         $licenseCheck = $this->general_info_model->check_user_license($employee_sid, 'employee', 'drivers');
                         $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
 
@@ -310,6 +318,16 @@ class General_info extends Public_Controller
                         if ($license_file != 'error' && !empty($license_file)) {
                             $data_to_save['license_file'] = $license_file;
                         }
+
+
+                        //
+                        if (!empty($this->input->post('dob')) && $this->input->post('dob') != null) {
+                            if (underAge(formatDateToDB($this->input->post('dob'), 'm/d/Y', DB_DATE))) {
+                                $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                                redirect('general_info', 'refresh');
+                            }
+                        }
+
 
                         $licenseCheck = $this->general_info_model->check_user_license($employee_sid, 'employee', 'occupational');
                         $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;

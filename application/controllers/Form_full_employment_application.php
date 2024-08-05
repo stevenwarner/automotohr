@@ -947,7 +947,7 @@ class Form_full_employment_application extends CI_Controller
                 //
                 if ($data['dob_required'] == 1) {
                     //
-                    $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean|callback_check_age');
                 }
 
                 if (isset($ei['affiliate'])) {
@@ -1268,5 +1268,16 @@ class Form_full_employment_application extends CI_Controller
         }
         echo $result;
         exit(0);
+    }
+
+    //
+    public function check_age($TextBoxDOB)
+    {
+        if (underAge(formatDateToDB($TextBoxDOB, 'm/d/Y', DB_DATE))) {
+            $this->form_validation->set_message('check_age', UNDER_AGE_MESSAGE);
+            return false;
+        } else {
+            return true;
+        }
     }
 }

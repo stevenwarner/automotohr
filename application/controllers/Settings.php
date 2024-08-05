@@ -1492,7 +1492,7 @@ class Settings extends Public_Controller
             //
             if ($data['dob_required'] == 1) {
                 //
-                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean|callback_check_age');
             }
 
             if (isset($ei['affiliate'])) {
@@ -2508,6 +2508,13 @@ class Settings extends Public_Controller
                 }
 
                 //
+                if ($formpost['dob'] != '' && $formpost['dob'] != null) {
+                    if (underAge(formatDateToDB($formpost['dob'], 'm/d/Y', DB_DATE))) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                        redirect($reload_location, 'refresh');
+                    }
+                }
+                //
                 if (preg_match(XSYM_PREG, $formpost['license_number'])) $formpost['license_number'] = $license_info_data['license_number'];
                 if (preg_match(XSYM_PREG, $formpost['license_issue_date'])) $formpost['license_issue_date'] = $license_info_data['license_issue_date'];
                 if (preg_match(XSYM_PREG, $formpost['license_expiration_date'])) $formpost['license_expiration_date'] = $license_info_data['license_expiration_date'];
@@ -2515,6 +2522,7 @@ class Settings extends Public_Controller
 
                 $licenseData['license_details'] = serialize($formpost);
                 $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
+
 
                 if (preg_match(XSYM_PREG, $this->input->post('dob'))) $dateOfBirth['dob'] = $license_info_data['dob'];
                 if ($licenseCheck->num_rows() > 0) {
@@ -2799,6 +2807,15 @@ class Settings extends Public_Controller
                 if (isset($formpost['perform_action'])) {
                     unset($formpost['perform_action']);
                 }
+
+                //
+                if ((!empty($this->input->post('dob')))) {
+                    if (underAge(formatDateToDB($this->input->post('dob'), 'm/d/Y', DB_DATE))) {
+                        $this->session->set_flashdata('message', '<b>Error:</b> ' . UNDER_AGE_MESSAGE);
+                        redirect($reload_location, 'refresh');
+                    }
+                }
+
 
                 $licenseData['license_details'] = serialize($formpost);
                 $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
@@ -6188,9 +6205,8 @@ class Settings extends Public_Controller
         //
         if ($shiftStatus == 'rejected') {
             $this->sendEmailToEmployee($shiftIds);
-            
         } else if ($shiftStatus == 'confirmed') {
-            
+
             $this->sendEmailToAdmin($shiftIds);
         }
         //
@@ -6199,7 +6215,8 @@ class Settings extends Public_Controller
         ]);
     }
 
-    function sendEmailToEmployee ($shiftIds) {
+    function sendEmailToEmployee($shiftIds)
+    {
         //
         $requestsData = $this->shift_model->getSwapShiftsRequestById($shiftIds);
         //
@@ -6238,7 +6255,8 @@ class Settings extends Public_Controller
         }
     }
 
-    function sendEmailToAdmin ($shiftIds) {
+    function sendEmailToAdmin($shiftIds)
+    {
         //
         $companyDetail = checkAndGetSession("company_detail");
         $adminList = getCompanyAdminPlusList($companyDetail['sid']);
@@ -6285,7 +6303,7 @@ class Settings extends Public_Controller
                     }
                 }
             }
-        }    
+        }
     }
 
     /**
@@ -6486,8 +6504,8 @@ class Settings extends Public_Controller
         } else {
             $this->shift_model->cancelShiftsTradeRequest($shiftIds, $data_update_request);
         }
-        
-        
+
+
         //
         // send mail
         $emailTemplateFromEmployee = get_email_template(SHIFTS_SWAP_ADMIN_REJECTED);
@@ -6642,7 +6660,6 @@ class Settings extends Public_Controller
                 "list" => $data["employeesdata"]
             ]
         );
-      
     }
 
     //
@@ -6742,6 +6759,18 @@ class Settings extends Public_Controller
             "view" => $this->load->view("v1/settings/shifts/partials/shift_history", $data, true),
             "data" => $data["return"] ?? []
         ]);
-    }    
+    }
 
+    //
+    public function check_age($TextBoxDOB)
+    {
+        if (underAge(formatDateToDB($TextBoxDOB, 'm/d/Y', DB_DATE))) {
+
+            $this->form_validation->set_message('check_age', UNDER_AGE_MESSAGE);
+
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

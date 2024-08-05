@@ -392,24 +392,24 @@ class Form_i9 extends Public_Controller
                     $insert_data['section2_state'] = $formpost['section2_state'];
                     $insert_data['section2_zip_code'] = $formpost['section2_zip_code'];
                     //
-                   
+
                     //
                     $details = [];
                     // 
                     for ($i = 1; $i <= 3; $i++) {
                         $details[$i] = [
-                            'section3_rehire_date' => $formpost['section3_authorized_rehire_date_'.$i],
-                            'section3_last_name' => $formpost['section3_authorized_last_name_'.$i],
-                            'section3_first_name' => $formpost['section3_authorized_first_name_'.$i],
-                            'section3_middle_initial' => $formpost['section3_authorized_middle_initial_'.$i],
-                            'section3_document_title' => $formpost['section3_authorized_document_title_'.$i],
-                            'section3_document_number' => $formpost['section3_authorized_document_number_'.$i],
-                            'section3_expiration_date' => $formpost['section3_authorized_expiration_date_'.$i],
-                            'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_'.$i],
-                            'signature' => $formpost['section3_authorized_signature_'.$i],
-                            'section3_signature_date' => $formpost['section3_authorized_today_date_'.$i],
-                            'section3_additional_information' => $formpost['section3_authorized_additional_information_'.$i],
-                            'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_'.$i]) ? 1 : 0,
+                            'section3_rehire_date' => $formpost['section3_authorized_rehire_date_' . $i],
+                            'section3_last_name' => $formpost['section3_authorized_last_name_' . $i],
+                            'section3_first_name' => $formpost['section3_authorized_first_name_' . $i],
+                            'section3_middle_initial' => $formpost['section3_authorized_middle_initial_' . $i],
+                            'section3_document_title' => $formpost['section3_authorized_document_title_' . $i],
+                            'section3_document_number' => $formpost['section3_authorized_document_number_' . $i],
+                            'section3_expiration_date' => $formpost['section3_authorized_expiration_date_' . $i],
+                            'section3_name_of_emp' => $formpost['section3_authorized_name_of_emp_' . $i],
+                            'signature' => $formpost['section3_authorized_signature_' . $i],
+                            'section3_signature_date' => $formpost['section3_authorized_today_date_' . $i],
+                            'section3_additional_information' => $formpost['section3_authorized_additional_information_' . $i],
+                            'section3_alternative_procedure' => isset($formpost['section3_authorized_alternative_procedure_' . $i]) ? 1 : 0,
                         ];
                         //
                     }
@@ -442,7 +442,8 @@ class Form_i9 extends Public_Controller
                 if ($previous_form['user_consent'] == 0) {
                     $insert_data['employer_flag'] = 0;
                 }
-                
+
+           
                 // Log i9 form
                 $i9TrackerData = [];
                 $i9TrackerData['data'] = $insert_data;

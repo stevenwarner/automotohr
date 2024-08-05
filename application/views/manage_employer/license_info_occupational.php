@@ -12,6 +12,18 @@
                                         <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                         <?php echo $title; ?></span>
                                 </div>
+                                <?php if ($this->session->flashdata('message')) { ?>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="flash_error_message">
+                                                <div class="alert alert-success alert-dismissible" role="alert">
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <?php echo $this->session->flashdata('message'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                                 <div class="dashboard-conetnt-wrp">
                                     <div class="tagline-heading">
                                         <span class="pull-right">
