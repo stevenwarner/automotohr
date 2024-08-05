@@ -75,7 +75,6 @@ class External_payroll_model extends Base_payroll_model
         if (!$records) {
             return [];
         }
-        _e($records,true,true);
         //
         foreach ($records as $key => $value) {
             $records[$key]['employees_count'] = $this->db

@@ -300,7 +300,7 @@ class External extends Public_controller
                     'applicable_benefits',
                     'applicable_taxes',
                 ]
-            );
+            );  
         // decode json
         $externalPayrollDetails['applicable_earnings'] = json_decode($externalPayrollDetails['applicable_earnings'], true);
         $externalPayrollDetails['applicable_benefits'] = json_decode($externalPayrollDetails['applicable_benefits'], true);
