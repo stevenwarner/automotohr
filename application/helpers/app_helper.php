@@ -3799,7 +3799,6 @@ if (!function_exists('getButton')) {
 if (!function_exists('underAge')) {
     function underAge($dob)
     {
-
         $date = new DateTime($dob);
         $now = new DateTime();
         $interval = $now->diff($date);

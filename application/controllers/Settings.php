@@ -1492,7 +1492,7 @@ class Settings extends Public_Controller
             //
             if ($data['dob_required'] == 1) {
                 //
-                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean|callback_check_age');
+                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
             }
 
             if (isset($ei['affiliate'])) {
@@ -6759,18 +6759,5 @@ class Settings extends Public_Controller
             "view" => $this->load->view("v1/settings/shifts/partials/shift_history", $data, true),
             "data" => $data["return"] ?? []
         ]);
-    }
-
-    //
-    public function check_age($TextBoxDOB)
-    {
-        if (underAge(formatDateToDB($TextBoxDOB, 'm/d/Y', DB_DATE))) {
-
-            $this->form_validation->set_message('check_age', UNDER_AGE_MESSAGE);
-
-            return false;
-        } else {
-            return true;
-        }
     }
 }
