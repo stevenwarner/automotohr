@@ -2267,3 +2267,10 @@ $route['manage_admin/reports/employees_termination_report/(:any)/(:any)/(:any)/(
 
 
 $route["eeoc/(:num)/opt_out"]["put"] = "v1/App/processOptOut/$1";
+
+
+/**
+ * CRON job links
+ */
+// Indeed cron job link
+$route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";

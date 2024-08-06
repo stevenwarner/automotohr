@@ -1928,6 +1928,21 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) deleted.';
                 } elseif ($action == 'active') {
+                    // make sure to always have an
+                    // array of job ids
+                    $newJobIds = is_array($jobId) ? $jobId : [$jobId];
+                    // load the indeed model
+                    $this->load->model(
+                        "Indeed_model",
+                        "indeed_model"
+                    );
+                    // call the cron handler
+                    $this
+                        ->indeed_model
+                        ->checkAndActivateJobs(
+                            $newJobIds,
+                            $company_id
+                        );
                     $this->dashboard_model->active($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
@@ -1976,6 +1991,20 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) Activated.';
                 } elseif ($action == 'deactive') {
+                    // make sure to always have an
+                    // array of job ids
+                    $newJobIds = is_array($jobId) ? $jobId : [$jobId];
+                    // load the indeed model
+                    $this->load->model(
+                        "Indeed_model",
+                        "indeed_model"
+                    );
+                    // call the cron handler
+                    $this
+                        ->indeed_model
+                        ->checkAndDeactivateJobs(
+                            $newJobIds
+                        );
 
                     $this->dashboard_model->deactive($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');

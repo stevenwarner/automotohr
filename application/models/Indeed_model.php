@@ -819,6 +819,7 @@ class Indeed_model extends CI_Model
                     [
                         "log_sid" => null,
                         "is_processed" => 0,
+                        "is_processing" => 0,
                         "is_expired" => 0,
                         "has_errors" => 0,
                         "processed_at" => null,
@@ -1062,8 +1063,8 @@ class Indeed_model extends CI_Model
 
     {
 
-       //
-        $recordCount= $this
+        //
+        $recordCount = $this
             ->db
             ->where([
                 "job_id" => $insertArray['job_id']
@@ -1132,5 +1133,300 @@ class Indeed_model extends CI_Model
                 "job_posting_indeed_response",
                 $updateArray
             );
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // Job Sync API functions
+    // -----------------------------------------------------------------------------------------------------
+    /**
+     * load job for queue
+     *
+     * @param int $numberOfJobs
+     * @return array
+     */
+    public function getJobQueueForActiveJobs(
+        int $numberOfJobs
+    ) {
+        // we are not adding the any active or organic
+        // filter here as the jobs are add while checking the filter
+        $o = $this
+            ->db
+            ->select([
+                "indeed_job_queue.sid",
+                "indeed_job_queue.job_sid",
+                "indeed_job_queue.is_expired",
+                "portal_job_listings.user_sid",
+                "portal_job_listings.activation_date",
+                "portal_job_listings.Title",
+                "portal_job_listings.JobDescription",
+                "portal_job_listings.JobRequirements",
+                "portal_job_listings.Location_Country",
+                "portal_job_listings.Location_State",
+                "portal_job_listings.Location_City",
+                "portal_job_listings.Location_ZipCode",
+                "portal_job_listings.Salary",
+                "portal_job_listings.JobType",
+                "portal_job_listings.questionnaire_sid",
+                "portal_job_listings.approval_status",
+                "states.state_code",
+            ])
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->join(
+                "states",
+                "states.sid = portal_job_listings.Location_State",
+                "inner"
+            )
+            ->where([
+                "indeed_job_queue.is_processing" => 0,
+                "indeed_job_queue.is_processed" => 0,
+            ])
+            ->limit($numberOfJobs)
+            ->get("indeed_job_queue");
+        //
+        $d = $o->result_array();
+        $o->free_result();
+        //
+        if (!$d) {
+            return [];
+        }
+        // extract job queue sids
+        $queueIds = array_column(
+            $d,
+            "sid"
+        );
+        // update the processing jobs
+        $this
+            ->db
+            ->where_in(
+                "sid",
+                $queueIds
+            )
+            ->update(
+                "indeed_job_queue",
+                [
+                    "is_processing" => 1,
+                    "updated_at" => getSystemDate()
+                ]
+            );
+        //
+        $this->updateJobQueueCount(
+            count($queueIds),
+            "total_processing_jobs",
+            "+"
+        );
+        //
+        return $d;
+    }
+
+
+    public function getPortalData(
+        array $companyIds
+    ) {
+        $o = $this
+            ->db
+            ->select([
+                "portal_employer.user_sid",
+                "portal_employer.sub_domain",
+                "users.CompanyName",
+                "users.has_job_approval_rights",
+            ])
+            ->join(
+                "users",
+                "users.sid = portal_employer.user_sid",
+                "inner"
+            )
+            ->where_in(
+                "portal_employer.user_sid",
+                $companyIds
+            )
+            ->get("portal_employer");
+        //
+        $d = $o->result_array();
+        $o->free_result();
+        //
+        if (!$d) {
+            return [];
+        }
+        //
+        $t  = [];
+        //
+        foreach ($d as $v) {
+            $t[$v["user_sid"]] = $v;
+        }
+        //
+        return $t;
+    }
+
+    /**
+     * update the job queue
+     *
+     * @param int $count
+     * @param string $column
+     * @param string $operator
+     */
+    private function updateJobQueueCount(
+        int $count,
+        string $column,
+        string $operator
+    ) {
+        $this
+            ->db
+            ->query(
+                "UPDATE `indeed_job_queue_count`
+            SET `$column` =  $column $operator $count;"
+            );
+    }
+
+    /**
+     * update the job queue
+     *
+     * @param array $jobIds
+     * @param array $updateArray
+     */
+    public function updateJobsQueue(
+        array $jobIds,
+        array $updateArray
+    ) {
+        //
+        $updateArray["updated_at"] = getSystemDate();
+        //
+        $this
+            ->db
+            ->where_in("sid", $jobIds)
+            ->update(
+                "indeed_job_queue",
+                $updateArray
+            );
+    }
+
+    /**
+     * update the job queue
+     *
+     * @param string $jobUUID
+     * @param array $indeedPostingId
+     */
+    public function checkAndAddIndeedJobPosting(
+        string $jobUUID,
+        string $indeedPostingId
+    ) {
+        // set where array
+        $where = [
+            "job_sid" => $jobUUID,
+            "indeed_posting_id" => $indeedPostingId,
+        ];
+        // check if already exists
+        if (
+            !$this
+                ->db
+                ->where($where)
+                ->count_all_results("indeed_job_queue_tracking")
+        ) {
+            //
+            $this
+                ->db
+                ->where("job_sid", $jobUUID)
+                ->update(
+                    "indeed_job_queue_tracking",
+                    [
+                        "is_deleted" => 1,
+                        "updated_at" => getSystemDate(),
+                    ]
+                );
+            //
+            $this
+                ->db
+                ->insert(
+                    "indeed_job_queue_tracking",
+                    [
+                        "job_sid" => $jobUUID,
+                        "indeed_posting_id" => $indeedPostingId,
+                        "is_deleted" => 0,
+                        "created_at" => getSystemDate(),
+                        "updated_at" => getSystemDate(),
+                    ]
+                );
+        }
+    }
+
+    /**
+     * update the job queue
+     *
+     * @param string $jobUUID
+     * @param string $indeedPostingId
+     * @param string $trackingKey
+     */
+    public function checkAndAddIndeedTrackingKey(
+        string $jobUUID,
+        string $indeedPostingId,
+        string $trackingKey
+    ) {
+        //
+        $this
+            ->db
+            ->where([
+                "job_sid" => $jobUUID,
+                "indeed_posting_id" => $indeedPostingId,
+            ])
+            ->update(
+                "indeed_job_queue_tracking",
+                [
+                    "tracking_key" => $trackingKey,
+                    "updated_at" => getSystemDate(),
+                ]
+            );
+    }
+
+    /**
+     * check and get the job queue
+     *
+     * @param string $jobUUID
+     * @param int $jobQueueId
+     * @return string
+     */
+    public function checkAndGetJobPostingId(
+        string $jobUUID,
+        int $jobQueueId
+    ): string {
+        //
+        $record = $this
+            ->db
+            ->select("indeed_posting_id")
+            ->where([
+                "job_sid" => $jobUUID,
+                "is_deleted" => 0,
+            ])
+            ->get("indeed_job_queue_tracking")
+            ->row_array();
+        // check if not exists
+        if (!$record) {
+            //
+            $this
+                ->db
+                ->where("sid", $jobQueueId)
+                ->delete("indeed_job_queue");
+            return "";
+        }
+        //
+        return $record["indeed_posting_id"];
+    }
+
+    /**
+     * check and get the job queue
+     *
+     * @param int $jobQueueId
+     * @return string
+     */
+    public function removeJobFromQueue(
+        int $jobQueueId
+    ) {
+        //
+        $this
+            ->db
+            ->where("sid", $jobQueueId)
+            ->delete("indeed_job_queue");
     }
 }
