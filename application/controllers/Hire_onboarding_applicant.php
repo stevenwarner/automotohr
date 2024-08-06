@@ -275,6 +275,25 @@ class Hire_onboarding_applicant extends CI_Controller
         }
 
         //
+        if (!empty($applicant_profile_info['hourly_rate'])) {
+            $employer_data['hourly_rate'] = $applicant_profile_info['hourly_rate'];
+        }
+
+        if (!empty($applicant_profile_info['hourly_technician'])) {
+            $employer_data['hourly_technician'] = $applicant_profile_info['hourly_technician'];
+        }
+        if (!empty($applicant_profile_info['flat_rate_technician'])) {
+            $employer_data['flat_rate_technician'] = $applicant_profile_info['flat_rate_technician'];
+        }
+        if (!empty($applicant_profile_info['semi_monthly_salary'])) {
+            $employer_data['semi_monthly_salary'] = $applicant_profile_info['semi_monthly_salary'];
+        }
+        if (!empty($applicant_profile_info['semi_monthly_draw'])) {
+            $employer_data['semi_monthly_draw'] = $applicant_profile_info['semi_monthly_draw'];
+        }
+
+
+        //
         $employer_data['languages_speak'] = $applicant_profile_info['languages_speak'];
         $employer_data['salary_benefits'] = $applicant_profile_info['salary_benefits'];
         $employer_data['workers_compensation_code'] = $applicant_profile_info['workers_compensation_code'];
@@ -313,7 +332,7 @@ class Hire_onboarding_applicant extends CI_Controller
             $applicant_misc_notes = $this->hire_onboarding_applicant_model->get_applicant_misc_notes($applicant_sid, $employee_result);
 
             // 7) private_message
-            $applicant_private_message = $this->hire_onboarding_applicant_model->get_applicant_private_message($applicant_email, $employee_result,$applicant_sid);
+            $applicant_private_message = $this->hire_onboarding_applicant_model->get_applicant_private_message($applicant_email, $employee_result, $applicant_sid);
 
             // 8) portal_applicant_rating
             $applicant_rating = $this->hire_onboarding_applicant_model->get_applicant_rating($applicant_sid, $employee_result);
@@ -644,6 +663,37 @@ class Hire_onboarding_applicant extends CI_Controller
             $employer_data['eeoc_code'] = $applicant_profile_info['eeoc_code'];
             $update_flag = 1;
         }
+
+        //
+        if ((empty($employee_profile_info['hourly_rate']) || $employee_profile_info['hourly_rate'] == NULL || $employee_profile_info['hourly_rate'] == "0.00" || $employee_profile_info['hourly_rate'] == "0") && !empty($applicant_profile_info['hourly_rate'])) {
+            $employer_data['hourly_rate'] = $applicant_profile_info['hourly_rate'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['hourly_technician']) || $employee_profile_info['hourly_technician'] == NULL || $employee_profile_info['hourly_technician'] == "0.00" || $employee_profile_info['hourly_technician'] == "0") && !empty($applicant_profile_info['hourly_technician'])) {
+            $employer_data['hourly_technician'] = $applicant_profile_info['hourly_technician'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['flat_rate_technician']) || $employee_profile_info['flat_rate_technician'] == NULL || $employee_profile_info['flat_rate_technician'] == "0.00" || $employee_profile_info['flat_rate_technician'] == "0") && !empty($applicant_profile_info['flat_rate_technician'])) {
+            $employer_data['flat_rate_technician'] = $applicant_profile_info['flat_rate_technician'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['semi_monthly_salary']) || $employee_profile_info['semi_monthly_salary'] == NULL || $employee_profile_info['semi_monthly_salary'] == "0.00" || $employee_profile_info['semi_monthly_salary'] == "0") && !empty($applicant_profile_info['semi_monthly_salary'])) {
+            $employer_data['semi_monthly_salary'] = $applicant_profile_info['semi_monthly_salary'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['semi_monthly_draw']) || $employee_profile_info['semi_monthly_draw'] == NULL || $employee_profile_info['semi_monthly_draw'] == "0.00" || $employee_profile_info['semi_monthly_draw'] == "0")  && !empty($applicant_profile_info['semi_monthly_draw'])) {
+            $employer_data['semi_monthly_draw'] = $applicant_profile_info['semi_monthly_draw'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['uniform_top_size']) || $employee_profile_info['uniform_top_size'] == NULL || $employee_profile_info['uniform_top_size'] == "0.00" || $employee_profile_info['uniform_top_size'] == "0") && !empty($applicant_profile_info['uniform_top_size'])) {
+            $employer_data['uniform_top_size'] = $applicant_profile_info['uniform_top_size'];
+            $update_flag = 1;
+        }
+        if ((empty($employee_profile_info['uniform_bottom_size']) || $employee_profile_info['uniform_bottom_size'] == NULL) && !empty($applicant_profile_info['uniform_bottom_size'])) {
+            $employer_data['uniform_bottom_size'] = $applicant_profile_info['uniform_bottom_size'];
+            $update_flag = 1;
+        }
+
 
         //
         $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
