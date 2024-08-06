@@ -75,6 +75,7 @@ class Indeed_lib
         string $atsId,
         string $status
     ) {
+        return ["error" => "Disabled."];
         //
         $dateTime =
             getSystemDateInUTC("Y-m-d\TH:i:s.") . substr(getSystemDateInUTC("u"), 0, 3) . 'Z';
