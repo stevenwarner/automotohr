@@ -204,6 +204,7 @@ class Job_listings extends Public_Controller
             } else {
                 $formpost                                                       = $this->input->post(NULL, TRUE);
 
+
                 if (!isset($formpost['interview_questionnaire_sid']) || $formpost['interview_questionnaire_sid'] == '') {
                     $formpost['interview_questionnaire_sid'] = 0;
                 }
@@ -422,6 +423,8 @@ class Job_listings extends Public_Controller
                         if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
                             $listing_data['ppj_activation_date']                = $approval_status_change_datetime;
                         }
+                    } else {
+                        $listing_data['approval_status']                    = 'pending';
                     }
                 }
 
@@ -433,6 +436,17 @@ class Job_listings extends Public_Controller
                 }
 
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
+
+
+                if ($listing_data["organic_feed"] == 1 && $listing_data['approval_status'] == 'approved') {
+                    // load the indeed model
+                    $this->load->model("Indeed_model", "indeed_model");
+                    $this->indeed_model->addJobToQueue(
+                        $jobId,
+                        $company_id,
+                        $listing_data["approval_status"]
+                    );
+                }
                 //send new created job to remarket
                 $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
 
@@ -1065,6 +1079,7 @@ class Job_listings extends Public_Controller
                     $this->load->view('main/footer');
                 } else {
                     $formpost = $this->input->post(NULL, TRUE);
+
                     $altertextarea = $formpost['JobDescription'] = $this->input->post('JobDescription', false);
                     $formpost['JobRequirements'] = $this->input->post('JobRequirements', false);
                     $previous_active = isset($formpost['listing_status_old']) ? $formpost['listing_status_old'] : '';
@@ -1393,6 +1408,15 @@ class Job_listings extends Public_Controller
                     }
 
                     $this->dashboard_model->update_listing($formpost['sid'], $listing_data); //Now call dashboard_model function to insert data in DB
+                    if ($listing_data["organic_feed"] == 1) {
+                        // load the indeed model
+                        $this->load->model("Indeed_model", "indeed_model");
+                        $this->indeed_model->updateJobToQueue(
+                            $formpost['sid'],
+                            $company_id,
+                            $listing_data["approval_status"]
+                        );
+                    }
 
                     if ($formpost['listing_status']) {
                         if ($per_job_listing_charge == 1 && $data['sponsor_radio'] == 'no' && (isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it')) {
@@ -1821,10 +1845,21 @@ class Job_listings extends Public_Controller
                             if ((isset($formpost['sponsor_this_job']) && $formpost['sponsor_this_job'] == 'sponsor_it') && $per_job_listing_charge == 1) {
                                 $listing_data['ppj_activation_date']            = $approval_status_change_datetime;
                             }
+                        } else {
+                            $listing_data['approval_status']                    = 'pending';
                         }
                     }
 
                     $jobId                                                      = $this->dashboard_model->add_listing($listing_data);
+                    if ($listing_data["organic_feed"] == 1) {
+                        // load the indeed model
+                        $this->load->model("Indeed_model", "indeed_model");
+                        $this->indeed_model->addJobToQueue(
+                            $jobId,
+                            $company_id,
+                            $listing_data["approval_status"]
+                        );
+                    }
                     //send new cloned job to remarket
                     $this->sendJobDetailsToRemarket($listing_data, $jobId, $data['session']['company_detail']);
 
@@ -1893,6 +1928,21 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) deleted.';
                 } elseif ($action == 'active') {
+                    // make sure to always have an
+                    // array of job ids
+                    $newJobIds = is_array($jobId) ? $jobId : [$jobId];
+                    // load the indeed model
+                    $this->load->model(
+                        "Indeed_model",
+                        "indeed_model"
+                    );
+                    // call the cron handler
+                    $this
+                        ->indeed_model
+                        ->checkAndActivateJobs(
+                            $newJobIds,
+                            $company_id
+                        );
                     $this->dashboard_model->active($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
@@ -1941,6 +1991,21 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) Activated.';
                 } elseif ($action == 'deactive') {
+                    // make sure to always have an
+                    // array of job ids
+                    $newJobIds = is_array($jobId) ? $jobId : [$jobId];
+                    // load the indeed model
+                    $this->load->model(
+                        "Indeed_model",
+                        "indeed_model"
+                    );
+                    // call the cron handler
+                    $this
+                        ->indeed_model
+                        ->checkAndDeactivateJobs(
+                            $newJobIds
+                        );
+
                     $this->dashboard_model->deactive($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);

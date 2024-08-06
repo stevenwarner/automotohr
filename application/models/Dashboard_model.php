@@ -187,6 +187,10 @@ class Dashboard_model extends CI_Model
 
     function deactive($id)
     {
+
+
+        
+
         $this->listing_tracking($id, 'Job De-Activated');
         $data = array();
         $data['active'] = 0;

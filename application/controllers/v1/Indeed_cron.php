@@ -1,325 +1,807 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
-
+/**
+ * Indeed Cron job
+ *
+ * @version 1.0
+ */
 
 class Indeed_cron extends CI_Controller
 {
+    /**
+     * holds the jobs count
+     * @var int
+     */
+    private $numberOfJobsForQueue = 1;
 
+    /**
+     * holds the jobs
+     * @var array
+     */
+    private $jobs = [];
+
+    /**
+     * holds the current job
+     * @var array
+     */
+    private $job = [];
+
+    /**
+     * holds the API token
+     * @var string
+     */
+    private $apiToken = "Asdas";
+
+    /**
+     * holds the job body
+     * @var string
+     */
+    private $jobBody = "";
+
+    /**
+     * holds the job ids
+     * @var array
+     */
+    private $jobIds = [];
+
+    /**
+     * holds the expired job body
+     * @var string
+     */
+    private $expiredJobBody = "";
+
+    /**
+     * holds the expired jobs
+     * @var array
+     */
+    private $expiredJobs = [];
+
+    /**
+     * holds the expired job ids
+     * @var array
+     */
+    private $expiredJobIds = [];
+
+    /**
+     * holds the company portal data
+     * @var array
+     */
+    private $portalData = [];
+
+    /**
+     * holds the company indeed contact details
+     * @var array
+     */
+    private $indeedContactDetails = [];
+
+    /**
+     * Main entry point
+     */
     public function __construct()
     {
         parent::__construct();
+        // load the indeed model
+        $this
+            ->load
+            ->model(
+                "Indeed_model",
+                "indeed_model"
+            );
+        // load the all feed model
+        $this
+            ->load
+            ->model(
+                "all_feed_model"
+            );
+        // load indeed library
+        $this->load->library(
+            "Indeed_lib",
+            "",
+            "indeed_lib"
+        );
     }
-
 
     /**
      * Cron job to push the jobs to Indeed
      *
      * @param string $verificationToken
      */
-    public function jobSync()
+    public function processJobSync()
     {
-        // load the model
-        $this->load->model("Indeed_model", "indeed_model");
-        // check if we can moved forward
-        if ($this->indeed_model->checkQueue()) {
-            exit(0);
+        // load the queued jobs
+        $this->loadJobs();
+        // load portal data
+        $this
+            ->loadPortalData(
+                array_column(
+                    $this->jobs,
+                    "user_sid"
+                )
+            );
+        // iterate through jobs
+        foreach ($this->jobs as $job) {
+            // set the job
+            $this->job = $job;
+            // set the uuid and publish date
+            $this->setJobUUIdAndPublishDate();
+            // check if job is expired
+            if ($job["is_expired"]) {
+                $this->expiredJobs[] = $this->job;
+                continue;
+            }
+            // generate the add/edit job body
+            $this->generateJobBody();
         }
-        $this->load->model("all_feed_model");
+        // create/update jobs on Indeed
+        $this->sendJobsToIndeed();
+        // delete jobs from Indeed
+        $this->deleteJobsFromIndeed();
+    }
+
+
+    /************************************************************************* */
+    /* Private Events  */
+    /************************************************************************* */
+
+
+    /**
+     * load the jobs
+     */
+    private function loadJobs()
+    {
         // get the jobs
-        $jobsInQueue = $this->indeed_model->getQueueJobs(1);
+        $this->jobs = $this
+            ->indeed_model
+            ->getJobQueueForActiveJobs(
+                $this->numberOfJobsForQueue
+            );
         // when there is no jobs in queue
-        if (!$jobsInQueue) {
-            echo "No job found.";
+        if (!$this->jobs) {
+            echo "No jobs found.";
             exit(0);
         }
-        // set the default portal data
-        $companiesPortalData = [];
-        // set default company indeed information
-        $companyIndeedContactDetails = [];
+    }
+
+
+    /**
+     * set the portal details
+     *
+     * @param array $companyIds
+     */
+    private function loadPortalData(
+        array $companyIds
+    ) {
+        $this->portalData = $this
+            ->indeed_model
+            ->getPortalData(
+                $companyIds
+            );
+    }
+
+    /**
+     * set the job uuid and
+     * publish date
+     */
+    private function setJobUUIdAndPublishDate()
+    {
+        // set the job uuid and publish date
+        $this->job["uuid"] = $this->job['job_sid'];
+        $this->job["publishDate"] = $this->job['activation_date'];
+        // check if there is uuid present
+        $feedData = $this
+            ->all_feed_model
+            ->fetch_uid_from_job_sid(
+                $this->job["uuid"]
+            );
+
+        if ($feedData) {
+            // set to new uuid and publish date
+            $this->job["uuid"] = $feedData['uid'];
+            $this->job["publishDate"] = $feedData['publish_date'];
+        }
+    }
+
+    /**
+     * generate the job body
+     *
+     * @method setJobToExpireAndDeleteIt
+     * @method setJobDataArray
+     * @return bool
+     */
+    private function generateJobBody(): bool
+    {
+        // check if portal data
+        if (!$this->portalData[$this->job["user_sid"]]) {
+            // add the job to expire array
+            // and delete it from queue
+            $this->expiredJobs[] = $this->job;
+            //
+            return false;
+        }
+        // check for approval rights
+        if (
+            $this->portalData[$this->job["user_sid"]]["has_job_approval_rights"] == 1
+            && $this->job["approval_status"] != "approved"
+        ) {
+            $this
+                ->indeed_model
+                ->removeJobFromQueue(
+                    $this->job["sid"]
+                );
+            return false;
+        }
+        // load indeed contact details
+        $this->loadIndeedContactDetails();
+        // set data array
+        $this->setJobDataArray();
+        // // set the Indeed contact details
+        $this->setIndeedContactDetails();
         //
-        $jobs = '';
-        // loop through the jobs
-        foreach ($jobsInQueue as $v) {
-            // set the job id
-            $jobId = $v["job_sid"];
-            // get the job details
-            $jobDetails = $this->indeed_model
-                ->getJobDetailsForIndeed($jobId);
-            // delete the job from queue when no job is found
-            // or company is not paid or inactive
-            if (!$jobDetails) {
-                $this->indeed_model
-                    ->deleteJobToQueue($jobId);
-                continue;
-            }
-            // set company id
-            $companyId = $jobDetails["user_sid"];
-            // check company portal data in cache
-            // get the portal data
-            $companyPortal = $companiesPortalData[$companyId] ??
-                $this->indeed_model->getPortalDetail($companyId);
-            // update the cache
-            $companiesPortalData[$companyId] = $companyPortal;
-            // also delete the job if company is not found.
-            if (!$companyPortal) {
-                $this->indeed_model
-                    ->deleteJobToQueue($jobId);
-                continue;
-            }
-            //
-            $contactName = $jobDetails['ContactName'];
-            $contactPhone = $jobDetails['PhoneNumber'];
-            $contactEmail = $jobDetails['email'];
-            // Check for company indeed details
-            $indeedDetails = $companyIndeedContactDetails[$companyId] ??
-                $this->indeed_model->GetCompanyIndeedDetails($companyId, $jobId);
-            // update cache
-            $companyIndeedContactDetails[$companyId] = $indeedDetails;
+        $this->convertDataToJobToGQL();
+        // set the job
+        $this->jobIds[] =
+            [
+                "sid" => $this->job["sid"],
+                "job_sid" => $this->job["job_sid"],
+                "uuid" => $this->job["uuid"],
+            ];
+        //
+        return true;
+    }
 
-            // update the contact details
-            if ($indeedDetails['Name']) {
-                $contactName = $indeedDetails['Name'];
-            }
-            if ($indeedDetails['Phone']) {
-                $contactPhone = $indeedDetails['Phone'];
-            }
-            if ($indeedDetails['Email']) {
-                $contactEmail = $indeedDetails['Email'];
-            }
-            $contactEmail = "test@automotohr.com";
+    /**
+     * load the Indeed contact details
+     *
+     * @return bool
+     */
+    private function loadIndeedContactDetails()
+    {
+        // check if already loaded for company
+        if (isset($this->indeedContactDetails[$this->job["user_sid"]])) {
+            return true;
+        }
+        // update cache
+        $this->indeedContactDetails[$this->job["user_sid"]] =
+            $this
+            ->indeed_model
+            ->GetCompanyIndeedDetails(
+                $this->job["user_sid"],
+                $this->job["job_sid"]
+            );
+    }
 
-            // handle the job UUID
-            $uuid = $jobId;
-            $publishDate = $jobDetails['activation_date'];
-            $feedData = $this->indeed_model->fetchUidFromJobSid($jobId);
-            //
-            if ($feedData) {
-                $uuid = $feedData['uid'];
-                $publishDate = $feedData['publish_date'];
-            }
-
-            // convert publish date
-            $publishDate = formatDateToDB(
-                $publishDate,
+    /**
+     * get the data shell
+     */
+    private function setJobDataArray()
+    {
+        // get the salary
+        $salaryArray = $this->getSalary();
+        // get the employer details
+        $employerDetails = $this->portalData[$this->job["user_sid"]];
+        //
+        $this->job["data"] = [
+            '\title' => $this->job["Title"] . " dev",
+            '\description' => $this->getDescription(),
+            '\country' => "US",
+            '\cityRegionPostal' => $this->getRegionPostal(),
+            '\currency' => 'USD',
+            '\minimumMinor' => $salaryArray["min"],
+            '\maximumMinor' => $salaryArray["max"],
+            '\period' => $salaryArray["period"],
+            '\companyName' => $employerDetails["CompanyName"],
+            '\sourceName' => "automotohr-sandbox",
+            // '\sourceName' => $employerDetails["CompanyName"],
+            '\sourceType' => 'Employer',
+            '\contactName' => "",
+            '\contactEmail' => "",
+            '\contactPhone' => "",
+            '\jobPostingId' => $this->job["uuid"],
+            '\datePublished' => formatDateToDB(
+                $this->job["publishDate"],
                 DB_DATE_WITH_TIME,
                 "Y-m-d\TH:i\Z"
-            );
+            ),
+            '\url' => $this->getJobURL(),
+            '\apiToken' => $this->apiToken,
+            '\postUrl' => $this->getPostURL(),
+            '\applyQuestions' => $this->getApplyQuestionnaire(),
+            '\resumeRequired' => "YES",
+            '\phoneRequired' => "YES",
+        ];
+    }
 
-            $jobDesc = StripFeedTags(nl2br($jobDetails['JobDescription']));
-            $country['country_code'] = "US";
-            $state['state_name'] = "";
-            $city = "";
-            $zipcode = "";
-            $salary = "";
-            $jobType = "";
+    /**
+     * set the Indeed contact details
+     *
+     * @return bool
+     */
+    private function setIndeedContactDetails()
+    {
+        // update job data array
+        $indeedContactDetails = $this->indeedContactDetails[$this->job["user_sid"]];
+        // update the contact details
+        if (clean($indeedContactDetails['Name'])) {
+            $this->job["data"]["\contactName"] =
+                clean($indeedContactDetails['Name']);
+        }
+        if (clean($indeedContactDetails['Phone'])) {
+            $this->job["data"]["\contactEmail"] =
+                clean($indeedContactDetails['Phone']);
+        }
+        if ($indeedContactDetails['Email']) {
+            $this->job["data"]["\contactPhone"] =
+                clean($indeedContactDetails['Email']);
+        }
+        // for testing purpose
+        if (
+            $this->job["data"]["\contactEmail"] == '' ||
+            $this->job["data"]["\contactEmail"] == null
+        ) {
+            $this->job["data"]["\contactEmail"] = "test@automotohr.com";
+        }
+    }
 
-
-            //
-            if (isset($jobDetails['JobRequirements']) && $jobDetails['JobRequirements'] != null) {
-                $jobDesc .= '<br><br>Job Requirements:<br>' . StripFeedTags($jobDetails['JobRequirements']);
-            }
-            //
-            if (isset($jobDetails['Location_Country']) && $jobDetails['Location_Country'] != null) {
-                $country = db_get_country_name($jobDetails['Location_Country']);
-            }
-            //
-            if (isset($jobDetails['Location_State']) && $jobDetails['Location_State'] != null) {
-                $state = db_get_state_name($jobDetails['Location_State']);
-            }
-            //
-            if (isset($jobDetails['Location_City']) && $jobDetails['Location_City'] != null) {
-                $city = $jobDetails['Location_City'];
-            }
-            //
-            if (isset($jobDetails['Location_ZipCode']) && $jobDetails['Location_ZipCode'] != null) {
-                $zipcode = $jobDetails['Location_ZipCode'];
-            }
-            //
-            if (isset($jobDetails['Salary']) && $jobDetails['Salary'] != null) {
-                $salary = $jobDetails['Salary'];
-            }
-
-            //
-            if (
-                isset($jobDetails['JobType']) && $jobDetails['JobType'] != null
-            ) {
-                $jobDetails['JobType'] = trim($jobDetails['JobType']);
-                if (
-                    $jobDetails['JobType'] == 'Full Time'
-                ) {
-                    $jobType = "Full Time";
-                } elseif ($jobDetails['JobType'] == 'Part Time') {
-                    $jobType = "Part Time";
-                } elseif ($jobDetails['JobType'] == 'Seasonal') {
-                    $jobType = "Seasonal";
-                }
-            }
-
-
-            //
-            $JobCategorys = $jobDetails['JobCategory'];
-            //
-            if ($JobCategorys != null) {
-                $cat_id = explode(
-                    ',',
-                    $JobCategorys
-                );
-                $job_category_array = array();
-                //
-                foreach ($cat_id as $id) {
-                    $job_cat_name = $this->all_feed_model->get_job_category_name_by_id($id);
-                    $job_category_array[] = $job_cat_name[0]['value'];
-                }
-
-                $job_category = implode(', ', $job_category_array);
-            }
-
-            //
-            $salary = remakeSalary($salary, $jobDetails['SalaryType']);
-            //
-            $jobQuestionnaireUrl = "";
-            //
-            if ($jobDetails["questionnaire_sid"] || $this->indeed_model->hasEEOCEnabled($companyId)) {
-                //
-                if ($this->indeed_model->saveQuestionIntoFile($jobId, $companyId, true)) {
-                    $jobQuestionnaireUrl = STORE_FULL_URL_SSL . "indeed/$uuid/jobQuestions.json";
-                }
-            }
-
-            $replaceArray = [
-                '\title' => $jobDetails["Title"],
-                '\description' => html_escape(
-                    preg_replace("/\s+/", "", nl2br($jobDesc))
-                ),
-                '\country' => $country["country_code"],
-                '\cityRegionPostal' => $city . ", " . $state["state_code"] . " " . $zipcode,
-                '\currency' => 'USD',
-                '\minimumMinor' => $salary["salary"],
-                '\maximumMinor' => $salary["salary"],
-                '\period' => $salary["type"],
-                '\companyName' => $jobDetails["CompanyName"],
-                '\sourceName' => $jobDetails["CompanyName"],
-                '\sourceType' => 'Employer',
-                '\contactName' => $contactName,
-                '\contactEmail' => $contactEmail,
-                '\jobPostingId' => $uuid,
-                '\datePublished' => $publishDate,
-                '\url' => STORE_PROTOCOL_SSL . $companyPortal['sub_domain'] . "/job_details/" . $uuid,
-                '\apiToken' => '56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781',
-                '\postUrl' => STORE_FULL_URL . "/indeed_feed/indeedPostUrl",
-                '\applyQuestions' => $jobQuestionnaireUrl ? 'applyQuestions: "' . $jobQuestionnaireUrl . '"' : "",
-                '\resumeRequired' => "NO",
-                '\phoneRequired' => "YES",
-            ];
-
-            // create a job
-            $singleJob = <<<'GRAPHQL'
-            {
-                body: {
-                    title: "\title"
-                    description: "\description"
-                    location: {
-                        country: "\country"
-                        cityRegionPostal: "\cityRegionPostal"
-                    }
-                    benefits: []
-                    salary: {
-                        currency: "\currency"
-                        minimumMinor: \minimumMinor
-                        maximumMinor: \maximumMinor
-                        period: "\period"
-                    }
-                }
-                metadata: {
-                    jobSource: {
-                        companyName: "\companyName"
-                        sourceName: "\sourceName"
-                        sourceType: "\sourceType"
-                    }
-                    contacts: {
-                        contactType: "contact"
-                        contactInfo: {
-                            contactName: "\contactName"
-                            contactEmail: "\contactEmail"
-                        }
-                    }
-                    jobPostingId: "\jobPostingId"
-                    datePublished: "\datePublished"
-                    url: "\url"
-                }
-                applyMethod: {
-                    indeedApply: {
-                        apiToken: "\apiToken"
-                        postUrl: "\postUrl"
-                        \applyQuestions
-                        phoneRequired: YES
-                    }
-                }
-            }
-            GRAPHQL;
-
-            // replace the variables
-            $jobs .= str_replace(
-                array_keys($replaceArray),
-                $replaceArray,
-                $singleJob
+    /**
+     * get the description
+     * 
+     * @return string
+     */
+    private function getDescription(): string
+    {
+        $jd = StripFeedTags(nl2br(
+            $this->job['JobDescription']
+        ));
+        //
+        if ($this->job['JobRequirements']) {
+            $jd .= '<br><br>Job Requirements:<br>' . StripFeedTags(
+                $this->job['JobRequirements']
             );
         }
+        // remove line breaks
+        $jd = str_replace(
+            [
+                "\r",
+                "\n"
+            ],
+            "",
+            $jd
+        );
+        //
+        return htmlentities($jd);
+    }
 
-        // set the call
-        $query = <<<'GRAPHQL'
-        mutation {
-            createSourcedJobPostings(
-                input: {
-                    jobPostings: [
-                        \jobs
-                    ]
-                }
+    /**
+     * get the regional
+     * 
+     * @return string
+     */
+    private function getRegionPostal(): string
+    {
+        // set default
+        $regional = "";
+        // check and set city
+        if ($this->job["Location_City"]) {
+            $regional .= $this->job['Location_City'] . ", ";
+        }
+        // check and set state
+        if ($this->job["Location_State"]) {
+            $regional .= db_get_state_name(
+                $this->job['Location_State']
+            )["state_code"] . " ";
+        }
+        // check and set postal code
+        if ($this->job["Location_ZipCode"]) {
+            $regional .= $this->job['Location_ZipCode'];
+        }
+        //
+        return rtrim(
+            rtrim(
+                $regional
+            ),
+            ","
+        );
+    }
+
+    /**
+     * get the salary
+     *
+     * @return array
+     */
+    private function getSalary(): array
+    {
+        // set default
+        $salaryArray = [
+            "min" => null,
+            "max" => null,
+            "period" => null,
+        ];
+        //
+        if ($this->job["Salary"]) {
+            //
+            $salaryArray = remakeSalary(
+                $this->job["Salary"],
+                $this->job['SalaryType']
+            );
+        }
+        //
+        $salaryArray["min"] = 25;
+        $salaryArray["max"] = 30;
+        $salaryArray["period"] = "HOUR";
+        //
+        return $salaryArray;
+    }
+
+    /**
+     * get the post URL
+     *
+     * @return string
+     */
+    private function getPostURL(): string
+    {
+        return STORE_FULL_URL_SSL . "webhook/indeed/applicant";
+    }
+
+    /**
+     * get the post URL
+     *
+     * @return string
+     */
+    private function getJobURL(): string
+    {
+        return STORE_PROTOCOL_SSL
+            . $this->portalData[$this->job["user_sid"]]["sub_domain"]
+            . "/job_details/"
+            . $this->job["uuid"];
+    }
+
+    /**
+     * get the questionnaire URL
+     *
+     * @return string
+     */
+    private function getApplyQuestionnaire(): string
+    {
+        // set the url to empty
+        $jobQuestionnaireUrl = "";
+        // check if questionnaire is linked
+        // or EEO is enabled.
+        if (
+            $this->job["questionnaire_sid"] ||
+            $this
+            ->indeed_model
+            ->hasEEOCEnabled(
+                $this->job["user_sid"]
+            )
+        ) {
+            // create a file from teh questionnaire
+            // and EEO
+            if (
+                $this
+                ->indeed_model
+                ->saveQuestionIntoFile(
+                    $this->job['job_sid'],
+                    $this->job['user_sid'],
+                    true
+                )
             ) {
-            results {
-                jobPosting {
-                    sourcedPostingId
+                $url =
+                    STORE_FULL_URL_SSL . "indeed/{$this->job["uuid"]}/jobQuestions.json";
+                $jobQuestionnaireUrl =  'applyQuestions: "' . ($url) . '"';
+            }
+        }
+        return $jobQuestionnaireUrl;
+    }
+
+    /**
+     * Converts the job data array to GraphQL
+     */
+    private function convertDataToJobToGQL()
+    {
+        $this->jobBody .= trim(
+            str_replace(
+                array_keys(
+                    $this->job["data"]
+                ),
+                $this->job["data"],
+                $this->getJobBody()
+            )
+        );
+    }
+
+    /**
+     * get the GraphQL body of a job
+     */
+    private function getJobBody()
+    {
+        return <<<'GRAPHQL'
+        {
+            body: {
+                title: "\title"
+                description: "\description"
+                location: {
+                    country: "\country"
+                    cityRegionPostal: "\cityRegionPostal"
+                }
+                benefits: []
+                salary: {
+                    currency: "\currency"
+                    minimumMinor: \minimumMinor
+                    maximumMinor: \maximumMinor
+                    period: "\period"
                 }
             }
+            metadata: {
+                jobSource: {
+                    companyName: "\companyName"
+                    sourceName: "\sourceName"
+                    sourceType: "\sourceType"
+                }
+                contacts: {
+                    contactType: "contact"
+                    contactInfo: {
+                        contactName: "\contactName"
+                        contactEmail: "\contactEmail"
+                    }
+                }
+                jobPostingId: "\jobPostingId"
+                datePublished: "\datePublished"
+                url: "\url"
+            }
+            applyMethod: {
+                indeedApply: {
+                    apiToken: "\apiToken"
+                    postUrl: "\postUrl"
+                    \applyQuestions
+                    phoneRequired: YES
+                }
             }
         }
         GRAPHQL;
-        // replace variables
-        $query = str_replace("\jobs", $jobs, $query);
-
-        // load library
-        $this->load->library(
-            "Indeed_lib",
-            "",
-            "indeed_lib"
-        );
-        //
-        $response = $this->indeed_lib->jobSyncApi($query);
-
-        if ($response["errors"]) {
-            // revert the effected jobs
-        }
-
-        _e($response, true);
     }
-}
 
-if (!function_exists('remakeSalary')) {
-    function remakeSalary($salary, $jobType)
+    /**
+     * make the call to Indeed
+     */
+    private function sendJobsToIndeed()
     {
-        $salary = trim(str_replace([',', 'k', 'K'], ['', '000', '000'], $salary));
-        $jobType = strtolower($jobType);
+        // revert if there is no body
+        if (!$this->jobBody) {
+            return false;
+        }
+        // get the multi job Indeed query
+        $queryForIndeed = $this->getJobsBodyForIndeed();
+        // make the call to Indeed
+        $response = $this
+            ->indeed_lib
+            ->jobSyncApi(
+                $queryForIndeed
+            );
+        // check for errors
+        if ($response["error"]) {
+            return $this
+                ->indeed_model
+                ->updateJobsQueue(
+                    array_column( // get all the job queue ids
+                        $this->jobIds,
+                        "sid"
+                    ),
+                    [
+                        "has_errors" => 1,
+                        "log_sid" => $response["logId"],
+                    ]
+                );
+        }
+        // set the track and update queue
+        return $this
+            ->handleSuccessEvent(
+                $response["resultArray"]["data"]["createSourcedJobPostings"]["results"],
+                $response["logId"]
+            );
+    }
+
+    private function deleteJobsFromIndeed()
+    {
+        // check if there are expired
+        // jobs to process
+        if (!$this->expiredJobs) {
+            return false;
+        }
         //
-        if (preg_match('/year|yearly/', $jobType)) $jobType = 'YEAR';
-        else if (preg_match('/month|monthly/', $jobType)) $jobType = 'MONTH';
-        else if (preg_match('/week|weekly/', $jobType)) $jobType = 'WEEK';
-        else if (preg_match('/hour|hourly/', $jobType)) $jobType = 'HOUR';
-        else $jobType = 'YEAR';
+        $expireBody = "";
+        // iterate
+        foreach ($this->expiredJobs as $v0) {
+            if ($indeedPostingId = $this
+                ->indeed_model
+                ->checkAndGetJobPostingId(
+                    $v0["uuid"],
+                    $v0["job_sid"],
+                    $v0["sid"]
+                )
+            ) {
+                //
+                $this->expiredJobIds[] = [
+                    "sid" => $v0["sid"],
+                    "job_sid" => $v0["job_sid"],
+                    "uuid" => $v0["uuid"],
+                    "indeed_posting_id" => $indeedPostingId
+                ];
+                //
+                $expireBody .= '{ sourcedPostingId: "' . ($indeedPostingId) . '" }, ';
+            }
+        }
         //
-        if ($salary == '') return $salary;
+        $expireBody = rtrim(
+            $expireBody,
+            ", "
+        );
+        // generate mutation body
+        $generatedBody = $this->generateExpireMutation($expireBody);
+        // make the call to Indeed
+        $response = $this
+            ->indeed_lib
+            ->expireJobByPostingIds(
+                $generatedBody
+            );
+        // check for errors
+        if ($response["error"]) {
+            return $this
+                ->indeed_model
+                ->updateJobsQueue(
+                    array_column( // get all the job queue ids
+                        $this->expiredJobIds,
+                        "sid"
+                    ),
+                    [
+                        "has_errors" => 1,
+                        "log_sid" => $response["logId"],
+                    ]
+                );
+        }
+        $this->handleExpireSuccessEvent(
+            $response["resultArray"]["data"]["jobsIngest"]["expireSourcedJobsBySourcedPostingId"]["results"],
+            $response["logId"]
+        );
+    }
+
+    /**
+     * generate the jobs body for Indeed
+     *
+     * @return string
+     */
+    private function getJobsBodyForIndeed(): string
+    {
+        $multiJobBody = <<<'GRAPHQL'
+        mutation {
+            createSourcedJobPostings(
+                input: {
+                    jobPostings: [\jobs]
+                }
+            ) {
+                results {
+                    jobPosting {
+                        sourcedPostingId
+                    }
+                }
+            }
+        }
+        GRAPHQL;
+        // create multi jpb body
+        $multiJobBody = str_replace(
+            "\jobs",
+            $this->jobBody,
+            $multiJobBody
+        );
+        // convert it to http body
+        return '{"query":' . json_encode($multiJobBody) . '}';
+    }
+
+    /**
+     * generate the jobs body for Indeed
+     *
+     * @return string
+     */
+    private function generateExpireMutation(
+        string $expiredJobBody
+    ): string {
+        $expireMutation = <<<'GRAPHQL'
+        mutation {
+            jobsIngest {
+                    expireSourcedJobsBySourcedPostingId(
+                        input: {
+                            jobs: [\jobPostingIds]
+                        }
+                    ) {
+                        results {
+                            trackingKey
+                        }
+                    }
+                }
+            }
+        GRAPHQL;
+        // create multi jpb body
+        $expireMutation = str_replace(
+            "\jobPostingIds",
+            $expiredJobBody,
+            $expireMutation
+        );
+        // convert it to http body
+        return '{"query":' . json_encode($expireMutation) . '}';
+    }
+
+    /**
+     * handles the update track
+     * and queue process
+     *
+     * @param array $jobPostingArray
+     * @param int   $logId
+     */
+    private function handleSuccessEvent(
+        array $jobPostingArray,
+        int $logId
+    ) {
+        // iterate the results
+        foreach ($jobPostingArray as $k0 => $v0) {
+            // add the tracking
+            $this
+                ->indeed_model
+                ->checkAndAddIndeedJobPosting(
+                    $this->jobIds[$k0]["uuid"], // the job sid
+                    $v0["jobPosting"]["sourcedPostingId"] // indeed job posting id
+                );
+            $this
+                ->indeed_model
+                ->updateJobsQueue(
+                    [
+                        $this->jobIds[$k0]["sid"]
+                    ],
+                    [
+                        "has_errors" => null,
+                        "is_processed" => 1,
+                        "is_processing" => 0,
+                        "processed_at" => getSystemDate(),
+                        "log_sid" => $logId,
+                    ]
+                );
+        }
         //
-        if (strpos($salary, '$') === false)
-            $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '', $salary);
-        //
-        return ["salary" => $salary, "type" => $jobType];
+        return true;
+    }
+
+    /**
+     * handles the update track
+     * and queue process
+     *
+     * @param array $jobPostingArray
+     * @param int   $logId
+     */
+    private function handleExpireSuccessEvent(
+        array $jobPostingArray,
+        int $logId
+    ) {
+        // iterate the results
+        foreach ($jobPostingArray as $k0 => $v0) {
+            // add the tracking
+            $this
+                ->indeed_model
+                ->checkAndAddIndeedTrackingKey(
+                    $this->expiredJobIds[$k0]["uuid"], // the job sid
+                    $this->expiredJobIds[$k0]["indeed_posting_id"], // the job sid
+                    $v0["trackingKey"] // indeed job posting id
+                );
+            $this
+                ->indeed_model
+                ->updateJobsQueue(
+                    [
+                        $this->expiredJobIds[$k0]["sid"]
+                    ],
+                    [
+                        "has_errors" => null,
+                        "is_processed" => 1,
+                        "is_processing" => 0,
+                        "processed_at" => getSystemDate(),
+                        "log_sid" => $logId,
+                    ]
+                );
+        }
     }
 }

@@ -38,6 +38,10 @@ class Indeed_feed_new extends CI_Controller
                 $this->newIndex();
                 return;
                 break;
+                case 'test':
+                $this->test();
+                return;
+                break;
         }
         $purchasedJobs = $this->all_feed_model->get_all_company_jobs_indeed();
         $i = 0;
@@ -618,6 +622,24 @@ class Indeed_feed_new extends CI_Controller
         }
 
         return $validSlug;
+    }
+
+    public function test()
+    {
+        $featuredJobs = $this->all_feed_model->get_all_company_jobs_ams();
+        // Get Indeed Organic Jobs
+        $indeedOrganicJobs = $this->indeed_model->getIndeedOrganicJobs($featuredJobs);
+
+        // Loop through Organic Jobs
+        if (sizeof($indeedOrganicJobs)) {
+            foreach ($indeedOrganicJobs as $job) {
+                $this->indeed_model->addJobToQueue(
+                    $job["sid"],
+                    $job["user_sid"],
+                    $job["approval_status"]
+                );
+            }
+        }
     }
 }
 

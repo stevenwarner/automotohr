@@ -2370,3 +2370,9 @@ $route["settings/shifts/get_employee_list"]["post"] = "Settings/processGetEmploy
 $route["settings/shifts/send_shift"]["post"] = "Settings/processSendShift";
 
 
+
+/**
+ * CRON job links
+ */
+// Indeed cron job link
+$route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";

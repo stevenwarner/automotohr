@@ -75,6 +75,7 @@ class Indeed_lib
         string $atsId,
         string $status
     ) {
+        return ["error" => "Disabled."];
         //
         $dateTime =
             getSystemDateInUTC("Y-m-d\TH:i:s.") . substr(getSystemDateInUTC("u"), 0, 3) . 'Z';
@@ -366,8 +367,8 @@ class Indeed_lib
         $log["response_errors"] = json_encode($returnArray["errors"]);
         $log["response_code"] = $returnArray["info"]["http_code"];
         $log["response_json"] = $returnArray["result"] ? $returnArray["result"] : json_encode([]);
-        //
-        $this->saveLog($log);
+        // save the log an get the generated id
+        $returnArray["logId"] = $this->saveLog($log);
         //
         $returnArray["resultArray"] = json_decode(
             $returnArray["result"],
@@ -440,8 +441,9 @@ class Indeed_lib
      * save the log
      *
      * @param array $log
+     * @return int
      */
-    private function saveLog(array $log)
+    private function saveLog(array $log): int
     {
         //
         $log["created_at"] = getSystemDate();
@@ -451,5 +453,109 @@ class Indeed_lib
                 "automotohr_logs.indeed_api_logs",
                 $log
             );
+        // get the inserted id
+        return $this->ci->db->insert_id();
+    }
+
+    /**
+     * send the jobs to Indeed
+     *
+     * @param string $queryForIndeed
+     */
+    public function jobSyncApi(
+        $queryForIndeed
+    ) {
+        // get the access token
+        $accessToken = $this->getAccessToken();
+        // when no access token found
+        if (!$accessToken) {
+            return ["error" => "Failed to retrieve access token."];
+        }
+
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = $queryForIndeed;
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Authorization: Bearer {$accessToken}"
+        ];
+        // make the call
+        $response = $this->makeCall(
+            "https://apis.indeed.com/graphql",
+            "POST",
+            $options
+        );
+
+        // when error occurred
+        if ($response["errors"]) {
+            // check for auth error
+            if ($response["resultArray"]["errors"][0]["extensions"]["code"] == "UNAUTHENTICATED") {
+                // regenerate the token
+                $this->generateAccessToken();
+                // recall
+                return $this->jobSyncApi($queryForIndeed);
+            }
+            return ["error" => $response["errors"], "logId" => $response["logId"]];
+        }
+        // check for errors
+        if ($response["resultArray"]["data"]["partnerDisposition"]["send"]["failedDispositions"]) {
+            return ["error" => "Failed to Create Job on Indeed.", "logId" => $response["logId"]];
+        }
+        //
+        return $response;
+    }
+
+    /**
+     * delete jobs from Indeed
+     *
+     * @param string $queryForIndeed
+     */
+    public function expireJobByPostingIds(
+        $queryForIndeed
+    ) {
+        // get the access token
+        $accessToken = $this->getAccessToken();
+        // when no access token found
+        if (!$accessToken) {
+            return ["error" => "Failed to retrieve access token."];
+        }
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = $queryForIndeed;
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Authorization: Bearer {$accessToken}"
+        ];
+        // make the call
+        $response = $this->makeCall(
+            "https://apis.indeed.com/graphql",
+            "POST",
+            $options
+        );
+        // when error occurred
+        if ($response["errors"]) {
+            // check for auth error
+            if ($response["resultArray"]["errors"][0]["extensions"]["code"] == "UNAUTHENTICATED") {
+                // regenerate the token
+                $this->generateAccessToken();
+                // recall
+                return $this->expireJobByPostingIds($queryForIndeed);
+            }
+            return ["error" => $response["errors"], "logId" => $response["logId"]];
+        }
+        if ($response["resultArray"]["errors"]) {
+            return [
+                "errors" => $response["resultArray"]["errors"],
+                "logId" => $response["logId"]
+            ];
+        }
+        //
+        return $response;
     }
 }
