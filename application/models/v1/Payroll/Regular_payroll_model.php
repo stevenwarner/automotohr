@@ -361,12 +361,13 @@ class Regular_payroll_model extends Base_payroll_model
      * @param int $companyId
      * @param int $payrollId
      * @param array $columns
+     * Optional
      * @return array
      */
     public function getRegularPayrollById(
         int $companyId,
         int $payrollId,
-        array $columns
+        array $columns = ["*"]
     ): array {
         // get single payroll
         $record = $this->db
@@ -689,6 +690,8 @@ class Regular_payroll_model extends Base_payroll_model
         // add payroll uuid
         $this->gustoCompany['other_uuid']
             = $payroll['gusto_uuid'];
+        $this->gustoCompany['regular_payroll_sid']
+            = $payroll["sid"];
         //
         $response = $this
             ->lb_gusto
@@ -706,13 +709,25 @@ class Regular_payroll_model extends Base_payroll_model
             return $response;
         }
         //
+        $this
+            ->db
+            ->where(
+                "gusto_uuid",
+                $payrollUUID
+            )
+            ->update(
+                "payrolls.regular_payrolls",
+                [
+                    "status" => "calculated"
+                ]
+            );
+        //
         $this->gustoToStoreRegularPayroll($response);
         //
         $this->updateEmployeeCompensations(
             $payroll["sid"],
             $response["employee_compensations"]
         );
-        _e($response);
     }
 
     /**
@@ -1041,5 +1056,174 @@ class Regular_payroll_model extends Base_payroll_model
         return [
             "message" => "You have successfully discarded the payroll data."
         ];
+    }
+
+    /**
+     * submit single payroll
+     *
+     * @param int $payrollId
+     * @return array
+     */
+    public function submitPayroll(int $payrollId): array
+    {
+        // get single payroll
+        $payroll = $this->db
+            ->select('
+                gusto_uuid,
+                company_sid
+            ')
+            ->where('sid', $payrollId)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+        // get company details
+        $this->setCompanyDetails($payroll['company_sid']);
+        // add payroll uuid
+        $this->gustoCompany['other_uuid'] = $payroll['gusto_uuid'];
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                'payroll_submit',
+                $this->gustoCompany,
+                [],
+                "PUT",
+                true
+            );
+        // errors found
+        if (isset($response["errors"])) {
+            return $response;
+        }
+        $this
+            ->db
+            ->where("sid", $payrollId)
+            ->update(
+                "payrolls.regular_payrolls",
+                [
+                    "status" => "submitted",
+                    "updated_at" => getSystemDate()
+                ]
+            );
+        //
+        return $response;
+    }
+
+    /**
+     * 
+     */
+    public function handleSubmitPayroll(string $payrollUUID)
+    {
+        // synd data from Gusto to Store
+        $this->gustoToStorePayrollById($payrollUUID);
+        // update the stage
+        $this
+            ->db
+            ->where("gusto_uuid", $payrollUUID)
+            ->update(
+                "payrolls.regular_payrolls",
+                [
+                    "status" => "processed",
+                    "updated_at" => getSystemDate()
+                ]
+            );
+        // get receipt
+        // $this->gustoToStorePayrollReceipt($payrollUUID);
+        // sync employee pay stubs
+        $this->syncPayrollEmployeePayStubs();
+    }
+
+    /**
+     * Gusto to store payroll receipt
+     */
+    private function gustoToStorePayrollReceipt()
+    {
+        //
+        $response = $this
+            ->lb_gusto
+            ->gustoCall(
+                'payroll_receipt',
+                $this->gustoCompany,
+                [],
+                "GET"
+            );
+        // errors found
+        if ($response["errors"]) {
+            return $response;
+        }
+        //
+        $upd = [];
+        $upd['payroll_receipt'] = json_encode($response);
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('gusto_uuid', $this->gustoCompany["other_uuid"])
+            ->update(
+                'payrolls.regular_payrolls',
+                $upd
+            );
+
+        return $response;
+    }
+
+    /**
+     * Gusto to store payroll employee pay stubs
+     * @return array
+     */
+    private function syncPayrollEmployeePayStubs(): array
+    {
+        // get all employees
+        $employees = $this->db
+            ->select('
+                payrolls.regular_payrolls_employees.sid,
+                gusto_companies_employees.gusto_uuid
+            ')
+            ->join(
+                'gusto_companies_employees',
+                'gusto_companies_employees.employee_sid = payrolls.regular_payrolls_employees.employee_sid',
+                'inner'
+            )
+            ->where(
+                '
+            payrolls.regular_payrolls_employees.regular_payroll_sid',
+                $this->gustoCompany["regular_payroll_sid"]
+            )
+            ->get('payrolls.regular_payrolls_employees')
+            ->result_array();
+        //
+        if (!$employees) {
+            return ['success' => true];
+        }
+        //
+        foreach ($employees as $value) {
+            //
+            $this->gustoCompany['other_uuid_2'] = $value['gusto_uuid'];
+            //
+            $response = $this
+                ->lb_gusto
+                ->gustoCall(
+                    'payroll_employee_paystubs',
+                    $this->gustoCompany,
+                    [],
+                    "GET",
+                    true
+                );
+            // errors found
+            if ($response["errors"]) {
+                return $response;
+            }
+            // //
+            $upd = [];
+            $upd['paystub_json'] = json_encode($response);
+            $upd['updated_at'] = getSystemDate();
+            //
+            $this->db
+                ->where('sid', $value['sid'])
+                ->update(
+                    'payrolls.regular_payrolls_employees',
+                    $upd
+                );
+        }
+        //
+        return
+            ['success' => true];
     }
 }

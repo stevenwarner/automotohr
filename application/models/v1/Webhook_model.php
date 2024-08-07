@@ -336,6 +336,17 @@ class Webhook_model extends CI_Model
             $this
                 ->regular_payroll_model
                 ->gustoToStorePayrollById(
+                    $this->post["entity_uuid"],
+                    true
+                );
+        }
+        // capture payroll submitted event
+        elseif ($this->post["event_type"] === "payroll.processed") {
+            // step one get the payroll from
+            // Gusto
+            $this
+                ->regular_payroll_model
+                ->handleSubmitPayroll(
                     $this->post["entity_uuid"]
                 );
         }

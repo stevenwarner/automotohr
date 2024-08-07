@@ -2251,33 +2251,33 @@ $route['payrolls/regular']['get'] =
 // Regular single payroll routes
 $route['payrolls/regular/(:num)']['get'] =
   'v1/payrolls/regular/single/$1';
+// Regular single payroll routes
+$route['payrolls/regular/(:num)/review']['get'] =
+  'v1/payrolls/regular/review/$1';
 // Regular single calculting
 $route['payrolls/regular/stage/(:num)/(:any)']['get'] =
   'v1/payrolls/regular/getPayrollStage/$1/$2';
 // revert
 $route['payrolls/regular/discard/(:num)']['post'] =
   'v1/payrolls/regular/discardPayrollChanges/$1';
-// Submit
-// // submit regular payroll
-// $route['payrolls/regular/(:num)/submit']['put'] =
-//   'v1/payrolls/regular/submitPayroll/$1';
 // // cancel regular payroll
 // $route['payrolls/regular/(:num)/cancel']['put'] =
 //   'v1/payrolls/regular/cancelPayroll/$1';
 
 // AJAX calls
-// // get regular payroll step 1 view
+// get regular payroll step 1 view
 $route['payrolls/regular/(:num)/view/1']['get'] =
   'v1/payrolls/regular/getRegularPayrollStep1/$1';
 // save regular payroll step 1
 $route['payrolls/regular/(:num)/save/1']['post'] =
   'v1/payrolls/regular/saveRegularPayrollStep1/$1';
-// $route['payrolls/regular/(:num)/(:any)']['get'] =
-// 'v1/payrolls/regular/single/$1/$2';
-// // Hours and earnings
-// // Regular single payroll update employees routes
-// $route['payrolls/regular/(:num)/prepare']['post'] =
-//   'v1/payrolls/regular/preparePayrollForUpdate/$1';
+// Review
+$route['payrolls/regular/(:num)/view/3']['get'] =
+  'v1/payrolls/regular/getRegularPayrollStep3/$1';
+// Submit
+// submit regular payroll
+$route['payrolls/regular/(:num)/submit']['put'] =
+  'v1/payrolls/regular/submitPayroll/$1';
 
 
 // Benefits

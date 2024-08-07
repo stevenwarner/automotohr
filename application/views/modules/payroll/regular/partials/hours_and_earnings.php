@@ -46,7 +46,7 @@
                                 <!-- 1 -->
                                 <div class="col-sm-6 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+                                        <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
                                     <p class="csF16" style="margin-top: 10px;">
@@ -57,7 +57,7 @@
                                 <!-- 3 -->
                                 <div class="col-sm-6 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                        <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                                         </div>
                                     </div>
                                     <p class="csF16" style="margin-top: 10px;">

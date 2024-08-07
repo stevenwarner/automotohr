@@ -969,7 +969,6 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	/* color: var(--txColor) !important; */
 }
 
-
 /* page loader */
 /* Common loader CSS */
 
@@ -1001,4 +1000,10 @@ div.ui-timepicker-container.ui-timepicker-standard {
 .csPageLoader .csPageLoaderBox span {
 	font-size: 16px;
 	color: #333;
+}
+
+/* box */
+.cs-box {
+	padding: 10px;
+	border-radius: 5px;
 }
