@@ -930,6 +930,15 @@ if (checkIfAppIsEnabled('timeoff')) {
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
+                                <?php if (!empty($EmployeeBeforeHireData)) : ?>
+                                    <div id="jsBeforHireBox" style="display: none;">
+                                        <div class="universal-form-style-v2 info_view">
+                                        <?php $this->load->view('manage_employer/employee_management/profile_view_part_befor_hire', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob]); ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                                
                             </div>
                             <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
                                 <!-- #tab1 -->
@@ -2646,6 +2655,15 @@ if (checkIfAppIsEnabled('timeoff')) {
                                         </div>
                                     </div>
                                 <?php endif; ?>
+
+                                <?php if (!empty($EmployeeBeforeHireData)) : ?>
+                                    <div id="jsBeforHireBox" style="display: none;">
+                                        <div class="universal-form-style-v2 info_view">
+                                        <?php $this->load->view('manage_employer/employee_management/profile_view_part_befor_hire', ['primary_phone_number_cc' => $primary_phone_number_cc, 'dob' => $dob]); ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                                
                             </div>
                             <?php if (!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'] || $this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {  ?>
                                 <!-- #tab1 -->

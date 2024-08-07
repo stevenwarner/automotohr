@@ -2453,7 +2453,7 @@
         $this->db->where('sid', $sid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where_in('employee_type', ['fulltime', 'full-time']);
         $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
@@ -2486,6 +2486,25 @@
             $insertHistory['profile_data'] = json_encode($historyArray);
 
             $this->db->insert('profile_history', $insertHistory);
+        }
+    }
+
+    //
+    function getApplicantDataBeforHire($employeeId)
+    {
+        $employeeData = $this->db->select('applicant_sid')
+            ->where('sid', $employeeId)
+            ->get('users')
+            ->row_array();
+        if (!empty($employeeData)) {
+            return
+                $this->db->select('*')
+                ->where('sid', $employeeData['applicant_sid'])
+                ->order_by('sid', 'ASC')
+                ->get('portal_job_applications')
+                ->row_array();
+        } else {
+            return [];
         }
     }
 }

@@ -1522,7 +1522,8 @@ class Employee_management extends Public_Controller
                         ['1.0.2', '2022/js/employee_profile/main']
                     ];
 
-
+                    //
+                    $data['EmployeeBeforeHireData'] = $this->employee_model->getApplicantDataBeforHire($employer_id);
                     //
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
