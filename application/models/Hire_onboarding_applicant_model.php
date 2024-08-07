@@ -77,6 +77,12 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.employee_number');
 
         //
+        $this->db->select('portal_job_applications.hourly_rate');
+        $this->db->select('portal_job_applications.hourly_technician');
+        $this->db->select('portal_job_applications.flat_rate_technician');
+        $this->db->select('portal_job_applications.semi_monthly_salary');
+        $this->db->select('portal_job_applications.semi_monthly_draw');        
+        //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');
 
