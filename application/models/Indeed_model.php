@@ -758,14 +758,24 @@ class Indeed_model extends CI_Model
      *
      * @param int $jobId
      * @param int $companyId
-     * @param string $jobApprovalStatus
+     * @param string $jobApprovalStatus Optional
      * @return array
      */
     public function updateJobToQueue(
         int $jobId,
         int $companyId,
-        string $jobApprovalStatus
+        string $jobApprovalStatus = ""
     ): array {
+        //
+        if (!$jobApprovalStatus) {
+            $jobApprovalStatus = $this
+                ->db
+                ->select("approval_status")
+                ->where("sid", $jobId)
+                ->limit(1)
+                ->get("portal_job_listings")
+                ->row_array()["approval_status"];
+        }
         // check if job is allowed to be added to queue
         if ($this->getJobApprovalStatus($companyId) && $jobApprovalStatus != 'approved') {
             return ["errors" => [
@@ -866,7 +876,6 @@ class Indeed_model extends CI_Model
     public function expireJobToQueue(
         int $jobId
     ): array {
-        die("asdas");
         // check if job already exists
         if (
             $this->db
@@ -874,7 +883,6 @@ class Indeed_model extends CI_Model
             ->where("is_expired <>", 1)
             ->count_all_results("indeed_job_queue")
         ) {
-            die("asdas");
             // set update array
             $updateArray = [];
             $updateArray["is_expired"] = 1;
@@ -974,13 +982,7 @@ class Indeed_model extends CI_Model
             $this->updateJobToQueue(
                 $v0,
                 $companyId,
-                $this
-                    ->db
-                    ->select("approval_status")
-                    ->where("sid", $v0)
-                    ->limit(1)
-                    ->get("portal_job_listings")
-                    ->row_array()["approval_status"]
+                ""
             );
         }
     }
