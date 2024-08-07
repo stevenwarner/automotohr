@@ -2006,7 +2006,7 @@ class Job_listings extends Public_Controller
                             $newJobIds
                         );
 
-                    $this->dashboard_model->deactive($jobId);
+                    // $this->dashboard_model->deactive($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
                     $insert_record['edit_by_sid'] = $data['session']['employer_detail']['sid'];

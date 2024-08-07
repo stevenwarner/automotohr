@@ -866,6 +866,7 @@ class Indeed_model extends CI_Model
     public function expireJobToQueue(
         int $jobId
     ): array {
+        die("asdas");
         // check if job already exists
         if (
             $this->db
@@ -873,6 +874,7 @@ class Indeed_model extends CI_Model
             ->where("is_expired <>", 1)
             ->count_all_results("indeed_job_queue")
         ) {
+            die("asdas");
             // set update array
             $updateArray = [];
             $updateArray["is_expired"] = 1;
@@ -944,6 +946,43 @@ class Indeed_model extends CI_Model
         return [
             "success" => "The job was either already expired / not added yet."
         ];
+    }
+
+    /**
+     * multiple jobs deactivation
+     *
+     * @param array $jobId
+     */
+    public function checkAndDeactivateJobs(array $jobIds)
+    {
+        foreach ($jobIds as $v0) {
+            $this->expireJobToQueue($v0);
+        }
+    }
+
+    /**
+     * multiple jobs activate
+     *
+     * @param array $jobId
+     * @param int $companyId
+     */
+    public function checkAndActivateJobs(
+        array $jobIds,
+        int $companyId
+    ) {
+        foreach ($jobIds as $v0) {
+            $this->updateJobToQueue(
+                $v0,
+                $companyId,
+                $this
+                    ->db
+                    ->select("approval_status")
+                    ->where("sid", $v0)
+                    ->limit(1)
+                    ->get("portal_job_listings")
+                    ->row_array()["approval_status"]
+            );
+        }
     }
 
     /**
