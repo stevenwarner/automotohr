@@ -202,8 +202,7 @@ class External_payroll_model extends Base_payroll_model
     ): array {
         //
         $externalPayrollDetails =
-            $this->external_payroll_model
-            ->getExternalPayrollById(
+            $this->getExternalPayrollById(
                 [
                     'sid' => $externalPayrollId
                 ],
@@ -461,8 +460,7 @@ class External_payroll_model extends Base_payroll_model
         }
         // get gusto id of external payroll
         $externalPayrollDetails =
-            $this->external_payroll_model
-            ->getExternalPayrollById(
+            $this->getExternalPayrollById(
                 [
                     'sid' => $externalPayrollId
                 ],
@@ -474,7 +472,8 @@ class External_payroll_model extends Base_payroll_model
                     'company_sid'
                 ]
             );
-        // get employee details
+        //  
+        // 
         // get gusto employee details
         $gustoEmployee = $this->getGustoLinkedEmployeeDetails(
             $employeeId
@@ -487,7 +486,9 @@ class External_payroll_model extends Base_payroll_model
         $this->gustoCompany['other_uuid'] = $externalPayrollDetails['gusto_uuid'];
         //
         $earnings = json_decode($externalPayrollDetails['applicable_earnings'], true);
+        $benefits = json_decode($externalPayrollDetails['applicable_benefits'], true);
         $passEarnings = [];
+        $passBenefits = [];
         //
         if ($earnings) {
             foreach ($earnings as $earning) {
@@ -499,6 +500,16 @@ class External_payroll_model extends Base_payroll_model
                 ];
             }
         }
+        //
+        if ($benefits) {
+            foreach ($benefits as $benefit) {
+                $passBenefits[] = [
+                    'benefit_id' => $benefit['id'],
+                    'company_contribution_amount' => 0.0,
+                    'employee_deduction_amount' => 0.0,
+                ];
+            }
+        }
         // prepare request
         $request = [];
         $request['replace_fields'] = true;
@@ -506,7 +517,7 @@ class External_payroll_model extends Base_payroll_model
         $request['external_payroll_items'][] = [
             'employee_uuid' => $gustoEmployee['gusto_uuid'],
             'earnings' => $passEarnings,
-            'benefits' => json_decode($externalPayrollDetails['applicable_benefits'], true),
+            'benefits' => $passBenefits,
         ];
         // make call
         $gustoResponse = $this

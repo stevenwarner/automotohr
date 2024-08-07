@@ -24,7 +24,8 @@ class Regular extends Payroll_base_controller
             base_url("public/v1/plugins/alertifyjs/css/alertify.min.css")
         ];
         $this->data['pageJs'] = [
-            base_url("public/v1/plugins/alertifyjs/alertify.min.js")
+            base_url("public/v1/plugins/alertifyjs/alertify.min.js"),
+            base_url("public/v1/plugins/jquery/jquery-ui.js")
         ];
     }
 
@@ -48,6 +49,7 @@ class Regular extends Payroll_base_controller
         $this->data['appJs'] = $this->loadJsBundle([
             'v1/payroll/js/regular/main'
         ], "main");
+        
         // get the payrolls
         $this->data['regularPayrolls'] = $this
             ->regular_payroll_model

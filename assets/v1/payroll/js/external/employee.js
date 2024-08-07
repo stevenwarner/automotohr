@@ -69,7 +69,14 @@ $(function externalPayrollsEmployee() {
 			data: dataOBJ,
 			cache: false,
 		})
-			.success(function (resp) {
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				//
 				if (doCalculate) {
 					ml(true, "jsPageLoader");
@@ -81,13 +88,6 @@ $(function externalPayrollsEmployee() {
 						window.location.reload();
 					});
 				}
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				//
-				XHR = null;
-				//
-				ml(false, "jsPageLoader");
 			});
 	}
 
@@ -114,7 +114,14 @@ $(function externalPayrollsEmployee() {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				//
 				resp.data.map(function (taxSuggestion) {
 					$(
@@ -124,13 +131,6 @@ $(function externalPayrollsEmployee() {
 					).val(taxSuggestion.amount);
 				});
 				return _success(resp.message);
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				//
-				XHR = null;
-				//
-				ml(false, "jsPageLoader");
 			});
 	}
 	//

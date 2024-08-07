@@ -54,25 +54,28 @@ $(function addExternalPayrolls() {
 			method: "POST",
 			data: dataOBJ,
 		})
-			.success(function (resp) {
-				return _success(resp.message, function () {
-					window.location.href = baseUrl("payrolls/external");
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.message, function () {
+					window.location.href = baseUrl("payrolls/external");
+				});
 			});
 	}
 
 	//
-	$(".jsDatePicker").datepicker({
-		format: "mm/dd/yyyy",
-		changeYear: true,
-		changeMonth: true,
+	$(".jsDatePicker").daterangepicker({
+		showDropdowns: true,
+		singleDatePicker: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
 	});
 	//
 	ml(false, "jsPageLoader");

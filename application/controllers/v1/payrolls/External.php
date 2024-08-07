@@ -1,39 +1,37 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
+// add the controller
+loadController(
+    "modules/payroll/Payroll_base_controller"
+);
 
-class External extends Public_controller
+class External extends Payroll_base_controller
 {
-    /**
-     * for js
-     */
-    private $js;
-    /**
-     * for css
-     */
-    private $css;
-    /**
-     * wether to create minified files or not
-     */
-    private $createMinifyFiles;
+   
     /**
      * main entry point to controller
      */
     public function __construct()
     {
         // inherit
-        parent::__construct();
+        parent::__construct(true);
         //
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
-        // Call the model
-        $this->load->model("v1/Payroll/External_payroll_model", "external_payroll_model");
-        // set the logged in user id
-        $this->userId = $this->session->userdata('logged_in')['employer_detail']['sid'] ?? 0;
-        // set path to CSS file
-        $this->css = 'public/v1/css/payroll/external/';
-        // set path to JS file
-        $this->js = 'public/v1/js/payroll/external/';
         //
-        $this->createMinifyFiles = true;
+        $this->load->model(
+            "v1/Payroll/External_payroll_model",
+            "external_payroll_model"
+        );
+        // load compulsory plugins
+        // plugins
+        $this->data['pageCSS'] = [
+            base_url("public/v1/plugins/alertifyjs/css/alertify.min.css"),
+            base_url('public/v1/plugins/daterangepicker/css/daterangepicker.min.css')
+        ];
+        $this->data['pageJs'] = [
+            base_url("public/v1/plugins/alertifyjs/alertify.min.js"),
+            base_url('public/v1/plugins/daterangepicker/daterangepicker.min.js')
+        ];
     }
 
     /**
@@ -41,67 +39,60 @@ class External extends Public_controller
      */
     public function index()
     {
+        // check the payroll blockers
+        if ($this->checkForPayrollBlockers()) {
+            return true;
+        }
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
+        $this->data['title'] = "External Payrolls";
         //
-        $data['title'] = "External Payrolls";
-        //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
         // css
-        $data['appCSS'] = bundleCSS(
+        $this->data['appCSS'] = $this->loadCssBundle(
             [
                 'v1/app/css/loader'
             ],
-            $this->css,
-            'main',
-            $this->createMinifyFiles
+            'main'
         );
         //
-        $data['appJs'] = bundleJs(
+        $this->data['appJs'] = $this->loadJsBundle(
             [
                 'js/app_helper',
                 'v1/payroll/js/external/main'
             ],
-            $this->js,
-            'main',
-            $this->createMinifyFiles
+            'main'
         );
         // get all external payrolls
-        $data['externalPayrolls'] =
+        $this->data['externalPayrolls'] =
             $this->external_payroll_model
             ->getAllCompanyExternalPayrolls(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
 
         // get all external payrolls
-        $data['hasUnProcessedExternalPayroll'] =
+        $this->data['hasUnProcessedExternalPayroll'] =
             $this->external_payroll_model
             ->hasAnyUnprocessedExternalPayrolls(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
 
-        $data['hasExternalPayroll'] =
+        $this->data['hasExternalPayroll'] =
             $this->external_payroll_model
             ->hasExternalPayroll(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
 
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/manage')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/manage');
     }
 
     /**
@@ -110,46 +101,35 @@ class External extends Public_controller
     public function create()
     {
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
         //
-        $data['title'] = "Create External Payroll";
+        $this->data['title'] = "Create External Payroll";
         //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
         //
-        $data['appCSS'] = bundleCSS(
+        $this->data['appCSS'] =  $this->loadCssBundle(
             [
                 'v1/app/css/loader'
             ],
-            $this->css,
-            'add-external',
-            $this->createMinifyFiles
+            'add-external'
         );
         //
-        $data['appJs'] = bundleJs(
+        $this->data['appJs'] =  $this->loadJsBundle(
             [
-                'js/app_helper',
                 'v1/payroll/js/external/add'
             ],
-            $this->js,
-            'add-external',
-            $this->createMinifyFiles
+            'add-external'
         );
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/add')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/add');
     }
 
     /**
@@ -161,30 +141,26 @@ class External extends Public_controller
     public function manageSingle(int $externalPayrollId)
     {
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
+        $this->data['title'] = "Single External Payroll";
         //
-        $data['title'] = "Single External Payroll";
-        //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
         // get all external payroll
-        $data['externalPayroll'] =
+        $this->data['externalPayroll'] =
             $this->external_payroll_model
             ->getExternalPayrollById(
                 [
                     'sid' => $externalPayrollId,
                     'is_deleted' => 0,
-                    'company_sid' => $data['loggedInPersonCompany']['sid']
+                    'company_sid' => $this->data['loggedInPersonCompany']['sid']
                 ],
                 [
                     'is_processed',
@@ -194,27 +170,24 @@ class External extends Public_controller
                 ]
             );
         //
-        if (!$data['externalPayroll']) {
+        if (!$this->data['externalPayroll']) {
             return redirect(base_url('payrolls/external'));
         }
 
-        $data['externalPayrollId'] = $externalPayrollId;
+        $this->data['externalPayrollId'] = $externalPayrollId;
         // get all payroll employees
-        $data['payrollEmployees'] =
+        $this->data['payrollEmployees'] =
             $this->external_payroll_model
             ->getPayrollOnboardEmployees(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
         //
-        $data['linkedEmployeeIds'] = $this->external_payroll_model
+        $this->data['linkedEmployeeIds'] = $this->external_payroll_model
             ->getLinkEmployeeIds(
                 $externalPayrollId
             );
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/manage_single')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/manage_single');
     }
 
     /**
@@ -230,21 +203,17 @@ class External extends Public_controller
         int $employeeId
     ) {
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
+        $this->data['title'] = "Single Employee External Payroll";
         //
-        $data['title'] = "Single Employee External Payroll";
-        //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
         // check external payroll
         if (!$this
@@ -253,7 +222,7 @@ class External extends Public_controller
                 [
                     'sid' => $externalPayrollId,
                     'is_deleted' => 0,
-                    'company_sid' => $data['loggedInPersonCompany']['sid']
+                    'company_sid' => $this->data['loggedInPersonCompany']['sid']
                 ]
             )) {
 
@@ -266,7 +235,7 @@ class External extends Public_controller
                 $employeeId
             );
         // add css
-        $data['appCSS'] = bundleCSS(
+        $this->data['appCSS'] = bundleCSS(
             [
                 'v1/app/css/loader'
             ],
@@ -275,7 +244,7 @@ class External extends Public_controller
             $this->createMinifyFiles
         );
         // add js
-        $data['appJs'] = bundleJs(
+        $this->data['appJs'] = bundleJs(
             [
                 'js/app_helper',
                 'v1/payroll/js/external/employee'
@@ -284,6 +253,7 @@ class External extends Public_controller
             'employee',
             $this->createMinifyFiles
         );
+        
         // get actual payroll
         $externalPayrollDetails =
             $this
@@ -292,7 +262,7 @@ class External extends Public_controller
                 [
                     'sid' => $externalPayrollId,
                     'is_deleted' => 0,
-                    'company_sid' => $data['loggedInPersonCompany']['sid']
+                    'company_sid' => $this->data['loggedInPersonCompany']['sid']
                 ],
                 [
                     'is_processed',
@@ -306,13 +276,13 @@ class External extends Public_controller
         $externalPayrollDetails['applicable_benefits'] = json_decode($externalPayrollDetails['applicable_benefits'], true);
         $externalPayrollDetails['applicable_taxes'] = json_decode($externalPayrollDetails['applicable_taxes'], true);
         //
-        $data['externalPayrollDetails'] = $externalPayrollDetails;
-        $data['externalPayrollId'] = $externalPayrollId;
+        $this->data['externalPayrollDetails'] = $externalPayrollDetails;
+        $this->data['externalPayrollId'] = $externalPayrollId;
         // get single employee details
-        $data['employeeDetails'] =
+        $this->data['employeeDetails'] =
             $this->external_payroll_model
             ->getPayrollEmployeeById(
-                $data['loggedInPersonCompany']['sid'],
+                $this->data['loggedInPersonCompany']['sid'],
                 $employeeId
             );
         // get employee external payroll details
@@ -324,16 +294,13 @@ class External extends Public_controller
             );
         //
         if ($employeeExternalPayrollDetails) {
-            $data['externalPayrollDetails'] = $this->mergeEarnings(
-                $data['externalPayrollDetails'],
+            $this->data['externalPayrollDetails'] = $this->mergeEarnings(
+                $this->data['externalPayrollDetails'],
                 $employeeExternalPayrollDetails
             );
         }
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/employee')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/employee');
     }
 
     /**
@@ -344,34 +311,30 @@ class External extends Public_controller
     public function taxLiabilities()
     {
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
+        $this->data['title'] = "Single Employee External Payroll";
         //
-        $data['title'] = "Single Employee External Payroll";
-        //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
         // sync tax liabilities
         $this->external_payroll_model
             ->syncTaxLiabilitiesForExternalPayroll(
-                $data['loggedInPersonCompany']['sid'],
-                $data['loggedInPerson']['sid']
+                $this->data['loggedInPersonCompany']['sid'],
+                $this->data['loggedInPerson']['sid']
             );
-        $data['taxLiabilities'] = $this->external_payroll_model
+        $this->data['taxLiabilities'] = $this->external_payroll_model
             ->getExternalPayrollTaxLiabilities(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
         // add css
-        $data['appCSS'] = bundleCSS(
+        $this->data['appCSS'] = bundleCSS(
             [
                 'v1/app/css/loader'
             ],
@@ -380,7 +343,7 @@ class External extends Public_controller
             $this->createMinifyFiles
         );
         // add js
-        $data['appJs'] = bundleJs(
+        $this->data['appJs'] = bundleJs(
             [
                 'js/app_helper',
                 'v1/payroll/js/external/tax_liabilities'
@@ -390,10 +353,7 @@ class External extends Public_controller
             $this->createMinifyFiles
         );
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/tax_liabilities')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/tax_liabilities');
     }
 
     /** 
@@ -404,31 +364,27 @@ class External extends Public_controller
     public function confirmTaxLiabilities()
     {
         //
-        $data = [];
-        // check and set user session
-        $data['session'] = checkUserSession();
+        $this->data['title'] = "Confirm Tax Liabilities External Payroll";
         //
-        $data['title'] = "Confirm Tax Liabilities External Payroll";
-        //
-        $data['isLoggedInView'] = 1;
+        $this->data['isLoggedInView'] = 1;
         // set
-        $data['loggedInPerson'] = $data['session']['employer_detail'];
-        $data['loggedInPersonCompany'] = $data['session']['company_detail'];
+        $this->data['loggedInPerson'] = $this->data['session']['employer_detail'];
+        $this->data['loggedInPersonCompany'] = $this->data['session']['company_detail'];
         // get the security details
-        $data['security_details'] = db_get_access_level_details(
-            $data['session']['employer_detail']['sid'],
+        $this->data['security_details'] = db_get_access_level_details(
+            $this->data['session']['employer_detail']['sid'],
             null,
-            $data['session']
+            $this->data['session']
         );
-        $data['taxLiabilities'] = $this->external_payroll_model
+        $this->data['taxLiabilities'] = $this->external_payroll_model
             ->getExternalPayrollTaxLiabilities(
-                $data['loggedInPersonCompany']['sid']
+                $this->data['loggedInPersonCompany']['sid']
             );
-        if (!$data['taxLiabilities']) {
+        if (!$this->data['taxLiabilities']) {
             return redirect('payrolls/external');
         }
         // add css
-        $data['appCSS'] = bundleCSS(
+        $this->data['appCSS'] = bundleCSS(
             [
                 'v1/app/css/loader'
             ],
@@ -437,7 +393,7 @@ class External extends Public_controller
             $this->createMinifyFiles
         );
         // add js
-        $data['appJs'] = bundleJs(
+        $this->data['appJs'] = bundleJs(
             [
                 'js/app_helper',
                 'v1/payroll/js/external/confirm_tax_liabilities'
@@ -447,10 +403,7 @@ class External extends Public_controller
             $this->createMinifyFiles
         );
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/external/confirm_tax_liabilities')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/external/confirm_tax_liabilities');
     }
 
 
@@ -462,10 +415,6 @@ class External extends Public_controller
      */
     public function createProcess(): array
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         // validation
@@ -497,11 +446,10 @@ class External extends Public_controller
         $response = $this
             ->external_payroll_model
             ->createExternalPayroll(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid'],
                 $post
             );
-
         // send response
         return SendResponse(
             $response['errors'] ? 400 : 200,
@@ -517,18 +465,14 @@ class External extends Public_controller
      */
     public function deleteProcess(int $externalPayrollId): array
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         //
         $response = $this
             ->external_payroll_model
             ->deleteExternalPayroll(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid'],
                 $externalPayrollId
             );
 
@@ -550,10 +494,6 @@ class External extends Public_controller
         int $externalPayrollId,
         int $employeeId
     ): array {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         // get the post
@@ -579,8 +519,8 @@ class External extends Public_controller
         $response = $this
             ->external_payroll_model
             ->updateEmployeeExternalPayroll(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid'],
                 $externalPayrollId,
                 $employeeId,
                 $post
@@ -604,18 +544,14 @@ class External extends Public_controller
         int $externalPayrollId,
         int $employeeId
     ): array {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         //
         $response = $this
             ->external_payroll_model
             ->calculateEmployeeExternalPayroll(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid'],
                 $externalPayrollId,
                 $employeeId
             );
@@ -634,10 +570,6 @@ class External extends Public_controller
      */
     public function updateTaxLiabilities(): array
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         //
@@ -646,8 +578,8 @@ class External extends Public_controller
         $response = $this
             ->external_payroll_model
             ->updateTaxLiabilities(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid'],
                 $post
             );
 
@@ -665,18 +597,14 @@ class External extends Public_controller
      */
     public function finishTaxLiabilities(): array
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
         // check if company is on payroll
         $this->checkForLinkedCompany(true);
         //
         $response = $this
             ->external_payroll_model
             ->finishTaxLiabilities(
-                $session['company_detail']['sid'],
-                $session['employer_detail']['sid']
+                $this->data['session']['company_detail']['sid'],
+                $this->data['session']['employer_detail']['sid']
             );
 
         // send response
@@ -700,46 +628,6 @@ class External extends Public_controller
         );
     }
 
-    /**
-     * generate error based on session
-     *
-     * @param mixed $session
-     * @return json
-     */
-    private function checkSessionStatus($session)
-    {
-        if (!$session) {
-            return SendResponse(
-                401,
-                [
-                    'errors' => ['Access denied. Please login to access this route.']
-                ]
-            );
-        }
-    }
-
-    /**
-     * check if company is synced with Gusto
-     */
-    private function checkForLinkedCompany($isAJAX = false)
-    {
-        // check if module is active
-        if (!isCompanyLinkedWithGusto($this->session->userdata('logged_in')['company_detail']['sid'])) {
-            //
-            if ($isAJAX) {
-                return SendResponse(
-                    400,
-                    [
-                        'errors' => ['Company is not set-up for payroll.']
-                    ]
-                );
-            }
-            // set message
-            $this->session->set_flashdata('message', 'Access denied!');
-            // redirect
-            return redirect('dashboard');
-        }
-    }
 
     /**
      * merge the external and employee external payroll

@@ -463,7 +463,7 @@ $(function timeSheet() {
 	});
 
 	//
-	$(".jsDateRangePicker").daterangepicker({
+	$(".jsDateRangePicker")
 		showDropdowns: true,
 		autoApply: true,
 		locale: {

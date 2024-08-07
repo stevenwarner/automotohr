@@ -17908,3 +17908,78 @@ input[type='checkbox'].user_checkbox:checked:after {
 .jsStateDropDown{
     padding: 0px 20px !important;
 }
+
+/*  */
+
+.csGB {
+    background-color: #f1f1f1;
+  }
+  
+  /*  */
+  
+  .pt5 {
+    padding-top: 5px;
+  }
+  
+  .pb5 {
+    padding-bottom: 5px;
+  }
+  
+  .pl5 {
+    padding-left: 5px;
+  }
+  
+  .pr5 {
+    padding-right: 5px;
+  }
+  
+  /* Theme Backgrounds */
+  
+  /*  */
+  
+  .csBG1 {
+    background-color: #81b431;
+    color: #ffffff;
+  }
+  
+  .csBG2 {
+    background-color: #3554dc;
+    color: #ffffff;
+  }
+  
+  .csBG3 {
+    background-color: #fd7a2a;
+    color: #ffffff;
+  }
+  
+  .csBG4 {
+    background-color: #444444;
+    color: #ffffff;
+  }
+  
+  .csBG5 {
+    background-color: #C9C9C9;
+    color: #000;
+  }
+  
+  /* Theme Forecolors */
+  
+  .csFC1 {
+    color: #81b431 !important;
+  }
+  
+  .csFC2 {
+    color: #3554dc !important;
+  }
+  
+  .csFC3 {
+    color: #fd7a2a !important;
+  }
+  
+  .csFC4 {
+    color: #444 !important;
+  }
+  
+  .vam {
+    vertical-align: middle !important;
+  }

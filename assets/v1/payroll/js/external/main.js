@@ -34,25 +34,29 @@ $(function externalPayrolls() {
 			url: baseUrl("payrolls/external/" + externalPayrollId + ""),
 			method: "DELETE",
 		})
-			.success(function (resp) {
-				return _success(resp.message, function () {
-					window.location.reload();
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
-			});
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.message, function () {
+					window.location.reload();
+				});
+			})
+			;
 	}
 
 	//
-	$(".jsDatePicker").datepicker({
-		format: "mm/dd/yyyy",
-		changeYear: true,
-		changeMonth: true,
+	$(".jsDatePicker").daterangepicker({
+		showDropdowns: true,
+		singleDatePicker: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
 	});
 	//
 	ml(false, "jsPageLoader");
