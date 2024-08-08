@@ -1414,7 +1414,7 @@ class Job_listings extends Public_Controller
                         $this->indeed_model->updateJobToQueue(
                             $formpost['sid'],
                             $company_id,
-                            $listing_data["approval_status"]
+                            $listing_data["approval_status"] ?? ""
                         );
                     }
 
