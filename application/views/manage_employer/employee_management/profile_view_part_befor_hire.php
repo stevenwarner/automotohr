@@ -81,8 +81,7 @@ if ($_ssv) {
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Primary Number</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($primary_phone_number_cc); 
-                                                        ?></p>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["phone_number"]); ?></p>
                     </div>
                 </div>
                 <!--  -->
@@ -94,7 +93,7 @@ if ($_ssv) {
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Job Title</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["job_title"]); ?></p>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["desired_job_title"]); ?></p>
                     </div>
 
                 </div>
@@ -103,7 +102,7 @@ if ($_ssv) {
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <label class="csF16">Address</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireDatame["Location_Address"]); ?></p>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["address"]); ?></p>
                     </div>
                 </div>
                 <!--  -->
@@ -111,11 +110,11 @@ if ($_ssv) {
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">City</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["Location_City"]); ?></p>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["city"]); ?></p>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Zipcode</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["Location_ZipCode"]); ?></p>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["zipcode"]); ?></p>
                     </div>
                 </div>
                 <!--  -->
@@ -123,11 +122,23 @@ if ($_ssv) {
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">State</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["state_name"]); ?></p>
+                        <p class="dummy-invoice-fields"><?
+                                                        if ($EmployeeBeforeHireData["state"] != '') {
+                                                            $stateName = db_get_state_name_only($EmployeeBeforeHireData["state"]);
+
+                                                            echo GetVal($stateName);
+                                                        }
+
+                                                        ?></p>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Country</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData["country_name"]); ?></p>
+                        <p class="dummy-invoice-fields"><?
+                                                        if ($EmployeeBeforeHireData["country"] != '') {
+                                                            $countryName = db_get_country_name($EmployeeBeforeHireData["country"], false, 'country_name');
+
+                                                            echo GetVal($countryName);
+                                                        } ?></p>
                     </div>
                 </div>
                 <!--  -->
@@ -145,59 +156,37 @@ if ($_ssv) {
                 <!--  -->
                 <br>
                 <div class="row">
-                    <div class="col-md-6 col-xs-12">
-                        <label class="csF16">Office Location</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['office_location']); ?></p>
-                    </div>
+
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Employment Type</label>
                         <p class="dummy-invoice-fields">
-                            <?= GetVal(isset($employment_types[$EmployeeBeforeHireData["employee_type"]]) ? $employment_types[$EmployeeBeforeHireData["employee_type"]] : $employment_types['fulltime']); 
+                            <?= GetVal(isset($employment_types[$EmployeeBeforeHireData["employee_type"]]) ? $employment_types[$EmployeeBeforeHireData["employee_type"]] : $employment_types['fulltime']);
                             ?>
                         </p>
                     </div>
                     <div class="col-md-6 col-xs-12 dn">
                         <label class="csF16">Employee Status</label>
                         <p class="dummy-invoice-fields">
-                            <?= GetVal(isset($employment_statuses[$EmployeeBeforeHireData["employee_status"]]) ? $employment_statuses[$EmployeeBeforeHireData["employee_status"]] : ''); 
+                            <?= GetVal(isset($employment_statuses[$EmployeeBeforeHireData["employee_status"]]) ? $employment_statuses[$EmployeeBeforeHireData["employee_status"]] : '');
                             ?>
                         </p>
                     </div>
                 </div>
-                <br>
-                <div class="row">
-                    <div class="col-md-6 col-xs-12">
-                        <label class="csF16">Union Member</label>
-                        <p class="dummy-invoice-fields" <?= $EmployeeBeforeHireData['union_member'] ? "style='height: 100px'" : '' ?>><?= $EmployeeBeforeHireData['union_member'] ? 'Yes <br><br>' . $EmployeeBeforeHireData['union_name'] : 'No'; ?></p>
-                    </div>
-                </div>
-                <br>
-                <!--  -->
-                <?php if (IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
-                    <div class="row">
-                        <!-- TimeZone -->
-                        <div class="col-md-12 col-xs-12">
-                            <label class="csF16">Timezone</label>
-                            <p class="dummy-invoice-fields">
-                                <?= ($EmployeeBeforeHireData["timezone"] == '' || $EmployeeBeforeHireData["timezone"] == null) || (!preg_match('/^[A-Z]/', $EmployeeBeforeHireData['timezone'])) ? 'Not Specified' : get_timezones($EmployeeBeforeHireDatame["timezone"], 'name'); ?>
-                            </p>
-                        </div>
-                    </div>
-                <?php } ?>
-                <!--  -->
+             
+
                 <br>
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Secondary Email</label>
                         <?php
-                         $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $EmployeeBeforeHireData["alternative_email"];
+                        $secondaryEmail = isset($extra_info["secondary_email"]) && !empty($extra_info["secondary_email"]) ? $extra_info["secondary_email"] : $EmployeeBeforeHireData["alternative_email"];
                         ?>
-                        <p class="dummy-invoice-fields"><?= GetVal($secondaryEmail); 
+                        <p class="dummy-invoice-fields"><?= GetVal($secondaryEmail);
                                                         ?></p>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Secondary Mobile Number</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['secondary_PhoneNumber']); 
+                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['secondary_PhoneNumber']);
                                                         ?></p>
                     </div>
                 </div>
@@ -206,12 +195,12 @@ if ($_ssv) {
                 <div class="row">
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Other Email</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_email']); 
+                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_email']);
                                                         ?></p>
                     </div>
                     <div class="col-md-6 col-xs-12">
                         <label class="csF16">Other Phone Number</label>
-                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_PhoneNumber']); 
+                        <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_PhoneNumber']);
                                                         ?></p>
                     </div>
                 </div>
@@ -224,27 +213,93 @@ if ($_ssv) {
                             <p class="dummy-invoice-fields"><a href="<?= $EmployeeBeforeHireData["linkedin_profile_url"]; ?>" target="_blank"><?= $EmployeeBeforeHireData["linkedin_profile_url"]; ?></a>
                             </p>
                         <?php } else { ?>
-                            <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_PhoneNumber']); 
+                            <p class="dummy-invoice-fields"><?= GetVal($extra_info['other_PhoneNumber']);
                                                             ?></p>
                         <?php } ?>
                     </div>
                 </div>
-            
+
+
                 <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16">Interests</label>
-                        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["interests"]) ? $extra_info["interests"] : ''); ?></p>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Hourly Rate</label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['hourly_rate']);
+                                                        ?></p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Hourly Technician</label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['hourly_technician']);
+                                                        ?></p>
                     </div>
                 </div>
-                <!--  -->
-                <br>
+
                 <div class="row">
-                    <div class="col-md-12 col-xs-12">
-                        <label class="csF16">Short Bio</label>
-                        <p class="dummy-invoice-fields"><?= GetVal(isset($extra_info["short_bio"]) ? $extra_info["short_bio"] : ''); ?></p>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Flat Rate Technician                        </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['flat_rate_technician']);
+                                                        ?></p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Semi Monthly Salary                        </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['semi_monthly_salary']);
+                                                        ?></p>
                     </div>
                 </div>
-                <!--  -->
+
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Semi Monthly Draw </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['semi_monthly_draw']);
+                                                        ?></p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Workers Compensation Code  </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['workers_compensation_code']);
+                                                        ?></p>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">EEOC Code </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['eeoc_code']);
+                                                        ?></p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Benefits Salary </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['salary_benefits']);
+                                                        ?></p>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Uniform Top Size </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['uniform_top_size']);
+                                                        ?></p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">Uniform Bottom Size </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['uniform_bottom_size']);
+                                                        ?></p>
+                    </div>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <label class="csF16">I Speak </label>
+                        <p class="dummy-invoice-fields"><?= GetVal($EmployeeBeforeHireData['languages_speak']);
+                                                        ?></p>
+                    </div>
+                   
+                </div>
+
+
+
             </div>
         </div>
     </div>
