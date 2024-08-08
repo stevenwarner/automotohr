@@ -505,11 +505,13 @@ class External_payroll_model extends Base_payroll_model
             foreach ($benefits as $benefit) {
                 $passBenefits[] = [
                     'benefit_id' => $benefit['id'],
+                    'description' => $benefit['description'],
                     'company_contribution_amount' => 0.0,
                     'employee_deduction_amount' => 0.0,
                 ];
             }
         }
+        _e($benefits,true);
         // prepare request
         $request = [];
         $request['replace_fields'] = true;
@@ -519,6 +521,7 @@ class External_payroll_model extends Base_payroll_model
             'earnings' => $passEarnings,
             'benefits' => $passBenefits,
         ];
+        _e($request,true,true);
         // make call
         $gustoResponse = $this
             ->lb_gusto
