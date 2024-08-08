@@ -15,6 +15,13 @@
                         Merged Employee Information
                     </button>
                 <?php } ?>
+
+                <?php if (!empty($EmployeeBeforeHireData)) { ?>
+                    <button id="jsBeforHireButton" class="btn btn-success">
+                        Employee Information Before Hire
+                    </button>
+                <?php } ?>
+
                 <?php if ($profileHistory > 0) { ?>
                     <button type="button" class="btn btn-warning" id="jsProfileHistory" data-id="<?= $employer_id; ?>" data-name="<?= remakeEmployeeName($employer); ?>">Profile History</button>
                 <?php } ?>
@@ -576,6 +583,15 @@
         $('#jsSecondaryEmployeeBox').show();
     });
 
+
+
+    $('#jsBeforHireButton').click(function(e) {
+        //
+        e.preventDefault();
+        //
+        $('#jsPrimaryEmployeeBox').hide();
+        $('#jsBeforHireBox').show();
+    });
 
 
 
