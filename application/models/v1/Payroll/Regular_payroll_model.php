@@ -965,6 +965,7 @@ class Regular_payroll_model extends Base_payroll_model
         if (isset($response["errors"])) {
             return $response;
         }
+        //
         $this
             ->db
             ->where(
@@ -1040,6 +1041,56 @@ class Regular_payroll_model extends Base_payroll_model
         }
         return [
             "message" => "You have successfully discarded the payroll data."
+        ];
+    }
+
+    /**
+     * get payroll blocker
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getRegularPayrollBlocker(int $companyId): array
+    {
+        $this->setCompanyDetails(
+            $companyId
+        );
+        //
+        // get the blockers
+        $gustoResponse = $this
+            ->lb_gusto
+            ->gustoCall(
+                "getPayrollBlockers",
+                $this->gustoCompany,
+                [],
+                "GET",
+                true
+            );
+        //
+        if (isset($gustoResponse["errors"])) {
+            return $gustoResponse['errors'];
+        }
+        // check if already exists
+        if ($this->db->where('company_sid', $companyId)->count_all_results('payrolls.payroll_blockers')) {
+            $this->db
+                ->where('company_sid', $companyId)
+                ->update('payrolls.payroll_blockers', [
+                    'updated_at' => getSystemDate(),
+                    'blocker_json' => json_encode($gustoResponse),
+                ]);
+        } else {
+            $this->db
+                ->insert('payrolls.payroll_blockers', [
+                    'company_sid' => $companyId,
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate(),
+                    'blocker_json' => json_encode($gustoResponse),
+                ]);
+        }
+        //
+        return [
+            'success' => true,
+            'data' => $gustoResponse
         ];
     }
 }
