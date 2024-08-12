@@ -798,6 +798,7 @@ class Regular_payroll_model extends Base_payroll_model
         if ($response["credit_blockers"]) {
             $upd["credit_blockers"] = json_encode($response["credit_blockers"]);
         }
+        _e($upd,true,true);
         //
         $this->db
             ->where('gusto_uuid', $response["payroll_uuid"])

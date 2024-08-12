@@ -17,7 +17,7 @@ class Off_cycle_payroll extends Payroll_base_controller
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
         // Call the model
-        $this->load->model("v1/Off_cycle_payroll_model", "off_cycle_payroll_model");
+        $this->load->model("v1/Payroll/Off_cycle_payroll_model", "off_cycle_payroll_model");
         $this->load->model("v1/Payroll/Regular_payroll_model", "regular_payroll_model");
         // load compulsory plugins
         // plugins
@@ -37,7 +37,7 @@ class Off_cycle_payroll extends Payroll_base_controller
      * @param string $reason
      */
     public function index(string $reason)
-    {
+    {   
         //
         // let's check if there are any payroll blockers
         $payrollBlockers = $this->regular_payroll_model
@@ -300,12 +300,12 @@ class Off_cycle_payroll extends Payroll_base_controller
             return SendResponse(400, ['errors' => $errorsArray]);
         }
         // check if payroll already exists
-        if ($this->off_cycle_payroll_model->getPayrollId($post['off_cycle_reason'], $session['company_detail']['sid'])) {
+        if ($this->off_cycle_payroll_model->getPayrollId($post['off_cycle_reason'], $this->data['session']['company_detail']['sid'])) {
             return SendResponse(400, ['errors' => ['"' . ($post['off_cycle_reason']) . '" already in progress.']]);
         }
         // 
         $response = $this->off_cycle_payroll_model->processOffCyclePayroll(
-            $session['company_detail']['sid'],
+            $this->data['session']['company_detail']['sid'],
             $post
         );
         //
@@ -328,7 +328,7 @@ class Off_cycle_payroll extends Payroll_base_controller
         // 
         $response = $this->off_cycle_payroll_model
             ->clearDraftData(
-                $session['company_detail']['sid'],
+                $this->data['session']['company_detail']['sid'],
                 $payrollId
             );
         //
