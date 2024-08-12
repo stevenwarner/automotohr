@@ -765,7 +765,7 @@ div.ui-timepicker-container.ui-timepicker-standard {
 
 /* Employee row */
 .schedule-employee-row {
-	min-height: 60px;
+	min-height: 120px;
 	border: 1px solid #eee;
 	padding: 5px;
 }
@@ -797,21 +797,32 @@ div.ui-timepicker-container.ui-timepicker-standard {
 	border: 1px solid #ccc;
 }
 .schedule-column {
+	
 	position: relative;
-	min-height: 60px;
+	/*min-height: 60px;*/
+	min-height: 120px;
+
 	padding: 5px;
 	border: 1px solid #ccc;
 	cursor: pointer;
+	overflow-y: auto;  
+
+
 }
 .schedule-item {
+
 	display: flex;
 	align-items: end;
-	min-height: 53px;
+	/*min-height: 53px;*/
+	min-height: 20px;
+
 	background: #fff;
 	border-left: 3px solid var(--bgOrangeColor);
 	border-radius: 5px;
 	padding: 5px;
 	cursor: pointer;
+	margin-bottom: 5px;
+
 }
 .schedule-item .circle {
 	position: absolute;

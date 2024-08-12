@@ -384,7 +384,7 @@ class Shift_model extends CI_Model
      * @param array $employeeIds
      * @return array
      */
-    public function getShifts(array $filter, array $employeeIds, $publishedOnly = false): array
+    public function getShifts_old(array $filter, array $employeeIds, $publishedOnly = false): array
     {
         //
         if (empty($employeeIds)) {
@@ -467,6 +467,94 @@ class Shift_model extends CI_Model
 
         return $records;
     }
+
+
+    //
+    public function getShifts(array $filter, array $employeeIds, $publishedOnly = false): array
+    {
+        //
+        if (empty($employeeIds)) {
+            $employeeIds = ['0'];
+        }
+        $this->db
+            ->select("sid, employee_sid, shift_date, start_time, end_time, job_sites,is_published")
+            ->where_in("employee_sid", $employeeIds);
+
+        if ($filter["mode"] === "month") {
+            //
+            $startDate = $filter["year"] . '-' . $filter["month"] . '-01';
+            //
+            $endDateObj = new DateTime($startDate);
+            $endDate = $endDateObj->format("Y-m-t");
+            //
+            $this->db
+                ->where("shift_date >= ", $startDate)
+                ->where("shift_date <= ", $endDate);
+        } else {
+            //
+            $this->db
+                ->where("shift_date >= ", formatDateToDB($filter["start_date"], SITE_DATE, DB_DATE))
+                ->where("shift_date <= ", formatDateToDB($filter["end_date"], SITE_DATE, DB_DATE));
+        }
+        //
+        if ($publishedOnly == true) {
+            $this->db->where("cl_shifts.is_published", 1);
+        }
+
+        $records = $this->db
+            ->get("cl_shifts")
+            ->result_array();
+        //
+        if ($records) {
+            // extract employee ids
+            $employeeIds = array_column($records, "employee_sid");
+            // get the job color codes by employees jobs
+            $employeesJobColorCodes = $this->getEmployeesJobColor($employeeIds);
+            //
+            $employees = [];
+            //
+            foreach ($records as $v0) {
+                //
+                if (!$employees[$v0["employee_sid"]]) {
+                    $employees[$v0["employee_sid"]] = [
+                        "totalTimeText" => '0h',
+                        "totalTime" => 0,
+                        "dates" => [],
+                        "jobColor" => $employeesJobColorCodes[$v0["employee_sid"]] ?? "#eeeeee"
+                    ];
+                }
+                //
+                $employees[$v0["employee_sid"]]["dates"][$v0["shift_date"]][] = [
+                    "sid" => $v0["sid"],
+                    "start_time" => $v0["start_time"],
+                    "end_time" => $v0["end_time"],
+                    "job_sites" => json_decode($v0["job_sites"], true),
+                    "totalTime" => getTimeBetweenTwoDates(
+                        $v0["shift_date"] . ' ' . $v0["start_time"],
+                        $v0["shift_date"] . ' ' . $v0["end_time"],
+                    ),
+                    "is_published" => $v0["is_published"],
+                    "shift_date" => $v0["shift_date"],
+
+                ];
+
+                //
+                $employees[$v0["employee_sid"]]["totalTime"] += getTimeBetweenTwoDates(
+                    $v0["shift_date"] . ' ' . $v0["start_time"],
+                    $v0["shift_date"] . ' ' . $v0["end_time"],
+                );
+                //
+                $employees[$v0["employee_sid"]]["totalTimeText"] = convertSecondsToTime(
+                    $employees[$v0["employee_sid"]]["totalTime"]
+                );
+            }
+            $records = $employees;
+        }
+
+        return $records;
+    }
+
+
 
     /**
      * get the company holidays

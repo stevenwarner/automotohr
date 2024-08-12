@@ -128,7 +128,7 @@ class Employee_shifts extends Public_Controller
         // set bundle
         $data["appJs"] = bundleJs([
             "v1/settings/shifts/ems_main"
-        ], "public/v1/shifts/", "my_ems_shifts", true);
+        ], "public/v1/shifts/", "my_ems_shifts", false);
 
         $this->load->view('main/header', $data);
         $this->load->view('v1/schedules/my/listing');

@@ -166,8 +166,38 @@ $(function manageMyShifts() {
 		});
 	}
 
-	applyDatePicker();
 
+
+	function applyDatePickerMy() {
+		$("#start_date").daterangepicker(
+			{
+				opens: "center",
+				singleDatePicker: true,
+				showDropdowns: true,
+				autoApply: true,
+				startDate: getStartDate(),
+				locale: {
+					format: "MM/DD/YYYY",
+				},
+			},
+			function (start, end, label) {
+				$("#start_date").data("daterangepicker").setStartDate(start);
+			}
+		);
+
+		$("#end_date").daterangepicker({
+			opens: "center",
+			singleDatePicker: true,
+			showDropdowns: true,
+			autoApply: true,
+			startDate: getEndDate(),
+			locale: {
+				format: "MM/DD/YYYY",
+			},
+		});
+	}
+
+	applyDatePickerMy();
 	//
 	$(".jsNavigateRightMy").click(function (event) {
 		event.preventDefault();
