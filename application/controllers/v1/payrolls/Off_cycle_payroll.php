@@ -12,7 +12,7 @@ class Off_cycle_payroll extends Payroll_base_controller
     public function __construct()
     {
         // inherit
-        parent::__construct();
+        parent::__construct(true);
         //
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
@@ -242,8 +242,6 @@ class Off_cycle_payroll extends Payroll_base_controller
         //
         $this->loadView('v1/payroll/off_cycle/review');
     }
-
-
 
 
     // API calls

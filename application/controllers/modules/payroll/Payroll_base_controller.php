@@ -227,6 +227,7 @@ class Payroll_base_controller extends CI_Controller
                 ->session
                 ->userdata('logged_in')['company_detail']["sid"];
         //
+        
         return true;
     }
 

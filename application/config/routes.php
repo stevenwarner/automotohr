@@ -1946,31 +1946,44 @@ $route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$
  */
 // $route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off-cycle';
 $route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle_payroll/index/off-cycle';
-$route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle/index/bonus';
-$route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle/index/corrections';
+// $route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle/index/bonus';
+$route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle_payroll/index/bonus';
+// $route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle/index/corrections';
+$route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle_payroll/index/corrections';
 // hours and earnings
-$route['payrolls/corrections/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/corrections/$1';
+// $route['payrolls/corrections/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/corrections/$1';
+$route['payrolls/corrections/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle_payroll/hoursAndEarnings/corrections/$1';
 // time off
-$route['payrolls/corrections/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/corrections/$1';
+// $route['payrolls/corrections/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/corrections/$1';
+$route['payrolls/corrections/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle_payroll/timeOff/corrections/$1';
 // review off
-$route['payrolls/corrections/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/corrections/$1';
+// $route['payrolls/corrections/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/corrections/$1';
+$route['payrolls/corrections/(:num)/review']['get'] = 'v1/payrolls/Off_cycle_payroll/review/corrections/$1';
 
 // hours and earnings
-$route['payrolls/bonus/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/bonus/$1';
+// $route['payrolls/bonus/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/bonus/$1';
+$route['payrolls/bonus/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle_payroll/hoursAndEarnings/bonus/$1';
 // time off
-$route['payrolls/bonus/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/bonus/$1';
+// $route['payrolls/bonus/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/bonus/$1';
+$route['payrolls/bonus/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle_payroll/timeOff/bonus/$1';
 // review off
-$route['payrolls/bonus/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/bonus/$1';
+// $route['payrolls/bonus/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/bonus/$1';
+$route['payrolls/bonus/(:num)/review']['get'] = 'v1/payrolls/Off_cycle_payroll/review/bonus/$1';
 // hours and earnings
-$route['payrolls/off-cycle/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/off-cycle/$1';
+// $route['payrolls/off-cycle/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle/hoursAndEarnings/off-cycle/$1';
+$route['payrolls/off-cycle/(:num)/hours_and_earnings']['get'] = 'v1/payrolls/Off_cycle_payroll/hoursAndEarnings/off-cycle/$1';
 // time off
-$route['payrolls/off-cycle/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/off-cycle/$1';
+// $route['payrolls/off-cycle/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle/timeOff/off-cycle/$1';
+$route['payrolls/off-cycle/(:num)/timeoff']['get'] = 'v1/payrolls/Off_cycle_payroll/timeOff/off-cycle/$1';
 // review off
-$route['payrolls/off-cycle/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/off-cycle/$1';
+// $route['payrolls/off-cycle/(:num)/review']['get'] = 'v1/payrolls/Off_cycle/review/off-cycle/$1';
+$route['payrolls/off-cycle/(:num)/review']['get'] = 'v1/payrolls/Off_cycle_payroll/review/off-cycle/$1';
 // process payroll
-$route['payrolls/off-cycle/basics']['post'] = 'v1/payrolls/Off_cycle/processBasics';
+// $route['payrolls/off-cycle/basics']['post'] = 'v1/payrolls/Off_cycle/processBasics';
+$route['payrolls/off-cycle/basics']['post'] = 'v1/payrolls/Off_cycle_payroll/processBasics';
 // clear payroll data
-$route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clearDraftData/$1';
+// $route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle/clearDraftData/$1';
+$route['payrolls/off-cycle/(:num)/clear']['post'] = 'v1/payrolls/Off_cycle_payroll/clearDraftData/$1';
 
 /**
  * Super admin payroll

@@ -332,7 +332,12 @@ $(function regularPayrollsHoursAndEarnings() {
 			},
 			cache: false,
 		})
-			.success(function (resp) {
+			.always(function () {
+				XHR = null;
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				return _success(resp.msg, function () {
 					ml(
 						true,
@@ -347,11 +352,6 @@ $(function regularPayrollsHoursAndEarnings() {
 							"/timeoff"
 					);
 				});
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				XHR = null;
-				ml(false, "jsPageLoader");
 			});
 	});
 
@@ -371,7 +371,14 @@ $(function regularPayrollsHoursAndEarnings() {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
+			.always(function () {
+				//
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
 				//
 				payrollEmployees = resp.employees;
 				payroll = resp.payroll;
@@ -404,13 +411,6 @@ $(function regularPayrollsHoursAndEarnings() {
 					//
 					setView();
 				}
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				//
-				XHR = null;
-				//
-				ml(false, "jsPageLoader");
 			});
 	}
 
@@ -424,6 +424,7 @@ $(function regularPayrollsHoursAndEarnings() {
 			const employeeId = $(this).data("id");
 			//
 			const payrollEmployee = payroll["employees"][employeeId];
+			//
 			if (payrollEmployee && !payrollEmployee.excluded) {
 				if (
 					payrollEmployee.hourly_compensations &&
@@ -478,7 +479,12 @@ $(function regularPayrollsHoursAndEarnings() {
 							`${payrollEmployee.hourly_compensations.double_overtime.hours}`
 						);
 				}
-				if (payrollEmployee.fixed_compensations.bonus) {
+				//
+				console.log("tip top")
+				if (
+					payrollEmployee.fixed_compensations &&
+					payrollEmployee.fixed_compensations.bonus
+				) {
 					// for bonus
 					$(this)
 						.find(".jsBonusText")
@@ -520,7 +526,9 @@ $(function regularPayrollsHoursAndEarnings() {
 					.find(".jsAdditionalEarningValue")
 					.val(fixedCompensationTotal);
 				//
-				if (payrollEmployee.v1.reimbursements.total != 0) {
+				if (
+					payrollEmployee.v1 &&
+					payrollEmployee.v1.reimbursements.total != 0) {
 					$(this)
 						.find(".jsReimburmentTotal")
 						.text(
