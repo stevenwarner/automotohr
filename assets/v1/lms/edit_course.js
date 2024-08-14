@@ -374,10 +374,14 @@ $(function editCourse() {
 		ml(true, modalLoaderId);
 		//
 		if (
+			!courseObj.course_file.link &&
 			Object.keys(courseObj.course_file).length &&
 			courseObj.course_file_type !== "link"
 		) {
+			
+			//
 			if (!isCourseTypeFile) {
+				isCourseTypeFile = true;
 				// upload file
 				let response = await uploadFile(courseObj.course_file);
 				// parse the JSON
@@ -413,7 +417,10 @@ $(function editCourse() {
 			//
 			const updateCourseResponse = await updateCourseCall(courseObj);
 			//
-			if (courseObj.course_type === "scorm") {
+			if (
+				courseObj.course_type === "scorm" &&
+				isCourseTypeFile
+			) {
 				await updateScormCourseCall(courseObj.course_file);
 			}
 			//
