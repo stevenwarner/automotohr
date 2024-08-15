@@ -1944,7 +1944,8 @@ $route['payrolls/employees/(:num)/get']['get'] = 'v1/Payroll/getSingleEmployee/$
 /**
  * Off-cycle payroll
  */
-$route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off-cycle';
+// $route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle/index/off-cycle';
+$route['payrolls/off-cycle']['get'] = 'v1/payrolls/Off_cycle_payroll/index/off-cycle';
 $route['payrolls/bonus']['get'] = 'v1/payrolls/Off_cycle/index/bonus';
 $route['payrolls/corrections']['get'] = 'v1/payrolls/Off_cycle/index/corrections';
 // hours and earnings

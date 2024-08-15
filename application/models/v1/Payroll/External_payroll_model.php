@@ -503,13 +503,18 @@ class External_payroll_model extends Base_payroll_model
         //
         if ($benefits) {
             foreach ($benefits as $benefit) {
-                $passBenefits[] = [
-                    'benefit_id' => $benefit['id'],
-                    'company_contribution_amount' => 0.0,
-                    'employee_deduction_amount' => 0.0,
-                ];
+                $rates = $this->getBenefitRate($benefit['description'], $employeeId);
+                if ($rates) {
+                    $passBenefits[] = [
+                        'benefit_id' => $benefit['id'],
+                        'description' => $benefit['description'],
+                        'company_contribution_amount' => $rates['company_contribution'],
+                        'employee_deduction_amount' => $rates['employee_deduction'],
+                    ];   
+                }
             }
         }
+        //
         // prepare request
         $request = [];
         $request['replace_fields'] = true;
@@ -1079,5 +1084,25 @@ class External_payroll_model extends Base_payroll_model
             $newPayroll['earnings']
         );
         return $newPayroll;
+    }
+
+    public function getBenefitRate ($title, $employeeId) {
+        // fetch
+        $record = $this->db
+            ->select('
+                    employee_deduction,
+                    company_contribution
+                ')
+            ->join('payrolls.company_benefits', 'payrolls.company_benefits.sid = payrolls.employee_benefits.company_benefit_sid', 'inner')
+            ->where('payrolls.employee_benefits.employee_sid', $employeeId)
+            ->where('payrolls.company_benefits.description', $title)
+            ->get('payrolls.employee_benefits')
+            ->row_array();
+        //
+        if (!$record) {
+            return [];
+        }
+        //
+        return $record;
     }
 }

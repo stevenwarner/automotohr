@@ -132,19 +132,19 @@ $(function () {
 			method: "POST",
 			data,
 		})
-			.success(function (resp) {
-				_success(resp.msg, function () {
-					window.location.href = baseUrl(
-						`payrolls/${reason}/${resp.id}/hours_and_earnings`
-					);
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				// flush the call
 				XHR = null;
 				// hides the loader
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				_success(resp.msg, function () {
+					window.location.href = baseUrl(
+						`payrolls/${reason}/${resp.id}/hours_and_earnings`
+					);
+				});
 			});
 	}
 
@@ -162,10 +162,13 @@ $(function () {
 	// set the view
 	setSchedule();
 	// add date picker
-	$(".jsDatePicker").datepicker({
-		format: "mm/dd/yyyy",
-		changeYear: true,
-		changeMonth: true,
+	$(".jsDatePicker").daterangepicker({
+		showDropdowns: true,
+		singleDatePicker: true,
+		autoApply: true,
+		locale: {
+			format: "MM/DD/YYYY",
+		},
 	});
 	// hides the loader
 	ml(false, "jsPageLoader");

@@ -13,9 +13,7 @@ class Regular_payroll_model extends Base_payroll_model
     /**
      * main function
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * set company details
@@ -451,11 +449,13 @@ class Regular_payroll_model extends Base_payroll_model
                     json_decode(
                         $value["additional_earnings"],
                         true
-                    ), "reimbursement_json" =>
+                    ),
+                    "reimbursement_json" =>
                     json_decode(
                         $value["reimbursement_json"],
                         true
-                    ), "deductions_json" =>
+                    ),
+                    "deductions_json" =>
                     json_decode(
                         $value["deductions_json"],
                         true
@@ -980,6 +980,7 @@ class Regular_payroll_model extends Base_payroll_model
         if (isset($response["errors"])) {
             return $response;
         }
+        //
         $this
             ->db
             ->where(
@@ -1059,6 +1060,7 @@ class Regular_payroll_model extends Base_payroll_model
     }
 
     /**
+<<<<<<< HEAD
      * submit single payroll
      *
      * @param int $payrollId

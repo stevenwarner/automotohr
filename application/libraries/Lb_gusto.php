@@ -1110,7 +1110,12 @@ class Lb_gusto
         $urls["update_employee_benefit"] =
             "v1/employee_benefits/{$key1}";
 
-
+        // payroll blocker
+        $urls['getPayrollBlockers'] = "v1/companies/$key/payrolls/blockers";
+        // off cycle payrolls
+        $urls["createOffCyclePayroll"] = "v1/companies/$key/payrolls";
+        $urls["calculateSinglePayroll"] =
+            "v1/companies/$key/payrolls/$key1/calculate";
 
 
         return $this->credentials["url"] . $urls[$index];
