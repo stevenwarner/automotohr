@@ -84,7 +84,7 @@
                                         <?= $value['recurring'] ? 'Yes' : 'No'; ?>
                                     </td>
                                     <td class="vam text-right">
-                                        <?= _a($value['annual_maximum'], ''); ?>
+                                        <?php echo $value['annual_maximum'] != '' ? _a($value['annual_maximum'], '') : '0'; ?>
                                     </td>
                                     <td class="vam text-right">
                                         <?= _a($value['pay_period_maximum'], ''); ?>

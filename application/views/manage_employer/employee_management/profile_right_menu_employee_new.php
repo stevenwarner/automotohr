@@ -224,6 +224,23 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <h4>Payroll dashboard</h4>
                                         <a href="<?php echo base_url('payrolls/dashboard/employee/' . $employer["sid"]); ?>">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>
+
+                                    <li>
+                                        <span class="left-addon">
+                                            <i aria-hidden="true" class="fa fa-dashboard"></i>
+                                        </span>
+                                        <h4>Garnishments</h4>
+                                        <a href="javascript:void(0);" data-key='<?php echo $employer["sid"] ?>' class="jsPayrollEmployeeGarnishments">Manage<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                        <!--
+                                        <button class="btn csW csBG3 csF16 jsPayrollEmployeeGarnishments" data-key='<?php //echo $employer["sid"] 
+                                                                                                                    ?>'>
+                                            <i class="fa fa-eye csF16" aria-hidden="true"></i>&nbsp;
+                                            <span>Garnishments</span>
+                                        </button>
+                                -->
+
+
+                                    </li>
                                 <?php } ?>
 
                                 <?php if (checkIfAppIsEnabled('performance_management')) { ?>
@@ -1165,10 +1182,448 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
             );
         }
     });
+
+
+    //
+    let XHR = null;
+    let employeeId = 0;
+    /**
+     * load garnishments
+     */
+    $(".jsPayrollEmployeeGarnishments").click(function(event) {
+        //
+        event.preventDefault();
+        //
+        employeeId = $(this).data("key");
+        //
+        Modal({
+                Id: "jsGarnishmentModal",
+                Loader: "jsGarnishmentModalLoader",
+                Title: 'Garnishments<span id="jsGarnishmentModalSpan"></span>',
+                Body: '<div id="jsGarnishmentModalBody"></div>',
+            },
+            function() {
+                //
+                loadGarnishmentView();
+            }
+        );
+    });
+
+    /**
+     * load garnishments
+     */
+    function loadGarnishmentView() {
+        //
+        if (XHR !== null) {
+            XHR.abort();
+        }
+        //
+        XHR = $.ajax({
+                url: baseUrl("payrolls/employees/" + employeeId + "/garnishments"),
+                method: "GET",
+                cache: false,
+            })
+            .success(function(resp) {
+                $("#jsGarnishmentModalBody").html(resp.view);
+                $("#jsGarnishmentModalSpan").text(` of ${resp.employee.name}`);
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+
+
+    /**
+     * add garnishment
+     */
+    $(document).on("click", ".jsAddGarnishment", function(event) {
+        //
+        event.preventDefault();
+        //
+        loadAddGarnishmentView();
+    });
+
+    /**
+     * add garnishments
+     */
+    function loadAddGarnishmentView() {
+        //
+        if (XHR !== null) {
+            XHR.abort();
+        }
+        //
+        $("#jsGarnishmentModalBody").html("");
+        //
+        ml(
+            false,
+            "jsGarnishmentModalLoader",
+            "Please wait while we are generating a preview."
+        );
+        //
+        XHR = $.ajax({
+                url: baseUrl(
+                    "payrolls/employees/" + employeeId + "/garnishments/add"
+                ),
+                method: "GET",
+                cache: false,
+            })
+            .success(function(resp) {
+                $("#jsGarnishmentModalBody").html(resp.view);
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+
+
+    /**
+     * edit garnishment event
+     */
+    $(document).on("click", ".jsEditGarnishment", function(event) {
+        //
+        event.preventDefault();
+        //
+        loadEditGarnishmentView($(this).closest("tr").data("id"));
+    });
+
+    /**
+     * edit garnishment
+     */
+    function loadEditGarnishmentView(garnishmentId) {
+        //
+        if (XHR !== null) {
+            XHR.abort();
+        }
+        //
+        $("#jsGarnishmentModalBody").html("");
+        //
+        ml(
+            false,
+            "jsGarnishmentModalLoader",
+            "Please wait while we are generating a preview."
+        );
+        //
+        XHR = $.ajax({
+                url: baseUrl(
+                    "payrolls/employees/" +
+                    employeeId +
+                    "/garnishments/" +
+                    garnishmentId
+                ),
+                method: "GET",
+                cache: false,
+            })
+            .success(function(resp) {
+                $("#jsGarnishmentModalBody").html(resp.view);
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+
+
+
+    /**
+     * saves garnishments
+     */
+    $(document).on("click", ".jsSaveGarnishment", function(event) {
+        //
+        event.preventDefault();
+        //
+        const obj = {
+            active: $(".jsGarnishmentActive option:selected").val(),
+            amount: $(".jsGarnishmentAmount").val().trim() || 0,
+            description: $(".jsGarnishmentDescription").val().trim(),
+            court_ordered: $(
+                ".jsGarnishmentCourtOrdered option:selected"
+            ).val(),
+            times: $(".jsGarnishmentTimes").val().trim() || null,
+            recurring: $(".jsGarnishmentRecurring option:selected").val(),
+            annual_maximum: $(".jsGarnishmentAnnualMaximum").val().trim() || null,
+            pay_period_maximum: $(".jsGarnishmentPayPeriodMaximum").val().trim() || null,
+            deduct_as_percentage: $(
+                ".jsGarnishmentDeductAsPercentage option:selected"
+            ).val(),
+            beneficiaryName: $(".jsBeneficiaryName").val(),
+            beneficiaryAddress: $(".jsBeneficiaryAddress").val(),
+            beneficiaryPhone: $(".jsBeneficiaryPhone").val(),
+            beneficiaryPaymentType: $('input[name="payment_type"]:checked').val(),
+        };
+        //
+        const errorsArray = [];
+        // validation
+        if (!obj.amount) {
+            errorsArray.push('"Amount" is required.');
+        }
+        if (!obj.description) {
+            errorsArray.push('"Description" is required.');
+        }
+        if (!obj.court_ordered) {
+            errorsArray.push('"Court ordered" is required.');
+        }
+        //
+        if (!obj.beneficiaryName) {
+            errorsArray.push('"Contact name" is required.');
+        }
+        // if (!obj.beneficiaryAddress) {
+        // 	errorsArray.push('"Contact Address" is required.');
+        // }
+        // if (!obj.beneficiaryPhone) {
+        // 	errorsArray.push('"Contact Phone" is required.');
+        // }
+        //
+        if (obj.beneficiaryPaymentType == 'bank') {
+            obj.bankAccountTitle = $(".jsBankAccountTitle").val();
+            obj.bankAccountType = $('input[name="beneficiary_banking_type"]:checked').val();
+            obj.bankName = $(".jsBankName").val();
+            obj.bankRoutingNumber = $(".jsBankRoutingNumber").val().replace(/[^\d]/g, "");
+            obj.bankAccountNumber = $(".jsBankAccountNumber").val().replace(/[^\d]/g, "");
+            //
+            if (!obj.bankAccountTitle) {
+                errorsArray.push('"Bank account title" is required.');
+            }
+            if (!obj.bankName) {
+                errorsArray.push('"Bank name" is required.');
+            }
+            if (!obj.bankRoutingNumber) {
+                errorsArray.push('"Routing number" is required.');
+            }
+            if (obj.bankRoutingNumber.length !== 9) {
+                errorsArray.push('Routing number must be of 9 digits.');
+            }
+            if (!obj.bankAccountNumber) {
+                errorsArray.push('"Account number" is required.');
+            }
+            if (obj.bankAccountNumber.length !== 9) {
+                errorsArray.push('Account number must be of 9 digits.');
+            }
+        }
+        //
+        if (errorsArray.length) {
+            return _error(getErrorsStringFromArray(errorsArray));
+        }
+
+        //
+        saveGarnishment(obj);
+    });
+
+    /**
+     * save garnishments
+     */
+    function saveGarnishment(obj) {
+        //
+        if (XHR !== null) {
+            return;
+        }
+        //
+        ml(
+            true,
+            "jsGarnishmentModalLoader",
+            "Please wait while we are saving garnishment."
+        );
+        //
+        XHR = $.ajax({
+                url: baseUrl("payrolls/employees/" + employeeId + "/garnishment"),
+                method: "POST",
+                cache: false,
+                data: obj,
+            })
+            .success(function(resp) {
+                return _success(resp.msg, function() {
+                    loadGarnishmentView();
+                });
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+
+
+    /**
+     * edit garnishment
+     */
+    function loadEditGarnishmentView(garnishmentId) {
+        //
+        if (XHR !== null) {
+            XHR.abort();
+        }
+        //
+        $("#jsGarnishmentModalBody").html("");
+        //
+        ml(
+            false,
+            "jsGarnishmentModalLoader",
+            "Please wait while we are generating a preview."
+        );
+        //
+        XHR = $.ajax({
+                url: baseUrl(
+                    "payrolls/employees/" +
+                    employeeId +
+                    "/garnishments/" +
+                    garnishmentId
+                ),
+                method: "GET",
+                cache: false,
+            })
+            .success(function(resp) {
+                $("#jsGarnishmentModalBody").html(resp.view);
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+
+
+    /**
+     * updates garnishments
+     */
+    $(document).on("click", ".jsUpdateGarnishment", function(event) {
+        //
+        event.preventDefault();
+        //
+        const obj = {
+            active: $(".jsGarnishmentActive option:selected").val(),
+            amount: $(".jsGarnishmentAmount").val().trim() || 0,
+            description: $(".jsGarnishmentDescription").val().trim(),
+            court_ordered: $(
+                ".jsGarnishmentCourtOrdered option:selected"
+            ).val(),
+            times: $(".jsGarnishmentTimes").val().trim() || null,
+            recurring: $(".jsGarnishmentRecurring option:selected").val(),
+            annual_maximum: $(".jsGarnishmentAnnualMaximum").val().trim() || null,
+            pay_period_maximum: $(".jsGarnishmentPayPeriodMaximum").val().trim() || null,
+            deduct_as_percentage: $(
+                ".jsGarnishmentDeductAsPercentage option:selected"
+            ).val(),
+            beneficiaryName: $(".jsBeneficiaryName").val(),
+            beneficiaryAddress: $(".jsBeneficiaryAddress").val(),
+            beneficiaryPhone: $(".jsBeneficiaryPhone").val(),
+            beneficiaryPaymentType: $('input[name="payment_type"]:checked').val(),
+        };
+        //
+        const garnishmentId = $(".jsGarnishmentKey").val();
+        //
+        const errorsArray = [];
+        // validation
+        if (!obj.amount) {
+            errorsArray.push('"Amount" is required.');
+        }
+        if (!obj.description) {
+            errorsArray.push('"Description" is required.');
+        }
+        if (!obj.court_ordered) {
+            errorsArray.push('"Court ordered" is required.');
+        }
+        if (!garnishmentId) {
+            errorsArray.push('"Key" is required.');
+        }
+        //
+        if (!obj.beneficiaryName) {
+            errorsArray.push('"Contact name" is required.');
+        }
+        if (obj.beneficiaryPaymentType == 'bank') {
+            obj.bankAccountTitle = $(".jsBankAccountTitle").val();
+            obj.bankAccountType = $('input[name="beneficiary_banking_type"]:checked').val();
+            obj.bankName = $(".jsBankName").val();
+            obj.bankRoutingNumber = $(".jsBankRoutingNumber").val().replace(/[^\d]/g, "");
+            obj.bankAccountNumber = $(".jsBankAccountNumber").val().replace(/[^\d]/g, "");
+            //
+            if (!obj.bankAccountTitle) {
+                errorsArray.push('"Bank account title" is required.');
+            }
+            if (!obj.bankName) {
+                errorsArray.push('"Bank name" is required.');
+            }
+            if (!obj.bankRoutingNumber) {
+                errorsArray.push('"Routing number" is required.');
+            }
+            if (obj.bankRoutingNumber.length !== 9) {
+                errorsArray.push('Routing number must be of 9 digits.');
+            }
+            if (!obj.bankAccountNumber) {
+                errorsArray.push('"Account number" is required.');
+            }
+            if (obj.bankAccountNumber.length !== 9) {
+                errorsArray.push('Account number must be of 9 digits.');
+            }
+        }
+        //
+        //
+        if (errorsArray.length) {
+            return _error(getErrorsStringFromArray(errorsArray));
+        }
+        //
+
+        updateGarnishment(obj, garnishmentId);
+    });
+
+    //
+
+    /**
+     * update garnishment
+     * @param {object} obj
+     * @param {number} garnishmentId
+     * @returns
+     */
+    function updateGarnishment(obj, garnishmentId) {
+        //
+        if (XHR !== null) {
+            return;
+        }
+        //
+        ml(
+            true,
+            "jsGarnishmentModalLoader",
+            "Please wait while we are updating garnishment."
+        );
+        //
+        XHR = $.ajax({
+                url: baseUrl(
+                    "payrolls/employees/" +
+                    employeeId +
+                    "/garnishments/" +
+                    garnishmentId
+                ),
+                method: "POST",
+                cache: false,
+                data: obj,
+            })
+            .success(function(resp) {
+                return _success(resp.msg, function() {
+                    loadGarnishmentView();
+                });
+            })
+            .fail(handleErrorResponse)
+            .always(function() {
+                XHR = null;
+                ml(false, "jsGarnishmentModalLoader");
+            });
+    }
+    //
+
+    /**
+     * view garnishments
+     */
+    $(document).on("click", ".jsViewGarnishment", function(event) {
+        //
+        event.preventDefault();
+        //
+        loadGarnishmentView();
+    });
 </script>
 
 <?php $this->load->view('iframeLoader'); ?>
-
 
 <script>
     window.sre = {};

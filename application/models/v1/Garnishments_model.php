@@ -145,6 +145,8 @@ class Garnishments_model extends Payroll_model
         $request['recurring'] = $request['recurring'] == 'yes' ? true : false;
         $request['deduct_as_percentage'] = $request['deduct_as_percentage'] == 'yes' ? true : false;
         // make call
+        
+        /*
         $gustoResponse = gustoCall(
             'createGarnishment',
             $companyDetails,
@@ -157,6 +159,8 @@ class Garnishments_model extends Payroll_model
         if ($errors) {
             return $errors;
         }
+
+
         //
         $ins = [];
         $ins['gusto_uuid'] = $gustoResponse['uuid'];
@@ -173,6 +177,26 @@ class Garnishments_model extends Payroll_model
         $ins['employee_sid'] = $employeeId;
         $ins['last_changed_by'] = $loggedInEmployerId;
         $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+
+        */
+
+
+        $ins = [];
+        $ins['gusto_uuid'] ='122';
+        $ins['gusto_version'] = "1.2";
+        $ins['active'] = $request['active'];
+        $ins['description'] = $request['description'];
+        $ins['court_ordered'] = $request['court_ordered'];
+        $ins['times'] = $request['times'];
+        $ins['deduct_as_percentage'] = $request['deduct_as_percentage'];
+        $ins['recurring'] = $request['recurring'];
+        $ins['annual_maximum'] = $request['annual_maximum'];
+        $ins['pay_period_maximum'] = $request['pay_period_maximum'];
+        $ins['amount'] = $request['amount'];
+        $ins['employee_sid'] = $employeeId;
+        $ins['last_changed_by'] = $loggedInEmployerId;
+        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+
         //
         $this->db
             ->insert(
@@ -223,6 +247,7 @@ class Garnishments_model extends Payroll_model
         $request['recurring'] = $request['recurring'] == 'yes' ? true : false;
         $request['deduct_as_percentage'] = $request['deduct_as_percentage'] == 'yes' ? true : false;
         // make call
+        /*
         $gustoResponse = gustoCall(
             'updateGarnishment',
             $companyDetails,
@@ -249,6 +274,25 @@ class Garnishments_model extends Payroll_model
         $upd['amount'] = $gustoResponse['amount'];
         $upd['last_changed_by'] = $loggedInEmployerId;
         $upd['updated_at'] = getSystemDate();
+
+        */
+
+
+        $upd = [];
+        $upd['gusto_version'] = $request['version'];
+        $upd['active'] = $request['active'];
+        $upd['description'] = $request['description'];
+        $upd['court_ordered'] = $request['court_ordered'];
+        $upd['times'] = $request['times'];
+        $upd['deduct_as_percentage'] = $request['deduct_as_percentage'];
+        $upd['recurring'] = $request['recurring'];
+        $upd['annual_maximum'] = $request['annual_maximum'];
+        $upd['pay_period_maximum'] = $request['pay_period_maximum'];
+        $upd['amount'] = $request['amount'];
+        $upd['last_changed_by'] = $loggedInEmployerId;
+        $upd['updated_at'] = getSystemDate();
+
+
         //
         $this->db
             ->where('sid', $garnishmentId)
