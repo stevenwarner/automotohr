@@ -7,59 +7,6 @@ $(function regularPayrollsTimeOff() {
 	 * get the payroll id from segment
 	 */
 	const payrollId = getSegment(2);
-	// save payroll
-	$(document).on("click", ".jsRegularPayrollStep2Save", function (event) {
-		//
-		event.preventDefault();
-		//
-		$(".jsRegularPayrollEmployeeRowTimeOff").map(function () {
-			//
-			const employeeId = $(this).data("id");
-			//
-			$(this)
-				.find(".jsTimeOffField")
-				.map(function () {
-					// set the proper amount
-					payroll["employees"][employeeId]["fixed_compensations"][
-						$(this).prop("name")
-					]["amount"] = parseFloat($(this).val().trim() || 0);
-				});
-		});
-		//
-		ml(true, "jsPageLoader", "Please wait, while we are saving data.");
-		//
-		if (XHR !== null) {
-			return;
-		}
-		//
-		XHR = $.ajax({
-			url: baseUrl("payrolls/regular/" + payrollId + "/save/1"),
-			method: "POST",
-			data: {
-				payrollId,
-				action: "Time Off",
-				employees: payroll.employees,
-			},
-			cache: false,
-		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					ml(
-						true,
-						"jsPageLoader",
-						"Please wait while we are generating a view."
-					);
-					window.location.href = baseUrl(
-						"payrolls/regular/" + payrollId + "/review"
-					);
-				});
-			})
-			.fail(handleErrorResponse)
-			.always(function () {
-				XHR = null;
-				ml(false, "jsPageLoader");
-			});
-	});
 
 	// toggle between hours and pay view
 	$(document).on("click", ".jsToggleHoursPay", function (event) {
@@ -103,15 +50,15 @@ $(function regularPayrollsTimeOff() {
 			method: "GET",
 			cache: false,
 		})
-			.success(function (resp) {
-				$(".jsContentArea").html(resp.view);
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				$(".jsContentArea").html(resp.view);
 			});
 	}
 
@@ -135,22 +82,19 @@ $(function regularPayrollsTimeOff() {
 			method: "PUT",
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"payrolls/history/" + payrollId
-					);
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.refresh();
+				});
 			});
 	}
-
 	//
 	getRegularPayrollReview();
 });

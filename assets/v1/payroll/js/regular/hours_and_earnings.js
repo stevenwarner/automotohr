@@ -418,10 +418,10 @@ $(function regularPayrollsHoursAndEarnings() {
 					ml(
 						true,
 						"jsPageLoader",
-						"Please wait while we are generating a view."
+						"Please wait while we are processing your request."
 					);
 					window.location.href = baseUrl(
-						"payrolls/regular/" + payrollId + "/review"
+						"payrolls/regular/" + payrollId
 					);
 				});
 			});
@@ -468,12 +468,6 @@ $(function regularPayrollsHoursAndEarnings() {
 						'			<i class="fa fa-times-circle " aria-hidden="true"></i>';
 					rows += "			&nbsp;Cancel";
 					rows += "		</a>";
-					rows +=
-						'		<button class="btn btn-red jsRegularPayrollStep1Save">';
-					rows +=
-						'			<i class="fa fa-refresh csF16" aria-hidden="true"></i>';
-					rows += "			&nbsp;Discard";
-					rows += "		</button>";
 					rows +=
 						'		<button class="btn btn-orange jsRegularPayrollStep1Save">';
 					rows +=

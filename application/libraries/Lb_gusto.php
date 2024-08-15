@@ -606,6 +606,131 @@ class Lb_gusto
     }
 
     /**
+     * extract taxes
+     *
+     * @param array $employees
+     * @return array
+     */
+    public function extractTaxes(array $employees): array
+    {
+        //
+        $returnArray = [];
+        //
+        if ($employees) {
+            foreach ($employees as $value) {
+                //
+                if ($value['taxes']) {
+                    foreach ($value['taxes'] as $v1) {
+                        //
+                        $taxSlug = stringToSlug($v1['name'], '_');
+                        //
+                        if (!isset($returnArray[$taxSlug])) {
+                            $returnArray[$taxSlug] = [
+                                'name' => $v1['name'],
+                                'employee_tax_total' => 0,
+                                'employer_tax_total' => 0,
+                            ];
+                        }
+                        //
+                        $returnArray[$taxSlug][$v1['employer'] ? 'employer_tax_total' : 'employee_tax_total'] += $v1['amount'];
+                    }
+                }
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+
+    /**
+     * calculate employee taxes
+     *
+     * @param array $taxes
+     * @return array
+     */
+    public function calculateTax(array $taxes): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employer_tax_total' => 0,
+            'employee_taxes' => [],
+            'employer_taxes' => [],
+        ];
+
+        //
+        if ($taxes) {
+            foreach ($taxes as $tax) {
+                //
+                $returnArray[$tax['employer'] ? 'employer_tax_total' : 'employee_tax_total'] += $tax['amount'];
+                $returnArray[$tax['employer'] ? 'employer_taxes' : 'employee_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+
+
+    /**
+     * calculate employee taxes
+     *
+     * @param array $benefits
+     * @return array
+     */
+    public function calculateBenefits(array $benefits): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employer_tax_total' => 0,
+            'employee_taxes' => [],
+            'employer_taxes' => [],
+        ];
+
+        //
+        if ($benefits) {
+            foreach ($benefits as $tax) {
+                //
+                $returnArray['employer_tax_total'] += $tax['company_contribution'];
+                $returnArray['employee_tax_total'] += $tax['employee_deduction'];
+                $returnArray[$tax['employee_deduction'] ? 'employee_taxes' : 'employer_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+
+    /**
+     * calculate employee deductions
+     *
+     * @param array $deductions
+     * @return array
+     */
+    public function calculateDeductions(array $deductions): array
+    {
+        //
+        $returnArray = [
+            'employee_tax_total' => 0,
+            'employee_taxes' => [],
+        ];
+
+        //
+        if ($deductions) {
+            foreach ($deductions as $tax) {
+                //
+                $returnArray['employee_tax_total'] += $tax['amount'];
+                $returnArray['employee_taxes'][stringToSlug($tax['name'], '_')] = $tax;
+            }
+        }
+
+        //
+        return $returnArray;
+    }
+
+
+    /**
      * make call to Gusto
      *
      * @param string $url
@@ -928,6 +1053,15 @@ class Lb_gusto
         // payroll_get
         $urls["payroll_get"] =
             "v1/companies/{$key}/payrolls/{$key1}";
+        // payroll_submit
+        $urls["payroll_submit"] =
+            "v1/companies/{$key}/payrolls/{$key1}/submit";
+        // payroll_receipt
+        $urls["payroll_receipt"] =
+            "v1/payrolls/{$key1}/receipt";
+        // payroll_employee_paystubs
+        $urls["payroll_employee_paystubs"] =
+            "v1/payrolls/{$key1}/employees/{$key2}/pay_stub";
 
         // External payroll calls
         // create external payroll

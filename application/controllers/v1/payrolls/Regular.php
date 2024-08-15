@@ -27,6 +27,14 @@ class Regular extends Payroll_base_controller
             base_url("public/v1/plugins/alertifyjs/alertify.min.js"),
             base_url("public/v1/plugins/jquery/jquery-ui.js")
         ];
+        // load library
+        $this
+            ->load
+            ->library(
+                "Lb_gusto",
+                ["companyId" => $this->data["companyId"]],
+                "lb_gusto"
+            );
     }
 
     /**
@@ -49,7 +57,7 @@ class Regular extends Payroll_base_controller
         $this->data['appJs'] = $this->loadJsBundle([
             'v1/payroll/js/regular/main'
         ], "main");
-        
+
         // get the payrolls
         $this->data['regularPayrolls'] = $this
             ->regular_payroll_model
@@ -61,28 +69,6 @@ class Regular extends Payroll_base_controller
             ->loadView(
                 'modules/payroll/regular/listing'
             );
-    }
-
-    /**
-     * Revert the regular payroll changes
-     *
-     * @param int $regularPayrollId
-     */
-    public function discardPayrollChanges(int $regularPayrollId)
-    {
-        // set the title
-        $this->data['title'] = "Regular Payrolls";
-        //
-        $response = $this
-            ->regular_payroll_model
-            ->discardPayrollChanges(
-                $regularPayrollId
-            );
-        // get the payrolls
-        return SendResponse(
-            $response["errors"] ? 400 : 200,
-            $response
-        );
     }
 
     /**
@@ -124,6 +110,15 @@ class Regular extends Payroll_base_controller
                     "status"
                 ]
             );
+
+        if ($this->data['regularPayroll']["status"] == "processed") {
+            return redirect("payrolls/history");
+        }
+
+        if ($this->data['regularPayroll']["status"] == "calculated") {
+            return redirect("payrolls/regular/$payrollId/review");
+        }
+
         // check the state
         if ($this->data['regularPayroll']["status"] !== "pending") {
             return $this->handlePayrollStatusPage();
@@ -148,39 +143,91 @@ class Regular extends Payroll_base_controller
     }
 
     /**
-     * regular payroll hours and earnings
+     * Run regular payroll
      *
+     * @method hoursAndEarnings
      * @param int $payrollId
      */
-    private function hoursAndEarnings()
+    public function review(int $payrollId)
     {
-        // plugins
-        $this->data['pageCSS'] = [
-            base_url("public/v1/plugins/alertifyjs/css/alertify.min.css")
-        ];
-        $this->data['pageJs'] = [
-            base_url("public/v1/plugins/alertifyjs/alertify.min.js")
-        ];
-        // css
+        // check the payroll blockers
+        if ($this->checkForPayrollBlockers()) {
+            return true;
+        }
+        //
+        $this->data['regularPayroll'] = $this
+            ->regular_payroll_model
+            ->getRegularPayrollByIdColumns(
+                $payrollId,
+                [
+                    'start_date',
+                    'end_date',
+                    'check_date',
+                    'payroll_deadline',
+                    'calculated_at',
+                    "status"
+                ]
+            );
+
+        if ($this->data['regularPayroll']["status"] == "processed") {
+            return redirect("payrolls/history");
+        }
+
+        if ($this->data['regularPayroll']["status"] == "submitted") {
+            return $this->handlePayrollStatusPage();
+        }
+        //
+        $this->data['title'] = "Regular Payroll Review | ";
+        $this->data['title'] .= formatDateToDB(
+            $this->data["regularPayroll"]["start_date"],
+            DB_DATE,
+            DATE
+        );
+        $this->data['title'] .= " - ";
+        $this->data['title'] .= formatDateToDB(
+            $this->data["regularPayroll"]["end_date"],
+            DB_DATE,
+            DATE
+        );
+        //
+        // time to calculate payroll
         $this->data['appCSS'] = $this->loadCssBundle(
             [
-                'v1/plugins/ms_modal/main',
                 'v1/app/css/loader'
             ],
-            'hours_and_earnings'
+            'regular_payroll_review'
         );
-        // js
+        //
         $this->data['appJs'] = $this->loadJsBundle(
             [
-                'v1/plugins/ms_modal/main',
-                'v1/payroll/js/regular/hours_and_earnings'
+                'v1/payroll/js/regular/review'
             ],
-            'hours_and_earnings'
+            'regular_payroll_review'
         );
-        return $this
-            ->loadView(
-                "modules/payroll/regular/partials/hours_and_earnings"
+        //
+        $this->loadView("modules/payroll/regular/partials/review");
+    }
+
+    /**
+     * Revert the regular payroll changes
+     *
+     * @param int $regularPayrollId
+     */
+    public function discardPayrollChanges(int $regularPayrollId)
+    {
+        // set the title
+        $this->data['title'] = "Regular Payrolls";
+        //
+        $response = $this
+            ->regular_payroll_model
+            ->discardPayrollChanges(
+                $regularPayrollId
             );
+        // get the payrolls
+        return SendResponse(
+            $response["errors"] ? 400 : 200,
+            $response
+        );
     }
 
     /**
@@ -242,6 +289,46 @@ class Regular extends Payroll_base_controller
                 'payroll' => $passData['regularPayroll']
             ]
         );
+    }
+
+    //--------------------------------------------------------------------------
+    //-Private events
+    //--------------------------------------------------------------------------
+
+    /**
+     * regular payroll hours and earnings
+     *
+     * @param int $payrollId
+     */
+    private function hoursAndEarnings()
+    {
+        // plugins
+        $this->data['pageCSS'] = [
+            base_url("public/v1/plugins/alertifyjs/css/alertify.min.css")
+        ];
+        $this->data['pageJs'] = [
+            base_url("public/v1/plugins/alertifyjs/alertify.min.js")
+        ];
+        // css
+        $this->data['appCSS'] = $this->loadCssBundle(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/app/css/loader'
+            ],
+            'hours_and_earnings'
+        );
+        // js
+        $this->data['appJs'] = $this->loadJsBundle(
+            [
+                'v1/plugins/ms_modal/main',
+                'v1/payroll/js/regular/hours_and_earnings'
+            ],
+            'hours_and_earnings'
+        );
+        return $this
+            ->loadView(
+                "modules/payroll/regular/partials/hours_and_earnings"
+            );
     }
 
     /**
@@ -350,50 +437,6 @@ class Regular extends Payroll_base_controller
         );
     }
 
-
-    /**
-     * regular payroll review
-     *
-     * @param int $payrollId
-     * @param array $data
-     */
-    private function review(int $payrollId, array $data)
-    {
-        // time to calculate payroll
-        $gustoResponse = $this->regular_payroll_model->calculatePayrollById($payrollId);
-        //
-        if (!$gustoResponse['success']) {
-            return redirect('payrolls/regular');
-        }
-        // css
-        $data['appCSS'] = bundleCSS(
-            [
-                'v1/plugins/ms_modal/main',
-                'v1/app/css/loader'
-            ],
-            $this->css,
-            'review',
-            $this->disableMinifiedFilesCreation
-        );
-        //
-        $data['appJs'] = bundleJs(
-            [
-                'v1/plugins/ms_modal/main',
-                'js/app_helper',
-                'v1/payroll/js/regular/review'
-            ],
-            $this->js,
-            'review',
-            $this->disableMinifiedFilesCreation
-        );
-        //
-        $this->load
-            ->view('main/header', $data)
-            ->view("v1/payroll/regular/review")
-            ->view('main/footer');
-    }
-
-
     //  API routes
     /**
      * handles external payroll creation
@@ -491,36 +534,26 @@ class Regular extends Payroll_base_controller
      * @param int $payrollId
      * @return JSON
      */
-    public function getRegularPayrollStep3(int $payrollId): array
+    public function getRegularPayrollStep3(int $payrollId)
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
-        // check if company is on payroll
-        $this->checkForLinkedCompany(true);
-        // get payroll one more time
-        $this->regular_payroll_model
-            ->getPayrollById($payrollId);
-
         //
         $passData = [
             'payrollEmployees' => []
         ];
         // get the single payroll
-        $regularPayroll = $this->regular_payroll_model
+        $regularPayroll = $this
+            ->regular_payroll_model
             ->getRegularPayrollById(
-                $session['company_detail']['sid'],
+                $this->data["companyId"],
                 $payrollId
             );
-        if ($regularPayroll['employees']) {
-            $payrollEmployees = $this->regular_payroll_model
-                ->getPayrollEmployeesWithCompensation(
-                    $session['company_detail']['sid'],
-                    true
-                );
-            $passData['payrollEmployees'] = $payrollEmployees;
-        }
+        //
+        $payrollEmployees = $this
+            ->regular_payroll_model
+            ->getPayrollEmployeesWithCompensation(
+                $this->data["companyId"]
+            );
+        $passData['payrollEmployees'] = $payrollEmployees;
         //
         $passData['payroll'] = $regularPayroll;
 
@@ -529,7 +562,7 @@ class Regular extends Payroll_base_controller
             200,
             [
                 'view' => $this->load->view(
-                    'v1/payroll/regular/partials/review',
+                    'modules/payroll/regular/partials/review_view',
                     $passData,
                     true
                 )
@@ -545,14 +578,9 @@ class Regular extends Payroll_base_controller
      */
     public function submitPayroll(int $payrollId)
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
-        // check if company is on payroll
-        $this->checkForLinkedCompany(true);
         // get payroll one more time
-        $gustoResponse = $this->regular_payroll_model
+        $gustoResponse = $this
+            ->regular_payroll_model
             ->submitPayroll($payrollId);
 
         return SendResponse(
@@ -617,6 +645,18 @@ class Regular extends Payroll_base_controller
                     'v1/payroll/js/regular/calculating_payroll'
                 ],
                 'calculating_payroll'
+            );
+        }
+        // for submitted
+        if ($this->data['regularPayroll']["status"] === "submitted") {
+            $page = "submittedStage";
+            $this->data['title'] .= "Submitted";
+            // js
+            $this->data['appJs'] = $this->loadJsBundle(
+                [
+                    'v1/payroll/js/regular/submitted_payroll'
+                ],
+                'submitted_payroll'
             );
         }
         return $this->loadView("modules/payroll/regular/partials/" . $page);
