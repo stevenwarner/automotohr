@@ -7,7 +7,7 @@ $(function regularPayrollsTimeOff() {
 	 * get the payroll id from segment
 	 */
 	const payrollId = getSegment(2);
-	
+
 	// toggle between hours and pay view
 	$(document).on("click", ".jsToggleHoursPay", function (event) {
 		//
@@ -82,22 +82,19 @@ $(function regularPayrollsTimeOff() {
 			method: "PUT",
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl(
-						"payrolls/history/" + payrollId
-					);
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.refresh();
+				});
 			});
 	}
-
 	//
 	getRegularPayrollReview();
 });

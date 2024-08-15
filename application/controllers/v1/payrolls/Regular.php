@@ -111,6 +111,10 @@ class Regular extends Payroll_base_controller
                 ]
             );
 
+        if ($this->data['regularPayroll']["status"] == "processed") {
+            return redirect("payrolls/history");
+        }
+
         if ($this->data['regularPayroll']["status"] == "calculated") {
             return redirect("payrolls/regular/$payrollId/review");
         }
@@ -164,6 +168,10 @@ class Regular extends Payroll_base_controller
                     "status"
                 ]
             );
+
+        if ($this->data['regularPayroll']["status"] == "processed") {
+            return redirect("payrolls/history");
+        }
 
         if ($this->data['regularPayroll']["status"] == "submitted") {
             return $this->handlePayrollStatusPage();
