@@ -467,9 +467,15 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
     </div>
 </div>
 <script>
+
+
     $('#employee_status').select2({
         closeOnSelect: false
     });
+
+     $('#employee_status').select2('val', 'all');
+
+    $("#access_level").val('all');       
 
     $('#display_start_date').datepicker({
         dateFormat: 'mm-dd-yy',
@@ -527,7 +533,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
             $("input[name='test']").val(ids);
 
         });
-    <?php } ?>
+    <?php } ?>    
 </script>
 <style>
     .cs_full_width {
