@@ -594,7 +594,7 @@ class Employee_federal_form_payroll_model extends Base_payroll_model
      *
      * @return array
      */
-    private function checkAndSignTheFederalDocument()
+    private function checkAndSignTheFederalDocument(int $increment = 0)
     {
         // check if form exists
         $form = $this->db
@@ -606,11 +606,18 @@ class Employee_federal_form_payroll_model extends Base_payroll_model
             ->where('form_name', 'US_W-4')
             ->get('gusto_employees_forms')
             ->row_array();
+        if (!$form && $increment != 0) {
+            return [
+                "errors" => [
+                    "No forms found."
+                ]
+            ];
+        }
         //
         if (!$form) {
             // get the forms
             $this->gustoToStoreForms();
-            return $this->checkAndSignTheFederalDocument();
+            return $this->checkAndSignTheFederalDocument(++$increment);
         }
         if ($form["requires_signing"]) {
             //

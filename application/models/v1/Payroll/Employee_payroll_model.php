@@ -25,11 +25,11 @@ class Employee_payroll_model extends Base_payroll_model
     /**
      * set company details
      *
-     * @param int $companyId
+     * @param string $companyId
      * @param string $column Optional
      */
     public function setCompanyDetails(
-        int $companyId,
+        string $companyId,
         string $column = "company_sid"
     ) {
         //
@@ -44,7 +44,9 @@ class Employee_payroll_model extends Base_payroll_model
                 $column
             );
         //
-        $this->initialize($companyId);
+        $this->initialize(
+            $this->gustoCompany["company_sid"]
+        );
         return $this;
     }
 
@@ -115,7 +117,7 @@ class Employee_payroll_model extends Base_payroll_model
         $this->getGustoLinkedEmployeeDetails(
             $employeeGustoUUID,
             [
-                "employee_sid"
+                "employee_sid",
             ],
             true,
             "gusto_uuid"
