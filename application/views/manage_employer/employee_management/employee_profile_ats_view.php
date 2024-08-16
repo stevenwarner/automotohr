@@ -170,6 +170,128 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                 
+                                                    <?php if (isCompanyOnComplyNet($employer['parent_sid']) != 0) { ?>
+                                                        <label>ComplyNet Job Title</label>
+                                                        <div class="hr-fields-wrap">
+                                                            <div class="hr-select-dropdown">
+                                                                <select name="complynet_job_title" id="complynet_job_title" class="invoice-fields">
+                                                                    <option <?= $employer["complynet_job_title"] == null ? 'selected' : ''; ?> value="null">
+                                                                        Please select job title
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'BDC Person' ? 'selected' : ''; ?> value="BDC Person">
+                                                                        BDC Person
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Body Shop Estimator' ? 'selected' : ''; ?> value="Body Shop Estimator">
+                                                                        Body Shop Estimator
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Body Shop Manager' ? 'selected' : ''; ?> value="Body Shop Manager">
+                                                                        Body Shop Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Body Shop Tech' ? 'selected' : ''; ?> value="Body Shop Tech">
+                                                                        Body Shop Tech
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Cashier' ? 'selected' : ''; ?> value="Cashier">
+                                                                        Cashier
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'CFO' ? 'selected' : ''; ?> value="CFO">
+                                                                        CFO
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Detail Manager' ? 'selected' : ''; ?> value="Detail Manager">
+                                                                        Detail Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Detailer' ? 'selected' : ''; ?> value="Detailer">
+                                                                        Detailer
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'F&I Manager' ? 'selected' : ''; ?> value="F&I Manager">
+                                                                        F&I Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'F&I Writer' ? 'selected' : ''; ?> value="F&I Writer">
+                                                                        F&I Writer
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Fixed Operations Director' ? 'selected' : ''; ?> value="Fixed Operations Director">
+                                                                        Fixed Operations Director
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'GM' ? 'selected' : ''; ?> value="GM">
+                                                                        GM
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'HR Assistant' ? 'selected' : ''; ?> value="HR Assistant">
+                                                                        HR Assistant
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'HR Manager' ? 'selected' : ''; ?> value="HR Manager">
+                                                                        HR Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'IT' ? 'selected' : ''; ?> value="IT">
+                                                                        IT
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Office Employee' ? 'selected' : ''; ?> value="Office Employee">
+                                                                        Office Employee
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Office Manager' ? 'selected' : ''; ?> value="Office Manager">
+                                                                        Office Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Owner' ? 'selected' : ''; ?> value="Owner">
+                                                                        Owner
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Parts Desk' ? 'selected' : ''; ?> value="Parts Desk">
+                                                                        Parts Desk
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Parts Driver' ? 'selected' : ''; ?> value="Parts Driver">
+                                                                        Parts Driver
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Parts Manager' ? 'selected' : ''; ?> value="Parts Manager">
+                                                                        Parts Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Parts Sales' ? 'selected' : ''; ?> value="Parts Sales">
+                                                                        Parts Sales
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Parts Shipper' ? 'selected' : ''; ?> value="Parts Shipper">
+                                                                        Parts Shipper
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Porter' ? 'selected' : ''; ?> value="Porter">
+                                                                        Porter
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Receptionist' ? 'selected' : ''; ?> value="Receptionist">
+                                                                        Receptionist
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Sales Employee' ? 'selected' : ''; ?> value="Sales Employee">
+                                                                        Sales Employee
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Sales Manager' ? 'selected' : ''; ?> value="Sales Manager">
+                                                                        Sales Manager
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Sales Person' ? 'selected' : ''; ?> value="Sales Person">
+                                                                        Sales Person
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Service Advisor' ? 'selected' : ''; ?> value="Service Advisor">
+                                                                        Service Advisor
+                                                                    </option>
+                                                                    <option <?= $data["complynet_job_title"] == 'Service Director' ? 'selected' : ''; ?> value="Service Director">
+                                                                        Service Director
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Service Manager' ? 'selected' : ''; ?> value="Service Manager">
+                                                                        Service Manager
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Service Office' ? 'selected' : ''; ?> value="Service Office">
+                                                                        Service Office
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Service Tech' ? 'selected' : ''; ?> value="Service Tech">
+                                                                        Service Tech
+                                                                    </option>
+                                                                    <option <?= $employer["complynet_job_title"] == 'Warranty Clerk' ? 'selected' : ''; ?> value="Warranty Clerk">
+                                                                        Warranty Clerk
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                <?php } ?>
+
+
+                                                </div>
+
+
+
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Payment Method:</label>
                                                     <select class="invoice-fields" name="payment_method">
                                                         <option <?= $employer["payment_method"] == 'direct_deposit' ? 'selected' : ''; ?> value="direct_deposit">Direct Deposit</option>
@@ -177,6 +299,8 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     </select>
                                                     <?php echo form_error('payment_method'); ?>
                                                 </div>
+
+
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
