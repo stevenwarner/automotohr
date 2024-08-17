@@ -1,0 +1,382 @@
+<div class="main-content">
+    <div class="dashboard-wrp">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4">
+                    <?php $this->load->view('v1/payroll/sidebar'); ?>
+                </div>
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                    <!-- Top bar -->
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="page-header-area">
+                                <span class="page-heading down-arrow">
+                                    <!-- Company details header -->
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                    <!--  -->
+                                    <a href="<?php echo base_url('dashboard'); ?>" class="dashboard-link-btn">
+                                        <i class="fa fa-chevron-left"></i>Back
+                                    </a>
+                                </span>
+                            </div>
+
+                            <div class="dashboard-conetnt-wrp">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="panel-group-wrp">
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                                            <h4 class="panel-title">
+                                                                Advanced Search Filters <span class="glyphicon glyphicon-plus"></span>
+                                                            </h4>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapseOne" class="panel-collapse collapse <?php if (isset($filter_state) && $filter_state == true) {
+                                                                                                                echo 'in';
+                                                                                                            } ?>">
+                                                        <form method="get" enctype="multipart/form-data">
+                                                            <div class="panel-body">
+
+                                                                <div class="row">
+                                                                    <div class="col-sm-3">
+                                                                        <label>Employees</label>
+                                                                        <select id="js-filter-employee" class="js-filter-employee" multiple="multiple">
+                                                                            <option value="all">All</option>
+                                                                            <?php foreach ($allemployees as $empRow) { ?>
+                                                                                <option value="<?php echo $empRow['userId']; ?>" <?= in_array($empRow["userId"], $filter_employees) ? "selected" : ""; ?>>
+                                                                                    <?= remakeEmployeeName($empRow); ?>
+                                                                                </option>
+                                                                            <?php } ?>
+
+                                                                        </select>
+                                                                    </div>
+
+                                                                    <div class="col-sm-3">
+                                                                        <label>Departments / Teams</label>
+                                                                        <br>
+                                                                        <?= get_company_departments_teams_dropdown($company_sid, 'teamId', $filter_team ?? 0); ?>
+                                                                    </div>
+
+                                                                    <div class="col-sm-3">
+                                                                        <label>Job Title</label>
+                                                                        <br>
+                                                                        <?= get_jobTitle_dropdown_for_search($company_sid, 'jobtitleId') ?>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <label class="">Start Date</label>
+                                                                            <?php $start_date = $this->uri->segment(3) != 'all' && $this->uri->segment(3) != '' ? urldecode($this->uri->segment(3)) : date('m-d-Y'); ?>
+                                                                            <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                        <div class="field-row">
+                                                                            <label class="">End Date</label>
+                                                                            <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-d-Y'); ?>
+                                                                            <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                                        <div class="field-row autoheight text-right">
+
+                                                                            <a id="btn_apply_filters" class="btn btn-success" href="#">Apply Filters</a>
+                                                                            <a id="btn_reset_filters" class="btn btn-success" href="<?php echo base_url('payrolls/ledger'); ?>">Reset Filters</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Bottom here-->
+
+                                        <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) { ?>
+                                            <div class="box-view reports-filtering">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-group">
+                                                            <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
+                                                                <i class="fa fa-print" aria-hidden="true"></i>
+                                                                Print
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <!-- table -->
+                                        <div class="hr-box">
+                                            <div class="hr-box-header bg-header-green">
+                                                <span class="pull-left">
+                                                    <h1 class="hr-registered">Ledger</h1>
+                                                </span>
+                                                <span class="pull-right">
+                                                    <h1 class="hr-registered">Total Records Found : <?php echo $ledgerCount; ?></h1>
+                                                </span>
+                                            </div>
+                                            <div class="hr-innerpadding">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span class="pull-left">
+                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $ledgerCount ?></p>
+                                                        </span>
+                                                        <span class="pull-right" style="margin-top: 20px; margin-bottom: 20px;">
+                                                            <?php echo $page_links ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="table-responsive" id="print_div">
+                                                            <table class="table table-bordered horizontal-scroll" id="example">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Employee Name</th>
+                                                                        <th>Debit Amount</th>
+                                                                        <th>Credit Amount</th>
+                                                                        <th>Description</th>
+                                                                        <th>Is Deleted</th>
+                                                                        <th>Created At</th>
+                                                                        <th>Updated At</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) { ?>
+                                                                        <?php foreach ($employeesLedger as $rowEmployee) { ?>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo remakeEmployeeName([
+                                                                                        'first_name' => $rowEmployee['first_name'],
+                                                                                        'last_name' => $rowEmployee['last_name'],
+                                                                                        'access_level' => $rowEmployee['access_level'],
+                                                                                        'timezone' => isset($rowEmployee['timezone']) ? $rowEmployee['timezone'] : '',
+                                                                                        'access_level_plus' => $rowEmployee['access_level_plus'],
+                                                                                        'is_executive_admin' => $rowEmployee['is_executive_admin'],
+                                                                                        'pay_plan_flag' => $rowEmployee['pay_plan_flag'],
+                                                                                        'job_title' => $rowEmployee['job_title'],
+                                                                                    ]);
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php echo $rowEmployee['debit_amount']; ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php echo $rowEmployee['credit_amount']; ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php echo $rowEmployee['description']; ?>
+                                                                                </td>
+
+                                                                                <td class="text-center">
+                                                                                    <?php
+
+                                                                                    echo $rowEmployee['is_deleted'] ? "Yes" : "No";
+
+
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo formatDateToDB($rowEmployee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                                                                    ?>s
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo formatDateToDB($rowEmployee['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                                                                    ?>
+                                                                                </td>
+
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    <?php } else { ?>
+                                                                        <tr>
+                                                                            <td class="text-center" colspan="7">
+                                                                                <div class="no-data">No record found.</div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php } ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr />
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <span class="pull-right">
+                                                            <?php echo $page_links ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- table -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
+
+<script type="text/javascript">
+    $(document).keypress(function(e) {
+        if (e.which == 13) {
+            // enter pressed
+            $('#btn_apply_filters').click();
+        }
+    });
+
+    function generate_search_url() {
+        //
+        var start_date_applied = $('#start_date_applied').val();
+        var end_date_applied = $('#end_date_applied').val();
+
+        var employees = $('#js-filter-employee').val();
+        var departments = $('#teamId').val();
+        var jobTitles = $('#jobtitleId').val();
+
+        //
+        start_date_applied = start_date_applied != '' && start_date_applied != null && start_date_applied != undefined && start_date_applied != 0 ? encodeURIComponent(start_date_applied) : 'all';
+        end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
+
+        var url = '<?php echo base_url('payrolls/ledger'); ?>' + '/' + start_date_applied + '/' + end_date_applied + '/' + employees + '/' + departments + '/' + jobTitles;
+
+        $('#btn_apply_filters').attr('href', url);
+    }
+
+    $(document).ready(function() {
+
+        //
+        $('#js-filter-employee').select2();
+        $('#teamId').select2();
+        $('#jobtitleId').select2();
+
+
+        <?php if ($this->uri->segment(5) != '') { ?>
+            let filteremployes = "<?php echo $this->uri->segment(5); ?>";
+            let filteremployeesArray = filteremployes.split(',');
+            $('#js-filter-employee').select2('val', filteremployeesArray);
+        <?php } else { ?>
+            $('#js-filter-employee').select2('val', 'all');
+
+        <?php } ?>
+
+
+        <?php if ($this->uri->segment(6) != '') { ?>
+            let filterDepartment = "<?php echo $this->uri->segment(6); ?>";
+            let filterDepartmentArray = filterDepartment.split(',');
+            $('#teamId').select2('val', filterDepartmentArray);
+        <?php } else { ?>
+            $('#teamId').select2('val', '0');
+
+        <?php } ?>
+
+
+        <?php if ($this->uri->segment(7) != '') { ?>
+            let filterJobtitle = "<?php echo urldecode($this->uri->segment(7)); ?>";
+            let filterJobTitleArray = filterJobtitle.split(',');
+            $('#jobtitleId').select2('val', filterJobTitleArray);
+        <?php } else { ?>
+            $('#jobtitleId').select2('val', 'all');
+
+        <?php } ?>
+
+
+        $('#btn_apply_filters').on('click', function(e) {
+            e.preventDefault();
+            generate_search_url();
+
+            window.location = $(this).attr('href').toString();
+        });
+
+        // Search Area Toggle Function
+        jQuery('.hr-search-criteria').click(function() {
+            jQuery(this).next().slideToggle('1000');
+            jQuery(this).toggleClass("opened");
+        });
+
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy'
+        }).val();
+
+        $('#start_date_applied').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
+                $('#end_date_applied').datepicker('option', 'minDate', value);
+
+                generate_search_url();
+            }
+        }).datepicker('option', 'maxDate', $('#end_date_applied').val());
+
+        $('#end_date_applied').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
+                $('#start_date_applied').datepicker('option', 'maxDate', value);
+                generate_search_url();
+            }
+        }).datepicker('option', 'minDate', $('#start_date_applied').val());
+
+    });
+
+    function print_page(elem) {
+        $("table").removeClass("horizontal-scroll");
+
+        var data = ($(elem).html());
+        var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
+
+        mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/bootstrap.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/responsive.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/jquery-ui.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/css/jquery.datetimepicker.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/images/favi-icon.png'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/alertifyjs/css/alertify.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/alertifyjs/css/themes/default.min.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/select2.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>" type="text/css" />');
+        mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/css/chosen.css'); ?>" type="text/css" />');
+        mywindow.document.write('</head><body >');
+        mywindow.document.write('<table> <tr><td>&nbsp;</td></tr><tr><td><b><?php echo $companyName; ?></b></td></tr><tr><td>&nbsp;</td></tr></table >');
+        mywindow.document.write(data);
+        mywindow.document.write('</body></html>');
+        mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
+        mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
+        mywindow.document.close();
+        mywindow.focus();
+
+        $("table").addClass("horizontal-scroll");
+    }
+</script>

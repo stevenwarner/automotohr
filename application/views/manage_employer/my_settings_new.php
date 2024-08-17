@@ -293,6 +293,9 @@
                                             <?php if ($isCompanyOnPayroll && $isTermsAgreed) { ?>
                                                 <li><a href="<?= base_url('payrolls/dashboard'); ?>">Payroll Dashboard</a></li>
                                             <?php } ?>
+
+                                            <li><a href="<?= base_url('payrolls/ledger'); ?>">Payroll Ledger</a></li>
+
                                         <?php } ?>
                                         <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
                                             <!-- Attendance module settings -->

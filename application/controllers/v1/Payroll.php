@@ -2879,4 +2879,117 @@ class Payroll extends CI_Controller
                 ]
             );
     }
+
+    //
+    public function ledger($start_date = 'all', $end_date = 'all', $employee = 'all', $department = 'all', $jobtitles = 'all', $page_number = 1)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'reports');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['title'] = 'Advanced Hr Reports - Employees Termination Reports';
+            //
+
+            $this->load->model("v1/Regular_payroll_model", "regular_payroll_model");
+
+
+            $data["allemployees"] = $this->regular_payroll_model->getCompanyEmployeesOnly(
+                $company_sid
+            );
+            $data["company_sid"] = $company_sid;
+
+
+            $start_date = urldecode($start_date);
+            $end_date = urldecode($end_date);
+
+            $filterEmployees = explode(',', urldecode($employee));
+            $filterJobTitles = explode(',', urldecode($jobtitles));
+            $filterDepartment = explode(',', urldecode($department));
+         
+            //
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d');
+            } else {
+                $start_date_applied = date('Y-m-d 00:00:00');
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d');
+            } else {
+                $end_date_applied = date('Y-m-d');
+            }
+            //
+            $between = '';
+            //
+            if ($start_date_applied != NULL && $end_date_applied != NULL) {
+                $between = "payroll_ledger.created_at between '" . $start_date_applied . "' and '" . $end_date_applied . "'";
+            }
+            //
+            $data["flag"] = true;
+
+            //
+            $data['ledgerCount'] = sizeof($this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees,$filterJobTitles,$filterDepartment, null, null));
+            /** pagination * */
+            $this->load->library('pagination');
+            $records_per_page = PAGINATION_RECORDS_PER_PAGE;
+            $my_offset = 0;
+            //
+            if ($page_number > 1) {
+                $my_offset = ($page_number - 1) * $records_per_page;
+            }
+            //
+            $baseUrl = base_url('payrolls/ledger') . '/' . urlencode($start_date) . '/' . urlencode($end_date).'/'.urlencode($employee).'/'.urldecode($department).'/'.urldecode($jobtitles);
+            //
+            $uri_segment = 8;
+            $config = array();
+            $config["base_url"] = $baseUrl;
+            $config["total_rows"] = $data['ledgerCount'];
+            $config["per_page"] = $records_per_page;
+            $config["uri_segment"] = $uri_segment;
+            $choice = $config["total_rows"] / $config["per_page"];
+            $config["num_links"] = ceil($choice);
+            $config["use_page_numbers"] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '&laquo; First';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = 'Last &raquo;';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
+
+            $this->pagination->initialize($config);
+            $data['page_links'] = $this->pagination->create_links();
+            $total_records = $data['terminatedEmployeesCount'];
+
+            $data['current_page'] = $page_number;
+            $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
+            $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
+
+            $data['employeesLedger'] = $this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees,$filterJobTitles,$filterDepartment, $records_per_page, $my_offset);
+         
+            //
+            $this->load
+                ->view('main/header', $data)
+                ->view('v1/payroll/ledger')
+                ->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
 }

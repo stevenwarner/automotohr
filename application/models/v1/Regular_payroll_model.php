@@ -1056,4 +1056,90 @@ class Regular_payroll_model extends Payroll_model
         return
             ['success' => true];
     }
+
+
+//
+    public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles,$filterDepartment, $limit = null, $start = null)
+    {
+        //
+        $this->db->select('payroll_ledger.debit_amount');
+        $this->db->select('payroll_ledger.credit_amount');
+        $this->db->select('payroll_ledger.description');
+        $this->db->select('payroll_ledger.is_deleted');
+        $this->db->select('payroll_ledger.created_at');
+        $this->db->select('payroll_ledger.updated_at');
+        $this->db->select('users.sid');
+        $this->db->select('users.first_name');
+        $this->db->select('users.last_name');
+        $this->db->select('users.access_level');
+        $this->db->select('users.timezone');
+        $this->db->select('users.is_executive_admin');
+        $this->db->select('users.pay_plan_flag');
+        $this->db->select('users.job_title');
+        $this->db->select('users.joined_at');
+        $this->db->select('users.rehire_date');
+        $this->db->select('users.department_sid');
+        //
+        $this->db->join('users', 'users.sid = payroll_ledger.employee_sid', 'left');
+        $this->db->where('users.parent_sid', $company_sids);
+        //
+        if ($between != '' && $between != NULL) {
+            $this->db->where($between);
+        }
+
+        if (!in_array("all", $filterEmployees)) {
+
+            $this->db->where_in('payroll_ledger.employee_sid', $filterEmployees);
+        }
+
+        if (!in_array("0", $filterDepartment)) {
+
+            $this->db->where_in('users.department_sid', $filterDepartment);
+        }
+
+        if (!in_array("all", $filterJobTitles)) {
+
+            $i = 0;
+            $this->db->group_start();
+            foreach ($filterJobTitles as $title) {
+                if ($i == 0) {
+                    $this->db->like('users.job_title', $title);
+                } else {
+                    $this->db->or_like('users.job_title', $title);
+                }
+                $i++;
+            }
+            $this->db->group_end();
+        }
+
+        //
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
+        }
+        //  
+        $this->db->order_by("payroll_ledger.sid", "desc");
+        $employeesLedger = $this->db->get('payroll_ledger')->result_array();
+        //
+        $str = $this->db->last_query();
+
+        return $employeesLedger;
+    }
+
+    //
+    public function getCompanyEmployeesOnly(int $companyId): array
+    {
+
+        $this->db
+            ->select(getUserFields())
+            ->where([
+                "users.parent_sid" => $companyId,
+                "users.is_executive_admin" => 0,
+                "users.active" => 1,
+                "users.terminated_status" => 0
+            ]);
+        //
+
+        $this->db->order_by("users.first_name", "ASC");
+        return $this->db->get("users")->result_array();
+    }
 }
