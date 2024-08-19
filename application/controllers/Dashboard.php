@@ -650,11 +650,11 @@ class Dashboard extends Public_Controller
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
 
-            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/v1/css/', 'dashboard', true);
+            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/modules/payroll/helper', 'dashboard_green', true);
             $bundleJS = bundleJs([
                 'v1/plugins/ms_modal/main',
                 'js/app_helper',
-            ], 'public/v1/js/', 'dashboard', true);
+            ], 'public/modules/payroll/helper', 'dashboard_green', true);
 
             // check and add payroll scripts
             if (checkIfAppIsEnabled(PAYROLL)) {
@@ -667,8 +667,8 @@ class Dashboard extends Public_Controller
                 ];
                 //
                 if (!$data["payrollChecks"]["isTermsAgreed"]) {
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/agreement'], 'public/v1/js/payroll/', 'company-agreement', true);
-                    $bundleJS .= "\n" . bundleJs(['v1/payroll/js/partner/create'], 'public/v1/js/payroll/', 'setup-company', true);
+                    $bundleJS .= "\n" . bundleJs(['modules/payroll/agreement/main'], 'public/modules/payroll/js/', 'agreement', true);
+                    $bundleJS .= "\n" . bundleJs(['modules/payroll/partner_company/main'], 'public/modules/payroll/js/', 'partner-company', true);
                 }
                 // for payroll
                 if ($data["payrollChecks"]["isEmployeeOnPayroll"]) {

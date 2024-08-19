@@ -264,6 +264,8 @@
                                             </li>
                                         <?php } ?>
 
+                                        <?php $checkForPayrollSync = checkIfSyncingInProgress();?>
+
                                         <?php if (checkIfAppIsEnabled(PAYROLL)) { ?>
                                             <?php
                                             $isCompanyOnPayroll = isCompanyLinkedWithGusto($session['company_detail']['sid']);
@@ -288,13 +290,8 @@
                                             </li>
                                         <?php } ?>
 
-                                        <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(PAYROLL)) { ?>
+                                        <?php if (isPayrollOrPlus() && checkIfAppIsEnabled(PAYROLL) && $isCompanyOnPayroll && $isTermsAgreed && !$checkForPayrollSync) { ?>
                                             <!-- Company bank accounts -->
-                                            <li>
-                                                <a href="<?= base_url("settings/company/accounts"); ?>">
-                                                    Company Bank accounts
-                                                </a>
-                                            </li>
                                              <li>
                                                 <a href="<?= base_url("schedules"); ?>">
                                                     Company Pay Schedules

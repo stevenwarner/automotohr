@@ -419,29 +419,7 @@ class Payroll_model extends CI_Model
             ->row_array();
     }
 
-    /**
-     * check company onboard
-     *
-     * @param int $companyId
-     * @return string
-     */
-    public function getCompanyOnboardLastStep(int $companyId): string
-    {
-        $record = $this->db
-            ->select('is_ts_accepted')
-            ->where([
-                'company_sid' => $companyId
-            ])
-            ->get('gusto_companies')
-            ->row_array();
-        //
-        if (!$record) {
-            return 'onboard';
-        } elseif (!$record['is_ts_accepted']) {
-            return 'terms';
-        }
-        return 'done';
-    }
+    
 
     /**
      * check payroll admin of a company
@@ -460,24 +438,7 @@ class Payroll_model extends CI_Model
             ->count_all_results('gusto_companies_admin');
     }
 
-    /**
-     * get payroll admin of a company
-     *
-     * @param int $companyId
-     * @return bool
-     */
-    public function getAdminForPayroll(int $companyId): array
-    {
-        //
-        return $this->db
-            ->select('first_name, email_address, last_name')
-            ->where([
-                'company_sid' => $companyId,
-                'is_store_admin' => 0
-            ])
-            ->get('gusto_companies_admin')
-            ->row_array();
-    }
+    
 
     /**
      * check and add admin

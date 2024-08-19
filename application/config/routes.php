@@ -1769,20 +1769,12 @@ $route['hit2_lms_cron/(:any)'] = "Cron_lms_courses/sendTodayAssignedCoursesEmail
 /**
  * Payroll routes
  */
-$route['payroll/company/(:num)/requirements'] =
-  'v1/payrolls/Company_payroll/checkCompanyRequirements/$1';
 
-$route['payroll/cpc/7/(:num)'] =
-  'v1/payrolls/Company_payroll/createPartnerCompanyProcess/$1';
 
-$route['payroll/cpc/(:num)/(:num)'] =
-  'v1/Payroll/getCreatePartnerCompanyPage/$1/$2';
+
 
 // Sign Gusto Agreement
-$route['payrolls/agreement/(:num)']['get'] =
-  'v1/payrolls/Company_payroll/getCompanyAgreement/$1';
-$route['payrolls/agreement/(:num)']['post'] =
-  'v1/payrolls/Company_payroll/signCompanyAgreement/$1';
+
 
 $route['payrolls/dashboard']['get'] = 'v1/payrolls/modules/Clp_dashboard';
 $route['payrolls/setup']['get'] = 'v1/payrolls/modules/Clp_dashboard/setup';

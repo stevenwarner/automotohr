@@ -82,20 +82,25 @@ class Settings extends Public_Controller
             $this->load->model('manage_admin/company_model');
             $data['company_info'] = $this->company_model->get_contact_info($company_id);
             // set CSS
-            $data['PageCSS'] = [];
-            $data['PageCSS'][] = 'v1/plugins/ms_modal/main';
-            // set default js
-            $data['PageScripts'] = [];
-            $data['PageScripts'][] = 'v1/plugins/ms_modal/main';
-            $data['PageScripts'][] = 'js/app_helper';
+            $bundleCSS = bundleCSS(['v1/plugins/ms_modal/main'], 'public/modules/payroll/helper', 'dashboard_green', true);
+            $bundleJS = bundleJs([
+                'v1/plugins/ms_modal/main',
+                'js/app_helper',
+            ], 'public/modules/payroll/helper', 'dashboard_green', true);
             // check and add payroll scripts
             if (checkIfAppIsEnabled('payroll')) {
-                if (!hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])) {
-                    $data['PageScripts'][] = 'v1/payroll/js/agreement';
+                if (
+                    !hasAcceptedPayrollTerms($data['session']['company_detail']['sid'])
+                    && isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])
+                ) {
+                    $bundleJS .= "\n" . bundleJs(['modules/payroll/agreement/main'], 'public/modules/payroll/js/', 'agreement', true);
                 }
                 if (!isCompanyLinkedWithGusto($data['session']['company_detail']['sid'])) {
-                    $data['PageScripts'][] = 'v1/payroll/js/company_onboard';
+                    $bundleJS .= "\n" . bundleJs(['modules/payroll/agreement/main'], 'public/modules/payroll/js/', 'agreement', true);
+                    $bundleJS .= "\n" . bundleJs(['modules/payroll/partner_company/main'], 'public/modules/payroll/js/', 'partner-company', true);
                 }
+                $data['appJs'] .= $bundleJS;
+                $data['appCSS'] .= $bundleCSS;
             }
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_settings_new');

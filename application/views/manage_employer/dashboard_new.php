@@ -1004,13 +1004,7 @@
                                     <?php endif; ?>
 
 
-                                    <?php
-                                    /**
-                                     * Payroll
-                                     * 2024
-                                     */
-                                    $this->load->view('v1/payroll/partials/dashboard_green_tabs');
-                                    ?>
+                                    <?php $this->load->view('payroll/tabs/green/dashboard'); ?>
 
                                     <!-- Account Activity -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

@@ -60,7 +60,7 @@ class Payroll_base_controller extends CI_Controller
         $this
             ->load
             ->model(
-                "v1/Payroll/Payrolls_model",
+                "Payrolls_model",
                 "payrolls_model"
             );
         $this->checkCompanySync();
@@ -227,7 +227,7 @@ class Payroll_base_controller extends CI_Controller
                 ->session
                 ->userdata('logged_in')['company_detail']["sid"];
         //
-        
+
         return true;
     }
 
@@ -272,9 +272,9 @@ class Payroll_base_controller extends CI_Controller
         ];
         $this->data = $this->setPublicData();
         // set path to CSS file
-        $this->css = 'public/v1/css/payrolls/';
+        $this->css = 'public/modules/payroll/';
         // set path to JS file
-        $this->js = 'public/v1/js/payrolls/';
+        $this->js = 'public/modules/payroll/';
         // set the creation of minified files
         $this->disableMinifiedFilesCreation = false;
         //
