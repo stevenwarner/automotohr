@@ -20,7 +20,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate/applicants');?>
+                                                    <?php $url = base_url('reports/generate/applicants'); ?>
                                                     <figure><i class="fa fa-users"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicants</a>
@@ -37,7 +37,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_monthly_filled_jobs_report');?>
+                                                    <?php $url = base_url('reports/generate_monthly_filled_jobs_report'); ?>
                                                     <figure><i class="fa fa-users"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Jobs - Per Month</a>
@@ -57,7 +57,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_interviews_scheduled_by_recruiters');?>
+                                                    <?php $url = base_url('reports/generate_interviews_scheduled_by_recruiters'); ?>
                                                     <figure><i class="fa fa-calendar"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Interviews</a>
@@ -74,7 +74,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/candidates_between_period');?>
+                                                    <?php $url = base_url('reports/candidates_between_period'); ?>
                                                     <figure><i class="fa fa-users"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicants</a>
@@ -93,7 +93,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_time_to_fill');?>
+                                                    <?php $url = base_url('reports/generate_time_to_fill'); ?>
                                                     <figure><i class="fa fa-clock-o"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Jobs</a>
@@ -110,7 +110,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_time_to_hire');?>
+                                                    <?php $url = base_url('reports/generate_time_to_hire'); ?>
                                                     <figure><i class="fa fa-clock-o"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Jobs</a>
@@ -129,7 +129,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_active_new_hire_categories');?>
+                                                    <?php $url = base_url('reports/generate_active_new_hire_categories'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Job Categories</a>
@@ -146,7 +146,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_new_hires_report');?>
+                                                    <?php $url = base_url('reports/generate_new_hires_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">New Hires</a>
@@ -165,7 +165,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_new_hires_onboarding_report');?>
+                                                    <?php $url = base_url('reports/generate_new_hires_onboarding_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">New Hires On-Boarding</a>
@@ -182,7 +182,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_job_views_applicants_report');?>
+                                                    <?php $url = base_url('reports/generate_job_views_applicants_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Job Views</a>
@@ -200,7 +200,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_applicant_referrals_report');?>
+                                                    <?php $url = base_url('reports/generate_applicant_referrals_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Reference</a>
@@ -218,7 +218,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_applicant_status_report');?>
+                                                    <?php $url = base_url('reports/generate_applicant_status_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicant Status</a>
@@ -236,7 +236,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_candidate_offers_report');?>
+                                                    <?php $url = base_url('reports/generate_candidate_offers_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Candidate Offers</a>
@@ -251,10 +251,10 @@
                                             </div>
                                         </div>
                                         <!-- applicant origination tracker report -->
-<!--                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                        <!--                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/applicant_origination_tracker_report');?>
+                                                    <?php $url = base_url('reports/applicant_origination_tracker_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicant Origination Tracker</a>
@@ -272,7 +272,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/applicant_interview_scores_report');?>
+                                                    <?php $url = base_url('reports/applicant_interview_scores_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicant Interview Scores</a>
@@ -290,7 +290,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/applicant_source_report');?>
+                                                    <?php $url = base_url('reports/applicant_source_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicant Source Tracking</a>
@@ -308,7 +308,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_applicant_origination_statistics_report');?>
+                                                    <?php $url = base_url('reports/generate_applicant_origination_statistics_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Applicant Origination Statistics</a>
@@ -323,30 +323,30 @@
                                             </div>
                                         </div>
                                         <!-- job fair report -->
-                                        <?php if($job_fair_configuration) { ?>
-                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_job_fair_report');?>
-                                                    <figure><i class="fa fa-list"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo $url; ?>">Job Fair Track Report</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Job Fair Report</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                        <?php if ($job_fair_configuration) { ?>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <?php $url = base_url('reports/generate_job_fair_report'); ?>
+                                                        <figure><i class="fa fa-list"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo $url; ?>">Job Fair Track Report</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Job Fair Report</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <?php }?>
+                                        <?php } ?>
 
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/generate_company_daily_activity_report');?>
+                                                    <?php $url = base_url('reports/generate_company_daily_activity_report'); ?>
                                                     <figure><i class="fa fa-list"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Company Daily Activity Report</a>
@@ -364,7 +364,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/driving_license');?>
+                                                    <?php $url = base_url('reports/driving_license'); ?>
                                                     <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Employee</a>
@@ -379,40 +379,40 @@
                                             </div>
                                         </div>
 
-                                        <?php if(!empty($companyDetailsForSMS)) { ?>
+                                        <?php if (!empty($companyDetailsForSMS)) { ?>
 
-                                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                            <div class="dash-box">
-                                                <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/company_sms_report');?>
-                                                    <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
-                                                    <h2 class="post-title">
-                                                        <a href="<?php echo $url; ?>">SMS Report</a>
-                                                    </h2>
-                                                    <div class="count-box">
-                                                        <small>Company SMS Report</small>
-                                                    </div>
-                                                    <div class="button-panel">
-                                                        <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <?php $url = base_url('reports/company_sms_report'); ?>
+                                                        <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo $url; ?>">SMS Report</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Company SMS Report</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         <?php } ?>
                                         <!--
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php /*$url = base_url('reports/employee_monthly_attendance_report');*/?>
+                                                    <?php /*$url = base_url('reports/employee_monthly_attendance_report');*/ ?>
                                                     <figure><i class="fa fa-calendar"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php /*echo $url; */?>">Attendance Report</a>
+                                                        <a href="<?php /*echo $url; */ ?>">Attendance Report</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>Monthly</small>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php /*echo $url; */?>">Generate</a>
+                                                        <a class="site-btn" href="<?php /*echo $url; */ ?>">Generate</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -423,16 +423,16 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php /*$url = base_url('reports/employee_weekly_attendance_report');*/?>
+                                                    <?php /*$url = base_url('reports/employee_weekly_attendance_report');*/ ?>
                                                     <figure><i class="fa fa-calendar"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php /*echo $url; */?>">Attendance Report</a>
+                                                        <a href="<?php /*echo $url; */ ?>">Attendance Report</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>Weekly</small>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a class="site-btn" href="<?php /*echo $url; */?>">Generate</a>
+                                                        <a class="site-btn" href="<?php /*echo $url; */ ?>">Generate</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -445,7 +445,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/employee_document');?>
+                                                    <?php $url = base_url('reports/employee_document'); ?>
                                                     <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Employee</a>
@@ -463,7 +463,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/employeeAssignedDocuments');?>
+                                                    <?php $url = base_url('reports/employeeAssignedDocuments'); ?>
                                                     <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Employee</a>
@@ -481,7 +481,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
-                                                    <?php $url = base_url('reports/employeeTerminationReport');?>
+                                                    <?php $url = base_url('reports/employeeTerminationReport'); ?>
                                                     <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
                                                     <h2 class="post-title">
                                                         <a href="<?php echo $url; ?>">Employee</a>
@@ -495,6 +495,27 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                <div class="dash-box">
+                                                    <div class="dashboard-widget-box">
+                                                        <?php $url = base_url('payrolls/ledger'); ?>
+                                                        <figure><i class="fa fa-list" aria-hidden="true"></i></figure>
+                                                        <h2 class="post-title">
+                                                            <a href="<?php echo $url; ?>">Payroll Ledger</a>
+                                                        </h2>
+                                                        <div class="count-box">
+                                                            <small>Employees Payroll Ledger Report</small>
+                                                        </div>
+                                                        <div class="button-panel">
+                                                            <a class="site-btn" href="<?php echo $url; ?>">Generate</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
 
                                     </div>
                                 </div>

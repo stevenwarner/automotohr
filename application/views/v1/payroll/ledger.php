@@ -14,12 +14,11 @@
                                     <!-- Company details header -->
                                     <?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <!--  -->
-                                    <a href="<?php echo base_url('dashboard'); ?>" class="dashboard-link-btn">
+                                    <a href="<?php echo base_url('reports'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Back
                                     </a>
                                 </span>
                             </div>
-
                             <div class="dashboard-conetnt-wrp">
                                 <div class="row">
                                     <div class="col-xs-12">
@@ -49,7 +48,6 @@
                                                                                     <?= remakeEmployeeName($empRow); ?>
                                                                                 </option>
                                                                             <?php } ?>
-
                                                                         </select>
                                                                     </div>
 
@@ -65,24 +63,32 @@
                                                                         <?= get_jobTitle_dropdown_for_search($company_sid, 'jobtitleId') ?>
                                                                     </div>
                                                                 </div>
-
+                                                                <br><br>
                                                                 <div class="row">
-
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                        <div class="field-row">
-                                                                            <label class="">Start Date</label>
-                                                                            <?php $start_date = $this->uri->segment(3) != 'all' && $this->uri->segment(3) != '' ? urldecode($this->uri->segment(3)) : date('m-d-Y'); ?>
-                                                                            <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
-                                                                        </div>
+                                                                    <div class="col-sm-12">
+                                                                        <label class="control control--radio">
+                                                                            By Transaction Date &nbsp;&nbsp;
+                                                                            <input type="radio" name="dateselection" class="assignAndSendDocument" value="transaction" <?php echo $this->uri->segment(8) == 'transaction' || $this->uri->segment(8) == '' ? 'checked' : ''; ?>>
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio">
+                                                                            By Period Date &nbsp;&nbsp;
+                                                                            <input type="radio" name="dateselection" class="assignAndSendDocument" value="period" <?php echo $this->uri->segment(8) == 'period' ? 'checked' : ''; ?>>
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
                                                                     </div>
-                                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                        <div class="field-row">
-                                                                            <label class="">End Date</label>
-                                                                            <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-d-Y'); ?>
-                                                                            <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
-                                                                        </div>
+                                                                    <br><br>
+                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                        <label class="">Start Date</label>
+                                                                        <?php $start_date = $this->uri->segment(3) != 'all' && $this->uri->segment(3) != '' ? urldecode($this->uri->segment(3)) : date('m-1-Y'); ?>
+                                                                        <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                                     </div>
 
+                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                        <label class="">End Date</label>
+                                                                        <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-d-Y'); ?>
+                                                                        <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
+                                                                    </div>
                                                                 </div>
 
                                                                 <div class="row">
@@ -104,16 +110,88 @@
 
                                         <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) { ?>
                                             <div class="box-view reports-filtering">
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <div class="form-group">
-                                                            <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
-                                                                <i class="fa fa-print" aria-hidden="true"></i>
-                                                                Print
-                                                            </a>
+                                                <form method="post" id="export" name="export">
+                                                    <div class="panel panel-default cs_margin_panel">
+                                                        <div class="panel-heading">
+                                                            <div class="row">
+                                                                <div class="col-lg-9 col-xs-10 ">
+                                                                    <label class="control control--checkbox">
+                                                                        <input type="checkbox" name="" id="check_all" value="">
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                    <p class="cs_line" style="padding-left:35px;margin-top: -12px;">Include columns in export file</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="collapse1" class="panel-collapse ">
+                                                            <div class="panel-body" style="min-height:100px;">
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;"> Employee Id <input type="checkbox" class="check_it" name="employee_sid" value="employeeId">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">First Name<input type="checkbox" class="check_it" name="first_name" value="firstname">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">Middle Name<input type="checkbox" class="check_it" name="middle_name" value="middlename">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">Last Name<input type="checkbox" class="check_it" name="last_name" value="lastname">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">Job Title<input type="checkbox" class="check_it" name="job_title" value="jobtitle">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">Department<input type="checkbox" class="check_it" name="department" value="department">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                        <label class="control control--checkbox" style="padding-left:35px;">Team<input type="checkbox" class="check_it" name="team" value="team">
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
+
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="form-group">
+                                                                <input type="submit" name="submit" class="submit-btn pull-right" value="Export">
+                                                                <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
+                                                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                                                    Print
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
                                             </div>
                                         <?php } ?>
                                         <!-- table -->
@@ -147,8 +225,11 @@
                                                                         <th>Employee Name</th>
                                                                         <th>Debit Amount</th>
                                                                         <th>Credit Amount</th>
+                                                                        <th>Gross Pay</th>
+                                                                        <th>Net Pay</th>
+                                                                        <th>Taxes</th>
                                                                         <th>Description</th>
-                                                                        <th>Is Deleted</th>
+                                                                        <th>Transaction Date</th>
                                                                         <th>Created At</th>
                                                                         <th>Updated At</th>
                                                                     </tr>
@@ -172,27 +253,37 @@
                                                                                     ?>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo $rowEmployee['debit_amount']; ?>
+                                                                                    <?php echo $rowEmployee['debit_amount'] != '' ? _a($rowEmployee['debit_amount']) : '-'; ?>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo $rowEmployee['credit_amount']; ?>
+                                                                                    <?php echo  $rowEmployee['credit_amount'] != '' ? _a($rowEmployee['credit_amount']) : '-'; ?>
                                                                                 </td>
+
+                                                                                <td>
+                                                                                    <?php echo  $rowEmployee['gross_pay'] != '' ? _a($rowEmployee['gross_pay']) : '-'; ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php echo  $rowEmployee['net_pay'] != '' ? _a($rowEmployee['net_pay']) : '-'; ?>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <?php echo  $rowEmployee['taxes'] != '' ? _a($rowEmployee['taxes']) : '-'; ?>
+                                                                                </td>
+
                                                                                 <td>
                                                                                     <?php echo $rowEmployee['description']; ?>
                                                                                 </td>
 
-                                                                                <td class="text-center">
+                                                                                <td>
                                                                                     <?php
-
-                                                                                    echo $rowEmployee['is_deleted'] ? "Yes" : "No";
-
-
+                                                                                    echo formatDateToDB($rowEmployee['transaction_date'], DB_DATE, DATE);
                                                                                     ?>
                                                                                 </td>
+
                                                                                 <td>
                                                                                     <?php
                                                                                     echo formatDateToDB($rowEmployee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-                                                                                    ?>s
+                                                                                    ?>
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php
@@ -204,7 +295,7 @@
                                                                         <?php } ?>
                                                                     <?php } else { ?>
                                                                         <tr>
-                                                                            <td class="text-center" colspan="7">
+                                                                            <td class="text-center" colspan="11">
                                                                                 <div class="no-data">No record found.</div>
                                                                             </td>
                                                                         </tr>
@@ -228,7 +319,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -245,7 +335,6 @@
 <script type="text/javascript">
     $(document).keypress(function(e) {
         if (e.which == 13) {
-            // enter pressed
             $('#btn_apply_filters').click();
         }
     });
@@ -254,16 +343,16 @@
         //
         var start_date_applied = $('#start_date_applied').val();
         var end_date_applied = $('#end_date_applied').val();
-
         var employees = $('#js-filter-employee').val();
         var departments = $('#teamId').val();
         var jobTitles = $('#jobtitleId').val();
+        var dateSelection = $("input[name=dateselection]:checked").val();
 
         //
         start_date_applied = start_date_applied != '' && start_date_applied != null && start_date_applied != undefined && start_date_applied != 0 ? encodeURIComponent(start_date_applied) : 'all';
         end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
 
-        var url = '<?php echo base_url('payrolls/ledger'); ?>' + '/' + start_date_applied + '/' + end_date_applied + '/' + employees + '/' + departments + '/' + jobTitles;
+        var url = '<?php echo base_url('payrolls/ledger'); ?>' + '/' + start_date_applied + '/' + end_date_applied + '/' + employees + '/' + departments + '/' + jobTitles + '/' + dateSelection;
 
         $('#btn_apply_filters').attr('href', url);
     }
@@ -275,16 +364,13 @@
         $('#teamId').select2();
         $('#jobtitleId').select2();
 
-
         <?php if ($this->uri->segment(5) != '') { ?>
             let filteremployes = "<?php echo $this->uri->segment(5); ?>";
             let filteremployeesArray = filteremployes.split(',');
             $('#js-filter-employee').select2('val', filteremployeesArray);
         <?php } else { ?>
             $('#js-filter-employee').select2('val', 'all');
-
         <?php } ?>
-
 
         <?php if ($this->uri->segment(6) != '') { ?>
             let filterDepartment = "<?php echo $this->uri->segment(6); ?>";
@@ -292,9 +378,7 @@
             $('#teamId').select2('val', filterDepartmentArray);
         <?php } else { ?>
             $('#teamId').select2('val', '0');
-
         <?php } ?>
-
 
         <?php if ($this->uri->segment(7) != '') { ?>
             let filterJobtitle = "<?php echo urldecode($this->uri->segment(7)); ?>";
@@ -302,7 +386,6 @@
             $('#jobtitleId').select2('val', filterJobTitleArray);
         <?php } else { ?>
             $('#jobtitleId').select2('val', 'all');
-
         <?php } ?>
 
 
@@ -346,6 +429,10 @@
             }
         }).datepicker('option', 'minDate', $('#start_date_applied').val());
 
+    });
+
+    $("#check_all").click(function() {
+        $(".check_it").prop("checked", this.checked);
     });
 
     function print_page(elem) {

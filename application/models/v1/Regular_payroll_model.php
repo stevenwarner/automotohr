@@ -1058,8 +1058,8 @@ class Regular_payroll_model extends Payroll_model
     }
 
 
-//
-    public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles,$filterDepartment, $limit = null, $start = null)
+    //
+    public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles, $filterDepartment, $limit = null, $start = null)
     {
         //
         $this->db->select('payroll_ledger.debit_amount');
@@ -1068,9 +1068,14 @@ class Regular_payroll_model extends Payroll_model
         $this->db->select('payroll_ledger.is_deleted');
         $this->db->select('payroll_ledger.created_at');
         $this->db->select('payroll_ledger.updated_at');
+        $this->db->select('payroll_ledger.gross_pay');
+        $this->db->select('payroll_ledger.net_pay');
+        $this->db->select('payroll_ledger.taxes');
+        $this->db->select('payroll_ledger.transaction_date');
         $this->db->select('users.sid');
         $this->db->select('users.first_name');
         $this->db->select('users.last_name');
+        $this->db->select('users.middle_name');
         $this->db->select('users.access_level');
         $this->db->select('users.timezone');
         $this->db->select('users.is_executive_admin');
@@ -1082,23 +1087,22 @@ class Regular_payroll_model extends Payroll_model
         //
         $this->db->join('users', 'users.sid = payroll_ledger.employee_sid', 'left');
         $this->db->where('users.parent_sid', $company_sids);
+        $this->db->where('payroll_ledger.is_deleted', 0);
+
         //
         if ($between != '' && $between != NULL) {
             $this->db->where($between);
         }
 
         if (!in_array("all", $filterEmployees)) {
-
             $this->db->where_in('payroll_ledger.employee_sid', $filterEmployees);
         }
 
         if (!in_array("0", $filterDepartment)) {
-
             $this->db->where_in('users.department_sid', $filterDepartment);
         }
 
         if (!in_array("all", $filterJobTitles)) {
-
             $i = 0;
             $this->db->group_start();
             foreach ($filterJobTitles as $title) {
