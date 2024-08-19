@@ -237,5 +237,15 @@
                 </a>
             </li>
         <?php } ?>
+        <?php if (isPayrollOrPlus()) { ?>
+            <li>
+                <a <?= uri_string() === "payrolls/ledger/import" ? 'class="active"' : ""; ?> href="<?php echo base_url('payrolls/ledger/import'); ?>">
+                    <figure>
+                        <i class="fa fa-upload" aria-hidden="true"></i>
+                    </figure>
+                    Import Payroll General Ledger
+                </a>
+            </li>
+        <?php } ?>
     </ul>
 </div>

@@ -2369,6 +2369,9 @@ $route['swap_shift_confirm/(:any)/(:any)/(:any)'] = 'v1/Shifts/Employee_shifts/s
 $route["settings/shifts/get_employee_list"]["post"] = "Settings/processGetEmployeeList";
 $route["settings/shifts/send_shift"]["post"] = "Settings/processSendShift";
 
+// Payroll Ledger
+$route["payrolls/ledger/import"]["get"] = "v1/payrolls/Ledger/import";
+$route['import-ledger/handler'] = 'v1/payrolls/Ledger/handler';
 
 
 /**
