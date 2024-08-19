@@ -6,7 +6,7 @@ loadController(
 
 class External extends Payroll_base_controller
 {
-   
+
     /**
      * main entry point to controller
      */
@@ -89,6 +89,13 @@ class External extends Payroll_base_controller
             $this->external_payroll_model
             ->hasExternalPayroll(
                 $this->data['loggedInPersonCompany']['sid']
+            );
+
+        // get the processed payrolls
+        $this->data["processedPayrollCount"] = $this
+            ->external_payroll_model
+            ->getProcessedPayrollCount(
+                $this->data["companyId"]
             );
 
         //
@@ -253,7 +260,7 @@ class External extends Payroll_base_controller
             'employee',
             $this->createMinifyFiles
         );
-        
+
         // get actual payroll
         $externalPayrollDetails =
             $this
@@ -270,7 +277,7 @@ class External extends Payroll_base_controller
                     'applicable_benefits',
                     'applicable_taxes',
                 ]
-            );  
+            );
         // decode json
         $externalPayrollDetails['applicable_earnings'] = json_decode($externalPayrollDetails['applicable_earnings'], true);
         $externalPayrollDetails['applicable_benefits'] = json_decode($externalPayrollDetails['applicable_benefits'], true);

@@ -1228,4 +1228,60 @@ class Regular_payroll_model extends Base_payroll_model
         return
             ['success' => true];
     }
+
+    /**
+     * cancel single payroll
+     *
+     * @param int $payrollId
+     * @return array
+     */
+    public function cancelPayroll(int $payrollId): array
+    {
+        // get single payroll
+        $payroll = $this->db
+            ->select('
+                gusto_uuid,
+                company_sid
+            ')
+            ->where('sid', $payrollId)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+        // add payroll uuid
+        $this->gustoCompany['other_uuid'] = $payroll['gusto_uuid'];
+        //
+        $gustoResponse = $this
+            ->lb_gusto
+            ->gustoCall(
+                'payroll_cancel',
+                $this->gustoCompany,
+                [],
+                "PUT",
+                true
+            );
+        // errors found
+        if ($gustoResponse["errors"]) {
+            return $gustoResponse;
+        }
+        //
+        $upd = [];
+        $upd['off_cycle'] = $gustoResponse['off_cycle'];
+        $upd['processed'] = $gustoResponse['processed'];
+        $upd['processed_date'] = $gustoResponse['processed_date'];
+        $upd['calculated_at'] = $gustoResponse['calculated_at'];
+        $upd['payroll_deadline'] = $gustoResponse['payroll_deadline'];
+        $upd['check_date'] = $gustoResponse['check_date'];
+        $upd['start_date'] = $gustoResponse["pay_period"]['start_date'];
+        $upd['end_date'] = $gustoResponse["pay_period"]['end_date'];
+        $upd['status'] = "pending";
+        $upd['updated_at'] = getSystemDate();
+        //
+        $this->db
+            ->where('sid', $payrollId)
+            ->update(
+                'payrolls.regular_payrolls',
+                $upd
+            );
+        //
+        return $gustoResponse;
+    }
 }

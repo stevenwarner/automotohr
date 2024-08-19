@@ -1,34 +1,46 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
-
-class History extends Public_controller
+// add the controller
+loadController(
+    "modules/payroll/Payroll_base_controller"
+);
+class History extends Payroll_base_controller
 {
-    /**
-     * for js
-     */
-    private $js;
-    /**
-     * for css
-     */
-    private $css;
-    /**
-     * wether to create minified files or not
-     */
-    private $createMinifyFiles;
     /**
      * main entry point to controller
      */
     public function __construct()
     {
         // inherit
-        parent::__construct();
+        parent::__construct(true);
         // Call the model
-        $this->load->model("v1/History_payroll_model", "history_payroll_model");
-        // set path to CSS file
-        $this->css = 'public/v1/css/payroll/history/';
-        // set path to JS file
-        $this->js = 'public/v1/js/payroll/history/';
-        //
-        $this->createMinifyFiles = true;
+        $this->load->model(
+            "v1/History_payroll_model",
+            "history_payroll_model"
+        );
+        // load compulsory plugins
+        // plugins
+        $this->data['pageCSS'] = [
+            base_url("public/v1/plugins/alertifyjs/css/alertify.min.css")
+        ];
+        $this->data['pageJs'] = [
+            base_url("public/v1/plugins/alertifyjs/alertify.min.js"),
+            base_url("public/v1/plugins/jquery/jquery-ui.js")
+        ];
+        // css
+        $this->data['appCSS'] = $this->loadCssBundle(
+            [
+                'v1/app/css/loader'
+            ],
+            'loader'
+        );
+        // load library
+        $this
+            ->load
+            ->library(
+                "Lb_gusto",
+                ["companyId" => $this->data["companyId"]],
+                "lb_gusto"
+            );
     }
 
     /**
@@ -37,39 +49,22 @@ class History extends Public_controller
     public function index()
     {
         //
-        $data = $this->getData();
+        $this->data['title'] = "Payrolls History";
         //
-        $data['title'] = "Payroll History";
-        // css
-        $data['appCSS'] = bundleCSS(
+        $this->data['appJs'] = $this->loadJsBundle(
             [
-                'v1/app/css/loader'
-            ],
-            $this->css,
-            'main',
-            $this->createMinifyFiles
-        );
-        //
-        $data['appJs'] = bundleJs(
-            [
-                'js/app_helper',
                 'v1/payroll/js/history/main'
             ],
-            $this->js,
-            'main',
-            $this->createMinifyFiles
+            'payroll_history'
         );
         // get the processed payrolls
-        $data['payrolls'] = $this
+        $this->data['payrolls'] = $this
             ->history_payroll_model
             ->getProcessedPayrolls(
-                $data['loggedInPersonCompanyId']
+                $this->data['companyId']
             );
         //
-        $this->load
-            ->view('main/header', $data)
-            ->view('v1/payroll/history/manage')
-            ->view('main/footer');
+        $this->loadView('v1/payroll/history/manage');
     }
 
     /**

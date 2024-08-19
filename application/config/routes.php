@@ -1890,10 +1890,6 @@ $route['payrolls/regular/(:num)/view/2']['get'] =
 $route['payrolls/regular/(:num)/view/3']['get'] =
   'v1/payrolls/regular/getRegularPayrollStep3/$1';
 
-// Payroll History routes
-$route['payrolls/history']['get'] = 'v1/payrolls/History/index';
-$route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';
-
 // pay stubs
 $route['payrolls/pay-stubs']['get'] = 'v1/payrolls/Pay_stub/index';
 $route['payrolls/pay-stubs/(:num)/view']['get'] = 'v1/payrolls/Pay_stub/generateView/$1';
@@ -2275,13 +2271,16 @@ $route['payrolls/regular/stage/(:num)/(:any)']['get'] =
 $route['payrolls/regular/discard/(:num)']['post'] =
   'v1/payrolls/regular/discardPayrollChanges/$1';
 // // cancel regular payroll
-// $route['payrolls/regular/(:num)/cancel']['put'] =
-//   'v1/payrolls/regular/cancelPayroll/$1';
+$route['payrolls/regular/(:num)/cancel']['put'] =
+  'v1/payrolls/regular/cancelPayroll/$1';
 
 // AJAX calls
 // get regular payroll step 1 view
 $route['payrolls/regular/(:num)/view/1']['get'] =
   'v1/payrolls/regular/getRegularPayrollStep1/$1';
+  // get regular payroll step 1 view
+$route['payrolls/off-cycle/(:num)/view/1']['get'] =
+  'v1/payrolls/Off_cycle_payroll/getRegularPayrollStep1/$1';
 // save regular payroll step 1
 $route['payrolls/regular/(:num)/save/1']['post'] =
   'v1/payrolls/regular/saveRegularPayrollStep1/$1';
@@ -2313,3 +2312,7 @@ $route['benefits/(:num)/employees/listing']['get'] = "v1/Company_benefits/genera
 $route['benefits/employees/(:num)/edit']['get'] = "v1/Company_benefits/generateBenefitEmployeesEditView/$1";
 $route['benefits/employees/(:num)']['post'] = "v1/Company_benefits/updateBenefitEmployee/$1";
 $route['benefits/employees/(:num)']['delete'] = "v1/Company_benefits/deleteBenefitEmployee/$1";
+
+// Payroll History routes
+$route['payrolls/history']['get'] = 'v1/payrolls/History/index';
+$route['payrolls/history/(:num)']['get'] = 'v1/payrolls/History/single/$1';

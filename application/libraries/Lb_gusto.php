@@ -1056,6 +1056,9 @@ class Lb_gusto
         // payroll_submit
         $urls["payroll_submit"] =
             "v1/companies/{$key}/payrolls/{$key1}/submit";
+            // payroll_cancel
+        $urls["payroll_cancel"] =
+            "v1/companies/{$key}/payrolls/{$key1}/cancel";
         // payroll_receipt
         $urls["payroll_receipt"] =
             "v1/payrolls/{$key1}/receipt";

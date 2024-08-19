@@ -94,6 +94,9 @@ class Off_cycle_payroll_model extends Base_payroll_model
         $ins['withholding_pay_period'] = $gustoResponse['response']['withholding_pay_period'];
         $ins['fixed_withholding_rate'] = $gustoResponse['response']['fixed_withholding_rate'];
         $ins['skip_regular_deductions'] = $gustoResponse['response']['skip_regular_deductions'];
+        $ins['fixed_compensations_json'] = json_encode(
+            $gustoResponse['response']['fixed_compensation_types']
+        );
         $ins['created_at'] = $ins['updated_at'] = getSystemDate();
         // insert
         $this->db
@@ -332,7 +335,7 @@ class Off_cycle_payroll_model extends Base_payroll_model
         //
         // errors found
         if (isset($gustoResponse["errors"])) {
-            return $gustoResponse["errors"];
+            return $gustoResponse;
         }
         //
         return [
@@ -342,7 +345,7 @@ class Off_cycle_payroll_model extends Base_payroll_model
         ];
     }
 
-     /**
+    /**
      * get filtered payroll employees
      *
      * @param int $companyId
@@ -419,4 +422,23 @@ class Off_cycle_payroll_model extends Base_payroll_model
             ->count_all_results("gusto_employees_payment_method");
     }
 
+
+    /**
+     * get regular payroll specific columns by id
+     *
+     * @param int $payrollId
+     * @param array $columns
+     * @return array
+     */
+    public function getRegularPayrollByIdColumns(
+        int $payrollId,
+        array $columns
+    ): array {
+        // get single payroll
+        return $this->db
+            ->select($columns)
+            ->where('sid', $payrollId)
+            ->get('payrolls.regular_payrolls')
+            ->row_array();
+    }
 }

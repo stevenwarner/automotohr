@@ -23,9 +23,9 @@
                     </div>
 
                     <!--  -->
-                    <div class="panel panel-success">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="csF16 csW" style="margin: 0">
+                            <h1 class="panel-heading-text text-medium">
                                 <strong>External Payrolls</strong>
                             </h1>
                         </div>
@@ -36,7 +36,7 @@
                                     <p class="csF16">To make sure we file your taxes properly, we need to collect some info from your employees' previous payrolls.</p>
                                 </div>
                                 <div class="col-sm-4 col-xs-12 text-right">
-                                    <?php if (!$hasExternalPayroll || $hasUnProcessedExternalPayroll) { ?>
+                                    <?php if (!$processedPayrollCount && (!$hasExternalPayroll || $hasUnProcessedExternalPayroll)) { ?>
                                         <a href="<?= base_url('payrolls/external/create'); ?>" class="btn csW csBG3 csF16">
                                             <i class="fa fa-plus-circle csF16"></i>
                                             &nbsp;Create an external payroll
@@ -80,7 +80,7 @@
                                                     </td>
                                                     <td class="vam">
                                                         <p class="csF16">
-                                                            <?=$value['employees_count'];?>
+                                                            <?= $value['employees_count']; ?>
                                                         </p>
                                                     </td>
                                                     <td class="vam text-right">
@@ -103,7 +103,7 @@
                                                 </tr>
                                             <?php } ?>
                                         </tbody>
-                                        <?php if ($hasUnProcessedExternalPayroll) { ?>
+                                        <?php if (!$processedPayrollCount && $hasUnProcessedExternalPayroll) { ?>
                                             <tfoot>
                                                 <tr>
                                                     <td class="vam text-right" colspan="3">

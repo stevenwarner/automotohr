@@ -57,7 +57,7 @@
                                 <?= _a($value['net_pay']); ?>
                             </td>
                             <td class="vam text-right">
-                                <?= _a($value['fixed_compensations']['reimbursement']['amount']); ?>
+                                <?= _a($value['fixed_compensations']['reimbursement']['amount'] ?? 0); ?>
                             </td>
                             <td class="vam text-right">
                                 <?= _a($calculatedTaxes['employer_tax_total']); ?>

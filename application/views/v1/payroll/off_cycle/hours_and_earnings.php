@@ -22,9 +22,9 @@
                         </div>
                     </div>
                     <!--  -->
-                    <div class="panel panel-success">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="csF16 csW" style="margin: 0">
+                            <h1 class="panel-heading-text text-medium">
                                 <strong>Off-cycle Payroll</strong>
                             </h1>
                         </div>
@@ -32,7 +32,7 @@
                             <!--  -->
                             <div class="row">
                                 <div class="col-sm-12">
-                                    <p class="csF16">
+                                    <p class="text-medium">
                                         <strong>Pay period: </strong>
                                         <?= formatDateToDB($payroll['start_date'], DB_DATE, DATE); ?> -
                                         <?= formatDateToDB($payroll['end_date'], DB_DATE, DATE); ?>
@@ -44,50 +44,39 @@
                             <!-- Steps -->
                             <div class="row">
                                 <!-- 1 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
+                                    <p class="text-medium" style="margin-top: 10px;">
                                         <strong>1. Basics</strong>
                                     </p>
                                 </div>
                                 <!-- 1 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
+                                    <p class="text-medium" style="margin-top: 10px;">
                                         <strong>2. Hours and earnings</strong>
                                     </p>
                                 </div>
 
-                                <!-- 2 -->
-                                <div class="col-sm-3 col-xs-12">
-                                    <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                        </div>
-                                    </div>
-                                    <p class="csF16" style="margin-top: 10px;">
-                                        3. Time off
-                                    </p>
-                                </div>
-
                                 <!-- 3 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
-                                        4. Review and submit
+                                    <p class="text-medium" style="margin-top: 10px;">
+                                        3. Review and submit
                                     </p>
                                 </div>
                             </div>
                             <br />
-                            <div class="alert alert-danger csF16">
+                            <div class="alert alert-danger text-medium">
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <p class="btn">
@@ -98,20 +87,20 @@
                                         </p>
                                     </div>
                                     <div class="col-sm-6 text-right">
-                                        <button class="btn btn-danger csF16 jsClearDraftData">
-                                            <i class="fa fa-times-circle csF16"></i>
+                                        <button class="btn btn-danger text-medium jsClearDraftData">
+                                            <i class="fa fa-times-circle text-medium"></i>
                                             &nbsp; Clear draft data
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <!-- Text -->
-                            <h1 class="csF16">
+                            <h1 class="text-medium">
                                 <strong>
                                     Hours and additional earnings
                                 </strong>
                             </h1>
-                            <p class="csF16">Update your employees' hours, reimbursements, and additional earnings below.</p>
+                            <p class="text-medium">Update your employees' hours, reimbursements, and additional earnings below.</p>
                             <hr />
                             <div class="table-responsive">
                                 <table class="table table-striped">

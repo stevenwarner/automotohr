@@ -18,7 +18,7 @@ $(function payrollHistory() {
 		rows +=
 			"You may cancel the <strong>" +
 			span +
-			"</strong> payroll now and run it again later. Just note that your employees will be paid late if you don't run it by 4:00pm PDT on <strong>" +
+			"</strong> payroll now and run it again later. Just note that your employees will be paid late if you don't run it by <strong>" +
 			payrollDeadline +
 			"</strong>.<br /><br />";
 		rows +=
@@ -57,17 +57,17 @@ $(function payrollHistory() {
 			method: "PUT",
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl("payrolls/history/");
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.refresh();
+				});
 			});
 	}
 	//

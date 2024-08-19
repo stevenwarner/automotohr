@@ -23,9 +23,9 @@
                     </div>
 
                     <!--  -->
-                    <div class="panel panel-success">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="csF16 csW" style="margin: 0">
+                            <h1 class="panel-heading-text text-medium">
                                 <strong>Basics</strong>
                             </h1>
                         </div>
@@ -33,45 +33,33 @@
                             <!-- Steps -->
                             <div class="row">
                                 <!-- 1 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
+                                    <p class="text-medium" style="margin-top: 10px;">
                                         <strong>1. Basics</strong>
                                     </p>
                                 </div>
                                 <!-- 1 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
+                                    <p class="text-medium" style="margin-top: 10px;">
                                         2. Hours and earnings
                                     </p>
                                 </div>
-
-                                <!-- 2 -->
-                                <div class="col-sm-3 col-xs-12">
-                                    <div class="progress mb0" style="height: 5px">
-                                        <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
-                                        </div>
-                                    </div>
-                                    <p class="csF16" style="margin-top: 10px;">
-                                        3. Time off
-                                    </p>
-                                </div>
-
                                 <!-- 3 -->
-                                <div class="col-sm-3 col-xs-12">
+                                <div class="col-sm-4 col-xs-12">
                                     <div class="progress mb0" style="height: 5px">
                                         <div class="progress-bar csBG3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
                                         </div>
                                     </div>
-                                    <p class="csF16" style="margin-top: 10px;">
-                                        4. Review and submit
+                                    <p class="text-medium" style="margin-top: 10px;">
+                                        3. Review and submit
                                     </p>
                                 </div>
                             </div>
@@ -81,8 +69,8 @@
                             <!--  -->
                             <form action="">
 
-                                <div class="form-group <?=$reason != 'off-cycle' ? 'hidden' : '';?>">
-                                    <label class="csF16">
+                                <div class="form-group <?= $reason != 'off-cycle' ? 'hidden' : ''; ?>">
+                                    <label class="text-medium">
                                         Choose the type of off-cycle payroll
                                         <strong class="text-danger">*</strong>
                                     </label>
@@ -95,7 +83,7 @@
                                     </p>
 
                                     <label class="control control--radio">
-                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?=$reason == 'corrections' ? 'checked' : '';?> value="Correction" />
+                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?= $reason == 'corrections' ? 'checked' : ''; ?> value="Correction" />
                                         Correction
                                         <p class="csF12" style="font-weight: normal">
                                             Run a payroll outside of your regular pay schedule
@@ -104,7 +92,7 @@
                                     </label>
                                     <br />
                                     <label class="control control--radio">
-                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?=$reason == 'bonus' ? 'checked' : '';?> value="Bonus" />
+                                        <input type="radio" name="payroll[off_cycle_reason]" class="" <?= $reason == 'bonus' ? 'checked' : ''; ?> value="Bonus" />
                                         Bonus
                                         <p class="csF12" style="font-weight: normal">
                                             Reward a team member with a bonus, gift, or commission
@@ -115,7 +103,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="csF16">
+                                    <label class="text-medium">
                                         Work period
                                         <strong class="text-danger">*</strong>
                                     </label>
@@ -131,7 +119,7 @@
                                         <div class="col-sm-2">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
-                                                    <i class="fa fa-calendar csF16" aria-hidden="true"></i>
+                                                    <i class="fa fa-calendar text-medium" aria-hidden="true"></i>
                                                 </div>
                                                 <input type="text" name="payroll[start_date]" class="form-control jsDatePicker" placeholder="MM/DD/YYYY" readonly />
                                             </div>
@@ -139,7 +127,7 @@
                                         <div class="col-sm-2">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
-                                                    <i class="fa fa-calendar csF16" aria-hidden="true"></i>
+                                                    <i class="fa fa-calendar text-medium" aria-hidden="true"></i>
                                                 </div>
                                                 <input type="text" name="payroll[end_date]" class="form-control jsDatePicker" placeholder="MM/DD/YYYY" readonly />
                                             </div>
@@ -149,7 +137,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="csF16">
+                                    <label class="text-medium">
                                         Payment date
                                         <strong class="text-danger">*</strong>
                                     </label>
@@ -165,7 +153,7 @@
                                         <div class="col-sm-2">
                                             <div class="input-group">
                                                 <div class="input-group-addon">
-                                                    <i class="fa fa-calendar csF16" aria-hidden="true"></i>
+                                                    <i class="fa fa-calendar text-medium" aria-hidden="true"></i>
                                                 </div>
                                                 <input type="text" name="payroll[check_date]" class="form-control jsDatePicker" placeholder=" MM/DD/YYYY" readonly />
                                             </div>
@@ -175,7 +163,7 @@
 
                                 <hr />
                                 <div class="form-group">
-                                    <h1 class="csF16">
+                                    <h1 class="text-medium">
                                         <strong>
                                             Deductions and contributions
                                         </strong>
@@ -199,13 +187,13 @@
 
                                 <hr />
                                 <div class="form-group">
-                                    <h1 class="csF16">
+                                    <h1 class="text-medium">
                                         <strong>
                                             Tax withholding rates
                                         </strong>
                                         <span class="pull-right">
-                                            <button type="button" class="btn btn-warning csF16 jsToggleTaxView">
-                                                <i class="fa fa-edit csF16" aria-hidden="true"></i>
+                                            <button type="button" class="btn btn-warning text-medium jsToggleTaxView">
+                                                <i class="fa fa-edit text-medium" aria-hidden="true"></i>
                                                 &nbsp;Edit
                                             </button>
                                         </span>
@@ -214,7 +202,7 @@
                                     <!--  -->
                                     <div class="panel panel-success jsTaxView hidden">
                                         <div class="panel-body">
-                                            <h1 class="csF16">
+                                            <h1 class="text-medium">
                                                 <strong>
                                                     Rate for regular wages and earnings
                                                 </strong>
@@ -226,7 +214,7 @@
                                                 Regular wages should be taxed at a rate matching your employees' regular pay schedule. Select the most accurate pay schedule below.
                                             </p>
                                             <!-- < -->
-                                            <label class="csF16">
+                                            <label class="text-medium">
                                                 Rate is based on payment schedule of
                                             </label>
                                             <select class="form-control" name="payroll[withholding_pay_period]">
@@ -240,7 +228,7 @@
                                             </select>
 
                                             <br />
-                                            <h1 class="csF16">
+                                            <h1 class="text-medium">
                                                 <strong>
                                                     Rate for regular wages and earnings
                                                 </strong>
@@ -312,7 +300,7 @@
                                                     <td class="vam">
                                                         Not taxed
                                                         &nbsp;
-                                                        <i class="fa fa-info-circle csF16" aria-hidden="true" title="Reimbursements are typically untaxed, so we won't withhold any taxes from these wages." placement="top"></i>
+                                                        <i class="fa fa-info-circle text-medium" aria-hidden="true" title="Reimbursements are typically untaxed, so we won't withhold any taxes from these wages." placement="top"></i>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -321,7 +309,7 @@
                                 </div>
                                 <hr>
                                 <div class="form-group">
-                                    <h1 class="csF16">
+                                    <h1 class="text-medium">
                                         <strong>
                                             Employees
                                         </strong>
@@ -369,13 +357,13 @@
                         </div>
                         <div class="panel-footer text-right">
                             <!-- cancel -->
-                            <a href="<?= base_url('payrolls/dashboard'); ?>" class="btn csW csBG4 csF16">
-                                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+                            <a href="<?= base_url('payrolls/dashboard'); ?>" class="btn csW csBG4 text-medium">
+                                <i class="fa fa-times-circle text-medium" aria-hidden="true"></i>
                                 &nbsp;Cancel
                             </a>
                             <?php if ($payrollEmployees) { ?>
-                                <button class="btn csW csBG3 csF16 jsOffCycleSave">
-                                    <i class="fa fa-save csF16" aria-hidden="true"></i>
+                                <button class="btn csW csBG3 text-medium jsOffCycleSave">
+                                    <i class="fa fa-save text-medium" aria-hidden="true"></i>
                                     &nbsp;Continue
                                 </button>
                             <?php } ?>

@@ -510,7 +510,7 @@ class External_payroll_model extends Base_payroll_model
                         'description' => $benefit['description'],
                         'company_contribution_amount' => $rates['company_contribution'],
                         'employee_deduction_amount' => $rates['employee_deduction'],
-                    ];   
+                    ];
                 }
             }
         }
@@ -1086,7 +1086,8 @@ class External_payroll_model extends Base_payroll_model
         return $newPayroll;
     }
 
-    public function getBenefitRate ($title, $employeeId) {
+    public function getBenefitRate($title, $employeeId)
+    {
         // fetch
         $record = $this->db
             ->select('
@@ -1104,5 +1105,19 @@ class External_payroll_model extends Base_payroll_model
         }
         //
         return $record;
+    }
+
+
+    public function getProcessedPayrollCount(int $companyId): int
+    {
+        return $this
+            ->db
+            ->where([
+                "company_sid" => $companyId,
+                "processed" => 1,
+            ])
+            ->count_all_results(
+                "payrolls.regular_payrolls"
+            );
     }
 }

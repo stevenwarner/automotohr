@@ -23,9 +23,9 @@
                     </div>
 
                     <!--  -->
-                    <div class="panel panel-success">
+                    <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h1 class="csF16 csW" style="margin: 0">
+                            <h1 class="panel-heading-text text-medium" style="margin: 0">
                                 <strong>Payroll history</strong>
                             </h1>
                         </div>
@@ -50,7 +50,18 @@
                                         </thead>
                                         <tbody>
                                             <?php foreach ($payrolls as $payroll) {
-                                                $payroll['payroll_deadline'] = formatDateToDB($payroll['payroll_deadline'], 'Y-m-d\TH:i:sZ', DB_DATE) . ' 16:00:00'; ?>
+
+                                                $payroll['payroll_deadline'] = reset_datetime(
+                                                    [
+                                                        "datetime" => $payroll['payroll_deadline'],
+                                                        "from_timezone" => "UTC",
+                                                        "timezone" => "PDT",
+                                                        "from_format" => 'Y-m-d\TH:i:sZ',
+                                                        "format" => DB_DATE . " H:i:s",
+                                                        "_this" => $this
+                                                    ]
+                                                );
+                                            ?>
                                                 <tr>
                                                     <td class="vam">
                                                         <?= formatDateToDB($payroll['check_date'], DB_DATE, DATE); ?>
@@ -68,13 +79,13 @@
                                                     </td>
                                                     <td class="vam text-right">
                                                         <?php if ($payroll['payroll_deadline'] >= getSystemDate()) { ?>
-                                                            <button class="btn csW csBG4 csF16 jsCancelPayroll" data-span="<?= formatDateToDB($payroll['start_date'], DB_DATE, DATE); ?> - <?= formatDateToDB($payroll['end_date'], DB_DATE, DATE); ?>" data-deadline="<?= formatDateToDB($payroll['payroll_deadline'], DB_DATE_WITH_TIME, DATE); ?>" data-key="<?= $payroll['sid']; ?>" title="This payroll can still be cancelled." placement="top">
-                                                                <i class="fa fa-times-circle csF16" aria-hidden="true"></i>
+                                                            <button class="btn btn-black jsCancelPayroll" data-span="<?= formatDateToDB($payroll['start_date'], DB_DATE, DATE); ?> - <?= formatDateToDB($payroll['end_date'], DB_DATE, DATE); ?>" data-deadline="<?= formatDateToDB($payroll['payroll_deadline'], DB_DATE_WITH_TIME, DATE. " h:i A T"); ?>" data-key="<?= $payroll['sid']; ?>" title="This payroll can still be cancelled." placement="top">
+                                                                <i class="fa fa-times-circle" aria-hidden="true"></i>
                                                                 &nbsp;Cancel this payroll
                                                             </button>
                                                         <?php } ?>
-                                                        <a href="<?= base_url('payrolls/history/' . $payroll['sid'] . ''); ?>" class="btn csW csBG3 csF16">
-                                                            <i class="fa fa-eye csF16" aria-hidden="true"></i>
+                                                        <a href="<?= base_url('payrolls/history/' . $payroll['sid'] . ''); ?>" class="btn btn-orange">
+                                                            <i class="fa fa-eye" aria-hidden="true"></i>
                                                             &nbsp;View details
                                                         </a>
                                                     </td>

@@ -597,14 +597,12 @@ class Regular extends Payroll_base_controller
      */
     public function cancelPayroll(int $payrollId)
     {
-        // get the session
-        $session = checkUserSession(false);
-        // check session and generate proper error
-        $this->checkSessionStatus($session);
-        // check if company is on payroll
-        $this->checkForLinkedCompany(true);
         // get payroll one more time
-        $gustoResponse = $this->regular_payroll_model
+        $gustoResponse = $this
+            ->regular_payroll_model
+            ->setCompanyDetails(
+                $this->data["companyId"]
+            )
             ->cancelPayroll($payrollId);
 
         return SendResponse(

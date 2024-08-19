@@ -1,4 +1,4 @@
-$(function(){
+$(function () {
 	/**
 	 * get the payroll id from segment
 	 */
@@ -30,17 +30,17 @@ $(function(){
 			method: "POST",
 			cache: false,
 		})
-			.success(function (resp) {
-				return _success(resp.msg, function () {
-					window.location.href = baseUrl("payrolls/off-cycle");
-				});
-			})
-			.fail(handleErrorResponse)
 			.always(function () {
 				//
 				XHR = null;
 				//
 				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function (resp) {
+				return _success(resp.msg, function () {
+					window.location.href = baseUrl("payrolls/off-cycle");
+				});
 			});
 	}
-})
+});

@@ -17,8 +17,10 @@ class Off_cycle_payroll extends Payroll_base_controller
         $this->form_validation->set_message('required', '"{field}" is required.');
         $this->form_validation->set_message('valid_date', '"{field}" is invalid.');
         // Call the model
-        $this->load->model("v1/Payroll/Off_cycle_payroll_model", "off_cycle_payroll_model");
-        $this->load->model("v1/Payroll/Regular_payroll_model", "regular_payroll_model");
+        $this->load->model(
+            "v1/Payroll/Off_cycle_payroll_model",
+            "off_cycle_payroll_model"
+        );
         // load compulsory plugins
         // plugins
         $this->data['pageCSS'] = [
@@ -37,29 +39,26 @@ class Off_cycle_payroll extends Payroll_base_controller
      * @param string $reason
      */
     public function index(string $reason)
-    {   
-        //
-        // let's check if there are any payroll blockers
-        $payrollBlockers = $this->regular_payroll_model
-            ->getRegularPayrollBlocker(
-                $this->data['session']['company_detail']['sid']
-            );
-        //
-        if ($payrollBlockers['data']) {
-            //
-            $this->data['title'] = "Payroll blockers";
-            $this->data['payrollBlockers'] = $payrollBlockers['data'];
-            //
-            $this->loadView('v1/payroll/regular/blockers');
+    {
+        // check the payroll blockers
+        if ($this->checkForPayrollBlockers()) {
+            return true;
         }
         //
         $parsedReason = getReason($reason);
         // check if off cycle already exists
-        $payrollId = $this->off_cycle_payroll_model->getPayrollId($parsedReason, $this->data['session']['company_detail']['sid']);
+        $payrollId = $this
+            ->off_cycle_payroll_model
+            ->getPayrollId(
+                $parsedReason,
+                $this->data["companyId"]
+            );
         //
         if ($payrollId) {
             // redirect to payroll
-            return redirect("/payrolls/{$reason}/{$payrollId}/hours_and_earnings");
+            return redirect(
+                "/payrolls/{$reason}/{$payrollId}/hours_and_earnings"
+            );
         }
         //
         $this->basic($reason);
@@ -73,31 +72,31 @@ class Off_cycle_payroll extends Payroll_base_controller
     public function basic(string $reason)
     {
         //
-        //
         $this->data['title'] = "Basic details";
         // get payroll employees
-        $this->data['payrollEmployees'] = $this->off_cycle_payroll_model
+        $this->data['payrollEmployees'] = $this
+            ->off_cycle_payroll_model
             ->getFilteredPayrollEmployees(
-                $this->data['session']['company_detail']['sid']
+                $this->data["companyId"]
             );
-        $this->data['schedule'] = $this->off_cycle_payroll_model
+        $this->data['schedule'] = $this
+            ->off_cycle_payroll_model
             ->getCompanySchedule(
-                $this->data['session']['company_detail']['sid']
+                $this->data["companyId"]
             );
         //
         $this->data['appCSS'] =  $this->loadCssBundle(
             [
                 'v1/app/css/loader'
             ],
-            'basic'
+            'off_cycle_basic'
         );
         //
         $this->data['appJs'] =  $this->loadJsBundle(
             [
-                'js/app_helper',
                 'v1/payroll/js/off_cycle/basic'
             ],
-            'basic'
+            'off_cycle_basic'
         );
         //
         $this->data['reason'] = $reason;
@@ -114,10 +113,10 @@ class Off_cycle_payroll extends Payroll_base_controller
     public function hoursAndEarnings(string $reason, int $payrollId)
     {
         //
-        //
-        $this->data['title'] = "Hours and earnings details";
+        $this->data['title'] = "{$reason} Payroll | Hours and earnings";
         // get data
-        $this->data['payroll'] = $this->regular_payroll_model
+        $this->data['payroll'] = $this
+            ->off_cycle_payroll_model
             ->getRegularPayrollByIdColumns(
                 $payrollId,
                 [
@@ -130,67 +129,20 @@ class Off_cycle_payroll extends Payroll_base_controller
         //
         $this->data['appCSS'] =  $this->loadCssBundle(
             [
-                'v1/plugins/ms_modal/main',
                 'v1/app/css/loader'
             ],
-            'hours_and_earnings'
+            'off_cycle_basic_hours_and_earnings'
         );
         //
         $this->data['appJs'] =  $this->loadJsBundle(
             [
-                'v1/plugins/ms_modal/main',
-                'js/app_helper',
                 'v1/payroll/js/off_cycle/clear_data',
                 'v1/payroll/js/off_cycle/hours_and_earnings'
             ],
-            'hours_and_earnings'
+            'off_cycle_basic_hours_and_earnings'
         );
         //
         $this->loadView('v1/payroll/off_cycle/hours_and_earnings');
-    }
-
-    /**
-     * hours and earnings
-     *
-     * @param string $reason
-     * @param string $payrollId
-     */
-    public function timeOff(string $reason, int $payrollId)
-    {
-        //
-        //
-        $this->data['title'] = "Time off details";
-        // get data
-        $this->data['payroll'] = $this->regular_payroll_model
-            ->getRegularPayrollByIdColumns(
-                $payrollId,
-                [
-                    'start_date',
-                    'end_date',
-                    'check_date',
-                    'payroll_deadline'
-                ]
-            );
-        // css
-        $this->data['appCSS'] =  $this->loadCssBundle(
-            [
-                'v1/plugins/ms_modal/main',
-                'v1/app/css/loader'
-            ],
-            'timeoff'
-        );
-        //
-        $this->data['appJs'] =  $this->loadJsBundle(
-            [
-                'v1/plugins/ms_modal/main',
-                'js/app_helper',
-                'v1/payroll/js/off_cycle/clear_data',
-                'v1/payroll/js/off_cycle/timeoff'
-            ],
-            'timeoff'
-        );
-        //
-        $this->loadView('v1/payroll/off_cycle/timeoff');
     }
 
     /**
@@ -253,8 +205,6 @@ class Off_cycle_payroll extends Payroll_base_controller
      */
     public function processBasics(): array
     {
-        // check if company is on payroll
-        $this->checkForLinkedCompany(true);
         // get sanitized post
         $post = $this->input->post(null, true);
         // set errors array
@@ -298,14 +248,29 @@ class Off_cycle_payroll extends Payroll_base_controller
             return SendResponse(400, ['errors' => $errorsArray]);
         }
         // check if payroll already exists
-        if ($this->off_cycle_payroll_model->getPayrollId($post['off_cycle_reason'], $this->data['session']['company_detail']['sid'])) {
-            return SendResponse(400, ['errors' => ['"' . ($post['off_cycle_reason']) . '" already in progress.']]);
+        if ($this
+            ->off_cycle_payroll_model
+            ->getPayrollId(
+                $post['off_cycle_reason'],
+                $this->data['companyId']
+            )
+        ) {
+            return SendResponse(
+                400,
+                [
+                    'errors' => [
+                        '"' . ($post['off_cycle_reason']) . '" already in progress.'
+                    ]
+                ]
+            );
         }
         // 
-        $response = $this->off_cycle_payroll_model->processOffCyclePayroll(
-            $this->data['session']['company_detail']['sid'],
-            $post
-        );
+        $response = $this
+            ->off_cycle_payroll_model
+            ->processOffCyclePayroll(
+                $this->data['companyId'],
+                $post
+            );
         //
         return SendResponse(
             $response['errors'] ? 400 : 200,
@@ -350,4 +315,65 @@ class Off_cycle_payroll extends Payroll_base_controller
         );
     }
 
+
+    /**
+     * get the regular payroll view
+     *
+     * @param int $payrollId
+     * @return JSON
+     */
+    public function getRegularPayrollStep1(int $payrollId): array
+    {
+        // get the session
+        $session = checkUserSession(false);
+        // check session and generate proper error
+        $this->checkSessionStatus();
+        // check if company is on payroll
+        $this->checkForLinkedCompany(true);
+        //
+        $passData = [
+            'payrollEmployees' => []
+        ];
+        // get the single payroll
+        $regularPayroll = $this
+            ->regular_payroll_model
+            ->getRegularPayrollById(
+                $session['company_detail']['sid'],
+                $payrollId,
+                [
+                    "sid",
+                    "gusto_uuid",
+                    "start_date",
+                    "end_date",
+                    "check_date",
+                    "payroll_deadline",
+                    "fixed_compensations_json"
+                ]
+            );
+        //
+        if ($regularPayroll['employees']) {
+            $payrollEmployees = $this
+                ->regular_payroll_model
+                ->getPayrollEmployeesWithCompensation(
+                    $session['company_detail']['sid'],
+                    true
+                );
+            $passData['payrollEmployees'] = $payrollEmployees;
+        }
+        //
+        $passData['regularPayroll'] = $regularPayroll;
+        // send response
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view(
+                    'modules/payroll/regular/partials/hours_and_earnings_view',
+                    $passData,
+                    true
+                ),
+                'employees' => $passData['payrollEmployees'],
+                'payroll' => $passData['regularPayroll']
+            ]
+        );
+    }
 }
