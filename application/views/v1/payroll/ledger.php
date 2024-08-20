@@ -1,3 +1,6 @@
+<?php
+$filter_state = $this->uri->segment(3) != '' ? true : false;
+?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -86,7 +89,7 @@
 
                                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                                         <label class="">End Date</label>
-                                                                        <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-d-Y'); ?>
+                                                                        <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-t-Y'); ?>
                                                                         <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                                     </div>
                                                                 </div>
@@ -222,7 +225,7 @@
                                                             <table class="table table-bordered horizontal-scroll" id="example">
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Employee Name</th>
+                                                                        <th>Employee/Company</th>
                                                                         <th>Debit Amount</th>
                                                                         <th>Credit Amount</th>
                                                                         <th>Gross Pay</th>
@@ -230,69 +233,123 @@
                                                                         <th>Taxes</th>
                                                                         <th>Description</th>
                                                                         <th>Transaction Date</th>
-                                                                        <th>Created At</th>
-                                                                        <th>Updated At</th>
+                                                                        <th>Start Date</th>
+                                                                        <th>End Date</th>
+                                                                        <th>Imported At</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) { ?>
+                                                                    <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) {
+
+                                                                        $debitAmountTotal = 0;
+                                                                        $creditAmountTotal = 0;
+                                                                        $grossPayTotal = 0;
+                                                                        $netPayTotal = 0;
+                                                                        $taxesTotal = 0;
+
+                                                                    ?>
                                                                         <?php foreach ($employeesLedger as $rowEmployee) { ?>
                                                                             <tr>
                                                                                 <td>
                                                                                     <?php
-                                                                                    echo remakeEmployeeName([
-                                                                                        'first_name' => $rowEmployee['first_name'],
-                                                                                        'last_name' => $rowEmployee['last_name'],
-                                                                                        'access_level' => $rowEmployee['access_level'],
-                                                                                        'timezone' => isset($rowEmployee['timezone']) ? $rowEmployee['timezone'] : '',
-                                                                                        'access_level_plus' => $rowEmployee['access_level_plus'],
-                                                                                        'is_executive_admin' => $rowEmployee['is_executive_admin'],
-                                                                                        'pay_plan_flag' => $rowEmployee['pay_plan_flag'],
-                                                                                        'job_title' => $rowEmployee['job_title'],
-                                                                                    ]);
+
+                                                                                    if ($rowEmployee['employee_sid'] !== null) {
+                                                                                        echo remakeEmployeeName([
+                                                                                            'first_name' => $rowEmployee['first_name'],
+                                                                                            'last_name' => $rowEmployee['last_name'],
+                                                                                            'access_level' => $rowEmployee['access_level'],
+                                                                                            'timezone' => isset($rowEmployee['timezone']) ? $rowEmployee['timezone'] : '',
+                                                                                            'access_level_plus' => $rowEmployee['access_level_plus'],
+                                                                                            'is_executive_admin' => $rowEmployee['is_executive_admin'],
+                                                                                            'pay_plan_flag' => $rowEmployee['pay_plan_flag'],
+                                                                                            'job_title' => $rowEmployee['job_title'],
+                                                                                        ]);
+                                                                                    } else {
+                                                                                        echo getCompanyNameBySid($rowEmployee['company_sid']);
+                                                                                    }
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td class="text-success">
+                                                                                    <?php
+                                                                                    $debitAmountTotal = $debitAmountTotal + $rowEmployee['debit_amount'];
+                                                                                    echo $rowEmployee['debit_amount'] != '' ? _a($rowEmployee['debit_amount']) : '-';
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td class="text-danger">
+                                                                                    <?php
+                                                                                    $creditAmountTotal = $creditAmountTotal + $rowEmployee['credit_amount'];
+                                                                                    echo  $rowEmployee['credit_amount'] != '' ? _a($rowEmployee['credit_amount']) : '-';
                                                                                     ?>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo $rowEmployee['debit_amount'] != '' ? _a($rowEmployee['debit_amount']) : '-'; ?>
+                                                                                    <?php
+                                                                                    $grossPayTotal = $grossPayTotal + $rowEmployee['gross_pay'];
+                                                                                    echo  $rowEmployee['gross_pay'] != '' ? _a($rowEmployee['gross_pay']) : '-'; ?>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo  $rowEmployee['credit_amount'] != '' ? _a($rowEmployee['credit_amount']) : '-'; ?>
-                                                                                </td>
-
-                                                                                <td>
-                                                                                    <?php echo  $rowEmployee['gross_pay'] != '' ? _a($rowEmployee['gross_pay']) : '-'; ?>
+                                                                                    <?php
+                                                                                    $netPayTotal = $netPayTotal + $rowEmployee['net_pay'];
+                                                                                    echo  $rowEmployee['net_pay'] != '' ? _a($rowEmployee['net_pay']) : '-'; ?>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <?php echo  $rowEmployee['net_pay'] != '' ? _a($rowEmployee['net_pay']) : '-'; ?>
+                                                                                    <?php
+                                                                                    $taxesTotal = $taxesTotal + $rowEmployee['taxes'];
+                                                                                    echo  $rowEmployee['taxes'] != '' ? _a($rowEmployee['taxes']) : '-'; ?>
                                                                                 </td>
-
-                                                                                <td>
-                                                                                    <?php echo  $rowEmployee['taxes'] != '' ? _a($rowEmployee['taxes']) : '-'; ?>
-                                                                                </td>
-
                                                                                 <td>
                                                                                     <?php echo $rowEmployee['description']; ?>
                                                                                 </td>
-
                                                                                 <td>
                                                                                     <?php
                                                                                     echo formatDateToDB($rowEmployee['transaction_date'], DB_DATE, DATE);
                                                                                     ?>
                                                                                 </td>
-
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo formatDateToDB($rowEmployee['start_date'], DB_DATE, DATE);
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo formatDateToDB($rowEmployee['end_date'], DB_DATE, DATE);
+                                                                                    ?>
+                                                                                </td>
                                                                                 <td>
                                                                                     <?php
                                                                                     echo formatDateToDB($rowEmployee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                                                     ?>
                                                                                 </td>
-                                                                                <td>
-                                                                                    <?php
-                                                                                    echo formatDateToDB($rowEmployee['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-                                                                                    ?>
-                                                                                </td>
-
                                                                             </tr>
                                                                         <?php } ?>
+
+
+                                                                        <tr class="bg-header-green">
+                                                                            <td>
+                                                                                Grand Total:
+                                                                            </td>
+                                                                            <td class="text-success">
+                                                                                <?php echo $debitAmountTotal > 0 ? _a($debitAmountTotal) : '-'; ?>
+                                                                            </td>
+                                                                            <td class="text-danger">
+                                                                                <?php echo  $creditAmountTotal > 0 ? _a($creditAmountTotal) : '-'; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php echo  $grossPayTotal > 0 ? _a($grossPayTotal) : '-'; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php echo  $netPayTotal > 0 ? _a($netPayTotal) : '-'; ?>
+                                                                            </td>
+                                                                            <td>
+                                                                                <?php echo  $taxesTotal > 0 ? _a($taxesTotal) : '-'; ?>
+                                                                            </td>
+                                                                            <td></td>
+                                                                            <td>  </td>
+                                                                            <td> </td>
+                                                                            <td></td>
+                                                                            <td> </td>
+                                                                        </tr>
+
+
                                                                     <?php } else { ?>
                                                                         <tr>
                                                                             <td class="text-center" colspan="11">

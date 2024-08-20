@@ -2938,7 +2938,7 @@ class Payroll extends CI_Controller
             $data['ledgerCount'] = sizeof($this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, null, null));
             /** pagination * */
             $this->load->library('pagination');
-            $records_per_page = PAGINATION_RECORDS_PER_PAGE;
+            $records_per_page =  PAGINATION_RECORDS_PER_PAGE;
             $my_offset = 0;
             //
             if ($page_number > 1) {
@@ -2983,7 +2983,10 @@ class Payroll extends CI_Controller
             $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
             $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
 
+
             $data['employeesLedger'] = $this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, $records_per_page, $my_offset);
+
+
             //
             if (sizeof($this->input->post(NULL, TRUE))) {
 
@@ -3013,11 +3016,13 @@ class Payroll extends CI_Controller
                 $additionalHeader['debit_amount'] = 'Debit Amount';
                 $additionalHeader['credit_amount'] = 'Credit Amount';
                 $additionalHeader['gross_pay'] = 'Gross Pay';
+                $additionalHeader['net_pay'] = 'Net Pay';
                 $additionalHeader['taxes'] = 'Taxes';
                 $additionalHeader['description'] = 'Description';
                 $additionalHeader['transaction_date'] = 'Transaction Date';
-                $additionalHeader['created_at'] = 'Created At';
-                $additionalHeader['updated_at'] = 'Updated At';
+                $additionalHeader['start_date'] = 'Stard Date';
+                $additionalHeader['end_date'] = 'End Date';
+                $additionalHeader['created_at'] = 'Imported At';
 
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=employees_ledger_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
@@ -3039,31 +3044,30 @@ class Payroll extends CI_Controller
 
                 if (!empty($data['employeesLedger'])) {
                     foreach ($data['employeesLedger'] as $ledgerRow) {
-                     
+
                         $input = array();
 
                         $teamDepartment = [];
 
                         if ($additionalHeader['employee_id']) {
-                            $input['employee_sid'] = $ledgerRow['sid'];
+                            $input['employee_sid'] = $ledgerRow['employee_sid'];
                         }
                         if ($additionalHeader['first_name']) {
                             $input['first_name'] = $ledgerRow['first_name'];
                         }
-                        if ($additionalHeader['last_name']) {
-                            $input['last_name'] = $ledgerRow['last_name'];
-                        }
                         if ($additionalHeader['middle_name']) {
                             $input['middle_name'] = $ledgerRow['middle_name'];
+                        }
+                        if ($additionalHeader['last_name']) {
+                            $input['last_name'] = $ledgerRow['last_name'];
                         }
                         if ($additionalHeader['job_title']) {
                             $input['job_title'] = $ledgerRow['job_title'];
                         }
-
                         if ($additionalHeader['department'] || $additionalHeader['team']) {
-                            $teamDepartment = getEmployeeDepartmentAndTeams($ledgerRow['sid']);
-                        }
 
+                            $teamDepartment = $ledgerRow['employee_sid'] != null ? getEmployeeDepartmentAndTeams($ledgerRow['employee_sid']) : '';
+                        }
                         if ($additionalHeader['department']) {
                             $departments = !empty($teamDepartment['departments']) ? implode(',', array_column($teamDepartment['departments'], 'name')) : '';
                             $input['department'] = $departments;
@@ -3073,7 +3077,6 @@ class Payroll extends CI_Controller
                             $input['team'] = $teams;
                         }
 
-                        //  $input['employee_name'] = $employeeName;
                         $input['debit_amount'] = $ledgerRow['debit_amount'] ? _a($ledgerRow['debit_amount']) : '-';
                         $input['credit_amount'] = $ledgerRow['credit_amount'] ? _a($ledgerRow['credit_amount']) : '-';
                         $input['gross_pay'] = $ledgerRow['gross_pay'] ? _a($ledgerRow['gross_pay']) : '-';
@@ -3081,9 +3084,9 @@ class Payroll extends CI_Controller
                         $input['taxes'] = $ledgerRow['taxes'] ? _a($ledgerRow['taxes']) : '-';
                         $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
                         $input['transaction_date'] = formatDateToDB($ledgerRow['transaction_date'], DB_DATE, DATE);
-                        $input['created_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-                        $input['updated_at'] = formatDateToDB($ledgerRow['updated_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-
+                        $input['start_date'] = formatDateToDB($ledgerRow['start_date'], DB_DATE, DATE);
+                        $input['end_date'] = formatDateToDB($ledgerRow['end_date'], DB_DATE, DATE);
+                        $input['imported_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                         fputcsv($output, $input);
                     }
                 }
