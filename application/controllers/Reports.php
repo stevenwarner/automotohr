@@ -276,7 +276,6 @@ class Reports extends Public_Controller
 
                     foreach ($myRecords as $applicant) {
                         $input = array();
-
                         foreach ($myColumns as $myColumn) {
                             if ($myColumn != 'questionnaire' && $myColumn != 'score' && $myColumn != 'passing_score' && $myColumn != 'sid') {
                                 if ($myColumn != 'Title' && $myColumn != 'applicant_type') {

@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+
+use Sabberworm\CSS\Value\Value;
+
+defined('BASEPATH') || exit('No direct script access allowed');
 // load the payroll model
 loadUpModel('v1/Payroll_model', 'Payroll_model');
 /**
@@ -1055,5 +1059,237 @@ class Regular_payroll_model extends Payroll_model
         //
         return
             ['success' => true];
+    }
+
+
+    //
+    public function getEmployeesLedger_old($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles, $filterDepartment, $limit = null, $start = null)
+    {
+        //
+        $this->db->select('payroll_ledger.debit_amount');
+        $this->db->select('payroll_ledger.credit_amount');
+        $this->db->select('payroll_ledger.description');
+        $this->db->select('payroll_ledger.is_deleted');
+        $this->db->select('payroll_ledger.created_at');
+        $this->db->select('payroll_ledger.updated_at');
+        $this->db->select('payroll_ledger.gross_pay');
+        $this->db->select('payroll_ledger.net_pay');
+        $this->db->select('payroll_ledger.taxes');
+        $this->db->select('payroll_ledger.transaction_date');
+        $this->db->select('payroll_ledger.start_date');
+        $this->db->select('payroll_ledger.end_date');
+        $this->db->select('payroll_ledger.employee_sid');
+        $this->db->select('users.sid');
+        $this->db->select('users.first_name');
+        $this->db->select('users.last_name');
+        $this->db->select('users.middle_name');
+        $this->db->select('users.access_level');
+        $this->db->select('users.timezone');
+        $this->db->select('users.is_executive_admin');
+        $this->db->select('users.pay_plan_flag');
+        $this->db->select('users.job_title');
+        $this->db->select('users.joined_at');
+        $this->db->select('users.rehire_date');
+        $this->db->select('users.department_sid');
+        //
+        $this->db->join('users', 'users.sid = payroll_ledger.employee_sid', 'right');
+        $this->db->where('users.parent_sid', $company_sids);
+        $this->db->where('payroll_ledger.is_deleted', 0);
+
+        //
+        if ($between != '' && $between != NULL) {
+            $this->db->where($between);
+        }
+
+        if (!in_array("all", $filterEmployees)) {
+            $this->db->where_in('payroll_ledger.employee_sid', $filterEmployees);
+        }
+
+        if (!in_array("0", $filterDepartment)) {
+            $this->db->where_in('users.department_sid', $filterDepartment);
+        }
+
+        if (!in_array("all", $filterJobTitles)) {
+            $i = 0;
+            $this->db->group_start();
+            foreach ($filterJobTitles as $title) {
+                if ($i == 0) {
+                    $this->db->like('users.job_title', $title);
+                } else {
+                    $this->db->or_like('users.job_title', $title);
+                }
+                $i++;
+            }
+            $this->db->group_end();
+        }
+
+        //
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
+        }
+        //  
+        $this->db->order_by("payroll_ledger.sid", "desc");
+        $employeesLedger = $this->db->get('payroll_ledger')->result_array();
+        //
+        //$str = $this->db->last_query();
+
+        //
+        $this->db->select('payroll_ledger.debit_amount');
+        $this->db->select('payroll_ledger.credit_amount');
+        $this->db->select('payroll_ledger.description');
+        $this->db->select('payroll_ledger.is_deleted');
+        $this->db->select('payroll_ledger.created_at');
+        $this->db->select('payroll_ledger.updated_at');
+        $this->db->select('payroll_ledger.gross_pay');
+        $this->db->select('payroll_ledger.net_pay');
+        $this->db->select('payroll_ledger.taxes');
+        $this->db->select('payroll_ledger.transaction_date');
+        $this->db->select('payroll_ledger.start_date');
+        $this->db->select('payroll_ledger.end_date');
+        $this->db->select('payroll_ledger.employee_sid');
+        $this->db->select('users.sid');
+        $this->db->select('users.CompanyName');         //
+        $this->db->join('users', 'users.sid = payroll_ledger.company_sid', 'left');
+        $this->db->where('payroll_ledger.is_deleted', 0);
+        $this->db->where('payroll_ledger.employee_sid', null);
+
+        //
+        if ($between != '' && $between != NULL) {
+            $this->db->where($between);
+        }
+
+        //
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
+        }
+        //  
+        $this->db->order_by("payroll_ledger.sid", "desc");
+        $companyLedger = $this->db->get('payroll_ledger')->result_array();
+
+        $ledgersRecords = array_merge($employeesLedger, $companyLedger);
+
+        return $ledgersRecords;
+    }
+
+
+
+
+    //
+    public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles, $filterDepartment, $limit = null, $start = null)
+    {
+        //
+        $this->db->select('payroll_ledger.debit_amount');
+        $this->db->select('payroll_ledger.credit_amount');
+        $this->db->select('payroll_ledger.description');
+        $this->db->select('payroll_ledger.is_deleted');
+        $this->db->select('payroll_ledger.created_at');
+        $this->db->select('payroll_ledger.updated_at');
+        $this->db->select('payroll_ledger.gross_pay');
+        $this->db->select('payroll_ledger.net_pay');
+        $this->db->select('payroll_ledger.taxes');
+        $this->db->select('payroll_ledger.transaction_date');
+        $this->db->select('payroll_ledger.start_date');
+        $this->db->select('payroll_ledger.end_date');
+        $this->db->select('payroll_ledger.employee_sid');
+        $this->db->select('payroll_ledger.company_sid');
+        $this->db->select('users.sid');
+        $this->db->select('users.first_name');
+        $this->db->select('users.last_name');
+        $this->db->select('users.middle_name');
+        $this->db->select('users.access_level');
+        $this->db->select('users.timezone');
+        $this->db->select('users.is_executive_admin');
+        $this->db->select('users.pay_plan_flag');
+        $this->db->select('users.job_title');
+        $this->db->select('users.joined_at');
+        $this->db->select('users.rehire_date');
+        $this->db->select('users.department_sid');
+
+
+        if (in_array("all", $filterEmployees) && in_array("0", $filterDepartment) && in_array("all", $filterJobTitles)) {
+            $this->db->join('users', 'users.sid = payroll_ledger.company_sid');
+        } else {
+            $this->db->join('users', 'users.sid = payroll_ledger.employee_sid');
+        }
+
+        $this->db->where('payroll_ledger.is_deleted', 0);
+
+        //
+        if ($between != '' && $between != NULL) {
+            $this->db->where($between);
+        }
+
+        if (!in_array("all", $filterEmployees)) {
+            $this->db->where_in('payroll_ledger.employee_sid', $filterEmployees);
+        }
+
+        if (!in_array("0", $filterDepartment)) {
+            $this->db->where_in('users.team_sid', $filterDepartment);
+        }
+
+        if (!in_array("all", $filterJobTitles)) {
+            $i = 0;
+            $this->db->group_start();
+            foreach ($filterJobTitles as $title) {
+                if ($i == 0) {
+                    $this->db->like('users.job_title', $title);
+                } else {
+                    $this->db->or_like('users.job_title', $title);
+                }
+                $i++;
+            }
+            $this->db->group_end();
+        }
+
+        //
+        if ($limit != null) {
+            $this->db->limit($limit, $start);
+        }
+
+        //  
+        $this->db->order_by("payroll_ledger.sid", "desc");
+        $employeesLedger = $this->db->get('payroll_ledger')->result_array();
+        //
+        $str = $this->db->last_query();
+    
+        foreach ($employeesLedger as $key => $val) {
+            if ($val['employee_sid'] != null) {
+                $empInfo = getUserNameBySID($val['employee_sid'], false);
+
+                $employeesLedger[$key]['first_name'] = $empInfo[0]['first_name'];
+                $employeesLedger[$key]['last_name'] = $empInfo[0]['last_name'];
+                $employeesLedger[$key]['access_level'] = $empInfo[0]['access_level'];
+                $employeesLedger[$key]['job_title'] = $empInfo[0]['job_title'];
+                $employeesLedger[$key]['is_executive_admin'] = $empInfo[0]['is_executive_admin'];
+                $employeesLedger[$key]['pay_plan_flag'] = $empInfo[0]['pay_plan_flag'];
+                $employeesLedger[$key]['timezone'] = $empInfo[0]['timezone'];
+                $employeesLedger[$key]['middle_name'] = $empInfo[0]['middle_name'];
+
+            }
+
+        }
+
+        return $employeesLedger;
+    }
+
+
+
+
+    //
+    public function getCompanyEmployeesOnly(int $companyId): array
+    {
+
+        $this->db
+            ->select(getUserFields())
+            ->where([
+                "users.parent_sid" => $companyId,
+                "users.is_executive_admin" => 0,
+                "users.active" => 1,
+                "users.terminated_status" => 0
+            ]);
+        //
+
+        $this->db->order_by("users.first_name", "ASC");
+        return $this->db->get("users")->result_array();
     }
 }

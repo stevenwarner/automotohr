@@ -2879,4 +2879,229 @@ class Payroll extends CI_Controller
                 ]
             );
     }
+
+    //
+    public function ledger($start_date = 'all', $end_date = 'all', $employee = 'all', $department = 'all', $jobtitles = 'all', $dateSelection = 'transaction', $page_number = 1)
+    {
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'reports');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['title'] = 'Advanced Hr Reports - Employees Termination Reports';
+            //
+
+            $this->load->model("v1/Regular_payroll_model", "regular_payroll_model");
+
+            $data["allemployees"] = $this->regular_payroll_model->getCompanyEmployeesOnly(
+                $company_sid
+            );
+            $data["company_sid"] = $company_sid;
+
+
+            $start_date = urldecode($start_date);
+            $end_date = urldecode($end_date);
+
+            $filterEmployees = explode(',', urldecode($employee));
+            $filterJobTitles = explode(',', urldecode($jobtitles));
+            $filterDepartment = explode(',', urldecode($department));
+
+            //
+            if (!empty($start_date) && $start_date != 'all') {
+                $start_date_applied = empty($start_date) ? null : DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d');
+            } else {
+                $start_date_applied = date('Y-m-d 00:00:00');
+            }
+
+            if (!empty($end_date) && $end_date != 'all') {
+                $end_date_applied = empty($end_date) ? null : DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d');
+            } else {
+                $end_date_applied = date('Y-m-d');
+            }
+            //
+            $between = '';
+            //
+            if ($start_date_applied != NULL && $end_date_applied != NULL) {
+                if ($dateSelection == 'transaction') {
+                    $between = "payroll_ledger.transaction_date >= '" . $start_date_applied . "' and payroll_ledger.transaction_date <=  '" . $end_date_applied . "'";
+                } else {
+                    $between = "payroll_ledger.start_date = '" . $start_date_applied . "' and payroll_ledger.end_date = '" . $end_date_applied . "'";
+                }
+            }
+
+            //
+            $data["flag"] = true;
+            $data['ledgerCount'] = sizeof($this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, null, null));
+            /** pagination * */
+            $this->load->library('pagination');
+            $records_per_page =  PAGINATION_RECORDS_PER_PAGE;
+            $my_offset = 0;
+            //
+            if ($page_number > 1) {
+                $my_offset = ($page_number - 1) * $records_per_page;
+            }
+            //
+            $baseUrl = base_url('payrolls/ledger') . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($employee) . '/' . urldecode($department) . '/' . urldecode($jobtitles) . '/' . $dateSelection;
+            //
+            $uri_segment = 9;
+            $config = array();
+            $config["base_url"] = $baseUrl;
+            $config["total_rows"] = $data['ledgerCount'];
+            $config["per_page"] = $records_per_page;
+            $config["uri_segment"] = $uri_segment;
+            $choice = $config["total_rows"] / $config["per_page"];
+            $config["num_links"] = ceil($choice);
+            $config["use_page_numbers"] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '&laquo; First';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = 'Last &raquo;';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
+
+            $this->pagination->initialize($config);
+            $data['page_links'] = $this->pagination->create_links();
+            $total_records = $data['terminatedEmployeesCount'];
+
+            $data['current_page'] = $page_number;
+            $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
+            $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
+
+
+            $data['employeesLedger'] = $this->regular_payroll_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, $records_per_page, $my_offset);
+
+
+            //
+            if (sizeof($this->input->post(NULL, TRUE))) {
+
+                $additionalHeader = [];
+                if ($this->input->post('employee_sid')) {
+                    $additionalHeader['employee_id'] = 'Employee ID';
+                }
+                if ($this->input->post('first_name')) {
+                    $additionalHeader['first_name'] = "First Name";
+                }
+                if ($this->input->post('middle_name')) {
+                    $additionalHeader['middle_name'] = "Middle Name";
+                }
+                if ($this->input->post('last_name')) {
+                    $additionalHeader['last_name'] = "Last Name";
+                }
+                if ($this->input->post('job_title')) {
+                    $additionalHeader['job_title'] = "Job Title";
+                }
+                if ($this->input->post('department')) {
+                    $additionalHeader['department'] = "Department";
+                }
+                if ($this->input->post('team')) {
+                    $additionalHeader['team'] = "Team";
+                }
+
+                $additionalHeader['debit_amount'] = 'Debit Amount';
+                $additionalHeader['credit_amount'] = 'Credit Amount';
+                $additionalHeader['gross_pay'] = 'Gross Pay';
+                $additionalHeader['net_pay'] = 'Net Pay';
+                $additionalHeader['taxes'] = 'Taxes';
+                $additionalHeader['description'] = 'Description';
+                $additionalHeader['transaction_date'] = 'Transaction Date';
+                $additionalHeader['start_date'] = 'Stard Date';
+                $additionalHeader['end_date'] = 'End Date';
+                $additionalHeader['created_at'] = 'Imported At';
+
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=employees_ledger_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+                $output = fopen('php://output', 'w');
+
+                fputcsv($output, array($data['session']['company_detail']['CompanyName'], '', '', ''));
+
+                fputcsv($output, array(
+                    "Exported By",
+                    $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                ));
+                fputcsv($output, array(
+                    "Export Date",
+                    date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                ));
+                fputcsv($output, array("",));
+
+                fputcsv($output, $additionalHeader);
+
+                if (!empty($data['employeesLedger'])) {
+                    foreach ($data['employeesLedger'] as $ledgerRow) {
+
+                        $input = array();
+
+                        $teamDepartment = [];
+
+                        if ($additionalHeader['employee_id']) {
+                            $input['employee_sid'] = $ledgerRow['employee_sid'];
+                        }
+                        if ($additionalHeader['first_name']) {
+                            $input['first_name'] = $ledgerRow['first_name'];
+                        }
+                        if ($additionalHeader['middle_name']) {
+                            $input['middle_name'] = $ledgerRow['middle_name'];
+                        }
+                        if ($additionalHeader['last_name']) {
+                            $input['last_name'] = $ledgerRow['last_name'];
+                        }
+                        if ($additionalHeader['job_title']) {
+                            $input['job_title'] = $ledgerRow['job_title'];
+                        }
+                        if ($additionalHeader['department'] || $additionalHeader['team']) {
+
+                            $teamDepartment = $ledgerRow['employee_sid'] != null ? getEmployeeDepartmentAndTeams($ledgerRow['employee_sid']) : '';
+                        }
+                        if ($additionalHeader['department']) {
+                            $departments = !empty($teamDepartment['departments']) ? implode(',', array_column($teamDepartment['departments'], 'name')) : '';
+                            $input['department'] = $departments;
+                        }
+                        if ($additionalHeader['team']) {
+                            $teams = !empty($teamDepartment['teams']) ? implode(',', array_column($teamDepartment['teams'], 'name')) : '';
+                            $input['team'] = $teams;
+                        }
+
+                        $input['debit_amount'] = $ledgerRow['debit_amount'] ? _a($ledgerRow['debit_amount']) : '-';
+                        $input['credit_amount'] = $ledgerRow['credit_amount'] ? _a($ledgerRow['credit_amount']) : '-';
+                        $input['gross_pay'] = $ledgerRow['gross_pay'] ? _a($ledgerRow['gross_pay']) : '-';
+                        $input['net_pay'] = $ledgerRow['net_pay'] ? _a($ledgerRow['net_pay']) : '-';
+                        $input['taxes'] = $ledgerRow['taxes'] ? _a($ledgerRow['taxes']) : '-';
+                        $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
+                        $input['transaction_date'] = formatDateToDB($ledgerRow['transaction_date'], DB_DATE, DATE);
+                        $input['start_date'] = formatDateToDB($ledgerRow['start_date'], DB_DATE, DATE);
+                        $input['end_date'] = formatDateToDB($ledgerRow['end_date'], DB_DATE, DATE);
+                        $input['imported_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                        fputcsv($output, $input);
+                    }
+                }
+
+                fclose($output);
+                exit;
+            }
+
+            //
+            $this->load
+                ->view('main/header', $data)
+                ->view('v1/payroll/ledger')
+                ->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
 }

@@ -2379,3 +2379,16 @@ $route['import-ledger/handler'] = 'v1/payrolls/Ledger/handler';
  */
 // Indeed cron job link
 $route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
+//
+$route['payrolls/ledger'] = 'v1/Payroll/ledger';
+
+$route['payrolls/ledger'] = 'v1/Payroll/ledger';
+$route['payrolls/ledger/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2';
+
+$route['payrolls/ledger/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3';
+$route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4';
+$route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5';
+$route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5/$6';
+$route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5/$6/$7';
+
+
