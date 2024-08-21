@@ -30,7 +30,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                 <div class="panel panel-default">
                                                     <div class="panel-heading">
                                                         <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                                            <h4 class="panel-title">
+                                                            <h4 class="panel-title" style="padding-left: 12px;">
                                                                 Advanced Search Filters <span class="glyphicon glyphicon-plus"></span>
                                                             </h4>
                                                         </a>
@@ -69,26 +69,28 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                 <br><br>
                                                                 <div class="row">
                                                                     <div class="col-sm-12">
+                                                                        <label><strong>Search by</strong></label> <br>
+
                                                                         <label class="control control--radio">
-                                                                            By Transaction Date &nbsp;&nbsp;
+                                                                            Transaction Date &nbsp;&nbsp;
                                                                             <input type="radio" name="dateselection" class="assignAndSendDocument" value="transaction" <?php echo $this->uri->segment(8) == 'transaction' || $this->uri->segment(8) == '' ? 'checked' : ''; ?>>
                                                                             <div class="control__indicator"></div>
                                                                         </label>
                                                                         <label class="control control--radio">
-                                                                            By Period Date &nbsp;&nbsp;
+                                                                            Period Date &nbsp;&nbsp;
                                                                             <input type="radio" name="dateselection" class="assignAndSendDocument" value="period" <?php echo $this->uri->segment(8) == 'period' ? 'checked' : ''; ?>>
                                                                             <div class="control__indicator"></div>
                                                                         </label>
-                                                                    </div>
+                                                                    </div><br>
                                                                     <br><br>
                                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="">Start Date</label>
+                                                                        <label class="">Start Period</label>
                                                                         <?php $start_date = $this->uri->segment(3) != 'all' && $this->uri->segment(3) != '' ? urldecode($this->uri->segment(3)) : date('m-1-Y'); ?>
                                                                         <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                                     </div>
 
                                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                                                                        <label class="">End Date</label>
+                                                                        <label class="">End Period</label>
                                                                         <?php $end_date = $this->uri->segment(4) != 'all' && $this->uri->segment(4) != '' ? urldecode($this->uri->segment(4)) : date('m-t-Y'); ?>
                                                                         <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                                     </div>
@@ -120,65 +122,112 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                 <div class="col-lg-9 col-xs-10 ">
                                                                     <label class="control control--checkbox">
                                                                         <input type="checkbox" name="" id="check_all" value="">
-                                                                        <div class="control__indicator"></div>
+                                                                        <div class="control__indicator" style="background: #fff;"></div>
                                                                     </label>
-                                                                    <p class="cs_line" style="padding-left:35px;margin-top: -12px;">Include columns in export file</p>
+                                                                    <p class="cs_line" style="padding-left:35px;margin-top: -12px;"><strong>Include columns in export file</strong></p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div id="collapse1" class="panel-collapse ">
                                                             <div class="panel-body" style="min-height:100px;">
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;"> Employee Id <input type="checkbox" class="check_it" name="employee_sid" value="employeeId">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+
+                                                                <div class="row">
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;"> Employee Id <input type="checkbox" class="check_it" name="employee_sid" value="employeeId">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">First Name<input type="checkbox" class="check_it" name="first_name" value="firstname">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">First Name<input type="checkbox" class="check_it" name="first_name" value="firstname" checked>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">Middle Name<input type="checkbox" class="check_it" name="middle_name" value="middlename">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Middle Name<input type="checkbox" class="check_it" name="middle_name" value="middlename" checked>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Last Name<input type="checkbox" class="check_it" name="last_name" value="lastname" checked>
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Job Title<input type="checkbox" class="check_it" name="job_title" value="jobtitle">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">Last Name<input type="checkbox" class="check_it" name="last_name" value="lastname">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+                                                                <div class="row">
+                                                                    
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Department<input type="checkbox" class="check_it" name="department" value="department">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Team<input type="checkbox" class="check_it" name="team" value="team">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Employee Number<input type="checkbox" class="check_it" name="employee_number" value="employee_number">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">SSN<input type="checkbox" class="check_it" name="ssn" value="ssn">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Email<input type="checkbox" class="check_it" name="email" value="email">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">Job Title<input type="checkbox" class="check_it" name="job_title" value="jobtitle">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
+                                                                <div class="row">
+                                                                   
+
+                                                                    <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                                        <div class="checkbox cs_full_width" style="width: 100%;">
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Phone Number<input type="checkbox" class="check_it" name="phone_number" value="phone_number">
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">Department<input type="checkbox" class="check_it" name="department" value="department">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
-                                                                    <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                        <label class="control control--checkbox" style="padding-left:35px;">Team<input type="checkbox" class="check_it" name="team" value="team">
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -187,10 +236,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                         <div class="col-xs-12">
                                                             <div class="form-group">
                                                                 <input type="submit" name="submit" class="submit-btn pull-right" value="Export">
-                                                                <a href="javascript:;" class="submit-btn pull-right" onclick="print_page('#print_div');">
-                                                                    <i class="fa fa-print" aria-hidden="true"></i>
-                                                                    Print
-                                                                </a>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -233,9 +279,15 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                         <th>Taxes</th>
                                                                         <th>Description</th>
                                                                         <th>Transaction Date</th>
-                                                                        <th>Start Date</th>
-                                                                        <th>End Date</th>
+                                                                        <th>Start Period</th>
+                                                                        <th>End Period</th>
                                                                         <th>Imported At</th>
+
+                                                                        <th>Account Name</th>
+                                                                        <th>Account Number</th>
+                                                                        <th>Reference Number</th>
+                                                                        <th>General Entry Number</th>
+
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -319,36 +371,64 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                     echo formatDateToDB($rowEmployee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                                                     ?>
                                                                                 </td>
+
+
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo $rowEmployee['account_name'];
+                                                                                    ?>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo $rowEmployee['account_number'];
+                                                                                    ?>
+                                                                                </td>
+
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo $rowEmployee['reference_number'];
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    echo $rowEmployee['general_entry_number'];
+                                                                                    ?>
+                                                                                </td>
+
+
                                                                             </tr>
                                                                         <?php } ?>
-
 
                                                                         <tr class="bg-header-green">
                                                                             <td>
                                                                                 Grand Total:
                                                                             </td>
                                                                             <td class="text-success">
-                                                                                <?php echo $debitAmountTotal > 0 ? _a($debitAmountTotal) : '-'; ?>
+                                                                                <?php echo $debitAmountTotal > 0 ? _a($debitAmountTotal) : '0'; ?>
                                                                             </td>
                                                                             <td class="text-danger">
-                                                                                <?php echo  $creditAmountTotal > 0 ? _a($creditAmountTotal) : '-'; ?>
+                                                                                <?php echo  $creditAmountTotal > 0 ? _a($creditAmountTotal) : '0'; ?>
                                                                             </td>
                                                                             <td>
-                                                                                <?php echo  $grossPayTotal > 0 ? _a($grossPayTotal) : '-'; ?>
+                                                                                <?php echo  $grossPayTotal > 0 ? _a($grossPayTotal) : '0'; ?>
                                                                             </td>
                                                                             <td>
-                                                                                <?php echo  $netPayTotal > 0 ? _a($netPayTotal) : '-'; ?>
+                                                                                <?php echo  $netPayTotal > 0 ? _a($netPayTotal) : '0'; ?>
                                                                             </td>
                                                                             <td>
-                                                                                <?php echo  $taxesTotal > 0 ? _a($taxesTotal) : '-'; ?>
+                                                                                <?php echo  $taxesTotal > 0 ? _a($taxesTotal) : '0'; ?>
                                                                             </td>
                                                                             <td></td>
-                                                                            <td>  </td>
+                                                                            <td> </td>
                                                                             <td> </td>
                                                                             <td></td>
+                                                                            <td> </td>
+                                                                            <td> </td>
+                                                                            <td> </td>
+                                                                            <td> </td>
                                                                             <td> </td>
                                                                         </tr>
-
 
                                                                     <?php } else { ?>
                                                                         <tr>
@@ -395,6 +475,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
             $('#btn_apply_filters').click();
         }
     });
+
 
     function generate_search_url() {
         //
@@ -485,6 +566,11 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                 generate_search_url();
             }
         }).datepicker('option', 'minDate', $('#start_date_applied').val());
+
+
+        <?php if ($this->uri->segment(3) == '' || $this->uri->segment(4) == '') { ?>
+            $('#btn_apply_filters').click();
+        <?php  } ?>
 
     });
 

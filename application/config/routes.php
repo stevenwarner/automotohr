@@ -2374,6 +2374,7 @@ $route["payrolls/ledger/import"]["get"] = "v1/payrolls/Ledger/import";
 $route['import-ledger/handler'] = 'v1/payrolls/Ledger/handler';
 
 
+
 /**
  * CRON job links
  */
@@ -2390,5 +2391,9 @@ $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2
 $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5';
 $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5/$6';
 $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Payroll/ledger/$1/$2/$3/$4/$5/$6/$7';
+
+
+$route["payrolls/ledger/downloadtemplate"]["post"] = "v1/payrolls/Ledger/DownloadTemplate";
+
 
 

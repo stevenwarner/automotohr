@@ -126,6 +126,8 @@ class Ledger extends Public_controller
                 $failCount = $insertCount = $existCount = 0;
                 $updatedRows = [];
                 $failRows = [];
+
+               // _e($formpost['payrolls'],true,true);
                 //
                 if ($formpost['payrolls']) {
                     foreach ($formpost['payrolls'] as $key => $payroll) {
@@ -172,6 +174,16 @@ class Ledger extends Public_controller
                                     $dataToInsert['description'] = $payroll['description'];
                                     $dataToInsert['created_at'] = $currentDate;
                                     $dataToInsert['updated_at'] = $currentDate;
+
+                                    $dataToInsert['account_name'] = $payroll['account_name'];
+                                    $dataToInsert['account_number'] = $payroll['account_number'];
+                                    $dataToInsert['reference_number'] = $payroll['reference_number'];
+                                    $dataToInsert['general_entry_number'] = $payroll['general_entry_number'];
+
+                                    if(!empty($payroll['extra'])){
+                                        $dataToInsert['extra'] = json_encode($payroll['extra']);
+                                    }
+
                                     //
                                     $this->ledger_model->insertLedgerInfo($dataToInsert);
                                     //
@@ -209,6 +221,15 @@ class Ledger extends Public_controller
                                     $dataToInsert['description'] = $payroll['description'];
                                     $dataToInsert['created_at'] = $currentDate;
                                     $dataToInsert['updated_at'] = $currentDate;
+
+                                    $dataToInsert['account_name'] = $payroll['account_name'];
+                                    $dataToInsert['account_number'] = $payroll['account_number'];
+                                    $dataToInsert['reference_number'] = $payroll['reference_number'];
+                                    $dataToInsert['general_entry_number'] = $payroll['general_entry_number'];
+
+                                    if(!empty($payroll['extra'])){
+                                        $dataToInsert['extra'] = json_encode($payroll['extra']);
+                                    }
                                     //
                                     $this->ledger_model->insertLedgerInfo($dataToInsert);
                                     //
@@ -250,4 +271,19 @@ class Ledger extends Public_controller
         echo json_encode($responseArray);
         exit(0);
     }
+
+
+
+
+    public function DownloadTemplate(){
+
+        header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=ledger_sample.csv");
+                $output = fopen('php://output', 'w');
+
+                fputcsv($output, array('First Name','Last Name','Email','Primary Number','Employee ID','Employee Number','Social Security Number','Debit','Credit','Start Date','End Date','Transaction Date','Job Title/Position','Department','Gross Pay','Net Pay','Taxes','Description','Account Name','Account Number','Reference Number','General Entry Number'));
+
+                fclose($output);
+                exit;
+    } 
 }

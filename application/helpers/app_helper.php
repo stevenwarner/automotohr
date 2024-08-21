@@ -3022,7 +3022,9 @@ if (!function_exists('get_jobTitle_dropdown_for_search')) {
         //
         if ($jobTitles) {
             foreach ($jobTitles as $row) {
-                $options .= '<option value="' . $row . '">' . $row . '</option>';
+                if ($row != '' || $row != null) {
+                    $options .= '<option value="' . $row . '">' . $row . '</option>';
+                }
             }
         }
 
@@ -3737,18 +3739,16 @@ if (!function_exists("updateDocumentCorrectionDesc")) {
     }
 }
 
-if (!function_exists("checkAndGetDocumentDescription"))
-{
+if (!function_exists("checkAndGetDocumentDescription")) {
     function checkAndGetDocumentDescription(
         int $documentId,
         string $description,
         bool $encode = false
-    ):string
-    {
+    ): string {
         // get CI instance
-        $CI =& get_instance();
+        $CI = &get_instance();
         // check if fillable document
-        if(
+        if (
             $CI
             ->db
             ->where([
@@ -3756,7 +3756,7 @@ if (!function_exists("checkAndGetDocumentDescription"))
                 "fillable_document_slug IS NOT NULL" => null
             ])
             ->count_all_results("documents_management")
-        ){
+        ) {
             return $encode ? htmlentities(
                 $description
             ) : $description;
@@ -3772,8 +3772,8 @@ if (!function_exists("checkAndGetDocumentDescription"))
             ->row_array();
         //
         return $encode ? htmlentities(
-                $record["document_description"]
-            ) : $record["document_description"];
+            $record["document_description"]
+        ) : $record["document_description"];
     }
 }
 

@@ -1079,6 +1079,12 @@ class Regular_payroll_model extends Payroll_model
         $this->db->select('payrolls.payroll_ledger.end_date');
         $this->db->select('payrolls.payroll_ledger.employee_sid');
         $this->db->select('payrolls.payroll_ledger.company_sid');
+
+        $this->db->select('payrolls.payroll_ledger.account_name');
+        $this->db->select('payrolls.payroll_ledger.account_number');
+        $this->db->select('payrolls.payroll_ledger.general_entry_number');
+        $this->db->select('payrolls.payroll_ledger.reference_number');
+
         $this->db->select('users.sid');
         $this->db->select('users.first_name');
         $this->db->select('users.last_name');
@@ -1091,6 +1097,12 @@ class Regular_payroll_model extends Payroll_model
         $this->db->select('users.joined_at');
         $this->db->select('users.rehire_date');
         $this->db->select('users.department_sid');
+
+        $this->db->select('users.employee_number');
+        $this->db->select('users.ssn');
+        $this->db->select('users.email');
+        $this->db->select('users.PhoneNumber');
+
 
         if (in_array("all", $filterEmployees) && in_array("0", $filterDepartment) && in_array("all", $filterJobTitles)) {
             $this->db->join('users', 'users.sid = payrolls.payroll_ledger.company_sid');
@@ -1137,22 +1149,24 @@ class Regular_payroll_model extends Payroll_model
         $employeesLedger = $this->db->get('payrolls.payroll_ledger')->result_array();
         //
         $str = $this->db->last_query();
-    
+
         foreach ($employeesLedger as $key => $val) {
             if ($val['employee_sid'] != null) {
-                $empInfo = getUserNameBySID($val['employee_sid'], false);
+                $empInfo = $this->getEmmployeeInfo($val['employee_sid']);
 
-                $employeesLedger[$key]['first_name'] = $empInfo[0]['first_name'];
-                $employeesLedger[$key]['last_name'] = $empInfo[0]['last_name'];
-                $employeesLedger[$key]['access_level'] = $empInfo[0]['access_level'];
-                $employeesLedger[$key]['job_title'] = $empInfo[0]['job_title'];
-                $employeesLedger[$key]['is_executive_admin'] = $empInfo[0]['is_executive_admin'];
-                $employeesLedger[$key]['pay_plan_flag'] = $empInfo[0]['pay_plan_flag'];
-                $employeesLedger[$key]['timezone'] = $empInfo[0]['timezone'];
-                $employeesLedger[$key]['middle_name'] = $empInfo[0]['middle_name'];
-
+                $employeesLedger[$key]['first_name'] = $empInfo['first_name'];
+                $employeesLedger[$key]['last_name'] = $empInfo['last_name'];
+                $employeesLedger[$key]['access_level'] = $empInfo['access_level'];
+                $employeesLedger[$key]['job_title'] = $empInfo['job_title'];
+                $employeesLedger[$key]['is_executive_admin'] = $empInfo['is_executive_admin'];
+                $employeesLedger[$key]['pay_plan_flag'] = $empInfo['pay_plan_flag'];
+                $employeesLedger[$key]['timezone'] = $empInfo['timezone'];
+                $employeesLedger[$key]['middle_name'] = $empInfo['middle_name'];
+                $employeesLedger[$key]['ssn'] = $empInfo['ssn'];
+                $employeesLedger[$key]['email'] = $empInfo['email'];
+                $employeesLedger[$key]['PhoneNumber'] = $empInfo['PhoneNumber'];
+                $employeesLedger[$key]['employee_number'] = $empInfo['employee_number'];
             }
-
         }
 
         return $employeesLedger;
@@ -1174,5 +1188,13 @@ class Regular_payroll_model extends Payroll_model
 
         $this->db->order_by("users.first_name", "ASC");
         return $this->db->get("users")->result_array();
+    }
+
+    //
+    public function getEmmployeeInfo($emp_id)
+    {
+        $this->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name,employee_number,ssn,PhoneNumber');
+        $this->db->where('sid', $emp_id);
+        return $this->db->get('users')->row_array();
     }
 }

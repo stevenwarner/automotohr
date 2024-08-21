@@ -18,15 +18,21 @@ $importColumnsArray[] = 'Gross Pay';
 $importColumnsArray[] = 'Net Pay';
 
 //
+$importColumnsArray[] = 'Account Name';
+$importColumnsArray[] = 'Account Number';
+$importColumnsArray[] = 'Reference Number';
+$importColumnsArray[] = 'General Entry Number';
+
+//
 $importValueArray = '';
-$importValueArray .= ', , , , , company, 25000, 0, 1/7/2024, 31/7/2024, 5/8/2024,  31/7/2024, , , , , , , <br/>';
-$importValueArray .= '1234, E1234, 219-09-9999, email@abc.com, +1234567892, employee, 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,<br/>';
-$importValueArray .= '1234, , , , , employee, 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,<br/>';
-$importValueArray .= ' , E1234, , , , employee, 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,<br/>';
-$importValueArray .= ' ,  , 219-09-9999, , , employee, 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,<br/>';
-$importValueArray .= ', , , email@abc.com, , employee, 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,<br/>';
-$importValueArray .= ' , , , , +1234567892, employee, 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,<br/>';
-$importValueArray .= ', , , , , company, 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024, , , , , , , <br/>';
+$importValueArray .= ', , , , ,25000, 0, 1/7/2024, 31/7/2024, 5/8/2024,  31/7/2024, , , , , , , JON,1255556666,54877770012,235687<br/>';
+$importValueArray .= '1234, E1234, 219-09-9999, email@abc.com, +1234567892, 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,JONJo,1255556666,54877770012,235687<br/>';
+$importValueArray .= '1234, , , , , 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,,1255556666,54877770012,235687<br/>';
+$importValueArray .= ' , E1234, , , , 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,Ryan,1255556666,54877770012,235687<br/>';
+$importValueArray .= ' ,  , 219-09-9999, , , 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,Ryan,1255556666,54877770012,235687<br/>';
+$importValueArray .= ', , , email@abc.com, , 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,Jana,1255556666,54877770012,235687<br/>';
+$importValueArray .= ' , , , , +1234567892, 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,JO,1255556666,54877770012,235687<br/>';
+$importValueArray .= ', , , , , 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024, , , , , , ,Jef,1255556666,54877770012,235687 <br/>';
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -44,7 +50,16 @@ $importValueArray .= ', , , , , company, 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024
                             <div class="dashboard-conetnt-wrp">
                                 <div class="panel panel-success">
                                     <div class="panel-heading">
-                                        <h4>The Provided CSV File must be in Following Format</h4>
+
+                                        <form method="post" id="export" name="export" action="<?php echo base_url('payrolls/ledger/downloadtemplate') ?>">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="form-group">
+                                                        <h4>The Provided CSV File must be in Following Format <input type="submit" name="submit" class="submit-btn pull-right" value="Download Template"></h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                     <div class="panel-body">
                                         <pre>
@@ -89,5 +104,5 @@ $importValueArray .= ', , , , , company, 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024
 </div>
 
 <script>
-    var baseURI = "<?=base_url()?>";
+    var baseURI = "<?= base_url() ?>";
 </script>
