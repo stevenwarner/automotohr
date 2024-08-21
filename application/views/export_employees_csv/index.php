@@ -396,7 +396,7 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <label>Access Level:</label>
                                                 <div class="hr-select-dropdown autoheight">
-                                                    <select data-rule-required="true" class="invoice-fields" name="access_level" id="access_level" multiple>
+                                                    <select data-rule-required="true" class="invoice-fields" name="access_level[]" id="access_level" multiple>
                                                         <option value="all">All Employees</option>
                                                         <?php if (!empty($access_levels)) { ?>
                                                             <?php foreach ($access_levels as $access_level) { ?>

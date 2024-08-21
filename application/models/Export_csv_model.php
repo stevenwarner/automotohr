@@ -98,9 +98,17 @@ class Export_csv_model extends CI_Model
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
-        if ($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
-            $this->db->where('access_level', $access_level);
+        if (is_array($access_level)) {
+            if (!in_array("all", $access_level)) {
+                $this->db->where_in('access_level', $access_level);
+            }
+
+        } else {
+            if ($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
+                $this->db->where('access_level', $access_level);
+            }
         }
+
 
         if ($access_level == 'executive_admin') {
             $this->db->where('is_executive_admin', 1);
@@ -170,7 +178,6 @@ class Export_csv_model extends CI_Model
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
         
         if (!empty($records_arr)) {
             return $records_arr;
