@@ -2504,4 +2504,41 @@ class Complynet_model extends CI_Model
         //
         return true;
     }
+
+    /**
+     * Get the job role id
+     *
+     * @param string $jobTitle
+     * @return string
+     */
+    public function getComplyNetJobRoleId(
+        string $jobTitle
+    ) {
+        //
+        $record = $this->db
+            ->select('complynet_job_role_sid')
+            ->where([
+                'complynet_job_role_name' => $jobTitle,
+                'job_title' => $jobTitle
+            ])
+            ->get('complynet_jobRole')
+            ->row_array();
+        //
+        if ($record) {
+            return $record['complynet_job_role_sid'];
+        }
+        //
+        return 0;
+    }   
+    
+    
+    public function checkJobRoleAlreadyUpdated ($employeeId, $companyId, $jobRollId) {
+        return $this->db
+            ->where([
+                'complynet_job_role_sid' => $jobRollId,
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeId
+            ])
+            ->count_all_results('complynet_employees');
+    }
 }

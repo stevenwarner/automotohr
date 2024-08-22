@@ -1111,6 +1111,32 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
+
+    function fixJobTitle () {
+        $companyIds = [59234,59232,58302,58134,56410,56407,53562,52584,49929,32055,32051,28588,16485,16483,16481,16479,16475,16459,16439,16437,16433,16431,16429,16427,16374];
+        $this->load->model('2022/complynet_model', 'complynet_model');
+
+        foreach ($companyIds as $companyId) {
+            if (isCompanyOnComplyNet($companyId)) {
+                $complynetEmployees = $this->complynet_model->getCompanyEmployees($companyId);
+                //
+                if ($complynetEmployees) {
+                    foreach ($complynetEmployees as $employee) {
+                        $complynetJobRoleId = $this->complynet_model->getComplyNetJobRoleId($employee['complynet_job_title']);
+                        if ($complynetJobRoleId != 0) {
+                            $status =  $this->complynet_model->checkJobRoleAlreadyUpdated($employee['sid'], $companyId, $complynetJobRoleId);
+                            if (!$status) {
+                                _e("update status for".$employee['email'], true);
+                            }
+                        }
+                    }
+                }
+                
+                //
+                _e(count($complynetEmployees),true);
+            } 
+        }
+    }
 }
 
 if (!function_exists('remakeSalary')) {
@@ -1135,3 +1161,5 @@ if (!function_exists('remakeSalary')) {
         return $salary;
     }
 }
+
+
