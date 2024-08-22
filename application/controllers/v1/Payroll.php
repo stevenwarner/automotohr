@@ -3032,20 +3032,49 @@ class Payroll extends CI_Controller
                 }
                 //
 
-                $additionalHeader['debit_amount'] = 'Debit Amount';
-                $additionalHeader['credit_amount'] = 'Credit Amount';
-                $additionalHeader['gross_pay'] = 'Gross Pay';
-                $additionalHeader['net_pay'] = 'Net Pay';
-                $additionalHeader['taxes'] = 'Taxes';
-                $additionalHeader['description'] = 'Description';
-                $additionalHeader['transaction_date'] = 'Transaction Date';
-                $additionalHeader['start_date'] = 'Start Period';
-                $additionalHeader['end_date'] = 'End Period';
-                $additionalHeader['created_at'] = 'Imported At';
-                $additionalHeader['account_name'] = 'Account Name';
-                $additionalHeader['account_number'] = 'Account Number';
-                $additionalHeader['general_entry_number'] = 'General Entry Number';
-                $additionalHeader['reference_number'] = 'Reference Number';
+                if ($this->input->post('debit_amount')) {
+                    $additionalHeader['debit_amount'] = 'Debit Amount';
+                }
+                if ($this->input->post('credit_amount')) {
+                    $additionalHeader['credit_amount'] = 'Credit Amount';
+                }
+                if ($this->input->post('gross_pay')) {
+                    $additionalHeader['gross_pay'] = 'Gross Pay';
+                }
+                if ($this->input->post('net_pay')) {
+                    $additionalHeader['net_pay'] = 'Net Pay';
+                }
+                if ($this->input->post('taxes')) {
+                    $additionalHeader['taxes'] = 'Taxes';
+                }
+                if ($this->input->post('description')) {
+                    $additionalHeader['description'] = 'Description';
+                }
+                if ($this->input->post('transaction_date')) {
+                    $additionalHeader['transaction_date'] = 'Transaction Date';
+                }
+                if ($this->input->post('start_date')) {
+                    $additionalHeader['start_date'] = 'Start Period';
+                }
+                if ($this->input->post('end_date')) {
+                    $additionalHeader['end_date'] = 'End Period';
+                }
+                if ($this->input->post('created_at')) {
+                    $additionalHeader['created_at'] = 'Imported At';
+                }
+                if ($this->input->post('account_name')) {
+                    $additionalHeader['account_name'] = 'Account Name';
+                }
+                if ($this->input->post('account_number')) {
+                    $additionalHeader['account_number'] = 'Account Number';
+                }
+                if ($this->input->post('general_entry_number')) {
+                    $additionalHeader['general_entry_number'] = 'General Entry Number';
+                }
+                if ($this->input->post('reference_number')) {
+
+                    $additionalHeader['reference_number'] = 'Reference Number';
+                }
 
 
                 header('Content-Type: text/csv; charset=utf-8');
@@ -3123,22 +3152,48 @@ class Payroll extends CI_Controller
 
 
 
-
-                        $input['debit_amount'] = $ledgerRow['debit_amount'] ? _a($ledgerRow['debit_amount']) : '0';
-                        $input['credit_amount'] = $ledgerRow['credit_amount'] ? _a($ledgerRow['credit_amount']) : '0';
-                        $input['gross_pay'] = $ledgerRow['gross_pay'] ? _a($ledgerRow['gross_pay']) : '0';
-                        $input['net_pay'] = $ledgerRow['net_pay'] ? _a($ledgerRow['net_pay']) : '0';
-                        $input['taxes'] = $ledgerRow['taxes'] ? _a($ledgerRow['taxes']) : '0';
-                        $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
-                        $input['transaction_date'] = formatDateToDB($ledgerRow['transaction_date'], DB_DATE, DATE);
-                        $input['start_date'] = formatDateToDB($ledgerRow['start_date'], DB_DATE, DATE);
-                        $input['end_date'] = formatDateToDB($ledgerRow['end_date'], DB_DATE, DATE);
-                        $input['imported_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-
-                        $input['account_name'] = $ledgerRow['account_name'];
-                        $input['account_number'] = $ledgerRow['account_number'];
-                        $input['general_entry_number'] = $ledgerRow['general_entry_number'];
-                        $input['reference_number'] = $ledgerRow['reference_number'];
+                        if ($additionalHeader['debit_amount']) {
+                            $input['debit_amount'] = $ledgerRow['debit_amount'] ? _a($ledgerRow['debit_amount']) : '0';
+                        }
+                        if ($additionalHeader['credit_amount']) {
+                            $input['credit_amount'] = $ledgerRow['credit_amount'] ? _a($ledgerRow['credit_amount']) : '0';
+                        }
+                        if ($additionalHeader['gross_pay']) {
+                            $input['gross_pay'] = $ledgerRow['gross_pay'] ? _a($ledgerRow['gross_pay']) : '0';
+                        }
+                        if ($additionalHeader['net_pay']) {
+                            $input['net_pay'] = $ledgerRow['net_pay'] ? _a($ledgerRow['net_pay']) : '0';
+                        }
+                        if ($additionalHeader['nettaxes_pay']) {
+                            $input['taxes'] = $ledgerRow['taxes'] ? _a($ledgerRow['taxes']) : '0';
+                        }
+                        if ($additionalHeader['description']) {
+                            $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
+                        }
+                        if ($additionalHeader['transaction_date']) {
+                            $input['transaction_date'] = formatDateToDB($ledgerRow['transaction_date'], DB_DATE, DATE);
+                        }
+                        if ($additionalHeader['start_date']) {
+                            $input['start_date'] = formatDateToDB($ledgerRow['start_date'], DB_DATE, DATE);
+                        }
+                        if ($additionalHeader['end_date']) {
+                            $input['end_date'] = formatDateToDB($ledgerRow['end_date'], DB_DATE, DATE);
+                        }
+                        if ($additionalHeader['imported_at']) {
+                            $input['imported_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                        }
+                        if ($additionalHeader['account_name']) {
+                            $input['account_name'] = $ledgerRow['account_name'];
+                        }
+                        if ($additionalHeader['account_number']) {
+                            $input['account_number'] = $ledgerRow['account_number'];
+                        }
+                        if ($additionalHeader['general_entry_number']) {
+                            $input['general_entry_number'] = $ledgerRow['general_entry_number'];
+                        }
+                        if ($additionalHeader['reference_number']) {
+                            $input['reference_number'] = $ledgerRow['reference_number'];
+                        }
 
 
                         fputcsv($output, $input);

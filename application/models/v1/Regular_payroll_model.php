@@ -1166,7 +1166,19 @@ class Regular_payroll_model extends Payroll_model
                 $employeesLedger[$key]['email'] = $empInfo['email'];
                 $employeesLedger[$key]['PhoneNumber'] = $empInfo['PhoneNumber'];
                 $employeesLedger[$key]['employee_number'] = $empInfo['employee_number'];
+                $employeesLedger[$key]['sid'] = $empInfo['sid'];
+
+                $teamDepartment = $val['employee_sid'] != null ? getEmployeeDepartmentAndTeams($val['employee_sid']) : '';
+                $departments = !empty($teamDepartment['departments']) ? implode(',', array_column($teamDepartment['departments'], 'name')) : '';
+                $employeesLedger[$key]['department'] = $departments;
+
+                $teams = !empty($teamDepartment['teams']) ? implode(',', array_column($teamDepartment['teams'], 'name')) : '';
+                $employeesLedger[$key]['team'] = $teams;
+            } else {
+                $employeesLedger[$key]['department'] = '';
+                $employeesLedger[$key]['team'] = '';
             }
+
         }
 
         return $employeesLedger;
@@ -1193,7 +1205,7 @@ class Regular_payroll_model extends Payroll_model
     //
     public function getEmmployeeInfo($emp_id)
     {
-        $this->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name,employee_number,ssn,PhoneNumber');
+        $this->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name,employee_number,ssn,PhoneNumber,sid');
         $this->db->where('sid', $emp_id);
         return $this->db->get('users')->row_array();
     }

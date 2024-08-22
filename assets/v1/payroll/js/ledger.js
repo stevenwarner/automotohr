@@ -85,12 +85,25 @@ $(function importLedger() {
 
         e.preventDefault();
         var fileData = file.target.result.split(/\r\n|\n/g);
+
         //Check if is it right format
         var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
+
         if (!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")) {
             alertify.alert('Not a valid format');
             return false;
         }
+
+        if (!format_index.includes("debitamount") && !format_index.includes("debit")) {
+            alertify.alert('Not a valid format');
+            return false;
+        }
+        if (!format_index.includes("creditamount") && !format_index.includes("credit")) {
+            alertify.alert('Not a valid format');
+            return false;
+        }
+
+
         // Get header
         var indexes = fileData[0].split(',');
         // Reset index
