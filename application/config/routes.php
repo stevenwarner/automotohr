@@ -1697,6 +1697,7 @@ $route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFrom
  */
 $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 $route['sa/lms/courses/(:num)']['get'] = 'manage_admin/2022/Courses/companyCourses/$1';
+$route['lms/courses/my_lms_dashboard']['get'] = 'v1/Courses/dashboard';
 $route['lms/courses/my']['get'] = 'v1/Courses/myCourses';
 $route['lms/courses/(:num)']['get'] = 'v1/Courses/getCourse/$1';
 $route['lms/courses/(:num)/(:num)/(:any)/certificate']['get'] = 'v1/Courses/viewCertificate/$1/$2/$3';

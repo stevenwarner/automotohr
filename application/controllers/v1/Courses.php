@@ -25,6 +25,63 @@ class Courses extends Public_Controller
     /**
      *
      */
+    public function dashboard()
+    {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $myDepartmentAndTeams = getMyDepartmentAndTeams($employeeId, "", "count_all_results");
+        //
+        if (!empty($myDepartmentAndTeams)) {
+            $haveSubordinate = 'yes';
+        } else {
+            $haveSubordinate = 'no';
+        }
+        //
+        $data['title'] = "My Course(s) | " . STORE_NAME;
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = 0;
+        $data['page'] = "my_dashboard";
+        $data['viewMode'] = "my";
+        $data['employee'] = $session['employer_detail'];
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['load_view'] = 1;
+        $data['type'] = "self";
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/employee_courses_dashboard',
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/my_dashboard')
+            ->view('main/footer');
+    }
+
+    /**
+     *
+     */
     public function myCourses()
     {
         //
@@ -56,7 +113,8 @@ class Courses extends Public_Controller
         $data['type'] = "self";
         // load CSS
         $data['PageCSS'] = [
-            '2022/css/main'
+            '2022/css/main',
+            'v1/app/css/globals'
         ];
         // load JS
         $data['PageScripts'] = [
@@ -75,7 +133,7 @@ class Courses extends Public_Controller
         //
         $this->load
             ->view('main/header_2022', $data)
-            ->view('courses/my_dashboard')
+            ->view('courses/my_courses')
             ->view('main/footer');
     }
 

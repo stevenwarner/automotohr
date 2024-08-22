@@ -29,7 +29,7 @@
                                         <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } ?>
                                 <?php } else { ?> 
-                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } ?>     
                             </div>
                         </h1>

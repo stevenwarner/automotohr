@@ -1130,13 +1130,13 @@
                                                     <figure><i class="fa fa-file <?= $pendingTrainings != 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                                     </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>">My Courses</a>
+                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>">My Courses</a>
                                                     </h2>
                                                     <div class="count-box" style="font-size: 12px">
                                                         <span class="green"><?= $pendingTrainings ?? 0; ?> course(s) pending</span><br>
                                                     </div>
                                                     <div class="button-panel">
-                                                        <a href="<?= base_url('lms/courses/my'); ?>" class="site-btn">Show</a>
+                                                        <a href="<?= base_url('lms/courses/my_lms_dashboard'); ?>" class="site-btn">Show</a>
                                                     </div>
                                                 </div>
                                             </div>

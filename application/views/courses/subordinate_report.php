@@ -22,7 +22,7 @@
                         <h1 class="section-ttile">
                             <?php echo $title; ?>
                             <div style="float: right;">
-                                <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
+                                <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
                             </div>
                         </h1>
                     </div>

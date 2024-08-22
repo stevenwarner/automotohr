@@ -31,7 +31,7 @@
         <li>
             <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
                     echo 'class="active"';
-                } ?> href="<?php echo base_url('lms/courses/my') ?>">
+                } ?> href="<?php echo base_url('lms/courses/my_lms_dashboard') ?>">
                 <figure><i class="fa fa-list-alt"></i></figure>My Courses
             </a>
         </li>
