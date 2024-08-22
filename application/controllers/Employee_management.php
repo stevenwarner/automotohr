@@ -1873,6 +1873,13 @@ class Employee_management extends Public_Controller
                     }
 
 
+                    //
+                    if (isset($_POST['complynet_job_title'])) {
+                        if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+
+                            $data_to_insert['complynet_job_title'] = $this->input->post('complynet_job_title', true);
+                        }
+                    }
 
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
@@ -1933,10 +1940,26 @@ class Employee_management extends Public_Controller
                             'PhoneNumber' => $employee_detail['PhoneNumber']
                         ]);
 
+                        // update employee complynet job title on complynet
+
+                        if ($employee_detail['complynet_job_title'] != $data_to_insert['complynet_job_title']) {
+                            updateEmployeeJobRoleToComplyNet($sid, $company_id);
+                        }
+
                         // update employee department on complynet
+                        /*
                         if ($employee_detail['department_sid'] != $data_to_insert['department_sid']) {
                             updateEmployeeDepartmentToComplyNet($sid, $company_id);
                         }
+                            */
+
+                            $department = $this->input->post('department');
+                            $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
+                            //
+                            if ($employee_detail['department_sid'] != $departmentId) {
+                                updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                            }
+
                     }
 
                     // update the data in verification forms

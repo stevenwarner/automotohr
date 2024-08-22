@@ -78,6 +78,16 @@
     <!--  -->
     <br>
     <div class="row">
+
+
+
+        <?php if (isCompanyOnComplyNet($employer['parent_sid']) != 0) { ?>
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">ComplyNet Job Title</label>
+                <p class="dummy-invoice-fields"><?= $employer["complynet_job_title"];?></p>
+            </div>
+
+        <?php } ?>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Payment Method</label>
             <p class="dummy-invoice-fields"><?= $employer["payment_method"] == 'direct_deposit' ? 'Direct Deposit' : 'Check'; ?></p>
@@ -210,14 +220,14 @@
                 <?= GetVal($employmentDate); ?>
             </p>
         </div>
-       
+
 
 
     </div <!-- -->
     <br>
 
     <div class="row">
-    <div class="col-md-6 col-xs-12">
+        <div class="col-md-6 col-xs-12">
             <label class="csF16">Linkedin Profile URL</label>
             <?php if (isset($employer["linkedin_profile_url"])) { ?>
                 <p class="dummy-invoice-fields"><a href="<?= $employer["linkedin_profile_url"]; ?>" target="_blank"><?= $employer["linkedin_profile_url"]; ?></a>
