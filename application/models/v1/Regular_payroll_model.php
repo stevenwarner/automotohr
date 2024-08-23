@@ -1084,6 +1084,8 @@ class Regular_payroll_model extends Payroll_model
         $this->db->select('payrolls.payroll_ledger.account_number');
         $this->db->select('payrolls.payroll_ledger.general_entry_number');
         $this->db->select('payrolls.payroll_ledger.reference_number');
+        $this->db->select('payrolls.payroll_ledger.extra');
+
 
         $this->db->select('users.sid');
         $this->db->select('users.first_name');

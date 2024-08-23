@@ -19,20 +19,19 @@ $(function importLedger() {
         credit = ['credit', 'creditamount'],
         startPeriod = ['start', 'startdate', 'startduration', 'startperiod'],
         endPeriod = ['end', 'enddate', 'endduration', 'endperiod'],
-        transactionDate = ['transaction', 'transactiondate', 'transactiontime', 'paydate'];
-    firstName = ['employeefirstname', 'firstname', 'fname'],
+        transactionDate = ['transaction', 'transactiondate', 'transactiontime', 'paydate'],
+        firstName = ['employeefirstname', 'firstname', 'fname'],
         lastName = ['employeelastname', 'lastname', 'fname'],
         department = ['departmentname', 'department', 'homedepartmentdescription'],
         jobTitles = ['jobtitle', 'job', 'position'],
         grossPay = ['grosspay', 'gross', 'grosssalary'],
         netPay = ['netpay', 'net', 'netsalary'],
-        taxes = ['taxes']
-    description = ['description, note'];
-
-    accountname = ['accountname'];
-    accountNumber = ['accountnumber'];
-    referenceNumber = ['referencenumber'];
-    generalEntrynumber = ['generalentrynumber'];
+        taxes = ['taxes'],
+        description = ['description, note'],
+        accountname = ['accountname'],
+        accountNumber = ['accountnumber'],
+        referenceNumber = ['referencenumber'],
+        generalEntrynumber = ['generalentrynumber'];
 
 
     loader('hide');
@@ -89,6 +88,7 @@ $(function importLedger() {
         //Check if is it right format
         var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
 
+
         if (!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")) {
             alertify.alert('Not a valid format');
             return false;
@@ -106,12 +106,18 @@ $(function importLedger() {
 
         // Get header
         var indexes = fileData[0].split(',');
+
         // Reset index
         indexes = indexes.map(function (v, i) {
+            // console.log(v);
             var index = in_array(v.toLowerCase().replace(/[^a-z]/g, '').trim());
-            return index === -1 ? 'extra' : index;
-
+            //  console.log(index);
+            return index === -1 ? '#' + v : index;
+           // return index === -1 ? 'extra' : index;
         });
+
+        //  return;
+
         // Remove head
         fileData.splice(0, 1);
         //
@@ -150,16 +156,24 @@ $(function importLedger() {
                 len = tmp.length;
 
             record['extra'] = [];
-
+            var objextra = {};
             if (len > 2) {
                 //
                 for (i; i < len; i++) {
-                    if (indexes[i] === 'extra') {
-                        record['extra'].push(tmp[i]);
+                    // console.log(indexes[i]);
+                    let extchk = indexes[i];
+                    extchk = extchk.replace("#", "");
+                    if (indexes[i] === '#' + extchk) {
+                        // record['extra'].push(tmp[i]);
+                        objextra[extchk] = tmp[i];
                     } else {
                         record[indexes[i]] = tmp[i].trim();
                     }
                 }
+
+                record['extra'].push(objextra);
+
+                console.log(record);
 
                 //
                 var employeeIdFlag = true;
@@ -400,7 +414,6 @@ $(function importLedger() {
         array = description;
         for (i; i < len; i++)
             if (index == array[i].trim()) return 'description';
-
 
         i = 0;
         len = accountname.length;
