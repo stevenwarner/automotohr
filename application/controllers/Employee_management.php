@@ -1943,7 +1943,7 @@ class Employee_management extends Public_Controller
                         // update employee complynet job title on complynet
 
                         if ($employee_detail['complynet_job_title'] != $data_to_insert['complynet_job_title']) {
-                            updateEmployeeJobRoleToComplyNet($sid, $company_id);
+                            // updateEmployeeJobRoleToComplyNet($sid, $company_id);
                         }
 
                         // update employee department on complynet
@@ -1957,7 +1957,7 @@ class Employee_management extends Public_Controller
                             $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
                             //
                             if ($employee_detail['department_sid'] != $departmentId) {
-                                updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                                // updateEmployeeDepartmentToComplyNet($sid, $company_id);
                             }
 
                     }
