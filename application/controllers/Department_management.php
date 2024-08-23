@@ -504,8 +504,16 @@ class Department_management extends Public_Controller
             $data_to_update['deleted_by_sid'] = $employer_sid;
             $data_to_update['deleted_date'] = date('Y-m-d H:i:s');
             if ($type == 'department') {
-                $this->department_management_model->update_department($sid, $data_to_update);
-                $this->department_management_model->deleteDepartment($sid);
+               // _e($sid, true);
+                $countEmployee = checkDepartmentIsAssigned($sid);
+
+                if ($countEmployee > 0) {
+                    echo "haveemployes";
+                    return;
+                }
+
+               $this->department_management_model->update_department($sid, $data_to_update);
+               $this->department_management_model->deleteDepartment($sid);
             } else if ($type == 'team') {
                 $this->department_management_model->update_team($sid, $data_to_update);
                 $this->department_management_model->deleteTeam($sid);

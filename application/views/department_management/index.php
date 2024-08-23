@@ -139,8 +139,12 @@
                     url: myurl,
                     async : false,
                     success: function (data) {
+                        if(data==='haveemployes'){
+                        alertify.alert('This department have employees ,ensure that all employees have been successfully transferred out of the department,then delete department again');
+                        }else{
                         $('#row_'+department_sid).remove();
                         alertify.success('Department Deleted Successfully!');
+                        }
                     },
                     error: function (data) {
 

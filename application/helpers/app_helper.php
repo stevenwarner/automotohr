@@ -3737,18 +3737,16 @@ if (!function_exists("updateDocumentCorrectionDesc")) {
     }
 }
 
-if (!function_exists("checkAndGetDocumentDescription"))
-{
+if (!function_exists("checkAndGetDocumentDescription")) {
     function checkAndGetDocumentDescription(
         int $documentId,
         string $description,
         bool $encode = false
-    ):string
-    {
+    ): string {
         // get CI instance
-        $CI =& get_instance();
+        $CI = &get_instance();
         // check if fillable document
-        if(
+        if (
             $CI
             ->db
             ->where([
@@ -3756,7 +3754,7 @@ if (!function_exists("checkAndGetDocumentDescription"))
                 "fillable_document_slug IS NOT NULL" => null
             ])
             ->count_all_results("documents_management")
-        ){
+        ) {
             return $encode ? htmlentities(
                 $description
             ) : $description;
@@ -3772,8 +3770,8 @@ if (!function_exists("checkAndGetDocumentDescription"))
             ->row_array();
         //
         return $encode ? htmlentities(
-                $record["document_description"]
-            ) : $record["document_description"];
+            $record["document_description"]
+        ) : $record["document_description"];
     }
 }
 
@@ -3794,5 +3792,22 @@ if (!function_exists('getButton')) {
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
 {{text}}             
 </a>');
+    }
+}
+
+
+
+//
+if (!function_exists("checkDepartmentIsAssigned")) {
+    function checkDepartmentIsAssigned(
+        $departmentSid
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        $recordCount = $CI
+            ->db
+            ->where("department_sid", $departmentSid)
+            ->count_all_results("departments_employee_2_team");
+        return $recordCount;
     }
 }
