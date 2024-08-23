@@ -1111,7 +1111,45 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
+
+    function test123 () {
+        $header = [];
+        $records = [
+            [
+                'credit' => 500,
+                'extra'=> [
+                    'name' => "usman",
+                    'pet' => "dog"
+                ]
+            ],
+            [
+                'credit' => 000,
+                'extra'=> [
+                    'name' => "Numan",
+                    'pet' => "Cat"
+                ]    
+            ]
+            
+        ];
+    
+        foreach ($records as $key1 => $row) {
+            foreach ($row['extra'] as $key2 => $value) {
+                if (!in_array($key2, $header)) {
+                    $header[] = $key2;
+                }
+                //
+                $records[$key1][$key2] = $value;
+            }
+        }
+        //
+        _e($header,true);
+        _e($records,true,true);
+    
+    }
 }
+
+
+
 
 if (!function_exists('remakeSalary')) {
     function remakeSalary($salary, $jobType)

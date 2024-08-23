@@ -54,7 +54,7 @@
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        Inprogress Courses
+                                                        <strong>Inprogress Courses</strong>
                                                     </div>    
                                                     <div class="col-sm-6 text-right">
                                                         <a href="#" class="btn btn-info csRadius5" role="button">View Course</a> 
@@ -72,7 +72,7 @@
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        Past Due
+                                                        <strong>Past Due</strong>
                                                     </div>    
                                                     <div class="col-sm-6 text-right">
                                                         <a href="#" class="btn btn-info csRadius5" role="button">View Course</a> 
@@ -90,7 +90,7 @@
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        Due Soon
+                                                        <strong>Due Soon</strong>
                                                     </div>    
                                                     <div class="col-sm-6 text-right">
                                                         <a href="#" class="btn btn-info csRadius5" role="button">View Course</a> 
@@ -108,7 +108,7 @@
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        Assign Courses
+                                                        <strong>Assigned Courses</strong>
                                                     </div>    
                                                     <div class="col-sm-6 text-right">
                                                         <a href="#" class="btn btn-info csRadius5" role="button">View Course</a> 
