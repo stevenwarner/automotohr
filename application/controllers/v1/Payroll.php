@@ -3050,6 +3050,7 @@ class Payroll extends CI_Controller
                 if ($this->input->post('description')) {
                     $additionalHeader['description'] = 'Description';
                 }
+
                 if ($this->input->post('transaction_date')) {
                     $additionalHeader['transaction_date'] = 'Transaction Date';
                 }
@@ -3075,6 +3076,32 @@ class Payroll extends CI_Controller
 
                     $additionalHeader['reference_number'] = 'Reference Number';
                 }
+
+
+                //
+                if ($this->input->post('extra')) {
+
+                    $header = [];
+                    foreach ($data['employeesLedger'] as $key1 => $row) {
+                        foreach (json_decode($row['extra'], true)[0] as $key2 => $value) {
+                            if (!in_array($key2, $header)) {
+                                $header[] = $key2;
+                            }
+                            //
+                            $data['employeesLedger'][$key1]['extra_1'][$key2] = $value;
+                        }
+                    }
+
+                    if (!empty($header)) {
+                        foreach ($header as  $hdRow) {
+
+                            $headerkey = 'extra_' . preg_replace('/\s+/', '', $hdRow);
+
+                            $additionalHeader[$headerkey] = $hdRow;
+                        }
+                    }
+                }
+
 
 
                 header('Content-Type: text/csv; charset=utf-8');
@@ -3120,18 +3147,19 @@ class Payroll extends CI_Controller
                             $input['job_title'] = $ledgerRow['job_title'];
                         }
                         if ($additionalHeader['department'] || $additionalHeader['team']) {
-
                             $teamDepartment = $ledgerRow['employee_sid'] != null ? getEmployeeDepartmentAndTeams($ledgerRow['employee_sid']) : '';
                         }
                         if ($additionalHeader['department']) {
-                            $departments = !empty($teamDepartment['departments']) ? implode(',', array_column($teamDepartment['departments'], 'name')) : '';
+
+                            $department = array_column($teamDepartment['departments'], 'name');
+
+                            $departments = $department[0];
                             $input['department'] = $departments;
                         }
                         if ($additionalHeader['team']) {
-                            $teams = !empty($teamDepartment['teams']) ? implode(',', array_column($teamDepartment['teams'], 'name')) : '';
+                            $teams = !empty($teamDepartment['teams']) ? $teamDepartment['teams'][0]['name'] : '';
                             $input['team'] = $teams;
                         }
-
 
 
                         if ($additionalHeader['employee_number']) {
@@ -3151,21 +3179,20 @@ class Payroll extends CI_Controller
                         }
 
 
-
                         if ($additionalHeader['debit_amount']) {
-                            $input['debit_amount'] = $ledgerRow['debit_amount'] ? _a($ledgerRow['debit_amount']) : '0';
+                            $input['debit_amount'] = $ledgerRow['debit_amount'] ? $ledgerRow['debit_amount'] : '0';
                         }
                         if ($additionalHeader['credit_amount']) {
-                            $input['credit_amount'] = $ledgerRow['credit_amount'] ? _a($ledgerRow['credit_amount']) : '0';
+                            $input['credit_amount'] = $ledgerRow['credit_amount'] ? $ledgerRow['credit_amount'] : '0';
                         }
                         if ($additionalHeader['gross_pay']) {
-                            $input['gross_pay'] = $ledgerRow['gross_pay'] ? _a($ledgerRow['gross_pay']) : '0';
+                            $input['gross_pay'] = $ledgerRow['gross_pay'] ? $ledgerRow['gross_pay'] : '0';
                         }
                         if ($additionalHeader['net_pay']) {
-                            $input['net_pay'] = $ledgerRow['net_pay'] ? _a($ledgerRow['net_pay']) : '0';
+                            $input['net_pay'] = $ledgerRow['net_pay'] ? $ledgerRow['net_pay'] : '0';
                         }
-                        if ($additionalHeader['nettaxes_pay']) {
-                            $input['taxes'] = $ledgerRow['taxes'] ? _a($ledgerRow['taxes']) : '0';
+                        if ($additionalHeader['taxes']) {
+                            $input['taxes'] = $ledgerRow['taxes'] ? $ledgerRow['taxes'] : '0';
                         }
                         if ($additionalHeader['description']) {
                             $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
@@ -3195,6 +3222,15 @@ class Payroll extends CI_Controller
                             $input['reference_number'] = $ledgerRow['reference_number'];
                         }
 
+                        //                        
+                        if (!empty($header)) {
+                            if (!empty($ledgerRow['extra_1'])) {
+                                foreach ($ledgerRow['extra_1'] as $key => $val) {
+                                    $headerkey = 'extra_' . preg_replace('/\s+/', '', $key);
+                                    $input[$headerkey] = $val;
+                                }
+                            }
+                        }
 
                         fputcsv($output, $input);
                     }

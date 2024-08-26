@@ -22,21 +22,23 @@ $(function importLedger() {
         transactionDate = ['transaction', 'transactiondate', 'transactiontime', 'paydate'],
         firstName = ['employeefirstname', 'firstname', 'fname'],
         lastName = ['employeelastname', 'lastname', 'fname'],
-        department = ['departmentname', 'department', 'homedepartmentdescription'],
+        department = ['departmentname', 'department', 'homedepartment'],
         jobTitles = ['jobtitle', 'job', 'position'],
         grossPay = ['grosspay', 'gross', 'grosssalary'],
         netPay = ['netpay', 'net', 'netsalary'],
         taxes = ['taxes'],
-        description = ['description, note'],
+        note = ['description','note'],
         accountname = ['accountname'],
         accountNumber = ['accountnumber'],
         referenceNumber = ['referencenumber'],
-        generalEntrynumber = ['generalentrynumber'];
+        generalEntrynumber = ['generalentrynumber'],
+        middleName = ['middlename'],
+        type = ['type'],
+        team = ['team'];
 
 
     loader('hide');
     // 
-    // $('#userfile').change(fileChanged);
     //
     $('#js-import-form').submit(formHandler);
     //
@@ -88,35 +90,44 @@ $(function importLedger() {
         //Check if is it right format
         var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
 
-
         if (!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")) {
-            alertify.alert('Not a valid format');
+            alertify.alert('Not a valid format First Name');
             return false;
         }
 
         if (!format_index.includes("debitamount") && !format_index.includes("debit")) {
-            alertify.alert('Not a valid format');
+            alertify.alert('Not a valid format Debit Amount');
             return false;
         }
-        if (!format_index.includes("creditamount") && !format_index.includes("credit")) {
-            alertify.alert('Not a valid format');
+        if (!format_index.includes("creditamount credit") && !format_index.includes("credit")) {
+            alertify.alert('Not a valid format Credit Amount  is missing');
             return false;
         }
 
+        if (!format_index.includes("startdate") && !format_index.includes("startduration")  && !format_index.includes("startperiod")) {
+            alertify.alert('Not a valid format Start Period is missing');
+            return false;
+        }
+
+        if (!format_index.includes("enddate") && !format_index.includes("endperiod") && !format_index.includes("endduration")) {
+            alertify.alert('Not a valid format End Period is missing');
+            return false;
+        }
+   
+        if (!format_index.includes("transactiondate") && !format_index.includes("transactiontime") && !format_index.includes("paydate")) {
+            alertify.alert('Not a valid format  Transaction Date is missing');
+            return false;
+        }
 
         // Get header
         var indexes = fileData[0].split(',');
-
         // Reset index
         indexes = indexes.map(function (v, i) {
             // console.log(v);
             var index = in_array(v.toLowerCase().replace(/[^a-z]/g, '').trim());
-            //  console.log(index);
             return index === -1 ? '#' + v : index;
            // return index === -1 ? 'extra' : index;
         });
-
-        //  return;
 
         // Remove head
         fileData.splice(0, 1);
@@ -172,9 +183,6 @@ $(function importLedger() {
                 }
 
                 record['extra'].push(objextra);
-
-                console.log(record);
-
                 //
                 var employeeIdFlag = true;
                 var employeeNumberFlag = true;
@@ -408,13 +416,8 @@ $(function importLedger() {
         array = taxes;
         for (i; i < len; i++)
             if (index == array[i].trim()) return 'taxes';
-        // Reset start and length
-        i = 0;
-        len = description.length;
-        array = description;
-        for (i; i < len; i++)
-            if (index == array[i].trim()) return 'description';
-
+       
+        //
         i = 0;
         len = accountname.length;
         array = accountname;
@@ -437,7 +440,32 @@ $(function importLedger() {
         for (i; i < len; i++)
             if (index == array[i].trim()) return 'general_entry_number';
 
-        return -1;
+        i = 0;
+        len = middleName.length;
+        array = middleName;
+        for (i; i < len; i++)
+            if (index == array[i].trim()) return 'middle_name';
+
+        i = 0;
+        len = type.length;
+        array = type;
+        for (i; i < len; i++)
+            if (index == array[i].trim()) return 'type';
+
+        i = 0;
+        len = team.length;
+        array = team;
+        for (i; i < len; i++)
+            if (index == array[i].trim()) return 'team';
+
+
+ // Reset start and length
+ i = 0;
+ len = note.length;
+ array = note;
+ for (i; i < len; i++)
+     if (index == array[i].trim()) return 'description';
+        return -1;        
     }
 
     //

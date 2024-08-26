@@ -126,8 +126,6 @@ class Ledger extends Public_controller
                 $failCount = $insertCount = $existCount = 0;
                 $updatedRows = [];
                 $failRows = [];
-
-                // _e($formpost['payrolls'],true,true);
                 //
                 if ($formpost['payrolls']) {
                     foreach ($formpost['payrolls'] as $key => $payroll) {

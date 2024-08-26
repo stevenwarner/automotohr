@@ -45,6 +45,10 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
     .employee_id_td {
         display: none;
     }
+
+    .extra_td {
+        display: none;
+    }
 </style>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -157,6 +161,21 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                             </div>
                                         </div>
                                         <!-- Bottom here-->
+
+
+                                        <?php
+                                        $header = [];
+                                        foreach ($employeesLedger as $key1 => $row) {
+                                            foreach (json_decode($row['extra'], true)[0] as $key2 => $value) {
+                                                if (!in_array($key2, $header)) {
+                                                    $header[] = $key2;
+                                                }
+                                                //
+                                                $employeesLedger[$key1]['extra_1'][$key2] = $value;
+                                            }
+                                        }
+                                        ?>
+
                                         <?php if (isset($employeesLedger) && sizeof($employeesLedger) > 0) { ?>
                                             <div class="box-view reports-filtering">
                                                 <form method="post" id="export" name="export">
@@ -362,7 +381,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
 
                                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 cs_adjust_margin">
                                                                         <div class="checkbox cs_full_width" style="width: 100%;">
-                                                                            <label class="control control--checkbox" style="padding-left:35px;">Extra<input type="checkbox" class="check_it" name="extra" value="extra" id="extra" checked>
+                                                                            <label class="control control--checkbox" style="padding-left:35px;">Extra<input type="checkbox" class="check_it" name="extra" value="extra" id="extra" >
                                                                                 <div class="control__indicator"></div>
                                                                             </label>
                                                                         </div>
@@ -435,17 +454,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                         <div class="table-responsive" id="print_div">
                                                             <table class="table table-bordered horizontal-scroll" id="example">
                                                                 <thead>
-                                                                    <?php
-                                                                    $extraFlage = false;
-                                                                    foreach ($employeesLedger as $rowEmployee) {
-                                                                        $extraArray = json_decode($rowEmployee['extra'], true);
-                                                                        if (!empty($extraArray)) {
-                                                                           // $extraFlage = true;
-                                                                           // _e($extraArray, true);
-                                                                        }
-                                                                    }
 
-                                                                    ?>
 
                                                                     <tr>
                                                                         <th class="employee_id_td">Employee Id</th>
@@ -475,10 +484,12 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                         <th class="reference_number_td">Reference Number</th>
                                                                         <th class="general_entry_number_td">General Entry Number</th>
 
-                                                                        <?php if ($extraFlage) { ?>
-                                                                            <th class="extra_td">Extra</th>
-                                                                        <?php }
+                                                                        <?php if (!empty($header)) {
+                                                                            foreach ($header as $hdRow) {
                                                                         ?>
+                                                                                <th class="extra_td"><?php echo $hdRow ?></th>
+                                                                        <?php }
+                                                                        } ?>
 
 
                                                                     </tr>
@@ -493,14 +504,9 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                         $taxesTotal = 0;
                                                                     ?>
                                                                         <?php foreach ($employeesLedger as $rowEmployee) {
-                                                                            //    _e(json_decode($rowEmployee['extra'],true));
-                                                                            $extraArray = json_decode($rowEmployee['extra'], true);
-                                                                            if (!empty($extraArray)) {
-                                                                                //_e($extraArray, true);
-                                                                            }
-
 
                                                                         ?>
+
                                                                             <tr>
                                                                                 <td class="employee_id_td">
                                                                                     <?php
@@ -649,7 +655,30 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                     echo $rowEmployee['general_entry_number'];
                                                                                     ?>
                                                                                 </td>
-                                                                               
+
+                                                                                <?php
+                                                                                if (!empty($header)) {
+                                                                                    if (!empty($rowEmployee['extra_1'])) {
+                                                                                        foreach ($rowEmployee['extra_1'] as  $key => $val) {
+                                                                                ?>
+                                                                                            <td class="extra_td">
+                                                                                                <?php echo $val; ?>
+                                                                                            </td>
+                                                                                        <?php
+                                                                                        }
+                                                                                    }
+
+                                                                                    if (empty(json_decode($rowEmployee['extra']))) {
+
+                                                                                        foreach ($header as $row) {
+                                                                                        ?>
+                                                                                            <td class="extra_td">
+                                                                                            </td>
+                                                                                <?php }
+                                                                                    }
+                                                                                }
+
+                                                                                ?>
                                                                             </tr>
                                                                         <?php } ?>
 
@@ -1102,6 +1131,18 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
             $(".employee_id_td").hide();
         }
     });
+
+
+
+    $("#extra").click(function() {
+        if ($("#extra").is(':checked')) {
+            $(".extra_td").show();
+        } else {
+            $(".extra_td").hide();
+        }
+    });
+
+
 
 
     function print_page(elem) {
