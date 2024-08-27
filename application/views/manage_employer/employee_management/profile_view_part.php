@@ -212,7 +212,7 @@
         </div>
 
         <div class="col-md-6 col-xs-12">
-            <label class="csF16">Employment Date</label>
+            <label class="csF16">Starting Date as a Full-Time Employee</label>
             <?php
             $employmentDate = $employer['employment_date'] != NULL && $employer['employment_date'] != '0000-00-00' ? date_with_time($employer['employment_date']) : '';
             ?>

@@ -231,7 +231,9 @@
 
                                                                 ?>
                                                                     <tr>
-                                                                        <td><?php echo ucwords($company['CompanyName']); ?></td>
+                                                                        <td><?php echo ucwords($company['CompanyName']); ?> <?php if ($company['company_status'] == 0) { ?> <label class="label label-danger" title="The store is closed." placement="top">
+                                                                                    Closed
+                                                                                </label><?php } ?></td>
                                                                         <td><?php echo $company['sub_domain']; ?></td>
                                                                         <td class="exec-admin-access text-center">
 
@@ -258,7 +260,7 @@
                                                                                         ?> class="has_access" id="has_access_<?php //echo $registered_company_sid; 
                                                                                                                                 ?>" data-company-sid="<?php //echo $registered_company_sid; 
                                                                                                                                                         ?>" data-executive-admin-sid="<?php //echo $administrator['sid']; 
-                                                                                                                                                                                                                                                                ?>" name="has_access" value="1" type="checkbox">
+                                                                                                                                                                                        ?>" name="has_access" value="1" type="checkbox">
                                                                                 <div class="control__indicator"></div>
                                                                             </label>-->
                                                                         </td>

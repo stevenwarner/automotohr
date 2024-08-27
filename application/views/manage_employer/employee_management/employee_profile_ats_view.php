@@ -461,7 +461,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 <!--  -->
 
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Employment Date:</label>
+                                                    <label>Starting Date as a Full-Time Employee:</label>
 
                                                     <?php
                                                     $employmentDate = $employer['employment_date'] != NULL && $employer['employment_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $employer['employment_date'])->format('m-d-Y') : '';
