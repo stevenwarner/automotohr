@@ -27,9 +27,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 <?php foreach ($offerLetters as $k => $v) $offerLetters[$k]['letter_body'] = html_entity_decode($v['letter_body']); ?>
 <?php foreach ($all_documents as $k => $v) $all_documents[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllNoActionRequiredDocuments as $k => $v) $AllNoActionRequiredDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllCompletedDocuments as $k => $v) $AllCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
-<?php foreach ($AllNotCompletedDocuments as $k => $v) $AllNotCompletedDocuments[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
+<?php foreach ($AllNoActionRequiredDocuments as $k => $v) $AllNoActionRequiredDocuments[$k]['document_description'] = html_entity_decode(html_entity_decode($v['document_description'])); ?>
+<?php foreach ($AllCompletedDocuments as $k => $v) $AllCompletedDocuments[$k]['document_description'] = html_entity_decode(html_entity_decode($v['document_description'])); ?>
+<?php foreach ($AllNotCompletedDocuments as $k => $v) $AllNotCompletedDocuments[$k]['document_description'] =  html_entity_decode(html_entity_decode($v['document_description'])); ?>
 <?php foreach ($AllNotCompletedOfferLetters as $k => $v) $AllNotCompletedOfferLetters[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
 <?php foreach ($AllCompletedOfferLetters as $k => $v) $AllCompletedOfferLetters[$k]['document_description'] = html_entity_decode($v['document_description']); ?>
 <style>
