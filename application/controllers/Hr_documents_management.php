@@ -2054,6 +2054,7 @@ class Hr_documents_management extends Public_Controller
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
 
                     $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $user_sid, $user_type, 'single_download');
+                    
                     break;
                 case 'applicant':
                     $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $user_sid);
@@ -7871,7 +7872,7 @@ class Hr_documents_management extends Public_Controller
                 $document_content = str_replace('[Target User Input Field]', $value, $document_content);
 
                 $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
-                $document_content = str_replace('[Target User Checkbox]', $value, $document_content);
+                $document_content = html_entity_decode(str_replace('[Target User Checkbox]', $value, $document_content));
 
                 //E_signature process
                 $signature_bas64_image = '<a class="btn blue-button btn-sm get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
@@ -9850,7 +9851,7 @@ class Hr_documents_management extends Public_Controller
         // $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'preview');
         $document = $this->hr_documents_management_model->get_requested_generated_document_content($document_sid, $request_from);
         $requested_content = $this->hr_documents_management_model->get_requested_generated_document_content_body($document_sid, $request_type, $request_from, 'preview');
-        $view = '<div class="panel panel-success"><div class="panel-heading"><strong>' . $document['document_title'] . '</strong></div><div class="panel-body" id="document_preview_div">' . html_entity_decode($requested_content) . '</div></div>';
+        $view = '<div class="panel panel-success"><div class="panel-heading"><strong>' . $document['document_title'] . '</strong></div><div class="panel-body" id="document_preview_div">' . html_entity_decode(html_entity_decode($requested_content)) . '</div></div>';
 
         if (!empty($document['form_input_data'])) {
             $form_input_data = unserialize($document['form_input_data']);
@@ -9868,6 +9869,8 @@ class Hr_documents_management extends Public_Controller
             $return_data['is_iframe_preview']   = $is_iframe_preview;
             $return_data['requested_content']   = $requested_content;
             $return_data['requested_content']   = preg_match('/(&.+;)/i', $requested_content) ? html_entity_decode($requested_content) : $requested_content;
+
+
             echo json_encode($return_data);
         } else {
             echo false;
@@ -9943,8 +9946,10 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
             //
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
-            $requested_content = $document_content;
+            $requested_content = html_entity_decode($document_content);
         }
+
+        
 
         $data = array();
         $data['file_name'] = $file_name;
