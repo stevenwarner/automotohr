@@ -201,11 +201,11 @@ class Hr_documents_management extends Public_Controller
 
                         //
                         $documentDescription =
-                            checkAndGetDocumentDescription(
+                            html_entity_decode(checkAndGetDocumentDescription(
                                 $document_sid,
                                 $this->input->post('document_description') ?? '',
                                 true
-                            );
+                            ));                      
 
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
@@ -6086,7 +6086,8 @@ class Hr_documents_management extends Public_Controller
 
                 if (!empty($document['document_description'])) {
                     $document_body = $document['document_description'];
-                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+
+                   $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                     $magic_signature_codes = array('{{signature}}', '{{inital}}');
                     $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
 
@@ -6152,7 +6153,7 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     $document_content = replace_tags_for_document($company_sid, $employer_sid, 'employee', $document['document_description'], $document['document_sid']);
-                    $document['document_description'] = $document_content;
+                    $document['document_description'] = html_entity_decode($document_content);
                     $requested_content = preg_replace('#(<br */?>\s*)+#i', '<br />', $requested_content);
                 } else {
                     $this->session->set_flashdata('message', '<strong>Error</strong> Document Not found!');
@@ -13120,7 +13121,7 @@ class Hr_documents_management extends Public_Controller
         $data['company_sid'] = $company_sid;
         $data['token'] = $token == null || $token == 0 ? time() : $token;
         //
-        
+
         $this->load->view('download_bulk_documents', $data);
     }
 
