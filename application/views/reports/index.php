@@ -507,7 +507,7 @@
                                                             <a href="<?php echo $url; ?>">Payroll Ledger</a>
                                                         </h2>
                                                         <div class="count-box">
-                                                            <small>Employees Payroll Ledger Report</small>
+                                                            <small>Payroll Ledger Report</small>
                                                         </div>
                                                         <div class="button-panel">
                                                             <a class="site-btn" href="<?php echo $url; ?>">Generate</a>

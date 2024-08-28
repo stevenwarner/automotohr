@@ -134,7 +134,7 @@ class Ledger extends Public_controller
                         //
                         if ($employeeId == 0 && ($payroll['first_name'] || $payroll['last_name'])) {
                             $failCount++;
-                            $failRows[] =$key;
+                            $failRows[] = $key;
                         } else {
                             $starDate = formatDateToDB($payroll['start_period'], SITE_DATE, DB_DATE);
                             $endDate = formatDateToDB($payroll['end_period'], SITE_DATE, DB_DATE);
@@ -147,16 +147,16 @@ class Ledger extends Public_controller
                                 // employee
                                 if (
                                     !$this->db
-                                    ->where([
-                                        'start_date' => $starDate, 
-                                        'end_date' => $endDate, 
-                                        'transaction_date' => $transactionDate,
-                                        'debit_amount' => $payroll['debit'],
-                                        'credit_amount' => $payroll['credit'],
-                                        'company_sid' => $data['companyId'],
-                                        'employee_sid' => $employeeId
-                                        ])    
-                                    ->count_all_results('payrolls.payroll_ledger')
+                                        ->where([
+                                            'start_date' => $starDate,
+                                            'end_date' => $endDate,
+                                            'transaction_date' => $transactionDate,
+                                            'debit_amount' => $payroll['debit'],
+                                            'credit_amount' => $payroll['credit'],
+                                            'company_sid' => $data['companyId'],
+                                            'employee_sid' => $employeeId
+                                        ])
+                                        ->count_all_results('payrolls.payroll_ledger')
                                 ) {
                                     $dataToInsert = [];
                                     $dataToInsert['company_sid'] = $data['companyId'];
@@ -172,6 +172,16 @@ class Ledger extends Public_controller
                                     $dataToInsert['description'] = $payroll['description'];
                                     $dataToInsert['created_at'] = $currentDate;
                                     $dataToInsert['updated_at'] = $currentDate;
+
+                                    $dataToInsert['account_name'] = $payroll['account_name'];
+                                    $dataToInsert['account_number'] = $payroll['account_number'];
+                                    $dataToInsert['reference_number'] = $payroll['reference_number'];
+                                    $dataToInsert['general_entry_number'] = $payroll['general_entry_number'];
+
+                                    if (!empty($payroll['extra'])) {
+                                        $dataToInsert['extra'] = json_encode($payroll['extra']);
+                                    }
+
                                     //
                                     $this->ledger_model->insertLedgerInfo($dataToInsert);
                                     //
@@ -185,16 +195,16 @@ class Ledger extends Public_controller
                                 // company
                                 if (
                                     !$this->db
-                                    ->where([
-                                        'start_date' => $starDate, 
-                                        'end_date' => $endDate, 
-                                        'transaction_date' => $transactionDate,
-                                        'debit_amount' => $payroll['debit'],
-                                        'credit_amount' => $payroll['credit'],
-                                        'company_sid' => $data['companyId'],
-                                        'employee_sid' => null
-                                        ])    
-                                    ->count_all_results('payrolls.payroll_ledger')
+                                        ->where([
+                                            'start_date' => $starDate,
+                                            'end_date' => $endDate,
+                                            'transaction_date' => $transactionDate,
+                                            'debit_amount' => $payroll['debit'],
+                                            'credit_amount' => $payroll['credit'],
+                                            'company_sid' => $data['companyId'],
+                                            'employee_sid' => null
+                                        ])
+                                        ->count_all_results('payrolls.payroll_ledger')
                                 ) {
                                     $dataToInsert = [];
                                     $dataToInsert['company_sid'] = $data['companyId'];
@@ -209,6 +219,14 @@ class Ledger extends Public_controller
                                     $dataToInsert['description'] = $payroll['description'];
                                     $dataToInsert['created_at'] = $currentDate;
                                     $dataToInsert['updated_at'] = $currentDate;
+                                    $dataToInsert['account_name'] = $payroll['account_name'];
+                                    $dataToInsert['account_number'] = $payroll['account_number'];
+                                    $dataToInsert['reference_number'] = $payroll['reference_number'];
+                                    $dataToInsert['general_entry_number'] = $payroll['general_entry_number'];
+
+                                    if (!empty($payroll['extra'])) {
+                                        $dataToInsert['extra'] = json_encode($payroll['extra']);
+                                    }
                                     //
                                     $this->ledger_model->insertLedgerInfo($dataToInsert);
                                     //
@@ -249,5 +267,19 @@ class Ledger extends Public_controller
         header('Content-type: application/json');
         echo json_encode($responseArray);
         exit(0);
+    }
+
+    //
+    public function DownloadTemplate()
+    {
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header("Content-Disposition: attachment; filename=ledger_sample.csv");
+        $output = fopen('php://output', 'w');
+
+        fputcsv($output, array('First Name', 'Last Name', 'Email', 'Primary Number', 'Employee ID', 'Employee Number', 'Social Security Number', 'Debit', 'Credit', 'Start Period', 'End Period', 'Transaction Date', 'Job Title/Position', 'Department', 'Gross Pay', 'Net Pay', 'Taxes', 'Description', 'Account Name', 'Account Number', 'Reference Number', 'General Entry Number'));
+
+        fclose($output);
+        exit;
     }
 }
