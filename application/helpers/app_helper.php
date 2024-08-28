@@ -2227,9 +2227,9 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         $employeeNewDepartmentId = $CI->complynet_model->getEmployeeDepartmentId($employeeId);
 
         // when both ids are equal
-        if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
-            return false;
-        }
+        // if ($employeeNewDepartmentId == $employeeOldDepartmentId) {
+        //     return false;
+        // }
 
         // Create New Department On Comply Net
         if (empty($employeeNewDepartmentId) || $employeeNewDepartmentId === 0) {
@@ -2248,7 +2248,7 @@ if (!function_exists('updateEmployeeDepartmentToComplyNet')) {
         //
         $employee = $CI->complynet_model->getemployeeComplyNetJobTitle($employeeId);
         //
-        $complyJobRoleId = $CI->complynet_model->getAndSetJobRoleId(
+        $complyJobRoleId = $CI->complynet_model->syncJobRoles(
             $employeeNewDepartmentId,
             $employee['complynet_job_title']
         );

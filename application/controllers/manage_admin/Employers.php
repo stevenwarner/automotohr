@@ -520,17 +520,17 @@ class employers extends Admin_Controller
                 ]);
 
                 // update employee complynet job title on complynet
-                if ($employer_detail[0]['complynet_job_title'] != $data['complynet_job_title']) {
+                // if ($employer_detail[0]['complynet_job_title'] != $data['complynet_job_title']) {
                     updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
-                }
+                // }
 
                 // update employee department on complynet
                 //
                 $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
                 //
-                if ($employer_detail[0]['department_sid'] != $departmentId) {
+                // if ($employer_detail[0]['department_sid'] != $departmentId) {
                     updateEmployeeDepartmentToComplyNet($sid, $oldData['parent_sid']);
-                }
+                // }
             }
 
             if ($action == 'Save') {
