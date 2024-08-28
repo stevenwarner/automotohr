@@ -55,6 +55,133 @@ class Complynet_cron_model extends CI_Model
         }
     }
 
+    /**
+     * sync company to ComplyNet
+     */
+    public function synCompanyDepartments(int $companyId)
+    {
+        // get all companies on ComplyNet
+        $this->company =
+            $this
+            ->db
+            ->select([
+                "company_sid",
+                "complynet_company_sid",
+                "complynet_location_sid"
+            ])
+            ->where(
+                "company_sid",
+                $companyId
+            )
+            ->limit(1)
+            ->get("complynet_companies")
+            ->row_array();
+        // check there were no data
+        if (!$this->company) {
+            return "No company found.";
+        }
+        //
+        $this->syncDepartments();
+    }
+
+    /**
+     * sync company to ComplyNet
+     */
+    public function synCompanyJobRole(
+        string $complynetDepartmentId,
+        string $jobTitle
+    ) {
+        $jobTitle = trim($jobTitle);
+        //
+        $this->setCompanyFromDepartment(
+            $complynetDepartmentId
+        );
+        // check there were no data
+        if (!$this->company) {
+            return 0;
+        }
+        // sync the job roles as well
+        $this->syncDepartmentJobRoles(
+            $complynetDepartmentId
+        );
+        // get the job role
+        //
+        $record = $this
+            ->db
+            ->select("complynet_job_role_sid")
+            ->where([
+                "complynet_department_sid" => $complynetDepartmentId,
+                "trim(lower(REGEXP_REPLACE(job_title, '/[^a-zA-Z]/', ''))) =" => $this->stringToSlug($jobTitle),
+            ])
+            ->limit(1)
+            ->get("complynet_jobRole")
+            ->row_array();
+        //
+        if (!$record) {
+            $complyNetJobRoleId = $this
+                ->complynet_lib
+                ->addJobRole([
+                    'ParentId' => $complynetDepartmentId,
+                    'Name' => $jobTitle
+                ]);
+            // set insert array
+            $ins = [];
+            $ins["complynet_department_sid"] = $complynetDepartmentId;
+            $ins["complynet_job_role_sid"] = $complyNetJobRoleId;
+            $ins["complynet_job_role_name"] = $jobTitle;
+            $ins["job_title"] = $jobTitle;
+            $ins["status"] = 1;
+            $ins["updated_at"] = getSystemDate();
+            $this->checkAndAddDepartmentJobRole($ins);
+        } else {
+            $complyNetJobRoleId = $record["complynet_job_role_sid"];
+        }
+        // 
+        if ($complyNetJobRoleId == "0") {
+            return 0;
+        }
+        return $complyNetJobRoleId;
+    }
+
+
+    private function setCompanyFromDepartment(
+        string $complynetDepartmentId
+    ) {
+        $record = $this
+            ->db
+            ->select([
+                "company_sid",
+            ])
+            ->where(
+                "complynet_department_sid",
+                $complynetDepartmentId
+            )
+            ->limit(1)
+            ->get("complynet_companies")
+            ->row_array();
+        // get company id
+        //
+        if (!$record) {
+            return 0;
+        }
+        //get all companies on ComplyNet
+        $this->company =
+            $this
+            ->db
+            ->select([
+                "company_sid",
+                "complynet_company_sid",
+                "complynet_location_sid"
+            ])
+            ->where(
+                "company_sid",
+                $record["company_sid"]
+            )
+            ->limit(1)
+            ->get("complynet_companies")
+            ->row_array();
+    }
+
     /*
      | ----------------------------------------------------- 
      | PRIVATE

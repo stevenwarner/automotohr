@@ -280,8 +280,16 @@ class Complynet extends Admin_Controller
         //
         $this->complyCompanyId = $company['complynet_company_sid'];
         $this->complyLocationId = $company['complynet_location_sid'];
-        // Lets sync departments
-        $this->syncDepartments();
+
+        // load model
+        $this->load->model(
+            "2022/Complynet_cron_model",
+            "complynet_cron_model"
+        );
+        // sync company departments and job roles
+        $this
+            ->complynet_cron_model
+            ->synCompanyDepartments($companyId);
         // Lets sync job roles
         $this->syncEmployees();
         //
