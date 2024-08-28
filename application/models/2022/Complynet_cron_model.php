@@ -157,7 +157,7 @@ class Complynet_cron_model extends CI_Model
                 $complynetDepartmentId
             )
             ->limit(1)
-            ->get("complynet_companies")
+            ->get("complynet_departments")
             ->row_array();
         // get company id
         //
