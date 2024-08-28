@@ -1864,7 +1864,7 @@ class Company_model extends CI_Model
 
     function get_all_executive_admin_companies()
     {
-        $this->db->select('users.sid, users.career_page_type, users.CompanyName, portal_employer.sub_domain');
+        $this->db->select('users.sid, users.career_page_type, users.CompanyName, portal_employer.sub_domain,users.company_status');
         $this->db->where('parent_sid', 0);
         $this->db->where('active', 1);
         $this->db->where('is_paid', 1);
