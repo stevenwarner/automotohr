@@ -39,6 +39,7 @@ class Complynet_cron_model extends CI_Model
      */
     public function syncStoreToComplyNet()
     {
+        die("This event is topped by the Admin, please do not remove this line.");
         // get all companies on ComplyNet
         $this->setCompanies();
         // check there were no data
@@ -49,8 +50,8 @@ class Complynet_cron_model extends CI_Model
         foreach ($this->companies as $v0) {
             // set the company
             $this->company = $v0;
-            $this->syncDepartments();
-            $this->updateEmployees();
+            // $this->syncDepartments();
+            // $this->updateEmployees();
         }
     }
 

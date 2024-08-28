@@ -2304,9 +2304,9 @@ if (!function_exists('updateEmployeeJobRoleToComplyNet')) {
         $employeeNewJobRoleId = $CI->complynet_model->getEmployeeNewComplyNetJobRole($employeeDepartmentId, $employeeComplyNetJobTitle['complynet_job_title']);
 
         //
-        if ($employeeNewJobRoleId == $employeeOldJobRoleId) {
-            return false;
-        }
+        // if ($employeeNewJobRoleId == $employeeOldJobRoleId) {
+        //     return false;
+        // }
 
         if ($employeeNewJobRoleId != '') {
             // Just Bind
