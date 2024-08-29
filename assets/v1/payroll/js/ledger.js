@@ -12,7 +12,7 @@ $(function importLedger() {
         file = [],
         employeeId = ['employeeid', 'employeesid', 'employeeId'],
         employeeNumber = ['employeenumber', 'employeeno'],
-        employeeSSN = ['employee_ssn', 'socialsecurity', 'socialsecuritynumber', 'socialsecurity#', 'ssn', 'ss', 'ss#'],
+        employeeSSN = ['employee_ssn', 'socialsecurity', 'socialsecuritynumber', 'socialsecurity#', 'ssn', 'ss', 'ss#','employeessn'],
         employeeEmail = ['employeeemail', 'email', 'emailaddress', 'personalemail', 'e-mail'],
         employeePhone = ['employeephonenumber', 'phonenumber', 'contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber', 'primarynumber'],
         debit = ['debit', 'debitamount'],
@@ -31,7 +31,7 @@ $(function importLedger() {
         accountname = ['accountname'],
         accountNumber = ['accountnumber'],
         referenceNumber = ['referencenumber'],
-        generalEntrynumber = ['generalentrynumber'],
+        generalEntrynumber = ['generalentrynumber','journalentrynumber','journalnumber'],
         middleName = ['middlename'],
         type = ['type'],
         team = ['team'];

@@ -7,32 +7,39 @@ $importColumnsArray[] = 'Employee Email';
 $importColumnsArray[] = 'Employee Phone Number';
 $importColumnsArray[] = 'Debit';
 $importColumnsArray[] = 'Credit';
+$importColumnsArray[] = 'Taxes';
+$importColumnsArray[] = 'Description';
+
 $importColumnsArray[] = 'Start Period';
 $importColumnsArray[] = 'End Period';
 $importColumnsArray[] = 'Transaction Date';
-$importColumnsArray[] = 'First Name';
-$importColumnsArray[] = 'Last name';
-$importColumnsArray[] = 'Department';
-$importColumnsArray[] = 'Position';
-$importColumnsArray[] = 'Gross Pay';
-$importColumnsArray[] = 'Net Pay';
 
 //
 $importColumnsArray[] = 'Account Name';
 $importColumnsArray[] = 'Account Number';
 $importColumnsArray[] = 'Reference Number';
-$importColumnsArray[] = 'General Entry Number';
+$importColumnsArray[] = 'Journal Entry Number';
+
+$importColumnsArray[] = 'First Name';
+$importColumnsArray[] = 'Last name';
+$importColumnsArray[] = 'Department';
+$importColumnsArray[] = 'Job Title';
+$importColumnsArray[] = 'Gross Pay';
+$importColumnsArray[] = 'Net Pay';
+
+
 
 //
 $importValueArray = '';
-$importValueArray .= ', , , , ,25000, 0, 1/7/2024, 31/7/2024, 5/8/2024,  31/7/2024, , , , , , , JON,1255556666,54877770012,235687<br/>';
-$importValueArray .= '1234, E1234, 219-09-9999, email@abc.com, +1234567892, 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,JONJo,1255556666,54877770012,235687<br/>';
-$importValueArray .= '1234, , , , , 3000, 0, 1/7/2024, 31/7/2024, 5/8/2024, John, Doe, Sales, Sales Representative, 5000, 1000, 4000,,1255556666,54877770012,235687<br/>';
-$importValueArray .= ' , E1234, , , , 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,Ryan,1255556666,54877770012,235687<br/>';
-$importValueArray .= ' ,  , 219-09-9999, , , 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,Ryan,1255556666,54877770012,235687<br/>';
-$importValueArray .= ', , , email@abc.com, , 2400, 0 ,1/7/2024, 31/7/2024, 5/8/2024, Jason, Snow, Sales, General Manager, 7000, 1500, 5500,Jana,1255556666,54877770012,235687<br/>';
-$importValueArray .= ' , , , , +1234567892, 2900, 0, 1/7/2024, 31/7/2024, 5/8/2024, Nathan, Quite, Sales, Technician, 4000, 800, 3200,JO,1255556666,54877770012,235687<br/>';
-$importValueArray .= ', , , , , 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024, , , , , , ,Jef,1255556666,54877770012,235687 <br/>';
+
+$importValueArray .= ', , , , , 3000, 0, ,,1/7/2024, 31/7/2024, 5/8/2024, Jon Doe,1232659875555,25415878,9874889, John, Doe, Sales, Sales Representative, 5000, 1000<br/>';
+$importValueArray .= '1234, E1234, 219-09-9999, email@abc.com, +1234567892, 3000, 0, ,12,1/7/2024, 31/7/2024, 5/8/2024, Jon Doe,1232659875555,25415878,9874889, John, Doe, Sales, Sales Representative, 5000, 1000<br/>';
+$importValueArray .= '123452, E12345, 219-09-9999, jonemail@abc.com, +12345670892, 3000, 0, 100,,1/7/2024, 31/7/2024, 5/8/2024,  ,123265987553558,2541587885,1258, , Jason, Sales, General Manager, 8000, 1000<br/>';
+$importValueArray .= '123489, E12345255, 219-09-9999, nathan@abc.com, +12345678092, 3000, 0,, ,1/7/2024, 31/7/2024, 5/8/2024,  ,12326593875555,25415874888,9874889788, , Nathan, Sales, Technician, 5000, 5000<br/>';
+$importValueArray .= '123489433, , 219-09-9999, Jef@abc.com, +12345678902, 3000, 0,,, 1/7/2024, 31/7/2024, 5/8/2024,  ,123265987554455,25415874888,9874889788,Jef , Jo, Sales, Technician, 5000, 5000<br/>';
+$importValueArray .= ', , , jan@abc.com, +12345678902, 3000, 0, ,,1/7/2024, 31/7/2024, 5/8/2024,  ,123265987554455,25415874888,9874889788,jan , Jo, Sales, Technician, 8000, 5000<br/>';
+
+
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -54,8 +61,11 @@ $importValueArray .= ', , , , , 30000, 0, 1/7/2024, 31/7/2024, 5/8/2024, , , , ,
                                         <form method="post" id="export" name="export" action="<?php echo base_url('payrolls/ledger/downloadtemplate') ?>">
                                             <div class="row">
                                                 <div class="col-xs-12">
-                                                    <div class="form-group">
-                                                        <h4>The Provided CSV File must be in Following Format <input type="submit" name="submit" class="submit-btn pull-right" value="Download Template"></h4>
+                                                    <div class=" col-xs-6">
+                                                        <h4>The Provided CSV File must be in Following Format </h4>
+                                                    </div>
+                                                    <div class=" col-xs-6">
+                                                        <input type="submit" name="submit" class="submit-btn pull-right" value="Download Template">
                                                     </div>
                                                 </div>
                                             </div>
