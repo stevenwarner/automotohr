@@ -760,7 +760,6 @@ if (!function_exists('generate_image_compressed')) {
     function generate_image_compressed($source_image_path, $thumbnail_image_path)
     {
         ImageJPEG(ImageCreateFromString(file_get_contents($source_image_path)), $thumbnail_image_path, 75);
-        
     }
 }
 
@@ -11507,6 +11506,11 @@ if (!function_exists('isDocumentCompleted')) {
                 unset($documents[$k0]);
                 continue;
             }
+
+            if ($document['document_description'] != '') {
+                $documents[$k0]['document_description'] = html_entity_decode($document['document_description']);
+            }
+
             // Column to check
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
@@ -12685,7 +12689,7 @@ if (!function_exists('getCompanyAdminPlusList')) {
         $admin_plus = $CI->db->get('users')->result_array();
 
         if ($admin_plus) {
-            $response = $admin_plus; 
+            $response = $admin_plus;
         }
 
         return $response;
@@ -15387,7 +15391,11 @@ if (!function_exists('isImage')) {
         return in_array(
             strtolower(pathinfo($str, PATHINFO_EXTENSION)),
             [
-                'png', 'jpg', 'jpeg', 'gif', 'webp'
+                'png',
+                'jpg',
+                'jpeg',
+                'gif',
+                'webp'
             ]
         );
     }
@@ -17059,7 +17067,7 @@ if (!function_exists('getActiveAdmin')) {
             'active' => 1,
             'is_executive_admin'  => 0,
             'terminated_status' => 0,
-            'access_level' =>'Admin'
+            'access_level' => 'Admin'
         );
         return $CI->db->get_where('users', $where)->result_array();
     }
