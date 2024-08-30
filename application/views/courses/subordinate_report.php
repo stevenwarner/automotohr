@@ -170,7 +170,10 @@
                                                                                 <td class="_csVm"><?php echo $teamName; ?></td>
                                                                                 <td class="_csVm"><?php echo $courseCountText; ?></td>
                                                                                 <td class="_csVm">
-                                                                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                                    <!-- <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                                        <i class="fa fa-eye"></i> View
+                                                                                    </a> -->
+                                                                                    <a href="<?php echo base_url('lms/subordinate/dashboard/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View
                                                                                     </a>
                                                                                 </td>

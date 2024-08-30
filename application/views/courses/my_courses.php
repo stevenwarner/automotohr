@@ -150,4 +150,5 @@
     var subordinateId = "<?php echo $subordinate_sid; ?>";
     var subordinateName = "<?php echo $subordinateName; ?>";
     var reviewAs = "<?php echo $type; ?>";
+    var search = "<?php echo $search; ?>";
 </script>

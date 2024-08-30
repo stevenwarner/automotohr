@@ -9,6 +9,10 @@ $(function LMSEmployeeCourses() {
 		status: "all",
 	};
 	//
+	if (search.length) {
+		filterObj.status = search;
+	}
+	//
 	/**
 	 * Apply box filter
 	 */

@@ -1704,7 +1704,11 @@ $route['lms/courses/(:num)/(:num)/(:any)/certificate']['get'] = 'v1/Courses/view
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 $route['lms/courses/report'] = 'v1/Courses/subordinatesReport';
+
+$route['lms/subordinate/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/non_plus/$1';
 $route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/non_plus/$1';
+
+$route['lms/employee/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';
 $route['lms/employee/courses/(:num)'] = 'v1/Courses/subordinateCourses/plus/$1';
 $route['lms/subordinate/course/(:num)/(:num)/(:any)'] = 'v1/Courses/previewSubordinateCourse/$1/$2/$3';
 $route['lms/courses/company_report'] = 'v1/Courses/companyReport';

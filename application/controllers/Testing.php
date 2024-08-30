@@ -1146,6 +1146,60 @@ class Testing extends CI_Controller
         _e($records,true,true);
     
     }
+
+    /**
+     * SCORM parse
+     */
+    public function parseScorm($courseId)
+    {
+        // SCORM file name
+        $filePath = 'msprod__ns_1724805406_0_1_ofac_scorm12.zip';
+        // get the file to local
+        $zipFilePath = copyAWSFile($filePath);
+        $uploadPath = str_replace('.zip', '', $zipFilePath);
+        // extract the file
+        $zip = new ZipArchive;
+        $res = $zip->open($zipFilePath);
+        //
+        if ($res !== true) {
+            // unable to extract the file
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
+        }
+        // extract the file
+        $zip->extractTo($uploadPath);
+        $zip->close();
+        // set the "IMSmanifest" file
+        $file = $uploadPath . '/imsmanifest.xml';
+        // check if the file exists
+        if (!file_exists($file)) {
+            return SendResponse(404, ['status' => false, 'errors' => ['"IMSmanifest.xml" file is missing.']]);
+        }
+        // read the file
+        $handler = fopen($file, 'r');
+        $fileContents = fread($handler, filesize($file));
+        fclose($handler);
+        // load library
+        $this->load->library('scorm/parser', [], 'scorm_parser');
+        // content to JSON
+        $scormInfo = $this
+            ->scorm_parser
+            ->setContent($fileContents)
+            ->parse();
+        //
+        if (!$scormInfo) {
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to read XML file.']]);
+        }
+        //
+        if (isset($scormInfo['errors'])) {
+            // Todo delete AWS file and also local one if version not matched
+            return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
+        }
+        //
+        $this->db->where("sid", $courseId);
+        $this->db->update("lms_default_courses", ["Imsmanifist_json" => $scormInfo]);
+        //
+        return SendResponse(200, ['status' => true, 'success' => ['SCORM file read successfully.']]);
+    }
 }
 
 

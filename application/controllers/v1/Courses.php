@@ -60,6 +60,9 @@ class Courses extends Public_Controller
         ];
         // load JS
         $data['PageScripts'] = [
+            'https://code.highcharts.com/highcharts.js',
+            'https://code.highcharts.com/modules/exporting.js',
+            'https://code.highcharts.com/modules/accessibility.js',
             'js/app_helper',
             'v1/common',
             'v1/lms/employee_courses_dashboard',
@@ -100,6 +103,12 @@ class Courses extends Public_Controller
             $haveSubordinate = 'yes';
         } else {
             $haveSubordinate = 'no';
+        }
+        //
+        $data['search'] = '';
+        //
+        if (isset($_GET) && $_GET['type']) {
+           $data['search'] = $_GET['type'];
         }
         //
         $data['title'] = "My Course(s) | " . STORE_NAME;
@@ -253,7 +262,7 @@ class Courses extends Public_Controller
         $data['student_sid'] = $studentId;
         $data['type'] = $type;
         $data['employee'] = $session['employer_detail'];
-        $data['employeeName'] = getUserNameBySID($studentId);
+        $data['employeeName'] = getEmployeeOnlyNameBySID($studentId);
         $data['company_info'] = $session['company_detail'];
         $data['companyName'] = getCompanyNameBySid($companyId);
         $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
@@ -468,7 +477,7 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateCourses ($type, $subordinateId) {
+    public function subordinateDashboard($type, $subordinateId) {
         //
         $data = [];
         //
@@ -515,6 +524,77 @@ class Courses extends Public_Controller
         $data['PageScripts'] = [
             'js/app_helper',
             'v1/common',
+            'v1/lms/subordinate_employee_dashboard'
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/subordinate_dashboard')
+            ->view('main/footer');
+    }
+
+    public function subordinateCourses ($type, $subordinateId) {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['search'] = '';
+        //
+        if (isset($_GET) && $_GET['type']) {
+            $data['search'] = $_GET['type'];
+        }
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        $haveSubordinate = 'no';
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $haveSubordinate = 'yes';
+            $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } else if ($session['employer_detail']['access_level_plus']) {
+            $haveSubordinate = 'yes';
+        }
+        //
+        if ($type == "plus") {
+            $data['title'] = "Employee Courses | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Courses | " . STORE_NAME;
+        }
+        //
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = $subordinateId;
+        $data['subordinateName'] = getUserNameBySID($subordinateId);
+        $data['viewMode'] = "subordinate";
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['uniqueKey'] = $uniqueKey;
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['page'] = "subordinate_courses";
+        $data['type'] = $type;
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+  
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
             'v1/lms/employee_course_preview'
         ];
         //
@@ -528,7 +608,7 @@ class Courses extends Public_Controller
         //
         $this->load
             ->view('main/header_2022', $data)
-            ->view('courses/my_dashboard')
+            ->view('courses/my_courses')
             ->view('main/footer');
     }
 
