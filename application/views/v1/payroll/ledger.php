@@ -411,7 +411,7 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
 
                                                             </div>
 
-                                                           
+
                                                         </div>
                                                     </div>
 
@@ -452,8 +452,6 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                         <div class="table-responsive" id="print_div">
                                                             <table class="table table-bordered horizontal-scroll" id="example">
                                                                 <thead>
-
-
                                                                     <tr>
                                                                         <th class="employee_id_td">Employee Id</th>
                                                                         <th>Employee/Company</th>
@@ -481,15 +479,13 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                         <th class="account_number_td">Account Number</th>
                                                                         <th class="reference_number_td">Reference Number</th>
                                                                         <th class="general_entry_number_td">Journal Entry Number</th>
-
                                                                         <?php if (!empty($header)) {
                                                                             foreach ($header as $hdRow) {
                                                                         ?>
                                                                                 <th class="extra_td"><?php echo $hdRow ?></th>
                                                                         <?php }
                                                                         } ?>
-
-
+                                                                        <th>Actions</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -502,9 +498,8 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                         $taxesTotal = 0;
                                                                     ?>
                                                                         <?php foreach ($employeesLedger as $rowEmployee) {
-
+                                                                            $employeeName = '';
                                                                         ?>
-
                                                                             <tr>
                                                                                 <td class="employee_id_td">
                                                                                     <?php
@@ -513,9 +508,8 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                 </td>
                                                                                 <td>
                                                                                     <?php
-
                                                                                     if ($rowEmployee['employee_sid'] !== null) {
-                                                                                        echo remakeEmployeeName([
+                                                                                        $employeeName = remakeEmployeeName([
                                                                                             'first_name' => $rowEmployee['first_name'],
                                                                                             'last_name' => $rowEmployee['last_name'],
                                                                                             'access_level' => $rowEmployee['access_level'],
@@ -526,8 +520,10 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                             'job_title' => $rowEmployee['job_title'],
                                                                                         ]);
                                                                                     } else {
-                                                                                        echo getCompanyNameBySid($rowEmployee['company_sid']);
+                                                                                        $employeeName = getCompanyNameBySid($rowEmployee['company_sid']);
                                                                                     }
+                                                                                    echo $employeeName;
+
                                                                                     ?>
                                                                                 </td>
                                                                                 <td class="first_name_td">
@@ -583,29 +579,43 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                 </td>
                                                                                 <td class="text-success debit_amount_td">
                                                                                     <?php
-                                                                                    $debitAmountTotal = $debitAmountTotal + $rowEmployee['debit_amount'];
+                                                                                    if ($rowEmployee['employee_sid'] == null || $rowEmployee['employee_sid'] == '') {
+                                                                                        $debitAmountTotal = $debitAmountTotal + $rowEmployee['debit_amount'];
+                                                                                    }
                                                                                     echo $rowEmployee['debit_amount'] != '' ? _a($rowEmployee['debit_amount']) : '-';
                                                                                     ?>
                                                                                 </td>
                                                                                 <td class="text-danger credit_amount_td">
                                                                                     <?php
-                                                                                    $creditAmountTotal = $creditAmountTotal + $rowEmployee['credit_amount'];
+                                                                                    if ($rowEmployee['employee_sid'] == null || $rowEmployee['employee_sid'] == '') {
+
+                                                                                        $creditAmountTotal = $creditAmountTotal + $rowEmployee['credit_amount'];
+                                                                                    }
                                                                                     echo  $rowEmployee['credit_amount'] != '' ? _a($rowEmployee['credit_amount']) : '-';
                                                                                     ?>
                                                                                 </td>
                                                                                 <td class="gross_pay_td">
                                                                                     <?php
-                                                                                    $grossPayTotal = $grossPayTotal + $rowEmployee['gross_pay'];
+                                                                                    if ($rowEmployee['employee_sid'] == null || $rowEmployee['employee_sid'] == '') {
+
+                                                                                        $grossPayTotal = $grossPayTotal + $rowEmployee['gross_pay'];
+                                                                                    }
                                                                                     echo  $rowEmployee['gross_pay'] != '' ? _a($rowEmployee['gross_pay']) : '-'; ?>
                                                                                 </td>
                                                                                 <td class="net_pay_td">
                                                                                     <?php
-                                                                                    $netPayTotal = $netPayTotal + $rowEmployee['net_pay'];
+                                                                                    if ($rowEmployee['employee_sid'] == null || $rowEmployee['employee_sid'] == '') {
+
+                                                                                        $netPayTotal = $netPayTotal + $rowEmployee['net_pay'];
+                                                                                    }
                                                                                     echo  $rowEmployee['net_pay'] != '' ? _a($rowEmployee['net_pay']) : '-'; ?>
                                                                                 </td>
                                                                                 <td class="taxes_td">
                                                                                     <?php
-                                                                                    $taxesTotal = $taxesTotal + $rowEmployee['taxes'];
+                                                                                    if ($rowEmployee['employee_sid'] == null || $rowEmployee['employee_sid'] == '') {
+
+                                                                                        $taxesTotal = $taxesTotal + $rowEmployee['taxes'];
+                                                                                    }
                                                                                     echo  $rowEmployee['taxes'] != '' ? _a($rowEmployee['taxes']) : '-'; ?>
                                                                                 </td>
                                                                                 <td class="description_td">
@@ -675,8 +685,14 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                                 <?php }
                                                                                     }
                                                                                 }
-
                                                                                 ?>
+                                                                                <td>
+                                                                                    <?php if ($rowEmployee['is_regular'] == 1 ||  $rowEmployee['is_regular_employee'] == 1 || $rowEmployee['is_external'] == 1) { ?>
+
+                                                                                        <button type="button" class="btn btn-success jsProfileHistory" data-id="<?php echo $rowEmployee['payroll_sid']; ?>" data-isregular="<?php echo $rowEmployee['is_regular']; ?>" data-isregularemployee="<?php echo $rowEmployee['is_regular_employee']; ?>" data-isexternal="<?php echo $rowEmployee['is_external']; ?>" data-name="<?php echo $employeeName; ?>">View Breakdown</button>
+
+                                                                                    <?php } ?>
+                                                                                </td>
                                                                             </tr>
                                                                         <?php } ?>
 
@@ -686,7 +702,6 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                             <td>
                                                                                 Grand Total:
                                                                             </td>
-
                                                                             <td class="first_name_td">
                                                                             </td>
                                                                             <td class="middle_name_td">
@@ -731,22 +746,19 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
                                                                             <td class="account_number_td"> </td>
                                                                             <td class="reference_number_td"> </td>
                                                                             <td class="general_entry_number_td"> </td>
-
-
                                                                             <?php if (!empty($header)) {
                                                                                 foreach ($header as $hdRow) {
                                                                             ?>
                                                                                     <td class="extra_td"></td>
                                                                             <?php }
                                                                             } ?>
-
-
-
+                                                                            <td>
+                                                                            </td>
                                                                         </tr>
 
                                                                     <?php } else { ?>
                                                                         <tr>
-                                                                            <td class="text-center" colspan="11">
+                                                                            <td class="text-center" colspan="15">
                                                                                 <div class="no-data">No record found.</div>
                                                                             </td>
                                                                         </tr>
@@ -777,12 +789,10 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
         </div>
     </div>
 </div>
-
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
-
 <script type="text/javascript">
     $(document).keypress(function(e) {
         if (e.which == 13) {
@@ -803,7 +813,6 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
         end_date_applied = end_date_applied != '' && end_date_applied != null && end_date_applied != undefined && end_date_applied != 0 ? encodeURIComponent(end_date_applied) : 'all';
 
         var url = '<?php echo base_url('payrolls/ledger'); ?>' + '/' + start_date_applied + '/' + end_date_applied + '/' + employees + '/' + departments + '/' + jobTitles + '/' + dateSelection;
-
         $('#btn_apply_filters').attr('href', url);
     }
 
@@ -1143,7 +1152,6 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
     });
 
 
-
     $("#extra").click(function() {
         if ($("#extra").is(':checked')) {
             $(".extra_td").show();
@@ -1153,7 +1161,38 @@ $filter_state = $this->uri->segment(3) != '' ? true : false;
     });
 
 
+    //
+    $('.jsProfileHistory').click(getbreakDown);
 
+    function getbreakDown(e) {
+
+        sId = $(this).data('id');
+        isRegular = $(this).data('isregular');
+        isRegularEmployee = $(this).data('isregularemployee');
+        isExternal = $(this).data('isexternal');
+
+        applicantName = $(this).data('name');
+        //
+        Model({
+            Id: 'jsEmployeeProfileHistoryModel',
+            Loader: 'jsEmployeeProfileHistoryLoader',
+            Body: '<div class="container"><div id="jsLedgerBreakdown"></div></div>',
+            Title: 'Ledger Breakdown of ' + applicantName
+        }, getData);
+
+    }
+
+    //
+    function getData() {
+        //
+        $.get(
+            "<?= base_url('get_ledger_brakdown/'); ?>/" + sId + '/' + isRegular + '/' + isRegularEmployee + '/' + isExternal,
+            function(resp) {
+                $('#jsLedgerBreakdown').html(resp.view);
+                ml(false, 'jsEmployeeProfileHistoryLoader');
+            });
+
+    }
 
     function print_page(elem) {
         $("table").removeClass("horizontal-scroll");

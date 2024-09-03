@@ -2391,9 +2391,9 @@ $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/payrolls/Ledg
 $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/payrolls/Ledger/ledger/$1/$2/$3/$4/$5/$6';
 $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/payrolls/Ledger/ledger/$1/$2/$3/$4/$5/$6/$7';
 
-
-
 $route["payrolls/ledger/downloadtemplate"]["post"] = "v1/payrolls/Ledger/DownloadTemplate";
+
+$route['get_ledger_brakdown/(:num)/(:num)/(:num)/(:num)']['get'] = 'v1/payrolls/Ledger/getledgerBreakdown/$1/$2/$3/$4';
 
 
 

@@ -18,12 +18,14 @@ class Ledger_model extends CI_Model
         parent::__construct();
     }
 
-    function getEmployerDetail($id) {
+    function getEmployerDetail($id)
+    {
         $this->db->where('sid', $id);
         return $this->db->get('users')->row_array();
     }
 
-    function checkEmployeeExistInCompany ($data, $companyId) {
+    function checkEmployeeExistInCompany($data, $companyId)
+    {
         //
         $columnName = "";
         $columnValue = "";
@@ -36,15 +38,15 @@ class Ledger_model extends CI_Model
             $columnValue = $data['employee_number'];
         } else if ($data['employee_ssn']) {
             $columnName = 'REGEXP_REPLACE(ssn, "[^0-9]", "") =';
-            $columnValue = preg_replace('/[^0-9]/', '',$data['employee_ssn']);
+            $columnValue = preg_replace('/[^0-9]/', '', $data['employee_ssn']);
         } else if ($data['employee_email']) {
             $columnName = 'LOWER(email)';
             $columnValue = $data['employee_email'];
         } else if ($data['employee_phone']) {
             $columnName = 'PhoneNumber';
-            $columnValue =$data['employee_phone'];
+            $columnValue = $data['employee_phone'];
         }
-      
+
         //
         if ($columnName &&  $columnValue) {
             //
@@ -55,62 +57,64 @@ class Ledger_model extends CI_Model
             //
             if ($columnName == 'PhoneNumber') {
                 //
-                $phoneNumber = preg_replace('/[^0-9]/', '',$data['employee_phone']);
+                $phoneNumber = preg_replace('/[^0-9]/', '', $data['employee_phone']);
                 //
                 $this->db->group_start();
                 $this->db->where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', $phoneNumber);
                 //
-                if (substr(preg_replace('/[^0-9]/', '',$data['employee_phone']),0,1) != 1) {
+                if (substr(preg_replace('/[^0-9]/', '', $data['employee_phone']), 0, 1) != 1) {
                     $this->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', '1' . $phoneNumber);
                     $this->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+1' . $phoneNumber);
                 } else {
                     $this->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+' . $phoneNumber);
-                    $this->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', substr($phoneNumber,1));
+                    $this->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', substr($phoneNumber, 1));
                 }
                 //
                 $this->db->group_end();
             } else {
                 $this->db->where($columnName, $columnValue);
             }
-            
+
             $this->db->limit(1);
             //
             $result = $this->db->get('users')->row_array();
-            
+
             return $result['sid'] ?? 0;
-        } 
+        }
         //
         return 0;
         //
     }
 
-    public function insertLedgerInfo ($data) {
+    public function insertLedgerInfo($data)
+    {
         $this->db->insert('payrolls.payroll_ledger', $data);
     }
 
 
-     //
-     public function getCompanyEmployeesOnly(int $companyId): array
-     {
- 
-         $this->db
-             ->select(getUserFields())
-             ->where([
-                 "users.parent_sid" => $companyId,
-                 "users.is_executive_admin" => 0,
-                 "users.active" => 1,
-                 "users.terminated_status" => 0
-             ]);
-         //
- 
-         $this->db->order_by("users.first_name", "ASC");
-         return $this->db->get("users")->result_array();
-     }
+    //
+    public function getCompanyEmployeesOnly(int $companyId): array
+    {
+
+        $this->db
+            ->select(getUserFields())
+            ->where([
+                "users.parent_sid" => $companyId,
+                "users.is_executive_admin" => 0,
+                "users.active" => 1,
+                "users.terminated_status" => 0
+            ]);
+        //
+
+        $this->db->order_by("users.first_name", "ASC");
+        return $this->db->get("users")->result_array();
+    }
 
 
-       //
+    //
     public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles, $filterDepartment, $limit = null, $start = null)
     {
+
         //
         $this->db->select('payrolls.payroll_ledger.debit_amount');
         $this->db->select('payrolls.payroll_ledger.credit_amount');
@@ -132,6 +136,12 @@ class Ledger_model extends CI_Model
         $this->db->select('payrolls.payroll_ledger.general_entry_number');
         $this->db->select('payrolls.payroll_ledger.reference_number');
         $this->db->select('payrolls.payroll_ledger.extra');
+        $this->db->select('payrolls.payroll_ledger.extra');
+
+        $this->db->select('payrolls.payroll_ledger.payroll_sid');
+        $this->db->select('payrolls.payroll_ledger.is_regular');
+        $this->db->select('payrolls.payroll_ledger.is_regular_employee');
+        $this->db->select('payrolls.payroll_ledger.is_external');
 
 
         $this->db->select('users.sid');
@@ -160,6 +170,7 @@ class Ledger_model extends CI_Model
         }
 
         $this->db->where('payrolls.payroll_ledger.is_deleted', 0);
+        $this->db->where('payrolls.payroll_ledger.company_sid', $company_sids);
 
         //
         if ($between != '' && $between != NULL) {
@@ -227,17 +238,60 @@ class Ledger_model extends CI_Model
                 $employeesLedger[$key]['department'] = '';
                 $employeesLedger[$key]['team'] = '';
             }
-
         }
 
         return $employeesLedger;
     }
 
-       //
-       public function getEmmployeeInfo($emp_id)
-       {
-           $this->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name,employee_number,ssn,PhoneNumber,sid');
-           $this->db->where('sid', $emp_id);
-           return $this->db->get('users')->row_array();
-       }
+    //
+    public function getEmmployeeInfo($emp_id)
+    {
+        $this->db->select('first_name, last_name, email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag, timezone,middle_name,employee_number,ssn,PhoneNumber,sid');
+        $this->db->where('sid', $emp_id);
+        return $this->db->get('users')->row_array();
+    }
+
+
+
+    //
+    public function getledgerBreakdown($sId, $isRegular, $isRegularEmployee, $isExternal)
+    {
+
+        $brakdownData['brakdowndata'] = [];
+        if ($isRegular == 1) {
+            $this->db->select('totals');
+            $this->db->where('sid', $sId);
+            $record = $this->db->get('payrolls.regular_payrolls')->row_array();
+            if (!empty($record)) {
+                $brakdownData['brakdowndata'] = json_decode($record['totals'],true);
+            }
+        }
+
+        if ($isRegularEmployee == 1) {
+            $this->db->select('data_json');
+            $this->db->where('sid', $sId);
+            $record = $this->db->get('payrolls.regular_payrolls_employees')->row_array();
+            if (!empty($record)) {
+                $brakdownData['brakdowndata'] = json_decode($record['data_json'],true);
+            }
+        }
+
+
+
+        if ($isExternal == 1) {
+            $this->db->select('external_payroll_items,applicable_earnings,applicable_benefits,applicable_taxes');
+            $this->db->where('sid', $sId);
+            $record = $this->db->get('payrolls.external_payrolls')->row_array();
+
+            if (!empty($record)) {
+                $brakdownData['brakdowndata']['external_payroll_items'] = json_decode($record['external_payroll_items'],true);
+                $brakdownData['brakdowndata']['applicable_earnings'] = json_decode($record['applicable_earnings'],true);
+                $brakdownData['brakdowndata']['applicable_benefits'] = json_decode($record['applicable_benefits'],true);
+                $brakdownData['brakdowndata']['applicable_taxes'] = json_decode($record['applicable_taxes'],true);
+
+            }
+        }
+
+        return $brakdownData['brakdowndata'];
+    }
 }

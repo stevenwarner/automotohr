@@ -654,4 +654,20 @@ class Ledger extends Public_controller
             redirect('login', "refresh");
         }
     }
+
+
+    //
+    public function getledgerBreakdown($sId, $isRegular, $isRegularEmployee, $isExternal)
+    {
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('payroll/ledger/ledger_breakdown', [
+                    'data' => $this->ledger_model->getledgerBreakdown($sId, $isRegular, $isRegularEmployee, $isExternal)
+                ], true)
+            ]
+        );
+    }
+
+    //
 }
