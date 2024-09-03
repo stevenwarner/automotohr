@@ -1111,4 +1111,166 @@ class Courses extends Public_Controller
         res($res);
     }
 
+    public function importCourseCSV()
+    {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $data = [];
+            // check and set user session
+            $data['session'] = checkUserSession();
+            $data['title'] = "Import Courses CSV File";
+            // set
+            $data['loggedInPerson'] = $data['session']['employer_detail'];
+            $data['companyId'] = $data['session']['company_detail']['sid'];
+            $data['employerId'] = $data['session']['employer_detail']['sid'];
+            $data['level'] = 0;
+            $data['logged_in_view'] = true;
+            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            // get the security details
+            $data['security_details'] = db_get_access_level_details(
+                $data['session']['employer_detail']['sid'],
+                null,
+                $data['session']
+            );
+            //
+            $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
+            //
+            $data['PageCSS'] = [
+                'v1/plugins/alertifyjs/css/alertify.min',
+                'mFileUploader/index'
+            ];
+            // load JS
+            $data['PageScripts'] = [
+                'lodash/loadash.min',
+                'v1/plugins/alertifyjs/alertify.min',
+                'mFileUploader/index',
+                'v1/lms/import_courses_csv'
+            ];
+
+            $this->load->view('main/header', $data);
+            $this->load->view('courses/import_courses_csv');
+            $this->load->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+    /**
+     * Handle all ajax requests
+     * Created on: 16-08-2019
+     *
+     * @accepts POST
+     *
+     * @uses resp
+     *
+     * @return JSON
+     */
+    function handler()
+    {
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['companyId'] = $data['session']['company_detail']['sid'];
+        $data['employerId'] = $data['session']['employer_detail']['sid'];
+        // Set default response array
+        $resp = array();
+        $resp['Status'] = FALSE;
+        $resp['Response'] = 'Invalid request made.';
+        // Check for a valid AJAX request
+        if (!$this->input->is_ajax_request()) exit(0);
+        //
+        $formpost = $this->input->post(NULL, TRUE);
+        //
+        switch ($formpost['action']) {
+            case 'add_courses':
+                set_time_limit(0);
+                // Default array
+
+                $failCount = $insertCount = $existCount = 0;
+                $updatedRows = [];
+                $failRows = [];
+                //
+                if ($formpost['courses']) {
+                    foreach ($formpost['courses'] as $key => $course) {
+                        //
+                        $employeeId = checkEmployeeExistInCompany($course, $data['companyId']);
+                        //
+                        if ($employeeId == 0) {
+                            $failCount++;
+                            $failRows[] =$key;
+                        } else {
+                            //
+                            if ($employeeId != 0) {
+                                //
+                                $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type']);
+                                //
+                                if ($courseId > 0) {
+                                    if (
+                                        !$this->db
+                                        ->where([
+                                            'course_sid' => $courseId,
+                                            'company_sid' => $data['companyId'],
+                                            'employee_sid' => $employeeId
+                                            ])    
+                                        ->count_all_results('lms_employee_course')
+                                    ) {
+                                        //
+                                        $dataToInsert = [];
+                                        $dataToInsert['course_sid'] = $courseId;
+                                        $dataToInsert['company_sid'] = $data['companyId'];
+                                        $dataToInsert['employee_sid'] = $employeeId;
+                                        $dataToInsert['lesson_status'] = $course['progress'];
+                                        $dataToInsert['course_status'] = $course['status'];
+                                        $dataToInsert['course_type'] = $course['type'];
+                                        $dataToInsert['course_taken_count'] = $course['count'];
+                                        $dataToInsert['created_at'] = formatDateToDB($course['start_date'], SITE_DATE, DB_DATE);
+                                        $dataToInsert['updated_at'] = formatDateToDB($course['end_date'], SITE_DATE, DB_DATE);
+                                        //
+                                        $this->course_model->insertEmployeeCourseInfo($dataToInsert);
+                                        //
+                                        $insertCount++;
+                                    } else {
+                                        $updatedRows[] = $key;
+                                        $existCount++;
+                                    }
+                                } else {
+                                    $failCount++;
+                                    $failRows[] =$key;
+                                }
+                            }
+                        }
+                    }
+                }
+                //
+                $resp['Status'] = TRUE;
+                $resp['Response'] = 'Proceed.';
+                $resp['Inserted'] = $insertCount;
+                $resp['Existed'] = $existCount;
+                $resp['Failed'] = $failCount;
+                $resp['duplicateRows'] = $updatedRows;
+                $resp['FailedRows'] = $failRows;
+                //
+                $this->resp($resp);
+                break;
+        }
+        //
+        $this->resp($resp);
+    }
+
+    /**
+     * Send JSON response
+     *
+     * @param $responseArray Array
+     *
+     * @return JSON
+     */
+    function resp($responseArray)
+    {
+        header('Content-type: application/json');
+        echo json_encode($responseArray);
+        exit(0);
+    }
+
 }
+

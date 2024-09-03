@@ -527,4 +527,29 @@ class Course_model extends CI_Model
             return [];
         }
     }
+
+    function getEmployerDetail($id) {
+        $this->db->where('sid', $id);
+        return $this->db->get('users')->row_array();
+    }
+
+    public function getCourseIdByTitleAndType ($title, $type) {
+        $this->db->select('sid');
+        $this->db->where('course_title', $title);
+        $this->db->where('course_type', $type);
+        $a = $this->db->get('lms_default_courses');
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!empty($b)) {
+            return $b['sid'];
+        } else {
+            return 0;
+        }
+    }
+
+    public function insertEmployeeCourseInfo ($dataToInsert) {
+        $this->db->insert('lms_employee_course', $dataToInsert);
+    }
 }
