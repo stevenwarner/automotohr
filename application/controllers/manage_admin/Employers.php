@@ -1263,6 +1263,8 @@ class employers extends Admin_Controller
                 $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
             }
 
+            $data_change_status = [];
+
             $data_to_insert['involuntary_termination'] = $involuntary;
             $data_to_insert['do_not_hire'] = $rehire;
             $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
@@ -1281,6 +1283,12 @@ class employers extends Admin_Controller
                 }
                 $data_to_update['terminated_status'] = 1;
                 $data_to_update['general_status'] = 'terminated';
+
+                $data_change_status['user_sid'] = $sid;
+                $data_change_status['changed_by'] = 0;
+                $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                $data_change_status['changed_from'] = "Super Admin";
+                $data_change_status['status'] = "terminated";
             } else {
                 if ($status == 5) {
                     $data_to_update['active'] = 1;
@@ -1303,12 +1311,20 @@ class employers extends Admin_Controller
                     $data_to_update['active'] = 1;
                     $data_to_update['general_status'] = 'rehired';
                     $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
+
+                    $data_change_status['changed_by'] = 0;
+                    $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                    $data_change_status['changed_from'] = "Super Admin";
+                    $data_change_status['status'] = "rehired";
                 }
                 $data_to_update['terminated_status'] = 0;
             }
             //
             $rowId = $this->company_model->terminate_user($sid, $data_to_insert);
-            //
+            
+            if (!empty($data_change_status)) {
+                setUsersStatusLog($data_change_status);
+            }
             //
             $this->load->model("v1/payroll_model", "payroll_model");
             //
@@ -1424,6 +1440,8 @@ class employers extends Admin_Controller
                 $data_to_insert['termination_date'] = NULL;
             }
 
+            $data_change_status = [];
+
             $data_to_insert['involuntary_termination'] = $involuntary;
             $data_to_insert['do_not_hire'] = $rehire;
             $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
@@ -1444,6 +1462,11 @@ class employers extends Admin_Controller
                 }
                 $data_to_update['terminated_status'] = 1;
                 $data_to_update['general_status'] = 'terminated';
+                $data_change_status['user_sid'] = $sid;
+                $data_change_status['changed_by'] = 0;
+                $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                $data_change_status['changed_from'] = "Super Admin";
+                $data_change_status['status'] = "terminated";
             } else {
                 if ($status == 5) {
                     $data_to_update['active'] = 1;
@@ -1466,6 +1489,14 @@ class employers extends Admin_Controller
                     $data_to_update['active'] = 1;
                     $data_to_update['general_status'] = 'rehired';
                     $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
+
+                    $data_to_update['terminated_status'] = 1;
+                    $data_to_update['general_status'] = 'terminated';
+                    $data_change_status['user_sid'] = $sid;
+                    $data_change_status['changed_by'] = 0;
+                    $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                    $data_change_status['changed_from'] = "Super Admin";
+                    $data_change_status['status'] = "rehired";
                 }
                 $data_to_update['terminated_status'] = 0;
             }
@@ -1512,6 +1543,11 @@ class employers extends Admin_Controller
             }
             //
             $this->company_model->update_terminate_user($status_id, $data_to_insert);
+
+            if (!empty($data_change_status)) {
+                setUsersStatusLog($data_change_status);
+            }
+
             //
             if ($status == 9) {
 

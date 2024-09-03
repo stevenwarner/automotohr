@@ -3796,3 +3796,13 @@ if (!function_exists('getButton')) {
 </a>');
     }
 }
+
+
+//
+function setUsersStatusLog(
+    $data
+) {
+    // get the CI instance
+    $CI = &get_instance();
+    $CI->db->insert("users_status_log", $data);
+}

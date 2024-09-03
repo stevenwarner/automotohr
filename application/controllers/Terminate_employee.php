@@ -123,6 +123,8 @@ class Terminate_employee extends Public_Controller
                     $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
                 }
 
+                $data_change_status = [];
+
                 $data_to_insert['involuntary_termination'] = $involuntary;
                 $data_to_insert['do_not_hire'] = $rehire;
                 $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
@@ -143,6 +145,12 @@ class Terminate_employee extends Public_Controller
                     }
                     $data_to_update['terminated_status'] = 1;
                     $data_to_update['general_status'] = 'terminated';
+
+                    $data_change_status['user_sid'] = $sid;
+                    $data_change_status['changed_by'] = $employer_sid;
+                    $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                    $data_change_status['changed_from'] = "Green Panel Profile";
+                    $data_change_status['status'] = "terminated";
                 } else {
                     if ($status == 5) {
                         $data_to_update['active'] = 1;
@@ -165,11 +173,22 @@ class Terminate_employee extends Public_Controller
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
+
+                        $data_change_status['user_sid'] = $sid;
+                        $data_change_status['changed_by'] = $employer_sid;
+                        $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                        $data_change_status['changed_from'] = "Green Panel Profile";
+                        $data_change_status['status'] = "rehired";
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
                 //
                 $rowId = $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
+
+                if (!empty($data_change_status)) {
+                    setUsersStatusLog($data_change_status);
+                }
+
                 //
                 $this->load->model("v1/payroll_model", "payroll_model");
                 //
@@ -201,11 +220,11 @@ class Terminate_employee extends Public_Controller
                             // Delete inserted record because gusto error
                             $this->terminate_employee_model->deleteEmployeeStatus($rowId);
                             //
-                            $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                            $this->session->set_flashdata('message', '<b>Error:</b> ' . $response['errors'][0]['message'] . '!');
                             redirect(base_url('employee_status/' . $sid), 'refresh');
                         }
                     }
-                }    
+                }
                 //
                 if ($status == 9) {
                     $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
@@ -314,6 +333,8 @@ class Terminate_employee extends Public_Controller
                 $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
                 $data_to_update = array();
 
+                $data_change_status = [];
+
                 if ($status == 1) {
                     if ($system_access == 1) {
                         $data_to_update['active'] = 0;
@@ -324,6 +345,12 @@ class Terminate_employee extends Public_Controller
                     }
                     $data_to_update['terminated_status'] = 1;
                     $data_to_update['general_status'] = 'terminated';
+
+                    $data_change_status['user_sid'] = $sid;
+                    $data_change_status['changed_by'] = $employer_sid;
+                    $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                    $data_change_status['changed_from'] = "Green Panel Profile";
+                    $data_change_status['status'] = "terminated";
                 } else {
                     if ($status == 5) {
                         $data_to_update['active'] = 1;
@@ -346,6 +373,12 @@ class Terminate_employee extends Public_Controller
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
+
+                        $data_change_status['user_sid'] = $sid;
+                        $data_change_status['changed_by'] = $employer_sid;
+                        $data_change_status['changed_at'] = date('Y-m-d H:i:s');
+                        $data_change_status['changed_from'] = "Green Panel Profile";
+                        $data_change_status['status'] = "rehired";
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
@@ -381,14 +414,18 @@ class Terminate_employee extends Public_Controller
                             );
                             //
                             if (isset($response['errors'])) {
-                                $this->session->set_flashdata('message', '<b>Error:</b> '.$response['errors'][0]['message'].'!');
+                                $this->session->set_flashdata('message', '<b>Error:</b> ' . $response['errors'][0]['message'] . '!');
                                 redirect(base_url('employee_status/' . $sid), 'refresh');
                             }
                         }
                     }
-                }    
+                }
                 //
+
                 $this->terminate_employee_model->update_terminate_user($status_id, $data_to_insert);
+                if (!empty($data_change_status)) {
+                    setUsersStatusLog($data_change_status);
+                }
                 //
                 if ($status == 9) {
                     $data_transfer_log_update['from_company_sid'] = 0;
