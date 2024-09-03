@@ -43,7 +43,7 @@ $(function editCourse() {
 	 * SCORM uploader options
 	 */
 	let scormOptions = {
-		fileLimit: "50mb",
+		fileLimit: "100mb",
 		allowedTypes: ["zip"],
 	};
 
@@ -51,7 +51,7 @@ $(function editCourse() {
 	 * Manual uploader options
 	 */
 	let manualOptions = {
-		fileLimit: "50mb",
+		fileLimit: "100mb",
 		allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 	};
 

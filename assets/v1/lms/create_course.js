@@ -235,12 +235,12 @@ $(function createCourse() {
 				$("#jsAddCourseReassignType").val("year");
 				// load image
 				$("#jsAddCourseFile").msFileUploader({
-					fileLimit: "50mb",
+					fileLimit: "100mb",
 					allowedTypes: ["zip"],
 				});
 				//
 				$("#jsAddCourseVideoFile").msFileUploader({
-					fileLimit: "50mb",
+					fileLimit: "100mb",
 					allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 				});
 				//
