@@ -14775,6 +14775,9 @@ if (!function_exists('GetEmployeeStatus')) {
      */
     function GetEmployeeStatus($lastStatusText, $active)
     {
+        if(!$active) {
+            return "De-activated";
+        }
         //
         if (strtolower($lastStatusText) === 'rehired') {
             return 'Active';

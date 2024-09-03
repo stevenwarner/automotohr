@@ -405,13 +405,14 @@ class employers extends Admin_Controller
                 $this->company_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
             }
             //
-            if (!empty($this->input->post('nick_name', true))) {
-                $data['nick_name'] = $this->input->post('nick_name', true);
-            }
+            $data['nick_name'] = $this->input->post('nick_name', true)
+                ? $this->input->post('nick_name', true)
+                : null;
             //
-            if (!empty($this->input->post('middle_name', true))) {
-                $data['middle_name'] = $this->input->post('middle_name', true);
-            }
+            $data['middle_name'] = $this->input->post('middle_name', true)
+                ? $this->input->post('middle_name', true)
+                : null;
+
             //
             if (!empty($this->input->post('hourly_rate', true))) {
                 $data['hourly_rate'] = $this->input->post('hourly_rate', true);
@@ -521,7 +522,7 @@ class employers extends Admin_Controller
 
                 // update employee complynet job title on complynet
                 // if ($employer_detail[0]['complynet_job_title'] != $data['complynet_job_title']) {
-                    updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
+                updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
                 // }
 
                 // update employee department on complynet
@@ -529,7 +530,7 @@ class employers extends Admin_Controller
                 $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
                 //
                 // if ($employer_detail[0]['department_sid'] != $departmentId) {
-                    updateEmployeeDepartmentToComplyNet($sid, $oldData['parent_sid']);
+                updateEmployeeDepartmentToComplyNet($sid, $oldData['parent_sid']);
                 // }
             }
 
