@@ -258,7 +258,14 @@ $(function LMSCourses() {
 				ml(true, "jsLMSPreviewCourseModalLoader");
 				// setInterval(() => {
 				XHR = $.ajax({
-					url: apiURL + "lms/course/" + courseId + "/preview",
+					url:
+						apiURL +
+						"lms/course/" +
+						courseId +
+						"/preview?_has=" +
+						(window.location.host.indexOf("www.") !== -1
+							? "y"
+							: "n"),
 					method: "GET",
 				})
 					.success(function (response) {

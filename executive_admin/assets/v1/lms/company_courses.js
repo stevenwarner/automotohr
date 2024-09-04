@@ -27,11 +27,13 @@ $(function LMSCompanyCourses() {
 	 * Toggle view
 	 */
 	$(document).on("click", ".jsToggleViewCompanyCourse", function (event) {
-		console.log($(this).closest("tr").data("id"))
+		console.log($(this).closest("tr").data("id"));
 		// prevent default event
 		event.preventDefault();
 		//
-		$('[data-key="jsView' + $(this).closest("tr").data("id") + '"]').toggleClass("hidden");
+		$(
+			'[data-key="jsView' + $(this).closest("tr").data("id") + '"]'
+		).toggleClass("hidden");
 	});
 
 	/**
@@ -61,7 +63,14 @@ $(function LMSCompanyCourses() {
 				ml(true, "jsLMSPreviewCourseModalLoader");
 				// setInterval(() => {
 				XHR = $.ajax({
-					url: apiURL + "lms/course/" + courseId + "/preview",
+					url:
+						apiURL +
+						"lms/course/" +
+						courseId +
+						"/preview?_has=" +
+						(window.location.host.indexOf("www.") !== -1
+							? "y"
+							: "n"),
 					method: "GET",
 				})
 					.success(function (response) {
@@ -109,9 +118,9 @@ $(function LMSCompanyCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-            url: apiURL + "lms/company?" + getFilterAsString(),
+			url: apiURL + "lms/company?" + getFilterAsString(),
 			method: "GET",
-            headers: {
+			headers: {
 				Authorization: "Bearer " + apiAccessToken,
 			},
 		})
