@@ -195,7 +195,7 @@ class Courses extends Public_Controller
         $data['student_sid'] = $studentId;
         $data['type'] = $type;
         $data['employee'] = $session['employer_detail'];
-        $data['employeeName'] = getUserNameBySID($studentId);
+        $data['employeeName'] = getUserNameBySID($studentId, false);
         $data['company_info'] = $session['company_detail'];
         $data['companyName'] = getCompanyNameBySid($companyId);
         $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
