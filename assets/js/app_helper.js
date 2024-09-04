@@ -165,7 +165,7 @@ if (typeof uploadFile === "undefined") {
 			formData.append("file", fileObject);
 			// push the file to server
 			$.ajax({
-				url:  window.location.origin + "uploader",
+				url: apiURL + "uploader",
 				method: "POST",
 				timeout: 0,
 				processData: false,
@@ -193,7 +193,7 @@ if (typeof uploadStream === "undefined") {
 		return new Promise(function (resolve) {
 			// push the file to server
 			$.ajax({
-				url:  window.location.origin + "uploader/stream",
+				url: apiURL + "uploader/stream",
 				method: "POST",
 				timeout: 0,
 				contentType: "application/json",

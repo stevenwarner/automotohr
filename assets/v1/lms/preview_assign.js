@@ -9,16 +9,18 @@ $(function LMSEmployeeCourses() {
 		// prevent default event
 		event.preventDefault();
 		//
-		alertify.confirm(
-			"Are you sure you want to start this course?",
-			function () {
-				startCourse();
-			},
-			CB
-		).setHeader("Confirm");
+		alertify
+			.confirm(
+				"Are you sure you want to start this course?",
+				function () {
+					startCourse();
+				},
+				CB
+			)
+			.setHeader("Confirm");
 	});
 
-	function startCourse () {
+	function startCourse() {
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -27,7 +29,14 @@ $(function LMSEmployeeCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "lms/trainings/" + employeeId + "/" + courseId + "/start",
+			url:
+				apiURL +
+				"lms/trainings/" +
+				employeeId +
+				"/" +
+				courseId +
+				"/start?_has=" +
+				(window.location.host.indexOf("www.") !== -1 ? "y" : "n"),
 			method: "GET",
 		})
 			.success(function (response) {
@@ -84,7 +93,8 @@ $(function LMSEmployeeCourses() {
 								"SUCCESS!",
 								"Congratulations on successfully passing this course!",
 								function () {
-									window.location = baseURI + "lms/courses/my";
+									window.location =
+										baseURI + "lms/courses/my";
 								}
 							);
 						}
@@ -95,7 +105,7 @@ $(function LMSEmployeeCourses() {
 						XHR = null;
 					});
 				//
-			}	
+			}
 		}
 		//
 		window.sendCourseToSave = sendCourseToSave;
@@ -105,7 +115,6 @@ $(function LMSEmployeeCourses() {
 	 * From question to main screen
 	 */
 	$(document).on("click", ".jsSaveQuestionResult", function (event) {
-		
 		// stop the default behavior
 		event.preventDefault();
 		var errorArray = [];
@@ -203,7 +212,14 @@ $(function LMSEmployeeCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "lms/trainings/" + employeeId + "/" + courseId,
+			url:
+				apiURL +
+				"lms/trainings/" +
+				employeeId +
+				"/" +
+				courseId +
+				"?_has=" +
+				(window.location.host.indexOf("www.") !== -1 ? "y" : "n"),
 			method: "GET",
 		})
 			.success(function (response) {
@@ -249,21 +265,21 @@ $(function LMSEmployeeCourses() {
 				mode,
 			method: "GET",
 		})
-		.success(function (response) {
-			// empty the call
-			XHR = null;
-			// set the view
-			$("#jsPreviewCourseQuestion").html(response);
-			//
-			ml(false, "jsPageLoader");
-		})
-		.fail(handleErrorResponse)
-		.done(function () {
-			// empty the call
-			XHR = null;
-			// hide the loader
-			ml(false, "jsPageLoader");
-		});
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				$("#jsPreviewCourseQuestion").html(response);
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
 	}
 	//
 	/**
