@@ -246,7 +246,7 @@
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                                             <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
                                                 <span class="pm-presented-text padding-0 block cursive">This Certificate is presented to</span>
-                                                <span class="pm-name-text bold"><?php echo remakeEmployeeName($employeeName[0], true, false); ?></span>
+                                                <span class="pm-name-text bold"><?php echo remakeEmployeeName($employeeName[0], true, true); ?></span>
                                             </div>
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                                         </div>
