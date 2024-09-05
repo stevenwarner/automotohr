@@ -648,7 +648,7 @@ class Testing extends CI_Controller
         //
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where_in('employee_type', ['fulltime', 'full-time']);
         $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
@@ -688,7 +688,7 @@ class Testing extends CI_Controller
         echo "All Done";
     }
 
-     /**
+    /**
      * 
      */
     private function addLastRead($sid)
@@ -1077,7 +1077,7 @@ class Testing extends CI_Controller
                 $totalJobsForFeed++;
             }
         }
-        _e($totalJobsForFeed,true,true);
+        _e($totalJobsForFeed, true, true);
 
         // Post data to browser
         header('Content-type: text/xml');
@@ -1112,8 +1112,9 @@ class Testing extends CI_Controller
         return $validSlug;
     }
 
-    function fixJobTitle () {
-        $companyIds = [59234,59232,58302,58134,56410,56407,53562,52584,49929,32055,32051,28588,16485,16483,16481,16479,16475,16459,16439,16437,16433,16431,16429,16427,16374];
+    function fixJobTitle()
+    {
+        $companyIds = [59234, 59232, 58302, 58134, 56410, 56407, 53562, 52584, 49929, 32055, 32051, 28588, 16485, 16483, 16481, 16479, 16475, 16459, 16439, 16437, 16433, 16431, 16429, 16427, 16374];
         $this->load->model('2022/complynet_model', 'complynet_model');
 
         foreach ($companyIds as $companyId) {
@@ -1126,16 +1127,116 @@ class Testing extends CI_Controller
                         if ($complynetJobRoleId != 0) {
                             $status =  $this->complynet_model->checkJobRoleAlreadyUpdated($employee['sid'], $companyId, $complynetJobRoleId);
                             if (!$status) {
-                                _e("update status for".$employee['email'], true);
+                                _e("update status for" . $employee['email'], true);
                             }
                         }
                     }
                 }
-                
+
                 //
-                _e(count($complynetEmployees),true);
-            } 
+                _e(count($complynetEmployees), true);
+            }
         }
+    }
+
+
+
+    public function saveLedger()
+    {
+
+        $this->load->model(
+            "v1/Payroll/Ledger_model",
+            "ledger_model"
+        );
+
+
+        $jsonPayLoad = '{
+  "totals": {
+    "company_debit": "1080.47",
+    "net_pay_debit": "748.34",
+    "child_support_debit": "100.0",
+    "reimbursement_debit": "50.0",
+    "tax_debit": "182.13",
+     "company_credit": "0",
+     "gross_pay_debit": "0"
+  },
+  "taxes": [
+    {
+      "name": "Federal Income Tax",
+      "amount": "30.36"
+    },
+    {
+      "name": "Social Security",
+      "amount": "104.54"
+    },
+    {
+      "name": "Medicare",
+      "amount": "24.46"
+    },
+    {
+      "name": "Additional Medicare",
+      "amount": "0.0"
+    },
+    {
+      "name": "TX SUTA",
+      "amount": "22.77"
+    },
+    {
+      "name": "FUTA",
+      "amount": "0.0"
+    }
+  ],
+  "employee_compensations": [
+    {
+      "employee_uuid": "f83d0bd8-7e20-43b9-834c-6d514ef6cb47",
+      "employee_first_name": "Patricia",
+      "employee_last_name": "Hamill",
+      "payment_method": "Direct Deposit",
+      "net_pay": "748.34",
+      "total_tax": "182.13",
+      "total_garnishments": "0.0",
+      "child_support_garnishment": "100.0",
+      "total_reimbursement": "50.0",
+      "employee_debit": "0",
+      "employee_credit": "0",
+      "gross_pay_debit": "0",
+      "start_date": "2022-06-02",
+  "end_date": "2022-06-02",
+  "debit_date": "2022-06-02",
+    "recipient_notice": "Payroll Note"
+
+
+      
+    }
+  ],
+  "licensee": {
+    "name": "Gusto, Zenpayroll Inc.",
+    "address": "525 20th St",
+    "city": "San Francisco",
+    "state": "CA",
+    "postal_code": "94107",
+    "phone_number": "4157778888"
+  },
+  "payroll_uuid": "afccb970-357e-4013-81f5-85dafc74f9b6",
+  "company_uuid": "c827aa0d-3928-4d5a-ab1f-400641a7d2b8",
+  "name_of_sender": "Torp and Sons and Sons",
+  "name_of_recipient": "Payroll Recipients",
+  "recipient_notice": "Payroll recipients include the employees listed below plus the tax agencies for the taxes listed below.",
+  "debit_date": "2022-06-02",
+  "license": "ZenPayroll, Inc., dba Gusto is a licensed money transmitter. For more about Gusto’s licenses and your state-specific rights to request information, submit complaints, dispute errors, or cancel transactions, visit our license page.",
+  "license_uri": "https://gusto.com/about/licenses",
+  "right_to_refund": "https://gusto.com/about/licenses",
+  "liability_of_licensee": "https://gusto.com/about/licenses",
+  "start_date": "2022-06-02",
+  "end_date": "2022-06-02"
+}';
+
+
+
+        $companySid = 1;
+        $this->ledger_model->savePayrollLedgerFromJson($jsonPayLoad, $companySid);
+
+        echo "Done";
     }
 }
 
@@ -1161,5 +1262,3 @@ if (!function_exists('remakeSalary')) {
         return $salary;
     }
 }
-
-
