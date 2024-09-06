@@ -1181,7 +1181,7 @@ class Employee_management extends Public_Controller
     }
 
     public function employee_profile($sid = NULL)
-    {
+    { 
         if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
             redirect('employee_management', 'refresh');
@@ -1871,8 +1871,6 @@ class Employee_management extends Public_Controller
                     if ($this->input->post('employment_date')) {
                         $data_to_insert['employment_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('employment_date', true))->format('Y-m-d');
                     }
-
-
                     //
                     if (isset($_POST['complynet_job_title'])) {
                         if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {

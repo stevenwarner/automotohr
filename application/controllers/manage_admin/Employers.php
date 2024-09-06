@@ -481,6 +481,12 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+
+            if ($this->input->post('employment_date')) {
+                $data['employment_date'] = DateTime::createFromFormat('m-d-Y', $this->input->post('employment_date', true))->format('Y-m-d');
+            }
+
+
             //
             $this->company_model->update_user($sid, $data, 'Employer');
             //

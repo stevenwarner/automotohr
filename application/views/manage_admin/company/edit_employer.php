@@ -607,6 +607,21 @@
                                                         <input type="text" class="hr-form-fileds" readonly value="<?= !$data['last_status'] ? "N/A" : formatDateToDB($data['last_status']["termination_date"], DB_DATE, DATE); ?>">
                                                     </div>
                                                 </li>
+
+
+                                                <li>
+                                                    <label>Starting Date As A Full-Time Employee</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php
+                                                        $employmentDate = $data['employment_date'] != NULL && $data['employment_date'] != '0000-00-00' ? DateTime::createFromFormat('Y-m-d', $data['employment_date'])->format('m-d-Y') : '';
+                                                        ?>
+                                                        <input class="js-employmentDate invoice-fields datepicker" id="js-employment-date" type="text" name="employment_date" value="<?php echo $employmentDate; ?>">
+                                                        <?php echo form_error('employment_date'); ?>
+
+                                                    </div>
+                                                </li>
+
+
                                                 <li>
                                                     <label>Terminated Reason</label>
                                                     <div class="hr-fields-wrap">
@@ -742,7 +757,7 @@
                                                 <li>
                                                     <label>Uniform Top Size</label>
                                                     <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds"  value="<?= !$data['uniform_top_size'] ? "" : $data['uniform_top_size']; ?>" name="uniform_top_size">
+                                                        <input type="text" class="hr-form-fileds" value="<?= !$data['uniform_top_size'] ? "" : $data['uniform_top_size']; ?>" name="uniform_top_size">
                                                     </div>
                                                 </li>
                                                 <br>
@@ -757,24 +772,25 @@
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
                                                 if (isset($isOnComplyNet["errors"])) {
-                                                    ?>
+                                                ?>
                                                     <li>
                                                         <label>ComplyNet Status:</label>
                                                         <div class="hr-field-wrap">
                                                             <?= implode("<br>", $isOnComplyNet["errors"]); ?>
                                                         </div>
                                                     </li>
-                                                <?php } else {
-                                                //
-                                                if (!empty($isOnComplyNet)) { ?>
-                                                    <li>
-                                                        <label>ComplyNet Status:</label>
-                                                        <div class="hr-field-wrap">
-                                                            <?= $isOnComplyNet; ?>
-                                                        </div>
-                                                    </li>
+                                                    <?php } else {
+                                                    //
+                                                    if (!empty($isOnComplyNet)) { ?>
+                                                        <li>
+                                                            <label>ComplyNet Status:</label>
+                                                            <div class="hr-field-wrap">
+                                                                <?= $isOnComplyNet; ?>
+                                                            </div>
+                                                        </li>
                                                 <?php
-                                                }}
+                                                    }
+                                                }
                                                 ?>
                                                 <li>
                                                     <?php echo form_label('', ''); ?>

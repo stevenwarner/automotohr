@@ -198,6 +198,15 @@
                                                                             ?>
 
                                                                             <?php
+                                                                            // Employment Data
+                                                                            if ($value['employment_date']) {
+                                                                                echo '<p></p>';
+                                                                                echo '<b>Starting Date as a Full-Time Employee: </b><br>';
+                                                                                echo $employmentDate = $value['employment_date'] != NULL && $value['employment_date'] != '0000-00-00' ? date_with_time($value['employment_date']) : '';
+                                                                            }
+                                                                            ?>
+
+                                                                            <?php
                                                                             // Termination date
                                                                             if ($value['last_status']) {
                                                                                 echo '<p></p>';
@@ -223,7 +232,6 @@
                                                                             if (isset($isOnComplyNet["errors"])) {
                                                                                 echo "<b>ComplyNet: </b><br />";
                                                                                 echo implode("<br>", $isOnComplyNet["errors"]);
-
                                                                             } else {
                                                                                 //
                                                                                 if (!empty($isOnComplyNet)) {
