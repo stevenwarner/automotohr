@@ -223,7 +223,6 @@
                                                                             if (isset($isOnComplyNet["errors"])) {
                                                                                 echo "<b>ComplyNet: </b><br />";
                                                                                 echo implode("<br>", $isOnComplyNet["errors"]);
-
                                                                             } else {
                                                                                 //
                                                                                 if (!empty($isOnComplyNet)) {
@@ -544,12 +543,15 @@
 
 <script>
     // ComplyNet
+    let employeeId = 0;
+    let companyId = 0;
+
     $(document).on("click", ".jsAddEmployeeToComplyNet", function(event) {
         //
         event.preventDefault();
         //
-        let employeeId = $(this).data("id");
-        let companyId = $(this).data("cid");
+        employeeId = $(this).data("id");
+        companyId = $(this).data("cid");
 
         //
         return alertify.confirm(
@@ -562,7 +564,6 @@
 
     function addEmployeeToComplyNet(companyId, employeeId) {
         //
-
         Modal({
                 Id: "jsModelEmployeeToComplyNet",
                 Title: "Add Employee To ComplyNet",
@@ -588,12 +589,28 @@
                             //
                             $('#jsModelEmployeeToComplyNetBody').html(errors);
                         } else {
-                            $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
-                            alertify.alert(
-                                'Success',
-                                'You have successfully synced the employee with ComplyNet',
-                                window.location.reload
-                            );
+
+                            jobTitles = resp.jobtitle;
+                            var rows = '';
+                            rows += '<div id="lodertext"> </div>';
+                            rows += '<input type="hidden" name="complynet_department_id" value="' + resp.departmentid + '" class="hr-form-fileds" id="complynet_department_id" >';
+                            rows += '<strong>Department:</strong>  <input type="text" name="complynet_department_name" value="' + resp.departmentname + '" class="hr-form-fileds" id="complynet_department_name" readonly><br><br> <div>&nbsp;</div><strong>Job Titles</strong>';
+                            rows += '<select name="complynet_jobtite" id="complynet_jobtite" class="invoice-fields">';
+                            rows += '<option value="0">Please select a job title </option>';
+                            if (jobTitles.jobtitle != 0) {
+                                jobTitles.map(function(v) {
+                                    console.log(v);
+                                    rows += '<option value="' + (v.complynet_job_role_sid) + '">' + (v.complynet_job_role_name) + '</option>';
+                                });
+                            }
+                            rows += '</select>';
+                            rows += '<div>&nbsp;</div> <input type="button" value="Save" class="btn btn-success js-add-employee-oncomplynet">';
+
+
+                            $('#js-complynet-jobtitles').html(rows);
+                            $('#js-complynet-jobtitles').select2();
+                            $('#jsModelEmployeeToComplyNetBody').html(rows);
+
                         }
                     })
                     .fail(window.location.reload);
@@ -603,10 +620,55 @@
     }
 
 
-
-
-
     var isXHRInProgress = null;
+
+    $(document).on('click', '.js-add-employee-oncomplynet', function(event) {
+        //
+        event.preventDefault();
+        let complynetJobtitle = $("#complynet_jobtite").val();
+        if (complynetJobtitle == 0) {
+            alertify.alert(
+                'Error',
+                'Please select a job title ',
+            );
+        } else {
+
+            let complyNetDepartment = $("#complynet_department_id").val();
+            $('#lodertext').html('<p class="alert alert-info text-center">Please wait while we are syncing employee with ComplyNet. It may take a few moments.</p>');
+            //
+            $.post(window.location.origin + "/cn/" + companyId + "/employee/syncnew", {
+                    employeeId: employeeId,
+                    companyId: companyId,
+                    complyNetDepartment: complyNetDepartment,
+                    complyNetJobtitle: complynetJobtitle,
+                })
+                .success(function(resp) {
+                    //
+                    if (resp.hasOwnProperty("errors")) {
+                        //
+                        let errors = '';
+                        errors += '<strong class="text-danger">';
+                        errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
+                        errors += ' Please fill these details from employee\'s profile.</em></p><br />';
+                        errors += resp.errors.join("<br />");
+                        errors += '</strong>';
+                        //
+                        $('#jsModelEmployeeToComplyNetBody').html(errors);
+                    } else {
+                        $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
+                        alertify.alert(
+                            'Success',
+                            'You have successfully synced the employee with ComplyNet',
+                            window.location.reload
+                        );                     
+                    }
+                })
+                .fail(window.location.reload);
+            ml(false, "jsModelEmployeeToComplyNetLoader");
+        }
+
+    });
+
 
     $(document).on('click', '.jsEmployeeTransferLog', function(event) {
 

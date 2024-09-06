@@ -2395,5 +2395,6 @@ $route['payrolls/ledger/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1
 
 $route["payrolls/ledger/downloadtemplate"]["post"] = "v1/payrolls/Ledger/DownloadTemplate";
 
+$route['cn/(:num)/employee/syncnew']['post'] = "2022/Complynet/syncSingleEmployeeNew/$1";
 
 
