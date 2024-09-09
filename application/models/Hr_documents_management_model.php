@@ -2449,32 +2449,38 @@ class Hr_documents_management_model extends CI_Model
             //
             if (!empty($employees_general_documents)) {
                 foreach ($employees_general_documents as $employee_general) {
-                    $this->db->select('user_sid');
-                    $this->db->where('documents_assigned_general_sid', $employee_general['sid']);
-                    $this->db->where('action', 'assign');
-                    $this->db->limit(1);
-                    $this->db->order_by('sid', 'desc');
                     //
-                    $document_assign_by = $this->db->get('documents_assigned_general_assigners')->row_array();
-                    $assign_by = 0;
-                    //
-                    if (!empty($document_assign_by)) {
-                        $assign_by = $document_assign_by['user_sid'];
-                    }
-                    //
-                    $assigned_on = date('M d Y, D h:i:s', strtotime($employee_general['assigned_at']));
-                    //
-                    $datediff = $now - strtotime($employee_general['assigned_at']);
-                    $days = round($datediff / (60 * 60 * 24));
-                    //
-                    $pendingDocuments[$employee_general['user_sid']]['Documents'][] = array(
-                        'ID' => 0,
-                        'Title' => ucwords(str_replace('_', ' ', $employee_general['document_type'])),
-                        'Type' => 'General',
-                        'AssignedOn' => $assigned_on,
-                        'Days' => $days,
-                        'AssignedBy' => $assign_by
-                    );
+                    if (checkGeneralDocumentActive($employee_general['document_type'].'_flag')) {  
+                        $this->db->select('user_sid');
+                        $this->db->where('documents_assigned_general_sid', $employee_general['sid']);
+                        $this->db->where('action', 'assign');
+                        $this->db->limit(1);
+                        $this->db->order_by('sid', 'desc');
+                        //
+                        $document_assign_by = $this->db->get('documents_assigned_general_assigners')->row_array();
+                        $assign_by = 0;
+                        //
+                        if (!empty($document_assign_by)) {
+                            $assign_by = $document_assign_by['user_sid'];
+                        }
+                        //
+                        $assigned_on = date('M d Y, D h:i:s', strtotime($employee_general['assigned_at']));
+                        //
+                        $datediff = $now - strtotime($employee_general['assigned_at']);
+                        $days = round($datediff / (60 * 60 * 24));
+                        //
+                        $pendingDocuments[$employee_general['user_sid']]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => ucwords(str_replace('_', ' ', $employee_general['document_type'])),
+                            'Type' => 'General',
+                            'AssignedOn' => $assigned_on,
+                            'Days' => $days,
+                            'AssignedBy' => $assign_by
+                        );
+                          
+                    } else {
+                        unset($documents[$key]);
+                    }      
                 }
             }
         }
@@ -6712,6 +6718,13 @@ class Hr_documents_management_model extends CI_Model
         //
         $b = $a->result_array();
         $a = $a->free_result();
+        //
+        foreach ($b as $key => $val) {
+            //
+            if (!checkGeneralDocumentActive($val['document_type'].'_flag')) {
+                unset($b[$key]);
+            }    
+        }
         //
         return $b;
     }

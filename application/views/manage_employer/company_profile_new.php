@@ -327,6 +327,8 @@
                                 <p>Make the following selected documents mandatory.</p>
                             </div>
                         </div>
+            
+                        <?php if ($portal['dependents_flag'] == 1) { ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -336,6 +338,8 @@
                                 </label>
                             </div>
                         </div>
+                        <?php } ?>
+                        <?php if ($portal['direct_deposit_flag'] == 1) { ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -345,6 +349,8 @@
                                 </label>
                             </div>
                         </div>
+                        <?php } ?>
+                        <?php if ($portal['drivers_license_flag'] == 1) { ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -354,6 +360,8 @@
                                 </label>
                             </div>
                         </div>
+                        <?php } ?>
+                        <?php if ($portal['emergency_contacts_flag'] == 1) { ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -363,6 +371,8 @@
                                 </label>
                             </div>
                         </div>
+                        <?php } ?>
+                        <?php if ($portal['occupational_license_flag'] == 1) { ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
@@ -372,6 +382,7 @@
                                 </label>
                             </div>
                         </div>
+                        <?php } ?>
                         <?php if (checkIfAppIsEnabled('documentlibrary')) : ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="form-group autoheight">

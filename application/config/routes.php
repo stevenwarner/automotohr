@@ -617,6 +617,7 @@ $route['manage_admin/employers/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'manage_ad
 
 
 $route['manage_admin/companies/ajax_change_status'] = 'manage_admin/companies/ajax_change_status';
+$route['manage_admin/companies/ajax_change_general_documents_status'] = 'manage_admin/companies/changeGeneralDocumentsStatus';
 $route['manage_admin/companies/(:num)'] = 'manage_admin/companies/index/$1';
 $route['manage_admin/companies/search_company/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/companies/index/$1/$2/$3/$4/$5/$6';
 $route['manage_admin/companies/search_company/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/companies/index/$1/$2/$3/$4/$5/$6/$7';

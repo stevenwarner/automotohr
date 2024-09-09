@@ -422,6 +422,13 @@ class Notification_model extends CI_Model
         $b = $a->result_array();
         $a = $a->free_result();
         //
+        foreach ($b as $key => $val) {
+            //
+            if (!checkGeneralDocumentActive($val['document_type'].'_flag')) {
+                unset($b[$key]);
+            }    
+        }
+        //
         return $b;
     }
 

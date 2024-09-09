@@ -10824,11 +10824,16 @@ class Hr_documents_management extends Public_Controller
 
                 //
                 foreach ($documents as $key => $val) {
-                    if ($val['assigned_by'] != 0 && $val['assigned_by'] != 0) {
-                        $documents[$key]['assigned_by_name'] = "<br>Assigned By: " . getUserNameBySID($val['assigned_by']);
+                    //
+                    if (checkGeneralDocumentActive($val['document_type'].'_flag')) {
+                        if ($val['assigned_by'] != 0 && $val['assigned_by'] != 0) {
+                            $documents[$key]['assigned_by_name'] = "<br>Assigned By: " . getUserNameBySID($val['assigned_by']);
+                        } else {
+                            $documents[$key]['assigned_by_name'] = '';
+                        }
                     } else {
-                        $documents[$key]['assigned_by_name'] = '';
-                    }
+                        unset($documents[$key]);
+                    }    
                 }
 
                 //

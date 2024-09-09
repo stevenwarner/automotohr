@@ -162,6 +162,12 @@
     <script>
         $(document).ready(function() {
             //
+            var direct_deposit_flag = '<?php echo checkGeneralDocumentActive('direct_deposit_flag') ? 1 : 0; ?>';
+            var drivers_license_flag = '<?php echo checkGeneralDocumentActive('drivers_license_flag') ? 1 : 0; ?>';
+            var occupational_license_flag = '<?php echo checkGeneralDocumentActive('occupational_license_flag') ? 1 : 0; ?>';
+            var emergency_contacts_flag = '<?php echo checkGeneralDocumentActive('emergency_contacts_flag') ? 1 : 0; ?>';
+            var dependents_flag = '<?php echo checkGeneralDocumentActive('dependents_flag') ? 1 : 0; ?>';
+            //
             let docmentOBJ = {};
             let slugToName = {
                 'direct_deposit': 'Direct Deposit Information',
@@ -169,8 +175,6 @@
                 'occupational_license': 'Occupational License Information',
                 'emergency_contacts': 'Emergency Contacts',
                 'dependents': 'Dependents',
-
-
             };
             let typeToUrl = {
                 'direct_deposit': `direct_deposit/<?= $user_type; ?>/<?= $user_sid; ?>`,
@@ -501,7 +505,6 @@
                     obj,
                     (resp) => {
                         //
-                        console.log(resp.Data);
                         resetData(resp.Data);
                         setView();
                     }
@@ -514,11 +517,22 @@
                 let t = {};
                 //
                 if (data.length === 0) {
-                    t['direct_deposit'] = getDefaultObj('direct_deposit');
-                    t['drivers_license'] = getDefaultObj('drivers_license');
-                    t['occupational_license'] = getDefaultObj('occupational_license');
-                    t['emergency_contacts'] = getDefaultObj('emergency_contacts');
-                    t['dependents'] = getDefaultObj('dependents');
+                    
+                    if (direct_deposit_flag == 1) {
+                        t['direct_deposit'] = getDefaultObj('direct_deposit');
+                    }
+                    if (drivers_license_flag == 1) {
+                        t['drivers_license'] = getDefaultObj('drivers_license');
+                    }
+                    if (occupational_license_flag == 1) {
+                        t['occupational_license'] = getDefaultObj('occupational_license');
+                    }
+                    if (emergency_contacts_flag == 1) {    
+                        t['emergency_contacts'] = getDefaultObj('emergency_contacts');
+                    }
+                    if (dependents_flag == 1) {
+                        t['dependents'] = getDefaultObj('dependents');
+                    }    
 
                    
                 } else {
@@ -528,13 +542,22 @@
                     $.each(data, (i, v) => {
                         t1[v.document_type] = v;
                     });
-                    //
-                    if (t1['direct_deposit'] === undefined) t1['direct_deposit'] = getDefaultObj('direct_deposit');
-                    if (t1['drivers_license'] === undefined) t1['drivers_license'] = getDefaultObj('drivers_license');
-                    if (t1['occupational_license'] === undefined) t1['occupational_license'] = getDefaultObj('occupational_license');
-                    if (t1['emergency_contacts'] === undefined) t1['emergency_contacts'] = getDefaultObj('emergency_contacts');
-                    if (t1['dependents'] === undefined) t1['dependents'] = getDefaultObj('dependents');
                    
+                    if (direct_deposit_flag == 1) {
+                        if (t1['direct_deposit'] === undefined) t1['direct_deposit'] = getDefaultObj('direct_deposit');
+                    }
+                    if (drivers_license_flag == 1) {
+                        if (t1['drivers_license'] === undefined) t1['drivers_license'] = getDefaultObj('drivers_license');
+                    }
+                    if (occupational_license_flag == 1) {
+                        if (t1['occupational_license'] === undefined) t1['occupational_license'] = getDefaultObj('occupational_license');
+                    }
+                    if (emergency_contacts_flag == 1) {    
+                        if (t1['emergency_contacts'] === undefined) t1['emergency_contacts'] = getDefaultObj('emergency_contacts');
+                    }
+                    if (dependents_flag == 1) {
+                        if (t1['dependents'] === undefined) t1['dependents'] = getDefaultObj('dependents');
+                    } 
                     //
                     t = t1;
                 }
@@ -545,6 +568,7 @@
                 });
                 //
                 documentOBJ = ordered;
+                //
             }
 
             //

@@ -3796,3 +3796,33 @@ if (!function_exists('getButton')) {
 </a>');
     }
 }
+
+if (!function_exists("checkGeneralDocumentActive")) {
+    /**
+     * update the document description with corrected string
+     *
+     * @param string $description
+     * @param int    $assignedDocumentSid
+     * @param int    $parentDocumentId Optional
+     */
+    function checkGeneralDocumentActive(
+        string $documentField
+    ) {
+        // get the CI instance
+        $CI = &get_instance();
+        // get the session
+        $session = $CI->session->userdata('logged_in');
+        $companyId = $session['company_detail']['sid'];
+        // update the assigned table
+        $status = $CI->db->select($documentField)
+        ->where('user_sid', $companyId)
+        ->get('portal_employer')
+        ->row_array()[$documentField];
+        //
+        if ($status == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

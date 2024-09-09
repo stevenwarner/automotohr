@@ -375,7 +375,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <!-- Light Bulb Code - End -->
                                         <!--                            </li>-->
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'employee_emergency_contacts')) { ?>
+                                    <?php if (checkGeneralDocumentActive('emergency_contacts_flag') && check_access_permissions_for_view($security_details, 'employee_emergency_contacts')) { ?>
                                         <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-ambulance"></i>
@@ -392,7 +392,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'employee_occupational_license_info')) { ?>
+                                    <?php if (checkGeneralDocumentActive('occupational_license_flag') && check_access_permissions_for_view($security_details, 'employee_occupational_license_info')) { ?>
                                         <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-industry"></i>
@@ -409,7 +409,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <!-- Light Bulb Code - End -->
                                         </li>
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'employee_drivers_license_info')) { ?>
+                                    <?php if (checkGeneralDocumentActive('drivers_license_flag') && check_access_permissions_for_view($security_details, 'employee_drivers_license_info')) { ?>
                                         <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-automobile"></i>
@@ -457,7 +457,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <a href="<?php echo base_url('i9form') . '/employee/' . $employer['sid']; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
                                     </li>-->
                                     <?php } ?>
-                                    <?php if (check_access_permissions_for_view($security_details, 'employee_dependants')) { ?>
+                                    <?php if (checkGeneralDocumentActive('dependents_flag') &&  check_access_permissions_for_view($security_details, 'employee_dependants')) { ?>
                                         <li>
                                             <span class="left-addon">
                                                 <i aria-hidden="true" class="fa fa-child"></i>
@@ -503,7 +503,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         </li>
                                     <?php } ?>
 
-                                    <?php if (check_access_permissions_for_view($security_details, 'direct_deposit_info')) { ?>
+                                    <?php if (checkGeneralDocumentActive('direct_deposit_flag') && check_access_permissions_for_view($security_details, 'direct_deposit_info')) { ?>
                                         <li>
                                             <span class="left-addon"><i aria-hidden="true" class="fa fa-bank"></i></span>
                                             <h4>Direct Deposit Information</h4>
