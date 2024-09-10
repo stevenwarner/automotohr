@@ -719,19 +719,21 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                 </a>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                            <div class="widget-box">
-                                <a href="<?php echo base_url('general_info'); ?>">
-                                    <div class="link-box bg-info full-width">
-                                        <h2>General Information</h2>
-                                        <div class="status-panel">
-                                            <h3>General Information</h3>
-                                            <span>General Information</span>
+                        <?php if (!checkGeneralDocumentActive("all")): ?>
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?php echo base_url('general_info'); ?>">
+                                        <div class="link-box bg-info full-width">
+                                            <h2>General Information</h2>
+                                            <div class="status-panel">
+                                                <h3>General Information</h3>
+                                                <span>General Information</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
+                        <?php endif; ?>
                         <?php if ($has_approval_access) { ?>
                             <!-- Approval -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

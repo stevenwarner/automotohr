@@ -3796,3 +3796,38 @@ if (!function_exists('getButton')) {
 </a>');
     }
 }
+
+if (!function_exists("checkGeneralDocumentActive")) {
+    /**
+     * update the document description with corrected string
+     *
+     * @param string $description
+     * @param int    $assignedDocumentSid
+     * @param int    $parentDocumentId Optional
+     */
+    function checkGeneralDocumentActive(
+        string $documentField
+    ) {
+        // get the CI instance
+        $CI = &get_instance();
+        // set where
+        $where = [];
+        $where["user_sid"] = $CI
+            ->session
+            ->userdata('logged_in')['company_detail']['sid'];
+        if ($documentField == "all") {
+            $where["dependents_flag"] =
+                $where["direct_deposit_flag"] =
+                $where["drivers_license_flag"] =
+                $where["emergency_contacts_flag"] =
+                $where["occupational_license_flag"] = 0;
+        } else {
+            $where[$documentField] = 0;
+        }
+        //
+        return (bool)$CI
+            ->db
+            ->where($where)
+            ->count_all_results("portal_employer");
+    }
+}

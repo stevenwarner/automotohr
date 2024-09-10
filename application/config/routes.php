@@ -2397,3 +2397,4 @@ $route["payrolls/ledger/downloadtemplate"]["post"] = "v1/payrolls/Ledger/Downloa
 
 
 
+$route['manage_admin/companies/ajax_change_general_documents_status'] = 'manage_admin/companies/changeGeneralDocumentsStatus';

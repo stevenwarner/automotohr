@@ -3423,4 +3423,26 @@ class Company_model extends CI_Model
         $this->db->where('module_sid', '13');
         $this->db->update('company_modules', $data);
     }
+
+    function getGeneralDocumentsActiveStatus($company_sid)
+    {
+        $this->db->select('dependents_flag, direct_deposit_flag, drivers_license_flag, emergency_contacts_flag, occupational_license_flag');
+        $this->db->where('user_sid', $company_sid);
+        //
+        $record_obj = $this->db->get('portal_employer');
+        $data = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($data)) {
+            return $data;
+        } else {
+            return array();
+        }
+    }
+
+    function updateGeneralDocumentsStatus($sid, $data)
+    {
+        $this->db->where('user_sid', $sid);
+        $this->db->update('portal_employer', $data);
+    }
 }

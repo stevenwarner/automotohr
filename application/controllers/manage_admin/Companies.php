@@ -1436,6 +1436,7 @@ class Companies extends Admin_Controller
             $company_portal_status = $this->maintenance_mode_model->get_employer_portal_record($company_sid);
             $company_portal_invoices = $this->invoice_model->get_all_invoices($company_sid);
             $company_documents_status = $this->company_model->get_documents_status($company_sid);
+            $company_general_documents_status = $this->company_model->getGeneralDocumentsActiveStatus($company_sid);
             $company_trial_period_detail = $this->company_model->get_company_trial_period_detail($company_sid);
             $company_billing_contacts = $this->company_billing_contacts_model->get_all_billing_contacts($company_sid);
             $company_portal_email_templates = $this->portal_email_templates_model->getallemailtemplates($company_sid);
@@ -1513,6 +1514,7 @@ class Companies extends Admin_Controller
                 $this->data['remarket_company_settings_status'] = $this->remarket_model->get_remarket_company_settings($company_sid)['status'];
                 $this->data['company_sid'] = $company_sid;
                 $this->data['company_documents_status'] = $company_documents_status;
+                $this->data['company_general_documents_status'] = $company_general_documents_status;
                 $this->data['show_trial_period_button'] = $show_trial_period_button;
                 $this->data['trial_button_text'] = $trial_button_text;
                 $this->data['company_billing_contacts'] = $company_billing_contacts;
@@ -3511,5 +3513,17 @@ class Companies extends Admin_Controller
         $this->company_model->update_incident_status($sid, $data);
 
         print_r(json_encode($return_data));
+    }
+
+    public function changeGeneralDocumentsStatus()
+    {
+        $sid = $this->input->post('sid');
+        $status = $this->input->post('status');
+        $fieldName = $this->input->post('fieldName');
+        $data = array($fieldName => $status);
+        //
+        if ($sid > 0) {
+            $this->company_model->updateGeneralDocumentsStatus($sid, $data);
+        }
     }
 }

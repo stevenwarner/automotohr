@@ -1018,6 +1018,107 @@
                                                         <header class="hr-box-header hr-box-footer"></header>
                                                     </article>
                                                     <article class="information-box">
+                                                        <header class="hr-box-header">
+                                                            General Information Documents Management
+                                                        </header>
+                                                        <div class="table-outer">
+                                                            <div class="info-row">
+                                                                <ul>
+                                                                    <li>
+                                                                        <label>Form Name</label>
+                                                                        <div class="text text-center col-xs-6">
+                                                                            <strong>Status</strong>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>Dependents</label>
+                                                                        <div class="text text-center">
+                                                                            <?php $dependentStatus =  ($company_general_documents_status['dependents_flag'] == 1 ? 'active' : 'de-active'); ?>
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $dependentStatus)); ?>">
+                                                                                <?php echo ucwords(str_replace('-', ' ', $dependentStatus)) ?>
+                                                                                <?php if ($dependentStatus == 'active') { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="0" data-attr="dependents_flag" data-label="Dependents Information" class="site-btn btn-sm btn-danger pull-right jsChangeGeneralInformationDocumentStatus">De-Activate</a>
+                                                                                <?php } else { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="1" data-attr="dependents_flag" data-label="Dependents Information" class="site-btn btn-sm pull-right jsChangeGeneralInformationDocumentStatus">Activate</a>
+                                                                                <?php } ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+
+                                                                    <li>
+                                                                        <label>Direct Deposit Information</label>
+                                                                        <div class="text text-center">
+                                                                            <?php $directDepositStatus =  ($company_general_documents_status['direct_deposit_flag'] == 1 ? 'active' : 'de-active'); ?>
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $directDepositStatus)); ?>">
+                                                                                <?php echo ucwords(str_replace('-', ' ', $directDepositStatus)) ?>
+                                                                                <?php if ($directDepositStatus == 'active') { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="0" data-attr="direct_deposit_flag" data-label="Direct Deposit Information" class="site-btn btn-sm btn-danger pull-right jsChangeGeneralInformationDocumentStatus">De-Activate</a>
+                                                                                <?php } else { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="1" data-attr="direct_deposit_flag" data-label="Direct Deposit Information" class="site-btn btn-sm pull-right jsChangeGeneralInformationDocumentStatus">Activate</a>
+                                                                                <?php } ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>Drivers License Information</label>
+                                                                        <div class="text text-center">
+                                                                            <?php $driversLicenseStatus =  ($company_general_documents_status['drivers_license_flag'] == 1 ? 'active' : 'de-active'); ?>
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $driversLicenseStatus)); ?>">
+                                                                                <?php echo ucwords(str_replace('-', ' ', $driversLicenseStatus)) ?>
+                                                                                <?php if ($driversLicenseStatus == 'active') { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="0" data-attr="drivers_license_flag" data-label="Drivers License Information" class="site-btn btn-sm btn-danger pull-right jsChangeGeneralInformationDocumentStatus">De-Activate</a>
+                                                                                <?php } else { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="1" data-attr="drivers_license_flag" data-label="Drivers License Information" class="site-btn btn-sm pull-right jsChangeGeneralInformationDocumentStatus">Activate</a>
+                                                                                <?php } ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>Emergency Contacts</label>
+                                                                        <div class="text text-center">
+                                                                            <?php $emergencyContactStatus =  ($company_general_documents_status['emergency_contacts_flag'] == 1 ? 'active' : 'de-active'); ?>
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $emergencyContactStatus)); ?>">
+                                                                                <?php echo ucwords(str_replace('-', ' ', $emergencyContactStatus)) ?>
+                                                                                <?php if ($emergencyContactStatus == 'active') { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="0" data-attr="emergency_contacts_flag" data-label="Emergency Contacts" class="site-btn btn-sm btn-danger pull-right jsChangeGeneralInformationDocumentStatus">De-Activate</a>
+                                                                                <?php } else { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="1" data-attr="emergency_contacts_flag" data-label="Emergency Contacts" class="site-btn btn-sm pull-right jsChangeGeneralInformationDocumentStatus">Activate</a>
+                                                                                <?php } ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <label>Occupational License Information</label>
+                                                                        <div class="text text-center">
+                                                                            <?php $occupationalLicenseStatus =  ($company_general_documents_status['occupational_license_flag'] == 1 ? 'active' : 'de-active'); ?>
+                                                                            <span class="<?php echo strtolower(str_replace(' ', '-', $occupationalLicenseStatus)); ?>">
+                                                                                <?php echo ucwords(str_replace('-', ' ', $occupationalLicenseStatus)) ?>
+                                                                                <?php if ($occupationalLicenseStatus == 'active') { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="0" data-attr="occupational_license_flag" data-label="Occupational License Information" class="site-btn btn-sm btn-danger pull-right jsChangeGeneralInformationDocumentStatus">De-Activate</a>
+                                                                                <?php } else { ?>
+                                                                                    <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                    <a href="javascript:;" data-status="1" data-attr="occupational_license_flag" data-label="Occupational License Information" class="site-btn btn-sm pull-right jsChangeGeneralInformationDocumentStatus">Activate</a>
+                                                                                <?php } ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <header class="hr-box-header hr-box-footer"></header>
+                                                    </article>
+
+
+                                                    <article class="information-box">
                                                         <header class="hr-box-header">Deluxe Theme Status </header>
                                                         <div class="table-outer">
                                                             <div class="info-row">
@@ -2166,5 +2267,34 @@
                 return alertify.alert('Success!', resp.success, function() {});
             });
         }
+    });
+
+    //change_per_job_listing_status
+    $(document).on('click', '.jsChangeGeneralInformationDocumentStatus', function() {
+        var documentStatus = $(this).attr('data-status');
+        var documentField = $(this).attr('data-attr');
+        var documentLabel = $(this).attr('data-label');
+        var companyId = '<?php echo $company_sid; ?>';
+
+        alertify.confirm('Confirmation', "Are you sure you want to " + $(this).html() + " <strong>" + documentLabel + "</strong>",
+            function() {
+                $.ajax({
+                    url: "<?= base_url() ?>manage_admin/companies/ajax_change_general_documents_status",
+                    type: 'POST',
+                    data: {
+                        status: documentStatus,
+                        fieldName: documentField,
+                        sid: companyId
+                    },
+                    success: function(data) {
+                        alertify.success('Status updated successfully.');
+                        window.location.href = '<?php echo current_url() ?>';
+                    },
+                    error: function() {}
+                });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     });
 </script>
