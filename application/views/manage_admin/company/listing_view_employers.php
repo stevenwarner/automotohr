@@ -196,6 +196,15 @@
                                                                                 echo $rehireDate;
                                                                             }
                                                                             ?>
+                                                                            <?php if ($value["employment_date"]) : ?>
+                                                                                <p></p>
+                                                                                <b>Starting Date as a Full-Time Employee: </b><br />
+                                                                                <?= formatDateToDB(
+                                                                                    $value["employment_date"],
+                                                                                    DB_DATE,
+                                                                                    DATE
+                                                                                ); ?>
+                                                                            <?php endif; ?>
 
                                                                             <?php
                                                                             // Termination date
@@ -223,7 +232,6 @@
                                                                             if (isset($isOnComplyNet["errors"])) {
                                                                                 echo "<b>ComplyNet: </b><br />";
                                                                                 echo implode("<br>", $isOnComplyNet["errors"]);
-
                                                                             } else {
                                                                                 //
                                                                                 if (!empty($isOnComplyNet)) {

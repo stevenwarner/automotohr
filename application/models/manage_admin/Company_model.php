@@ -194,6 +194,7 @@ class Company_model extends CI_Model
         $this->db->select('table_one.registration_date');
         $this->db->select('table_one.joined_at');
         $this->db->select('table_one.rehire_date');
+        $this->db->select('table_one.employment_date');
         $this->db->select('table_one.access_level');
         $this->db->select('table_one.access_level_plus');
         $this->db->select('table_one.pay_plan_flag');
