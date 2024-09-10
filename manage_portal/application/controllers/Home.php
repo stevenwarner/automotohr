@@ -38,7 +38,7 @@ class Home extends CI_Controller
     }
 
     public function index()
-    { 
+    {
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
         $company_sid = $data['company_details']['sid'];
@@ -1101,7 +1101,6 @@ class Home extends CI_Controller
 
     public function job_details($sid = null)
     {
-
         $sid = $this->input->post('sid') ? $this->input->post('sid') : $sid;
         if (strpos($sid, "-") !== FALSE) {
             $sid = @end((explode('-', $sid)));
@@ -1118,10 +1117,22 @@ class Home extends CI_Controller
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
         company_phone_regex_module_check($company_sid, $data, $this);
-
+        // set it so it can used
+        // later on
+        $originalId = $sid;
+        // check if not numeric
+        // then get the original id from
+        // feed table
         if (!is_numeric($sid)) {
             $sid = $this->job_details->fetch_job_id_from_random_key($sid);
         }
+
+        // check and get the Indeed apply button
+        $data["indeedApplyButtonDetails"] = $this
+            ->job_details
+            ->getIndeedApplyButtonDetails(
+                $originalId
+            );
 
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
         $jobs_detail_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs_detail', 'jobs_detail_page_banner');
@@ -3126,7 +3137,7 @@ class Home extends CI_Controller
                     redirect('/', 'refresh');
                 }
 
-                if($email){
+                if ($email) {
                     // check if email is blocked
                     if (checkForBlockedEmail($email) == 'blocked') {
                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');

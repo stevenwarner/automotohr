@@ -8,17 +8,33 @@
 </div>
 
 <div class="main">
-    <?php   if((!empty($jobs_detail_page_banner_data) && $jobs_detail_page_banner_data['banner_type'] == 'default') || empty($jobs_detail_page_banner_data)) { ?>
-                <div class="bottom-btn-row top-aplly-btn">
-                    <ul><li><a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a></li></ul>
-                </div>
+    <?php if ((!empty($jobs_detail_page_banner_data) && $jobs_detail_page_banner_data['banner_type'] == 'default') || empty($jobs_detail_page_banner_data)) { ?>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a>
+                <?php if ($indeedApplyButtonDetails): ?>
+                    <a class="site-btn apply-now-large" style="background: none;" href="javascript:void(0)">
+                        <div
+                            data-indeed-apply-widget-type="AWI"
+                            data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
+                            data-indeed-apply-partnerApiToken="56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781"
+                            data-indeed-apply-encryptedJobUrl="<?= urlencode(current_url()) ?>"
+                            data-indeed-apply-hl="en"
+                            data-indeed-apply-co="US"
+                            data-indeed-apply-newTab="true">
+                        </div>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
     <?php   } ?>
+
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="job-detail">
                     <?php if (!empty($job_details['YouTube_Video'])) { ?>
-                        <?php $this->load->view('common/video_player_partial');?>
+                        <?php $this->load->view('common/video_player_partial'); ?>
                     <?php } ?>
 
                     <div class="job-description-text">
@@ -27,30 +43,30 @@
                         </header>
                         <?php echo $job_details['JobDescription']; ?>
                     </div>
-                    <?php   if (!empty($job_details['JobRequirements'])) { ?>
-                                <div class="job-description-text job-requirement">
-                                    <header class="heading-title">
-                                        <span class="section-title color">Job Requirements:</span>
-                                    </header>
-                                    <?php echo $job_details['JobRequirements']; ?>
-                                </div>
+                    <?php if (!empty($job_details['JobRequirements'])) { ?>
+                        <div class="job-description-text job-requirement">
+                            <header class="heading-title">
+                                <span class="section-title color">Job Requirements:</span>
+                            </header>
+                            <?php echo $job_details['JobRequirements']; ?>
+                        </div>
                     <?php }
-                            if (empty($value['pictures']) && !empty($company_details['Logo'])) {
-                                $image = AWS_S3_BUCKET_URL . $company_details['Logo'];
-                            } elseif(!empty($value['pictures'])){
-                                $image = AWS_S3_BUCKET_URL . $value['pictures'];
-                            } else {
-                                $image = AWS_S3_BUCKET_URL . DEFAULT_JOB_IMAGE;
-                            } ?>
+                    if (empty($value['pictures']) && !empty($company_details['Logo'])) {
+                        $image = AWS_S3_BUCKET_URL . $company_details['Logo'];
+                    } elseif (!empty($value['pictures'])) {
+                        $image = AWS_S3_BUCKET_URL . $value['pictures'];
+                    } else {
+                        $image = AWS_S3_BUCKET_URL . DEFAULT_JOB_IMAGE;
+                    } ?>
                     <div class="social-media job-detail">
-                        <?php   if(isset($job_details['share_links'])){
-                                    echo $job_details['share_links'];
-                                } ?>
+                        <?php if (isset($job_details['share_links'])) {
+                            echo $job_details['share_links'];
+                        } ?>
                     </div>
                     <div class="bottom-btn-row">
                         <ul>
                             <li><a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a></li>
-                            <li><a href="<?php echo strtolower(str_replace(" ","_",$more_career_oppurtunatity)); ?>" class="site-btn bg-color-v3">More Career Opportunities With This Company</a></li>
+                            <li><a href="<?php echo strtolower(str_replace(" ", "_", $more_career_oppurtunatity)); ?>" class="site-btn bg-color-v3">More Career Opportunities With This Company</a></li>
                         </ul>
                     </div>
                 </div>
@@ -129,7 +145,8 @@
                 last_name: {
                     required: 'Last Name is required',
                     pattern: 'Letters, numbers, and dashes only please'
-                }, email: {
+                },
+                email: {
                     required: 'Please provide Valid email'
                 },
                 phone_number: {
@@ -153,7 +170,7 @@
                 disability: "Please Provide Your Disability Status.",
                 gender: "Please Select Your Gender."
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 form.submit();
             }
         });
@@ -169,8 +186,7 @@
                     $("#" + val).val(null);
                     $('#name_' + val).html('<p class="red">Only (.pdf .docx .doc) allowed!</p>');
                 }
-            }
-            else if (val == 'pictures') {
+            } else if (val == 'pictures') {
                 if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe") {
                     $("#" + val).val(null);
                     $('#name_' + val).html('<p class="red">Only (.jpg .jpeg .jpe .png) allowed!</p>');
@@ -194,8 +210,8 @@
     }
 </script>
 <script>
-    $(document).ready(function () {
-        $('.eeo_check').click(function () {
+    $(document).ready(function() {
+        $('.eeo_check').click(function() {
             if ($('#eeo_yes').is(':checked')) {
                 //show form
                 $('.questionnaire-form').slideDown('slow');
@@ -216,7 +232,7 @@
             }
         });
 
-        $('.citizen_check').click(function () {
+        $('.citizen_check').click(function() {
             if ($('#citizen-yes').is(':checked')) {
                 $("#visa_status").prop('required', false);
                 $(".visa_status_div").css('display', 'none');
@@ -227,3 +243,5 @@
         });
     });
 </script>
+
+<script src="https://apply.indeed.com/indeedapply/static/scripts/app/awi-bootstrap.js"></script>
