@@ -29,7 +29,7 @@ class Indeed_cron extends CI_Controller
      * holds the API token
      * @var string
      */
-    private $apiToken = "Asdas";
+    private $apiToken = "56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781";
 
     /**
      * holds the job body
@@ -135,6 +135,8 @@ class Indeed_cron extends CI_Controller
         $this->sendJobsToIndeed();
         // delete jobs from Indeed
         $this->deleteJobsFromIndeed();
+        //
+        exit("All done");
     }
 
 
@@ -217,23 +219,11 @@ class Indeed_cron extends CI_Controller
             //
             return false;
         }
-        // check for approval rights
-        if (
-            $this->portalData[$this->job["user_sid"]]["has_job_approval_rights"] == 1
-            && $this->job["approval_status"] != "approved"
-        ) {
-            $this
-                ->indeed_model
-                ->removeJobFromQueue(
-                    $this->job["sid"]
-                );
-            return false;
-        }
         // load indeed contact details
         $this->loadIndeedContactDetails();
         // set data array
         $this->setJobDataArray();
-        // // set the Indeed contact details
+        //
         $this->setIndeedContactDetails();
         //
         $this->convertDataToJobToGQL();
@@ -418,7 +408,7 @@ class Indeed_cron extends CI_Controller
         //
         if ($this->job["Salary"]) {
             //
-            $salaryArray = remakeSalary(
+            $salaryArray = setTheSalary(
                 $this->job["Salary"],
                 $this->job['SalaryType']
             );
@@ -627,6 +617,8 @@ class Indeed_cron extends CI_Controller
                 ];
                 //
                 $expireBody .= '{ sourcedPostingId: "' . ($indeedPostingId) . '" }, ';
+            } else {
+                $this->indeed_model->removeJobFromQueue($v0["sid"]);
             }
         }
         //

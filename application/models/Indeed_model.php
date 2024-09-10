@@ -1194,6 +1194,7 @@ class Indeed_model extends CI_Model
                 "portal_job_listings.Location_City",
                 "portal_job_listings.Location_ZipCode",
                 "portal_job_listings.Salary",
+                "portal_job_listings.SalaryType",
                 "portal_job_listings.JobType",
                 "portal_job_listings.questionnaire_sid",
                 "portal_job_listings.approval_status",
