@@ -603,7 +603,7 @@ class Complynet_model extends CI_Model
     public function syncDepartments(
         int $companyId
     ) {
-        die;
+        return;
         // load model
         $this->load->model(
             "2022/Complynet_cron_model",
