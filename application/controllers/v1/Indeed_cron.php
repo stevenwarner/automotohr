@@ -315,7 +315,7 @@ class Indeed_cron extends CI_Controller
                 clean($indeedContactDetails['Name']);
         }
         if (clean($indeedContactDetails['Phone'])) {
-            $this->job["data"]["\contactEmail"] =
+            $this->job["data"]["\contactPhone"] =
                 clean($indeedContactDetails['Phone']);
         }
         if ($indeedContactDetails['Email']) {
