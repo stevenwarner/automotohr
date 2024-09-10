@@ -438,7 +438,7 @@ class Job_listings extends Public_Controller
                 $jobId                                                          = $this->dashboard_model->add_listing($listing_data);  //Now call dashboard_model function to insert data in DB
 
 
-                if ($listing_data["organic_feed"] == 1 && $listing_data['approval_status'] == 'approved') {
+                if ($listing_data["organic_feed"] == 1) {
                     // load the indeed model
                     $this->load->model("Indeed_model", "indeed_model");
                     $this->indeed_model->addJobToQueue(
@@ -1413,8 +1413,7 @@ class Job_listings extends Public_Controller
                         $this->load->model("Indeed_model", "indeed_model");
                         $this->indeed_model->updateJobToQueue(
                             $formpost['sid'],
-                            $company_id,
-                            $listing_data["approval_status"] ?? ""
+                            $company_id
                         );
                     }
 
@@ -1856,8 +1855,7 @@ class Job_listings extends Public_Controller
                         $this->load->model("Indeed_model", "indeed_model");
                         $this->indeed_model->addJobToQueue(
                             $jobId,
-                            $company_id,
-                            $listing_data["approval_status"]
+                            $company_id
                         );
                     }
                     //send new cloned job to remarket
@@ -1928,6 +1926,7 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) deleted.';
                 } elseif ($action == 'active') {
+                    $this->dashboard_model->active($jobId);
                     // make sure to always have an
                     // array of job ids
                     $newJobIds = is_array($jobId) ? $jobId : [$jobId];
@@ -1943,7 +1942,6 @@ class Job_listings extends Public_Controller
                             $newJobIds,
                             $company_id
                         );
-                    $this->dashboard_model->active($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
                     $insert_record['edit_by_sid'] = $data['session']['employer_detail']['sid'];
@@ -1991,6 +1989,7 @@ class Job_listings extends Public_Controller
 
                     echo 'Selected job(s) Activated.';
                 } elseif ($action == 'deactive') {
+                    $this->dashboard_model->deactive($jobId);
                     // make sure to always have an
                     // array of job ids
                     $newJobIds = is_array($jobId) ? $jobId : [$jobId];
@@ -2006,7 +2005,6 @@ class Job_listings extends Public_Controller
                             $newJobIds
                         );
 
-                    $this->dashboard_model->deactive($jobId);
                     $insert_record['edit_date'] = date('Y-m-d H:i:s');
                     $insert_record['edit_by_name'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
                     $insert_record['edit_by_sid'] = $data['session']['employer_detail']['sid'];

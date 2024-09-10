@@ -707,19 +707,15 @@ class Indeed_model extends CI_Model
      *
      * @param int $jobId
      * @param int $companyId
-     * @param string $jobApprovalStatus
-     * @param bool $byPassApprovalStatus Optional - Default is 'false'
      * @return array
      */
     public function addJobToQueue(
         int $jobId,
-        int $companyId,
-        string $jobApprovalStatus,
-        bool $byPassApprovalStatus = false
+        int $companyId
     ): array {
         //
         // check if job is allowed to be added to queue
-        if (!$byPassApprovalStatus && $this->getJobApprovalStatus($companyId) && $jobApprovalStatus != 'approved') {
+        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
             return ["errors" => [
                 "The job is not approved."
             ]];
@@ -758,26 +754,14 @@ class Indeed_model extends CI_Model
      *
      * @param int $jobId
      * @param int $companyId
-     * @param string $jobApprovalStatus Optional
      * @return array
      */
     public function updateJobToQueue(
         int $jobId,
-        int $companyId,
-        string $jobApprovalStatus = ""
+        int $companyId
     ): array {
-        //
-        if (!$jobApprovalStatus) {
-            $jobApprovalStatus = $this
-                ->db
-                ->select("approval_status")
-                ->where("sid", $jobId)
-                ->limit(1)
-                ->get("portal_job_listings")
-                ->row_array()["approval_status"];
-        }
         // check if job is allowed to be added to queue
-        if ($this->getJobApprovalStatus($companyId) && $jobApprovalStatus != 'approved') {
+        if (!$this->getJobApprovalStatus($companyId, $jobId)) {
             return ["errors" => [
                 "The job is not approved."
             ]];
@@ -791,7 +775,7 @@ class Indeed_model extends CI_Model
                 ->count_all_results("indeed_job_queue")
         ) {
             // add when the job was not found
-            return $this->addJobToQueue($jobId, $companyId, $jobApprovalStatus, true);
+            return $this->addJobToQueue($jobId, $companyId);
         }
         // check if the job is processed
         if ($this->db
@@ -837,21 +821,14 @@ class Indeed_model extends CI_Model
                     ]
                 );
             // manage the counter
-            $this->db->query("
-                UPDATE `indeed_job_queue_count`
-                SET `total_unprocessed_jobs` = `total_unprocessed_jobs` + 1
-                WHERE `sid` = 1;
-            ");
-            $this->db->query("
-                UPDATE `indeed_job_queue_count`
-                SET `total_processed_jobs` = `total_processed_jobs` - 1
-                WHERE `sid` = 1;
-            ");
+            $this->updateJobQueueCount(1, "total_unprocessed_jobs", "+");
+            $this->updateJobQueueCount(1, "total_processed_jobs", "-");
             //
             return [
                 "success" => "The job is successfully updated to the queue."
             ];
         }
+        $this->updateJobQueueCount(1, "total_expired_jobs", "-");
         // update the record
         $this->db
             ->where("job_sid", $jobId)
@@ -928,23 +905,11 @@ class Indeed_model extends CI_Model
                     $updateArray
                 );
             // increase the expire counter
-            $this->db->query("
-                UPDATE `indeed_job_queue_count`
-                SET `total_expired_jobs` = `total_expired_jobs` + 1
-                WHERE `sid` = 1;
-            ");
+            $this->updateJobQueueCount(1, "total_expired_jobs", "+");
             //
             if ($isProcessed) {
-                $this->db->query("
-                    UPDATE `indeed_job_queue_count`
-                    SET `total_processed_jobs` = `total_processed_jobs` - 1
-                    WHERE `sid` = 1;
-                ");
-                $this->db->query("
-                    UPDATE `indeed_job_queue_count`
-                    SET `total_unprocessed_jobs` = `total_unprocessed_jobs` + 1
-                    WHERE `sid` = 1;
-                ");
+                $this->updateJobQueueCount(1, "total_processed_jobs", "-");
+                $this->updateJobQueueCount(1, "total_unprocessed_jobs", "+");
             }
             //
             return [
@@ -981,10 +946,33 @@ class Indeed_model extends CI_Model
         foreach ($jobIds as $v0) {
             $this->updateJobToQueue(
                 $v0,
-                $companyId,
-                ""
+                $companyId
             );
         }
+    }
+
+    /**
+     * Get company job approval rights status
+     *
+     * @param  int $companyId
+     * @param  int $jobId
+     * @return bool
+     */
+    public function getJobApprovalStatus(int $companyId, int $jobId): bool
+    {
+        // if the logged in person is a plus
+        if (isPayrollOrPlus()) {
+            return true;
+        }
+        // get company approval status
+        if (!$this->getCompanyJobApprovalStatus($companyId)) {
+            return false;
+        }
+        // get job approval status
+        return (bool)$this->db
+            ->where('approval_status', 'approved')
+            ->where('sid', $jobId)
+            ->count_all_results('portal_job_listings');
     }
 
     /**
@@ -993,7 +981,7 @@ class Indeed_model extends CI_Model
      * @param  int $companySid
      * @return bool
      */
-    public function getJobApprovalStatus(int $companyId): bool
+    public function getCompanyJobApprovalStatus(int $companyId): bool
     {
         return $this->db
             ->where('has_job_approval_rights', 1)
