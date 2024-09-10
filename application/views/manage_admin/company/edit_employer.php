@@ -353,6 +353,13 @@
                                                     </div>
                                                 </li>
                                                 <li>
+                                                    <label>Starting Date as a Full-Time Employee</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input class="invoice-fields datepicker" id="js-employment-date" readonly name="employment_date" value="<?php echo set_value('employment_date', $data["employment_date"] ? formatDateToDB($data["employment_date"], DB_DATE, "m-d-Y") : ""); ?>" />
+                                                        <?php echo form_error('employment_date'); ?>
+                                                    </div>
+                                                </li>
+                                                <li>
                                                     <label>Gender</label>
                                                     <div class="hr-fields-wrap">
                                                         <div class="hr-select-dropdown">
@@ -742,7 +749,7 @@
                                                 <li>
                                                     <label>Uniform Top Size</label>
                                                     <div class="hr-fields-wrap">
-                                                        <input type="text" class="hr-form-fileds"  value="<?= !$data['uniform_top_size'] ? "" : $data['uniform_top_size']; ?>" name="uniform_top_size">
+                                                        <input type="text" class="hr-form-fileds" value="<?= !$data['uniform_top_size'] ? "" : $data['uniform_top_size']; ?>" name="uniform_top_size">
                                                     </div>
                                                 </li>
                                                 <br>
@@ -757,24 +764,25 @@
                                                 <?php
                                                 $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
                                                 if (isset($isOnComplyNet["errors"])) {
-                                                    ?>
+                                                ?>
                                                     <li>
                                                         <label>ComplyNet Status:</label>
                                                         <div class="hr-field-wrap">
                                                             <?= implode("<br>", $isOnComplyNet["errors"]); ?>
                                                         </div>
                                                     </li>
-                                                <?php } else {
-                                                //
-                                                if (!empty($isOnComplyNet)) { ?>
-                                                    <li>
-                                                        <label>ComplyNet Status:</label>
-                                                        <div class="hr-field-wrap">
-                                                            <?= $isOnComplyNet; ?>
-                                                        </div>
-                                                    </li>
+                                                    <?php } else {
+                                                    //
+                                                    if (!empty($isOnComplyNet)) { ?>
+                                                        <li>
+                                                            <label>ComplyNet Status:</label>
+                                                            <div class="hr-field-wrap">
+                                                                <?= $isOnComplyNet; ?>
+                                                            </div>
+                                                        </li>
                                                 <?php
-                                                }}
+                                                    }
+                                                }
                                                 ?>
                                                 <li>
                                                     <?php echo form_label('', ''); ?>

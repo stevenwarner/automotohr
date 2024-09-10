@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php
+
+use GraphQL\Error\FormattedError;
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 
 
@@ -290,6 +294,15 @@ class employers extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        // set employment date
+        $this->load->model('employee_model');
+        $this
+            ->employee_model
+            ->setEmploymentData(
+                $sid,
+                'admin',
+                0
+            );
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
         $this->data['company_detail'] = $company_detail;
@@ -432,6 +445,16 @@ class employers extends Admin_Controller
             //
             if (!empty($this->input->post('semi_monthly_draw', true))) {
                 $data['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
+            }
+
+            if ($this->input->post("employment_date", true)) {
+                $data["employment_date"] = formatDateToDB(
+                    $this->input->post("employment_date", true),
+                    "m-d-Y",
+                    DB_DATE
+                );
+            } else {
+                $data["employment_date"] = null;
             }
 
             if (IS_PTO_ENABLED == 1) {
