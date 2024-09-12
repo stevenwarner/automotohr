@@ -3713,6 +3713,7 @@ class Hr_documents_management_model extends CI_Model
         $data_to_update['w4'] = 0;
         $data_to_update['w9'] = 0;
         $data_to_update['i9'] = 0;
+        $data_to_update['eeoc'] = 0;
         $data_to_update['dependents'] = 0;
         $data_to_update['direct_deposit'] = 0;
         $data_to_update['drivers_license'] = 0;
