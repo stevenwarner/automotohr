@@ -2518,6 +2518,8 @@ class Reports_model extends CI_Model
         $companyId = $post['companySid'];
         $employeeArray = $post['employeeSid'];
 
+        $documentsArray = $post['documentSid'];
+
         //
         if ($post['page'] == 1) {
             //
@@ -2602,7 +2604,7 @@ class Reports_model extends CI_Model
     private function getAssignedPerformanceDocumentForReport($employeeId)
     {
         //
-        $completedStatus = 'Not Assigned'; 
+        $completedStatus = 'Not Assigned';
         //
         $this
             ->load
@@ -2628,13 +2630,16 @@ class Reports_model extends CI_Model
             }
         }
         //
-        return  $completedStatus; 
+        return  $completedStatus;
     }
 
 
     //
-    private function getAssignedDocumentForReport($employeeId, $companyId)
+    private function getAssignedDocumentForReport($employeeId, $companyId, $documentsSid = [])
     {
+
+        //   _e($documentsSid,true);
+
         //
         $this->db->select('
         documents_assigned.user_sid,
@@ -2661,6 +2666,11 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_sid', $employeeId)
             ->where('documents_assigned.status', 1)
             ->where('documents_assigned.archive', 0);
+
+        //
+        if (!empty($documentsSid) && !in_array('all', $documentsSid)) {
+            $this->db->where_in('documents_assigned.document_sid', $documentsSid);
+        }
         //
         $result = $this->db->get();
         //
@@ -2776,13 +2786,10 @@ class Reports_model extends CI_Model
 
 
         return $data ? array_values($data) : [];
-
-
-        //return $result ? $result->result_array() : [];
     }
 
 
-    private function getAssignedGeneralDocumentForReport($employeeId, $companyId)
+    private function getAssignedGeneralDocumentForReport($employeeId, $companyId, $documentType = [])
     {
         //
         $this->db->select('
@@ -2797,6 +2804,11 @@ class Reports_model extends CI_Model
             ->where('documents_assigned_general.company_sid', $companyId)
             ->where('documents_assigned_general.user_sid', $employeeId)
             ->where('documents_assigned_general.status', 1);
+
+        if (!empty($documentType) && !in_array('all', $documentType)) {
+            $this->db
+                ->where_in('documents_assigned_general.document_type', $documentType);
+        }
         //
         $result = $this->db->get();
         //
@@ -2977,5 +2989,108 @@ class Reports_model extends CI_Model
         $terminatedEmployees = $this->db->get('terminated_employees')->result_array();
         //
         return $terminatedEmployees;
+    }
+
+
+    //
+
+    function getCompanyDocuments($companySid)
+    {
+        $a = $this->db
+            ->select("sid,document_title")
+            ->where('company_sid', $companySid)
+            ->where('archive', 0)
+            ->order_by('document_title', 'ASC')
+            ->get('documents_management');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    //
+
+    //
+    function getEmployeeAssignedDocumentForReport($post, $csv = false)
+    {
+
+
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $companyId = $post['companySid'];
+        $employeeArray = $post['employeeSid'];
+        $documentsArray = $post['documentSid'];
+        //
+        if ($post['page'] == 1) {
+            //
+            $r['Count'] = $this->getEmployeeForReport(
+                $companyId,
+                (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+                true
+            );
+        }
+        //
+        $holderArray = $this->getEmployeeForReport(
+            $companyId,
+            (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+        //
+
+        // _e($documentsArray,true,true);
+        foreach ($holderArray as $k => $v) :
+            $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray);
+
+            $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray);
+
+            if (in_array('I9', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);
+            } else {
+                $holderArray[$k]['assignedi9document'] = [];
+            }
+
+            if (in_array('W9', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid']);
+            } else {
+                $holderArray[$k]['assignedw9document'] = [];
+            }
+            if (in_array('W4', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid']);
+            } else {
+                $holderArray[$k]['assignedw4document'] = [];
+            }
+
+            if (in_array('EEOC', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid'], $v['parent_sid']);
+            } else {
+                $holderArray[$k]['assignedeeocdocument'] = [];
+            }
+
+
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                if (in_array('PEDOC', $documentsArray) || in_array('all', $documentsArray)) {
+                    $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid']);
+                } else {
+                    $holderArray[$k]['assignedPerformanceDocument'] = [];
+                }
+            }
+
+        endforeach;
+
+        //
+        $r['Data'] = $holderArray;
+        return $r;
     }
 }

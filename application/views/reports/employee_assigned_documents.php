@@ -54,21 +54,56 @@
                                                             <input type="hidden" id="perform_action" name="perform_action" value="export_csv" />
                                                             <!-- Filter first row -->
                                                             <div class="row">
-                                                                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-7">
+                                                                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label>Employees</label>
                                                                         <select id="js-employee" name="dd-employee[]" multiple="true"></select>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-5">
+
+                                                                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                                                    <div class="field-row">
+                                                                        <label>Documents</label>
+                                                                        <select id="js-documents" name="dd-documents[]" multiple="true">
+                                                                            <option value="all">All Documents</option>
+                                                                            <option value="I9">I9</option>
+                                                                            <option value="W9">W9</option>
+                                                                            <option value="W4">W4</option>
+                                                                            <option value="EEOC">EEOC</option>
+                                                                            <option value="dependents">Dependents</option>
+                                                                            <option value="direct_deposit">Direct Deposit</option>
+                                                                            <option value="drivers_license">Drivers License </option>
+                                                                            <option value="emergency_contacts">Emergency Contacts</option>
+                                                                            <option value="occupational_license">Occupational License</option>
+                                                                            <option value="PEDOC"> Performance Evaluation Document</option>
+
+                                                                        
+                                                                            <?php if (!empty($companyDocuments)) {
+                                                                                foreach ($companyDocuments as $docuemntRow) {
+                                                                            ?>
+                                                                                    <option value="<?php echo $docuemntRow['sid']; ?>"><?php echo $docuemntRow['document_title']; ?></option>
+                                                                            <?php } ?>                                                                            
+
+                                                                          <?php  } ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="row">
+
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-5 pull-right">
                                                                     <div class="pull-right" style="margin-top: 30px;">
                                                                         <a id="js-apply-filter" class="btn btn-success " href="javascript:void()">Apply Filters</a> &nbsp;&nbsp;
                                                                         <a id="js-reset-filter" class="btn btn-success " href="javascript:void()">Reset Filters</a> &nbsp;&nbsp;
                                                                         <button type="submit" id="js-export" class="btn btn-success ">Export CSV</button>
                                                                     </div>
                                                                 </div>
+
                                                             </div>
+
                                                         </form>
                                                     </div>
                                                 </div>
@@ -189,6 +224,8 @@
             e.preventDefault();
             is_filter = false;
             $('#js-employee').select2('val', 'all');
+            $('#js-documents').select2('val', 'all');
+
 
 
             pOBJ['fetchReport']['records'] = [];
@@ -216,6 +253,7 @@
             pOBJ['fetchReport']['page'] = 1;
 
             filterOBJ.employeeSid = $('#js-employee').val();
+            filterOBJ.documentSid = $('#js-documents').val();
 
             $('.js-ip-pagination').html('');
             dataTarget.html('');
@@ -249,10 +287,16 @@
                 $('#js-employee').select2({
                     closeOnSelect: false
                 });
+
+                $('#js-documents').select2({
+                    closeOnSelect: false
+                });
+
                 $('#js-status-emp').select2({
                     closeOnSelect: false
                 });
                 $('#js-employee').select2('val', 'all');
+
             })
         }
 
@@ -402,7 +446,7 @@
                     }
                 }
 
-                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned') {
+                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned' && record.assignedPerformanceDocument !='') {
                     //
                     if (record.assignedPerformanceDocument == 'Completed') {
                         totalCompletedDoc = totalCompletedDoc + 1;
