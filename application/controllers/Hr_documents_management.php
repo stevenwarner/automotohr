@@ -7117,11 +7117,15 @@ class Hr_documents_management extends Public_Controller
 
             if ($this->form_validation->run() == false) {
                 //
-                $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingFederalFillable(
-                    $company_sid,
-                    $employees,
-                    $documents
-                );
+                $data['employees'] = [];
+                //
+                if ($employees) {
+                    $data['employees'] = $this->hr_documents_management_model->getEmployeesWithPendingFederalFillable(
+                        $company_sid,
+                        $employees,
+                        $documents
+                    );
+                }
                 //
                 if ($type == 'export') {
                     ob_start();
