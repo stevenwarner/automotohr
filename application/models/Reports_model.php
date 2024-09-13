@@ -2635,10 +2635,8 @@ class Reports_model extends CI_Model
 
 
     //
-    private function getAssignedDocumentForReport($employeeId, $companyId, $documentsSid = [])
+    private function getAssignedDocumentForReport($employeeId, $companyId, $documentsSid = [], $documentAction = 'all')
     {
-
-        //   _e($documentsSid,true);
 
         //
         $this->db->select('
@@ -2674,8 +2672,8 @@ class Reports_model extends CI_Model
         //
         $result = $this->db->get();
         //
-
         $data = $result->result_array();
+        //
         if (!empty($data)) {
 
             foreach ($data as $key => $val) {
@@ -2780,6 +2778,14 @@ class Reports_model extends CI_Model
                     } else {
                         $data[$key]['completedStatus'] = 'No Action Required';
                     }
+                    //
+                    if ($documentAction != 'all') {
+                        if ($documentAction == 'completed' && $data[$key]['completedStatus'] != 'Completed') {
+                            unset($data[$key]);
+                        } else if ($documentAction == 'not_completed' && $data[$key]['completedStatus'] != 'Not Completed') {
+                            unset($data[$key]);
+                        } 
+                    }
                 }
             }
         }
@@ -2789,7 +2795,7 @@ class Reports_model extends CI_Model
     }
 
 
-    private function getAssignedGeneralDocumentForReport($employeeId, $companyId, $documentType = [])
+    private function getAssignedGeneralDocumentForReport($employeeId, $companyId, $documentType = [], $documentAction = 'all')
     {
         //
         $this->db->select('
@@ -2804,7 +2810,15 @@ class Reports_model extends CI_Model
             ->where('documents_assigned_general.company_sid', $companyId)
             ->where('documents_assigned_general.user_sid', $employeeId)
             ->where('documents_assigned_general.status', 1);
-
+        //
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('documents_assigned_general.is_completed',1);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('documents_assigned_general.is_completed',0);
+            } 
+        }
+        //
         if (!empty($documentType) && !in_array('all', $documentType)) {
             $this->db
                 ->where_in('documents_assigned_general.document_type', $documentType);
@@ -3014,8 +3028,6 @@ class Reports_model extends CI_Model
     //
     function getEmployeeAssignedDocumentForReport($post, $csv = false)
     {
-
-
         $offSet = $post['limit'];
         $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
         $r = array(
@@ -3027,6 +3039,7 @@ class Reports_model extends CI_Model
         $companyId = $post['companySid'];
         $employeeArray = $post['employeeSid'];
         $documentsArray = $post['documentSid'];
+        $documentAction = $post['documentAction'];
         //
         if ($post['page'] == 1) {
             //
@@ -3051,9 +3064,9 @@ class Reports_model extends CI_Model
 
         // _e($documentsArray,true,true);
         foreach ($holderArray as $k => $v) :
-            $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray);
+            $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray, $documentAction);
 
-            $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray);
+            $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray, $documentAction);
 
             if (in_array('I9', $documentsArray) || in_array('all', $documentsArray)) {
                 $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid']);

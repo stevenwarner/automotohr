@@ -54,7 +54,7 @@
                                                             <input type="hidden" id="perform_action" name="perform_action" value="export_csv" />
                                                             <!-- Filter first row -->
                                                             <div class="row">
-                                                                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label>Employees</label>
                                                                         <select id="js-employee" name="dd-employee[]" multiple="true"></select>
@@ -62,7 +62,7 @@
                                                                 </div>
 
 
-                                                                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label>Documents</label>
                                                                         <select id="js-documents" name="dd-documents[]" multiple="true">
@@ -77,15 +77,23 @@
                                                                             <option value="emergency_contacts">Emergency Contacts</option>
                                                                             <option value="occupational_license">Occupational License</option>
                                                                             <option value="PEDOC"> Performance Evaluation Document</option>
-
-                                                                        
-                                                                            <?php if (!empty($companyDocuments)) {
-                                                                                foreach ($companyDocuments as $docuemntRow) {
-                                                                            ?>
+                                                                            
+                                                                            <?php if (!empty($companyDocuments)) { ?>
+                                                                                <?php foreach ($companyDocuments as $docuemntRow) {  ?>
                                                                                     <option value="<?php echo $docuemntRow['sid']; ?>"><?php echo $docuemntRow['document_title']; ?></option>
-                                                                            <?php } ?>                                                                            
+                                                                                <?php } ?>   
+                                                                            <?php  } ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
 
-                                                                          <?php  } ?>
+                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                    <div class="field-row">
+                                                                        <label>Action</label>
+                                                                        <select id="js-action" name="dd-action">
+                                                                            <option value="all">All</option>
+                                                                            <option value="completed">Completed</option>
+                                                                            <option value="not_completed">Not Completed</option>   
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -225,6 +233,7 @@
             is_filter = false;
             $('#js-employee').select2('val', 'all');
             $('#js-documents').select2('val', 'all');
+            $('#js-action').select2('val', 'all');
 
 
 
@@ -254,6 +263,7 @@
 
             filterOBJ.employeeSid = $('#js-employee').val();
             filterOBJ.documentSid = $('#js-documents').val();
+            filterOBJ.documentAction = $('#js-action').val();
 
             $('.js-ip-pagination').html('');
             dataTarget.html('');
@@ -289,6 +299,10 @@
                 });
 
                 $('#js-documents').select2({
+                    closeOnSelect: false
+                });
+
+                $('#js-action').select2({
                     closeOnSelect: false
                 });
 

@@ -3056,7 +3056,6 @@ class Reports extends Public_Controller
                 break;
 
             case 'get_employee_assigned_document':
-
                 $employeedocuments = $this->reports_model->getEmployeeAssignedDocumentForReport($formpost);
 
                 //
