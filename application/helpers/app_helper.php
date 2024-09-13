@@ -858,7 +858,7 @@ if (!function_exists('copyAWSFile')) {
     {
         if (!file_exists($path)) {
             //
-            mkdir($path, 0777, true);
+            mkdir($path, 0777, false);
         }
         // check the path
         if (!file_exists($path . $key)) {
