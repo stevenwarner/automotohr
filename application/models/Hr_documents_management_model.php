@@ -2201,8 +2201,8 @@ class Hr_documents_management_model extends CI_Model
         //
         $pendingDocuments = [];
         //
-        $activeEmployees = explode(':', $employeeList);
-        $filterDocuments = explode(':', $documentList);
+        $activeEmployees = $employeeList ? explode(':', $employeeList) : [];
+        $filterDocuments = $documentList ? explode(':', $documentList) : [];
         //
         $now = time();
         //
