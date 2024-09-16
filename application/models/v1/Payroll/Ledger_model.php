@@ -112,9 +112,15 @@ class Ledger_model extends CI_Model
 
 
     //
-    public function getEmployeesLedger($company_sids = NULL, $between = '', $filterEmployees, $filterJobTitles, $filterDepartment, $limit = null, $start = null)
-    {
-
+    public function getEmployeesLedger(
+        $companyId,
+        $between = '',
+        $filterEmployees,
+        $filterJobTitles,
+        $filterDepartment,
+        $limit = null,
+        $start = null
+    ) {
         //
         $this->db->select('payrolls.payroll_ledger.debit_amount');
         $this->db->select('payrolls.payroll_ledger.credit_amount');
@@ -136,83 +142,83 @@ class Ledger_model extends CI_Model
         $this->db->select('payrolls.payroll_ledger.general_entry_number');
         $this->db->select('payrolls.payroll_ledger.reference_number');
         $this->db->select('payrolls.payroll_ledger.extra');
-        $this->db->select('payrolls.payroll_ledger.extra');
 
         $this->db->select('payrolls.payroll_ledger.payroll_sid');
         $this->db->select('payrolls.payroll_ledger.is_regular');
         $this->db->select('payrolls.payroll_ledger.is_regular_employee');
         $this->db->select('payrolls.payroll_ledger.is_external');
 
-
-        $this->db->select('users.sid');
-        $this->db->select('users.first_name');
-        $this->db->select('users.last_name');
-        $this->db->select('users.middle_name');
-        $this->db->select('users.access_level');
-        $this->db->select('users.timezone');
-        $this->db->select('users.is_executive_admin');
-        $this->db->select('users.pay_plan_flag');
-        $this->db->select('users.job_title');
-        $this->db->select('users.joined_at');
-        $this->db->select('users.rehire_date');
-        $this->db->select('users.department_sid');
-
-        $this->db->select('users.employee_number');
-        $this->db->select('users.ssn');
-        $this->db->select('users.email');
-        $this->db->select('users.PhoneNumber');
+        //
+        $this->db->where('payrolls.payroll_ledger.is_deleted', 0);
+        $this->db->where('payrolls.payroll_ledger.company_sid', $companyId);
 
 
-        if (in_array("all", $filterEmployees) && in_array("0", $filterDepartment) && in_array("all", $filterJobTitles)) {
-            $this->db->join('users', 'users.sid = payrolls.payroll_ledger.company_sid');
-        } else {
-            $this->db->join('users', 'users.sid = payrolls.payroll_ledger.employee_sid');
+        if (
+            !in_array("all", $filterEmployees)
+            || (!in_array("all", $filterDepartment) && !in_array("0", $filterDepartment))
+            || !in_array("all", $filterJobTitles)
+        ) {
+            $this->db->join(
+                "users",
+                "users.sid = payrolls.payroll_ledger.employee_sid",
+                "inner"
+            );
+            if (!in_array("all", $filterEmployees)) {
+                $this->db->where_in('payrolls.payroll_ledger.employee_sid', $filterEmployees);
+            }
+
+            if (!in_array("0", $filterDepartment) && !in_array("all", $filterDepartment)) {
+                $this->db->where_in('users.team_sid', $filterDepartment);
+            }
+
+            if (!in_array("all", $filterJobTitles)) {
+                $i = 0;
+                $this->db->group_start();
+                foreach ($filterJobTitles as $title) {
+                    if ($i == 0) {
+                        $this->db->like('users.job_title', $title);
+                    } else {
+                        $this->db->or_like('users.job_title', $title);
+                    }
+                    $i++;
+                }
+                $this->db->group_end();
+            }
         }
 
-        $this->db->where('payrolls.payroll_ledger.is_deleted', 0);
-        $this->db->where('payrolls.payroll_ledger.company_sid', $company_sids);
-
         //
-        if ($between != '' && $between != NULL) {
+        if ($between != '' && $between != null) {
             $this->db->where($between);
         }
 
-        if (!in_array("all", $filterEmployees)) {
-            $this->db->where_in('payrolls.payroll_ledger.employee_sid', $filterEmployees);
-        }
-
-        if (!in_array("0", $filterDepartment)) {
-            $this->db->where_in('users.team_sid', $filterDepartment);
-        }
-
-        if (!in_array("all", $filterJobTitles)) {
-            $i = 0;
-            $this->db->group_start();
-            foreach ($filterJobTitles as $title) {
-                if ($i == 0) {
-                    $this->db->like('users.job_title', $title);
-                } else {
-                    $this->db->or_like('users.job_title', $title);
-                }
-                $i++;
-            }
-            $this->db->group_end();
+        // in case of count
+        if ($limit === null) {
+            return $this
+                ->db
+                ->count_all_results('payrolls.payroll_ledger');
         }
 
         //
         if ($limit != null) {
             $this->db->limit($limit, $start);
         }
-
-        //  
         $this->db->order_by("payrolls.payroll_ledger.sid", "desc");
         $employeesLedger = $this->db->get('payrolls.payroll_ledger')->result_array();
-        //
-        $str = $this->db->last_query();
+
+        // set caches
+        $employeeCache = [];
 
         foreach ($employeesLedger as $key => $val) {
             if ($val['employee_sid'] != null) {
-                $empInfo = $this->getEmmployeeInfo($val['employee_sid']);
+                // check in cache
+                if (!$employeeCache[$val["employee_sid"]]) {
+                    $employeeCache[$val["employee_sid"]] = [
+                        "profile" => $this->getEmmployeeInfo($val['employee_sid']),
+                        "teamDepartment" => $val['employee_sid'] != null ? getEmployeeDepartmentAndTeams($val['employee_sid']) : ''
+                    ];
+                }
+                $empInfo = $employeeCache[$val["employee_sid"]]["profile"];
+                $teamDepartment = $employeeCache[$val["employee_sid"]]["teamDepartment"];
 
                 $employeesLedger[$key]['first_name'] = $empInfo['first_name'];
                 $employeesLedger[$key]['last_name'] = $empInfo['last_name'];
@@ -227,8 +233,15 @@ class Ledger_model extends CI_Model
                 $employeesLedger[$key]['PhoneNumber'] = $empInfo['PhoneNumber'];
                 $employeesLedger[$key]['employee_number'] = $empInfo['employee_number'];
                 $employeesLedger[$key]['sid'] = $empInfo['sid'];
+                $employeesLedger[$key]['employee_id'] = $empInfo['sid'];
+                $employeesLedger[$key]['employee_ssn'] = $empInfo['ssn'];
+                $employeesLedger[$key]['employee_email'] = $empInfo['email'];
+                $employeesLedger[$key]['employee_phone_number'] = $empInfo['PhoneNumber'];
+                $employeesLedger[$key]['period_start_date'] = $val['start_date'];
+                $employeesLedger[$key]['period_end_date'] = $val['end_date'];
+                $employeesLedger[$key]['imported_at'] = $val['created_at'];
+                $employeesLedger[$key]['journal_entry_number'] = $val['general_entry_number'];
 
-                $teamDepartment = $val['employee_sid'] != null ? getEmployeeDepartmentAndTeams($val['employee_sid']) : '';
                 $departments = !empty($teamDepartment['departments']) ? implode(',', array_column($teamDepartment['departments'], 'name')) : '';
                 $employeesLedger[$key]['department'] = $departments;
 
@@ -263,7 +276,7 @@ class Ledger_model extends CI_Model
             $this->db->where('sid', $sId);
             $record = $this->db->get('payrolls.regular_payrolls')->row_array();
             if (!empty($record)) {
-                $brakdownData['brakdowndata'] = json_decode($record['totals'],true);
+                $brakdownData['brakdowndata'] = json_decode($record['totals'], true);
             }
         }
 
@@ -272,7 +285,7 @@ class Ledger_model extends CI_Model
             $this->db->where('sid', $sId);
             $record = $this->db->get('payrolls.regular_payrolls_employees')->row_array();
             if (!empty($record)) {
-                $brakdownData['brakdowndata'] = json_decode($record['data_json'],true);
+                $brakdownData['brakdowndata'] = json_decode($record['data_json'], true);
             }
         }
 
@@ -284,11 +297,10 @@ class Ledger_model extends CI_Model
             $record = $this->db->get('payrolls.external_payrolls')->row_array();
 
             if (!empty($record)) {
-                $brakdownData['brakdowndata']['external_payroll_items'] = json_decode($record['external_payroll_items'],true);
-                $brakdownData['brakdowndata']['applicable_earnings'] = json_decode($record['applicable_earnings'],true);
-                $brakdownData['brakdowndata']['applicable_benefits'] = json_decode($record['applicable_benefits'],true);
-                $brakdownData['brakdowndata']['applicable_taxes'] = json_decode($record['applicable_taxes'],true);
-
+                $brakdownData['brakdowndata']['external_payroll_items'] = json_decode($record['external_payroll_items'], true);
+                $brakdownData['brakdowndata']['applicable_earnings'] = json_decode($record['applicable_earnings'], true);
+                $brakdownData['brakdowndata']['applicable_benefits'] = json_decode($record['applicable_benefits'], true);
+                $brakdownData['brakdowndata']['applicable_taxes'] = json_decode($record['applicable_taxes'], true);
             }
         }
 

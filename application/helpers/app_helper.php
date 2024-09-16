@@ -3007,26 +3007,32 @@ if (!function_exists('get_jobTitle_dropdown_for_search')) {
         $select .= '</select>';
         //
         $CI = &get_instance();
-        // Get Company Job titles 
+        // Get Company Job titles
         $userJobTitle = $CI->db->select('job_title')
             ->where('parent_sid', $companyId)
+            ->where('job_title is not null', null)
             ->distinct('job_title')
             ->get('users')
             ->result_array();
 
-        $jobTitles =
-            array_unique(
-                array_column($userJobTitle, 'job_title')
-            );
+        if ($userJobTitle) {
+            $jobTitles =
+                array_unique(
+                    array_column($userJobTitle, 'job_title')
+                );
 
-        //
-        if ($jobTitles) {
-            foreach ($jobTitles as $row) {
-                if ($row != '' || $row != null) {
-                    $options .= '<option value="' . $row . '">' . $row . '</option>';
+            //
+            if ($jobTitles) {
+                foreach ($jobTitles as $row) {
+                    if ($row != '' || $row != null) {
+                        $options .= '<option value="' . $row . '">' . $row . '</option>';
+                    }
                 }
             }
+        } else {
+            $options .= '<option value="all">All</option>';
         }
+
 
         $select = str_replace('{{options}}', $options, $select);
         return $select;
@@ -3794,5 +3800,22 @@ if (!function_exists('getButton')) {
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
 {{text}}             
 </a>');
+    }
+}
+
+
+
+if (!function_exists("isDateTime")) {
+    function isDateTime($dateTime): bool
+    {
+        return preg_match("/\d{4}-\d{2}-\d{2}/", $dateTime);
+    }
+}
+
+
+if (!function_exists("isAmount")) {
+    function isAmount($value): bool
+    {
+        return is_double($value);
     }
 }

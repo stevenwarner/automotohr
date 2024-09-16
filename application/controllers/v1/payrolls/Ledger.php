@@ -22,8 +22,6 @@ class Ledger extends Public_controller
     public function __construct()
     {
         parent::__construct();
-        // $this->load->helper('path');
-        // $this->load->library('parse_csv');
         $this->load->model(
             "v1/Payroll/Ledger_model",
             "ledger_model"
@@ -34,7 +32,7 @@ class Ledger extends Public_controller
         // set path to JS file
         $this->js = 'public/v1/js/payroll/';
         //
-        $this->blockMinifyFilesCreation = false;
+        $this->blockMinifyFilesCreation = true;
     }
 
     public function import()
@@ -52,7 +50,7 @@ class Ledger extends Public_controller
             $data['level'] = 0;
             $data["sanitizedView"] = true;
             // get the security details
-            $data['security_details'] = db_get_access_level_details(
+            $data['security_details'] = $data['securityDetails'] = db_get_access_level_details(
                 $data['session']['employer_detail']['sid'],
                 null,
                 $data['session']
@@ -101,7 +99,7 @@ class Ledger extends Public_controller
      *
      * @return JSON
      */
-    function handler()
+    public function handler()
     {
         // check and set user session
         $data['session'] = checkUserSession();
@@ -181,7 +179,7 @@ class Ledger extends Public_controller
                                     $dataToInsert['general_entry_number'] = $payroll['general_entry_number'];
 
                                     if (!empty($payroll['extra'])) {
-                                        $dataToInsert['extra'] = json_encode($payroll['extra']);
+                                        $dataToInsert['extra'] = ($payroll['extra']);
                                     }
 
                                     //
@@ -264,7 +262,7 @@ class Ledger extends Public_controller
      *
      * @return JSON
      */
-    function resp($responseArray)
+    private function resp($responseArray)
     {
         header('Content-type: application/json');
         echo json_encode($responseArray);
@@ -279,7 +277,28 @@ class Ledger extends Public_controller
         header("Content-Disposition: attachment; filename=ledger_sample.csv");
         $output = fopen('php://output', 'w');
 
-        fputcsv($output, array('Employee ID', 'Employee Number', 'Employee SSN', 'Employee Email', 'Employee Phone Number', 'Debit', 'Credit', 'Taxes', 'Description', 'Start Period', 'End Period', 'Transaction Date', 'Account Name', 'Account Number', 'Reference Number', 'Journal Entry Number', 'First Name', 'Last name', 'Department', 'Job Title', 'Gross Pay', 'Net Pay'));
+        fputcsv($output, array(
+            'Employee ID',
+            'Employee Number',
+            'Employee SSN',
+            'Employee Email',
+            'Employee Phone Number',
+            'Debit',
+            'Credit',
+            'Taxes',
+            'Description',
+            'Start Period',
+            'End Period',
+            'Transaction Date',
+            'Account Name',
+            'Account Number',
+            'Reference Number',
+            'Journal Entry Number',
+            'First Name',
+            'Last Name',
+            'Gross Pay',
+            'Net Pay'
+        ));
 
         fclose($output);
         exit;
@@ -331,7 +350,7 @@ class Ledger extends Public_controller
             //
             $between = '';
             //
-            if ($start_date_applied != NULL && $end_date_applied != NULL) {
+            if ($start_date_applied != null && $end_date_applied != null) {
                 if ($dateSelection == 'transaction') {
                     $between = "payroll_ledger.transaction_date >= '" . $start_date_applied . "' and payroll_ledger.transaction_date <=  '" . $end_date_applied . "'";
                 } else {
@@ -341,7 +360,7 @@ class Ledger extends Public_controller
 
             //
             $data["flag"] = true;
-            $data['ledgerCount'] = sizeof($this->ledger_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, null, null));
+            $data['ledgerCount'] = $this->ledger_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, null);
             /** pagination * */
             $this->load->library('pagination');
             $records_per_page =  PAGINATION_RECORDS_PER_PAGE;
@@ -390,261 +409,15 @@ class Ledger extends Public_controller
             $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
 
 
+            $data["columns"] = $this->setColumns();
             $data['employeesLedger'] = $this->ledger_model->getEmployeesLedger($company_sid, $between, $filterEmployees, $filterJobTitles, $filterDepartment, $records_per_page, $my_offset);
 
-
+            $records = $this->setExtraColumnsWithTotal($data["employeesLedger"]);
+            $data["employeesLedger"] = $records["employeesLedger"];
+            $data["extraColumns"] = $records["extraColumns"];
+            $data["totalArray"] = $records["totalArray"];
             //
-            if (sizeof($this->input->post(NULL, TRUE))) {
-
-                $additionalHeader = [];
-
-                $additionalHeader['type'] = 'Type';
-
-                if ($this->input->post('employee_sid')) {
-                    $additionalHeader['employee_id'] = 'Employee ID';
-                }
-                if ($this->input->post('first_name')) {
-                    $additionalHeader['first_name'] = "First Name";
-                }
-                if ($this->input->post('middle_name')) {
-                    $additionalHeader['middle_name'] = "Middle Name";
-                }
-                if ($this->input->post('last_name')) {
-                    $additionalHeader['last_name'] = "Last Name";
-                }
-                if ($this->input->post('job_title')) {
-                    $additionalHeader['job_title'] = "Job Title";
-                }
-                if ($this->input->post('department')) {
-                    $additionalHeader['department'] = "Department";
-                }
-                if ($this->input->post('team')) {
-                    $additionalHeader['team'] = "Team";
-                }
-
-                if ($this->input->post('employee_number')) {
-                    $additionalHeader['employee_number'] = "Employee Number";
-                }
-                if ($this->input->post('ssn')) {
-                    $additionalHeader['ssn'] = "SSN";
-                }
-
-                if ($this->input->post('email')) {
-                    $additionalHeader['email'] = "Email";
-                }
-
-                if ($this->input->post('phone_number')) {
-                    $additionalHeader['phone_number'] = "Phone Number";
-                }
-                //
-
-                if ($this->input->post('debit_amount')) {
-                    $additionalHeader['debit_amount'] = 'Debit Amount';
-                }
-                if ($this->input->post('credit_amount')) {
-                    $additionalHeader['credit_amount'] = 'Credit Amount';
-                }
-                if ($this->input->post('gross_pay')) {
-                    $additionalHeader['gross_pay'] = 'Gross Pay';
-                }
-                if ($this->input->post('net_pay')) {
-                    $additionalHeader['net_pay'] = 'Net Pay';
-                }
-                if ($this->input->post('taxes')) {
-                    $additionalHeader['taxes'] = 'Taxes';
-                }
-                if ($this->input->post('description')) {
-                    $additionalHeader['description'] = 'Description';
-                }
-
-                if ($this->input->post('transaction_date')) {
-                    $additionalHeader['transaction_date'] = 'Transaction Date';
-                }
-                if ($this->input->post('start_date')) {
-                    $additionalHeader['start_date'] = 'Start Period';
-                }
-                if ($this->input->post('end_date')) {
-                    $additionalHeader['end_date'] = 'End Period';
-                }
-                if ($this->input->post('created_at')) {
-                    $additionalHeader['created_at'] = 'Imported At';
-                }
-                if ($this->input->post('account_name')) {
-                    $additionalHeader['account_name'] = 'Account Name';
-                }
-                if ($this->input->post('account_number')) {
-                    $additionalHeader['account_number'] = 'Account Number';
-                }
-                if ($this->input->post('general_entry_number')) {
-                    $additionalHeader['general_entry_number'] = 'Journal Entry Number';
-                }
-                if ($this->input->post('reference_number')) {
-
-                    $additionalHeader['reference_number'] = 'Reference Number';
-                }
-
-
-                //
-                if ($this->input->post('extra')) {
-
-                    $header = [];
-                    foreach ($data['employeesLedger'] as $key1 => $row) {
-                        foreach (json_decode($row['extra'], true)[0] as $key2 => $value) {
-                            if (!in_array($key2, $header)) {
-                                $header[] = $key2;
-                            }
-                            //
-                            $data['employeesLedger'][$key1]['extra_1'][$key2] = $value;
-                        }
-                    }
-
-                    if (!empty($header)) {
-                        foreach ($header as  $hdRow) {
-
-                            $headerkey = 'extra_' . preg_replace('/\s+/', '', $hdRow);
-
-                            $additionalHeader[$headerkey] = $hdRow;
-                        }
-                    }
-                }
-
-
-                header('Content-Type: text/csv; charset=utf-8');
-                header("Content-Disposition: attachment; filename=employees_ledger_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
-                $output = fopen('php://output', 'w');
-
-                fputcsv($output, array($data['session']['company_detail']['CompanyName'], '', '', ''));
-
-                fputcsv($output, array(
-                    "Exported By",
-                    $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
-                ));
-                fputcsv($output, array(
-                    "Export Date",
-                    date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
-                ));
-                fputcsv($output, array("",));
-
-                fputcsv($output, $additionalHeader);
-
-                if (!empty($data['employeesLedger'])) {
-                    foreach ($data['employeesLedger'] as $ledgerRow) {
-
-                        $input = array();
-
-                        $teamDepartment = [];
-
-                        $input['Type'] = $ledgerRow['employee_sid'] == null ? "Company" : "Employee";
-
-                        if ($additionalHeader['employee_id']) {
-                            $input['employee_sid'] = $ledgerRow['employee_sid'];
-                        }
-                        if ($additionalHeader['first_name']) {
-                            $input['first_name'] = $ledgerRow['first_name'];
-                        }
-                        if ($additionalHeader['middle_name']) {
-                            $input['middle_name'] = $ledgerRow['middle_name'];
-                        }
-                        if ($additionalHeader['last_name']) {
-                            $input['last_name'] = $ledgerRow['last_name'];
-                        }
-                        if ($additionalHeader['job_title']) {
-                            $input['job_title'] = $ledgerRow['job_title'];
-                        }
-                        if ($additionalHeader['department'] || $additionalHeader['team']) {
-                            $teamDepartment = $ledgerRow['employee_sid'] != null ? getEmployeeDepartmentAndTeams($ledgerRow['employee_sid']) : '';
-                        }
-                        if ($additionalHeader['department']) {
-
-                            $department = array_column($teamDepartment['departments'], 'name');
-
-                            $departments = $department[0];
-                            $input['department'] = $departments;
-                        }
-                        if ($additionalHeader['team']) {
-                            $teams = !empty($teamDepartment['teams']) ? $teamDepartment['teams'][0]['name'] : '';
-                            $input['team'] = $teams;
-                        }
-
-
-                        if ($additionalHeader['employee_number']) {
-                            $input['employee_number'] = $ledgerRow['employee_number'];
-                        }
-
-                        if ($additionalHeader['ssn']) {
-                            $input['ssn'] = $ledgerRow['ssn'];
-                        }
-
-                        if ($additionalHeader['email']) {
-                            $input['email'] = $ledgerRow['email'];
-                        }
-
-                        if ($additionalHeader['phone_number']) {
-                            $input['phone_number'] = $ledgerRow['PhoneNumber'];
-                        }
-
-
-                        if ($additionalHeader['debit_amount']) {
-                            $input['debit_amount'] = $ledgerRow['debit_amount'] ? $ledgerRow['debit_amount'] : '0';
-                        }
-                        if ($additionalHeader['credit_amount']) {
-                            $input['credit_amount'] = $ledgerRow['credit_amount'] ? $ledgerRow['credit_amount'] : '0';
-                        }
-                        if ($additionalHeader['gross_pay']) {
-                            $input['gross_pay'] = $ledgerRow['gross_pay'] ? $ledgerRow['gross_pay'] : '0';
-                        }
-                        if ($additionalHeader['net_pay']) {
-                            $input['net_pay'] = $ledgerRow['net_pay'] ? $ledgerRow['net_pay'] : '0';
-                        }
-                        if ($additionalHeader['taxes']) {
-                            $input['taxes'] = $ledgerRow['taxes'] ? $ledgerRow['taxes'] : '0';
-                        }
-                        if ($additionalHeader['description']) {
-                            $input['description'] = preg_replace('/[^A-Za-z0-9\-]/', '', $ledgerRow['description']);
-                        }
-                        if ($additionalHeader['transaction_date']) {
-                            $input['transaction_date'] = formatDateToDB($ledgerRow['transaction_date'], DB_DATE, DATE);
-                        }
-                        if ($additionalHeader['start_date']) {
-                            $input['start_date'] = formatDateToDB($ledgerRow['start_date'], DB_DATE, DATE);
-                        }
-                        if ($additionalHeader['end_date']) {
-                            $input['end_date'] = formatDateToDB($ledgerRow['end_date'], DB_DATE, DATE);
-                        }
-                        if ($additionalHeader['imported_at']) {
-                            $input['imported_at'] = formatDateToDB($ledgerRow['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-                        }
-                        if ($additionalHeader['account_name']) {
-                            $input['account_name'] = $ledgerRow['account_name'];
-                        }
-                        if ($additionalHeader['account_number']) {
-                            $input['account_number'] = $ledgerRow['account_number'];
-                        }
-                        if ($additionalHeader['general_entry_number']) {
-                            $input['general_entry_number'] = $ledgerRow['general_entry_number'];
-                        }
-                        if ($additionalHeader['reference_number']) {
-                            $input['reference_number'] = $ledgerRow['reference_number'];
-                        }
-
-                        //                        
-                        if (!empty($header)) {
-                            if (!empty($ledgerRow['extra_1'])) {
-                                foreach ($ledgerRow['extra_1'] as $key => $val) {
-                                    $headerkey = 'extra_' . preg_replace('/\s+/', '', $key);
-                                    $input[$headerkey] = $val;
-                                }
-                            }
-                        }
-
-                        fputcsv($output, $input);
-                    }
-                }
-
-                fclose($output);
-                exit;
-            }
-
+            $this->handleExport($data);
             //
             $this->load
                 ->view('main/header', $data)
@@ -669,5 +442,184 @@ class Ledger extends Public_controller
         );
     }
 
-    //
+    /**
+     * handles export process
+     */
+    private function handleExport($data)
+    {
+        $post = $this->input->post(null, true);
+        //
+        if (!$post) {
+            return false;
+        }
+        //
+        if (!$post["columns"]) {
+            return false;
+        }
+
+        // set columns
+        $columns = array_keys($post["columns"]);
+        //
+        $tmp = ["Employee/Company"];
+        //
+        foreach ($columns as $v0) {
+            if ($v0 === "employee_ssn") {
+                $tmp[] = "Employee SSN";
+            } else {
+                $tmp[] = SlugToString($v0);
+            }
+        }
+        // set headers
+        $headers = $tmp;
+        $rows = [];
+        // iterate through ledger
+        foreach ($data["employeesLedger"] as $v0) {
+            // tmp data holder
+            $tmp = [];
+            // add the company or employee name
+            $tmp[] =
+                $v0['employee_sid']
+                ? remakeEmployeeName($v0, true, true)
+                : $data["session"]["company_detail"]["CompanyName"];
+            // extra
+            $extraColumns = [];
+            // iterate through export columns
+            foreach ($columns as $v1) {
+                // check if index is extra
+                if (!array_key_exists($v1, $v0)) {
+                    $extraColumns[] = $v1;
+                    //
+                    $value = $v0["extra_column"][stringToSlug($v1, "")];
+                } else {
+                    // get the index
+                    $value = $v0[$v1];
+                }
+                //
+                if (isDateTime($value)) {
+                    $tmp[] = formatDateToDB(
+                        $value,
+                        false,
+                        SITE_DATE
+                    );
+                } elseif (in_array($v1, [
+                    "debit_amount",
+                    "credit_amount",
+                    "net_pay",
+                    "gross_pay",
+                    "taxes"
+                ])) {
+                    //
+                    $tmp[] = _a($value ? $value : 0);
+                } else {
+                    $tmp[] = $value;
+                }
+            }
+            //
+            $rows[] = $tmp;
+        }
+
+        // here goes the code
+        $filename = "payroll_ledger_export_at_" . date("Y_m_d_H_i_s") . ".csv";
+
+        // Set headers to force download the CSV file
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $filename);
+        $output = fopen('php://output', 'w');
+        fputcsv($output, $headers);
+        foreach ($rows as $row) {
+            fputcsv($output, $row);
+        }
+
+        // Close the output stream
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * handles export process
+     */
+    private function setColumns()
+    {
+        return [
+            ["slug" => "employee_id", "value" => "Employee Id", "selected" => false],
+            ["slug" => "employee_number", "value" => "Employee Number", "selected" => false],
+            ["slug" => "employee_ssn", "value" => "Employee SSN", "selected" => false],
+            ["slug" => "employee_email", "value" => "Employee Email", "selected" => false],
+            ["slug" => "employee_phone_number", "value" => "Employee Phone Number", "selected" => false],
+            ["slug" => "debit_amount", "value" => "Debit Amount", "selected" => true],
+            ["slug" => "credit_amount", "value" => "Credit Amount", "selected" => true],
+            ["slug" => "gross_pay", "selected" => true],
+            ["slug" => "net_pay", "selected" => true],
+            ["slug" => "taxes", "selected" => true],
+            ["slug" => "period_start_date", "value" => "Period Start Date", "selected" => false],
+            ["slug" => "period_end_date", "value" => "Period End Date", "selected" => false],
+            ["slug" => "transaction_date", "selected" => true],
+            ["slug" => "account_name", "selected" => false],
+            ["slug" => "account_number", "selected" => false],
+            ["slug" => "reference_number", "selected" => false],
+            ["slug" => "journal_entry_number", "selected" => false],
+            ["slug" => "first_name", "selected" => false],
+            ["slug" => "last_name", "selected" => false],
+            ["slug" => "department", "selected" => false],
+            ["slug" => "team", "selected" => false],
+            ["slug" => "job_title", "selected" => false],
+            ["slug" => "imported_at", "selected" => false],
+            ["slug" => "description", "selected" => false],
+        ];
+    }
+
+
+    /**
+     * handles export process
+     */
+    private function setExtraColumnsWithTotal(array $employeesLedger)
+    {
+        //
+        $returnArray =
+            [
+                "extraColumns" => [],
+                "totalArray" => [
+                    "debit_amount" => 0,
+                    "credit_amount" => 0,
+                    "gross_pay" => 0,
+                    "net_pay" => 0,
+                    "taxes" => 0,
+                ]
+            ];
+        //
+        if (!$employeesLedger) {
+            return $returnArray;
+        }
+        //
+        $extraColumns = [];
+        foreach ($employeesLedger as $k0 => $v0) {
+            //
+            $returnArray["totalArray"]["debit_amount"] += ($v0["debit_amount"] ? $v0["debit_amount"] : 0);
+            $returnArray["totalArray"]["credit_amount"] += ($v0["credit_amount"] ? $v0["credit_amount"] : 0);
+            $returnArray["totalArray"]["gross_pay"] += ($v0["gross_pay"] ? $v0["gross_pay"] : 0);
+            $returnArray["totalArray"]["net_pay"] += ($v0["net_pay"] ? $v0["net_pay"] : 0);
+            $returnArray["totalArray"]["taxes"] += ($v0["taxes"] ? $v0["taxes"] : 0);
+            //
+            $extraColumnArray = json_decode(
+                $v0["extra"],
+                true
+            );
+            //
+            $employeesLedger[$k0]["extra_column"] = [];
+
+            if ($extraColumnArray) {
+                foreach ($extraColumnArray as $k1 => $v1) {
+                    foreach ($v1 as $k2 => $v2) {
+                        $extraColumns[stringToSlug($k2, "")] = ucwords($k2);
+
+                        $employeesLedger[$k0]["extra_column"][stringToSlug($k2, "")] = $v2;
+                    }
+                }
+            }
+        }
+        $returnArray["extraColumns"] = array_values($extraColumns);
+        $returnArray["employeesLedger"] = $employeesLedger;
+
+        return $returnArray;
+    }
 }

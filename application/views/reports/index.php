@@ -496,7 +496,7 @@
                                             </div>
                                         </div>
 
-                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(MODULE_ATTENDANCE)) { ?>
+                                        <?php if (isPayrollOrPlus(true) && checkIfAppIsEnabled(PAYROLL)) { ?>
 
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="dash-box">

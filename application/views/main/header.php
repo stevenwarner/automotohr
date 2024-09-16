@@ -387,6 +387,7 @@
                                                                                                                     $class == 'performance_management' ||
                                                                                                                     $class == 'goals' ||
                                                                                                                     $class == 'govt_user' ||
+                                                                                                                    $class == 'ledger' ||
                                                                                                                     $class == 'terminate_employee' ||
                                                                                                                     ($class == 'home' && $method == 'resource_page') ||
                                                                                                                     ($class == 'home' && $method == 'event') ||
