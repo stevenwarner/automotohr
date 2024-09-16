@@ -1206,7 +1206,6 @@ class Employee_management extends Public_Controller
 
 
                 // Set Employment Date
-                $this->employee_model->setEmploymentData($employer_id, 'profile', $security_sid);
 
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
                 //

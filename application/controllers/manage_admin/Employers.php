@@ -296,13 +296,7 @@ class employers extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         // set employment date
         $this->load->model('employee_model');
-        $this
-            ->employee_model
-            ->setEmploymentData(
-                $sid,
-                'admin',
-                0
-            );
+       
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
         $this->data['company_detail'] = $company_detail;

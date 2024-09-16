@@ -355,7 +355,7 @@
                                                 <li>
                                                     <label>Starting Date as a Full-Time Employee</label>
                                                     <div class="hr-fields-wrap">
-                                                        <input class="invoice-fields datepicker" id="js-employment-date" readonly name="employment_date" value="<?php echo set_value('employment_date', $data["employment_date"] ? formatDateToDB($data["employment_date"], DB_DATE, "m-d-Y") : ""); ?>" />
+                                                        <input class="invoice-fields datepicker" id="js-employment-date" name="employment_date" value="<?php echo set_value('employment_date', $data["employment_date"] ? formatDateToDB($data["employment_date"], DB_DATE, "m-d-Y") : ""); ?>" />
                                                         <?php echo form_error('employment_date'); ?>
                                                     </div>
                                                 </li>
