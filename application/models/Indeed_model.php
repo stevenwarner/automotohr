@@ -836,6 +836,7 @@ class Indeed_model extends CI_Model
                 "indeed_job_queue",
                 [
                     "is_expired" => 0,
+                    "updated_at" => getSystemDate()
                 ]
             );
         //
