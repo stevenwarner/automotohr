@@ -221,9 +221,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             </div>
                                             <div class="col-xs-2 text-left" style="padding-right: 5px; padding-left: 5px">
                                                 <?php if ($offline) { ?>
-                                                    <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
+                                                  <!--  <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a> -->
                                                 <?php } else { ?>
-                                                    <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
+                                                   <!-- <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a> -->
                                                 <?php } ?>
                                             </div>
                                         <?php } ?>
