@@ -1091,9 +1091,7 @@ class Indeed_model extends CI_Model
 
     //
     public function saveIndeedJobPostingResponse($insertArray)
-
     {
-
         //
         $recordCount = $this
             ->db
@@ -1348,7 +1346,7 @@ class Indeed_model extends CI_Model
         // set where array
         $where = [
             "job_sid" => $jobUUID,
-            "indeed_posting_id" => $indeedPostingId,
+            // "indeed_posting_id" => $indeedPostingId,
         ];
         // check if already exists
         if (
