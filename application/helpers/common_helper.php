@@ -12577,10 +12577,49 @@ if (!function_exists('formatDateToDB')) {
         if (empty($date)) {
             return $date;
         }
+        // auto detect format
+        if ($fromFormat === false) {
+            $fromFormat = detectDateTimeFormat($date);
+        }
         //
         $date = formatDateBeforeProcess($date, $fromFormat);
         //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
+    }
+}
+
+if (!function_exists('detectDateTimeFormat')) {
+    function detectDateTimeFormat(
+        $date
+    ) {
+        $format;
+
+        // Y-m-d H:i:s
+        if (preg_match("/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}/", $date)) {
+            $format = "Y-m-d H:i:s";
+        } 
+        // Y-m-d
+        else if (preg_match("/\d{4}-\d{2}-\d{2}/", $date)) {
+            $format = "Y-m-d";
+        }
+        // m/d/Y H:i:s
+        else if (preg_match("/\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/", $date)) {
+            $format = "Y-m-d";
+        }
+        // m/d/Y
+        else if (preg_match("/\d{2}\/\d{2}\/\d{4}/", $date)) {
+            $format = "Y-m-d";
+        }
+        // m-d-Y H:i:s
+        else if (preg_match("/\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2}:\d{2}/", $date)) {
+            $format = "Y-m-d";
+        }
+        // m-d-Y
+        else if (preg_match("/\d{2}-\d{2}-\d{4}/", $date)) {
+            $format = "Y-m-d";
+        }
+
+        return $format;
     }
 }
 
