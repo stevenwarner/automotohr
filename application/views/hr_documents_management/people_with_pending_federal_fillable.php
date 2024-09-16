@@ -133,8 +133,10 @@
                                                             <label>Employee(s)</label>
                                                             <select id="js-filter-employees" name="employees[]" multiple="true">
                                                                 <?php 
-                                                                    foreach ($employeesList as $k => $v) {
-                                                                        echo '<option value="'.( $v['sid'] ).'" '.( isset($selectedEmployeeList[$v['sid']]) ? 'selected="selected"' : ''  ).'>'.( remakeEmployeeName( $v ) ).'</option>';
+                                                                    if ($employeesList) {
+                                                                        foreach ($employeesList as $k => $v) {
+                                                                            echo '<option value="'.( $v['sid'] ).'" '.( isset($selectedEmployeeList[$v['sid']]) ? 'selected="selected"' : ''  ).'>'.( remakeEmployeeName( $v ) ).'</option>';
+                                                                        }
                                                                     }
                                                                 ?>
                                                             </select>

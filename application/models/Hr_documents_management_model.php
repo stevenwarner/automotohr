@@ -2201,8 +2201,8 @@ class Hr_documents_management_model extends CI_Model
         //
         $pendingDocuments = [];
         //
-        $activeEmployees = explode(':', $employeeList);
-        $filterDocuments = explode(':', $documentList);
+        $activeEmployees = $employeeList ? explode(':', $employeeList) : [];
+        $filterDocuments = $documentList ? explode(':', $documentList) : [];
         //
         $now = time();
         //
@@ -2478,11 +2478,15 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
         }
-        // get state forms
-        $stateForms = $this->getEmployeesPendingStateForms(
-            $company_sid,
-            $activeEmployees
-        );
+        //
+        $stateForms = [];
+        if (!empty($activeEmployees)) {
+            // get state forms
+            $stateForms = $this->getEmployeesPendingStateForms(
+                $company_sid,
+                $activeEmployees
+            );
+        }
 
         if ($stateForms) {
             foreach ($stateForms as $form) {
