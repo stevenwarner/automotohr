@@ -865,6 +865,7 @@ class Indeed_model extends CI_Model
             $updateArray["is_expired"] = 1;
             $updateArray["is_processed"] = 0;
             $updateArray["processed_at"] = null;
+            $updateArray["updated_at"] = getSystemDate();
             //
             $isProcessed = 0;
             // check wether it was processed or not
