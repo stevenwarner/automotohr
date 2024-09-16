@@ -123,16 +123,6 @@ $(function importLedger() {
 			.trim();
 
 		if (
-			!format_index.includes("firstname") &&
-			!format_index.includes("first-name") &&
-			!format_index.includes("fname") &&
-			!format_index.includes("first_name")
-		) {
-			alertify.alert("Not a valid format First Name");
-			return false;
-		}
-
-		if (
 			!format_index.includes("debitamount") &&
 			!format_index.includes("debit") &&
 			!format_index.includes("creditamount") &&
@@ -140,10 +130,6 @@ $(function importLedger() {
 		) {
 			return alertify.alert("Debit or Credit amount is missing.");
 		}
-		// if () {
-		//     alertify.alert('Not a valid format Credit Amount is missing');
-		//     return false;
-		// }
 
 		if (
 			!format_index.includes("startdate") &&
