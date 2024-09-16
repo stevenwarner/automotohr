@@ -1697,6 +1697,7 @@ $route['cron/remove_employee_duplicate_teams'] = 'Cron_common/removeEmployeeFrom
  */
 $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 $route['sa/lms/courses/(:num)']['get'] = 'manage_admin/2022/Courses/companyCourses/$1';
+$route['lms/courses/my_lms_dashboard']['get'] = 'v1/Courses/dashboard';
 $route['lms/courses/my']['get'] = 'v1/Courses/myCourses';
 $route['lms/courses/(:num)']['get'] = 'v1/Courses/getCourse/$1';
 $route['lms/courses/(:num)/(:any)']['get'] = 'v1/Courses/getCourseByLanguage/$1/$2';
@@ -1704,7 +1705,13 @@ $route['lms/courses/(:num)/(:num)/(:any)/certificate']['get'] = 'v1/Courses/view
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
 $route['lms/courses/report'] = 'v1/Courses/subordinatesReport';
+$route['lms/courses/import_course_csv'] = 'v1/Courses/importCourseCSV';
+$route['lms/courses/import_course_csv_handler'] = 'v1/Courses/handler';
+
+$route['lms/subordinate/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/non_plus/$1';
 $route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/non_plus/$1';
+
+$route['lms/employee/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';
 $route['lms/employee/courses/(:num)'] = 'v1/Courses/subordinateCourses/plus/$1';
 $route['lms/subordinate/course/(:num)/(:num)/(:any)'] = 'v1/Courses/previewSubordinateCourse/$1/$2/$3';
 $route['lms/subordinate/course/(:num)/(:num)/(:any)/(:any)'] = 'v1/Courses/previewSubordinateCourseByLanguage/$1/$2/$3/$4';

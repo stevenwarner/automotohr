@@ -3831,3 +3831,68 @@ if (!function_exists("checkGeneralDocumentActive")) {
             ->count_all_results("portal_employer");
     }
 }
+
+if (!function_exists("checkEmployeeExistInCompany")) {
+    function checkEmployeeExistInCompany ($data, $companyId) {
+        //
+        $columnName = "";
+        $columnValue = "";
+        //
+        if ($data['employee_id']) {
+            $columnName = "sid";
+            $columnValue = $data['employee_id'];
+        } else if ($data['employee_number']) {
+            $columnName = "employee_number";
+            $columnValue = $data['employee_number'];
+        } else if ($data['employee_ssn']) {
+            $columnName = 'REGEXP_REPLACE(ssn, "[^0-9]", "") =';
+            $columnValue = preg_replace('/[^0-9]/', '',$data['employee_ssn']);
+        } else if ($data['employee_email']) {
+            $columnName = 'LOWER(email)';
+            $columnValue = $data['employee_email'];
+        } else if ($data['employee_phone']) {
+            $columnName = 'PhoneNumber';
+            $columnValue =$data['employee_phone'];
+        }
+    
+        //
+        if ($columnName &&  $columnValue) {
+            //
+            $CI = &get_instance();
+            //
+            $columnValue = trim(strtolower($columnValue));
+            //
+            $CI->db->select("sid");
+            $CI->db->where('parent_sid', $companyId);
+            //
+            if ($columnName == 'PhoneNumber') {
+                //
+                $phoneNumber = preg_replace('/[^0-9]/', '',$data['employee_phone']);
+                //
+                $CI->db->group_start();
+                $CI->db->where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', $phoneNumber);
+                //
+                if (substr(preg_replace('/[^0-9]/', '',$data['employee_phone']),0,1) != 1) {
+                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', '1' . $phoneNumber);
+                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+1' . $phoneNumber);
+                } else {
+                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+' . $phoneNumber);
+                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', substr($phoneNumber,1));
+                }
+                //
+                $CI->db->group_end();
+            } else {
+                $CI->db->where($columnName, $columnValue);
+            }
+            
+            $CI->db->limit(1);
+            //
+            $result = $CI->db->get('users')->row_array();
+            
+            return $result['sid'] ?? 0;
+        } 
+        //
+        return 0;
+        //
+    }
+}

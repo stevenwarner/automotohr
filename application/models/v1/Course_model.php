@@ -545,4 +545,30 @@ class Course_model extends CI_Model
         $this->db->where('course_sid', $courseId);
         $this->db->delete('lms_scorm_courses');   
     }
+
+    function getEmployerDetail($id) {
+        $this->db->where('sid', $id);
+        return $this->db->get('users')->row_array();
+    }
+
+    public function getCourseIdByTitleAndType ($title, $type, $companyId) {
+        $this->db->select('sid');
+        $this->db->where('course_title', $title);
+        $this->db->where('course_type', $type);
+        $this->db->where('company_sid', $companyId);
+        $a = $this->db->get('lms_default_courses');
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!empty($b)) {
+            return $b['sid'];
+        } else {
+            return 0;
+        }
+    }
+
+    public function insertEmployeeCourseInfo ($dataToInsert) {
+        $this->db->insert('lms_employee_course', $dataToInsert);
+    }
 }

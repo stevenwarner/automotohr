@@ -31,7 +31,7 @@ if (!function_exists('getEmployeeOnlyNameBySID')) {
         $employee_info = db_get_employee_profile($sid);
         //
         if ($employee_info) {
-            return $employee_info[0]["first_name"] . " " . $employee_info[0]["last_name"];
+            return $employee_info[0]["first_name"] . " " . $employee_info[0]["middle_name"] . " " . $employee_info[0]["last_name"];
         } else {
             return "";
         }

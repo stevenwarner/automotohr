@@ -1111,32 +1111,7 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
-
-    function fixJobTitle () {
-        $companyIds = [59234,59232,58302,58134,56410,56407,53562,52584,49929,32055,32051,28588,16485,16483,16481,16479,16475,16459,16439,16437,16433,16431,16429,16427,16374];
-        $this->load->model('2022/complynet_model', 'complynet_model');
-
-        foreach ($companyIds as $companyId) {
-            if (isCompanyOnComplyNet($companyId)) {
-                $complynetEmployees = $this->complynet_model->getCompanyEmployees($companyId);
-                //
-                if ($complynetEmployees) {
-                    foreach ($complynetEmployees as $employee) {
-                        $complynetJobRoleId = $this->complynet_model->getComplyNetJobRoleId($employee['complynet_job_title']);
-                        if ($complynetJobRoleId != 0) {
-                            $status =  $this->complynet_model->checkJobRoleAlreadyUpdated($employee['sid'], $companyId, $complynetJobRoleId);
-                            if (!$status) {
-                                _e("update status for".$employee['email'], true);
-                            }
-                        }
-                    }
-                }
-                
-                //
-                _e(count($complynetEmployees),true);
-            } 
-        }
-    }
+   
 
     function addScormCourses () {
         //
@@ -1160,72 +1135,10 @@ class Testing extends CI_Controller
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
-
-    /**
-     * SCORM parse
-     */
-    public function parseScorm($courseId)
-    {
-        // SCORM file name
-        $filePath = 'mstest_ns_1690306855_0_1_irs_8300_training_for_managers_scorm12_6_.zip';
-        $fileLanguage = "french";
-        // get the file to local
-        $zipFilePath = copyAWSFile($filePath);
-        $uploadPath = str_replace('.zip', '', $zipFilePath);
-        // extract the file
-        $zip = new ZipArchive;
-        $res = $zip->open($zipFilePath);
-        //
-        if ($res !== true) {
-            // unable to extract the file
-            return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
-        }
-        // extract the file
-        $zip->extractTo($uploadPath);
-        $zip->close();
-        // set the "IMSmanifest" file
-        $file = $uploadPath . '/imsmanifest.xml';
-        // check if the file exists
-        if (!file_exists($file)) {
-            return SendResponse(404, ['status' => false, 'errors' => ['"IMSmanifest.xml" file is missing.']]);
-        }
-        // read the file
-        $handler = fopen($file, 'r');
-        $fileContents = fread($handler, filesize($file));
-        fclose($handler);
-        // load library
-        $this->load->library('scorm/parser', [], 'scorm_parser');
-        // content to JSON
-        $scormInfo = $this
-            ->scorm_parser
-            ->setContent($fileContents)
-            ->parse();
-        //
-        if (!$scormInfo) {
-            return SendResponse(404, ['status' => false, 'errors' => ['Unable to read XML file.']]);
-        }
-        //
-        if (isset($scormInfo['errors'])) {
-            // Todo delete AWS file and also local one if version not matched
-            return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
-        }
-        //
-        $insert_data = array();
-        $insert_data['course_sid'] = $courseId;
-        $insert_data['course_file_name'] = $filePath;
-        $insert_data['course_file_language'] = $fileLanguage;
-        $insert_data['Imsmanifist_json'] = $scormInfo;
-        $insert_data['created_at'] = getSystemDate();
-        $insert_data['updated_at'] = getSystemDate();
-        //
-        $this->db->insert('lms_scorm_courses', $insert_data);
-        //
-        // $this->db->where("sid", $courseId);
-        // $this->db->update("lms_default_courses", ["Imsmanifist_json" => $scormInfo]);
-        //
-        return SendResponse(200, ['status' => true, 'success' => ['SCORM file read successfully.']]);
-    }
 }
+
+
+
 
 if (!function_exists('remakeSalary')) {
     function remakeSalary($salary, $jobType)

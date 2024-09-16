@@ -25,7 +25,7 @@ class Courses extends Public_Controller
     /**
      *
      */
-    public function myCourses()
+    public function dashboard()
     {
         //
         $data = [];
@@ -48,7 +48,7 @@ class Courses extends Public_Controller
         $data['title'] = "My Course(s) | " . STORE_NAME;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = 0;
-        $data['page'] = "my_courses";
+        $data['page'] = "my_dashboard";
         $data['viewMode'] = "my";
         $data['employee'] = $session['employer_detail'];
         $data['haveSubordinate'] = $haveSubordinate;
@@ -57,6 +57,73 @@ class Courses extends Public_Controller
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'https://code.highcharts.com/highcharts.js',
+            'https://code.highcharts.com/modules/exporting.js',
+            'https://code.highcharts.com/modules/accessibility.js',
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/employee_courses_dashboard',
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/my_dashboard')
+            ->view('main/footer');
+    }
+
+    /**
+     *
+     */
+    public function myCourses()
+    {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $myDepartmentAndTeams = getMyDepartmentAndTeams($employeeId, "", "count_all_results");
+        //
+        if (!empty($myDepartmentAndTeams)) {
+            $haveSubordinate = 'yes';
+        } else {
+            $haveSubordinate = 'no';
+        }
+        //
+        $data['search'] = '';
+        //
+        if (isset($_GET) && $_GET['type']) {
+           $data['search'] = $_GET['type'];
+        }
+        //
+        $data['title'] = "My Course(s) | " . STORE_NAME;
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = 0;
+        $data['page'] = "my_courses";
+        $data['viewMode'] = "my";
+        $data['employee'] = $session['employer_detail'];
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['load_view'] = 1;
+        $data['type'] = "self";
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main',
+            'v1/app/css/globals'
         ];
         // load JS
         $data['PageScripts'] = [
@@ -75,7 +142,7 @@ class Courses extends Public_Controller
         //
         $this->load
             ->view('main/header_2022', $data)
-            ->view('courses/my_dashboard')
+            ->view('courses/my_courses')
             ->view('main/footer');
     }
 
@@ -293,7 +360,7 @@ class Courses extends Public_Controller
         $data['student_sid'] = $studentId;
         $data['type'] = $type;
         $data['employee'] = $session['employer_detail'];
-        $data['employeeName'] = getUserNameBySID($studentId, false);
+        $data['employeeName'] = getEmployeeOnlyNameBySID($studentId);
         $data['company_info'] = $session['company_detail'];
         $data['companyName'] = getCompanyNameBySid($companyId);
         $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
@@ -508,7 +575,7 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateCourses ($type, $subordinateId) {
+    public function subordinateDashboard($type, $subordinateId) {
         //
         $data = [];
         //
@@ -555,6 +622,77 @@ class Courses extends Public_Controller
         $data['PageScripts'] = [
             'js/app_helper',
             'v1/common',
+            'v1/lms/subordinate_employee_dashboard'
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/subordinate_dashboard')
+            ->view('main/footer');
+    }
+
+    public function subordinateCourses ($type, $subordinateId) {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['search'] = '';
+        //
+        if (isset($_GET) && $_GET['type']) {
+            $data['search'] = $_GET['type'];
+        }
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        $haveSubordinate = 'no';
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $haveSubordinate = 'yes';
+            $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } else if ($session['employer_detail']['access_level_plus']) {
+            $haveSubordinate = 'yes';
+        }
+        //
+        if ($type == "plus") {
+            $data['title'] = "Employee Courses | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Courses | " . STORE_NAME;
+        }
+        //
+        $data['employer_sid'] = $employeeId;
+        $data['subordinate_sid'] = $subordinateId;
+        $data['subordinateName'] = getUserNameBySID($subordinateId);
+        $data['viewMode'] = "subordinate";
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['uniqueKey'] = $uniqueKey;
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['page'] = "subordinate_courses";
+        $data['type'] = $type;
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+  
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
             'v1/lms/employee_course_preview'
         ];
         //
@@ -568,7 +706,7 @@ class Courses extends Public_Controller
         //
         $this->load
             ->view('main/header_2022', $data)
-            ->view('courses/my_dashboard')
+            ->view('courses/my_courses')
             ->view('main/footer');
     }
 
@@ -1173,4 +1311,166 @@ class Courses extends Public_Controller
         );
     }
 
+    public function importCourseCSV()
+    {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $data = [];
+            // check and set user session
+            $data['session'] = checkUserSession();
+            $data['title'] = "Import Courses CSV File";
+            // set
+            $data['loggedInPerson'] = $data['session']['employer_detail'];
+            $data['companyId'] = $data['session']['company_detail']['sid'];
+            $data['employerId'] = $data['session']['employer_detail']['sid'];
+            $data['level'] = 0;
+            $data['logged_in_view'] = true;
+            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            // get the security details
+            $data['security_details'] = db_get_access_level_details(
+                $data['session']['employer_detail']['sid'],
+                null,
+                $data['session']
+            );
+            //
+            $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
+            //
+            $data['PageCSS'] = [
+                'v1/plugins/alertifyjs/css/alertify.min',
+                'mFileUploader/index'
+            ];
+            // load JS
+            $data['PageScripts'] = [
+                'lodash/loadash.min',
+                'v1/plugins/alertifyjs/alertify.min',
+                'mFileUploader/index',
+                'v1/lms/import_courses_csv'
+            ];
+
+            $this->load->view('main/header', $data);
+            $this->load->view('courses/import_courses_csv');
+            $this->load->view('main/footer');
+        } else {
+            redirect('login', "refresh");
+        }
+    }
+
+    /**
+     * Handle all ajax requests
+     * Created on: 16-08-2019
+     *
+     * @accepts POST
+     *
+     * @uses resp
+     *
+     * @return JSON
+     */
+    function handler()
+    {
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['companyId'] = $data['session']['company_detail']['sid'];
+        $data['employerId'] = $data['session']['employer_detail']['sid'];
+        // Set default response array
+        $resp = array();
+        $resp['Status'] = FALSE;
+        $resp['Response'] = 'Invalid request made.';
+        // Check for a valid AJAX request
+        if (!$this->input->is_ajax_request()) exit(0);
+        //
+        $formpost = $this->input->post(NULL, TRUE);
+        //
+        switch ($formpost['action']) {
+            case 'add_courses':
+                set_time_limit(0);
+                // Default array
+
+                $failCount = $insertCount = $existCount = 0;
+                $updatedRows = [];
+                $failRows = [];
+                //
+                if ($formpost['courses']) {
+                    foreach ($formpost['courses'] as $key => $course) {
+                        //
+                        $employeeId = checkEmployeeExistInCompany($course, $data['companyId']);
+                        //
+                        if ($employeeId == 0) {
+                            $failCount++;
+                            $failRows[] =$key;
+                        } else {
+                            //
+                            if ($employeeId != 0) {
+                                //
+                                $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
+                                //
+                                if ($courseId > 0) {
+                                    if (
+                                        !$this->db
+                                        ->where([
+                                            'course_sid' => $courseId,
+                                            'company_sid' => $data['companyId'],
+                                            'employee_sid' => $employeeId
+                                            ])    
+                                        ->count_all_results('lms_employee_course')
+                                    ) {
+                                        //
+                                        $dataToInsert = [];
+                                        $dataToInsert['course_sid'] = $courseId;
+                                        $dataToInsert['company_sid'] = $data['companyId'];
+                                        $dataToInsert['employee_sid'] = $employeeId;
+                                        $dataToInsert['lesson_status'] = $course['progress'];
+                                        $dataToInsert['course_status'] = $course['status'];
+                                        $dataToInsert['course_type'] = $course['type'];
+                                        $dataToInsert['course_taken_count'] = $course['count'];
+                                        $dataToInsert['created_at'] = formatDateToDB($course['start_date'], SITE_DATE, DB_DATE);
+                                        $dataToInsert['updated_at'] = formatDateToDB($course['end_date'], SITE_DATE, DB_DATE);
+                                        //
+                                        $this->course_model->insertEmployeeCourseInfo($dataToInsert);
+                                        //
+                                        $insertCount++;
+                                    } else {
+                                        $updatedRows[] = $key;
+                                        $existCount++;
+                                    }
+                                } else {
+                                    $failCount++;
+                                    $failRows[] =$key;
+                                }
+                            }
+                        }
+                    }
+                }
+                //
+                $resp['Status'] = TRUE;
+                $resp['Response'] = 'Proceed.';
+                $resp['Inserted'] = $insertCount;
+                $resp['Existed'] = $existCount;
+                $resp['Failed'] = $failCount;
+                $resp['duplicateRows'] = $updatedRows;
+                $resp['FailedRows'] = $failRows;
+                //
+                $this->resp($resp);
+                break;
+        }
+        //
+        $this->resp($resp);
+    }
+
+    /**
+     * Send JSON response
+     *
+     * @param $responseArray Array
+     *
+     * @return JSON
+     */
+    function resp($responseArray)
+    {
+        header('Content-type: application/json');
+        echo json_encode($responseArray);
+        exit(0);
+    }
+
 }
+

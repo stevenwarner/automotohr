@@ -7,6 +7,10 @@ $(function LMSEmployeeCourses() {
 		status: "all",
 	};
 	//
+	if (search.length) {
+		filterObj.status = search;
+	}
+	//
 	let timeOffDateFormatWithTime = "MMM DD YYYY, ddd";
 
 	/**

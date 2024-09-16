@@ -289,7 +289,11 @@
                                                                     <td class="_csVm"><?php echo $completedText; ?></td>
                                                                     <td class="_csVm stepText2"><?php echo $completedCoursesPercentage." %"; ?></td>
                                                                     <td class="_csVm">
-                                                                        <a href="<?php echo base_url('lms/employee/courses/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
+                                                                        <!-- <a href="<?php echo base_url('lms/employee/courses/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
+                                                                            <i class="fa fa-eye"></i>
+                                                                            View
+                                                                        </a> -->
+                                                                        <a href="<?php echo base_url('lms/employee/courses/dashboard/'.$employee); ?>" class="btn btn-info btn-block csRadius5">
                                                                             <i class="fa fa-eye"></i>
                                                                             View
                                                                         </a>
