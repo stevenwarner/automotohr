@@ -2518,6 +2518,8 @@ class Reports_model extends CI_Model
         $companyId = $post['companySid'];
         $employeeArray = $post['employeeSid'];
 
+        $documentsArray = $post['documentSid'];
+
         //
         if ($post['page'] == 1) {
             //
@@ -2599,10 +2601,10 @@ class Reports_model extends CI_Model
     }
 
     //
-    private function getAssignedPerformanceDocumentForReport($employeeId)
+    private function getAssignedPerformanceDocumentForReport($employeeId, $documentAction = 'all')
     {
         //
-        $completedStatus = 'Not Assigned'; 
+        $completedStatus = 'Not Assigned';
         //
         $this
             ->load
@@ -2618,23 +2620,41 @@ class Reports_model extends CI_Model
         if ($assignPerformanceDocument) {
             //
             $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
-                $employeeId
+                $employeeId,
+                $documentAction
             );
-            //`                                                                 
-            if ($pendingPerformanceSection) {
-                $completedStatus = 'Not Completed';
+
+            //
+            if ($documentAction != 'all') {
+                if ($documentAction == 'completed') {
+
+                    if ($pendingPerformanceSection == false) {
+                        $completedStatus = 'Completed';
+                    }
+                } else if ($documentAction == 'not_completed') {
+                    if ($pendingPerformanceSection == true) {
+
+                        $completedStatus = 'Not Completed';
+                    }
+                }
             } else {
-                $completedStatus = 'Completed';
+
+                if ($pendingPerformanceSection) {
+                    $completedStatus = 'Not Completed';
+                } else {
+                    $completedStatus = 'Completed';
+                }
             }
         }
         //
-        return  $completedStatus; 
+        return  $completedStatus;
     }
 
 
     //
-    private function getAssignedDocumentForReport($employeeId, $companyId)
+    private function getAssignedDocumentForReport($employeeId, $companyId, $documentsSid = [], $documentAction = 'all')
     {
+
         //
         $this->db->select('
         documents_assigned.user_sid,
@@ -2661,11 +2681,16 @@ class Reports_model extends CI_Model
             ->where('documents_assigned.user_sid', $employeeId)
             ->where('documents_assigned.status', 1)
             ->where('documents_assigned.archive', 0);
+
+        //
+        if (!empty($documentsSid) && !in_array('all', $documentsSid)) {
+            $this->db->where_in('documents_assigned.document_sid', $documentsSid);
+        }
         //
         $result = $this->db->get();
         //
-
         $data = $result->result_array();
+        //
         if (!empty($data)) {
 
             foreach ($data as $key => $val) {
@@ -2770,19 +2795,24 @@ class Reports_model extends CI_Model
                     } else {
                         $data[$key]['completedStatus'] = 'No Action Required';
                     }
+                    //
+                    if ($documentAction != 'all') {
+                        if ($documentAction == 'completed' && $data[$key]['completedStatus'] != 'Completed') {
+                            unset($data[$key]);
+                        } else if ($documentAction == 'not_completed' && $data[$key]['completedStatus'] != 'Not Completed') {
+                            unset($data[$key]);
+                        }
+                    }
                 }
             }
         }
 
 
         return $data ? array_values($data) : [];
-
-
-        //return $result ? $result->result_array() : [];
     }
 
 
-    private function getAssignedGeneralDocumentForReport($employeeId, $companyId)
+    private function getAssignedGeneralDocumentForReport($employeeId, $companyId, $documentType = [], $documentAction = 'all')
     {
         //
         $this->db->select('
@@ -2798,13 +2828,26 @@ class Reports_model extends CI_Model
             ->where('documents_assigned_general.user_sid', $employeeId)
             ->where('documents_assigned_general.status', 1);
         //
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('documents_assigned_general.is_completed', 1);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('documents_assigned_general.is_completed', 0);
+            }
+        }
+        //
+        if (!empty($documentType) && !in_array('all', $documentType)) {
+            $this->db
+                ->where_in('documents_assigned_general.document_type', $documentType);
+        }
+        //
         $result = $this->db->get();
         //
         return $result ? $result->result_array() : [];
     }
 
     //
-    function getAssignedi9DocumentForReport($employeeId, $companyId)
+    function getAssignedi9DocumentForReport($employeeId, $companyId, $documentAction = 'all')
     {
 
 
@@ -2816,6 +2859,17 @@ class Reports_model extends CI_Model
             ->where('user_sid', $employeeId)
             ->where('user_type', 'employee')
             ->where('status', 1);
+
+
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('applicant_i9form.user_consent', 1);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('applicant_i9form.user_consent', null);
+                $this->db->or_where('applicant_i9form.user_consent', '');
+            }
+        }
+
         //
         $result = $this->db->get();
         //
@@ -2823,9 +2877,8 @@ class Reports_model extends CI_Model
     }
 
     //
-    function getAssignedw9DocumentForReport($employeeId, $companyId)
+    function getAssignedw9DocumentForReport($employeeId, $companyId, $documentAction = 'all')
     {
-
 
         $this->db->select('user_consent');
 
@@ -2835,6 +2888,15 @@ class Reports_model extends CI_Model
             ->where('user_sid', $employeeId)
             ->where('user_type', 'employee')
             ->where('status', 1);
+
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('applicant_w9form.user_consent', 1);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('applicant_w9form.user_consent', null);
+                $this->db->or_where('applicant_w9form.user_consent', '');
+            }
+        }
         //
         $result = $this->db->get();
         //
@@ -2842,7 +2904,7 @@ class Reports_model extends CI_Model
     }
 
     //
-    function getAssignedw4DocumentForReport($employeeId, $companyId)
+    function getAssignedw4DocumentForReport($employeeId, $companyId, $documentAction = 'all')
     {
 
         //
@@ -2854,6 +2916,16 @@ class Reports_model extends CI_Model
             ->where('employer_sid', $employeeId)
             ->where('user_type', 'employee')
             ->where('status', 1);
+
+
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('form_w4_original.user_consent', 1);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('form_w4_original.user_consent', 0);
+            }
+        }
+
         //
         $result = $this->db->get();
         //
@@ -2862,7 +2934,7 @@ class Reports_model extends CI_Model
 
 
     //
-    function getAssignedeeocDocumentForReport($employeeId)
+    function getAssignedeeocDocumentForReport($employeeId, $companyId, $documentAction = 'all')
     {
 
         $this->db->select('last_completed_on');
@@ -2873,6 +2945,15 @@ class Reports_model extends CI_Model
             ->where('application_sid', $employeeId)
             ->where('users_type', 'employee')
             ->where('status', 1);
+
+        if ($documentAction != 'all') {
+            if ($documentAction == 'completed') {
+                $this->db->where('portal_eeo_form.last_completed_on !=', null);
+            } else if ($documentAction == 'not_completed') {
+                $this->db->where('portal_eeo_form.last_completed_on', null);
+            }
+        }
+
         //
         $result = $this->db->get();
         //
@@ -2977,5 +3058,105 @@ class Reports_model extends CI_Model
         $terminatedEmployees = $this->db->get('terminated_employees')->result_array();
         //
         return $terminatedEmployees;
+    }
+
+
+    //
+
+    function getCompanyDocuments($companySid)
+    {
+        $a = $this->db
+            ->select("sid,document_title")
+            ->where('company_sid', $companySid)
+            ->where('archive', 0)
+            ->order_by('document_title', 'ASC')
+            ->get('documents_management');
+        //
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    //
+
+    //
+    function getEmployeeAssignedDocumentForReport($post, $csv = false)
+    {
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $companyId = $post['companySid'];
+        $employeeArray = $post['employeeSid'];
+        $documentsArray = $post['documentSid'];
+        $documentAction = $post['documentAction'];
+        //
+        if ($post['page'] == 1) {
+            //
+            $r['Count'] = $this->getEmployeeForReport(
+                $companyId,
+                (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+                true
+            );
+        }
+        //
+        $holderArray = $this->getEmployeeForReport(
+            $companyId,
+            (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+        //
+        foreach ($holderArray as $k => $v) :
+            $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray, $documentAction);
+
+            $holderArray[$k]['assignedgeneraldocuments'] = $this->getAssignedGeneralDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray, $documentAction);
+
+            if (in_array('I9', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedi9document'] = $this->getAssignedi9DocumentForReport($v['sid'], $v['parent_sid'], $documentAction);
+            } else {
+                $holderArray[$k]['assignedi9document'] = [];
+            }
+
+            if (in_array('W9', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedw9document'] = $this->getAssignedw9DocumentForReport($v['sid'], $v['parent_sid'], $documentAction);
+            } else {
+                $holderArray[$k]['assignedw9document'] = [];
+            }
+            if (in_array('W4', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedw4document'] = $this->getAssignedw4DocumentForReport($v['sid'], $v['parent_sid'], $documentAction);
+            } else {
+                $holderArray[$k]['assignedw4document'] = [];
+            }
+
+            if (in_array('EEOC', $documentsArray) || in_array('all', $documentsArray)) {
+                $holderArray[$k]['assignedeeocdocument'] = $this->getAssignedeeocDocumentForReport($v['sid'], $v['parent_sid'], $documentAction);
+            } else {
+                $holderArray[$k]['assignedeeocdocument'] = [];
+            }
+
+
+            if (checkIfAppIsEnabled('performanceevaluation')) {
+                if (in_array('PEDOC', $documentsArray) || in_array('all', $documentsArray)) {
+                    $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid'], $documentAction);
+                } else {
+                    $holderArray[$k]['assignedPerformanceDocument'] = [];
+                }
+            }
+
+        endforeach;
+
+        //
+        $r['Data'] = $holderArray;
+        return $r;
     }
 }
