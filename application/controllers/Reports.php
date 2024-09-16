@@ -3406,6 +3406,8 @@ class Reports extends Public_Controller
             $post['employeeSid'] = $post['dd-employee'];
             $post['employeeStatus'] = $post['dd-status-emp'];
             $post['documentSid'] = $post['dd-documents'];
+            $post['documentAction'] = $post['dd-action'];
+
 
             $employeedocument = $this->reports_model->getEmployeeAssignedDocumentForReport($post);
 
@@ -3461,30 +3463,24 @@ class Reports extends Public_Controller
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedi9document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-
                         }
                     }
                     if (!empty($row['assignedw9document'])) {
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedw9document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-
                         }
                     }
                     if (!empty($row['assignedw4document'])) {
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedw4document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-
                         }
                     }
                     if (!empty($row['assignedeeocdocument'])) {
@@ -3590,7 +3586,7 @@ class Reports extends Public_Controller
 
                     //
                     if ($row['assignedPerformanceDocument'] != 'Not Assigned' && !empty($row['assignedPerformanceDocument'])) {
-                        $doc .= "Performance Evaluation Document" . $row['assignedPerformanceDocument'] . "\n\n";
+                        $doc .= "Performance Evaluation Document (" . $row['assignedPerformanceDocument'] . ")\n\n";
                     }
 
                     //

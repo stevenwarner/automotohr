@@ -2601,7 +2601,7 @@ class Reports_model extends CI_Model
     }
 
     //
-    private function getAssignedPerformanceDocumentForReport($employeeId,$documentAction='all')
+    private function getAssignedPerformanceDocumentForReport($employeeId, $documentAction = 'all')
     {
         //
         $completedStatus = 'Not Assigned';
@@ -2620,19 +2620,31 @@ class Reports_model extends CI_Model
         if ($assignPerformanceDocument) {
             //
             $pendingPerformanceSection = $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
-                $employeeId,$documentAction
+                $employeeId,
+                $documentAction
             );
-            //`                                                                 
-            if ($pendingPerformanceSection) {
-                $completedStatus = 'Not Completed';
+
+            //
+            if ($documentAction != 'all') {
+                if ($documentAction == 'completed') {
+
+                    if ($pendingPerformanceSection == false) {
+                        $completedStatus = 'Completed';
+                    }
+                } else if ($documentAction == 'not_completed') {
+                    if ($pendingPerformanceSection == true) {
+
+                        $completedStatus = 'Not Completed';
+                    }
+                }
             } else {
-                $completedStatus = 'Completed';
+
+                if ($pendingPerformanceSection) {
+                    $completedStatus = 'Not Completed';
+                } else {
+                    $completedStatus = 'Completed';
+                }
             }
-
-
-
-
-
         }
         //
         return  $completedStatus;
@@ -2922,7 +2934,7 @@ class Reports_model extends CI_Model
 
 
     //
-    function getAssignedeeocDocumentForReport($employeeId,$companyId,$documentAction = 'all')
+    function getAssignedeeocDocumentForReport($employeeId, $companyId, $documentAction = 'all')
     {
 
         $this->db->select('last_completed_on');
@@ -3104,7 +3116,6 @@ class Reports_model extends CI_Model
             return $r;
         }
         //
-
         foreach ($holderArray as $k => $v) :
             $holderArray[$k]['assigneddocuments'] = $this->getAssignedDocumentForReport($v['sid'], $v['parent_sid'], $documentsArray, $documentAction);
 
@@ -3136,7 +3147,7 @@ class Reports_model extends CI_Model
 
             if (checkIfAppIsEnabled('performanceevaluation')) {
                 if (in_array('PEDOC', $documentsArray) || in_array('all', $documentsArray)) {
-                    $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid'],$documentAction);
+                    $holderArray[$k]['assignedPerformanceDocument'] = $this->getAssignedPerformanceDocumentForReport($v['sid'], $documentAction);
                 } else {
                     $holderArray[$k]['assignedPerformanceDocument'] = [];
                 }
