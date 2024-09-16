@@ -3056,8 +3056,8 @@ class Reports extends Public_Controller
                 break;
 
             case 'get_employee_assigned_document':
+                $employeedocuments = $this->reports_model->getEmployeeAssignedDocumentForReport($formpost);
 
-                $employeedocuments = $this->reports_model->getEmployeeAssignedDocument($formpost);
                 //
                 if (!sizeof($employeedocuments)) {
                     $this->res['Response'] = 'No Employees found.';
@@ -3241,10 +3241,12 @@ class Reports extends Public_Controller
                 fputcsv($output, array($companyinfo['company_name'], '', '', ''));
 
                 fputcsv($output, array(
-                    "Exported By", $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                    "Exported By",
+                    $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
                 ));
                 fputcsv($output, array(
-                    "Export Date", date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                    "Export Date",
+                    date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
                 ));
 
                 fputcsv(
@@ -3403,10 +3405,9 @@ class Reports extends Public_Controller
 
             $post['employeeSid'] = $post['dd-employee'];
             $post['employeeStatus'] = $post['dd-status-emp'];
+            $post['documentSid'] = $post['dd-documents'];
 
-            $employeedocument = $this->reports_model->getEmployeeAssignedDocument($post);
-            //_e($employeedocument,true,true);
-
+            $employeedocument = $this->reports_model->getEmployeeAssignedDocumentForReport($post);
 
             if (sizeof($employeedocument['Data'])) {
 
@@ -3419,10 +3420,12 @@ class Reports extends Public_Controller
                 fputcsv($output, array($companyinfo['company_name'], '', '', ''));
 
                 fputcsv($output, array(
-                    "Exported By", $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                    "Exported By",
+                    $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
                 ));
                 fputcsv($output, array(
-                    "Export Date", date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                    "Export Date",
+                    date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
                 ));
 
                 fputcsv(
@@ -3452,17 +3455,15 @@ class Reports extends Public_Controller
                     $totalDocsNotCompleted = 0;
                     $totalDocsCompleted = 0;
                     $totalDocsNoAction = 0;
-                    $completedStatus ='';
+                    $completedStatus = '';
                     //
                     if (!empty($row['assignedi9document'])) {
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedi9document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-                           // $completedStatus = ' (Completed) ';
 
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-                          //  $completedStatus = ' (Not Completed) ';
 
                         }
                     }
@@ -3470,11 +3471,9 @@ class Reports extends Public_Controller
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedw9document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-                          //  $completedStatus = ' (Completed) ';
 
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-                           // $completedStatus = ' (Not Completed) ';
 
                         }
                     }
@@ -3482,11 +3481,9 @@ class Reports extends Public_Controller
                         $totalDocs = $totalDocs + 1;
                         if ($row['assignedw4document'][0]['user_consent'] == 1) {
                             $totalDocsCompleted = $totalDocsCompleted + 1;
-                          //  $completedStatus = ' (Completed) ';
 
                         } else {
                             $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
-                            //$completedStatus = ' (Not Completed) ';
 
                         }
                     }
@@ -3508,10 +3505,8 @@ class Reports extends Public_Controller
 
                         if ($row['assignedi9document'][0]['user_consent'] == 1) {
                             $completedStatus = ' (Completed) ';
-
                         } else {
                             $completedStatus = ' (Not Completed) ';
-
                         }
 
                         $doc .= "I9 Fillable" . $completedStatus . "\n\n";
@@ -3520,10 +3515,8 @@ class Reports extends Public_Controller
 
                         if ($row['assignedw9document'][0]['user_consent'] == 1) {
                             $completedStatus = ' (Completed) ';
-
                         } else {
                             $completedStatus = ' (Not Completed) ';
-
                         }
 
                         $doc .= "W9 Fillable" . $completedStatus . "\n\n";
@@ -3532,10 +3525,8 @@ class Reports extends Public_Controller
 
                         if ($row['assignedw4document'][0]['user_consent'] == 1) {
                             $completedStatus = ' (Completed) ';
-
                         } else {
                             $completedStatus = ' (Not Completed) ';
-
                         }
                         $doc .= "W4 Fillable" . $completedStatus . "\n\n";
                     }
@@ -3568,7 +3559,7 @@ class Reports extends Public_Controller
                     //
                     if (count($row['assigneddocuments']) > 0) {
                         foreach ($row['assigneddocuments'] as $assigned_row) {
-                            $completedStatus ='';
+                            $completedStatus = '';
                             if ($assigned_row['completedStatus'] == 'Not Completed') {
                                 $totalDocsNotCompleted = $totalDocsNotCompleted + 1;
                                 $completedStatus = ' (Not Completed) ';
@@ -3579,8 +3570,8 @@ class Reports extends Public_Controller
                             }
 
                             if ($assigned_row['completedStatus'] == 'No Action Required') {
-                                $totalDocsNoAction = $totalDocsNoAction  +1;
-                               $completedStatus = ' (No Action Required) ';
+                                $totalDocsNoAction = $totalDocsNoAction  + 1;
+                                $completedStatus = ' (No Action Required) ';
                             }
 
                             if ($assigned_row['confidential_employees'] != null) {
@@ -3598,7 +3589,7 @@ class Reports extends Public_Controller
                     }
 
                     //
-                    if ($row['assignedPerformanceDocument'] != 'Not Assigned') {
+                    if ($row['assignedPerformanceDocument'] != 'Not Assigned' && !empty($row['assignedPerformanceDocument'])) {
                         $doc .= "Performance Evaluation Document" . $row['assignedPerformanceDocument'] . "\n\n";
                     }
 
@@ -3619,6 +3610,9 @@ class Reports extends Public_Controller
             }
         }
 
+        $companyDocuments = $this->reports_model->getCompanyDocuments($company_sid);
+
+        $data['companyDocuments'] = $companyDocuments;
         //
         $this->load->view('main/header', $data);
         $this->load->view('reports/employee_assigned_documents');
@@ -3660,7 +3654,7 @@ class Reports extends Public_Controller
             }
             //
             $data["flag"] = true;
-            
+
             //
             $data['terminatedEmployeesCount'] = sizeof($this->reports_model->getTerminatedEmployees($company_sid, $between, null, null));
             /** pagination * */
@@ -3668,11 +3662,11 @@ class Reports extends Public_Controller
             $records_per_page = PAGINATION_RECORDS_PER_PAGE;
             $my_offset = 0;
             //
-            if($page_number > 1){
+            if ($page_number > 1) {
                 $my_offset = ($page_number - 1) * $records_per_page;
             }
             //
-            $baseUrl = base_url('manage_admin/reports/employees_termination_report') . '/'. urlencode($start_date) . '/' . urlencode($end_date);
+            $baseUrl = base_url('manage_admin/reports/employees_termination_report') . '/' . urlencode($start_date) . '/' . urlencode($end_date);
             //
             $uri_segment = 6;
             $config = array();
@@ -3709,20 +3703,20 @@ class Reports extends Public_Controller
             $data['current_page'] = $page_number;
             $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
             $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
-        
+
             $data['terminatedEmployees'] = $this->reports_model->getTerminatedEmployees($company_sid, $between, $records_per_page, $my_offset);
             $allTerminatedEmployees = $this->reports_model->getTerminatedEmployees($company_sid, $between, null, null);
 
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
-                if(isset($allTerminatedEmployees) && sizeof($allTerminatedEmployees) > 0){
-                    $filename = str_replace(' ', '_',$data['session']['employer_detail']['CompanyName']).'_employee_terminated_report.csv';
+                if (isset($allTerminatedEmployees) && sizeof($allTerminatedEmployees) > 0) {
+                    $filename = str_replace(' ', '_', $data['session']['employer_detail']['CompanyName']) . '_employee_terminated_report.csv';
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename='.$filename);
+                    header('Content-Disposition: attachment; filename=' . $filename);
                     $output = fopen('php://output', 'w');
 
                     fputcsv($output, array('Name', 'Employee ID', 'Job Title', 'Department', 'Hire Date', 'Last Day Worked', 'Termination Reason'));
 
-                    foreach($allTerminatedEmployees as $terminatedEmployee){
+                    foreach ($allTerminatedEmployees as $terminatedEmployee) {
                         //
                         $employeeName = remakeEmployeeName([
                             'first_name' => $terminatedEmployee['first_name'],
@@ -3733,7 +3727,7 @@ class Reports extends Public_Controller
                             'is_executive_admin' => $terminatedEmployee['is_executive_admin'],
                             'pay_plan_flag' => $terminatedEmployee['pay_plan_flag'],
                             'job_title' => $terminatedEmployee['job_title'],
-                        ]); 
+                        ]);
                         //
                         $hireDate = get_employee_latest_joined_date(
                             $terminatedEmployee['registration_date'],
@@ -3786,7 +3780,7 @@ class Reports extends Public_Controller
                         //
                         $input = array();
                         $input['employee_name'] = $employeeName;
-                        $input['employee_id'] = "AHR-".$terminatedEmployee['sid'];
+                        $input['employee_id'] = "AHR-" . $terminatedEmployee['sid'];
                         $input['job_title'] = $terminatedEmployee['job_title'];
                         $input['department'] = getDepartmentNameBySID($terminatedEmployee['department_sid']);
                         $input['hire_date'] = formatDateToDB($hireDate, DB_DATE, SITE_DATE);
