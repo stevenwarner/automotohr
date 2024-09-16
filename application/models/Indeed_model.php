@@ -1343,43 +1343,51 @@ class Indeed_model extends CI_Model
         string $jobUUID,
         string $indeedPostingId
     ) {
-        // set where array
-        $where = [
-            "job_sid" => $jobUUID,
-            // "indeed_posting_id" => $indeedPostingId,
-        ];
-        // check if already exists
-        if (
-            !$this
-                ->db
-                ->where($where)
-                ->count_all_results("indeed_job_queue_tracking")
+        // check for job
+        if ($this
+            ->db
+            ->where('job_sid', $jobUUID)
+            ->where('is_deleted', 0)
+            ->count_all_results("indeed_job_queue_tracking")
         ) {
-            //
-            $this
+            // check if job is expired
+            if ($this
                 ->db
-                ->where("job_sid", $jobUUID)
-                ->update(
-                    "indeed_job_queue_tracking",
-                    [
-                        "is_deleted" => 1,
-                        "updated_at" => getSystemDate(),
-                    ]
-                );
-            //
-            $this
-                ->db
-                ->insert(
-                    "indeed_job_queue_tracking",
-                    [
-                        "job_sid" => $jobUUID,
-                        "indeed_posting_id" => $indeedPostingId,
-                        "is_deleted" => 0,
-                        "created_at" => getSystemDate(),
-                        "updated_at" => getSystemDate(),
-                    ]
-                );
+                ->where('job_sid', $jobUUID)
+                ->where('is_deleted', 0)
+                ->where('tracking_key is not null', null)
+                ->count_all_results("indeed_job_queue_tracking")
+            ) {
+                // mark the previous ones as deleted
+                $this
+                    ->db
+                    ->where("job_sid", $jobUUID)
+                    ->where("is_deleted", 0)
+                    ->where('tracking_key is not null', null)
+                    ->update(
+                        "indeed_job_queue_tracking",
+                        [
+                            "is_deleted" => 1,
+                            "updated_at" => getSystemDate(),
+                        ]
+                    );
+            } else {
+                return false;
+            }
         }
+        // insert in case of not
+        $this
+            ->db
+            ->insert(
+                "indeed_job_queue_tracking",
+                [
+                    "job_sid" => $jobUUID,
+                    "indeed_posting_id" => $indeedPostingId,
+                    "is_deleted" => 0,
+                    "created_at" => getSystemDate(),
+                    "updated_at" => getSystemDate(),
+                ]
+            );
     }
 
     /**
