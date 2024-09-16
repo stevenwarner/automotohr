@@ -52,10 +52,12 @@
 <script>
     var courseId = "<?php echo $course_sid; ?>";
     var courseType = "<?php echo $courseInfo['course_type']; ?>";
+    var courseLanguage = "<?php echo $language; ?>";
     var scormVersion = "<?php echo $courseInfo['version']; ?>";
     var mode = "<?php echo $viewMode; ?>";
     var CMIElementsObj = <?= json_encode($CMIObject); ?>;
     var lessonStatus = "<?php echo $lessonStatus; ?>";
     var page = "<?php echo $page; ?>";
     var subordinateId = "<?php echo $subordinate_sid; ?>";
+    var reviewAs = "<?php echo $reviewAs; ?>";
 </script>

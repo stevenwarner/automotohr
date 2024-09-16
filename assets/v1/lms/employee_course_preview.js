@@ -56,6 +56,7 @@ $(function LMSEmployeeCourses() {
 		//
 		getLMSAssignCourses(subordinateId);
 	});
+
 	// set the default filter
     if (page === "subordinate_course") {
         if (courseType === "scorm") {
@@ -65,6 +66,47 @@ $(function LMSEmployeeCourses() {
             window.sendCourseToSave = sendCourseToSave;
         }
     }    
+
+	$(document).on("click", ".jsStartCourse", function (event) {
+		event.preventDefault();
+		//
+        var courseId = $(this).data("course_id");
+		var language = $('.jsCourseLanguage'+courseId).val();
+        var url = baseURI + "lms/subordinate/course/" + courseId + '/' + subordinateId + '/' + reviewAs + '/' + language;
+		//
+        $(this).attr('href', url);
+		//
+		window.location = $(this).attr('href').toString();
+	});
+
+	$(document).on("change", ".jsSelectCourseLanguage", function (event) {
+		event.preventDefault();
+		//
+        var courseId = $(this).data("course_id");
+		var language = $(this).val();
+        var url = baseURI + "lms/subordinate/course/" + courseId + '/' + subordinateId + '/' + reviewAs + '/' + language;
+		//
+        $('.jsStartCourse'+courseId).attr('href', url);
+	});
+
+	$(document).on("change", ".jsChangeScormLanguage", function (event) {
+		event.preventDefault();
+		//
+        var courseId = $(this).data("course_id");
+		var language = $(this).val();
+		var url = baseURI + "lms/subordinate/course/" + courseId + '/' + subordinateId + '/' + reviewAs + '/' + language;
+		//
+		alertify
+			.confirm(
+				"Are you sure you want to change course language?",
+				function () {
+					window.location = url;
+				},
+				CB
+			)
+			.setHeader("Confirm");
+		
+	});
 
 	/**
 	 * get LMS Specific course
@@ -78,7 +120,7 @@ $(function LMSEmployeeCourses() {
 		ml(true, "jsPageLoader");
 		// make the call
 		XHR = $.ajax({
-			url: apiURL + "lms/report/" + subordinateId + "/" + courseId,
+			url: apiURL + "lms/report/" + subordinateId + "/" + courseId + "/" +courseLanguage,
 			method: "GET",
 		})
 			.success(function (response) {
@@ -295,15 +337,30 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `        </div>`;
 								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
 								coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
-								coursesHTML += `            <select class="form-control">`;
-								coursesHTML += `                <option value="eng">English</option>`;
+								coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
+								//
+								if (course['course_type'] == 'scorm') {
+									course['course_languages'].map(function (language) {
+										coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+									});
+								} else {
+									coursesHTML += `                <option value="english">English</option>`;
+								}
+								//
 								coursesHTML += `            </select>`;
 								coursesHTML += `        </div>`;
 								coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
 								coursesHTML += `            <p>&nbsp;</p>`;
+
+								var defaultLanguage = '';
+								if (course['course_type'] == 'scorm') {
+									defaultLanguage = course['course_languages'][0];
+								} else {
+									defaultLanguage = 'english';
+								}
 							
 								if (course.course_status == "passed") {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
 																<i class="fa fa-eye"></i>
 																View Content
 															</a>`;
@@ -313,7 +370,7 @@ $(function LMSEmployeeCourses() {
 																View Certificate
 															</a>`;
 								} else {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
 																<i class="fa fa-play"></i>
 																Launch Content
 															</a>`;

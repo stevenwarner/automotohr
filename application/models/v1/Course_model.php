@@ -527,4 +527,22 @@ class Course_model extends CI_Model
             return [];
         }
     }
+
+    public function getCourseLanguageInfo ($courseId, $language) {
+        $courseInfo = $this->db
+            ->select('course_file_name, Imsmanifist_json')
+            ->from('lms_scorm_courses')
+            ->join('lms_assign_course_log', 'lms_scorm_courses.course_sid = lms_assign_course_log.default_course_sid')
+            ->where('lms_assign_course_log.assigned_course_sid', $courseId)
+            ->where('lms_scorm_courses.course_file_language', $language)
+            ->get()
+            ->row_array();
+        //
+        return $courseInfo;    
+    }
+
+    public function deletePreviousAllLanguagesById ($courseId) {
+        $this->db->where('course_sid', $courseId);
+        $this->db->delete('lms_scorm_courses');   
+    }
 }

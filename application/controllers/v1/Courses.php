@@ -177,6 +177,104 @@ class Courses extends Public_Controller
     /**
      *
      */
+    public function getCourseByLanguage(int $sid, string $language)
+    {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        // Check if course is already taken then move it to history if needed
+        // $this->course_model->moveCourseHistory($sid, $employeeId, $companyId);
+        //
+        $lessonStatus = '';
+        //
+        if (!$this->course_model->checkEmployeeCourse($companyId, $employeeId, $sid)) {
+            $lessonStatus = 'not_started';
+        } else {
+            if ($this->course_model->checkEmployeeCourseCompleted($companyId, $employeeId, $sid)) {
+                //
+                $lessonStatus = 'completed';
+            } else {
+                // 
+                $lessonStatus = 'started';
+            }
+        }
+        //
+        $courseInfo = $this->course_model->getCourseInfo($sid);
+        //
+        $questions = $courseInfo['course_questions'];
+        //
+        $data['title'] = "My Courses :: " . STORE_NAME;
+        $data['session'] = $session;
+        $data['employer_sid'] = $employeeId;
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['course_sid'] = $sid;
+        $data['courseInfo'] = $courseInfo;
+        $data['lessonStatus'] = $lessonStatus;
+        $data['page'] = "my_course";
+        $data['subordinate_sid'] = 0;
+        $data['language'] = $language;
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/preview_assign',
+        ];
+        //
+        if ($courseInfo['course_type'] == "scorm") {
+            $viewName = "scorm_course";
+            $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($sid, $language);
+            $scormInfo = json_decode($courseLanguageInfo['Imsmanifist_json'], true);
+            $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
+            //
+            if ($scormInfo["version"] == '1.2') {
+                $data['PageScripts'][] = 'v1/plugins/ms_scorm/adapter_12';
+            } elseif ($scormInfo["version"] == '2004_3') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_3'];
+            } elseif ($scormInfo["version"] == '2004_4') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_4'];
+            }
+            //
+            $data['version'] = $scormInfo["version"];
+            //
+            $data['CMIObject'] = $this->course_model->getCMIObject($sid, $employeeId, $companyId);
+        } elseif ($courseInfo['course_type'] == "manual") {
+            $viewName = "manual_course";
+            //
+            $data['questions'] = $questions;
+            $data['viewMode'] = "attempt";
+        }
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/' . $viewName)
+            ->view('main/footer');
+    }
+
+
+    /**
+     *
+     */
     public function viewCertificate(int $courseId, int $studentId, string $type)
     {
         //
@@ -527,6 +625,96 @@ class Courses extends Public_Controller
         if ($courseInfo['course_type'] == "scorm") {
             $viewName = "scorm_course";
             $scormInfo = json_decode($courseInfo['Imsmanifist_json'], true);
+            $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
+            //
+            if ($scormInfo["version"] == '1.2') {
+                $data['PageScripts'][] = 'v1/plugins/ms_scorm/adapter_12';
+            } elseif ($scormInfo["version"] == '2004_3') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_3'];
+            } elseif ($scormInfo["version"] == '2004_4') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_4'];
+            }
+            //
+            $data['version'] = $scormInfo["version"];
+            //
+            $data['CMIObject'] = $this->course_model->getCMIObject($sid, $employeeId, $companyId);
+        } elseif ($courseInfo['course_type'] == "manual") {
+            $viewName = "manual_course";
+            //
+            $data['questions'] = $questions;
+            
+        }
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        $data['viewMode'] = "preview_only";
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/' . $viewName)
+            ->view('main/footer');
+    }
+
+    public function previewSubordinateCourseByLanguage ($courseId, $subordinateId, $reviewAs, $language) {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } 
+        //
+        $courseInfo = $this->course_model->getCourseInfo($courseId);
+        //
+        $questions = $courseInfo['course_questions'];
+        //
+        if ($reviewAs == "plus") {
+            $data['title'] = "Employee Course Preview | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Course Preview | " . STORE_NAME;
+        }
+        //
+        $data["reviewAs"] = $reviewAs;
+        $data['session'] = $session;
+        $data['employer_sid'] = $employeeId;
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['course_sid'] = $courseId;
+        $data['courseInfo'] = $courseInfo;
+        $data['lessonStatus'] = $lessonStatus;
+        $data['page'] = "subordinate_course";
+        $data['subordinate_sid'] = $subordinateId;
+        $data['language'] = $language;
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/employee_course_preview',
+        ];
+        //
+        if ($courseInfo['course_type'] == "scorm") {
+            $viewName = "scorm_course";
+            $courseLanguageInfo = $this->course_model->getCourseLanguageInfo($courseId, $language);
+            $scormInfo = json_decode($courseLanguageInfo['Imsmanifist_json'], true);
             $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
             //
             if ($scormInfo["version"] == '1.2') {
@@ -971,6 +1159,18 @@ class Courses extends Public_Controller
         $res['Message'] = 'You have successfully sent an email reminder to selected employees.';
         //
         res($res);
+    }
+
+    public function deletePreviousAllLanguages ($courseId) {
+        //
+        $this->course_model->deletePreviousAllLanguagesById($courseId);
+        //
+        return SendResponse(
+            200,
+            [
+                "msg" => "Deleted."
+            ]
+        );
     }
 
 }

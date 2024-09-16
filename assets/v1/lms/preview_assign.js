@@ -20,6 +20,25 @@ $(function LMSEmployeeCourses() {
 			.setHeader("Confirm");
 	});
 
+	$(document).on("change", ".jsChangeScormLanguage", function (event) {
+		event.preventDefault();
+		//
+        var courseId = $(this).data("course_id");
+		var language = $(this).val();
+        var url = baseURI + "lms/courses/" + courseId + '/' + language;
+		//
+		alertify
+			.confirm(
+				"Are you sure you want to change course language?",
+				function () {
+					window.location = url;
+				},
+				CB
+			)
+			.setHeader("Confirm");
+		
+	});
+
 	function startCourse() {
 		// check and abort previous calls
 		if (XHR !== null) {
@@ -218,6 +237,8 @@ $(function LMSEmployeeCourses() {
 				employeeId +
 				"/" +
 				courseId +
+				"/" +
+				courseLanguage +
 				"?_has=" +
 				(window.location.host.indexOf("www.") !== -1 ? "y" : "n"),
 			method: "GET",

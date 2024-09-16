@@ -1699,6 +1699,7 @@ $route['sa/lms/courses'] = 'manage_admin/2022/Courses';
 $route['sa/lms/courses/(:num)']['get'] = 'manage_admin/2022/Courses/companyCourses/$1';
 $route['lms/courses/my']['get'] = 'v1/Courses/myCourses';
 $route['lms/courses/(:num)']['get'] = 'v1/Courses/getCourse/$1';
+$route['lms/courses/(:num)/(:any)']['get'] = 'v1/Courses/getCourseByLanguage/$1/$2';
 $route['lms/courses/(:num)/(:num)/(:any)/certificate']['get'] = 'v1/Courses/viewCertificate/$1/$2/$3';
 $route['lms/course/preview/(:num)']['get'] = 'v1/Courses/previewResult/$1';
 $route['lms/course/scorm/parse/(:num)'] = 'v1/App/parseScorm/$1';
@@ -1706,10 +1707,12 @@ $route['lms/courses/report'] = 'v1/Courses/subordinatesReport';
 $route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/non_plus/$1';
 $route['lms/employee/courses/(:num)'] = 'v1/Courses/subordinateCourses/plus/$1';
 $route['lms/subordinate/course/(:num)/(:num)/(:any)'] = 'v1/Courses/previewSubordinateCourse/$1/$2/$3';
+$route['lms/subordinate/course/(:num)/(:num)/(:any)/(:any)'] = 'v1/Courses/previewSubordinateCourseByLanguage/$1/$2/$3/$4';
 $route['lms/courses/company_report'] = 'v1/Courses/companyReport';
 $route['lms/courses/company_report/(:any)/(:any)/(:any)'] = 'v1/Courses/companyReport/$1/$2/$3';
 $route['lms/courses/company_courses'] = 'v1/Courses/companyCourses';
 $route['lms/courses/emailReminder/(:any)'] = 'v1/Courses/emailReminder/$1';
+$route['lms/course/delete_language/(:num)']['delete'] = 'v1/Courses/deletePreviousAllLanguages/$1';
 
 
 

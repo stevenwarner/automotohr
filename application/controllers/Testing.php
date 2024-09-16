@@ -1137,6 +1137,94 @@ class Testing extends CI_Controller
             } 
         }
     }
+
+    function addScormCourses () {
+        //
+        $results = $this->db->select("sid, course_file_name, Imsmanifist_json")
+            ->where("company_sid", 0)
+            ->where("course_type", 'scorm')
+            ->where("course_file_name <>", null)
+            ->where("course_file_name <>", '')
+            ->get("lms_default_courses")
+            ->result_array();
+
+        foreach ($results as $v) {
+            $insert_data = array();
+            $insert_data['course_sid'] = $v['sid'];
+            $insert_data['course_file_name'] = $v['course_file_name'];
+            $insert_data['course_file_language'] = 'english';
+            $insert_data['Imsmanifist_json'] = $v['Imsmanifist_json'];
+            $insert_data['created_at'] = getSystemDate();
+            $insert_data['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('lms_scorm_courses', $insert_data);
+        }
+    }
+
+    /**
+     * SCORM parse
+     */
+    public function parseScorm($courseId)
+    {
+        // SCORM file name
+        $filePath = 'mstest_ns_1690306855_0_1_irs_8300_training_for_managers_scorm12_6_.zip';
+        $fileLanguage = "french";
+        // get the file to local
+        $zipFilePath = copyAWSFile($filePath);
+        $uploadPath = str_replace('.zip', '', $zipFilePath);
+        // extract the file
+        $zip = new ZipArchive;
+        $res = $zip->open($zipFilePath);
+        //
+        if ($res !== true) {
+            // unable to extract the file
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to unzip file.']]);
+        }
+        // extract the file
+        $zip->extractTo($uploadPath);
+        $zip->close();
+        // set the "IMSmanifest" file
+        $file = $uploadPath . '/imsmanifest.xml';
+        // check if the file exists
+        if (!file_exists($file)) {
+            return SendResponse(404, ['status' => false, 'errors' => ['"IMSmanifest.xml" file is missing.']]);
+        }
+        // read the file
+        $handler = fopen($file, 'r');
+        $fileContents = fread($handler, filesize($file));
+        fclose($handler);
+        // load library
+        $this->load->library('scorm/parser', [], 'scorm_parser');
+        // content to JSON
+        $scormInfo = $this
+            ->scorm_parser
+            ->setContent($fileContents)
+            ->parse();
+        //
+        if (!$scormInfo) {
+            return SendResponse(404, ['status' => false, 'errors' => ['Unable to read XML file.']]);
+        }
+        //
+        if (isset($scormInfo['errors'])) {
+            // Todo delete AWS file and also local one if version not matched
+            return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
+        }
+        //
+        $insert_data = array();
+        $insert_data['course_sid'] = $courseId;
+        $insert_data['course_file_name'] = $filePath;
+        $insert_data['course_file_language'] = $fileLanguage;
+        $insert_data['Imsmanifist_json'] = $scormInfo;
+        $insert_data['created_at'] = getSystemDate();
+        $insert_data['updated_at'] = getSystemDate();
+        //
+        $this->db->insert('lms_scorm_courses', $insert_data);
+        //
+        // $this->db->where("sid", $courseId);
+        // $this->db->update("lms_default_courses", ["Imsmanifist_json" => $scormInfo]);
+        //
+        return SendResponse(200, ['status' => true, 'success' => ['SCORM file read successfully.']]);
+    }
 }
 
 if (!function_exists('remakeSalary')) {
