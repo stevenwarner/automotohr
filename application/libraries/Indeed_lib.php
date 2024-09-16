@@ -395,7 +395,7 @@ class Indeed_lib
     private function updateIndeedAccessToken(string $accessToken)
     {
         // set the path
-        $path = ROOTPATH . '../creds.json';
+        $path = ROOTPATH . '../credentials/indeed_api.json';
         // open the file
         $handler = fopen($path, "r");
         // get the contents
@@ -405,10 +405,8 @@ class Indeed_lib
         );
         // close the file
         fclose($handler);
-        // check if teher is an index
-        if (array_key_exists("ACCESS_TOKEN", $fileContentArray["AHR"]["INDEED"])) {
-            $fileContentArray["AHR"]["INDEED"]["ACCESS_TOKEN"] = $accessToken;
-        }
+        // check if there is an index
+        $fileContentArray["ACCESS_TOKEN"] = $accessToken;
         // open the file in write mode
         $handler = fopen($path, "w");
         // write the new data
@@ -427,7 +425,7 @@ class Indeed_lib
     private function getAccessToken(): string
     {
         // get the access token from credentails
-        $accessToken = getCreds("AHR")->INDEED->ACCESS_TOKEN;
+        $accessToken = getProtectedFile("indeed_api")->ACCESS_TOKEN;
         // when no access token found
         // generate a new one
         if (!$accessToken) {
@@ -446,7 +444,7 @@ class Indeed_lib
     private function saveLog(array $log): int
     {
         //
-        $log["created_at"] = getSystemDate();
+        $log["created_at"] = !function_exists("getSystemDate") ? date("Y-m-d H:i:s") : getSystemDate();
         //
         $this->ci->db
             ->insert(
@@ -557,5 +555,86 @@ class Indeed_lib
         }
         //
         return $response;
+    }
+
+    /**
+     * 
+     */
+    public function generateIndeedApplyButton($jobId, int $counter = 0)
+    {
+        die("Sadas");
+        $mutation = <<<'GRAPHQL'
+        mutation {
+            applyUrl {
+                createApplyUrlForEmployers(
+                    input: {
+                        jobId: { sourceJobPostingId: "\jobId" }
+                        jobUrl: "\jobUrl"
+                        continueUrl: "\continueUrl"
+                        exitUrl: "\xitUrl"
+                    }
+                ) {
+                    applyUrl
+                }
+            }
+        }
+        GRAPHQL;
+        // set replace array
+        $replaceArray = [
+            "\jobId" => $jobId,
+            "\jobUrl" => current_url(),
+            "\continueUrl" => current_url(),
+            "\xitUrl" => base_url("jobs")
+        ];
+        // replace the indexes
+        $mutationBody = str_replace(
+            array_keys(
+                $replaceArray
+            ),
+            $replaceArray,
+            $mutation
+        );
+
+        $queryForIndeed = '{"query":' . json_encode($mutationBody) . '}';
+        //
+        $accessToken = $this->getAccessToken();
+        // when no access token found
+        if (!$accessToken) {
+            return ["error" => "Failed to retrieve access token."];
+        }
+        // set options
+        $options = [];
+        // post
+        $options[CURLOPT_POSTFIELDS] = $queryForIndeed;
+        // headers
+        $options[CURLOPT_HTTPHEADER] = [
+            "Content-Type: application/json",
+            "Accept: application/json",
+            "Authorization: Bearer {$accessToken}"
+        ];
+        // make the call
+        $response = $this->makeCall(
+            "https://apis.indeed.com/graphql",
+            "POST",
+            $options
+        );
+        // when error occurred
+        if ($response["errors"]) {
+            // check for auth error
+            if ($response["resultArray"]["errors"][0]["extensions"]["code"] == "UNAUTHENTICATED") {
+
+                if ($counter == 0) {
+                    // regenerate the token
+                    $this->generateAccessToken();
+                    // recall
+                    return $this->generateIndeedApplyButton($jobId, 1);
+                }
+                return ["error" => "The system failed to generate access token.", "logId" => $response["logId"]];
+            }
+            return ["error" => $response["errors"], "logId" => $response["logId"]];
+        }
+        _e($response, true, true);
+
+        _e($mutationBody, true, true);
     }
 }
