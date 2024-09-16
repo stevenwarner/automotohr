@@ -76,12 +76,12 @@
                                                                             <option value="drivers_license">Drivers License </option>
                                                                             <option value="emergency_contacts">Emergency Contacts</option>
                                                                             <option value="occupational_license">Occupational License</option>
-                                                                            <option value="PEDOC"> Performance Evaluation Document</option>
-                                                                            
+                                                                            <option value="PEDOC">Performance Evaluation Document</option>
+
                                                                             <?php if (!empty($companyDocuments)) { ?>
                                                                                 <?php foreach ($companyDocuments as $docuemntRow) {  ?>
                                                                                     <option value="<?php echo $docuemntRow['sid']; ?>"><?php echo $docuemntRow['document_title']; ?></option>
-                                                                                <?php } ?>   
+                                                                                <?php } ?>
                                                                             <?php  } ?>
                                                                         </select>
                                                                     </div>
@@ -93,7 +93,7 @@
                                                                         <select id="js-action" name="dd-action">
                                                                             <option value="all">All</option>
                                                                             <option value="completed">Completed</option>
-                                                                            <option value="not_completed">Not Completed</option>   
+                                                                            <option value="not_completed">Not Completed</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -426,7 +426,9 @@
                     totalDocs = totalDocs + 1;
                 }
 
-
+                if (record.assignedPerformanceDocument != "Not Assigned") {
+                    totalDocs++;
+                }
                 //
                 if (record.assignedw4document.length > 0) {
                     if (record.assignedw4document[0]['user_consent'] == 1) {
@@ -461,7 +463,7 @@
                     }
                 }
 
-                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned' && record.assignedPerformanceDocument !='') {
+                if (record.assignedPerformanceDocument && record.assignedPerformanceDocument != 'Not Assigned' && record.assignedPerformanceDocument != '') {
                     //
                     if (record.assignedPerformanceDocument == 'Completed') {
                         totalCompletedDoc = totalCompletedDoc + 1;
