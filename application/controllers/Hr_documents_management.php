@@ -3766,7 +3766,10 @@ class Hr_documents_management extends Public_Controller
                         $is_magic_tag_exist = 0;
                         $is_document_completed = 0;
                         $is_document_authorized = 0;
+                        $is_document_authorized_date = 0;
                         $authorized_sign_status = 0;
+                        $authorized_date_status = 0;
+
 
                         if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                             $document_body = $assigned_document['document_description'];
@@ -3789,13 +3792,12 @@ class Hr_documents_management extends Public_Controller
 
                                 $is_magic_tag_exist = 1;
                             }
-
-
+                            //
+                            $assign_on = date("Y-m-d", strtotime($assigned_document['assigned_date']));
+                            $compare_date = date("Y-m-d", strtotime('2020-03-04'));
+                            //
                             if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
-
-                                $assign_on = date("Y-m-d", strtotime($assigned_document['assigned_date']));
-                                $compare_date = date("Y-m-d", strtotime('2020-03-04'));
-
+                                //
                                 // if (!empty($assigned_document['form_input_data'] || $assign_on >= $compare_date )) {
                                 if ($assign_on >= $compare_date || !empty($assigned_document['form_input_data'])) {
                                     $is_document_authorized = 1;
@@ -3810,12 +3812,31 @@ class Hr_documents_management extends Public_Controller
 
                                 $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
                                 $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
+                            } else if (str_replace('{{authorized_signature}}', '', $document_body) == $document_body && str_replace('{{authorized_signature_date}}', '', $document_body) != $document_body)  {
+                                //
+                                if ($assign_on >= $compare_date || !empty($assigned_document['form_input_data'])) {
+                                    $is_document_authorized_date = 1;
+                                    $is_document_authorized = 1;
+                                }
+                                // 
+                                if (!empty($assigned_document['authorized_signature_date'])) {
+                                    $authorized_date_status = 1;
+                                    $authorized_sign_status = 1;
+                                } else {
+                                    $authorized_date_status = 0;
+                                    $authorized_sign_status = 0;
+                                }
+                                //
+                                // $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
+                                // $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
+                                // $assigned_documents[$key]['is_document_authorized_date'] = $assigned_document['is_document_authorized_date'] = $is_document_authorized_date;
+                                // $assigned_documents[$key]['authorized_date_status'] = $assigned_document['authorized_date_status'] = $authorized_date_status;
                             }
                         }
-
+                        //
                         $assigned_documents[$key]['is_document_authorized'] = $assigned_document['is_document_authorized'] = $is_document_authorized;
                         $assigned_documents[$key]['authorized_sign_status'] = $assigned_document['authorized_sign_status'] = $authorized_sign_status;
-
+                        //
                         if ($assigned_document['document_type'] != 'offer_letter') {
                             if ($assigned_document['document_type'] == 'uploaded') {
                                 if (strpos($assigned_document['document_s3_name'], '&') !== false) {
@@ -4368,6 +4389,9 @@ class Hr_documents_management extends Public_Controller
                     );
                 }
             }
+            //
+            // _e($data['uncompleted_payroll_documents'],true);
+            // _e($data['completed_payroll_documents'],true,true);
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
