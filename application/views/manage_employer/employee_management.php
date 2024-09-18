@@ -220,11 +220,14 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                             </div>
                                             <div class="col-xs-2 text-left" style="padding-right: 5px; padding-left: 5px">
-                                                <?php if ($offline) { ?>
-                                                    <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
-                                                <?php } else { ?>
-                                                    <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
-                                                <?php } ?>
+                                                <?php if ($offline) { 
+                                                ?>
+                                                <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
+                                                <?php  } else { 
+                                                ?>
+                                                <a class="btn btn-danger btn-block" href="javascript:;" id="ej_controll_deactivate">De-activate Selected</a>
+                                                <?php } 
+                                                ?>
                                             </div>
                                         <?php } ?>
                                     </div>
@@ -271,6 +274,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </thead>
                                     <tbody>
                                         <form method="POST" name="ej_form" id="ej_form">
+
+                                            <input name="status_change_details" id="js_status_change_details" type="hidden" value="">
+
                                             <?php $sizeof = sizeof($employee_array);
                                             $bulkloginEmailIds = array();
                                             $bulkloginEmployeeName = array();
@@ -706,6 +712,8 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 </div>
 
 <script type="text/javascript">
+    let employeeStatusChangeMessage = '';
+
     function deactivate_single_employee(id) {
         window.location.href = "<?= base_url() ?>employee_status/" + id
         // alertify.confirm("Please Confirm Deactivate", "Are you sure you want to Deactivate employee?",
@@ -861,20 +869,53 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                 if (butt.attr("id") == "ej_controll_mark") {
                     $("#ej_action").val("mark");
                 } else {
-                    alertify.confirm("Are you sure you want to de-activate employee(s)?",
-                        function() {
-                            $('#ej_form').append('<input type="hidden" name="deactivate_employees" value="true" />');
-                            $("#ej_form").submit();
-                            alertify.success('De-activated');
-                        },
-                        function() {
-                            alertify.error('Cancelled');
-                        });
+
+                    //
+                    Model({
+                        Id: "jsEmployeeStatusChangeModal",
+                        Loader: 'jsEmployeeStatusChangeModalLoader',
+                        Title: 'Employees Change Status',
+                        Body: '<div class="container"><div id="jsEmployeeStatusChangeModalBody"></div></div>'
+                    }, function() {
+
+                        var html = '<div id="jsEmployeeStatusChangeModalMainBody"><br><br><div class="row"><div class="col-sm-12"><label>Status Change Details <span class="hr-required">*</span></label><textarea class="ckeditor" id="jsNoteBody"></textarea></div>&nbsp;<br><div class="col-sm-12 text-right"><input type="button" value="Save"  id="jsvalidateNote" class="submit-btn"></div></div></div>';
+
+                        //
+                        $('#jsEmployeeStatusChangeModalBody').html(html);
+                        CKEDITOR.replace('jsNoteBody');
+                        employeeStatusChangeMessage = "de-activate";
+                        $('#ej_form').append('<input type="hidden" name="deactivate_employees" value="true" />');
+                        $('.jsIPLoader[data-page="jsEmployeeStatusChangeModalLoader"]').hide(0);
+
+                    });
+
                 }
             } else {
                 alertify.alert('Please select employee(s) to de-activate');
             }
         });
+
+
+        //
+        $(document).on('click', '#jsvalidateNote', function(e) {
+            var note = CKEDITOR.instances['jsNoteBody'].getData().trim();
+            if (note == '') {
+                alertify.alert('Please Enter Status Change Details');
+
+            } else {
+
+                alertify.confirm("Are you sure you want " + employeeStatusChangeMessage + " employee(s)?",
+                    function() {
+                        $("#js_status_change_details").val(note);
+                        $("#ej_form").submit();
+                    },
+                    function() {
+                        alertify.error('Cancelled');
+                    });
+            }
+
+        });
+
 
         $('#ej_controll_activate').click(function() {
             var butt = $(this);
@@ -883,18 +924,27 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                 if (butt.attr("id") == "ej_controll_mark") {
                     $("#ej_action").val("mark");
                 } else {
-                    alertify.confirm("Are you sure you want to activate employee(s)?",
-                        function() {
-                            $('#ej_form').append('<input type="hidden" name="activate_employees" value="true" />');
-                            $("#ej_form").submit();
-                            alertify.success('activated');
-                        },
-                        function() {
-                            alertify.error('Cancelled');
-                        });
+                    //
+                    Model({
+                        Id: "jsEmployeeStatusChangeModal",
+                        Loader: 'jsEmployeeStatusChangeModalLoader',
+                        Title: 'Employees Change Status',
+                        Body: '<div class="container"><div id="jsEmployeeStatusChangeModalBody"></div></div>'
+                    }, function() {
+
+                        var html = '<div id="jsEmployeeStatusChangeModalMainBody"><br><br><div class="row"><div class="col-sm-12"><label>Status Change Details <span class="hr-required">*</span></label><textarea class="ckeditor" id="jsNoteBody"></textarea></div>&nbsp;<br><div class="col-sm-12 text-right"><input type="button" value="Save"  id="jsvalidateNote" class="submit-btn"></div></div></div>';
+
+                        //
+                        $('#jsEmployeeStatusChangeModalBody').html(html);
+                        CKEDITOR.replace('jsNoteBody');
+                        employeeStatusChangeMessage = "activate";
+                        $('#ej_form').append('<input type="hidden" name="activate_employees" value="true" />');
+                        $('.jsIPLoader[data-page="jsEmployeeStatusChangeModalLoader"]').hide(0);
+                    });
+
                 }
             } else {
-                alertify.alert('Please select employee(s) to de-activate');
+                alertify.alert('Please select employee(s) to activate');
             }
         });
 
@@ -1045,9 +1095,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         var keyword = $('.search-job').val().trim();
 
         var loginCred = $('select[name="logincred"]').find(':selected').val();
-
-
-
 
         url += 'employee_type=' + employeeType;
         url += '&department=' + department;

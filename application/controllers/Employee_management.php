@@ -317,12 +317,29 @@ class Employee_management extends Public_Controller
             $data['all_company_employees'] = array_merge($data['all_company_employees'], $data['executive_admins']);
             //
             $data['title'] = 'Employee / Team Members';
-
+       
             if (isset($_POST['deactivate_employees']) && $_POST['deactivate_employees'] == 'true') {
                 $deactivate_fields = $_POST['ej_check'];
 
+                $status = 6;
+                $termination_details = $this->input->post('status_change_details');
+                $data_to_insert = array();
+                $data_to_insert['employee_status'] = $status;
+                $data_to_insert['status_change_date'] =  date('Y-m-d');
+                $data_to_insert['details'] = htmlentities($termination_details);
+                $data_to_insert['changed_by'] = $security_sid;
+                $data_to_insert['ip_address'] = getUserIP();
+                $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data_to_update = array();
+                $data_to_update['general_status'] = 'inactive';
+                $data_to_update['active'] = 0;
+
+                $this->load->model('terminate_employee_model');
+
                 foreach ($deactivate_fields as $key => $value) {
-                    $this->employee_model->deactivate_employee_by_id($value);
+                    $data_to_insert['employee_sid'] = $value;
+                    $this->terminate_employee_model->terminate_user($value, $data_to_insert);
+                    $this->terminate_employee_model->change_terminate_user_status($value, $data_to_update);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Deactivated!');
@@ -332,8 +349,25 @@ class Employee_management extends Public_Controller
             if (isset($_POST['activate_employees']) && $_POST['activate_employees'] == 'true') {
                 $deactivate_fields = $_POST['ej_check'];
 
+                $status = 5;
+                $termination_details = $this->input->post('status_change_details');
+                $data_to_insert = array();
+                $data_to_insert['employee_status'] = $status;
+                $data_to_insert['status_change_date'] =  date('Y-m-d');
+                $data_to_insert['details'] = htmlentities($termination_details);
+                $data_to_insert['changed_by'] = $security_sid;
+                $data_to_insert['ip_address'] = getUserIP();
+                $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data_to_update = array();
+                $data_to_update['general_status'] = 'active';
+                $data_to_update['active'] = 1;
+
+                $this->load->model('terminate_employee_model');
+
                 foreach ($deactivate_fields as $key => $value) {
-                    $this->employee_model->activate_employee_by_id($value);
+                    $data_to_insert['employee_sid'] = $value;
+                   $this->terminate_employee_model->terminate_user($value, $data_to_insert);
+                   $this->terminate_employee_model->change_terminate_user_status($value, $data_to_update);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success: </b>Employee(s) / Team Member(s) Activated!');
@@ -1953,13 +1987,12 @@ class Employee_management extends Public_Controller
                         }
                             */
 
-                            $department = $this->input->post('department');
-                            $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
-                            //
-                            if ($employee_detail['department_sid'] != $departmentId) {
-                                // updateEmployeeDepartmentToComplyNet($sid, $company_id);
-                            }
-
+                        $department = $this->input->post('department');
+                        $departmentId = $departmentId != 0 ? getDepartmentColumnByTeamId($department, 'department_sid') : 0;
+                        //
+                        if ($employee_detail['department_sid'] != $departmentId) {
+                            // updateEmployeeDepartmentToComplyNet($sid, $company_id);
+                        }
                     }
 
                     // update the data in verification forms
