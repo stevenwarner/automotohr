@@ -681,7 +681,7 @@
                 url: myurl,
 
                 success: function(auth_sign_sid){
-                    alertify.alert("Authorized signature save successfully!", function() {
+                    alertify.alert("Authorized editable date save successfully!", function() {
                         $('#authorized_editable_date_Modal').modal('hide');
                         location.reload();
                     }).set({title:"Success"});
