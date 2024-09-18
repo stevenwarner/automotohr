@@ -4786,7 +4786,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
 
@@ -4814,7 +4814,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
@@ -5111,7 +5111,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
 
@@ -5139,7 +5139,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
@@ -5152,7 +5152,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
@@ -6168,7 +6168,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
 
@@ -6196,7 +6196,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
@@ -6209,7 +6209,7 @@ class Hr_documents_management extends Public_Controller
                         }
 
                         if (!empty($document['authorized_editable_date'])) {
-                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
@@ -8029,7 +8029,7 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     if (!empty($document['authorized_editable_date'])) {
-                        $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+                        $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
                     } else {
                         $authorized_editable_date = 'Authorize Date :------/-------/----------------';
                     }
@@ -9979,7 +9979,7 @@ class Hr_documents_management extends Public_Controller
                 $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
             }
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             } else {
                 $authorized_editable_date = '------------------------------(Authorized Date Required)';
             }
@@ -10118,7 +10118,7 @@ class Hr_documents_management extends Public_Controller
 
 
         if (!empty($document['authorized_editable_date'])) {
-            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
         }
 
@@ -10167,7 +10167,7 @@ class Hr_documents_management extends Public_Controller
         }
 
         if (!empty($document['authorized_editable_date'])) {
-            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
         } else {
             $authorized_editable_date = 'Authorize Date :------/-------/----------------';
         }
@@ -13561,7 +13561,7 @@ class Hr_documents_management extends Public_Controller
             }
 
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
             } else {
                 $authorized_editable_date = 'Authorize Date :------/-------/----------------';
             }
@@ -16530,7 +16530,7 @@ class Hr_documents_management extends Public_Controller
             }
 
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             } else {
                 $authorized_editable_date = '------------------------------(Authorized Date Required)';
             }
@@ -16798,7 +16798,7 @@ class Hr_documents_management extends Public_Controller
             }
 
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             } else {
                 $authorized_editable_date = '------------------------------(Authorized Date Required)';
             }

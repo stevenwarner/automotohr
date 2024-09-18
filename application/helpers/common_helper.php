@@ -13616,7 +13616,7 @@ if (!function_exists('getDocumentBody')) {
             }
 
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             } else {
                 $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
             }

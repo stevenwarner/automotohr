@@ -4971,7 +4971,7 @@ class Hr_documents_management_model extends CI_Model
                 }
 
                 if (!empty($record_arr[0]['authorized_editable_date'])) {
-                    $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                    $authorized_editable_date = ' <strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                 } else {
                     $authorized_editable_date = 'Authorize Date :------/-------/----------------';
                 }
@@ -8795,7 +8795,7 @@ class Hr_documents_management_model extends CI_Model
                 }
 
                 if (!empty($record_arr[0]['authorized_editable_date'])) {
-                    $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                    $authorized_editable_date = ' <strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                 } else {
                     $authorized_editable_date = 'Authorize Date :------/-------/----------------';
                 }

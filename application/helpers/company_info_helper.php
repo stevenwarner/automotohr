@@ -526,7 +526,7 @@ if (!function_exists('replace_tags_for_document')) {
         $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
         //
         if (!empty($record_arr[0]['authorized_editable_date'])) {
-            $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            $authorized_editable_date = ' <strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
         }
 
         $authorized_signature_name = '<input type="text" class="form-control" readonly style="background: #fff; margin-top:16px; width: 50%;">';
