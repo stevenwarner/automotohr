@@ -3506,7 +3506,7 @@ class Hr_documents_management extends Public_Controller
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                                 //
                                 if ($isAuthorized == 1) {
                                     // Managers handling
@@ -5604,7 +5604,7 @@ class Hr_documents_management extends Public_Controller
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                                 //
                                 if ($isAuthorized == 1) {
                                     // Managers handling

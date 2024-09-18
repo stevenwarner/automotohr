@@ -36,7 +36,7 @@
 	if(sizeof($assigned_documents)) {
 		foreach ($assigned_documents as $k => $v) {
 			$body = $v['document_description'];
-			$isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+			$isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
 			$assigned_documents[$k]['document_description'] =  html_entity_decode(getGeneratedDocumentURL($v, "uncompleted", $isAuthorized)['html_body']);
 			if ($v['user_consent'] == 1) {
 				$assigned_documents[$k]['submitted_document_description'] =  html_entity_decode(getGeneratedDocumentURL($v, "completed", $isAuthorized)['html_body']);

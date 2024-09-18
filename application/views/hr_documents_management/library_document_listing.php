@@ -125,7 +125,7 @@
                                                                                     $assign_links = getUploadedDocumentURL($assigned_document_data["document_s3_name"]);
                                                                                 } else {
                                                                                     $body = $assigned_document_data['document_description'];
-                                                                                    $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                    $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
                                                                                     $assign_links = getGeneratedDocumentURL($assigned_document_data, "uncompleted", $isAuthorized);
                                                                                 }
                                                                                 //
@@ -142,7 +142,7 @@
                                                                                         $completed_links = getUploadedDocumentURL($assigned_document_data["uploaded_file"]);
                                                                                     } else {
                                                                                         $body = $assigned_document_data['document_description'];
-                                                                                        $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                        $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
                                                                                         $completed_links = getGeneratedDocumentURL($assigned_document_data, "completed", $isAuthorized);
                                                                                     }
                                                                                     //
@@ -162,7 +162,7 @@
                                                                                     $links = getUploadedDocumentURL($document["uploaded_document_s3_name"]);
                                                                                 } else {
                                                                                     $body = $document['document_description'];
-                                                                                    $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                    $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
                                                                                     $links = getGeneratedDocumentURL($document, "company", $isAuthorized);
                                                                                 }
                                                                                 //
