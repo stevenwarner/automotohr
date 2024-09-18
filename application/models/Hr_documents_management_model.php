@@ -343,6 +343,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false);
         $this->db->group_end();
         $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
 
@@ -379,6 +380,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false);
         $this->db->group_end();
         if ($limit != null) {
             $this->db->limit($limit, $start);
@@ -4968,6 +4970,12 @@ class Hr_documents_management_model extends CI_Model
                     $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
                 }
 
+                if (!empty($record_arr[0]['authorized_editable_date'])) {
+                    $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                } else {
+                    $authorized_editable_date = 'Authorize Date :------/-------/----------------';
+                }
+
                 $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $record_arr[0]['signature_base64'] . '">';
                 $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $record_arr[0]['signature_initial'] . '">';
                 $sign_date = '<p><strong>' . date_with_time($record_arr[0]['signature_timestamp']) . '</strong></p>';
@@ -4977,6 +4985,7 @@ class Hr_documents_management_model extends CI_Model
                 $document_body = str_replace('{{sign_date}}', $sign_date, $document_body);
                 $document_body = str_replace('{{authorized_signature}}', $authorized_signature_image, $document_body);
                 $document_body = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_body);
+                $document_body = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_body);
 
                 if ($request_for == 'P&D') {
 
@@ -5086,9 +5095,11 @@ class Hr_documents_management_model extends CI_Model
 
         $authorized_signature = '------------------------------';
         $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
+        $authorized_editable_date = 'Authorize Date :------/-------/----------------';
 
         $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
         $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+        $document_content = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_content);
 
         $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
         $document_content = str_replace('{{checkbox}}', $value, $document_content);
@@ -8204,6 +8215,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
+        $this->db->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false);
         $this->db->group_end();
         $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
         $this->db->order_by('documents_assigned.authorized_signature', 'ASC', false);
@@ -8782,6 +8794,12 @@ class Hr_documents_management_model extends CI_Model
                     $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
                 }
 
+                if (!empty($record_arr[0]['authorized_editable_date'])) {
+                    $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                } else {
+                    $authorized_editable_date = 'Authorize Date :------/-------/----------------';
+                }
+
                 $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $record_arr[0]['signature_base64'] . '">';
                 $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $record_arr[0]['signature_initial'] . '">';
                 $sign_date = '<p><strong>' . date_with_time($record_arr[0]['signature_timestamp']) . '</strong></p>';
@@ -8791,6 +8809,7 @@ class Hr_documents_management_model extends CI_Model
                 $document_body = str_replace('{{sign_date}}', $sign_date, $document_body);
                 $document_body = str_replace('{{authorized_signature}}', $authorized_signature_image, $document_body);
                 $document_body = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_body);
+                $document_body = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_body);
 
                 if ($request_for == 'P&D') {
 
@@ -11508,7 +11527,7 @@ class Hr_documents_management_model extends CI_Model
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                         //
                         if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                             //
                             if ($isAuthorized == 1) {
                                 // Managers handling

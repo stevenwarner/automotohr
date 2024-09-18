@@ -1125,6 +1125,11 @@ if ($user_type == 'applicant') {
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <div class="form-group autoheight">
+                                                                    <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group autoheight">
                                                                     <input type="text" class="form-control tag" readonly="" value="{{signature}}">
                                                                 </div>
                                                             </div>
@@ -2084,6 +2089,11 @@ if ($user_type == 'applicant') {
                                                 <div class="col-md-6">
                                                     <div class="form-group autoheight">
                                                         <input type="text" class="form-control tag" readonly="" value="{{authorized_signature_date}}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group autoheight">
+                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">

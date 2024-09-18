@@ -1557,6 +1557,16 @@ if (isset($applicant)) {
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{authorized_signature_date}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
                                                             <input type="text" class="form-control tag" readonly="" value="{{sign_date}}">
                                                         </div>
                                                     </div>

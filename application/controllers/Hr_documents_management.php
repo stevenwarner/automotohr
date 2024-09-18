@@ -3812,25 +3812,22 @@ class Hr_documents_management extends Public_Controller
 
                                 $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
                                 $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
-                            } else if (str_replace('{{authorized_signature}}', '', $document_body) == $document_body && str_replace('{{authorized_signature_date}}', '', $document_body) != $document_body)  {
+                            } 
+                            
+                            if (str_replace('{{authorized_editable_date}}', '', $document_body) != $document_body)  {
                                 //
                                 if ($assign_on >= $compare_date || !empty($assigned_document['form_input_data'])) {
                                     $is_document_authorized_date = 1;
-                                    $is_document_authorized = 1;
                                 }
                                 // 
-                                if (!empty($assigned_document['authorized_signature_date'])) {
+                                if (!empty($assigned_document['authorized_editable_date'])) {
                                     $authorized_date_status = 1;
-                                    $authorized_sign_status = 1;
                                 } else {
                                     $authorized_date_status = 0;
-                                    $authorized_sign_status = 0;
                                 }
                                 //
-                                // $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
-                                // $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
-                                // $assigned_documents[$key]['is_document_authorized_date'] = $assigned_document['is_document_authorized_date'] = $is_document_authorized_date;
-                                // $assigned_documents[$key]['authorized_date_status'] = $assigned_document['authorized_date_status'] = $authorized_date_status;
+                                $assigned_documents[$key]['is_document_authorized_date'] = $assigned_document['is_document_authorized_date'] = $is_document_authorized_date;
+                                $assigned_documents[$key]['authorized_date_status'] = $assigned_document['authorized_date_status'] = $authorized_date_status;
                             }
                         }
                         //
@@ -4788,6 +4785,11 @@ class Hr_documents_management extends Public_Controller
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
 
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
+
                         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
                         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
                         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -4809,6 +4811,11 @@ class Hr_documents_management extends Public_Controller
                         if (!empty($document['authorized_signature_date'])) {
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+                        }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
 
@@ -5103,6 +5110,11 @@ class Hr_documents_management extends Public_Controller
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
 
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
+
                         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
                         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
                         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -5125,6 +5137,11 @@ class Hr_documents_management extends Public_Controller
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
                         $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
                         $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
@@ -5132,6 +5149,11 @@ class Hr_documents_management extends Public_Controller
                         if (!empty($document['authorized_signature_date'])) {
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+                        }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
 
@@ -6145,6 +6167,11 @@ class Hr_documents_management extends Public_Controller
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
 
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
+
                         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
                         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
                         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -6167,6 +6194,11 @@ class Hr_documents_management extends Public_Controller
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
                         $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
                         $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
@@ -6174,6 +6206,11 @@ class Hr_documents_management extends Public_Controller
                         if (!empty($document['authorized_signature_date'])) {
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+                        }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
 
@@ -7991,8 +8028,15 @@ class Hr_documents_management extends Public_Controller
                         $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
                     }
 
+                    if (!empty($document['authorized_editable_date'])) {
+                        $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+                    } else {
+                        $authorized_editable_date = 'Authorize Date :------/-------/----------------';
+                    }
+
                     $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
                     $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+                    $document_content = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_content);
 
                     $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
                     $document_content = str_replace('{{checkbox}}', $value, $document_content);
@@ -8068,6 +8112,7 @@ class Hr_documents_management extends Public_Controller
 
                     $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
                     $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+                    $document_content = str_replace('{{authorized_editable_date}}', 'Authorize Date :------/-------/----------------', $document_content);
 
                     $value = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
                     $document_content = str_replace('{{checkbox}}', $value, $document_content);
@@ -8759,7 +8804,7 @@ class Hr_documents_management extends Public_Controller
                         $original_document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
                         //
                         if ($original_document['document_type'] != "uploaded" && !empty($original_document['document_description'])) {
-                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $original_document['document_description']);
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $original_document['document_description']);
                             //
                             if ($isAuthorized == 1) {
                                 // Managers handling
@@ -8796,7 +8841,7 @@ class Hr_documents_management extends Public_Controller
                         $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
                         //
                         if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                             //
                             if ($isAuthorized == 1) {
                                 // Managers handling
@@ -9933,6 +9978,11 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
             }
+            if (!empty($document['authorized_editable_date'])) {
+                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            } else {
+                $authorized_editable_date = '------------------------------(Authorized Date Required)';
+            }
 
             $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
             $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
@@ -9947,6 +9997,7 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
 
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
@@ -9966,12 +10017,14 @@ class Hr_documents_management extends Public_Controller
             $signature_bas64_image = '------------------------------(Signature Required)';
             $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
             $sign_date = '------------------------------(Sign Date Required)';
+            $authorized_editable_date = '------------------------------(Authorized Date Required)';
             //
             $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
             //
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = html_entity_decode($document_content);
@@ -10063,6 +10116,12 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
         }
 
+
+        if (!empty($document['authorized_editable_date'])) {
+            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+        }
+
         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -10107,6 +10166,12 @@ class Hr_documents_management extends Public_Controller
             $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
         }
 
+        if (!empty($document['authorized_editable_date'])) {
+            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+        } else {
+            $authorized_editable_date = 'Authorize Date :------/-------/----------------';
+        }
+
         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -10116,6 +10181,7 @@ class Hr_documents_management extends Public_Controller
         $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
         $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
         $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+        $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
 
         $document_content = replace_tags_for_document($company_sid, $user_sid, $user_type, $document['document_description'], $document['document_sid'], 1);
         $document['document_description'] = $document_content;
@@ -13494,6 +13560,12 @@ class Hr_documents_management extends Public_Controller
                 $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
             }
 
+            if (!empty($document['authorized_editable_date'])) {
+                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';   
+            } else {
+                $authorized_editable_date = 'Authorize Date :------/-------/----------------';
+            }
+
             $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
             $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
             $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -13503,6 +13575,7 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
 
             // $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             // $requested_content = $document_content;
@@ -16178,7 +16251,7 @@ class Hr_documents_management extends Public_Controller
         $document = $this->hr_documents_management_model->get_preview_document($type, $document_sid);
         if ($document["document_type"] == "generated" || $document["document_type"] == "hybrid_document") {
             $document_content = $document['document_description'];
-            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document_content);
+            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document_content);
 
             $first_name = 'First Name : ------------------------------';
             $document_content = str_replace('{{first_name}}', $first_name, $document_content);
@@ -16211,6 +16284,9 @@ class Hr_documents_management extends Public_Controller
             //
             $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
             $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+            //
+            $authorized_editable_date = '------------------------------(Authorized Sign Date Required)';
+            $document_content = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_content);
             //
             $signature_bas64_image = '------------------------------(Signature Required)';
             $document_content = str_replace('{{signature}}', $signature_bas64_image, $document_content);
@@ -16446,10 +16522,17 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $authorized_signature_image = '------------------------------(Authorized Signature Required)';
             }
+
             if (!empty($document['authorized_signature_date'])) {
                 $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
             } else {
                 $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            }
+
+            if (!empty($document['authorized_editable_date'])) {
+                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            } else {
+                $authorized_editable_date = '------------------------------(Authorized Date Required)';
             }
 
             $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
@@ -16461,6 +16544,7 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
 
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
@@ -16480,12 +16564,14 @@ class Hr_documents_management extends Public_Controller
             $signature_bas64_image = '------------------------------(Signature Required)';
             $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
             $sign_date = '------------------------------(Sign Date Required)';
+            $authorized_editable_date = '------------------------------(Authorized Date Required)';
             //
             $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
             //
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
@@ -16704,10 +16790,17 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $authorized_signature_image = '------------------------------(Authorized Signature Required)';
             }
+
             if (!empty($document['authorized_signature_date'])) {
                 $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
             } else {
                 $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            }
+
+            if (!empty($document['authorized_editable_date'])) {
+                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            } else {
+                $authorized_editable_date = '------------------------------(Authorized Date Required)';
             }
 
             $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
@@ -16719,6 +16812,7 @@ class Hr_documents_management extends Public_Controller
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
 
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
@@ -16735,12 +16829,14 @@ class Hr_documents_management extends Public_Controller
             $signature_bas64_image = '------------------------------(Signature Required)';
             $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
             $sign_date = '------------------------------(Sign Date Required)';
+            $authorized_editable_date = '------------------------------(Authorized Date Required)';
             //
             $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
             $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
             //
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
@@ -17298,5 +17394,25 @@ class Hr_documents_management extends Public_Controller
                 0
             );
         echo 'ok';
+    }
+
+    public function save_authorized_editable_date()
+    {
+        if ($this->session->has_userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            $company_sid = $session['company_detail']['sid'];
+            //
+            $form_post = $this->input->post();
+            //
+            $authorized_signature_by = $form_post['user_sid'];
+            $document_sid = $form_post['document_sid'];
+            //
+            $data_to_update = array();
+            $data_to_update['authorized_editable_date'] = formatDateToDB($form_post['authorized_date'], SITE_DATE, DB_DATE);
+            //
+            $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
+
+            
+        }
     }
 }

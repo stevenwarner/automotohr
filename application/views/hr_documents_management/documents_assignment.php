@@ -2747,6 +2747,11 @@ if ($user_type == 'employee') {
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
                                         <input type="text" class="form-control tag" readonly="" value="{{signature}}">
                                     </div>
                                 </div>
@@ -3412,6 +3417,15 @@ if ($user_type == 'employee') {
         } else {
             $("#defaultAuthorizedDocument").hide();
         }
+    });
+
+    $('.manage_authorized_date').on('click', function() {
+        var document_auth_sid = $(this).attr('data-auth-sid');
+        var auth_date = $(this).attr('data-auth-date');
+
+        $('#authorized_editable_date_document_sid').val(document_auth_sid);
+        $('#jsAuthorizedDate').val(auth_date);
+        $('#authorized_editable_date_Modal').modal('show');
     });
 
     $("#is_offer_letter").on('click', function() {

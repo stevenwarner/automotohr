@@ -247,6 +247,17 @@ $noActionRequiredDocumentsList = [];
                                                                             <?php } ?>
                                                                         </a>
                                                                     <?php } ?>
+
+                                                                    <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                        <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                            <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                Employer Section - Not Completed
+                                                                            <?php } else if ($document['authorized_date_status'] == 1) { ?>
+                                                                                Employer Section - Completed
+                                                                            <?php } ?>
+                                                                        </a>
+                                                                    <?php } ?>
                                                                 <?php } ?>
                                                             </td>
                                                         </tr>
@@ -853,6 +864,17 @@ $noActionRequiredDocumentsList = [];
                                                                                                     <?php } ?>
                                                                                                 </a>
                                                                                             <?php } ?>
+
+                                                                                            <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                                <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                                    <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                                        Employer Section - Not Completed
+                                                                                                    <?php } else if ($document['authorized_date_status'] == 1) { ?>
+                                                                                                        Employer Section - Completed
+                                                                                                    <?php } ?>
+                                                                                                </a>
+                                                                                            <?php } ?>
                                                                                         <?php } ?>
 
                                                                                         <?php if ($document_all_permission  && $document['isdoctolibrary'] == 0) { ?>
@@ -978,6 +1000,17 @@ $noActionRequiredDocumentsList = [];
                                                                                                     <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                                         Employer Section - Not Completed
                                                                                                     <?php } else if ($document['authorized_sign_status'] == 1) { ?>
+                                                                                                        Employer Section - Completed
+                                                                                                    <?php } ?>
+                                                                                                </a>
+                                                                                            <?php } ?>
+
+                                                                                            <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                                <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                                    <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                                        Employer Section - Not Completed
+                                                                                                    <?php } else if ($document['authorized_date_status'] == 1) { ?>
                                                                                                         Employer Section - Completed
                                                                                                     <?php } ?>
                                                                                                 </a>
@@ -1162,6 +1195,17 @@ $noActionRequiredDocumentsList = [];
                                                                                     <?php } ?>
                                                                                 </a>
                                                                             <?php } ?>
+
+                                                                            <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                    <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                        Employer Section - Not Completed
+                                                                                    <?php } else if ($document['authorized_date_status'] == 1) { ?>
+                                                                                        Employer Section - Completed
+                                                                                    <?php } ?>
+                                                                                </a>
+                                                                            <?php } ?>
                                                                         <?php } ?>
                                                                     </td>
                                                                 <?php } else if ($document['document_type'] == 'offer_letter') { ?>
@@ -1213,6 +1257,17 @@ $noActionRequiredDocumentsList = [];
                                                                                         <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                             Employer Section - Not Completed
                                                                                         <?php } else if ($document['authorized_sign_status'] == 1) { ?>
+                                                                                            Employer Section - Completed
+                                                                                        <?php } ?>
+                                                                                    </a>
+                                                                                <?php } ?>
+
+                                                                                <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                    <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                    <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                        <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                            Employer Section - Not Completed
+                                                                                        <?php } else if ($document['authorized_date_status'] == 1) { ?>
                                                                                             Employer Section - Completed
                                                                                         <?php } ?>
                                                                                     </a>
@@ -1506,6 +1561,18 @@ $noActionRequiredDocumentsList = [];
                                                                                             <?php } ?>
                                                                                         </a>
                                                                                     <?php } ?>
+
+                                                                                    <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                        <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                            <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                                Employer Section - Not Completed
+                                                                                            <?php } else if ($document['authorized_date_status'] == 1) { ?>
+                                                                                                Employer Section - Completed
+                                                                                            <?php } ?>
+                                                                                        </a>
+                                                                                    <?php } ?>
+
                                                                                 <?php } ?>
                                                                             </td>
                                                                         <?php } ?>
@@ -1922,6 +1989,17 @@ $noActionRequiredDocumentsList = [];
                                                                                                 <?php if ($document['authorized_sign_status'] == 0) { ?>
                                                                                                     Employer Section - Not Completed
                                                                                                 <?php } else if ($document['authorized_sign_status'] == 1) { ?>
+                                                                                                    Employer Section - Completed
+                                                                                                <?php } ?>
+                                                                                            </a>
+                                                                                        <?php } ?>
+
+                                                                                        <?php if ($document['is_document_authorized_date'] == 1) { ?>
+                                                                                            <?php $btn_show = $document['authorized_date_status'] == 0 ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
+                                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_date" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-date="<?php echo $document['authorized_date_status'] == 1 ? formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) : ''; ?>">
+                                                                                                <?php if ($document['authorized_date_status'] == 0) { ?>
+                                                                                                    Employer Section - Not Completed
+                                                                                                <?php } else if ($document['authorized_date_status'] == 1) { ?>
                                                                                                     Employer Section - Completed
                                                                                                 <?php } ?>
                                                                                             </a>

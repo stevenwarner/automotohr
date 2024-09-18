@@ -1311,6 +1311,7 @@ class Dashboard_model extends CI_Model
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
+            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->get('authorized_document_assigned_manager');
         $data_obj = $data->result_array();
@@ -1373,6 +1374,7 @@ class Dashboard_model extends CI_Model
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
+            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)
@@ -1435,6 +1437,7 @@ class Dashboard_model extends CI_Model
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
+            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)

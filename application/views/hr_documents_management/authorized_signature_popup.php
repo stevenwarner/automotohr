@@ -291,12 +291,76 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div id="authorized_editable_date_Modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Authorized Date</h4>
+            </div>
+            <div class="modal-body">
+                <div id="authorized_signature_section">
+                    <form id="form_authorized_editable_date" enctype="multipart/form-data">
+                        <input type="hidden" name="perform_action" value="save_authorized_date" />
+                        <input type="hidden" name="user_sid" value="<?php echo $employer_sid; ?>" />
+                        <input type="hidden" name="document_sid" value="" id="authorized_editable_date_document_sid" />
+
+                        <!-- Section to populate current user info -->
+                        <div id="default_authorized_signature_section" class="row">
+                            <div class="col-xs-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <tbody>
+                                            <tr>
+                                                <th class="col-xs-4">Name</th>
+                                                <td class="col-xs-8"><?php echo ucwords($employer_first_name . ' ' . $employer_last_name); ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="col-xs-4">Email</th>
+                                                <td class="col-xs-8"><?php echo $employer_email; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <th class="col-xs-4">Authorized Date</th>
+                                                <td class="col-xs-8">
+                                                <div class="form-group">
+                                                    <input class="form-control"
+                                                    type="text"
+                                                    name="authorized_date"
+                                                    id="jsAuthorizedDate"
+                                                    value=""/> 
+                                                </div>
+                                                </td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div> 
+                    </form>
+                </div>      
+            </div>
+            <div class="modal-footer">
+                <button id="save_authorized_date_button" type="button" class="btn btn-success">Save Date</button>
+                <button type="button" class="btn cancel_btn_black" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <input type="hidden" value="0" id="assigned_manager_sid" />
 
 <script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/fabric.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/darkroom.js'); ?>"></script>
 <script type="text/javascript">
+    $('#jsAuthorizedDate').datepicker({
+        dateFormat: 'mm/dd/yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
+    });   
 
     $( "#authorized_e_Signature_Modal" ).on('shown.bs.modal', function(){
         var assign_doc_sid = $("#authorized_document_sid").val();
@@ -580,6 +644,45 @@
                 success: function(auth_sign_sid){
                     alertify.alert("Authorized signature save successfully!", function() {
                         $('#authorized_e_Signature_Modal').modal('hide');
+                        location.reload();
+                    }).set({title:"Success"});
+                },
+                error: function(){
+
+                }
+            });
+        }
+
+        
+    });
+
+    $('#save_authorized_date_button').on('click', function () {
+
+        var date_flag = 1;
+        
+        var auth_date = $("#jsAuthorizedDate").val(); 
+        console.log(auth_date)
+
+        if (auth_date == '' || auth_date == null) {
+            alertify.alert("Please Enter Authorized Editable Date");
+            date_flag = 0;
+            return true;
+        }
+
+        if (date_flag == 1) {
+
+            var myurl = "<?= base_url() ?>Hr_documents_management/save_authorized_editable_date";
+
+            $.ajax({
+                type: 'POST',
+                enctype: 'multipart/form-data',
+               
+                data: $('#form_authorized_editable_date').serialize(),
+                url: myurl,
+
+                success: function(auth_sign_sid){
+                    alertify.alert("Authorized signature save successfully!", function() {
+                        $('#authorized_editable_date_Modal').modal('hide');
                         location.reload();
                     }).set({title:"Success"});
                 },

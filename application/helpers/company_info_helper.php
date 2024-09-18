@@ -512,7 +512,7 @@ if (!function_exists('replace_tags_for_document')) {
             $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>';
         } else {
             $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
-            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';;
+            $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
         }
 
 
@@ -523,7 +523,11 @@ if (!function_exists('replace_tags_for_document')) {
         //     $authorized_signature = '';
         // }
 
-
+        $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
+        //
+        if (!empty($record_arr[0]['authorized_editable_date'])) {
+            $authorized_editable_date = '<strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+        }
 
         $authorized_signature_name = '<input type="text" class="form-control" readonly style="background: #fff; margin-top:16px; width: 50%;">';
         $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
@@ -535,6 +539,7 @@ if (!function_exists('replace_tags_for_document')) {
         $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
         $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name, $my_return);
         $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
+        $my_return = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $my_return);
         // Fillable documents
         $supervisor = "";
         $department = "";

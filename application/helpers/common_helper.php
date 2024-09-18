@@ -13193,7 +13193,7 @@ if (!function_exists('document_description_tags')) {
         $all_magic_codes = array();
         $simple_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{select}}');
         $signature_codes = array('{{signature}}', '{{inital}}');
-        $authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+        $authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}', '{{authorized_editable_date}}');
         //
         if ($type == 'all') {
             return array_merge($simple_codes, $signature_codes, $authorized_codes);
@@ -13267,7 +13267,7 @@ if (!function_exists('isDocumentCompletedCheck')) {
                 if ($withoutSignMC != $body) $ra['buttonType'] = 'consent_only';
                 else if ($withoutMC != $body) $ra['buttonType'] = 'save_only';
                 //
-                $ra['isAuthorized'] = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                $ra['isAuthorized'] = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $body);
                 //
                 $ra['hasMagicCodes'] = $hasAnyMC = preg_match('/{{(.*?)}}/i', $body);
                 //
@@ -13593,6 +13593,7 @@ if (!function_exists('getDocumentBody')) {
         //
         $authorized_signature = '';
         $authorized_signature_date = '';
+        $authorized_editable_date = '';
         //
         if ($isAuthorized == 1) {
             if ($document['authorized_signature_by'] != 0 && $document_type == 'completed') {
@@ -13614,8 +13615,15 @@ if (!function_exists('getDocumentBody')) {
                 $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
             }
 
+            if (!empty($document['authorized_editable_date'])) {
+                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+            } else {
+                $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
+            }
+
             $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
             $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
+            $my_return = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $my_return);
         }
 
         return $my_return;

@@ -1504,6 +1504,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += '        </div>';
 			rows += '        <div class="col-md-6">';
 			rows += '            <div class="form-group autoheight">';
+			rows += '                <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">';
+			rows += '            </div>';
+			rows += '        </div>';
+			rows += '        <div class="col-md-6">';
+			rows += '            <div class="form-group autoheight">';
 			rows += '                <input type="text" class="form-control tag" readonly="" value="{{short_text}}">';
 			rows += '            </div>';
 			rows += '        </div>';

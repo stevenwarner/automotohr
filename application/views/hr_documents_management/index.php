@@ -836,6 +836,11 @@ $requiredMessage = 'This document is required to complete the process.';
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
                                             <input type="text" class="form-control tag" readonly="" value="{{text}}">
                                         </div>
                                     </div>

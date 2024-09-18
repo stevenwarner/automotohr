@@ -54,6 +54,7 @@ class Notification_model extends CI_Model
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
+            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)

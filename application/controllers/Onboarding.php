@@ -187,7 +187,7 @@ class Onboarding extends CI_Controller
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                                 //
                                 if ($isAuthorized == 1) {
                                     // Managers handling
@@ -632,6 +632,11 @@ class Onboarding extends CI_Controller
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
 
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
+
                         $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
                         $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
                         $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
@@ -654,6 +659,11 @@ class Onboarding extends CI_Controller
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
+                        }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
                         $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
                         $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
@@ -661,6 +671,11 @@ class Onboarding extends CI_Controller
                         if (!empty($document['authorized_signature_date'])) {
                             $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                             $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+                        }
+
+                        if (!empty($document['authorized_editable_date'])) {
+                            $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                            $document['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document['document_description']);
                         }
                     }
                     //echo '<pre>';print_r($document); die();
@@ -904,7 +919,7 @@ class Onboarding extends CI_Controller
             $is_authorized_document = 'no';
 
             if (!empty($document['document_description'])) {
-                $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}');
+                $magic_authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}', '{{authorized_signature_date}}');
                 $document_body = $document['document_description'];
 
                 if (str_replace($magic_authorized_codes, '', $document_body) != $document_body) {
@@ -4311,8 +4326,15 @@ class Onboarding extends CI_Controller
                     $authorized_signature_date = '------------------------------(Authorized Sign Date Requireq)';
                 }
 
+                if (!empty($document['authorized_editable_date'])) {
+                    $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                } else {
+                    $authorized_editable_date = '------------------------------(Authorized Date Required)';
+                }
+
                 $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
-                $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
+                $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+                $document_content = str_replace('{{authorized_editable_date}}', $authorized_editable_date, $document_content);
 
                 $value = '<br><input type="checkbox" class="user_checkbox"/>';
                 $document_content = str_replace('{{checkbox}}', $value, $document_content);
@@ -4770,7 +4792,7 @@ class Onboarding extends CI_Controller
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
-                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                                 //
                                 if ($isAuthorized == 1) {
                                     // Managers handling
@@ -6571,6 +6593,11 @@ class Onboarding extends CI_Controller
                                 $authorized_signature_date = '<p><strong>' . date_with_time($offer_letter['authorized_signature_date']) . '</strong></p>';
                                 $offer_letter['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $offer_letter['document_description']);
                             }
+
+                            if (!empty($document['authorized_editable_date'])) {
+                                $authorized_editable_date = '<strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, SITE_DATE) . '</strong>';
+                                $offer_letter['document_description'] = str_replace('{{authorized_editable_date}}', $authorized_signature_date, $offer_letter['document_description']);
+                            } 
                         }
                         //
                         $document_content = replace_tags_for_document($company_info['sid'], $user_sid, $user_type, $offer_letter['document_description'], $offer_letter['document_sid']);

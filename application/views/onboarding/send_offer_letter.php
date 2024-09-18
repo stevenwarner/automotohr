@@ -402,6 +402,11 @@ if (isset($assigned_offer_letter_sid)) {
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group autoheight">
+                                                                        <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group autoheight">
                                                                         <input type="text" class="form-control tag" readonly="" value="{{short_text}}">
                                                                     </div>
                                                                 </div>
