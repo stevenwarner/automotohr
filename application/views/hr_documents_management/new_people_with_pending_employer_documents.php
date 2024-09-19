@@ -269,11 +269,25 @@
                                                                                     $assigned_by = getUserNameBySID($v['assigned_by']);
                                                                                     $assignedByText = '<br /> <em>Assigned By: ' . ($assigned_by) . '</em>';
                                                                                 }
+                                                                                
+                                                                                //
+                                                                                $assignedToText = '';
+                                                                                if ($v['user_type'] == "employee") {
+                                                                                    $assigned_to = getUserNameBySID($v['user_sid']);
+                                                                                    $assignedToText = '<br /> <em>Assigned To: ' . ($assigned_to) . '</em>';
+                                                                                } else {
+                                                                                    $assigned_to = getApplicantNameBySID($v['user_sid']);
+                                                                                    $assignedToText = '<br /> <em>Assigned To: ' . ($assigned_to) . '</em>';
+                                                                                }
+                                                                                //
                                                                                 $itext .= '<p>';
                                                                                 $itext .= ' <strong>' . ($v['document_title']) . '</strong> (' . ($v['document_type']) . ')';
+                                                                                $itext .= $assignedToText;
+                                                                                $itext .= ' </em>';
                                                                                 $itext .= ' <br /> <em>Assigned On: ' . (formatDateToDB($v['assigned_by_date'], 'Y-m-d H:i:s', DATE_WITH_TIME)) . '';
                                                                                 $itext .= ' </em>';
                                                                                 $itext .= $assignedByText;
+                                                                                
                                                                                 $itext .= ' <br /> <em>Type: ' . ($v['type'] == 'AD' ? 'Authorized Document' : '') . '';
                                                                                 $itext .= '</p>';
                                                                         ?>
