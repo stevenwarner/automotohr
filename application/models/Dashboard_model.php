@@ -1371,11 +1371,6 @@ class Dashboard_model extends CI_Model
         //
         $data = $this->db
             ->select("user_type, user_sid")
-            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
-            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
-            ->where('authorized_document_assigned_manager.company_sid', $company_id)
-            ->where('documents_assigned.archive', 0)
-            ->where('documents_assigned.status', 1)
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
@@ -1465,11 +1460,6 @@ class Dashboard_model extends CI_Model
         //
         $data = $this->db
             ->select("user_type, user_sid")
-            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
-            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
-            ->where('authorized_document_assigned_manager.company_sid', $company_id)
-            ->where('documents_assigned.archive', 0)
-            ->where('documents_assigned.status', 1)
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
@@ -1524,7 +1514,7 @@ class Dashboard_model extends CI_Model
             }
         }
         //
-        return count($data_obj) + count($data_obj2);
+        return count($data_obj) + count($data_obj);
     }
 
     function compnayEventCount($id, $today = false)
