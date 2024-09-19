@@ -139,6 +139,13 @@
         $('#authorized_document_sid').val(document_auth_sid);
     }); 
 
+    $('.add_authorized_editable_date').on('click', function() {
+        var document_auth_sid = $(this).attr('data-auth-sid');
+
+        $('#authorized_editable_date_document_sid').val(document_auth_sid);
+        $('#authorized_editable_date_Modal').modal('show');
+    });
+
                   
 </script>
 

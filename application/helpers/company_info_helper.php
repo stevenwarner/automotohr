@@ -510,9 +510,11 @@ if (!function_exists('replace_tags_for_document')) {
         if ($authorized_signature == 1) {
             $authorized_signature = '<a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="show_authorized_signature" />';
             $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>';
+            $authorized_editable_date = '<a class="btn btn-sm blue-button add_authorized_editable_date" data-auth-sid="" href="javascript:;">Authorized Editable Date</a>';
         } else {
             $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
             $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
+            $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
         }
 
 
@@ -523,7 +525,6 @@ if (!function_exists('replace_tags_for_document')) {
         //     $authorized_signature = '';
         // }
 
-        $authorized_editable_date = '<p>Authorized Date (<b>Not Entered</b>)</p>';
         //
         if (!empty($record_arr[0]['authorized_editable_date'])) {
             $authorized_editable_date = ' <strong>' . formatDateToDB($record_arr[0]['authorized_editable_date'], DB_DATE, DATE) . '</strong>';

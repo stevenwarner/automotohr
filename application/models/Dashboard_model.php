@@ -1371,18 +1371,22 @@ class Dashboard_model extends CI_Model
         //
         $data = $this->db
             ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
-            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)
             ->or_where('documents_assigned.authorized_signature = ""', null)
             ->group_end()
             ->get('authorized_document_assigned_manager');
+
         $data_obj = $data->result_array();
-        // ->count_all_results('authorized_document_assigned_manager');
         //
         foreach ($data_obj as $key => $v) {
             if ($v["user_type"] == "applicant") {
@@ -1398,7 +1402,34 @@ class Dashboard_model extends CI_Model
             }
         }
         //
-        return count($data_obj);
+        $data2 = $this->db
+            ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
+            ->where('documents_assigned.authorized_editable_date', null)
+            ->get('authorized_document_assigned_manager');
+        //
+        $data_obj2 = $data2->result_array();
+        //
+        foreach ($data_obj2 as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj) + count($data_obj2);
     }
 
     function get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
@@ -1434,16 +1465,21 @@ class Dashboard_model extends CI_Model
         //
         $data = $this->db
             ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
-            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)
             ->or_where('documents_assigned.authorized_signature = ""', null)
             ->group_end()
             ->get('authorized_document_assigned_manager');
+        //    
         $data_obj = $data->result_array();
         // ->count_all_results('authorized_document_assigned_manager');
         //
@@ -1461,7 +1497,34 @@ class Dashboard_model extends CI_Model
             }
         }
         //
-        return count($data_obj);
+        $data2 = $this->db
+            ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $employer_id)
+            ->where('authorized_document_assigned_manager.company_sid', $company_id)
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
+            ->where('documents_assigned.authorized_editable_date', null)
+            ->get('authorized_document_assigned_manager');
+        //
+        $data_obj2 = $data2->result_array();
+        //
+        foreach ($data_obj2 as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        //
+        return count($data_obj) + count($data_obj2);
     }
 
     function compnayEventCount($id, $today = false)

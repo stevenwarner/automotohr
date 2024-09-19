@@ -54,7 +54,6 @@ class Notification_model extends CI_Model
             ->group_start()
             ->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false)
             ->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false)
-            ->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
             ->group_end()
             ->group_start()
             ->where('documents_assigned.authorized_signature IS NULL', null)
@@ -78,7 +77,33 @@ class Notification_model extends CI_Model
             }
         }
         //
-        $c = count($data_obj);
+        $data2 = $this->db
+            ->select("user_type, user_sid")
+            ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
+            ->where('authorized_document_assigned_manager.assigned_to_sid', $ses['employer_detail']['sid'])
+            ->where('authorized_document_assigned_manager.company_sid', $ses['company_detail']['sid'])
+            ->where('documents_assigned.archive', 0)
+            ->where('documents_assigned.status', 1)
+            ->where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false)
+            ->where('documents_assigned.authorized_editable_date', null)
+            ->get('authorized_document_assigned_manager');
+        $data_obj2 = $data2->result_array();
+        //
+        foreach ($data_obj2 as $key => $v) {
+            if ($v["user_type"] == "applicant") {
+                if (in_array($v["user_sid"], $companyApplicantsForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+
+            if ($v["user_type"] == "employee") {
+                if (in_array($v["user_sid"], $companyEmployeesForVerification)) {
+                    unset($data_obj[$key]);
+                }
+            }
+        }
+        // 
+        $c = count($data_obj) + count($data_obj2);
         //
         if ((int)$c !== 0) {
             $r[] = array(

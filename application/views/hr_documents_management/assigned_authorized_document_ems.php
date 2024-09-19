@@ -128,6 +128,7 @@ if (!$assignedDocuments || empty($document['authorized_signature'])) {
         }
 
         $('.show_authorized_signature_popup').attr('data-auth-signature', '<?php echo $document['sid']; ?>');
+        $('.add_authorized_editable_date').attr('data-auth-sid', '<?php echo $document['sid']; ?>');
 
         <?php if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) { ?>
             var form_input_data = <?php echo $form_input_data; ?>;
@@ -215,6 +216,13 @@ if (!$assignedDocuments || empty($document['authorized_signature'])) {
 
         var document_auth_sid = $(this).attr('data-auth-signature');
         $('#authorized_document_sid').val(document_auth_sid);
+    });
+
+    $('.add_authorized_editable_date').on('click', function() {
+        var document_auth_sid = $(this).attr('data-auth-sid');
+
+        $('#authorized_editable_date_document_sid').val(document_auth_sid);
+        $('#authorized_editable_date_Modal').modal('show');
     });
 </script>
 

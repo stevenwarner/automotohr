@@ -8209,21 +8209,45 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('documents_assigned.status', 1);
         $this->db->where('documents_assigned.archive', 0);
         $this->db->group_start();
-        $this->db->where('documents_assigned.authorized_signature IS ', NULL);
+        $this->db->where('documents_assigned.authorized_signature IS NULL', null);
         $this->db->or_where('documents_assigned.authorized_signature', '');
         $this->db->group_end();
         $this->db->group_start();
         $this->db->where('documents_assigned.document_description like "%{{authorized_signature}}%"', null, false);
         $this->db->or_where('documents_assigned.document_description like "%{{authorized_signature_date}}%"', null, false);
-        $this->db->or_where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false);
         $this->db->group_end();
         $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
         $this->db->order_by('documents_assigned.authorized_signature', 'ASC', false);
         $this->db->order_by('assigned_by_date', 'DESC', false);
         //
         $record_obj = $this->db->get('authorized_document_assigned_manager');
-        $record_arr = $record_obj->result_array();
+        $documents1 = $record_obj->result_array();
         $record_obj->free_result();
+        //
+        $this->db->select('
+            documents_assigned.*,
+            authorized_document_assigned_manager.assigned_by_date,
+            authorized_document_assigned_manager.is_archive as assign_archive,
+            authorized_document_assigned_manager.archived_by_date,
+            authorized_document_assigned_manager.assigned_to_sid,
+            authorized_document_assigned_manager.archived_by
+        ');
+        //
+        if ($employees != 'all') {
+            $this->db->where_in('authorized_document_assigned_manager.assigned_to_sid', $employees);
+        }
+        $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->where('documents_assigned.archive', 0);
+        $this->db->where('documents_assigned.document_description like "%{{authorized_editable_date}}%"', null, false);
+        $this->db->where('documents_assigned.authorized_editable_date', null);
+        $this->db->join('documents_assigned', 'documents_assigned.sid = authorized_document_assigned_manager.document_assigned_sid', 'inner');
+        //
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $documents2 = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        $record_arr = array_merge($documents1, $documents2);
         //
         if (empty($record_arr)) {
             return [];
