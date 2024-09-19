@@ -3074,6 +3074,26 @@ class Reports extends Public_Controller
                 }
                 $this->resp();
                 break;
+
+            case 'get_indeed_joobs':
+
+                $indeedJobs = $this->reports_model->getIndeedJobsForReport($formpost);
+                //
+                if (!sizeof($indeedJobs)) {
+                    $this->res['Response'] = 'No Job found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Limit'] = $formpost['limit'];
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $indeedJobs['Data'];
+                //
+                if ($formpost['page'] == 1) {
+                    $this->res['TotalRecords'] = $indeedJobs['Count'];
+                    $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
+                }
+                $this->resp();
+                break;
         }
         //
         $this->resp();
@@ -3797,5 +3817,99 @@ class Reports extends Public_Controller
         } else {
             redirect('login', "refresh");
         }
+    }
+
+    //
+
+
+    //
+    function indeedJobs()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login', "refresh");
+        }
+
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = 'Indeed Jobs Report';
+        $companyinfo = getCompanyInfo($company_sid);
+        $data['companyName'] = $companyinfo['company_name'];
+
+        $data['employerSid'] = $data["session"]["employer_detail"]["sid"];
+
+        //
+        if (sizeof($this->input->post(NULL, TRUE))) {
+            $post = $this->input->post(NULL, TRUE);
+            $post['companySid'] = $company_sid;
+
+            $post['statusAction'] = $post['dd-action'];
+
+            $indeedJobs = $this->reports_model->getIndeedJobsForReport($post);
+
+            if (sizeof($indeedJobs['Data'])) {
+
+                $employeeList = array_column($indeedJobs['Data'], 'sid');
+
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=indeed_jobs_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+                $output = fopen('php://output', 'w');
+
+                fputcsv($output, array($companyinfo['company_name'], '', '', ''));
+
+                fputcsv($output, array(
+                    "Exported By",
+                    $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                ));
+                fputcsv($output, array(
+                    "Export Date",
+                    date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                ));
+
+                fputcsv(
+                    $output,
+                    array(
+                        'Job Title',
+                        'Created On',
+                        'Status'
+                    )
+                );
+
+                //
+                $rows = $indeedJobs['Data'];
+                //
+                foreach ($rows as $row) {
+                    //
+                    $jobStatus = '';
+                    if ($row['is_processed'] == 0 && $row['is_expired'] == 0) {
+                        $jobStatus = 'Pending';
+                    }
+                    if (($row['is_processed'] == 1 && $row['is_expired'] == 0) || ($row['is_processed'] == 1 && $row['is_expired'] == 1)) {
+                        $jobStatus = 'Completed';
+                    }
+                    if ($row['is_processed'] == 0 && $row['is_expired'] == 1) {
+                        $jobStatus = 'Expired';
+                    }
+
+                    //
+                    $a = [];
+                    $a[] = $row['Title'];
+                    $a[] = formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                    $a[] = $jobStatus;
+                    //
+                    fputcsv($output, $a);
+                }
+
+                fclose($output);
+                exit;
+            }
+        }
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('reports/indeed_jobs');
+        $this->load->view('main/footer');
     }
 }

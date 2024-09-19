@@ -3159,4 +3159,100 @@ class Reports_model extends CI_Model
         $r['Data'] = $holderArray;
         return $r;
     }
+
+
+
+    //
+    function getIndeedJobsForReport($post, $csv = false)
+    {
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+        //
+        $filters['status'] = $post['statusAction'];
+        //
+        if ($post['page'] == 1) {
+            //
+            $r['Count'] = $this->getIndeedJobs(
+                $filters,
+                true
+            );
+        }
+        //
+        $holderArray = $this->getIndeedJobs(
+            $filters,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+
+        //
+        $r['Data'] = $holderArray;
+        return $r;
+    }
+
+
+//
+    private function getIndeedJobs(
+        $filters,
+        $doCount = false,
+        $limit = []
+    ) {
+        //
+        if (!$doCount) :
+            $this->db->select('indeed_job_queue.is_processed,indeed_job_queue.is_expired,portal_job_listings.Title,portal_job_listings.activation_date,portal_job_listings.created_at,indeed_job_queue.job_sid');
+        endif;
+
+        $this->db
+            ->from('indeed_job_queue');
+        $this->db->join('portal_job_listings', 'portal_job_listings.sid = indeed_job_queue.job_sid');
+
+        if ($filters['status'] == 'completed') {
+            $this->db->group_start();
+            $this->db->where('indeed_job_queue.is_processed', 1);
+            $this->db->where('indeed_job_queue.is_expired', 0);
+            $this->db->group_end();
+
+            $this->db->or_group_start();
+            $this->db->where('indeed_job_queue.is_processed', 1);
+            $this->db->where('indeed_job_queue.is_expired', 1);
+            $this->db->group_end();
+        }
+
+        if ($filters['status'] == 'expired') {
+            $this->db->group_start();
+            $this->db->where('indeed_job_queue.is_processed', 0);
+            $this->db->where('indeed_job_queue.is_expired', 1);
+            $this->db->group_end();
+        }
+        if ($filters['status'] == 'pending') {
+            $this->db->group_start();
+            $this->db->where('indeed_job_queue.is_processed', 0);
+            $this->db->where('indeed_job_queue.is_expired', 0);
+            $this->db->group_end();
+        }
+
+        //
+        if ($doCount) :
+            return $this->db->count_all_results();
+        endif;
+        //
+        if (isset($limit[0])) :
+            $this->db->limit($limit[0], $limit[1]);
+        endif;
+        //
+
+        $this->db->order_by('portal_job_listings.Title', 'ASC');
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
 }

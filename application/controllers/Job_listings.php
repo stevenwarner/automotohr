@@ -2637,7 +2637,9 @@ class Job_listings extends Public_Controller
                     $job_url = $career_website['sub_domain'] . '/job_details/' . $sid;
                     $job_url = 'https://devsupport.automotohr.com/preview_job/8949/';
                 } else {
-                    $job_url = 'https://' . $career_website['sub_domain'] . '/preview_job/' . $sid;
+                   // $job_url = 'https://' . $career_website['sub_domain'] . '/preview_job/' . $sid;
+                
+                    $job_url = 'http://' . $career_website['sub_domain'] . '/preview_job/' . $sid;
                 }
 
                 $data['career_website'] = $career_website;
