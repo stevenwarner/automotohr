@@ -23,7 +23,8 @@ class message_model extends CI_Model {
         $this->db->where('to_type', 'admin');
         $this->db->where('status', 0);
         $this->db->where('outbox', 0);
-        return $this->db->get('private_message')->num_rows();
+        return $this->db->count_all_results("private_message");
+        // return $this->db->get('private_message')->num_rows();
     }
 
     public function get_messages_total_inbox($admin_id) {
@@ -32,7 +33,8 @@ class message_model extends CI_Model {
         $this->db->where('to_id', $admin_id);
         $this->db->where('to_type', 'admin');
         $this->db->where('outbox', 0);
-        return $this->db->get('private_message')->num_rows();
+        return $this->db->count_all_results("private_message");
+        // return $this->db->get('private_message')->num_rows();
     }
 
     public function get_messages_total_outbox($admin_id) {
@@ -41,7 +43,8 @@ class message_model extends CI_Model {
         $this->db->where('from_id', $admin_id);
         $this->db->where('outbox', 1);
         $this->db->where('from_type', 'admin');
-        return $this->db->get('private_message')->num_rows();
+        return $this->db->count_all_results("private_message");
+        // return $this->db->get('private_message')->num_rows();
     }
 
     public function get_inbox_message_detail($message_id) {
