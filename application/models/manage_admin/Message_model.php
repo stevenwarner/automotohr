@@ -9,7 +9,7 @@ class message_model extends CI_Model {
     public function get_admin_messages($admin_id) {
         $this->db->select('status,username,subject,date,private_message.id as msg_id');
         $this->db->join('users', 'users.sid = private_message.from_id');
-        $this->db->where('to_id', $admin_id);
+        $this->db->where("to_id = '{$admin_id}'");
         $this->db->where('to_type', 'admin');
         $this->db->where('outbox', 0);
         $this->db->order_by("date", "desc");
@@ -19,7 +19,7 @@ class message_model extends CI_Model {
     public function get_admin_messages_total($admin_id) {
         $this->db->select('username,subject,date,private_message.id as msg_id');
         $this->db->join('users', 'users.sid = private_message.from_id');
-        $this->db->where('to_id', $admin_id);
+        $this->db->where("to_id = '{$admin_id}'");
         $this->db->where('to_type', 'admin');
         $this->db->where('status', 0);
         $this->db->where('outbox', 0);
@@ -30,7 +30,7 @@ class message_model extends CI_Model {
     public function get_messages_total_inbox($admin_id) {
         $this->db->select('username,subject,date,private_message.id as msg_id');
         $this->db->join('users', 'users.sid = private_message.from_id');
-        $this->db->where('to_id', $admin_id);
+        $this->db->where("to_id = '{$admin_id}'");
         $this->db->where('to_type', 'admin');
         $this->db->where('outbox', 0);
         return $this->db->count_all_results("private_message");
