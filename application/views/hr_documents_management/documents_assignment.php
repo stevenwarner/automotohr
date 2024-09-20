@@ -2394,6 +2394,11 @@ if ($user_type == 'employee') {
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{authorized_editable_date}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
                                             <input type="text" class="form-control tag" readonly="" value="{{short_text}}">
                                         </div>
                                     </div>
@@ -2410,6 +2415,26 @@ if ($user_type == 'employee') {
                                     <div class="col-md-6">
                                         <div class="form-group autoheight">
                                             <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
+                                        </div>
+                                    </div>
+                                        <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{short_text_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text_area_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight">
+                                            <input type="text" class="form-control tag" readonly="" value="{{checkbox_required}}">
                                         </div>
                                     </div>
                                 </div>
@@ -2788,6 +2813,26 @@ if ($user_type == 'employee') {
                                 <div class="col-md-6">
                                     <div class="form-group autoheight">
                                         <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{short_text_required}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{text_required}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{text_area_required}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group autoheight">
+                                        <input type="text" class="form-control tag" readonly="" value="{{checkbox_required}}">
                                     </div>
                                 </div>
                             </div>

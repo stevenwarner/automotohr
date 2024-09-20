@@ -772,6 +772,26 @@ if (isset($applicant)) {
                                                                     <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
                                                                 </div>
                                                             </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group autoheight">
+                                                                    <input type="text" class="form-control tag" readonly="" value="{{short_text_required}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group autoheight">
+                                                                    <input type="text" class="form-control tag" readonly="" value="{{text_required}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group autoheight">
+                                                                    <input type="text" class="form-control tag" readonly="" value="{{text_area_required}}">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group autoheight">
+                                                                    <input type="text" class="form-control tag" readonly="" value="{{checkbox_required}}">
+                                                                </div>
+                                                            </div>
                                                         </div>
 
                                                     </div>
@@ -1578,6 +1598,26 @@ if (isset($applicant)) {
                                                     <div class="col-md-6">
                                                         <div class="form-group autoheight">
                                                             <input type="text" class="form-control tag" readonly="" value="{{checkbox}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{short_text_required}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{text_required}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{text_area_required}}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group autoheight">
+                                                            <input type="text" class="form-control tag" readonly="" value="{{checkbox_required}}">
                                                         </div>
                                                     </div>
                                                 </div>

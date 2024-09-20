@@ -777,6 +777,11 @@ if (sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_hist
                                             <i class="fa fa-copy cs-copy js-copy"></i>
                                         </div>
                                     </div>
+                                    <div class="form-group autoheight has-copy">
+                                            <input type="text" class="form-control tag" title="Click to copy" readonly="" value="{{authorized_editable_date}}">
+                                            <i class="fa fa-copy cs-copy js-copy"></i>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group autoheight has-copy">
                                             <input type="text" class="form-control tag" title="Click to copy" readonly="" value="{{text}}">
@@ -787,6 +792,26 @@ if (sizeof($assigned_offer_letter_history)) foreach ($assigned_offer_letter_hist
                                         <div class="form-group autoheight has-copy">
                                             <input type="text" class="form-control tag" title="Click to copy" readonly="" value="{{checkbox}}">
                                             <i class="fa fa-copy cs-copy js-copy"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight has-copy">
+                                            <input type="text" class="form-control tag" readonly="" value="{{short_text_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight has-copy">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight has-copy">
+                                            <input type="text" class="form-control tag" readonly="" value="{{text_area_required}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group autoheight has-copy">
+                                            <input type="text" class="form-control tag" readonly="" value="{{checkbox_required}}">
                                         </div>
                                     </div>
                                 </div>
