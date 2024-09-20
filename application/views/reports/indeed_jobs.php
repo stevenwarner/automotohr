@@ -43,9 +43,6 @@
                                                                 </div>
 
 
-
-
-
                                                                 <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                                                     <div class="field-row">
                                                                         <label>Job Title</label>
@@ -89,10 +86,7 @@
                                                                     </select>
                                                                 </div>
 
-
-
                                                             </div>
-
                                                             <div class="row">
 
                                                             </div>
@@ -114,11 +108,12 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row" id='canvasrow' style="display: none;">
-                                    <div class="col-sm-4">
-                                        <canvas id="jsJobsCanvas"></canvas>
-                                        <br>
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-5 pull-left" id="js-jobchart">
+                                        <figure class="highcharts-figure text-left">
+                                            <div id="container"></div>
+                                            <p class="highcharts-description"></p>
+                                        </figure>
                                     </div>
                                 </div>
 
@@ -168,7 +163,6 @@
     </div>
 </div>
 
-
 <div id="my_loader" class="text-center my_loader">
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
     <div class="loader-icon-box">
@@ -178,7 +172,9 @@
     </div>
 </div>
 
-<script language="JavaScript" type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/moment.js"></script>
 <script>
     $(function() {
@@ -228,8 +224,6 @@
 
             $('#js-jobstate').select2('val', 'all');
             $('#js-jobcity').val('');
-
-
 
             pOBJ['fetchReport']['records'] = [];
             pOBJ['fetchReport']['totalPages'] =
@@ -289,7 +283,6 @@
         function fetchReport() {
 
             loader(true);
-            //  filterOBJ.page = pOBJ['fetchReport']['page'];
             //
             $.post(baseHandlerURI, filterOBJ, function(resp) {
                 //
@@ -299,6 +292,48 @@
                     return;
                 }
 
+                pOBJ['fetchReport']['chartrecords'] = resp.chartData;
+
+                //
+                let completedPercent = 0;
+                let pendingPercent = 0;
+                let expiredPercent = 0;
+                pOBJ['fetchReport']['chartrecords'] = resp.chartData;
+
+                let chartTotal = pOBJ.fetchReport.chartrecords.length;
+
+                if (pOBJ.fetchReport.chartrecords.length == 0){
+                    loader(false);
+                   $("#js-jobchart").hide();
+
+                    dataTarget.html('<tr><td colspan="' + ($('thead tr th').length) + '"><p class="alert alert-info text-center">No records match</p></td></tr>');
+                    return;
+                }
+
+                pOBJ.fetchReport.chartrecords.map(function(chartrecord) {
+                    //
+
+                    if (chartrecord.is_processed == 0 && chartrecord.is_expired == 0) {
+                        pendingPercent++;
+                    }
+                    if ((chartrecord.is_processed == 1 && chartrecord.is_expired == 0) || (chartrecord.is_processed == 1 && chartrecord.is_expired == 1)) {
+                        completedPercent++;
+                    }
+                    if (chartrecord.is_processed == 0 && chartrecord.is_expired == 1) {
+                        expiredPercent++;
+                    }
+
+                });
+                $("#js-jobchart").show();
+
+                completedPercent = (completedPercent * 100) / chartTotal;
+                pendingPercent = (pendingPercent * 100) / chartTotal;
+                expiredPercent = (expiredPercent * 100) / chartTotal;
+
+                showChart(Math.round(completedPercent,1), Math.round(pendingPercent,1), Math.round(expiredPercent,1));
+
+                //
+
                 if (resp.Data.length == 0) {
                     loader(false);
                     dataTarget.html('<tr><td colspan="' + ($('thead tr th').length) + '"><p class="alert alert-info text-center">No records match</p></td></tr>');
@@ -306,6 +341,7 @@
                 }
 
                 pOBJ['fetchReport']['records'] = resp.Data;
+
                 if (pOBJ['fetchReport']['page'] == 1) {
                     pOBJ['fetchReport']['limit'] = resp.Limit;
                     pOBJ['fetchReport']['totalPages'] = resp.TotalPages;
@@ -326,49 +362,8 @@
         }
 
         //
-        <?php
-        $totalCompleted = 0;
-        $totalPending = 0;
-        $totalExpited = 0;
-        if (!empty($alljobs)) {
-            foreach ($alljobs as $jobRow) {
-                if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 0) {
-                    $totalPending++;
-                }
-                if (($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 0) || ($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 1)) {
-                    $totalCompleted++;
-                }
-                if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 1) {
-                    $totalExpited++;
-                }
-            }
-        }
-
-        ?>
-
-        loadHourGraph('jsJobsCanvas', {
-            data: {
-                labels: ['Completed', 'Pending', 'Expired'],
-                datasets: [{
-                    label: 'Dataset 1',
-                    data: [
-                        '<?php echo $totalCompleted ?>',
-                        '<?php echo $totalPending ?>',
-                        '<?php echo $totalExpited ?>',
-                    ],
-                    backgroundColor: [
-                        '#81b431',
-                        '#fd7a2a',
-                        '#d9534f',
-                    ],
-                }]
-            },
-            textToShow: "Indeed Jobs"
-        });
-
-
-
         function setTable() {
+
             if (pOBJ.fetchReport.records.length == 0) return;
             //
             var rows = '';
@@ -376,6 +371,7 @@
             let totalCompleted = 0;
             let totalExpited = 0;
             let totalPending = 0;
+
             //
             pOBJ.fetchReport.records.map(function(record) {
                 //
@@ -423,8 +419,6 @@
             });
             //
             dataTarget.html(rows);
-
-            $("#canvasrow").show();
 
             loader(false);
         }
@@ -592,37 +586,6 @@
     }
 
 
-    //
-    function loadHourGraph(ref, options) {
-
-        const config = {
-            type: 'pie',
-            data: options.data,
-
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: options.textToShow
-                    }
-                }
-            },
-        };
-
-
-        if (window.jobsChart != null) {
-            window.jobsChart.destroy();
-        }
-
-        window.jobsChart = new Chart(document.getElementById(ref), config);
-
-    }
-
-
     $('#start_date_applied').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
@@ -642,6 +605,93 @@
             $('#start_date_applied').datepicker('option', 'maxDate', value);
         }
     }).datepicker('option', 'minDate', $('#start_date_applied').val());
+
+
+
+    function showChart(completedPercent, pendingPercent, expiredPercent) {
+        Highcharts.chart('container', {
+            chart: {
+                type: 'pie'
+            },
+            title: {
+                text: 'Indeed Jobs',
+                style: {
+                            fontSize: '1.7em',
+                            
+                        }
+            },
+            tooltip: {
+                valueSuffix: '%',
+                style: {
+                            fontSize: '1.7em',
+                            textOutline: 'none',
+                            opacity: 10,
+                        }
+
+            },
+            subtitle: {
+                text: ''
+            },
+            plotOptions: {
+                series: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: [{
+                        enabled: true,
+                        distance: 20,
+                        style: {
+                            fontSize: '1.7em',
+                            textOutline: 'none',
+                            opacity: 0.7,
+                        }
+
+                    }, {
+                        enabled: true,
+                        distance: -40,
+                        format: '{point.percentage:.1f}%',
+                        style: {
+                            fontSize: '1.7em',
+                            textOutline: 'none',
+                            opacity: 0.7,
+                        },
+                        filter: {
+                            operator: '>',
+                            property: 'percentage',
+                            value: 0
+                        }
+                    }]
+                }
+            },
+            series: [{
+                name: 'Percentage',
+                colorByPoint: true,
+                data: [{
+                        name: 'Completed',
+                        y: completedPercent,
+                        color: '#81b431',
+                    },
+                    {
+                        name: 'Pending',
+                        selected: true,
+                        y: pendingPercent,
+                        color: '#fd7a2a',
+                        style: {
+                            fontSize: '1.7em',
+                            textOutline: 'none',
+                            opacity: 0.7
+                        }
+                    },
+                    {
+                        name: 'Expired',
+                        sliced: true,
+                        y: expiredPercent,
+                        color: '#d9534f',
+                    },
+                ]
+            }]
+        });
+
+    }
 </script>
 
 <style>
@@ -665,4 +715,6 @@
         color: #fff;
         border-color: #81b431;
     }
+
+
 </style>

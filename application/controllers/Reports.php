@@ -3083,10 +3083,12 @@ class Reports extends Public_Controller
                     $this->res['Response'] = 'No Job found.';
                     $this->resp();
                 }
+
                 $this->res['Status'] = true;
                 $this->res['Limit'] = $formpost['limit'];
                 $this->res['Response'] = 'Proceed';
                 $this->res['Data'] = $indeedJobs['Data'];
+                $this->res['chartData'] = $indeedJobs['chartData'];
                 //
                 if ($formpost['page'] == 1) {
                     $this->res['TotalRecords'] = $indeedJobs['Count'];
@@ -3850,10 +3852,7 @@ class Reports extends Public_Controller
         $post['endDate'] = '';
 
 
-
-
-
-        $jobsData = $this->reports_model->getIndeedJobsForReport($post);
+      //  $jobsData = $this->reports_model->getIndeedJobsForReport($post);
 
        // _e($jobsData ,true,true);
 

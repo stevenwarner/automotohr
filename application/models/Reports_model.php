@@ -3196,12 +3196,19 @@ class Reports_model extends CI_Model
             !$csv ? [$offSet, $inSet] : []
         );
         //
-        if (!$holderArray) {
-            return $r;
-        }
 
+        $filters['status'] = 'all';
+
+
+        $chartHolderArray = $this->getIndeedJobs(
+            $filters,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
         //
         $r['Data'] = $holderArray;
+        $r['chartData'] = $chartHolderArray;
+
         return $r;
     }
 
@@ -3223,8 +3230,6 @@ class Reports_model extends CI_Model
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = indeed_job_queue.job_sid');
 
 
-           
-        
         if ($filters['status'] == 'completed') {
             $this->db->group_start();
             $this->db->group_start();
@@ -3256,7 +3261,7 @@ class Reports_model extends CI_Model
             $this->db->like('portal_job_listings.Title', $filters['jobTitle']);
         }
 
-        if ($filters['jobState'] != 'all') { 
+        if ($filters['jobState'] != 'all') {
             $this->db->where('portal_job_listings.Location_State', $filters['jobState']);
         }
 
@@ -3264,7 +3269,7 @@ class Reports_model extends CI_Model
             $this->db->like('portal_job_listings.Location_City', $filters['jobCity']);
         }
 
-        if ($filters['startDate'] != '' && $filters['endDate'] !='') {
+        if ($filters['startDate'] != '' && $filters['endDate'] != '') {
             $this->db->group_start();
             $this->db->where('portal_job_listings.created_at >=', $filters['startDate']);
             $this->db->where('portal_job_listings.created_at <=', $filters['endDate']);
@@ -3284,10 +3289,7 @@ class Reports_model extends CI_Model
 
         $this->db->order_by('portal_job_listings.Title', 'ASC');
         //
-        $result = $this->db->get();
-
-      // $sql = $this->db->last_query();
-      // _e($sql,true,true);
+        $result = $this->db->get();     
 
         //
         return $result ? $result->result_array() : [];
