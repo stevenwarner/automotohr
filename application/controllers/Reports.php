@@ -3842,23 +3842,35 @@ class Reports extends Public_Controller
         $data['employerSid'] = $data["session"]["employer_detail"]["sid"];
         //
         $post['statusAction'] = 'all';
+        $post['jobTitle'] = '';
+        $post['jobCity'] = '';
+        $post['jobState'] = 'all';
 
-       $jobsData = $this->reports_model->getIndeedJobsForReport($post);
+        $post['startDate'] = '';
+        $post['endDate'] = '';
+
+
+
+
+
+        $jobsData = $this->reports_model->getIndeedJobsForReport($post);
+
+       // _e($jobsData ,true,true);
 
         $data['alljobs'] = $jobsData['Data'];
 
         //
         if (sizeof($this->input->post(NULL, TRUE))) {
             $post = $this->input->post(NULL, TRUE);
-            $post['companySid'] = $company_sid;
+            $post['companySid'] = $company_sid;                     
 
-            $post['statusAction'] = $post['statusAction'];
-            $post['jobTitle'] = trim($post['jobTitle']);
-            $post['jobCity'] = trim($post['jobCity']);
-            $post['jobState'] = $post['jobState'];
-            
-            $post['startDate'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
-            $post['endDate'] = formatDateToDB($post['endDate'], SITE_DATE, DB_DATE);
+            $post['statusAction'] = $post['dd-action'];
+            $post['jobTitle'] = trim($post['jobtitle']);
+            $post['jobCity'] = trim($post['jobcity']);
+            $post['jobState'] = $post['jobstate'];
+
+            $post['startDate'] = formatDateToDB($post['start_date_applied'], SITE_DATE, DB_DATE);
+            $post['endDate'] = formatDateToDB($post['end_date_applied'], SITE_DATE, DB_DATE);
 
             $indeedJobs = $this->reports_model->getIndeedJobsForReport($post);
 
@@ -3881,6 +3893,9 @@ class Reports extends Public_Controller
                     "Export Date",
                     date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
                 ));
+
+                fputcsv($output, array('', '', '', ''));
+
 
                 fputcsv(
                     $output,

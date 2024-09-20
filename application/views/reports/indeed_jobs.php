@@ -57,13 +57,13 @@
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                                     <label class="">Start Date</label>
                                                                     <?php $start_date = date('m-1-Y'); ?>
-                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" autocomplete="off" />
+                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="" autocomplete="off" />
                                                                 </div>
 
                                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                                     <label class="">End Date</label>
                                                                     <?php $end_date =  date('m-t-Y'); ?>
-                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" autocomplete="off" />
+                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="" autocomplete="off" />
                                                                 </div>
                                                             </div>
 
@@ -335,7 +335,7 @@
                 if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 0) {
                     $totalPending++;
                 }
-                if (($jobRowrow['is_processed'] == 1 && $jobRow['is_expired'] == 0) || ($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 1)) {
+                if (($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 0) || ($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 1)) {
                     $totalCompleted++;
                 }
                 if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 1) {

@@ -3222,7 +3222,11 @@ class Reports_model extends CI_Model
             ->from('indeed_job_queue');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = indeed_job_queue.job_sid');
 
+
+           
+        
         if ($filters['status'] == 'completed') {
+            $this->db->group_start();
             $this->db->group_start();
             $this->db->where('indeed_job_queue.is_processed', 1);
             $this->db->where('indeed_job_queue.is_expired', 0);
@@ -3231,6 +3235,7 @@ class Reports_model extends CI_Model
             $this->db->or_group_start();
             $this->db->where('indeed_job_queue.is_processed', 1);
             $this->db->where('indeed_job_queue.is_expired', 1);
+            $this->db->group_end();
             $this->db->group_end();
         }
 
@@ -3247,12 +3252,11 @@ class Reports_model extends CI_Model
             $this->db->group_end();
         }
 
-
         if ($filters['jobTitle'] != '') {
             $this->db->like('portal_job_listings.Title', $filters['jobTitle']);
         }
 
-        if ($filters['jobState'] != 'all') {
+        if ($filters['jobState'] != 'all') { 
             $this->db->where('portal_job_listings.Location_State', $filters['jobState']);
         }
 
@@ -3260,7 +3264,7 @@ class Reports_model extends CI_Model
             $this->db->like('portal_job_listings.Location_City', $filters['jobCity']);
         }
 
-        if ($filters['startDate'] != '' && $filters['endDate']) {
+        if ($filters['startDate'] != '' && $filters['endDate'] !='') {
             $this->db->group_start();
             $this->db->where('portal_job_listings.created_at >=', $filters['startDate']);
             $this->db->where('portal_job_listings.created_at <=', $filters['endDate']);
@@ -3281,6 +3285,10 @@ class Reports_model extends CI_Model
         $this->db->order_by('portal_job_listings.Title', 'ASC');
         //
         $result = $this->db->get();
+
+      // $sql = $this->db->last_query();
+      // _e($sql,true,true);
+
         //
         return $result ? $result->result_array() : [];
     }
