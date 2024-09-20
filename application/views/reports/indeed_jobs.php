@@ -30,7 +30,7 @@
                                                             <!-- Filter first row -->
                                                             <div class="row">
 
-                                                                <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                                                     <div class="field-row">
                                                                         <label>Status</label>
                                                                         <select id="js-action" name="dd-action">
@@ -42,10 +42,62 @@
                                                                     </div>
                                                                 </div>
 
+
+
+
+
+                                                                <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                                    <div class="field-row">
+                                                                        <label>Job Title</label>
+                                                                        <input type="text" id="js-jobtitle" name="jobtitle" value="" class="invoice-fields" />
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                    <label class="">Start Date</label>
+                                                                    <?php $start_date = date('m-1-Y'); ?>
+                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" autocomplete="off" />
+                                                                </div>
+
+                                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                                                    <label class="">End Date</label>
+                                                                    <?php $end_date =  date('m-t-Y'); ?>
+                                                                    <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" autocomplete="off" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                                <div class="field-row" style="margin-left:-12px;">
+                                                                    <label>City</label>
+                                                                    <input type="text" id="js-jobcity" name="jobcity" value="" class="invoice-fields" />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+                                                                <div class="field-row">
+                                                                    <label>State</label>
+                                                                    <select id="js-jobstate" name="jobstate">
+                                                                        <option value="all">All</option>
+                                                                        <?php
+                                                                        $states = db_get_active_states(227);
+                                                                        foreach ($states as $stateRow) {
+                                                                        ?>
+                                                                            <option value="<?php echo $stateRow['sid']; ?>"><?php echo $stateRow['state_name']; ?></option>
+                                                                        <?php } ?>
+
+                                                                    </select>
+                                                                </div>
+
+
+
                                                             </div>
 
                                                             <div class="row">
 
+                                                            </div>
+
+                                                            <div class="row">
                                                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-5 pull-right">
                                                                     <div class="pull-right" style="margin-top: 30px;">
                                                                         <a id="js-apply-filter" class="btn btn-success " href="javascript:void()">Apply Filters</a> &nbsp;&nbsp;
@@ -53,7 +105,6 @@
                                                                         <button type="submit" id="js-export" class="btn btn-success ">Export CSV</button>
                                                                     </div>
                                                                 </div>
-
                                                             </div>
 
                                                         </form>
@@ -64,13 +115,11 @@
                                     </div>
                                 </div>
 
-
                                 <div class="row" id='canvasrow' style="display: none;">
                                     <div class="col-sm-4">
                                         <canvas id="jsJobsCanvas"></canvas>
                                         <br>
                                     </div>
-
                                 </div>
 
                                 <div class="row">
@@ -173,6 +222,14 @@
             e.preventDefault();
             is_filter = false;
             $('#js-action').select2('val', 'all');
+            $('#js-jobtitle').val('');
+            $('#start_date_applied').val('');
+            $('#end_date_applied').val('');
+
+            $('#js-jobstate').select2('val', 'all');
+            $('#js-jobcity').val('');
+
+
 
             pOBJ['fetchReport']['records'] = [];
             pOBJ['fetchReport']['totalPages'] =
@@ -182,6 +239,13 @@
 
 
             filterOBJ.statusAction = $('#js-action').val();
+            filterOBJ.jobTitle = $('#js-jobtitle').val();
+            filterOBJ.startDate = $('#start_date_applied').val();
+            filterOBJ.endDate = $('#end_date_applied').val();
+
+            filterOBJ.jobCity = $('#js-jobcity').val();
+            filterOBJ.jobState = $('#js-jobstate').val();
+
 
             $('.js-ip-pagination').html('');
             dataTarget.html('');
@@ -200,6 +264,11 @@
             pOBJ['fetchReport']['page'] = 1;
 
             filterOBJ.statusAction = $('#js-action').val();
+            filterOBJ.jobTitle = $('#js-jobtitle').val();
+            filterOBJ.startDate = $('#start_date_applied').val();
+            filterOBJ.endDate = $('#end_date_applied').val();
+            filterOBJ.jobCity = $('#js-jobcity').val();
+            filterOBJ.jobState = $('#js-jobstate').val();
 
             $('.js-ip-pagination').html('');
             dataTarget.html('');
@@ -209,7 +278,10 @@
         //
         function fetchFilter() {
             $('#js-action').select2({
-                closeOnSelect: false
+                closeOnSelect: true
+            });
+            $('#js-jobstate').select2({
+                closeOnSelect: true
             });
         }
 
@@ -217,7 +289,7 @@
         function fetchReport() {
 
             loader(true);
-            filterOBJ.page = pOBJ['fetchReport']['page'];
+            //  filterOBJ.page = pOBJ['fetchReport']['page'];
             //
             $.post(baseHandlerURI, filterOBJ, function(resp) {
                 //
@@ -254,6 +326,48 @@
         }
 
         //
+        <?php
+        $totalCompleted = 0;
+        $totalPending = 0;
+        $totalExpited = 0;
+        if (!empty($alljobs)) {
+            foreach ($alljobs as $jobRow) {
+                if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 0) {
+                    $totalPending++;
+                }
+                if (($jobRowrow['is_processed'] == 1 && $jobRow['is_expired'] == 0) || ($jobRow['is_processed'] == 1 && $jobRow['is_expired'] == 1)) {
+                    $totalCompleted++;
+                }
+                if ($jobRow['is_processed'] == 0 && $jobRow['is_expired'] == 1) {
+                    $totalExpited++;
+                }
+            }
+        }
+
+        ?>
+
+        loadHourGraph('jsJobsCanvas', {
+            data: {
+                labels: ['Completed', 'Pending', 'Expired'],
+                datasets: [{
+                    label: 'Dataset 1',
+                    data: [
+                        '<?php echo $totalCompleted ?>',
+                        '<?php echo $totalPending ?>',
+                        '<?php echo $totalExpited ?>',
+                    ],
+                    backgroundColor: [
+                        '#81b431',
+                        '#fd7a2a',
+                        '#d9534f',
+                    ],
+                }]
+            },
+            textToShow: "Indeed Jobs"
+        });
+
+
+
         function setTable() {
             if (pOBJ.fetchReport.records.length == 0) return;
             //
@@ -311,26 +425,6 @@
             dataTarget.html(rows);
 
             $("#canvasrow").show();
-
-            loadHourGraph('jsJobsCanvas', {
-                data: {
-                    labels: ['Completed', 'Pending', 'Expired'],
-                    datasets: [{
-                        label: 'Dataset 1',
-                        data: [
-                            totalCompleted,
-                            totalPending,
-                            totalExpited,
-                        ],
-                        backgroundColor: [
-                            '#81b431',
-                            '#fd7a2a',
-                            '#f2dede',
-                        ],
-                    }]
-                },
-                textToShow: "Indeed Jobs"
-            });
 
             loader(false);
         }
@@ -527,6 +621,27 @@
         window.jobsChart = new Chart(document.getElementById(ref), config);
 
     }
+
+
+    $('#start_date_applied').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>",
+        onSelect: function(value) {
+            $('#end_date_applied').datepicker('option', 'minDate', value);
+        }
+    }).datepicker('option', 'maxDate', $('#end_date_applied').val());
+
+    $('#end_date_applied').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>",
+        onSelect: function(value) {
+            $('#start_date_applied').datepicker('option', 'maxDate', value);
+        }
+    }).datepicker('option', 'minDate', $('#start_date_applied').val());
 </script>
 
 <style>

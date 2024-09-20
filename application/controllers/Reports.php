@@ -3840,15 +3840,28 @@ class Reports extends Public_Controller
         $data['companyName'] = $companyinfo['company_name'];
 
         $data['employerSid'] = $data["session"]["employer_detail"]["sid"];
+        //
+        $post['statusAction'] = 'all';
+
+       $jobsData = $this->reports_model->getIndeedJobsForReport($post);
+
+        $data['alljobs'] = $jobsData['Data'];
 
         //
         if (sizeof($this->input->post(NULL, TRUE))) {
             $post = $this->input->post(NULL, TRUE);
             $post['companySid'] = $company_sid;
 
-            $post['statusAction'] = $post['dd-action'];
+            $post['statusAction'] = $post['statusAction'];
+            $post['jobTitle'] = trim($post['jobTitle']);
+            $post['jobCity'] = trim($post['jobCity']);
+            $post['jobState'] = $post['jobState'];
+            
+            $post['startDate'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
+            $post['endDate'] = formatDateToDB($post['endDate'], SITE_DATE, DB_DATE);
 
             $indeedJobs = $this->reports_model->getIndeedJobsForReport($post);
+
 
             if (sizeof($indeedJobs['Data'])) {
 

@@ -3174,6 +3174,13 @@ class Reports_model extends CI_Model
 
         //
         $filters['status'] = $post['statusAction'];
+        $filters['jobTitle'] = trim($post['jobTitle']);
+        $filters['jobCity'] = trim($post['jobCity']);
+        $filters['jobState'] = $post['jobState'];
+
+        $filters['startDate'] = formatDateToDB($post['startDate'], SITE_DATE, DB_DATE);
+        $filters['endDate'] = formatDateToDB($post['endDate'], SITE_DATE, DB_DATE);
+
         //
         if ($post['page'] == 1) {
             //
@@ -3199,7 +3206,7 @@ class Reports_model extends CI_Model
     }
 
 
-//
+    //
     private function getIndeedJobs(
         $filters,
         $doCount = false,
@@ -3209,6 +3216,7 @@ class Reports_model extends CI_Model
         if (!$doCount) :
             $this->db->select('indeed_job_queue.is_processed,indeed_job_queue.is_expired,portal_job_listings.Title,portal_job_listings.activation_date,portal_job_listings.created_at,indeed_job_queue.job_sid');
         endif;
+
 
         $this->db
             ->from('indeed_job_queue');
@@ -3238,6 +3246,27 @@ class Reports_model extends CI_Model
             $this->db->where('indeed_job_queue.is_expired', 0);
             $this->db->group_end();
         }
+
+
+        if ($filters['jobTitle'] != '') {
+            $this->db->like('portal_job_listings.Title', $filters['jobTitle']);
+        }
+
+        if ($filters['jobState'] != 'all') {
+            $this->db->where('portal_job_listings.Location_State', $filters['jobState']);
+        }
+
+        if ($filters['jobCity'] != '') {
+            $this->db->like('portal_job_listings.Location_City', $filters['jobCity']);
+        }
+
+        if ($filters['startDate'] != '' && $filters['endDate']) {
+            $this->db->group_start();
+            $this->db->where('portal_job_listings.created_at >=', $filters['startDate']);
+            $this->db->where('portal_job_listings.created_at <=', $filters['endDate']);
+            $this->db->group_end();
+        }
+
 
         //
         if ($doCount) :
