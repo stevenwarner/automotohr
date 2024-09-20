@@ -88,7 +88,7 @@ if (!function_exists('curl_make_api_call')) {
             $from_name = ucwords(STORE_DOMAIN);
             $body = $emailTemplateBody;
             //
-            sendMail($from, $to, $subject, $body, $from_name); 
+            // sendMail($from, $to, $subject, $body, $from_name); 
             sendMail($from, 'mubashar.ahmed@egenienext.com', $subject, $body, $from_name); 
         }
 
