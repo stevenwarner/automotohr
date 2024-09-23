@@ -719,6 +719,14 @@ class Indeed_model extends CI_Model
         int $jobId,
         int $companyId
     ): array {
+        // check if company is approved
+        if (!$this->checkIfCompanyIsAllowed($companyId)) {
+            return [
+                "errors" => [
+                    "Company is not allowed"
+                ]
+            ];
+        }
         //
         // check if job is allowed to be added to queue
         if (!$this->getJobApprovalStatus($companyId, $jobId)) {
@@ -766,6 +774,14 @@ class Indeed_model extends CI_Model
         int $jobId,
         int $companyId
     ): array {
+        // check if company is approved
+        if (!$this->checkIfCompanyIsAllowed($companyId)) {
+            return [
+                "errors" => [
+                    "Company is not allowed"
+                ]
+            ];
+        }
         // check if job is allowed to be added to queue
         if (!$this->getJobApprovalStatus($companyId, $jobId)) {
             return ["errors" => [
