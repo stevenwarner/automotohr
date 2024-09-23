@@ -936,6 +936,7 @@ class Company_model extends CI_Model
     {
         $this->db->select('users.*');
         $this->db->select('portal_employer.enable_captcha');
+        $this->db->select('portal_employer.indeed_job_sync');
         $this->db->select('products.name as package_name');
         $this->db->select('products.short_description as package_description');
         $this->db->select('products.includes_facebook_api as package_includes_facebook_api');
@@ -3445,5 +3446,27 @@ class Company_model extends CI_Model
     {
         $this->db->where('user_sid', $sid);
         $this->db->update('portal_employer', $data);
+    }
+
+    /**
+     * Set Indeed job sync & disposition API
+     *
+     * @param int $companyId
+     * @param int $selectedOption
+     */
+    public function setIndeedJobSyncAndDispositionApi(
+        int $companyId,
+        int $selectedOption
+    ) {
+        // update the record
+        $this
+            ->db
+            ->where("user_sid", $companyId)
+            ->update(
+                "portal_employer",
+                [
+                    "indeed_job_sync" => $selectedOption
+                ]
+            );
     }
 }

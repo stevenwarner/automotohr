@@ -1176,6 +1176,12 @@ class Indeed_model extends CI_Model
     public function getJobQueueForActiveJobs(
         int $numberOfJobs
     ) {
+        // get the list of activated companies
+        $companiesList = $this->getCompaniesForIndeedJobSync();
+        //
+        if (!$companiesList) {
+            return [];
+        }
         // we are not adding the any active or organic
         // filter here as the jobs are add while checking the filter
         $o = $this
@@ -1210,6 +1216,7 @@ class Indeed_model extends CI_Model
                 "states.sid = portal_job_listings.Location_State",
                 "inner"
             )
+            ->where_in("portal_job_listings.user_sid", $companiesList)
             ->where([
                 "indeed_job_queue.is_processing" => 0,
                 "indeed_job_queue.is_processed" => 0,
@@ -1466,5 +1473,22 @@ class Indeed_model extends CI_Model
             ->db
             ->where("sid", $jobQueueId)
             ->delete("indeed_job_queue");
+    }
+
+    /**
+     * get the companies with Indeed job sync activated
+     *
+     * @return array Containing the company ids
+     */
+    private function getCompaniesForIndeedJobSync(): array
+    {
+        $records = $this
+            ->db
+            ->select("user_sid")
+            ->where("indeed_job_sync", 1)
+            ->get("portal_employer")
+            ->result_array();
+        //
+        return !$records ? [] : array_column($records, "user_sid");
     }
 }

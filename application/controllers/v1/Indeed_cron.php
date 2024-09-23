@@ -188,18 +188,6 @@ class Indeed_cron extends CI_Controller
         // set the job uuid and publish date
         $this->job["uuid"] = $this->job['job_sid'];
         $this->job["publishDate"] = $this->job['activation_date'];
-        // check if there is uuid present
-        $feedData = $this
-            ->all_feed_model
-            ->fetch_uid_from_job_sid(
-                $this->job["uuid"]
-            );
-
-        if ($feedData) {
-            // set to new uuid and publish date
-            $this->job["uuid"] = $feedData['uid'];
-            $this->job["publishDate"] = $feedData['publish_date'];
-        }
     }
 
     /**
@@ -270,7 +258,7 @@ class Indeed_cron extends CI_Controller
         $employerDetails = $this->portalData[$this->job["user_sid"]];
         //
         $this->job["data"] = [
-            '\title' => $this->job["Title"] . " dev",
+            '\title' => $this->job["Title"],
             '\description' => $this->getDescription(),
             '\country' => "US",
             '\cityRegionPostal' => $this->getRegionPostal(),
@@ -280,15 +268,18 @@ class Indeed_cron extends CI_Controller
             '\period' => $salaryArray["period"],
             '\companyName' => $employerDetails["CompanyName"],
             '\sourceName' => "automotohr-sandbox",
-            // '\sourceName' => $employerDetails["CompanyName"],
+            '\sourceName' => $employerDetails["CompanyName"],
             '\sourceType' => 'Employer',
             '\contactName' => "",
             '\contactEmail' => "",
             '\contactPhone' => "",
             '\jobPostingId' => $this->job["uuid"],
-            '\datePublished' => formatDateToDB(
+            '\datePublished' => convertTimeZone(
                 $this->job["publishDate"],
                 DB_DATE_WITH_TIME,
+                "PST",
+                "UTC",
+                true,
                 "Y-m-d\TH:i\Z"
             ),
             '\url' => $this->getJobURL(),
