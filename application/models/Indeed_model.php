@@ -969,7 +969,7 @@ class Indeed_model extends CI_Model
         }
         // get company approval status
         if (!$this->getCompanyJobApprovalStatus($companyId)) {
-            return false;
+            return true;
         }
         // get job approval status
         return (bool)$this->db
