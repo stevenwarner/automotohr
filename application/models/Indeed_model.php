@@ -1608,8 +1608,6 @@ class Indeed_model extends CI_Model
 
                 "portal_job_listings.user_sid",
                 "portal_job_listings.Title",
-                "portal_job_listings.SalaryType",
-                "portal_job_listings.Salary",
             ])
             ->join(
                 "indeed_job_queue_tracking",
@@ -1672,5 +1670,23 @@ class Indeed_model extends CI_Model
             "portal_job_listings.sid = indeed_job_queue.job_sid",
             "inner"
         );
+    }
+
+    /**
+     * get the Indeed queue
+     *
+     * @param int $logId
+     *
+     * @return array
+     */
+    public function getLogById(int $logId)
+    {
+        // add columns to be selected
+        return $this
+            ->db
+            ->where("sid", $logId)
+            ->limit(1)
+            ->get("automotohr_logs.indeed_api_logs")
+            ->row_array();
     }
 }

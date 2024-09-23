@@ -211,7 +211,7 @@
                                                         $companyCache[$v0["user_sid"]] =
                                                             $companyCache[$v0["user_sid"]] ?? getCompanyColumnById($v0["user_sid"], "CompanyName")["CompanyName"];
                                                     ?>
-                                                        <tr data-id="<?=$v0["sid"];?>">
+                                                        <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>">
                                                             <td>
                                                                 <strong>
                                                                     <?= $v0["Title"]; ?>
@@ -244,10 +244,10 @@
                                                             </td>
                                                             <td class="text-right">
                                                                 <?php if ($v0["log_sid"]): ?>
-                                                                    <!-- <button class="btn btn-success">
+                                                                    <button class="btn btn-success jsButton" data-target="log">
                                                                         <i class="fa fa-eye"></i>
                                                                         Log
-                                                                    </button> -->
+                                                                    </button>
                                                                 <?php endif; ?>
                                                                 <!-- <button class="btn btn-success">
                                                                     <i class="fa fa-eye"></i>
@@ -294,6 +294,10 @@
 </div>
 
 
+<link rel="stylesheet" href="<?= base_url("public/v1/plugins/ms_modal/main.min.css"); ?>">
+<script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
+
+
 <script>
     $(function() {
         $("#jsCompanies").select2({
@@ -334,6 +338,47 @@
             }
 
             return date;
+        }
+
+
+
+        $(".jsButton").click(function(event) {
+            event.preventDefault();
+
+            const recordId = $(this).closest("tr").data("id");
+            const logId = $(this).closest("tr").data("logid");
+            const target = $(this).data("target");
+
+            Modal({
+                    Id: "jsModal",
+                    Title: "",
+                    Loader: "jsModalLoader",
+                    Body: '<div id="jsModalBody"></div>'
+                },
+                function() {
+                    if (target === "log") {
+                        loadLog(logId)
+                    }
+                }
+            );
+        });
+
+
+        // load log
+        function loadLog(logId) {
+            $
+                .ajax({
+                    url: window.location.origin + "/manage_admin/reports/indeed/log/" + logId,
+                    method: "GET"
+                })
+                .fail(function() {
+                    $("#jsModal .jsModalCancel").click();
+                    alert("Something went wrong!");
+                })
+                .success(function(resp) {
+                    $("#jsModalBody").html(resp.view);
+                    $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
+                });
         }
     })
 </script>

@@ -99,4 +99,21 @@ class Indeed_reporting extends Admin_Controller
             );
         $this->render('manage_admin/reports/indeed_report');
     }
+
+    public function log(int $logId)
+    {
+        // get the log from logId
+        $record = $this
+            ->indeed_model
+            ->getLogById(
+                $logId
+            );
+
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/reports/indeed_log", ["record" => $record], true)
+            ]
+        );
+    }
 }
