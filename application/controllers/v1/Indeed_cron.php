@@ -267,7 +267,6 @@ class Indeed_cron extends CI_Controller
             '\maximumMinor' => $salaryArray["max"],
             '\period' => $salaryArray["period"],
             '\companyName' => $employerDetails["CompanyName"],
-            '\sourceName' => "automotohr-sandbox",
             '\sourceName' => $employerDetails["CompanyName"],
             '\sourceType' => 'Employer',
             '\contactName' => "",
@@ -289,6 +288,10 @@ class Indeed_cron extends CI_Controller
             '\resumeRequired' => "YES",
             '\phoneRequired' => "YES",
         ];
+
+        if (!$employerDetails["is_paid"]) {
+            $this->job["data"]["\sourceName"] = "automotohr-sandbox";
+        }
     }
 
     /**

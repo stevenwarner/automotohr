@@ -538,9 +538,9 @@ class Indeed_model extends CI_Model
      */
     public function pushTheApplicantStatus(
         string $status,
-        int $applicantListId
+        int $applicantListId,
+        int $companyId
     ) {
-        return ["success" => true];
         // check if an applicant has Indeed ATS Id
         if (!$this->db
             ->where("sid", $applicantListId)
@@ -548,6 +548,12 @@ class Indeed_model extends CI_Model
             ->count_all_results("portal_applicant_jobs_list")) {
             return [
                 "error" => "Indeed ATS id not found."
+            ];
+        }
+        // check if company is allowed
+        if (!$this->checkIfCompanyIsAllowed($companyId)) {
+            return [
+                "error" => "Company not allowed."
             ];
         }
         // get the indeed ats id
@@ -779,7 +785,13 @@ class Indeed_model extends CI_Model
         }
         // check if the job is processed
         if ($this->db
+            ->group_start()
             ->where("is_processed", 1)
+            ->or_group_start()
+            ->where("is_processing", 1)
+            ->where("has_errors", 1)
+            ->group_end()
+            ->group_end()
             ->where("job_sid", $jobId)
             ->count_all_results("indeed_job_queue")
         ) {
@@ -820,15 +832,11 @@ class Indeed_model extends CI_Model
                         "updated_at" => $dateWithTime,
                     ]
                 );
-            // manage the counter
-            $this->updateJobQueueCount(1, "total_unprocessed_jobs", "+");
-            $this->updateJobQueueCount(1, "total_processed_jobs", "-");
             //
             return [
                 "success" => "The job is successfully updated to the queue."
             ];
         }
-        $this->updateJobQueueCount(1, "total_expired_jobs", "-");
         // update the record
         $this->db
             ->where("job_sid", $jobId)
@@ -906,13 +914,6 @@ class Indeed_model extends CI_Model
                     "indeed_job_queue",
                     $updateArray
                 );
-            // increase the expire counter
-            $this->updateJobQueueCount(1, "total_expired_jobs", "+");
-            //
-            if ($isProcessed) {
-                $this->updateJobQueueCount(1, "total_processed_jobs", "-");
-                $this->updateJobQueueCount(1, "total_unprocessed_jobs", "+");
-            }
             //
             return [
                 "success" => "The job is added to be expired."
@@ -1250,12 +1251,6 @@ class Indeed_model extends CI_Model
                 ]
             );
         //
-        $this->updateJobQueueCount(
-            count($queueIds),
-            "total_processing_jobs",
-            "+"
-        );
-        //
         return $d;
     }
 
@@ -1268,6 +1263,7 @@ class Indeed_model extends CI_Model
             ->select([
                 "portal_employer.user_sid",
                 "portal_employer.sub_domain",
+                "users.is_paid",
                 "users.CompanyName",
                 "users.has_job_approval_rights",
             ])
@@ -1688,5 +1684,17 @@ class Indeed_model extends CI_Model
             ->limit(1)
             ->get("automotohr_logs.indeed_api_logs")
             ->row_array();
+    }
+
+
+    public function checkIfCompanyIsAllowed(int $companyId)
+    {
+        return $this
+            ->db
+            ->where([
+                "user_sid" => $companyId,
+                "indeed_job_sync" => 1
+            ])
+            ->count_all_results("portal_employer");
     }
 }

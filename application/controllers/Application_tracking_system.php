@@ -157,7 +157,8 @@ class Application_tracking_system extends Public_Controller
                 $this->load->model("indeed_model");
                 $this->indeed_model->pushTheApplicantStatus(
                     $status,
-                    $sid
+                    $sid,
+                    $company_sid
                 );
                 echo 'Done';
                 exit;
@@ -171,7 +172,8 @@ class Application_tracking_system extends Public_Controller
                 $this->load->model("indeed_model");
                 $this->indeed_model->pushTheApplicantStatus(
                     $status,
-                    $sid
+                    $sid,
+                    $company_sid
                 );
                 echo 'Done';
                 exit;
