@@ -35,6 +35,8 @@ if (!function_exists('curl_make_api_call')) {
 
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 
         $result = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -88,7 +90,7 @@ if (!function_exists('curl_make_api_call')) {
             $from_name = ucwords(STORE_DOMAIN);
             $body = $emailTemplateBody;
             //
-            // sendMail($from, $to, $subject, $body, $from_name); 
+            sendMail($from, $to, $subject, $body, $from_name); 
             sendMail($from, 'mubashar.ahmed@egenienext.com', $subject, $body, $from_name); 
         }
 
