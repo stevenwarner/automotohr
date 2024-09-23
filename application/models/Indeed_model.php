@@ -1491,4 +1491,186 @@ class Indeed_model extends CI_Model
         //
         return !$records ? [] : array_column($records, "user_sid");
     }
+
+    /**
+     * get the Indeed queue
+     *
+     * @param array $filter
+     * companies
+     * status
+     * startDate
+     * endDate
+     * @param int $numberOfRecords
+     *
+     * @return int|array
+     */
+    public function getQueueRecordCount(array $filter)
+    {
+        // set return array
+        $returnArray = [
+            "records" => 0,
+            "processed" => 0,
+            "processing" => 0,
+            "pending" => 0,
+            "expired" => 0,
+            "errors" => 0,
+            "companies" => 0,
+        ];
+        // get the total records
+        $this->setWhere($filter);
+        $returnArray["records"] = $this
+            ->db
+            ->count_all_results("indeed_job_queue");
+
+        // get the total processed
+        $this->setWhere($filter);
+        $returnArray["processed"] = $this
+            ->db
+            ->where("is_processed", 1)
+            ->count_all_results("indeed_job_queue");
+
+        // get the total processing
+        $this->setWhere($filter);
+        $returnArray["processing"] = $this
+            ->db
+            ->where("is_processing", 1)
+            ->where("is_processed", 0)
+            ->where("has_errors", 0)
+            ->count_all_results("indeed_job_queue");
+
+        // get the total expired
+        $this->setWhere($filter);
+        $returnArray["expired"] = $this
+            ->db
+            ->where(
+                "is_expired",
+                1
+            )
+            ->count_all_results("indeed_job_queue");
+
+        // get the total errors
+        $this->setWhere($filter);
+        $returnArray["errors"] = $this
+            ->db
+            ->where(
+                "has_errors",
+                1
+            )
+            ->count_all_results("indeed_job_queue");
+
+        // get the total pending
+        $this->setWhere($filter);
+        $returnArray["pending"] = $this
+            ->db
+            ->where(
+                "is_processing",
+                0
+            )
+            ->count_all_results("indeed_job_queue");
+
+        return $returnArray;
+    }
+
+    /**
+     * get the Indeed queue
+     *
+     * @param array $filter
+     * companies
+     * status
+     * startDate
+     * endDate
+     * @param int $limit
+     * @param int $offset
+     *
+     * @return int|array
+     */
+    public function getQueueRecords(array $filter, int $limit, int $offset)
+    {
+        // set the filter
+        $this->setWhere($filter);
+        // add columns to be selected
+        return $this
+            ->db
+            ->select([
+                "indeed_job_queue.sid",
+                "indeed_job_queue.job_sid",
+                "indeed_job_queue.is_processed",
+                "indeed_job_queue.processed_at",
+                "indeed_job_queue.is_expired",
+                "indeed_job_queue.has_errors",
+                "indeed_job_queue.is_processing",
+                "indeed_job_queue.log_sid",
+                "indeed_job_queue.created_at",
+                "indeed_job_queue.updated_at",
+
+                "indeed_job_queue_tracking.indeed_posting_id",
+                "indeed_job_queue_tracking.tracking_key",
+
+                "portal_job_listings.user_sid",
+                "portal_job_listings.Title",
+                "portal_job_listings.SalaryType",
+                "portal_job_listings.Salary",
+            ])
+            ->join(
+                "indeed_job_queue_tracking",
+                "indeed_job_queue_tracking.job_sid = indeed_job_queue.job_sid
+                AND indeed_job_queue_tracking.is_deleted = 0",
+                "left"
+            )
+            ->order_by("indeed_job_queue.sid", "DESC")
+            ->limit($limit, $offset)
+            ->get("indeed_job_queue")
+            ->result_array();
+    }
+
+    /**
+     * set where for getting jobs
+     *
+     * @param array $filter
+     */
+    private function setWhere(array $filter)
+    {
+        // extract array index
+        extract($filter);
+        $startDate = $startDate ? formatDateToDB($startDate) : $startDate;
+        $endDate = $endDate ? formatDateToDB($endDate) : $endDate;
+        // companies filter
+        if ($companies && !in_array("All", $companies)) {
+            $this->db->where_in("portal_job_listings.user_sid", $companies);
+        }
+        // status filter
+        if ($status && !in_array("All", $status)) {
+            $this->db->group_start();
+            if (in_array("Processed", $status)) {
+                $this->db->or_where("indeed_job_queue.is_processed", 1);
+            }
+            if (in_array("Processing", $status)) {
+                $this->db->or_where("indeed_job_queue.is_processing", 1);
+            }
+            if (in_array("Expired", $status)) {
+                $this->db->or_where("indeed_job_queue.is_expired", 1);
+            }
+            if (in_array("Errors", $status)) {
+                $this->db->or_where("indeed_job_queue.has_errors", 1);
+            }
+            if (in_array("Pending", $status)) {
+                $this->db->or_where("indeed_job_queue.is_processing", 0);
+            }
+            $this->db->group_end();
+        }
+        // dates filter
+        if ($startDate && $endDate) {
+            $this->db->where("indeed_job_queue.updated_at >= '{$startDate}' AND indeed_job_queue.updated_at <= '{$endDate}'");
+        } elseif ($startDate) {
+            $this->db->where("indeed_job_queue.updated_at >= '{$startDate}'");
+        } elseif ($endDate) {
+            $this->db->where("indeed_job_queue.updated_at <= '{$endDate}'");
+        }
+        // add the join
+        $this->db->join(
+            "portal_job_listings",
+            "portal_job_listings.sid = indeed_job_queue.job_sid",
+            "inner"
+        );
+    }
 }

@@ -2374,12 +2374,6 @@ $route["payrolls/ledger/import"]["get"] = "v1/payrolls/Ledger/import";
 $route['import-ledger/handler'] = 'v1/payrolls/Ledger/handler';
 
 
-
-/**
- * CRON job links
- */
-// Indeed cron job link
-$route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
 //
 
 $route['payrolls/ledger'] = 'v1/payrolls/Ledger/ledger';
@@ -2398,3 +2392,13 @@ $route['get_ledger_brakdown/(:num)/(:num)/(:num)/(:num)']['get'] = 'v1/payrolls/
 
 
 $route['manage_admin/companies/ajax_change_general_documents_status'] = 'manage_admin/companies/changeGeneralDocumentsStatus';
+
+// Indeed reporting system
+$route['manage_admin/reports/indeed'] = 'manage_admin/reports/Indeed_reporting/index';
+$route['manage_admin/reports/indeed/(:num)'] = 'manage_admin/reports/Indeed_reporting/index/$1';
+
+/**
+ * CRON job links
+ */
+// Indeed cron job link
+$route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
