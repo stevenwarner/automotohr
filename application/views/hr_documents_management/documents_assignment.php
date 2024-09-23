@@ -2527,7 +2527,7 @@ if ($user_type == 'employee') {
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                 <div class="form-group">
                                     <label>Employer’s name <span class="cs-required">*</span></label>
-                                    <input type="text" id="emp-name" name="emp_name" value="<?php echo $popup_emp_name != '' ? $popup_emp_name : $employerPrefill['CompanyName']; ?>" class="form-control" />
+                                    <input type="text" id="emp-name" name="emp_name" value="<?php echo $popup_emp_name != '' ? $popup_emp_name : $employerPrefill['company_corp_name']; ?>" class="form-control" />
                                     <label id="emp-name-error" class="error"></label>
                                 </div>
                             </div>

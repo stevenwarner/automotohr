@@ -2731,7 +2731,8 @@ if (!function_exists("getDataForEmployerPrefill")) {
                 users.ssn,
                 states.state_code,
                 users.Location_Address_2,
-                users.extra_info
+                users.extra_info,
+                users.company_corp_name
             ')
             ->join(
                 "states",

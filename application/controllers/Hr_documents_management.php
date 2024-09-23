@@ -2034,6 +2034,7 @@ class Hr_documents_management extends Public_Controller
 
             switch ($user_type) {
                 case 'employee':
+                    
                     $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
 
                     if (empty($user_info)) {
@@ -3288,6 +3289,7 @@ class Hr_documents_management extends Public_Controller
                     }
                 }
             }
+            
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
 
@@ -17290,7 +17292,7 @@ class Hr_documents_management extends Public_Controller
         );
         //
         $updateArray = [];
-        $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["CompanyName"];
+        $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["company_corp_name"];
         $updateArray["emp_address"] = $w4Form["emp_address"] ?? $data["companyAddress"];
         if ((!$w4Form["first_date_of_employment"] || $w4Form["first_date_of_employment"] == "0000-00-00") && $data["first_day_of_employment"]) {
             $updateArray["first_date_of_employment"] = formatDateToDB($data["first_day_of_employment"], "m-d-Y", DB_DATE);

@@ -3367,4 +3367,23 @@ if (!function_exists("getCompanyExtraColumn")) {
         //
         return $data[$column] ? $data[$column] : "";
     }
+
+
+
+    if (!function_exists('getCompanyCorporateName')) {
+        function getCompanyCorporateName($companySid)
+        {
+            $CI = &get_instance();
+            $CI->db->select('company_corp_name');
+            $CI->db->where('sid', $companySid);
+            $result=$CI->db->get('users')->row_array();
+            if(!empty($result)){
+               return $result['company_corp_name'];
+            }else{
+                return '';
+            }
+        }
+    }
+
+
 }
