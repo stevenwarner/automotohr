@@ -89,6 +89,96 @@ class Indeed_reporting extends Admin_Controller
         $this->data['to_records'] = $this->data["counts"]["records"] < $per_page ? $this->data["counts"]["records"] : $offset + $per_page;
 
 
+        //ExportData
+        if ($this->input->get("perform_action", true)) {
+
+            $exportBy = $this->ion_auth->user()->row()->first_name . ' ' . $this->ion_auth->user()->row()->last_name;
+
+            // query params
+            $data["filter"]["companies"] = $this->input->get("companies", true) ?? ["All"];
+            $data["filter"]["status"] = $this->input->get("status", true) ?? ["All"];
+            $data["filter"]["startDate"] = $this->input->get("start", true) ?? "";
+            $data["filter"]["endDate"] = $this->input->get("end", true) ?? "";
+
+
+            $records = $this
+                ->indeed_model
+                ->getQueueRecordsCSV(
+                    $data["filter"]
+                );
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header("Content-Disposition: attachment; filename= indeed_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+            $output = fopen('php://output', 'w');
+
+
+            fputcsv($output, array(
+                "Exported By",
+                $exportBy
+            ));
+
+            if(!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])){
+            fputcsv($output, array(
+                "Period: " ,
+                 $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
+            ));
+        }
+
+
+            fputcsv($output, array(
+                "Export Date",
+                date('m/d/Y H:i:s ', strtotime('now'))
+            ));
+
+            fputcsv($output, array('', ''));
+
+            fputcsv(
+                $output,
+                array(
+                    'Job Title',
+                    'Source Posting Id',
+                    'Tracking Key',
+                    'Type',
+                    'Status'
+                )
+            );
+
+
+            if (!empty($records)) {
+                $companyCache = [];
+
+                foreach ($records as $row) {
+
+                    $companyCache[$row["user_sid"]] =
+                        $companyCache[$row["user_sid"]] ?? getCompanyColumnById($row["user_sid"], "CompanyName")["CompanyName"];
+                    $a = [];
+
+                    $a[] = $row['Title'] . "\n\n" . "Company: " . $companyCache[$row["user_sid"]];
+                    $a[] = $row["indeed_posting_id"] ?? "-";
+                    $a[] = $row["tracking_key"] ?? "-";
+                    $a[] = $row["is_expired"] ? "EXPIRED" : "NEW";
+                    $status = '';
+                    if ($row["is_processed"]) {
+                        $status = 'PROCESSED';
+                    } elseif ($row["is_processing"] == 0) {
+                        $status = 'PENDING';
+                    } elseif ($row["is_processing"] == 1 && $row["has_errors"]) {
+                        $status = 'ERRORS';
+                    } elseif ($row["is_processing"] == 1) {
+                        $status = 'PROCESSING';
+                    }
+
+                    $a[] = $status;
+
+                    //
+                    fputcsv($output, $a);
+                }
+            }
+
+            fclose($output);
+            exit;
+        }
+
         // get the records
         $this->data["records"] = $this
             ->indeed_model
@@ -99,6 +189,7 @@ class Indeed_reporting extends Admin_Controller
             );
         $this->render('manage_admin/reports/indeed_report');
     }
+
 
     public function log(int $logId)
     {
@@ -113,6 +204,23 @@ class Indeed_reporting extends Admin_Controller
             200,
             [
                 "view" => $this->load->view("manage_admin/reports/indeed_log", ["record" => $record], true)
+            ]
+        );
+    }
+
+    //
+    public function history(int $jobId)
+    {
+        $records = $this
+            ->indeed_model
+            ->getHistoryById(
+                $jobId
+            );
+
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/reports/indeed_history", ["records" => $records], true)
             ]
         );
     }

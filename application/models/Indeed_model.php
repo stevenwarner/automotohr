@@ -1713,4 +1713,85 @@ class Indeed_model extends CI_Model
             ])
             ->count_all_results("portal_employer");
     }
+
+
+
+    public function getQueueRecordsCSV(array $filter)
+    {
+        // set the filter
+        $this->setWhere($filter);
+        // add columns to be selected
+        return $this
+            ->db
+            ->select([
+                "indeed_job_queue.sid",
+                "indeed_job_queue.job_sid",
+                "indeed_job_queue.is_processed",
+                "indeed_job_queue.processed_at",
+                "indeed_job_queue.is_expired",
+                "indeed_job_queue.has_errors",
+                "indeed_job_queue.is_processing",
+                "indeed_job_queue.log_sid",
+                "indeed_job_queue.created_at",
+                "indeed_job_queue.updated_at",
+
+                "indeed_job_queue_tracking.indeed_posting_id",
+                "indeed_job_queue_tracking.tracking_key",
+
+                "portal_job_listings.user_sid",
+                "portal_job_listings.Title",
+            ])
+            ->join(
+                "indeed_job_queue_tracking",
+                "indeed_job_queue_tracking.job_sid = indeed_job_queue.job_sid
+                AND indeed_job_queue_tracking.is_deleted = 0",
+                "left"
+            )
+            ->order_by("indeed_job_queue.sid", "DESC")
+            ->get("indeed_job_queue")
+            ->result_array();
+    }
+
+
+
+    public function getHistoryById($jobId)
+    {
+        // set the filter
+        $this->db->where("indeed_job_queue_history.job_sid", $jobId);
+        // add columns to be selected
+        return $this
+            ->db
+            ->select([
+                "indeed_job_queue_history.sid",
+                "indeed_job_queue_history.job_sid",
+                "indeed_job_queue_history.is_processed",
+                "indeed_job_queue_history.processed_at",
+                "indeed_job_queue_history.is_expired",
+                "indeed_job_queue_history.has_errors",
+                "indeed_job_queue_history.is_processing",
+                "indeed_job_queue_history.log_sid",
+                "indeed_job_queue_history.created_at",
+                "indeed_job_queue_history.updated_at",
+
+                "indeed_job_queue_tracking.indeed_posting_id",
+                "indeed_job_queue_tracking.tracking_key",
+
+                "portal_job_listings.user_sid",
+                "portal_job_listings.Title",
+            ])
+            ->join(
+                "indeed_job_queue_tracking",
+                "indeed_job_queue_tracking.job_sid =indeed_job_queue_history.job_sid
+               ",
+                "left"
+            )
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue_history.job_sid",
+                "inner"
+            )
+            ->order_by("indeed_job_queue_history.sid", "DESC")
+            ->get("indeed_job_queue_history")
+            ->result_array();
+    }
 }
