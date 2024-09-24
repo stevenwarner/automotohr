@@ -760,7 +760,6 @@ if (!function_exists('generate_image_compressed')) {
     function generate_image_compressed($source_image_path, $thumbnail_image_path)
     {
         ImageJPEG(ImageCreateFromString(file_get_contents($source_image_path)), $thumbnail_image_path, 75);
-        
     }
 }
 
@@ -12597,7 +12596,7 @@ if (!function_exists('detectDateTimeFormat')) {
         // Y-m-d H:i:s
         if (preg_match("/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}/", $date)) {
             $format = "Y-m-d H:i:s";
-        } 
+        }
         // Y-m-d
         else if (preg_match("/\d{4}-\d{2}-\d{2}/", $date)) {
             $format = "Y-m-d";
@@ -12724,7 +12723,7 @@ if (!function_exists('getCompanyAdminPlusList')) {
         $admin_plus = $CI->db->get('users')->result_array();
 
         if ($admin_plus) {
-            $response = $admin_plus; 
+            $response = $admin_plus;
         }
 
         return $response;
@@ -14903,7 +14902,7 @@ if (!function_exists('GetEmployeeStatus')) {
      */
     function GetEmployeeStatus($lastStatusText, $active)
     {
-        if(!$active) {
+        if (!$active) {
             return "De-activated";
         }
         //
@@ -15518,7 +15517,11 @@ if (!function_exists('isImage')) {
         return in_array(
             strtolower(pathinfo($str, PATHINFO_EXTENSION)),
             [
-                'png', 'jpg', 'jpeg', 'gif', 'webp'
+                'png',
+                'jpg',
+                'jpeg',
+                'gif',
+                'webp'
             ]
         );
     }
@@ -17190,8 +17193,22 @@ if (!function_exists('getActiveAdmin')) {
             'active' => 1,
             'is_executive_admin'  => 0,
             'terminated_status' => 0,
-            'access_level' =>'Admin'
+            'access_level' => 'Admin'
         );
         return $CI->db->get_where('users', $where)->result_array();
+    }
+}
+
+
+if (!function_exists("getCompanyColumnById")) {
+    function getCompanyColumnById(int $id, string $column): array
+    {
+        return get_instance()
+            ->db
+            ->select($column)
+            ->where("sid", $id)
+            ->limit(1)
+            ->get("users")
+            ->row_array();
     }
 }

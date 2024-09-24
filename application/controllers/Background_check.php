@@ -238,7 +238,7 @@ class Background_check extends CI_Controller {
                             // Error occuresd
                             if(json_last_error() !== JSON_ERROR_NONE){
                                 $email_message = '<pre>' . print_r($this->input->post(), true) . print_r($package_response, true) . '</pre>';
-                                mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                               // mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
                                 $this->session->set_flashdata('message', '<b>Error!:</b> Failed to place a background check.');
                                 if ($type == 'applicant') {
                                     redirect('background_check/applicant/' . $sid . '/' .$jobs_listing, 'refresh');
@@ -297,7 +297,7 @@ class Background_check extends CI_Controller {
                                 $post_data = $this->input->post();
 
                                 $email_message = '<pre>' . print_r($post_data, true) . print_r($package_response, true) . '</pre>';
-                                mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                                // mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
 
                                 $this->session->set_flashdata('message', '<b>Success:</b> ' . $message . ' ( ' . $error_code . ' ) ');
 
@@ -792,7 +792,7 @@ class Background_check extends CI_Controller {
                     ]
                 }';
                 //
-                mail(TO_EMAIL_DEV, 'Accurate Background Check Order ' . date('Y-m-d H:i:s'), $data);
+                // mail(TO_EMAIL_DEV, 'Accurate Background Check Order ' . date('Y-m-d H:i:s'), $data);
                 //
                 $orderReference = generateRandomString(8);
                 //
@@ -1114,7 +1114,7 @@ class Background_check extends CI_Controller {
                             // Error occuresd
                             if(json_last_error() !== JSON_ERROR_NONE){
                                 $email_message = '<pre>' . print_r($this->input->post(), true) . print_r($package_response, true) . '</pre>';
-                                mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
+                                // mail(TO_EMAIL_DEV, 'Accurate Background Check Order Error ' . date('Y-m-d H:i:s'), $email_message);
                                 $this->session->set_flashdata('message', '<b>Error!:</b> Failed to place a drug test.');
                                 if ($type == 'applicant') {
                                     redirect('drug_test/applicant/' . $sid, 'refresh');

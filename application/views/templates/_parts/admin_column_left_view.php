@@ -153,7 +153,7 @@ if (
     $this->uri->segment(2) == 'cms' ||
     $this->uri->segment(2) == 'edit_page' ||
     $this->uri->segment(2) == 'resources' ||
-    
+
     base_url(uri_string()) == site_url('sa/lms/courses') ||
     $this->uri->segment(2) == 'benefits' ||
     $this->uri->segment(2) == 'job_title_templates' ||
@@ -801,7 +801,7 @@ if (
 
                         <div class="menu-item">
                             <a <?php
-                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) =='cms' || $this->uri->segment(2) == 'edit_page') {
+                                if (base_url(uri_string()) == site_url('manage_admin/cms') || $this->uri->segment(2) == 'cms' || $this->uri->segment(2) == 'edit_page') {
                                     echo 'class="active"';
                                 }
                                 ?> href="<?php echo site_url('manage_admin/cms'); ?>">Content Management System</a>
@@ -1224,6 +1224,13 @@ if (
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/employees_termination_report')) !== false || ($this->uri->segment(3) == 'employees_termination_report')) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('manage_admin/reports/employees_termination_report'); ?>">Employees Termination Report</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'indeed')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/indeed')) !== false || ($this->uri->segment(3) == 'indeed')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/reports/indeed'); ?>">Indeed Reports</a>
                             </div>
                         <?php } ?>
 

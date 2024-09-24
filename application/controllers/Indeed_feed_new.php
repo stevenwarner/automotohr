@@ -633,6 +633,10 @@ class Indeed_feed_new extends CI_Controller
         // Loop through Organic Jobs
         if (sizeof($indeedOrganicJobs)) {
             foreach ($indeedOrganicJobs as $job) {
+
+                if ($job["user_sid"] != 46819) {
+                    continue;
+                }
                 $this->indeed_model->addJobToQueue(
                     $job["sid"],
                     $job["user_sid"],

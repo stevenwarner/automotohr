@@ -481,6 +481,34 @@
                                                     <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
 
+                                                <!-- Phone Pattern -->
+                                                <div class="table-outer">
+                                                    <div class="info-row">
+                                                        <p><strong>Indeed Job Sync & Disposition API</strong></p>
+                                                        <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>">
+                                                            <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_api_status" />
+                                                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                            <ul>
+                                                                <li class="lineheight">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                            <input type="radio" id="set_indeed_api_status_active" name="set_indeed_api_status" value="1" <?php echo ($company_info['indeed_job_sync'] == 1 ? 'checked="checked"' : ''); ?> />&nbsp;<label for="sms_module_status" style="color: green; float: none;">Active</label>
+                                                                        </div>
+                                                                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                            <input type="radio" id="set_indeed_api_status_inactive" name="set_indeed_api_status" value="0" <?php echo ($company_info['indeed_job_sync'] == 0 ? 'checked="checked"' : ''); ?> />&nbsp;<label for="sms_module_status" style="color: red; float: none;">In Active</label>
+                                                                        </div>
+                                                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                                            <button type="submit" href="javascript:;" class="site-btn pull-right">update</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+
                                                 <!-- <article class="information-box">
                                                     <header class="hr-box-header">Career Site Powered By Logo</header>
                                                     <div class="table-outer">
