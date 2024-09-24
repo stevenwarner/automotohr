@@ -454,6 +454,15 @@
                             $('#' + input_field_id).prop('disabled', true);
                         <?php endif; ?>
                     } else if (input_type == 'checkbox') {
+                        //
+                        if ($('#' + input_field_id).attr('data-required') == "yes") {
+                            if (input_value[1] == 'yes') {
+                                $(`input[name="${input_value[0]}1"]`).prop('checked', true);
+                            } else {
+                                $(`input[name="${input_value[0]}2"]`).prop('checked', true);
+                            }
+                        }
+                        //
                         if (input_field_val == 'yes') {
                             $('#' + input_field_id).prop('checked', true);;
                         }
@@ -948,12 +957,25 @@
                     }).get()
                 }
 
+                let dataRequiredFlag = false;
+                $(".validation").remove();
+
                 $('input.short_textbox').map(function() {
+                    if ($(this).data("required") == "yes" && !this.value.length) {
+                        $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                        dataRequiredFlag = true;
+                    }
+                    //
                     input_values_obj[this.name] = this.value;
                 }).get();
 
 
                 $('input.long_textbox').map(function() {
+                    if ($(this).data("required") == "yes" && !this.value.length) {
+                        $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                        dataRequiredFlag = true;
+                    }
+                    //
                     input_values_obj[this.name] = this.value;
                 }).get();
 
@@ -961,18 +983,49 @@
                     input_values_obj[this.name] = this.value;
                 }).get();
 
-                $('input.user_checkbox').map(function() {
-                    var condition = 'no';
-                    if ($(this).is(":checked")) {
-                        condition = 'yes';
-                    }
+                $('.jsCheckbox').map(function() {
+                    //
+                    if ($(this).data("required") == "yes") {
+                        let name = $(this).data("name");
+                        //
+                        if (!$('input[name="'+name+'1"]:checked').length && !$('input[name="'+name+'2"]:checked').length) {
+                            $(this).after("<div class='validation' style='color:red;margin-bottom: 20px;'>These check-box field is required!</div>");
+                            dataRequiredFlag = true;
+                        } else if ($('input[name="'+name+'1"]:checked').length && $('input[name="'+name+'2"]:checked').length) {
+                            $(this).after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please select only one check-box!</div>");
+                            dataRequiredFlag = true;
+                        } else if ($('input[name="'+name+'1"]:checked').length) {
+                            input_values_obj[name] = 'yes';
+                        } else if ($('input[name="'+name+'2"]:checked').length) {
+                            input_values_obj[name] = 'no';
+                        }
+                    } else if ($(this).data("required") == "no") {
+                        var condition = 'no';
+                        if ($(this).is(":checked")) {
+                            condition = 'yes';
+                        }
 
-                    input_values_obj[this.name] = condition;
+                        input_values_obj[this.name] = condition;
+                    }
+                    
                 }).get();
 
                 $('textarea.text_area').map(function() {
+                    if ($(this).data("required") == "yes" && !this.value.length) {
+                        $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                        dataRequiredFlag = true;
+                    }
+                    //
                     input_values_obj[this.name] = this.value;
                 }).get();
+
+                if (dataRequiredFlag) {
+                    alertify.alert('WARNING!', 'Please provided the required data to save the document.');
+                    $("html, body").animate({
+                        scrollTop: $(".validation").offset().top
+                    });
+                    return;
+                } 
 
                 let hasError = false;
 
@@ -1406,12 +1459,26 @@
                                 input_values_obj["reemploying"] = $('input.js_reemploying:checked').val();
                             }
 
+                            //
+                            let dataRequiredFlag = false;
+                            $(".validation").remove();
+
                             $('input.short_textbox').map(function() {
+                                if ($(this).data("required") == "yes" && !this.value.length) {
+                                    $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                                    dataRequiredFlag = true;
+                                }
+                                //
                                 input_values_obj[this.name] = this.value;
                             }).get();
 
 
                             $('input.long_textbox').map(function() {
+                                if ($(this).data("required") == "yes" && !this.value.length) {
+                                    $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                                    dataRequiredFlag = true;
+                                }
+                                //
                                 input_values_obj[this.name] = this.value;
                             }).get();
 
@@ -1419,18 +1486,49 @@
                                 input_values_obj[this.name] = this.value;
                             }).get();
 
-                            $('input.user_checkbox').map(function() {
-                                var condition = 'no';
-                                if ($(this).is(":checked")) {
-                                    condition = 'yes';
-                                }
+                            $('.jsCheckbox').map(function() {
+                                //
+                                if ($(this).data("required") == "yes") {
+                                    let name = $(this).data("name");
+                                    //
+                                    if (!$('input[name="'+name+'1"]:checked').length && !$('input[name="'+name+'2"]:checked').length) {
+                                        $(this).after("<div class='validation' style='color:red;margin-bottom: 20px;'>These check-box field is required!</div>");
+                                        dataRequiredFlag = true;
+                                    } else if ($('input[name="'+name+'1"]:checked').length && $('input[name="'+name+'2"]:checked').length) {
+                                        $(this).after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please select only one check-box!</div>");
+                                        dataRequiredFlag = true;
+                                    } else if ($('input[name="'+name+'1"]:checked').length) {
+                                        input_values_obj[name] = 'yes';
+                                    } else if ($('input[name="'+name+'2"]:checked').length) {
+                                        input_values_obj[name] = 'no';
+                                    }
+                                } else if ($(this).data("required") == "no") {
+                                    var condition = 'no';
+                                    if ($(this).is(":checked")) {
+                                        condition = 'yes';
+                                    }
 
-                                input_values_obj[this.name] = condition;
+                                    input_values_obj[this.name] = condition;
+                                }
+                                
                             }).get();
 
                             $('textarea.text_area').map(function() {
+                                if ($(this).data("required") == "yes" && !this.value.length) {
+                                    $(this).parent().after("<div class='validation' style='color:red;margin-bottom: 20px;'>This data field is required!</div>");
+                                    dataRequiredFlag = true;
+                                }
+                                //
                                 input_values_obj[this.name] = this.value;
                             }).get();
+
+                            if (dataRequiredFlag) {
+                                alertify.alert('WARNING!', 'Please provided the required data to save the document.');
+                                $("html, body").animate({
+                                    scrollTop: $(".validation").offset().top
+                                });
+                                return;
+                            } 
 
                             let hasError = false;
 

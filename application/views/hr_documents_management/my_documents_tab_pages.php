@@ -1634,6 +1634,15 @@ if (isset($eeoc_form) && !empty($eeoc_form) && $eeoc_form["is_expired"] == 1 && 
                                         $('#' + input_field_id).val(input_field_val);
                                         $('#' + input_field_id).prop('disabled', true);
                                     } else if (input_type == 'checkbox') {
+                                        //
+                                        if ($('#' + input_field_id).attr('data-required') == "yes") {
+                                            if (input_value[1] == 'yes') {
+                                                $(`input[name="${input_value[0]}1"]`).prop('checked', true);
+                                            } else {
+                                                $(`input[name="${input_value[0]}2"]`).prop('checked', true);
+                                            }
+                                        }
+                                        //
                                         if (input_field_val == 'yes') {
                                             $('#' + input_field_id).prop('checked', true);;
                                         }

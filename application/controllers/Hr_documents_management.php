@@ -8008,6 +8008,8 @@ class Hr_documents_management extends Public_Controller
                     $document_content = str_replace('{{sign_date}}', $value, $document_content);
                     $document_content = str_replace('{{signature_print_name}}', $value, $document_content);
                     $document_content = str_replace('{{short_text}}', $value, $document_content);
+                    $valueRequired = '------------------------------(<b>Required Field</b>)';
+                    $document_content = str_replace('{{short_text_required}}', $valueRequired, $document_content);
                     $value = '------/-------/----------------';
                     $document_content = str_replace('{{start_date}}', $value, $document_content);
 
@@ -8043,9 +8045,26 @@ class Hr_documents_management extends Public_Controller
 
                     $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
                     $document_content = str_replace('{{text}}', $value, $document_content);
+                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                    
 
                     $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                     $document_content = str_replace('{{text_area}}', $value, $document_content);
+                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+
+                    $checkboxRequired = '<div class="row">';
+                    $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+                    $checkboxRequired .= '(<b>Required Field</b>)';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+                    $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey"/>Agree';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '<br>';
+                    $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+                    $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey"/>Disagree';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '</div>';
+                    $document_content = str_replace('{{checkbox_required}}', $checkboxRequired, $document_content);
 
                     $data['print'] = $type;
                     $data['document_file'] = 'no_pdf';
@@ -8100,6 +8119,8 @@ class Hr_documents_management extends Public_Controller
                     $document_content = str_replace('{{sign_date}}', $value, $document_content);
                     $document_content = str_replace('{{signature_print_name}}', $value, $document_content);
                     $document_content = str_replace('{{short_text}}', $value, $document_content);
+                    $valueRequired = '------------------------------(<b>Required Field</b>)';
+                    $document_content = str_replace('{{short_text_required}}', $valueRequired, $document_content);
                     $authorized_base64 = get_authorized_base64_signature($company_sid, $document_sid);
 
                     if (!empty($authorized_base64)) {
@@ -8119,9 +8140,25 @@ class Hr_documents_management extends Public_Controller
 
                     $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
                     $document_content = str_replace('{{text}}', $value, $document_content);
+                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
 
                     $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                     $document_content = str_replace('{{text_area}}', $value, $document_content);
+                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+
+                    $checkboxRequired = '<div class="row">';
+                    $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+                    $checkboxRequired .= '(<b>Required Field</b>)';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+                    $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey"/>Agree';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '<br>';
+                    $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+                    $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey"/>Disagree';
+                    $checkboxRequired .= '</div>';
+                    $checkboxRequired .= '</div>';
+                    $document_content = str_replace('{{checkbox_required}}', $checkboxRequired, $document_content);
 
                     $data['print'] = $type;
                     $data['document_file'] = 'no_pdf';

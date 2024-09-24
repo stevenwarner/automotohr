@@ -425,6 +425,10 @@ if (!function_exists('replace_tags_for_document')) {
         $long_textboxes = substr_count($my_return, '{{text}}');
         $checkboxes = substr_count($my_return, '{{checkbox}}');
         $textareas = substr_count($my_return, '{{text_area}}');
+        $short_textboxes_required = substr_count($my_return, '{{short_text_required}}');
+        $long_textboxes_required = substr_count($my_return, '{{text_required}}');
+        $checkboxes_required = substr_count($my_return, '{{checkbox_required}}');
+        $textareas_required = substr_count($my_return, '{{text_area_required}}');
 
         // _e($my_return, true, true);
         // _e(substr_count($my_return, '<input type="checkbox" />'), true, true);
@@ -448,7 +452,7 @@ if (!function_exists('replace_tags_for_document')) {
             $short_textbox_value = !empty($form_input_data[$short_textbox_name]) && $autofill == 1 ? $form_input_data[$short_textbox_name] : '';
             // echo $short_textbox_value.'<br>';
             $short_textbox_id = 'short_textbox_' . $stb . '_id';
-            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
+            $short_textbox = '<input type="text" data-type="text" data-required="no" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
             $my_return = preg_replace('/{{short_text}}/', $short_textbox, $my_return, 1);
         }
 
@@ -456,7 +460,7 @@ if (!function_exists('replace_tags_for_document')) {
             $long_textbox_name = 'long_textbox_' . $ltb;
             $long_textbox_value = !empty($form_input_data[$long_textbox_name]) && $autofill == 1 ? $form_input_data[$long_textbox_name] : '';
             $long_textbox_id = 'long_textbox_' . $ltb . '_id';
-            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
+            $long_textbox = '<input type="text" data-type="text" data-required="no" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
             $my_return = preg_replace('/{{text}}/', $long_textbox, $my_return, 1);
         }
 
@@ -464,7 +468,7 @@ if (!function_exists('replace_tags_for_document')) {
             $checkbox_name = 'checkbox_' . $cb;
             $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' && $autofill == 1 ? 'checked="checked"' : '';
             $checkbox_id = 'checkbox_' . $cb . '_id';
-            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
+            $checkbox = '<br><input type="checkbox" data-type="checkbox" data-required="no" class="jsCheckbox user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
             $my_return = preg_replace('/{{checkbox}}/', $checkbox, $my_return, 1);
         }
 
@@ -473,10 +477,64 @@ if (!function_exists('replace_tags_for_document')) {
             $textarea_value = !empty($form_input_data[$textarea_name]) && $autofill == 1 ? $form_input_data[$textarea_name] : '';
             $textarea_id = 'textarea_' . $ta . '_id';
             $div_id = 'textarea_' . $ta . '_id_sec';
-            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
+            $textarea = '<textarea data-type="textarea" data-required="no" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
             $my_return = preg_replace('/{{text_area}}/', $textarea, $my_return, 1);
         }
+        //
+        for ($stb;  $stb < ($short_textboxes + $short_textboxes_required); $stb++) {
+            $short_textbox_name = 'short_textbox_' . $stb;
+            $short_textbox_value = !empty($form_input_data[$short_textbox_name]) && $autofill == 1 ? $form_input_data[$short_textbox_name] : '';
+            //
+            $short_textbox_id = 'short_textbox_' . $stb . '_id';
+            $short_textbox ='<label><span class="staric">*</span></label><br>';
+            $short_textbox .= '<input type="text" data-type="text" data-required="yes" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
+            
+            $my_return = preg_replace('/{{short_text_required}}/', $short_textbox, $my_return, 1);
+        }
 
+        for ($ltb; $ltb < ($long_textboxes + $long_textboxes_required); $ltb++) {
+            $long_textbox_name = 'long_textbox_' . $ltb;
+            $long_textbox_value = !empty($form_input_data[$long_textbox_name]) && $autofill == 1 ? $form_input_data[$long_textbox_name] : '';
+            $long_textbox_id = 'long_textbox_' . $ltb . '_id';
+            $long_textbox ='<label><span class="staric">*</span></label>';
+            $long_textbox .= '<input type="text" data-type="text" data-required="yes" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
+            
+            $my_return = preg_replace('/{{text_required}}/', $long_textbox, $my_return, 1);
+        }
+
+        for ($ta; $ta < ($textareas + $textareas_required); $ta++) {
+            $textarea_name = 'textarea_' . $ta;
+            $textarea_value = !empty($form_input_data[$textarea_name]) && $autofill == 1 ? $form_input_data[$textarea_name] : '';
+            $textarea_id = 'textarea_' . $ta . '_id';
+            $div_id = 'textarea_' . $ta . '_id_sec';
+            $textarea ='<label><span class="staric">*</span></label>';
+            $textarea .= '<textarea data-type="textarea" data-required="yes" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
+            $my_return = preg_replace('/{{text_area_required}}/', $textarea, $my_return, 1);
+        }
+
+        for ($cb; $cb < ($checkboxes + $checkboxes_required); $cb++) {
+             
+            $checkbox_name = 'checkbox_' . $cb;
+            $checkbox_value1 = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' && $autofill == 1 ? 'checked="checked"' : '';
+            $checkbox_value2 = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'no' && $autofill == 1 ? 'checked="checked"' : '';
+            $checkbox_id = 'checkbox_' . $cb. '_id';
+            //
+            $checkboxRequired = '<div class="row jsCheckbox" data-type="checkbox" data-required="yes" data-name="'. $checkbox_name .'" id="'.$checkbox_id.'">';
+            $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+            $checkboxRequired .= '<label><span class="staric">*</span></label>';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'. $checkbox_name .'1" value="yes" ' . $checkbox_value1 . '/>Yes';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '<br>';
+            $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'. $checkbox_name .'2" value="no" ' . $checkbox_value2 . '/>No';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '</div>';
+            //
+            $my_return = preg_replace('/{{checkbox_required}}/', $checkboxRequired, $my_return, 1);
+        }
+        //
         // $value = '<br><input type="checkbox" class="user_checkbox input-grey" name="get_checkbox_condition"/>';
         // $my_return = str_replace('{{checkbox}}', $value, $my_return);
 
