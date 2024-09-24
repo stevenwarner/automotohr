@@ -15629,7 +15629,7 @@ if (!function_exists('check_document_completed')) {
 
         if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
             $document_body = $assigned_document['document_description'];
-            $magic_codes = array('{{signature}}', '{{inital}}');
+            $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
 
             if (str_replace($magic_codes, '', $document_body) != $document_body) {
                 $is_magic_tag_exist = 1;
@@ -15782,7 +15782,7 @@ if (!function_exists('check_document_completed_date')) {
             //
             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                 $document_body = $assigned_document['document_description'];
-                $magic_codes = array('{{signature}}', '{{inital}}');
+                $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
 
                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                     $is_magic_tag_exist = 1;

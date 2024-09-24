@@ -1941,7 +1941,7 @@ class Hr_documents_management_model extends CI_Model
                     $document_body = $assigned_document['document_description'];
                     //$magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
 
-                    $magic_codes = array('{{signature}}', '{{inital}}');
+                    $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
@@ -6101,7 +6101,7 @@ class Hr_documents_management_model extends CI_Model
     
                 if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
-                    $magic_codes = array('{{signature}}', '{{inital}}');
+                    $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
                     //
                     $documentBodyOld = $document_body;
                     $document_body = magicCodeCorrection($document_body);
@@ -10454,7 +10454,7 @@ class Hr_documents_management_model extends CI_Model
         if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
             //
             $document_body = $assigned_document['document_description'];
-            $magic_codes = array('{{signature}}', '{{inital}}');
+            $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
             //
             if (str_replace($magic_codes, '', $document_body) != $document_body) {
                 $is_magic_tag_exist = 1;

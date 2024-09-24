@@ -267,7 +267,7 @@ class Onboarding extends CI_Controller
                             //
                             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                                 $document_body = $assigned_document['document_description'];
-                                $magic_codes = array('{{signature}}', '{{inital}}');
+                                $magic_codes = array('{{signature}}', '{{inital}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}');
 
                                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                                     $is_magic_tag_exist = 1;
@@ -602,7 +602,7 @@ class Onboarding extends CI_Controller
                 //
                 if (!empty($document['document_description'])) {
                     $document_body = $document['document_description'];
-                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}', 'select');
                     $magic_signature_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_signature_codes, '', $document_body) != $document_body) {
@@ -6526,7 +6526,7 @@ class Onboarding extends CI_Controller
                     $document_info = $this->onboarding_model->get_assign_offer_letter_info($offer_letter['document_sid']);
                     $letter_body = $offer_letter['document_description'];
                     $save_offer_letter_type = '';
-                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}', 'select');
                     $magic_signature_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_signature_codes, '', $letter_body) != $letter_body) {
@@ -6867,7 +6867,7 @@ class Onboarding extends CI_Controller
                     $document_info = $this->onboarding_model->get_assign_offer_letter_info($offer_letter['document_sid']);
                     $letter_body = $offer_letter['document_description'];
                     $save_offer_letter_type = '';
-                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}', 'select');
                     $magic_signature_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_signature_codes, '', $letter_body) != $letter_body) {
@@ -10084,7 +10084,7 @@ class Onboarding extends CI_Controller
                     //
                     if (!empty($document['document_description'])) {
                         $document_body = $document['document_description'];
-                        $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                        $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}', 'select');
                         $magic_signature_codes = array('{{signature}}', '{{inital}}');
 
                         if (str_replace($magic_signature_codes, '', $document_body) != $document_body) {
