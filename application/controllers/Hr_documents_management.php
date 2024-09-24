@@ -16354,9 +16354,26 @@ class Hr_documents_management extends Public_Controller
             $short_text = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
             $document_content = str_replace('{{text}}', $short_text, $document_content);
             $document_content = str_replace('{{short_text}}', $short_text, $document_content);
+            $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)'.$short_text, $document_content);
+            $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$short_text, $document_content);
 
             $text_area = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
             $document_content = str_replace('{{text_area}}', $text_area, $document_content);
+            $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$text_area, $document_content);
+            //
+            $checkboxRequired = '<div class="row">';
+            $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
+            $checkboxRequired .= '(<b>Required Field</b>)';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+            $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey" />Agree';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '<br>';
+            $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
+            $checkboxRequired .= '<input type="checkbox" class="user_checkbox input-grey" />Disagree';
+            $checkboxRequired .= '</div>';
+            $checkboxRequired .= '</div>';
+            $document_content = str_replace('{{checkbox_required}}', $checkboxRequired, $document_content);
             //
             $document['document_description'] = $document_content;
             $links = getGeneratedDocumentURL($document, "company", $isAuthorized);
