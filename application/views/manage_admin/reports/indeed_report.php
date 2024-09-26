@@ -254,6 +254,11 @@
                                                                         Log
                                                                     </button>
                                                                 <?php endif; ?>
+
+                                                                <?php if ($v0["has_errors"]): ?>                                                                
+                                                                <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <?php endif; ?>
+
                                                                 <button class="btn btn-success jsHistory">
                                                                     <i class="fa fa-eye"></i>
                                                                     History
@@ -439,4 +444,13 @@
             }
         );
     });
+
+    $(".jsHasErrors").click(function(event) {
+        event.preventDefault();
+        const jobId = $(this).closest("tr").data("jobid");
+       window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
+   
+    });
+
+
 </script>

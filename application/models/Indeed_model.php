@@ -782,6 +782,7 @@ class Indeed_model extends CI_Model
                 ]
             ];
         }
+
         // check if job is allowed to be added to queue
         if (!$this->getJobApprovalStatus($companyId, $jobId)) {
             return ["errors" => [

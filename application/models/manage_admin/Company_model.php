@@ -3458,7 +3458,40 @@ class Company_model extends CI_Model
         int $companyId,
         int $selectedOption
     ) {
-        // update the record
+
+        //
+        $this->load->model("Indeed_model", "indeed_model");
+        if ($selectedOption == 1) {
+            $this->db->select('sid');
+            $this->db->where('user_sid', $companyId);
+            $this->db->where('active', 1);
+            $record_obj = $this->db->get('portal_job_listings');
+            $jobData = $record_obj->result_array();
+            if (!empty($jobData)) {
+                foreach ($jobData as $row) {
+                    $this->indeed_model->updateJobToQueue($row['sid'], $companyId);
+                }
+            }
+        }
+        //
+        if ($selectedOption == 0) {
+            $this->db->select('portal_job_listings.sid');
+            $this->db->where('portal_job_listings.user_sid', $companyId);
+            $this->db->join('indeed_job_queue', 'indeed_job_queue.job_sid = portal_job_listings.sid', 'inner');
+            $record_obj = $this->db->get('portal_job_listings');
+            $jobData = $record_obj->result_array();
+            if (!empty($jobData)) {
+                foreach ($jobData as $row) {
+                    $this
+                        ->indeed_model
+                        ->checkAndDeactivateJobs(
+                            [$row['sid']]
+                        );
+                }
+            }
+        }
+
+        //
         $this
             ->db
             ->where("user_sid", $companyId)

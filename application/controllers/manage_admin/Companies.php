@@ -3536,4 +3536,28 @@ class Companies extends Admin_Controller
             $this->company_model->updateGeneralDocumentsStatus($sid, $data);
         }
     }
+
+    //
+    function runIndeedJob($Jobsid)
+    {
+        $redirect_url = 'manage_admin/companies';
+        $function_name = 'edit_company';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+        $dateWithTime = getSystemDate();
+
+        $this->db
+            ->where("job_sid", $Jobsid)
+            ->update(
+                "indeed_job_queue",
+                [
+                    "has_errors" => 0,
+                    "updated_at" => $dateWithTime,
+                ]
+            );
+        redirect('manage_admin/reports/indeed', 'refresh');
+    }
 }
