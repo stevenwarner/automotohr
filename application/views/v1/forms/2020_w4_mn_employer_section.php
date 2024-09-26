@@ -13,7 +13,7 @@
                            Employer's name
                            <strong class="text-danger">*</strong>
                        </label>
-                       <input type="text" name="first_name" value="<?php echo $formInfo["employer_json"]['first_name'] != '' ? $formInfo["employer_json"]['first_name'] : $employerPrefill['CompanyName']; ?>" class="form-control" <?php echo $input; ?> />
+                       <input type="text" name="first_name" value="<?php echo $formInfo["employer_json"]['first_name'] != '' ? $formInfo["employer_json"]['first_name'] : $employerPrefill['company_corp_name']; ?>" class="form-control" <?php echo $input; ?> />
                    </div>
                </div>
                <div class="col-sm-3">

@@ -2731,7 +2731,8 @@ if (!function_exists("getDataForEmployerPrefill")) {
                 users.ssn,
                 states.state_code,
                 users.Location_Address_2,
-                users.extra_info
+                users.extra_info,
+                users.company_corp_name
             ')
             ->join(
                 "states",
@@ -3851,5 +3852,97 @@ if (!function_exists("isAmount")) {
     function isAmount($value): bool
     {
         return is_double($value);
+    }
+}
+
+
+
+if (!function_exists("getCompanyDataForPrefil")) {
+    /**
+     * get the company data for prefil
+     *
+     * @param int $companyId
+     * @return array
+     */
+    function getCompanyDataForPrefil(int $companyId): array
+    {
+        // set default array
+        $returnArray = [
+            // company details
+            "company_name" => "",
+            "company_corp_name" => "",
+            "company_ein" => "",
+            // address
+            "street_1" => "",
+            "street_2" => "",
+            "state" => "",
+            "city" => "",
+            "zip_code" => "",
+            "state_code" => "",
+            "address" => "",
+            // state level EIN
+            "state_ein" => "",
+        ];
+        //
+        $record = 
+        get_instance()
+        ->db
+            ->select('
+                users.CompanyName,
+                users.company_corp_name,
+                users.Location_Address,
+                users.Location_Address_2,
+                users.Location_City,
+                users.Location_ZipCode,
+                users.Location_State,
+                users.ssn,
+                states.state_code,
+                users.extra_info
+            ')
+            ->join(
+                "states",
+                "states.sid = users.Location_State",
+                "left"
+            )
+            ->where('users.sid', $companyId)
+            ->where('users.parent_sid', 0)
+            ->limit(1)
+            ->get('users')
+            ->row_array();
+        // when record found
+        if ($record) {
+            // set company details
+            $returnArray["company_name"] = $record["CompanyName"];
+            $returnArray["company_corp_name"] = $record["company_corp_name"];
+            $returnArray["company_ein"] = $record["ssn"];
+            // set address details
+            $returnArray["street_1"] = $record["Location_Address"];
+            $returnArray["street_2"] = $record["Location_Address_2"];
+            $returnArray["state"] = $record["Location_State"];
+            $returnArray["city"] = $record["Location_City"];
+            $returnArray["state_code"] = $record["state_code"];
+            $returnArray["zip_code"] = $record["Location_ZipCode"];
+
+            $address = "";
+            // add street 1
+            $address .= $record["Location_Address"] ? $record["Location_Address"] . ', ' : '';
+            $address .= $record["Location_Address_2"] ? $record["Location_Address_2"] . ', ' : '';
+            $address .= $record["Location_City"] ? $record["Location_City"] . ', ' : '';
+            $address .= $record["state_code"] ? $record["state_code"] . ', ' : '';
+            $address .= $record["Location_ZipCode"] ? $record["Location_ZipCode"] . ', ' : '';
+    
+            $returnArray["address"] = rtrim(
+                $address,
+                ", "
+            );
+            // get the state
+            $extraInfo = unserialize(
+                $record["extra_info"]
+            );
+            // set the state EIN
+            $returnArray["state_ein"] = $extraInfo["mtin"] ?? "";
+        }
+        //
+        return $returnArray;
     }
 }

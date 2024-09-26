@@ -10693,7 +10693,7 @@ class Hr_documents_management_model extends CI_Model
             if (!$result["employer_json"]) {
                 // set update array
                 $updateArray = [];
-                $updateArray["first_name"] = $companyData["CompanyName"];
+                $updateArray["first_name"] = $companyData["company_corp_name"];
                 $updateArray["mn_tax_number"] = $companyData["mtin"];
                 $updateArray["ssn"] = $companyData["ssn"];
                 $updateArray["street_1"] = $companyData["Location_Address"];

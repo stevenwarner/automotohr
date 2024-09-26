@@ -70,7 +70,13 @@
                                 <?php echo form_error('WebSite'); ?>
                             </div>
                         </div>
-                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                        <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                            <div class="form-group">
+                                <?php echo form_label('Company Corporate Name', 'CompanyName'); ?>
+                                <?php echo form_input('company_corp_name', set_value('company_corp_name', $company['company_corp_name']), 'class="form-control"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-12">
                             <div class="form-group">
                                 <label>Company Fed EIN Number<?php echo $payroll_status == 1 ? '<span class="hr-required staric">*</span>' : ''; ?></label>
                                 <?php //echo form_label('Company EIN Number  <span class="hr-required staric">*</span>', 'ssn'); 
@@ -79,6 +85,7 @@
                                 <?php echo form_error('ssn'); ?>
                             </div>
                         </div>
+
 
                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                             <div class="form-group">

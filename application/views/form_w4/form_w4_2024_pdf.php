@@ -359,7 +359,6 @@
                         </tbody>
                     </table>
                 </section>
-
                 <section class="pdf-cover-page">
                     <table class="table table-border-collapse" style="margin-bottom: 0px;">
                         <tbody>
