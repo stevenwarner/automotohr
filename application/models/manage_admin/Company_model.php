@@ -3461,13 +3461,25 @@ class Company_model extends CI_Model
 
         //
         $this->load->model("Indeed_model", "indeed_model");
+        //
+        $this
+        ->db
+        ->where("user_sid", $companyId)
+        ->update(
+            "portal_employer",
+            [
+                "indeed_job_sync" => $selectedOption
+            ]
+        );
+        //
         if ($selectedOption == 1) {
             $this->db->select('sid');
             $this->db->where('user_sid', $companyId);
             $this->db->where('active', 1);
+            $this->db->where('organic_feed', 1);
             $record_obj = $this->db->get('portal_job_listings');
             $jobData = $record_obj->result_array();
-            if (!empty($jobData)) {
+            if ($jobData) {
                 foreach ($jobData as $row) {
                     $this->indeed_model->updateJobToQueue($row['sid'], $companyId);
                 }
@@ -3480,7 +3492,7 @@ class Company_model extends CI_Model
             $this->db->join('indeed_job_queue', 'indeed_job_queue.job_sid = portal_job_listings.sid', 'inner');
             $record_obj = $this->db->get('portal_job_listings');
             $jobData = $record_obj->result_array();
-            if (!empty($jobData)) {
+            if ($jobData) {
                 foreach ($jobData as $row) {
                     $this
                         ->indeed_model
@@ -3490,16 +3502,5 @@ class Company_model extends CI_Model
                 }
             }
         }
-
-        //
-        $this
-            ->db
-            ->where("user_sid", $companyId)
-            ->update(
-                "portal_employer",
-                [
-                    "indeed_job_sync" => $selectedOption
-                ]
-            );
     }
 }
