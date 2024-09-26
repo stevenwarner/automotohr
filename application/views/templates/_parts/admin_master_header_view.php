@@ -183,6 +183,12 @@
                                                 $notifications_count++;
                                             }
 
+                                            if (isset($header_notifications['indeed_job_has_errors']) && $header_notifications['indeed_job_has_errors'] > 0) {
+                                                $notifications_count++;
+                                            }
+
+                                            
+
                                             echo $notifications_count;
                                             ?>
                                         </span>
@@ -307,10 +313,20 @@
                                                 </a>
                                             </li>
                                         <?php } ?>
+                                        
                                         <?php if ($header_notifications['indeed_pending_status'] > 0) { ?>
                                             <li>
                                                 <a href="<?php echo base_url('manage_admin/indeed/disposition/status/map'); ?>">
                                                     <span class="pull-left">Pending Indeed Disposition Status</span>
+                                                    <span class="pull-right"><i class="fa fa-eye"></i></span>
+                                                </a>
+                                            </li>
+                                        <?php } ?>
+
+                                        <?php if ($header_notifications['indeed_job_has_errors'] > 0) { ?>
+                                            <li>
+                                                <a href="<?php echo base_url('manage_admin/reports/indeed'); ?>">
+                                                    <span class="pull-left">Indeed Job Errors</span>
                                                     <span class="pull-right"><i class="fa fa-eye"></i></span>
                                                 </a>
                                             </li>

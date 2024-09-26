@@ -62,7 +62,8 @@
                                     </div>
                                     <div class="hr-search-main search-collapse-area" <?= $flag ? "style='display:block'" : ""; ?>>
                                         <!--  -->
-                                        <form action="<?= current_url(); ?>" type="GET">
+                                        <form action="<?= current_url(); ?>" type="GET" id="js-indeedform">
+                                            <input type="hidden" id="perform_action" name="perform_action" value="export_csv">
                                             <div class="row">
                                                 <div class="col-sm-4 col-xs-12">
                                                     <div class="form-group">
@@ -110,7 +111,7 @@
 
                                             <div class="row">
                                                 <div class="col-sm-12 text-right">
-                                                    <button class="btn btn-success">
+                                                    <button class="btn btn-success" type="button" id='js-search'>
                                                         <i class="fa fa-search"></i>
                                                         &nbsp;Apply
                                                     </button>
@@ -119,6 +120,10 @@
                                                         <i class="fa fa-refresh"></i>
                                                         &nbsp;Reset
                                                     </a>
+
+
+                                                    <button type="button" id="js-export" class="btn btn-success ">Export CSV</button>
+
                                                 </div>
                                             </div>
                                         </form>
@@ -211,7 +216,7 @@
                                                         $companyCache[$v0["user_sid"]] =
                                                             $companyCache[$v0["user_sid"]] ?? getCompanyColumnById($v0["user_sid"], "CompanyName")["CompanyName"];
                                                     ?>
-                                                        <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>">
+                                                        <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>" data-jobid="<?= $v0["job_sid"]; ?>">
                                                             <td>
                                                                 <strong>
                                                                     <?= $v0["Title"]; ?>
@@ -249,11 +254,16 @@
                                                                         Log
                                                                     </button>
                                                                 <?php endif; ?>
-                                                                <!-- <button class="btn btn-success">
+
+                                                                <?php if ($v0["has_errors"]): ?>                                                                
+                                                                <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <?php endif; ?>
+
+                                                                <button class="btn btn-success jsHistory">
                                                                     <i class="fa fa-eye"></i>
                                                                     History
                                                                 </button>
-                                                                <button class="btn btn-success">
+                                                                <!--   <button class="btn btn-success">
                                                                     <i class="fa fa-eye"></i>
                                                                     Job
                                                                 </button> -->
@@ -296,7 +306,6 @@
 
 <link rel="stylesheet" href="<?= base_url("public/v1/plugins/ms_modal/main.min.css"); ?>">
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
-
 
 <script>
     $(function() {
@@ -381,4 +390,67 @@
                 });
         }
     })
+
+
+    //js-search
+    $("#js-search").click(function(event) {
+        event.preventDefault();
+
+        $("#perform_action").val('');
+        $("#js-indeedform").submit();
+    });
+
+
+    //
+    $("#js-export").click(function(event) {
+        event.preventDefault();
+        $("#perform_action").val('csvexport');
+        $("#js-indeedform").submit();
+    });
+
+
+
+    // load history
+    function loadHistory(logId) {
+        $
+            .ajax({
+                url: window.location.origin + "/manage_admin/reports/indeed/history/" + logId,
+                method: "GET"
+            })
+            .fail(function() {
+                $("#jsModal .jsModalCancel").click();
+                alert("Something went wrong!");
+            })
+            .success(function(resp) {
+                $("#jsModalBody").html(resp.view);
+                $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
+            });
+    }
+
+    //
+    $(".jsHistory").click(function(event) {
+        event.preventDefault();
+
+        const jobId = $(this).closest("tr").data("jobid");
+
+        Modal({
+                Id: "jsModal",
+                Title: "",
+                Loader: "jsModalLoader",
+                Body: '<div id="jsModalBody"></div>'
+            },
+            function() {
+                loadHistory(jobId)
+            }
+        );
+    });
+
+    $(".jsHasErrors").click(function(event) {
+        event.preventDefault();
+        const jobId = $(this).closest("tr").data("jobid");
+       window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
+   
+    });
+
+
 </script>

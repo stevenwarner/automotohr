@@ -2403,3 +2403,4 @@ $route['manage_admin/reports/indeed/log/(:num)'] = 'manage_admin/reports/Indeed_
  */
 // Indeed cron job link
 $route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
+$route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Indeed_reporting/history/$1';
