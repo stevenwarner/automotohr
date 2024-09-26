@@ -481,7 +481,6 @@
                                                     <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
 
-                                                <!-- Phone Pattern -->
                                                 <div class="table-outer">
                                                     <div class="info-row">
                                                         <p><strong>Indeed Job Sync & Disposition API</strong></p>
@@ -499,6 +498,30 @@
                                                                         </div>
                                                                         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                                                             <button type="button" href="javascript:;" class="site-btn pull-right" id="js_set_indeed_api_status">update</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="table-outer">
+                                                    <div class="info-row">
+                                                        <p><strong>Indeed Apply</strong></p>
+                                                        <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>" id="form_set_indeed_apply_status">
+                                                            <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_apply" />
+                                                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                            <ul>
+                                                                <li class="lineheight">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                            <input type="radio" id="set_indeed_apply_active" name="set_indeed_apply_status" value="1" <?php echo ($company_info['indeed_opt'] == 1 ? 'checked="checked"' : ''); ?> />&nbsp;<label for="sms_module_status" style="color: green; float: none;">OPT In</label>
+                                                                        </div>
+                                                                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+                                                                            <input type="radio" id="set_indeed_apply_inactive" name="set_indeed_apply_status" value="0" <?php echo ($company_info['indeed_opt'] == 0 ? 'checked="checked"' : ''); ?> />&nbsp;<label for="sms_module_status" style="color: red; float: none;">OPT Out</label>
+                                                                        </div>
+                                                                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+                                                                            <button type="button" href="javascript:;" class="site-btn pull-right" id="js_set_indeed_apply_status">update</button>
                                                                         </div>
                                                                     </div>
                                                                 </li>
@@ -2328,19 +2351,39 @@
 
 
 
-    //
+    //    
+
     $(document).on('click', '#js_set_indeed_api_status', function() {
         let msg = '';
         let status = $('input[name="set_indeed_api_status"]:checked').val();
         if (status == 1) {
-            msg = "Activate Indeed Job Sync & Disposition API";
+            msg = "Are you sure you want to activate the Indeed Job Sync & Disposition API?";
         } else {
-            msg = "In Active Indeed Job Sync & Disposition API , all jobs will be In Active on indeed";
+            msg = "Are you sure you want to deactivate the Indeed Job Sync & Disposition API? All jobs will be marked as inactive on Indeed.";
         }
 
-        alertify.confirm('Confirmation', "<strong> Are you sure you want to " + msg + "</strong>",
+        alertify.confirm('Confirmation', "<strong>" + msg + "</strong>",
             function() {
                 $("#form_set_indeed_api_status").submit();
+            },
+            function() {
+                alertify.error('Canceled');
+            });
+    });
+
+    //
+    $(document).on('click', '#js_set_indeed_apply_status', function() {
+        let msg = '';
+        let status = $('input[name="set_indeed_apply_status"]:checked').val();
+        if (status == 1) {
+            msg = "By opting in, the Indeed Apply button will appear on the career site. Do you want to continue?";
+        } else {
+            msg = "By opting out, the Indeed Apply button will no longer appear on the career site. Do you want to continue?";
+        }
+
+        alertify.confirm('Confirmation', "<strong>" + msg + "</strong>",
+            function() {
+                $("#form_set_indeed_apply_status").submit();
             },
             function() {
                 alertify.error('Canceled');

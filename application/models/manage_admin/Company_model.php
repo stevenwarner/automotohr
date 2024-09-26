@@ -3460,6 +3460,17 @@ class Company_model extends CI_Model
     ) {
 
         //
+        $this
+            ->db
+            ->where("user_sid", $companyId)
+            ->update(
+                "portal_employer",
+                [
+                    "indeed_job_sync" => $selectedOption
+                ]
+            );
+
+
         $this->load->model("Indeed_model", "indeed_model");
         //
         $this
@@ -3502,5 +3513,23 @@ class Company_model extends CI_Model
                 }
             }
         }
+    }
+
+    //
+    public function setIndeedApplyOPT(
+        int $companyId,
+        int $selectedOption
+    ) {
+
+        //
+        $this
+            ->db
+            ->where("sid", $companyId)
+            ->update(
+                "users",
+                [
+                    "indeed_opt" => $selectedOption
+                ]
+            );
     }
 }
