@@ -11536,13 +11536,13 @@ class Hr_documents_management_model extends CI_Model
     ): int {
         //
         $sendGroupEmail = 0;
-        $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($companyId, $userType, $userId);
+        $assign_group_documents = $this->get_assign_group_documents($companyId, $userType, $userId);
 
         if (!empty($assign_group_documents)) {
             foreach ($assign_group_documents as $key => $assign_group_document) {
-                $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($companyId, $userType, $userId, $assign_group_document['document_sid']);
+                $is_document_assign = $this->check_document_already_assigned($companyId, $userType, $userId, $assign_group_document['document_sid']);
                 if ($is_document_assign == 0 && $assign_group_document['document_sid'] > 0) {
-                    $document = $this->hr_documents_management_model->get_hr_document_details($companyId, $assign_group_document['document_sid']);
+                    $document = $this->get_hr_document_details($companyId, $assign_group_document['document_sid']);
 
                     if (!empty($document)) {
                         $data_to_insert = array();
@@ -11566,14 +11566,14 @@ class Hr_documents_management_model extends CI_Model
                         $data_to_insert['is_required'] = $document['is_required'];
                         $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
                         //
-                        $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                        $assignment_sid = $this->insert_documents_assignment_record($data_to_insert);
                         //
                         if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
                             $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}|{{authorized_editable_date}}/i', $document['document_description']);
                             //
                             if ($isAuthorized == 1) {
                                 // Managers handling
-                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                $this->addManagersToAssignedDocuments(
                                     $document['managers_list'],
                                     $assignment_sid,
                                     $companyId,
