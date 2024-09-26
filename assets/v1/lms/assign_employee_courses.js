@@ -67,10 +67,25 @@ $(function LMSEmployeeCourses() {
         var courseId = $(this).data("course_id");
 		var language = $('.jsCourseLanguage'+courseId).val();
         var url = baseURI + "lms/courses/" + courseId + '/' + language;
+		var previousLanguage = $(this).data("previous_language");
 		//
-        $(this).attr('href', url);
-		//
-		window.location = $(this).attr('href').toString();
+        if (previousLanguage.length && previousLanguage != language) {
+			alertify
+				.confirm(
+					"Are you sure you want to change course language?",
+					function () {
+						changeScormLanguage(language, courseId)
+					},
+					CB
+				)
+				.setHeader("Confirm");
+			
+		} else {
+			//
+			$(this).attr('href', url);
+			//
+			window.location = $(this).attr('href').toString();
+		}s
 	});
 
 	$(document).on("change", ".jsSelectCourseLanguage", function (event) {
@@ -82,6 +97,44 @@ $(function LMSEmployeeCourses() {
 		//
         $('.jsStartCourse'+courseId).attr('href', url);
 	});
+
+	function changeScormLanguage (language, courseId) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url:
+				apiURL +
+				"lms/trainings/" +
+				employeeId +
+				"/" +
+				courseId +
+				"/" +
+				language ,
+			method: "PUT",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//
+				if (response.status === "language_changed") {
+					window.location = baseURI + "lms/courses/" + courseId + '/' + language;
+				}
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
 
 	/**
 	 * get LMS default courses
@@ -241,9 +294,23 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
 								coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
 								//
+								var defaultLanguage = '';
+								var previousLanguage = '';
+								if (course['course_type'] == 'scorm') {
+									defaultLanguage = course['course_languages'][0];
+								} else {
+									defaultLanguage = 'english';
+								}
+								//
 								if (course['course_type'] == 'scorm') {
 									course['course_languages'].map(function (language) {
-										coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+										if (course['selected_language'] && course['selected_language'] == language) {
+											defaultLanguage = course['selected_language'];
+											previousLanguage = course['selected_language'];
+											coursesHTML += `            <option value="${language}" selected="selected">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+										} else {
+											coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+										}
 									});
 								} else {
 									coursesHTML += `                <option value="english">English</option>`;
@@ -253,16 +320,9 @@ $(function LMSEmployeeCourses() {
 								coursesHTML += `        </div>`;
 								coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
 								coursesHTML += `            <p>&nbsp;</p>`;
-
-								var defaultLanguage = '';
-								if (course['course_type'] == 'scorm') {
-									defaultLanguage = course['course_languages'][0];
-								} else {
-									defaultLanguage = 'english';
-								}
 							
 								if (course.course_status == "passed") {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-previous_language="${previousLanguage}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
 																<i class="fa fa-eye"></i>
 																View Content
 															</a>`;
@@ -272,7 +332,7 @@ $(function LMSEmployeeCourses() {
 																View Certificate
 															</a>`;
 								} else {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
+									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-previous_language="${previousLanguage}" data-course_id="${course.sid}" href="${baseURI + "lms/courses/" + course.sid + "/" + defaultLanguage}">
 																<i class="fa fa-play"></i>
 																Launch Content
 															</a>`;
@@ -302,7 +362,6 @@ $(function LMSEmployeeCourses() {
 			});
 	}
 	//
-	
 	//
 	getLMSAssignCourses();
 	

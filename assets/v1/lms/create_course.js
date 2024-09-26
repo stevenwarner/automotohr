@@ -46,6 +46,7 @@ $(function createCourse() {
 			course_recurring_type: $("#jsAddCourseReassignType").val(),
 			course_start_period: $("#jsAddCourseStartPeriod").val().trim(),
 			course_end_period: $("#jsAddCourseEndPeriod").val().trim(),
+			course_sort_order: $("#jsAddCourseSortOrder").val().trim(),
 			course_version: $("#jsAddCourseVersion").val(),
 			course_file_type: $(".jsAddCourseFileType:checked").val(),
 			course_file_link: $("#jsAddCourseLink").val(),
@@ -463,6 +464,9 @@ $(function createCourse() {
 		}
 		if (!courseObj.course_start_period) {
 			errorArray.push("Course start date is required.");
+		}
+		if (!courseObj.course_sort_order) {
+			errorArray.push("Course sort order is required.");
 		}
 		if (!courseObj.course_recurring_type.length) {
 			errorArray.push("Course recurring type is required.");

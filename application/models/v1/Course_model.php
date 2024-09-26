@@ -546,6 +546,12 @@ class Course_model extends CI_Model
         $this->db->delete('lms_scorm_courses');   
     }
 
+    public function deletePreviousAllLanguagesByIdAndLanguage ($courseId, $language) {
+        $this->db->where('course_sid', $courseId);
+        $this->db->where('course_file_language', $language);
+        $this->db->delete('lms_scorm_courses');   
+    }
+
     function getEmployerDetail($id) {
         $this->db->where('sid', $id);
         return $this->db->get('users')->row_array();

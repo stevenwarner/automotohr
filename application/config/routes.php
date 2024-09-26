@@ -1720,6 +1720,7 @@ $route['lms/courses/company_report/(:any)/(:any)/(:any)'] = 'v1/Courses/companyR
 $route['lms/courses/company_courses'] = 'v1/Courses/companyCourses';
 $route['lms/courses/emailReminder/(:any)'] = 'v1/Courses/emailReminder/$1';
 $route['lms/course/delete_language/(:num)']['delete'] = 'v1/Courses/deletePreviousAllLanguages/$1';
+$route['lms/course/delete_language/(:num)/(:any)']['delete'] = 'v1/Courses/deletePreviousLanguages/$1/$2';
 
 
 

@@ -336,7 +336,7 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `    <br>`;
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12">`;
-				coursesHTML += `            <p>${course.course_content.substr(0,50)}</p>`;
+				coursesHTML += `            <p>${course.course_content.substr(0,50)}&nbsp;</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
 				coursesHTML += `    <div class="row">`;
@@ -360,7 +360,33 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
 				coursesHTML += `    <div class="row">`;
-			
+				coursesHTML += `        <div class="col-md-12 col-xs-12 text-center">`;
+				coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
+				//
+				var defaultLanguage = '';
+				if (course['course_type'] == 'scorm') {
+					defaultLanguage = course['course_languages'][0];
+				} else {
+					defaultLanguage = 'english';
+				}
+				//
+				if (course['course_type'] == 'scorm') {
+					course['course_languages'].map(function (language) {
+						if (course['selected_language'] && course['selected_language'] == language) {
+							defaultLanguage = course['selected_language'];
+							coursesHTML += `            <option value="${language}" selected="selected">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+						} else {
+							coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+						}
+					});
+				} else {
+					coursesHTML += `                <option value="english">English</option>`;
+				}
+				//
+				coursesHTML += `            </select>`;
+				coursesHTML += `        </div>`;
+				coursesHTML += `    </div>`;
+				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12 text-center">`;
 				coursesHTML += `            <p>&nbsp;</p>`;
 			

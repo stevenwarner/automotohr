@@ -1311,6 +1311,18 @@ class Courses extends Public_Controller
         );
     }
 
+    public function deletePreviousLanguages ($courseId, $language) {
+        //
+        $this->course_model->deletePreviousAllLanguagesByIdAndLanguage($courseId, $language);
+        //
+        return SendResponse(
+            200,
+            [
+                "msg" => "Deleted."
+            ]
+        );
+    }
+
     public function importCourseCSV()
     {
         if ($this->session->userdata('logged_in')) {
