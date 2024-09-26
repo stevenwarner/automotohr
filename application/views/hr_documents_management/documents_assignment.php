@@ -3496,6 +3496,14 @@ if ($user_type == 'employee') {
         var lista_part3_issuing_select_input = "<?php echo sizeof($pre_form) > 0 ? $pre_form['lista_part3_issuing_select_input'] : '' ?>";
 
 
+        // employer section updates
+        $("#section2_emp_business_name").val('<?=$pre_form && $pre_form["section2_emp_business_name"] ? $pre_form["section2_emp_business_name"] : "" ;?>')
+        $("#section2_emp_business_address").val('<?=$pre_form && $pre_form["section2_emp_business_address"] ? $pre_form["section2_emp_business_address"] : "" ;?>')
+        $("#section2_city_town").val('<?=$pre_form && $pre_form["section2_city_town"] ? $pre_form["section2_city_town"] : "" ;?>')
+        $('#section2_state option[value="<?=$pre_form && $pre_form["section2_state"] ? $pre_form["section2_state"] : "" ;?>"]').prop("selected", true)
+        $("#section2_zip_code").val('<?=$pre_form && $pre_form["section2_zip_code"] ? $pre_form["section2_zip_code"] : "" ;?>')
+
+
         $('#section2_lista_part1_document_title').on('change', function() {
             var title = $(this).val();
             i9_manager.fill_part1_authority(title);
