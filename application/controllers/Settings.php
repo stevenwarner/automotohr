@@ -398,7 +398,6 @@ class Settings extends Public_Controller
                 $safety_sheet = $this->input->post('safety_sheet');
                 $CompanyDescription = $this->input->post('CompanyDescription');
                 $complynet_link = $access_level_plus ? $this->input->post('complynet_link') : '';
-
                 //
                 $post = $this->input->post(NULL, TRUE);
                 //
@@ -541,6 +540,8 @@ class Settings extends Public_Controller
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
                 $data['Location_State'] = $this->input->post('Location_State', true);
+                $data['company_corp_name'] = $this->input->post('company_corp_name');
+
 
                 $this->dashboard_model->update_user($sid, $data);
                 $company_details = $data;
@@ -701,7 +702,7 @@ class Settings extends Public_Controller
                 //Emergency Contact
                 $portal_data['emergency_contact_phone_number_status'] = $this->input->post('emergency_contact_phone_number_status')  ? 1 : 0;
                 $portal_data['emergency_contact_email_status'] = $this->input->post('emergency_contact_email_status')  ? 1 : 0;
-
+                
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');
                 redirect("my_settings", "location");

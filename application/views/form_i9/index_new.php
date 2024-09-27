@@ -682,7 +682,7 @@
                                                                     class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
                                                             <input name="section2_emp_business_name"
                                                                     id="section2_emp_business_name" class="form-control"
-                                                                    type="text" value="<?= isset($pre_form['section2_emp_business_name']) && !empty($pre_form['section2_emp_business_name']) ? $pre_form['section2_emp_business_name'] : "";?>">
+                                                                    type="text" value="<?= isset($pre_form['section2_emp_business_name']) && !empty($pre_form['section2_emp_business_name']) ? $pre_form['section2_emp_business_name'] : $employee['company_corp_name'];?>">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">

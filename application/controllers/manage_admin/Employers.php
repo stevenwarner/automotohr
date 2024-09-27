@@ -862,7 +862,7 @@ class employers extends Admin_Controller
                 );
 
                 $this->db->where('company_id', $sess_array['company_detail']['sid']);
-                $config = $this->db->get('incident_type_configuration')->num_rows();
+                $config = $this->db->count_all_results('incident_type_configuration');
                 $sess_array['incident_config'] = $config;
                 $sess_array['resource_center'] = $sess_array['company_detail']['enable_resource_center'];
 

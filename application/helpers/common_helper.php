@@ -5372,6 +5372,10 @@ if (!function_exists('get_admin_notifications')) {
             ->row_array()['count'];
         //
         $data['indeed_pending_status'] = $totalStatus - $mapStatus;
+
+        $data['indeed_job_has_errors'] = $CI->db->where('has_errors', 1)->from('indeed_job_queue')->count_all_results();
+
+
         return $data;
     }
 }

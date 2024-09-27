@@ -2034,6 +2034,7 @@ class Hr_documents_management extends Public_Controller
 
             switch ($user_type) {
                 case 'employee':
+                    
                     $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
 
                     if (empty($user_info)) {
@@ -3288,6 +3289,7 @@ class Hr_documents_management extends Public_Controller
                     }
                 }
             }
+            
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
 
@@ -3437,10 +3439,23 @@ class Hr_documents_management extends Public_Controller
                     $sign_date                                      = '';
                 }
             }
+            
+            // get the company details for prefilling
+            $getCompanyDataForPrefil = getCompanyDataForPrefil($company_sid);
+
+            if ($i9_form) {
+                // set employer details
+                $i9_form["section2_emp_business_name"] = $i9_form["section2_emp_business_name"] ? $i9_form["section2_emp_business_name"] : $getCompanyDataForPrefil["company_corp_name"];
+                $i9_form["section2_emp_business_address"] = $i9_form["section2_emp_business_address"] ? $i9_form["section2_emp_business_address"] : $getCompanyDataForPrefil["street_1"];
+                $i9_form["section2_city_town"] = $i9_form["section2_city_town"] ? $i9_form["section2_city_town"] : $getCompanyDataForPrefil["city"];
+                $i9_form["section2_state"] = $i9_form["section2_state"] ? $i9_form["section2_state"] : $getCompanyDataForPrefil["state_code"];
+                $i9_form["section2_zip_code"] = $i9_form["section2_zip_code"] ? $i9_form["section2_zip_code"] : $getCompanyDataForPrefil["zip_code"];
+            }
 
             $data['i9_form'] = $i9_form;
             $data['w9_form'] = $w9_form;
             $data['w4_form'] = $w4_form;
+
 
             $data['user_type'] = $user_type;
             $data['user_sid'] = $user_sid;
@@ -17344,7 +17359,7 @@ class Hr_documents_management extends Public_Controller
         );
         //
         $updateArray = [];
-        $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["CompanyName"];
+        $updateArray["emp_name"] = $w4Form["emp_name"] ?? $data["company_corp_name"];
         $updateArray["emp_address"] = $w4Form["emp_address"] ?? $data["companyAddress"];
         if ((!$w4Form["first_date_of_employment"] || $w4Form["first_date_of_employment"] == "0000-00-00") && $data["first_day_of_employment"]) {
             $updateArray["first_date_of_employment"] = formatDateToDB($data["first_day_of_employment"], "m-d-Y", DB_DATE);

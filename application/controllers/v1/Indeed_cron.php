@@ -11,7 +11,7 @@ class Indeed_cron extends CI_Controller
      * holds the jobs count
      * @var int
      */
-    private $numberOfJobsForQueue = 1;
+    private $numberOfJobsForQueue = 20;
 
     /**
      * holds the jobs
