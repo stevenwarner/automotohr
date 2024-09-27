@@ -46,6 +46,7 @@ class Courses extends Public_Controller
         }
         //
         $data['title'] = "My Course(s) | " . STORE_NAME;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = 0;
         $data['page'] = "my_dashboard";
@@ -112,6 +113,7 @@ class Courses extends Public_Controller
         }
         //
         $data['title'] = "My Course(s) | " . STORE_NAME;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = 0;
         $data['page'] = "my_courses";
@@ -184,6 +186,7 @@ class Courses extends Public_Controller
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['session'] = $session;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
@@ -279,6 +282,7 @@ class Courses extends Public_Controller
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
         $data['session'] = $session;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
@@ -356,6 +360,7 @@ class Courses extends Public_Controller
         //
         $data['title'] = "Certificate :: " . STORE_NAME;
         $data['session'] = $session;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['student_sid'] = $studentId;
         $data['type'] = $type;
@@ -425,6 +430,7 @@ class Courses extends Public_Controller
         $courseInfo = $this->course_model->getCourseInfo($sid);
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['viewMode'] = "preview";
@@ -541,6 +547,7 @@ class Courses extends Public_Controller
         }
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
@@ -604,6 +611,7 @@ class Courses extends Public_Controller
             $data['title'] = "Subordinate Courses | " . STORE_NAME;
         }
         //
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
         $data['subordinateName'] = getUserNameBySID($subordinateId);
@@ -674,6 +682,7 @@ class Courses extends Public_Controller
             $data['title'] = "Subordinate Courses | " . STORE_NAME;
         }
         //
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
         $data['subordinateName'] = getUserNameBySID($subordinateId);
@@ -740,12 +749,13 @@ class Courses extends Public_Controller
         //
         $data["reviewAs"] = $reviewAs;
         $data['session'] = $session;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
         $data['course_sid'] = $courseId;
         $data['courseInfo'] = $courseInfo;
-        $data['lessonStatus'] = $lessonStatus;
+        // $data['lessonStatus'] = $lessonStatus;
         $data['page'] = "subordinate_course";
         $data['subordinate_sid'] = $subordinateId;
         //
@@ -828,12 +838,13 @@ class Courses extends Public_Controller
         //
         $data["reviewAs"] = $reviewAs;
         $data['session'] = $session;
+        $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;
         $data['course_sid'] = $courseId;
         $data['courseInfo'] = $courseInfo;
-        $data['lessonStatus'] = $lessonStatus;
+        // $data['lessonStatus'] = $lessonStatus;
         $data['page'] = "subordinate_course";
         $data['subordinate_sid'] = $subordinateId;
         $data['language'] = $language;
@@ -892,6 +903,7 @@ class Courses extends Public_Controller
         if ($this->session->userdata('logged_in')) { 
             // Added on: 28-08-2023
             $session = $this->session->userdata('logged_in');
+            $companyId = $session['company_detail']['sid'];
             //
             if (!$session['employer_detail']['access_level_plus']) {
                 $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
@@ -906,6 +918,7 @@ class Courses extends Public_Controller
             $data['session'] = $session;
             $data['security_details'] = $security_details;
             $data['title'] = "LMS Company Report";
+            $data['companyId'] = $companyId;
             $data['employer_sid'] = $security_sid;
             $data['company_sid'] = $session['company_detail']['sid'];
             $data['logged_in_view'] = true;
