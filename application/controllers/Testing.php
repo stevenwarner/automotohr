@@ -1111,33 +1111,34 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
+   
 
-    function fixJobTitle () {
-        $companyIds = [59234,59232,58302,58134,56410,56407,53562,52584,49929,32055,32051,28588,16485,16483,16481,16479,16475,16459,16439,16437,16433,16431,16429,16427,16374];
-        $this->load->model('2022/complynet_model', 'complynet_model');
+    function addScormCourses () {
+        //
+        $results = $this->db->select("sid, course_file_name, Imsmanifist_json")
+            ->where("company_sid", 0)
+            ->where("course_type", 'scorm')
+            ->where("course_file_name <>", null)
+            ->where("course_file_name <>", '')
+            ->get("lms_default_courses")
+            ->result_array();
 
-        foreach ($companyIds as $companyId) {
-            if (isCompanyOnComplyNet($companyId)) {
-                $complynetEmployees = $this->complynet_model->getCompanyEmployees($companyId);
-                //
-                if ($complynetEmployees) {
-                    foreach ($complynetEmployees as $employee) {
-                        $complynetJobRoleId = $this->complynet_model->getComplyNetJobRoleId($employee['complynet_job_title']);
-                        if ($complynetJobRoleId != 0) {
-                            $status =  $this->complynet_model->checkJobRoleAlreadyUpdated($employee['sid'], $companyId, $complynetJobRoleId);
-                            if (!$status) {
-                                _e("update status for".$employee['email'], true);
-                            }
-                        }
-                    }
-                }
-                
-                //
-                _e(count($complynetEmployees),true);
-            } 
+        foreach ($results as $v) {
+            $insert_data = array();
+            $insert_data['course_sid'] = $v['sid'];
+            $insert_data['course_file_name'] = $v['course_file_name'];
+            $insert_data['course_file_language'] = 'english';
+            $insert_data['Imsmanifist_json'] = $v['Imsmanifist_json'];
+            $insert_data['created_at'] = getSystemDate();
+            $insert_data['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
 }
+
+
+
 
 if (!function_exists('remakeSalary')) {
     function remakeSalary($salary, $jobType)

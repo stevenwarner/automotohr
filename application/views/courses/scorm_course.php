@@ -29,7 +29,7 @@
                                         <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } ?>
                                 <?php } else { ?> 
-                                    <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                    <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                 <?php } ?>     
                             </div>
                         </h1>
@@ -52,10 +52,12 @@
 <script>
     var courseId = "<?php echo $course_sid; ?>";
     var courseType = "<?php echo $courseInfo['course_type']; ?>";
+    var courseLanguage = "<?php echo $language; ?>";
     var scormVersion = "<?php echo $courseInfo['version']; ?>";
     var mode = "<?php echo $viewMode; ?>";
     var CMIElementsObj = <?= json_encode($CMIObject); ?>;
     var lessonStatus = "<?php echo $lessonStatus; ?>";
     var page = "<?php echo $page; ?>";
     var subordinateId = "<?php echo $subordinate_sid; ?>";
+    var reviewAs = "<?php echo $reviewAs; ?>";
 </script>

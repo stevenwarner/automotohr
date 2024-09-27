@@ -22,7 +22,7 @@
                         <h1 class="section-ttile">
                             <?php echo $title; ?>
                             <div style="float: right;">
-                                <a href="<?php echo base_url('lms/courses/my'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
+                                <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
                             </div>
                         </h1>
                     </div>
@@ -170,7 +170,10 @@
                                                                                 <td class="_csVm"><?php echo $teamName; ?></td>
                                                                                 <td class="_csVm"><?php echo $courseCountText; ?></td>
                                                                                 <td class="_csVm">
-                                                                                    <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                                    <!-- <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                                        <i class="fa fa-eye"></i> View
+                                                                                    </a> -->
+                                                                                    <a href="<?php echo base_url('lms/subordinate/dashboard/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View
                                                                                     </a>
                                                                                 </td>

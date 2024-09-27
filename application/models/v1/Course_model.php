@@ -527,4 +527,54 @@ class Course_model extends CI_Model
             return [];
         }
     }
+
+    public function getCourseLanguageInfo ($courseId, $language) {
+        $courseInfo = $this->db
+            ->select('course_file_name, Imsmanifist_json')
+            ->from('lms_scorm_courses')
+            ->join('lms_assign_course_log', 'lms_scorm_courses.course_sid = lms_assign_course_log.default_course_sid')
+            ->where('lms_assign_course_log.assigned_course_sid', $courseId)
+            ->where('lms_scorm_courses.course_file_language', $language)
+            ->get()
+            ->row_array();
+        //
+        return $courseInfo;    
+    }
+
+    public function deletePreviousAllLanguagesById ($courseId) {
+        $this->db->where('course_sid', $courseId);
+        $this->db->delete('lms_scorm_courses');   
+    }
+
+    public function deletePreviousAllLanguagesByIdAndLanguage ($courseId, $language) {
+        $this->db->where('course_sid', $courseId);
+        $this->db->where('course_file_language', $language);
+        $this->db->delete('lms_scorm_courses');   
+    }
+
+    function getEmployerDetail($id) {
+        $this->db->where('sid', $id);
+        return $this->db->get('users')->row_array();
+    }
+
+    public function getCourseIdByTitleAndType ($title, $type, $companyId) {
+        $this->db->select('sid');
+        $this->db->where('course_title', $title);
+        $this->db->where('course_type', $type);
+        $this->db->where('company_sid', $companyId);
+        $a = $this->db->get('lms_default_courses');
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!empty($b)) {
+            return $b['sid'];
+        } else {
+            return 0;
+        }
+    }
+
+    public function insertEmployeeCourseInfo ($dataToInsert) {
+        $this->db->insert('lms_employee_course', $dataToInsert);
+    }
 }

@@ -965,7 +965,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             <?php if ($haveSubordinate == "yes") { ?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="widget-box bg-box">
-                                        <a href="<?php echo base_url('lms/courses/my'); ?>">
+                                        <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>">
                                             <div class="link-box bg-redish full-width">
                                                 <div class="bg-icon-holder">
                                                     <i class="fa fa-users"></i>
@@ -987,7 +987,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             <!-- LMS - Courses -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
-                                    <a href="<?php echo base_url('lms/courses/my'); ?>">
+                                    <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>">
                                         <div class="link-box bg-redish full-width">
                                             <h2>Courses</h2>
                                             <div><span>&nbsp;</span></div>

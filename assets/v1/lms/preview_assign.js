@@ -20,6 +20,62 @@ $(function LMSEmployeeCourses() {
 			.setHeader("Confirm");
 	});
 
+	$(document).on("change", ".jsChangeScormLanguage", function (event) {
+		event.preventDefault();
+		//
+        // var courseId = $(this).data("course_id");
+		var language = $(this).val();
+		//
+		alertify
+			.confirm(
+				"Are you sure you want to change course language?",
+				function () {
+					changeScormLanguage(language);
+				},
+				CB
+			)
+			.setHeader("Confirm");
+		
+	});
+
+	function changeScormLanguage (language) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url:
+				apiURL +
+				"lms/trainings/" +
+				employeeId +
+				"/" +
+				courseId +
+				"/" +
+				language ,
+			method: "PUT",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//
+				if (response.status === "language_changed") {
+					window.location = baseURI + "lms/courses/" + courseId + '/' + language;
+				}
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
 	function startCourse() {
 		// check and abort previous calls
 		if (XHR !== null) {
@@ -35,6 +91,8 @@ $(function LMSEmployeeCourses() {
 				employeeId +
 				"/" +
 				courseId +
+				"/" +
+				courseLanguage +
 				"/start?_has=" +
 				(window.location.host.indexOf("www.") !== -1 ? "y" : "n"),
 			method: "GET",
@@ -218,6 +276,8 @@ $(function LMSEmployeeCourses() {
 				employeeId +
 				"/" +
 				courseId +
+				"/" +
+				courseLanguage +
 				"?_has=" +
 				(window.location.host.indexOf("www.") !== -1 ? "y" : "n"),
 			method: "GET",
