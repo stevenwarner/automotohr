@@ -55,6 +55,7 @@ class Courses extends Public_Controller
         $data['haveSubordinate'] = $haveSubordinate;
         $data['load_view'] = 1;
         $data['type'] = "self";
+        $data['level'] = 0;
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -122,6 +123,7 @@ class Courses extends Public_Controller
         $data['haveSubordinate'] = $haveSubordinate;
         $data['load_view'] = 1;
         $data['type'] = "self";
+        $data['level'] = 0;
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main',
@@ -195,6 +197,7 @@ class Courses extends Public_Controller
         $data['lessonStatus'] = $lessonStatus;
         $data['page'] = "my_course";
         $data['subordinate_sid'] = 0;
+        $data['level'] = 0;
         //
         // load CSS
         $data['PageCSS'] = [
@@ -292,6 +295,7 @@ class Courses extends Public_Controller
         $data['page'] = "my_course";
         $data['subordinate_sid'] = 0;
         $data['language'] = $language;
+        $data['level'] = 0;
         //
         // load CSS
         $data['PageCSS'] = [
@@ -371,6 +375,7 @@ class Courses extends Public_Controller
         $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
         $data['AHRStudentID'] = 'AHR-'.$studentId;
         $data['load_view'] = 1;
+        $data['level'] = 0;
         $data['courseInfo'] = $this->course_model->getCourseInfo($courseId);
         $EmployeeCourseProgress = $this->course_model->getEmployeeCourseProgressInfo($courseId, $studentId, $companyId);
         $studentInfo = $this->course_model->getStudentInfo($studentId);
@@ -437,6 +442,7 @@ class Courses extends Public_Controller
         $data['load_view'] = 1;
         $data['course_sid'] = $sid;
         $data['courseInfo'] = $courseInfo;
+        $data['level'] = 0;
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -556,6 +562,7 @@ class Courses extends Public_Controller
         $data['subordinateInfo'] = $subordinateInfo;
         $data['title'] = "Employee(s) Report";
         $data['filters'] = $filters;
+        $data['level'] = 0;
         // load CSS
         //
         $data['Page_CSS'] = [
@@ -622,6 +629,7 @@ class Courses extends Public_Controller
         $data['haveSubordinate'] = $haveSubordinate;
         $data['page'] = "subordinate_courses";
         $data['type'] = $type;
+        $data['level'] = 0;
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -693,6 +701,7 @@ class Courses extends Public_Controller
         $data['haveSubordinate'] = $haveSubordinate;
         $data['page'] = "subordinate_courses";
         $data['type'] = $type;
+        $data['level'] = 0;
         // load CSS
         $data['PageCSS'] = [
             '2022/css/main'
@@ -758,6 +767,7 @@ class Courses extends Public_Controller
         // $data['lessonStatus'] = $lessonStatus;
         $data['page'] = "subordinate_course";
         $data['subordinate_sid'] = $subordinateId;
+        $data['level'] = 0;
         //
         // load CSS
         $data['PageCSS'] = [
@@ -848,6 +858,7 @@ class Courses extends Public_Controller
         $data['page'] = "subordinate_course";
         $data['subordinate_sid'] = $subordinateId;
         $data['language'] = $language;
+        $data['level'] = 0;
         //
         // load CSS
         $data['PageCSS'] = [
@@ -925,6 +936,7 @@ class Courses extends Public_Controller
             $data['left_navigation'] = 'courses/partials/profile_left_menu';
             $data['employer_detail'] = $data['session']['employer_detail'];
             $data['company_detail'] = $data['session']['company_detail'];
+            $data['level'] = 0;
             //
             //
             $filters = [
@@ -1221,6 +1233,7 @@ class Courses extends Public_Controller
             $data['left_navigation'] = 'courses/partials/profile_left_menu';
             $data['employer_detail'] = $data['session']['employer_detail'];
             $data['company_detail'] = $data['session']['company_detail'];
+            $data['level'] = 0;
             //
             // load JS
             $data['PageScripts'] = [
