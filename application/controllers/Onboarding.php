@@ -4622,7 +4622,6 @@ class Onboarding extends CI_Controller
             //Removed pay plan 
             $pp_flag = 0;
             //
-
             switch ($user_type) {
                 case 'employee':
                     $data = employee_right_nav($user_sid);
@@ -4805,6 +4804,8 @@ class Onboarding extends CI_Controller
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
 
+                            //
+                            $data_to_insert['assign_location'] = "Green panel employee onboarding setup from group";
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);

@@ -511,6 +511,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				obj.approvers_note = approverInfo.approverNote;
 				obj.approvers_list = approverInfo.approversList.toString();
 			}
+
+			//
+			obj.assign_location = 'Green panel employee document center';
 			//
 			var post = new FormData();
 			//

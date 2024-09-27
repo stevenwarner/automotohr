@@ -11565,6 +11565,10 @@ class Hr_documents_management_model extends CI_Model
                         $data_to_insert['is_confidential'] = $document['is_confidential'];
                         $data_to_insert['is_required'] = $document['is_required'];
                         $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
+
+                        //
+                        $data_to_insert['assign_location'] = "EMS assigne bulk groups";
+
                         //
                         $assignment_sid = $this->insert_documents_assignment_record($data_to_insert);
                         //

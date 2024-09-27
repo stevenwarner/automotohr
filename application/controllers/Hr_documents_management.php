@@ -205,7 +205,7 @@ class Hr_documents_management extends Public_Controller
                                 $document_sid,
                                 $this->input->post('document_description') ?? '',
                                 true
-                            ));                      
+                            ));
 
                         $doSendEmails = !$this->input->post('notification_email', true)
                             ? 'yes'
@@ -2034,7 +2034,7 @@ class Hr_documents_management extends Public_Controller
 
             switch ($user_type) {
                 case 'employee':
-                    
+
                     $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
 
                     if (empty($user_info)) {
@@ -2055,7 +2055,7 @@ class Hr_documents_management extends Public_Controller
                     $data['employer'] = $this->hr_documents_management_model->get_company_detail($user_sid);
 
                     $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $user_sid, $user_type, 'single_download');
-                    
+
                     break;
                 case 'applicant':
                     $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $user_sid);
@@ -3289,7 +3289,7 @@ class Hr_documents_management extends Public_Controller
                     }
                 }
             }
-            
+
 
             $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid, 1);
 
@@ -3439,7 +3439,7 @@ class Hr_documents_management extends Public_Controller
                     $sign_date                                      = '';
                 }
             }
-            
+
             // get the company details for prefilling
             $getCompanyDataForPrefil = getCompanyDataForPrefil($company_sid);
 
@@ -3516,6 +3516,8 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             $data_to_insert['is_required'] = $document['is_required'];
                             $data_to_insert['fillable_document_slug'] = $document['fillable_document_slug'];
+
+                            $data_to_insert['assign_location'] = "Green panel employee document center from group";
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -3827,9 +3829,9 @@ class Hr_documents_management extends Public_Controller
 
                                 $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
                                 $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
-                            } 
-                            
-                            if (str_replace('{{authorized_editable_date}}', '', $document_body) != $document_body)  {
+                            }
+
+                            if (str_replace('{{authorized_editable_date}}', '', $document_body) != $document_body) {
                                 //
                                 if ($assign_on >= $compare_date || !empty($assigned_document['form_input_data'])) {
                                     $is_document_authorized_date = 1;
@@ -8046,7 +8048,7 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     if (!empty($document['authorized_editable_date'])) {
-                        $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
+                        $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
                     } else {
                         $authorized_editable_date = 'Authorize Date :------/-------/----------------';
                     }
@@ -8060,12 +8062,12 @@ class Hr_documents_management extends Public_Controller
 
                     $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
                     $document_content = str_replace('{{text}}', $value, $document_content);
-                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
-                    
+                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
+
 
                     $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                     $document_content = str_replace('{{text_area}}', $value, $document_content);
-                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
 
                     $checkboxRequired = '<div class="row">';
                     $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
@@ -8155,11 +8157,11 @@ class Hr_documents_management extends Public_Controller
 
                     $value = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
                     $document_content = str_replace('{{text}}', $value, $document_content);
-                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                    $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
 
                     $value = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
                     $document_content = str_replace('{{text_area}}', $value, $document_content);
-                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$value, $document_content);
+                    $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)' . $value, $document_content);
 
                     $checkboxRequired = '<div class="row">';
                     $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
@@ -10082,7 +10084,7 @@ class Hr_documents_management extends Public_Controller
             $requested_content = html_entity_decode($document_content);
         }
 
-        
+
 
         $data = array();
         $data['file_name'] = $file_name;
@@ -10219,7 +10221,7 @@ class Hr_documents_management extends Public_Controller
         }
 
         if (!empty($document['authorized_editable_date'])) {
-            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
+            $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
         } else {
             $authorized_editable_date = 'Authorize Date :------/-------/----------------';
         }
@@ -12572,8 +12574,12 @@ class Hr_documents_management extends Public_Controller
                 }
             }
         }
-        //
 
+        //
+        if (isset($post['assign_location'])) {
+            $a['assign_location'] = $post['assign_location'];
+       }
+        //
         if ($assignInsertId == null)
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
@@ -13613,7 +13619,7 @@ class Hr_documents_management extends Public_Controller
             }
 
             if (!empty($document['authorized_editable_date'])) {
-                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';   
+                $authorized_editable_date = ' <strong>' . formatDateToDB($document['authorized_editable_date'], DB_DATE, DATE) . '</strong>';
             } else {
                 $authorized_editable_date = 'Authorize Date :------/-------/----------------';
             }
@@ -15032,8 +15038,7 @@ class Hr_documents_management extends Public_Controller
             $new_documents_assigned_data['is_confidential'] = $documents_assigned_data['is_confidential'];
             $new_documents_assigned_data['fillable_document_slug'] = $documents_assigned_data['fillable_document_slug'];
 
-
-
+            $new_documents_assigned_data['assign_location'] = "Blue panel employee library document";
 
             // TODO
             // Send emails to assigned employers
@@ -16369,12 +16374,12 @@ class Hr_documents_management extends Public_Controller
             $short_text = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
             $document_content = str_replace('{{text}}', $short_text, $document_content);
             $document_content = str_replace('{{short_text}}', $short_text, $document_content);
-            $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)'.$short_text, $document_content);
-            $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)'.$short_text, $document_content);
+            $document_content = str_replace('{{short_text_required}}', ' (<b>Required Field</b>)' . $short_text, $document_content);
+            $document_content = str_replace('{{text_required}}', ' (<b>Required Field</b>)' . $short_text, $document_content);
 
             $text_area = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
             $document_content = str_replace('{{text_area}}', $text_area, $document_content);
-            $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)'.$text_area, $document_content);
+            $document_content = str_replace('{{text_area_required}}', ' (<b>Required Field</b>)' . $text_area, $document_content);
             //
             $checkboxRequired = '<div class="row">';
             $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
@@ -17480,8 +17485,6 @@ class Hr_documents_management extends Public_Controller
             $data_to_update['authorized_editable_date'] = formatDateToDB($form_post['authorized_date'], SITE_DATE, DB_DATE);
             //
             $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
-
-            
         }
     }
 }
