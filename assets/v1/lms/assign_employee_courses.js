@@ -85,7 +85,7 @@ $(function LMSEmployeeCourses() {
 			$(this).attr('href', url);
 			//
 			window.location = $(this).attr('href').toString();
-		}s
+		}
 	});
 
 	$(document).on("change", ".jsSelectCourseLanguage", function (event) {
