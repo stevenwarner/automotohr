@@ -106,3 +106,7 @@ manage_portal/.well-known/*
 manage_ams/.well-known/*
 affiliate_portal/.well-known/*
 executive_admin/.well-known/*
+
+# LMS
+uploads
+new
