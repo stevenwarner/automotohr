@@ -34,7 +34,7 @@
 
 <link rel="stylesheet" href="<?= base_url("assets/css/SystemModel.css"); ?>">
 <script src="<?= base_url("assets/js/SystemModal.js"); ?>"></script>
-<script type="text/javascript" src="http://automotohr.local/assets/js/app_helper.js?v=1691667825"></script>
+<script type="text/javascript" src="https://automotohr.local/assets/js/app_helper.js?v=1691667825"></script>
 <script>
     $(function EmployeePerformanceEvaluationDocument() {
 
