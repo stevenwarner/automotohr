@@ -78,4 +78,5 @@
     var lessonStatus = "<?php echo $lessonStatus; ?>";
     var page = "<?php echo $page; ?>";
     var subordinateId = "<?php echo $subordinate_sid; ?>";
+    var search = "<?php echo $search; ?>";
 </script>

@@ -123,8 +123,13 @@ $(function LMSEmployeeCourses() {
 		// show the loader
 		ml(true, "jsPageLoader");
 		// make the call
+		var courseUrl = apiURL + "lms/report/" + subordinateId + "/" + courseId;
+		//
+		if (courseType == "scorm") {
+			courseUrl += courseUrl+ "/" +courseLanguage
+		}
 		XHR = $.ajax({
-			url: apiURL + "lms/report/" + subordinateId + "/" + courseId + "/" +courseLanguage,
+			url: courseUrl,
 			method: "GET",
 		})
 			.success(function (response) {

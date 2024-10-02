@@ -389,23 +389,23 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12 text-center">`;
 				coursesHTML += `            <p>&nbsp;</p>`;
-			
+
 				if (course.course_status == "passed") {
-					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 btn-block" href="${baseURI + "lms/courses/" + course.sid}">
+					coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
 												<i class="fa fa-eye"></i>
 												View Content
 											</a>`;
 											
-					coursesHTML += `        <a class="btn btn-info csRadius5 csF16 btn-block" href="${window.location.origin}/lms/courses/${course.sid}/${employeeId}/my/certificate">
+					coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
 												<i class="fa fa-eye"></i>
 												View Certificate
 											</a>`;
 				} else {
-					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 btn-block" href="${baseURI + "lms/courses/" + course.sid}">
+					coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
 												<i class="fa fa-play"></i>
 												Launch Content
 											</a>`;
-				}	
+				}
 
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;

@@ -768,6 +768,7 @@ class Courses extends Public_Controller
         $data['page'] = "subordinate_course";
         $data['subordinate_sid'] = $subordinateId;
         $data['level'] = 0;
+        $data['search'] = "";
         //
         // load CSS
         $data['PageCSS'] = [
@@ -859,6 +860,7 @@ class Courses extends Public_Controller
         $data['subordinate_sid'] = $subordinateId;
         $data['language'] = $language;
         $data['level'] = 0;
+        $data['search'] = "";
         //
         // load CSS
         $data['PageCSS'] = [
