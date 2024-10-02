@@ -1,4 +1,3 @@
-
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -13,13 +12,10 @@
                     </div>
 
                     <div style="position: relative;">                      
-                    <?php $this->load->view("{$pp}all_feedbacks_blue"); ?>
+                        <?php $this->load->view("{$pp}dashboard_content_new"); ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-

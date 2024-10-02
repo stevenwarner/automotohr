@@ -1369,7 +1369,7 @@ $route['my_eeoc_form'] = 'onboarding/my_eeoc_form';
  * @date     02/02/2021
  */
 // Overview
-$route['performance-management/dashboard'] = 'Performance_management/dashboard';
+$route['performance-management/dashboard'] = 'Performance_management/dashboardNew';
 $route['performance-management/goals'] = 'Performance_management/goals';
 $route['performance-management/pd_goal/(:num)']['get'] = 'Performance_management/pd_goal/$1';
 $route['performance-management/pd/(:any)/(:num)/(:num)/(:num)']['get'] = 'Performance_management/pd/$1/$2/$3/$4';

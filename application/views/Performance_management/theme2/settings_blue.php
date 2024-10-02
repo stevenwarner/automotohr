@@ -4,7 +4,7 @@
     $teams = json_decode($settings['teams'], true);
     $employees = json_decode($settings['employees'], true);
 ?>
-<div class="col-md-12 col-sm-12">
+<div class="col-md-12 col-sm-12" style="padding-left: 0px;padding-right: 0px;">
     <!--  -->
     <div class="csIPLoader jsIPLoader" data-page="settings">
         <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>
@@ -12,7 +12,7 @@
 
     <!-- Visibility -->
     <div class="panel panel-theme">
-        <div class="panel-heading">
+        <div class="panel-heading" style="background-color: #81b431;">
             <p class="csF16 csB7 csW mb0">Visibility <small>(Who can manage reviews)</small></p>
         </div>
         <div class="panel-body jsPageBody" data-page="visibility">
@@ -93,7 +93,7 @@
         </div>
         <div class="panel-footer">
             <span class="pull-right">
-                <button class="btn btn-orange jsUpdateSettings"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update</button>
+                <button class="btn btn-success jsUpdateSettings"><i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update</button>
             </span>
             <div class="clearfix"></div>
         </div>

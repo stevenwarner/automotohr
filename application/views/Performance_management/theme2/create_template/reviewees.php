@@ -1,6 +1,12 @@
 <!-- Reviewees -->
+<?php if ($load_view) {
+$panelHeading = 'background-color: #3554DC';
+} else {
+$panelHeading = 'background-color: #81b431';
+}
+?>
 <div class="panel panel-theme">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?=$panelHeading?>">
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Select Reviewees <small>(The reviewee's are the employee's against which the review will run)</small></p>

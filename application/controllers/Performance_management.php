@@ -13,7 +13,8 @@
  * @link       https://www.automotohr.com
  */
 
-class Performance_management extends Public_Controller{
+class Performance_management extends Public_Controller
+{
     // Set page path
     private $pp;
     // Set mobile path
@@ -29,7 +30,8 @@ class Performance_management extends Public_Controller{
      * @employee Mubashir Ahmed 
      * @date     02/01/2021
      */
-    function __construct(){
+    function __construct()
+    {
         //
         parent::__construct();
         //
@@ -54,7 +56,7 @@ class Performance_management extends Public_Controller{
         ];
         //
 
-       // $this->header = 'main/header';
+        // $this->header = 'main/header';
         $this->header = 'main/header_2022';
         $this->footer = 'main/footer';
     }
@@ -67,7 +69,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function dashboard(){
+    function dashboard()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -81,7 +84,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['company_employees_index'] = [];
         //
-        foreach($this->pargs['company_employees'] as $emp){
+        foreach ($this->pargs['company_employees'] as $emp) {
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         // // Get Assigned Reviews 
@@ -90,7 +93,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
         //
-               
+
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}dashboard");
@@ -106,7 +109,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function goals(){
+    function goals()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -118,47 +122,62 @@ class Performance_management extends Public_Controller{
         //
         $ne = [];
         //
-        foreach($this->pargs['company_employees'] as $imp){
+        foreach ($this->pargs['company_employees'] as $imp) {
             $ne[$imp['Id']] = $imp;
         }
         //
         $this->pargs['ne'] = $ne;
+
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
         //
-        $this->pargs['type'] = $type = $this->input->get('type', true) ? $this->input->get('type', true): 'my';
+        $this->pargs['type'] = $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'my';
         //
-        if($type == 'my'){
+        if ($type == 'my') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
-        } else if($type == 'company'){
+            $this->pargs['load_view'] = true;
+       
+        } else if ($type == 'company') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], 0);
-        } else if($type == 'department'){
+        } else if ($type == 'department') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['department_sid']));
-        } else if($type == 'team'){
+        } else if ($type == 'team') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['team_sid']));
-        }else {
+        } else {
             //
-            if(!$this->pargs['employee']['access_level_plus']){
+            if (!$this->pargs['employee']['access_level_plus']) {
                 //
                 $this->pargs['MyGoals'] = $this->pargs['Goals'];
-            } else{
-                $this->pargs['MyGoals'] = array_filter($this->pargs['Goals'], function($goal){
+            } else {
+                $this->pargs['MyGoals'] = array_filter($this->pargs['Goals'], function ($goal) {
                     //
-                    if($goal['employee_sid'] == $this->pargs['employee']['sid']){
+                    if ($goal['employee_sid'] == $this->pargs['employee']['sid']) {
                         return 1;
                     }
                 });
             }
             $this->pargs['MyGoals'] = $this->pargs['Goals'];
-        } 
+        }
         //
+        if ($type == 'my') {
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}goals/dashboard");
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
+        }else{       
+       $this->load->view('main/header', $this->pargs);
+         $this->load->view("{$this->pp}goals/dashboard");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view('main/footer');
+        }
+
     }
 
     /**
@@ -169,18 +188,19 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function pd_goal($id){
+    function pd_goal($id)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
         $this->pargs['title'] = 'Performance Management - Goal';
         //
         $this->pargs['Goal'] = $this->pmm->GetSingleGoalById($id);
-        
+
         $this->load->view("{$this->pp}goals/pd");
     }
-    
-   
+
+
     /**
      * Reviews
      * 
@@ -189,7 +209,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function reviews(){
+    function reviews()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -208,22 +229,27 @@ class Performance_management extends Public_Controller{
         $this->pargs['ReviewCount'] = $this->pmm->GetReviewCount($this->pargs['companyId']);
         //
         $this->pargs['reviews'] = $this->pmm->GetAllReviews(
-            $this->pargs['employerId'], 
-            $this->pargs['employerRole'], 
-            $this->pargs['level'], 
+            $this->pargs['employerId'],
+            $this->pargs['employerRole'],
+            $this->pargs['level'],
             $this->pargs['companyId'],
             null,
             $type
         );
 
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}reviews");
         $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+
+        $this->load->view('main/footer');
     }
-   
-   
+
+
     /**
      * templates
      * 
@@ -232,7 +258,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function templates(){
+    function templates()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -246,11 +273,15 @@ class Performance_management extends Public_Controller{
             $this->pargs['companyId']
         );
 
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}templates");
         $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
     }
 
     /**
@@ -261,7 +292,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function MyReviews(){
+    function MyReviews()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -283,7 +315,7 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
-   
+
     /**
      * Reviews
      * 
@@ -292,7 +324,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function SingleReview($id){
+    function SingleReview($id)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -318,7 +351,7 @@ class Performance_management extends Public_Controller{
         $this->load->view("{$this->pp}footer");
         $this->load->view($this->footer);
     }
-    
+
     /**
      * Review
      * 
@@ -327,7 +360,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function review($reviewId, $revieweeId, $reviewerId){
+    function review($reviewId, $revieweeId, $reviewerId)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -345,6 +379,9 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
         //
+
+
+
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}feedback/review");
@@ -360,7 +397,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function feedback($reviewId, $revieweeId, $reviewerId){
+    function feedback($reviewId, $revieweeId, $reviewerId)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -376,7 +414,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['company_employees_index'] = [];
         //
-        foreach($this->pargs['company_employees'] as $emp){
+        foreach ($this->pargs['company_employees'] as $emp) {
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         //
@@ -401,7 +439,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_review($id = 0, $section = false){
+    function create_review($id = 0, $section = false)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -423,44 +462,46 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['section'] = $section;
         //
-        if($id !== 0 &&$this->pargs['review']['is_draft'] == 0){
-            redirect('performance-management/reviews','refresh');
+        if ($id !== 0 && $this->pargs['review']['is_draft'] == 0) {
+            redirect('performance-management/reviews', 'refresh');
             return;
         }
-        if($id !== 0){
-            if(empty($section)){
+        if ($id !== 0) {
+            if (empty($section)) {
                 //
-                if(!empty($this->pargs['review']['reviewers'])){
-                    redirect('performance-management/review/create/'.($id).'/reviewers','refresh');
+                if (!empty($this->pargs['review']['reviewers'])) {
+                    redirect('performance-management/review/create/' . ($id) . '/reviewers', 'refresh');
                     return;
                 }
                 //
-                if(!empty($this->pargs['review']['reviewees'])){
-                    redirect('performance-management/review/create/'.($id).'/reviewees','refresh');
+                if (!empty($this->pargs['review']['reviewees'])) {
+                    redirect('performance-management/review/create/' . ($id) . '/reviewees', 'refresh');
                     return;
                 }
                 //
-                if(!empty($this->pargs['review']['questions'])){
-                    redirect('performance-management/review/create/'.($id).'/questions','refresh');
+                if (!empty($this->pargs['review']['questions'])) {
+                    redirect('performance-management/review/create/' . ($id) . '/questions', 'refresh');
                     return;
                 }
             }
         }
-        
+
         // Set Job titles
-        $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function($job){
-            if(!empty($job)) {
+        $this->pargs['job_titles'] = array_filter(array_unique(array_column($this->pargs['company_employees'], 'JobTitle')), function ($job) {
+            if (!empty($job)) {
                 return 1;
             }
         });
         //
         sort($this->pargs['job_titles']);
-        //
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+        //        
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}create_review/create");
         $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
     }
 
     /**
@@ -471,7 +512,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function create_template($id = 0){
+    function create_template($id = 0)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -483,13 +525,17 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['template'] = $this->pmm->GetTemplateById($id);
         //
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+       
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}create_template/create");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
+
+
     }
-    
+
     /**
      * Create Review
      * 
@@ -498,7 +544,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function pd($action, $reviewId, $revieweeId, $reviewerId){
+    function pd($action, $reviewId, $revieweeId, $reviewerId)
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -521,7 +568,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function settings(){
+    function settings()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -535,14 +583,18 @@ class Performance_management extends Public_Controller{
         // Get Settings
         $this->pargs['settings'] = $this->pmm->GetSettings($this->pargs['companyId']);
         //
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+       
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}settings");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
+
+
     }
-    
-    
+
+
     /**
      * All Assigned Reviews
      * 
@@ -551,7 +603,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function all_reviews(){
+    function all_reviews()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -563,7 +616,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['company_employees_index'] = [];
         //
-        foreach($this->pargs['company_employees'] as $emp){
+        foreach ($this->pargs['company_employees'] as $emp) {
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         // // Get Assigned Reviews 
@@ -586,7 +639,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function all_feedbacks(){
+    function all_feedbacks()
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set title
@@ -598,18 +652,22 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['company_employees_index'] = [];
         //
-        foreach($this->pargs['company_employees'] as $emp){
+        foreach ($this->pargs['company_employees'] as $emp) {
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         // // Get Assigned Feedbacks 
         $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
 
-        //
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+        //   
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}all_feedbacks");
         $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
+
+
     }
 
     /**
@@ -620,13 +678,14 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function review_details($id){
+    function review_details($id)
+    {
         // 
         $this->checkLogin($this->pargs);
         //
         $this->pargs['company_employees_index'] = [];
         //
-        foreach($this->pmm->GetAllEmployees($this->pargs['companyId']) as $emp){
+        foreach ($this->pmm->GetAllEmployees($this->pargs['companyId']) as $emp) {
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         //
@@ -637,50 +696,51 @@ class Performance_management extends Public_Controller{
         echo $this->load->view("{$this->pp}review_detail", $this->pargs, true);
     }
 
-    
+
 
     // AJAX REQUESTS
 
     /**
      * 
      */
-    function template_questions($id, $type){
+    function template_questions($id, $type)
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
-        if($type == 'company'){
+        if ($type == 'company') {
             // Set system provided templates
             $template = $this->pmm->GetSingleCompanyTemplates($id, 'questions');
             // Set company generated templates
-        } else if($type == 'personal'){
+        } else if ($type == 'personal') {
             $template = $this->pmm->GetSinglePersonalTemplates($id, 'questions');
-            
-        } else{
+        } else {
             $this->res([], true);
         }
 
         //
-        $this->load->view($this->pp.'create_review/template_questions_view', ['id' => $id, 'questions' => json_decode($template['questions'])]);
+        $this->load->view($this->pp . 'create_review/template_questions_view', ['id' => $id, 'questions' => json_decode($template['questions'])]);
     }
 
     /**
      * 
      */
-    function single_template($id, $type){
+    function single_template($id, $type)
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
-        if($type == 'company'){
+        if ($type == 'company') {
             // Set system provided templates
             $template = $this->pmm->GetSingleCompanyTemplates($id, ['name', 'questions']);
             // Set company generated templates
-        } else if($type == 'personal'){
+        } else if ($type == 'personal') {
             $template = $this->pmm->GetSinglePersonalTemplates($id, ['name', 'questions']);
-        } else{
+        } else {
             $this->res([], true);
         }
         //
@@ -689,13 +749,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res(['data' => $template]);
     }
-    
+
     /**
      * 
      */
-    function SaveFeedbackAnswer(){
+    function SaveFeedbackAnswer()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -711,14 +772,15 @@ class Performance_management extends Public_Controller{
         //
         $this->res(['Status' => true, "Id" => $questionId]);
     }
-    
-    
+
+
     /**
      * 
      */
-    function GetReviewReviewers($reviewId, $revieweeId){
+    function GetReviewReviewers($reviewId, $revieweeId)
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -726,13 +788,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res(['Status' => true, "Data" => $reviewers]);
     }
-   
+
     /**
      * 
      */
-    function UpdateRevieweeReviewers(){
+    function UpdateRevieweeReviewers()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -744,7 +807,7 @@ class Performance_management extends Public_Controller{
         //
         $ids = [];
         //
-        foreach($post['reviewerIds'] as $reviewer){
+        foreach ($post['reviewerIds'] as $reviewer) {
             //
             $insertArray[] = [
                 'review_sid' => $post['reviewId'],
@@ -761,12 +824,12 @@ class Performance_management extends Public_Controller{
         $this->pmm->UpdateRevieweeReviewers($insertArray);
         $sent = 0;
         // Check if the review is started
-        if(
+        if (
             $this->pmm->IsReviewStarted(
                 $post['reviewId'],
                 $post['revieweeId']
-                )
-        ){
+            )
+        ) {
             $sent = 1;
             //
             $this->sendEmailNotifications(
@@ -777,71 +840,74 @@ class Performance_management extends Public_Controller{
         }
         //
         $this->res([
-            'Status' => true, 
-            'Message' => 'You have successfully added new reviewers. '.(
+            'Status' => true,
+            'Message' => 'You have successfully added new reviewers. ' . (
                 $sent ? 'An email notification has been sent to the selected reviewers.' : 'The selected reviewers are not notified because the review is not started yet.'
-            ).''
+            ) . ''
         ]);
     }
-    
+
     /**
      * 
      */
-    function ArchiveReview(){
+    function ArchiveReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->MarkReviewAsArchived($post['reviewId']);
-       
         //
         $this->res(['Status' => true]);
     }
-    
-    
+
+
     /**
      * 
      */
-    function ActivateReview(){
+    function ActivateReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->MarkReviewAsActive($post['reviewId']);
-       
+
         //
         $this->res(['Status' => true]);
     }
-    
+
     /**
      * 
      */
-    function StopReview(){
+    function StopReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->StopReview($post['reviewId']);
-       
+
         //
         $this->res(['Status' => true]);
     }
-    
+
     /**
      * 
      */
-    function StartReview(){
+    function StartReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -850,35 +916,37 @@ class Performance_management extends Public_Controller{
         $this->pmm->StartReview($post['reviewId']);
         //
         $this->sendEmailNotifications($post['reviewId']);
-        
+
         //
         $this->res(['Status' => true]);
     }
-    
-    
+
+
     /**
      * 
      */
-    function StopReviweeReview(){
+    function StopReviweeReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->pmm->StopReviweeReview($post['reviewId'], $post['revieweeId']);
-        
+
         //
         $this->res(['Status' => true]);
     }
-    
+
     /**
      * 
      */
-    function StartReviweeReview(){
+    function StartReviweeReview()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -886,17 +954,18 @@ class Performance_management extends Public_Controller{
         //
         $this->pmm->StartReviweeReview($post['reviewId'], $post['revieweeId']);
         $this->sendEmailNotifications($post['reviewId'], $post['revieweeId']);
-       
+
         //
         $this->res(['Status' => true]);
     }
-    
+
     /**
      * 
      */
-    function UpdateReviewee(){
+    function UpdateReviewee()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -907,24 +976,24 @@ class Performance_management extends Public_Controller{
         $newReviewers = array_diff($post['reviwers'], $currentReviewers);
         $deletedReviewers = array_diff($currentReviewers, $post['reviwers']);
         //
-        if(!empty($deletedReviewers)){
-            $this->pmm->DeleteRevieweeReviewers($post['reviewId'], $post['revieweeId'],$deletedReviewers);
+        if (!empty($deletedReviewers)) {
+            $this->pmm->DeleteRevieweeReviewers($post['reviewId'], $post['revieweeId'], $deletedReviewers);
         }
         //
-        if(!empty($newReviewers)){
-            $this->pmm->AddRevieweeReviewers($post['reviewId'], $post['revieweeId'],$newReviewers);
+        if (!empty($newReviewers)) {
+            $this->pmm->AddRevieweeReviewers($post['reviewId'], $post['revieweeId'], $newReviewers);
         }
         //
         $this->pmm->UpdateRevieweeDates($post['reviewId'], $post['revieweeId'], $post);
         //
         $sent = 0;
         // Check if the review is started
-        if(
+        if (
             $this->pmm->IsReviewStarted(
                 $post['reviewId'],
                 $post['revieweeId']
             )
-        ){
+        ) {
             $sent = 1;
             //
             $this->sendEmailNotifications(
@@ -935,20 +1004,21 @@ class Performance_management extends Public_Controller{
         }
         //
         $this->res([
-            'Status' => true, 
-            'Message' => 'You have successfully added new reviewers. '.(
+            'Status' => true,
+            'Message' => 'You have successfully added new reviewers. ' . (
                 $sent ? 'An email notification has been sent to the selected reviewers.' : 'The selected reviewers are not notified because the review is not started yet.'
-            ).''
+            ) . ''
         ]);
     }
-    
-    
+
+
     /**
      * 
      */
-    function GetReviewVisibility($id){
+    function GetReviewVisibility($id)
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -966,13 +1036,14 @@ class Performance_management extends Public_Controller{
 
         echo $this->load->view("{$this->pp}visibility", $data, true);
     }
-    
+
     /**
      * 
      */
-    function UpdateVisibility(){
+    function UpdateVisibility()
+    {
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res([], true);
         }
         //
@@ -980,22 +1051,23 @@ class Performance_management extends Public_Controller{
         //
         $ins = [];
         //
-        $ins['visibility_roles'] = !isset($post['roles']) ? '': implode(',', $post['roles']);
-        $ins['visibility_departments'] = !isset($post['departments']) ? '': implode(',', $post['departments']);
-        $ins['visibility_teams'] = !isset($post['teams']) ? '': implode(',', $post['teams']);
-        $ins['visibility_employees'] = !isset($post['employees']) ? '': implode(',', $post['employees']);
+        $ins['visibility_roles'] = !isset($post['roles']) ? '' : implode(',', $post['roles']);
+        $ins['visibility_departments'] = !isset($post['departments']) ? '' : implode(',', $post['departments']);
+        $ins['visibility_teams'] = !isset($post['teams']) ? '' : implode(',', $post['teams']);
+        $ins['visibility_employees'] = !isset($post['employees']) ? '' : implode(',', $post['employees']);
         //
         $this->pmm->UpdateVisibility($ins, $post['reviewId']);
         //
         $this->res(['Status' => true]);
     }
-    
+
     /**
      * 
      */
-    function SaveReviewStep(){
+    function SaveReviewStep()
+    {
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res([], true);
         }
         //
@@ -1007,70 +1079,70 @@ class Performance_management extends Public_Controller{
         //
         $this->checkLogin($pargs);
         //
-        switch($post['step']):
+        switch ($post['step']):
             case "ReviewStep1":
                 // Set data array
                 $data_array = [];
                 //
-                if(empty($post['data']['title'])){
+                if (empty($post['data']['title'])) {
                     //
                     $resp['Msg'] = "The review title is missing.";
                     $this->res($resp);
                 }
                 //
-                if(empty($post['data']['frequency_type'])){
+                if (empty($post['data']['frequency_type'])) {
                     //
                     $resp['Msg'] = "The frequency is missing.";
                     $this->res($resp);
                 }
                 //
-                if(
+                if (
                     ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') &&
                     (empty($post['data']['start_date']) || empty($post['data']['end_date']))
-                ){
+                ) {
                     //
                     $resp['Msg'] = "The review start and end dates are missing.";
                     $this->res($resp);
                 }
                 //
-                if(
+                if (
                     $post['data']['frequency_type'] == 'recurring' &&
                     (empty($post['data']['recur_value']) || $post['data']['recur_value'] == 0)
-                ){
+                ) {
                     //
                     $resp['Msg'] = "The recur value is missing.";
                     $this->res($resp);
                 }
                 //
-                if(
+                if (
                     $post['data']['frequency_type'] == 'custom' &&
                     (empty($post['data']['review_due_value']) || $post['data']['review_due_value'] == 0)
-                ){
+                ) {
                     //
                     $resp['Msg'] = "The review due value is missing.";
                     $this->res($resp);
                 }
                 //
-                if(
+                if (
                     $post['data']['frequency_type'] == 'custom' &&
-                    empty($post['data']['custom_runs']) 
-                ){
+                    empty($post['data']['custom_runs'])
+                ) {
                     //
                     $resp['Msg'] = "Please add at least one custom run.";
                     $this->res($resp);
                 }
                 //
-                if($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring'){
+                if ($post['data']['frequency_type'] == 'onetime' || $post['data']['frequency_type'] == 'recurring') {
                     $data_array['review_start_date'] = formatDateToDB($post['data']['start_date']);
                     $data_array['review_end_date'] = formatDateToDB($post['data']['end_date']);
                 }
                 //
-                if($post['data']['frequency_type'] == 'recurring'){
+                if ($post['data']['frequency_type'] == 'recurring') {
                     $data_array['repeat_after'] = $post['data']['recur_value'];
                     $data_array['repeat_type'] = $post['data']['recur_type'];
                 }
                 //
-                if($post['data']['frequency_type'] == 'custom'){
+                if ($post['data']['frequency_type'] == 'custom') {
                     $data_array['review_due_type'] = $post['data']['review_due_type'];
                     $data_array['review_due'] = $post['data']['review_due_value'];
                     $data_array['repeat_review'] = $post['data']['repeat_review'];
@@ -1081,35 +1153,35 @@ class Performance_management extends Public_Controller{
                 $data_array['description'] = $post['data']['description'];
                 $data_array['frequency'] = $post['data']['frequency_type'];
                 //
-                if(isset($post['data']['roles'])){
+                if (isset($post['data']['roles'])) {
                     $data_array['visibility_roles'] = implode(',', $post['data']['roles']);
                 }
-                if(isset($post['data']['departments'])){
+                if (isset($post['data']['departments'])) {
                     $data_array['visibility_departments'] = implode(',', $post['data']['departments']);
                 }
-                if(isset($post['data']['teams'])){
+                if (isset($post['data']['teams'])) {
                     $data_array['visibility_teams'] = implode(',', $post['data']['teams']);
                 }
-                if(isset($post['data']['employees'])){
+                if (isset($post['data']['employees'])) {
                     $data_array['visibility_employees'] = implode(',', $post['data']['employees']);
                 }
-                
-                if(isset($post['data']['questions'])){
+
+                if (isset($post['data']['questions'])) {
                     //
                     $questions = [];
                     //
-                    foreach($post['data']['questions'] as $question){
+                    foreach ($post['data']['questions'] as $question) {
                         //
-                        if(!isset($question['id'])){
+                        if (!isset($question['id'])) {
                             $questions[] = array_merge($question, ['id' => generateRandomString(10)]);
-                        } else{
+                        } else {
                             $questions[] = $question;
                         }
                     }
                     $data_array['questions'] = json_encode($questions);
                 }
                 //
-                if(!isset($post['id']) || $post['id'] == 0){
+                if (!isset($post['id']) || $post['id'] == 0) {
                     $data_array['company_sid']  = $pargs['companyId'];
                     $data_array['is_draft'] = 1;
                     $data_array['status'] = 'pending';
@@ -1117,7 +1189,7 @@ class Performance_management extends Public_Controller{
 
                     //
                     $reviewId = $this->pmm->InsertReview($data_array);
-                } else{
+                } else {
                     $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
                 }
                 //
@@ -1126,12 +1198,12 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "ReviewStep2":
                 // Set data array
                 $data_array = [];
                 //
-                if(empty($post['data']['included'])){
+                if (empty($post['data']['included'])) {
                     //
                     $resp['Msg'] = "Please select at least one reviewee.";
                     $this->res($resp);
@@ -1139,13 +1211,13 @@ class Performance_management extends Public_Controller{
                 //
                 $data_array['included_employees'] = implode(',', $post['data']['included']);
                 //
-                if(isset($post['data']['excluded'])){
+                if (isset($post['data']['excluded'])) {
                     $data_array['excluded_employees'] = implode(',', $post['data']['excluded']);
-                } else{
+                } else {
                     $data_array['excluded_employees'] = '';
                 }
                 $data_array['reviewers'] = '';
-                
+
                 $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
                 //
                 $resp['Status'] = true;
@@ -1153,25 +1225,25 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "ReviewStep3":
                 // Set data array
                 $data_array = [];
                 //
-                if(empty($post['data']['reviewer_type'])){
+                if (empty($post['data']['reviewer_type'])) {
                     //
                     $resp['Msg'] = "Please select the reviewer type.";
                     $this->res($resp);
                 }
                 //
-                if(empty($post['data']['reviewees'])){
+                if (empty($post['data']['reviewees'])) {
                     //
                     $resp['Msg'] = "Please add reviewers to reviewees.";
                     $this->res($resp);
                 }
 
                 $data_array['reviewers'] = json_encode($post['data']);
-                
+
                 $reviewId = $this->pmm->UpdateReview($data_array, $post['id']);
                 //
                 $resp['Status'] = true;
@@ -1179,17 +1251,17 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "SaveQuestion":
                 // Set data array
                 $data_array = [];
                 // Get old 
                 $questions = $this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'];
                 //
-                if(!empty($questions) && $questions != null && $questions != 'null'){
+                if (!empty($questions) && $questions != null && $questions != 'null') {
                     $questions = json_decode($questions, true);
                     $questions = array_merge($questions, [$post['data']]);
-                } else{
+                } else {
                     $questions[] = $post['data'];
                 }
                 //
@@ -1202,55 +1274,55 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "SaveVideo":
                 //
-                $path = APPPATH.'../assets/performance_management/videos/'.$post['reviewId'].'/';
+                $path = APPPATH . '../assets/performance_management/videos/' . $post['reviewId'] . '/';
                 //
-                if(!is_dir($path)){
+                if (!is_dir($path)) {
                     mkdir($path, DIR_WRITE_MODE, true);
                 }
                 //
-                $idd = time().generateRandomString(7);
+                $idd = time() . generateRandomString(7);
                 //
-                if($post['type'] == 'record'){
+                if ($post['type'] == 'record') {
                     //
-                    $newName = $path.$idd.'.webm';
+                    $newName = $path . $idd . '.webm';
                     //
-                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '',$this->input->post('file', false))));
+                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '', $this->input->post('file', false))));
                     //
                     $resp['Msg'] = "Recorded video is uploaded.";
-                    $resp['Id'] = $idd.'.webm';
+                    $resp['Id'] = $idd . '.webm';
                     $resp['Status'] = true;
                     $this->res($resp);
                 }
                 //
-                if(empty($_FILES)){
+                if (empty($_FILES)) {
                     //
                     $resp['Msg'] = "Please record/upload a video.";
                     $this->res($resp);
                 }
-                $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
+                $newName = $idd . '.' . (explode('.', $_FILES['file']['name'])[1]);
                 //
-                if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
+                if (!move_uploaded_file($_FILES['file']['tmp_name'], $path . $newName)) {
                     //
                     $resp['Msg'] = "Failed to save video.";
                     $this->res($resp);
-                } else{
+                } else {
                     $resp['Msg'] = "Video is uploaded";
                     $resp['Id'] = $newName;
                     $resp['Status'] = true;
                     $this->res($resp);
                 }
-            break;
+                break;
             case "RemoveQuestion":
                 // Get the question
                 $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
                 //
                 $returningIndex = 0;
                 //
-                foreach($questions as $index => $question){
-                    if($question['id'] == $post['question_id']){
+                foreach ($questions as $index => $question) {
+                    if ($question['id'] == $post['question_id']) {
                         //
                         $returningIndex = $index;
                         //
@@ -1266,7 +1338,7 @@ class Performance_management extends Public_Controller{
                 $resp['Index'] = $returningIndex;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "ReviewStep4":
                 //
                 $reviewId = $this->pmm->UpdateReview(['questions' => json_encode(array_values($post['questions']))], $post['id']);
@@ -1276,13 +1348,13 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "UpdateQuestion":
                 // Get the question
                 $questions = json_decode($this->pmm->GetReviewRowById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
                 //
-                foreach($questions as $index => $question){
-                    if($question['id'] == $post['data']['id']){
+                foreach ($questions as $index => $question) {
+                    if ($question['id'] == $post['data']['id']) {
                         //
                         $questions[$index] = $post['data'];
                     }
@@ -1295,7 +1367,7 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "ReviewStep5":
                 //
                 $now = date('Y-m-d H:i:s', strtotime('now'));
@@ -1307,7 +1379,7 @@ class Performance_management extends Public_Controller{
                 //
                 $ins = [];
                 //
-                foreach($questions as $question){
+                foreach ($questions as $question) {
                     //
                     $ins[] = [
                         'review_sid' => $review['reviewId'],
@@ -1325,11 +1397,11 @@ class Performance_management extends Public_Controller{
                 //
                 $reviewees = explode(',', $review['included']);
                 //
-                if(!empty($review['excluded'])){
+                if (!empty($review['excluded'])) {
                     $reviewees = array_diff($reviewees, explode(',', $review['excluded']));
                 }
                 //
-                foreach($reviewees as $reviewee){
+                foreach ($reviewees as $reviewee) {
                     //
                     $ins[] = [
                         'review_sid' => $review['reviewId'],
@@ -1351,11 +1423,11 @@ class Performance_management extends Public_Controller{
                 //
                 $reviewers = json_decode($review['reviewers'], true);
                 //
-                foreach($reviewers['reviewees'] as $reviewee => $reviewer){
+                foreach ($reviewers['reviewees'] as $reviewee => $reviewer) {
                     //
                     $newReviewers = array_diff($reviewer['included'], isset($reviewer['excluded']) ? $reviewer['excluded'] : []);
                     //
-                    foreach($newReviewers as $newReviewer){
+                    foreach ($newReviewers as $newReviewer) {
                         //
                         $ins[] = [
                             'review_sid' => $review['reviewId'],
@@ -1372,7 +1444,7 @@ class Performance_management extends Public_Controller{
                 $this->pmm->insertReviewReviewers($ins);
                 // 
                 $reviewId = $this->pmm->UpdateReview([
-                    'share_feedback' => $post['feedback'], 
+                    'share_feedback' => $post['feedback'],
                     'is_draft' => 0
                 ], $post['id']);
                 //
@@ -1381,16 +1453,17 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $reviewId;
                 //
                 $this->res($resp);
-            break;
+                break;
         endswitch;
     }
-    
+
     /**
      * 
      */
-    function SaveTemplateStep(){
+    function SaveTemplateStep()
+    {
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res([], true);
         }
         //
@@ -1402,17 +1475,17 @@ class Performance_management extends Public_Controller{
         //
         $this->checkLogin($pargs);
         //
-        switch($post['step']):
+        switch ($post['step']):
             case "InsertQuestion":
                 // Set data array
                 $data_array = [];
                 // Get old 
                 $questions = $this->pmm->GetTemplateById($post['id'])['questions'];
                 //
-                if(!empty($questions) && $questions != null && $questions != 'null'){
+                if (!empty($questions) && $questions != null && $questions != 'null') {
                     $questions = json_decode($questions, true);
                     $questions = array_merge($questions, [$post['data']]);
-                } else{
+                } else {
                     $questions[] = $post['data'];
                 }
                 //
@@ -1425,55 +1498,55 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $post['id'];
                 //
                 $this->res($resp);
-            break;
+                break;
             case "SaveVideo":
                 //
-                $path = APPPATH.'../assets/performance_management/videos/templates/'.$post['reviewId'].'/';
+                $path = APPPATH . '../assets/performance_management/videos/templates/' . $post['reviewId'] . '/';
                 //
-                if(!is_dir($path)){
+                if (!is_dir($path)) {
                     mkdir($path, DIR_WRITE_MODE, true);
                 }
                 //
-                $idd = time().generateRandomString(7);
+                $idd = time() . generateRandomString(7);
                 //
-                if($post['type'] == 'record'){
+                if ($post['type'] == 'record') {
                     //
-                    $newName = $path.$idd.'.webm';
+                    $newName = $path . $idd . '.webm';
                     //
-                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '',$this->input->post('file', false))));
+                    file_put_contents($newName, base64_decode(str_replace('data:video/webm;base64,', '', $this->input->post('file', false))));
                     //
                     $resp['Msg'] = "Recorded video is uploaded.";
-                    $resp['Id'] = $idd.'.webm';
+                    $resp['Id'] = $idd . '.webm';
                     $resp['Status'] = true;
                     $this->res($resp);
                 }
                 //
-                if(empty($_FILES)){
+                if (empty($_FILES)) {
                     //
                     $resp['Msg'] = "Please record/upload a video.";
                     $this->res($resp);
                 }
-                $newName = $idd.'.'.(explode('.', $_FILES['file']['name'])[1]);
+                $newName = $idd . '.' . (explode('.', $_FILES['file']['name'])[1]);
                 //
-                if(!move_uploaded_file($_FILES['file']['tmp_name'], $path.$newName)){
+                if (!move_uploaded_file($_FILES['file']['tmp_name'], $path . $newName)) {
                     //
                     $resp['Msg'] = "Failed to save video.";
                     $this->res($resp);
-                } else{
+                } else {
                     $resp['Msg'] = "Video is uploaded";
                     $resp['Id'] = $newName;
                     $resp['Status'] = true;
                     $this->res($resp);
                 }
-            break;
+                break;
             case "RemoveQuestion":
                 // Get the question
                 $questions = json_decode($this->pmm->GetTemplateById($post['id'], $pargs['companyId'], ['questions'])['questions'], true);
                 //
                 $returningIndex = 0;
                 //
-                foreach($questions as $index => $question){
-                    if($question['id'] == $post['question_id']){
+                foreach ($questions as $index => $question) {
+                    if ($question['id'] == $post['question_id']) {
                         //
                         $returningIndex = $index;
                         //
@@ -1489,14 +1562,14 @@ class Performance_management extends Public_Controller{
                 $resp['Index'] = $returningIndex;
                 //
                 $this->res($resp);
-            break;
+                break;
             case "UpdateQuestion":
 
                 // Get the question
                 $questions = json_decode($this->pmm->GetTemplateById($post['id'])['questions'], true);
                 //
-                foreach($questions as $index => $question){
-                    if($question['id'] == $post['data']['id']){
+                foreach ($questions as $index => $question) {
+                    if ($question['id'] == $post['data']['id']) {
                         //
                         $questions[$index] = $post['data'];
                     }
@@ -1509,7 +1582,7 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $post['id'];
                 //
                 $this->res($resp);
-            break;
+                break;
             case "ReviewStep4":
 
                 // Get the question
@@ -1521,15 +1594,16 @@ class Performance_management extends Public_Controller{
                 $resp['Id'] = $post['id'];
                 //
                 $this->res($resp);
-            break;
-            
+                break;
+
         endswitch;
     }
 
     /**
      * 
      */
-    function UploadQuestionAttachment(){
+    function UploadQuestionAttachment()
+    {
         $filename =  upload_file_to_aws('file', 1, $_FILES['file']['name']);
         echo $filename;
     }
@@ -1542,7 +1616,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return Void
      */
-    function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all'){
+    function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all')
+    {
         // 
         $this->checkLogin($this->pargs);
         // Set titleub
@@ -1551,17 +1626,21 @@ class Performance_management extends Public_Controller{
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
         //
         $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
-        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);        
+        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);
         //
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
+      
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}report/index");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
+        $this->load->view('main/footer');
+
     }
 
     //
-    function GetGoalBody(){
+    function GetGoalBody()
+    {
         //
         $this->checkLogin($this->pargs);
         // Set company employees
@@ -1571,13 +1650,14 @@ class Performance_management extends Public_Controller{
         //
         echo $this->load->view("{$this->pp}goals/create", $this->pargs, true);
     }
-    
+
     //
-    function SaveGoal(){
+    function SaveGoal()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1607,20 +1687,20 @@ class Performance_management extends Public_Controller{
         //
         $ids = [];
         //
-        if($insertArray['goal_type'] == 1){
+        if ($insertArray['goal_type'] == 1) {
             $this->pmm->InsertGoal($insertArray);
-        } else if($insertArray['goal_type'] == 2){
+        } else if ($insertArray['goal_type'] == 2) {
             //
             $ids = $this->pmm->GetEmployeesByDeparmentIds($post['departmentIds']);
-        } else if($insertArray['goal_type'] == 3){
+        } else if ($insertArray['goal_type'] == 3) {
             $ids = $this->pmm->GetEmployeesByTeamIds($post['teamIds']);
-        } else if($insertArray['goal_type'] == 4){
+        } else if ($insertArray['goal_type'] == 4) {
             $ids = $post['employeeIds'];
         }
 
-        if(!empty($ids)){
+        if (!empty($ids)) {
             //
-            foreach($ids as $id){
+            foreach ($ids as $id) {
                 $insertArray['employee_sid'] = $id;
                 $this->pmm->InsertGoal($insertArray);
             }
@@ -1631,14 +1711,15 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
-    
+
+
     //
-    function CloseGoal(){
+    function CloseGoal()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1667,13 +1748,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function OpenGoal(){
+    function OpenGoal()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1702,13 +1784,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function UpdateGoal(){
+    function UpdateGoal()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1739,13 +1822,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function UpdateSettings(){
+    function UpdateSettings()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1758,13 +1842,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function AddComment(){
+    function AddComment()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE)) ){
+        if (!$this->input->is_ajax_request() || empty($this->input->post(NULL, TRUE))) {
             $this->res($resp, true);
         }
         //
@@ -1788,13 +1873,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function GetGoalComments($id){
+    function GetGoalComments($id)
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res($resp, true);
         }
         $resp['Data'] = $this->pmm->GetGoalComments($id);
@@ -1804,13 +1890,14 @@ class Performance_management extends Public_Controller{
         //
         $this->res($resp);
     }
-    
+
     //
-    function SaveTemplate(){
+    function SaveTemplate()
+    {
         //
         $resp = ['Status' => false, 'Msg' => "Invalid request"];
         //
-        if( !$this->input->is_ajax_request() ){
+        if (!$this->input->is_ajax_request()) {
             $this->res($resp, true);
         }
         //
@@ -1818,7 +1905,7 @@ class Performance_management extends Public_Controller{
         //
         $post = $this->input->post(NULL, TRUE);
         //
-        if($post['Id'] != 0){
+        if ($post['Id'] != 0) {
             $Id = $post['Id'];
             $this->pmm->UpdateTemplate(
                 [
@@ -1827,19 +1914,19 @@ class Performance_management extends Public_Controller{
                 ],
                 $post['Id']
             );
-        } else{
-            $Id = 
-            $this->pmm->InsertTemplate(
-                [
-                    'name' => $post['name'],
-                    'company_sid' => $session['company_detail']['sid'],
-                    'employee_sid' => $session['employer_detail']['sid'],
-                    'created_at' => date('Y-m-d H:i:s', strtotime('now')),
-                    'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
-                ]
-            );
+        } else {
+            $Id =
+                $this->pmm->InsertTemplate(
+                    [
+                        'name' => $post['name'],
+                        'company_sid' => $session['company_detail']['sid'],
+                        'employee_sid' => $session['employer_detail']['sid'],
+                        'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                        'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
+                    ]
+                );
         }
-        
+
         $resp['Status'] = true;
         $resp['Id'] = $Id;
         $resp['Msg'] = 'Proceed';
@@ -1852,16 +1939,16 @@ class Performance_management extends Public_Controller{
     function filterGoals(
         $goals,
         $employerId
-    ){
+    ) {
         //
-        if(empty($goals)){
+        if (empty($goals)) {
             return $goals;
         }
         //
         $myGoals = [];
         //
-        foreach($goals as $goal){
-            if($goal['employee_sid'] == $employerId){
+        foreach ($goals as $goal) {
+            if ($goal['employee_sid'] == $employerId) {
                 $myGoals[] = $goal;
             }
         }
@@ -1881,7 +1968,8 @@ class Performance_management extends Public_Controller{
      * 
      * @return VOID
      */
-    private function checkLogin(&$data, $return = FALSE){
+    private function checkLogin(&$data, $return = FALSE)
+    {
         //
         if (!$this->session->userdata('logged_in')) {
             if ($return) {
@@ -1898,15 +1986,14 @@ class Performance_management extends Public_Controller{
         $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
         $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
-        $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+        $data['employerRole'] = $data['session']['employer_detail']['access_level'];
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
         // $data['load_view'] = 1;
         // $data['hide_employer_section'] = 1;
         //
         if ($return) {
             return true;
-        }
-        else {
+        } else {
             //
             $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
             // Get Goals
@@ -1922,12 +2009,13 @@ class Performance_management extends Public_Controller{
      * 
      * @return Array
      */
-    private function getParams(){
+    private function getParams()
+    {
         $r = [];
         $p = $this->uri->segment_array();
         unset($p[0], $p[1], $p[2], $p[3]);
         $r = array_values($p);
-        $r = array_map(function($i){
+        $r = array_map(function ($i) {
             return strip_tags(trim($i));
         }, $r);
         return $r;
@@ -1936,35 +2024,37 @@ class Performance_management extends Public_Controller{
     /**
      * 
      */
-    private function res($resp = [], $isError = false){
+    private function res($resp = [], $isError = false)
+    {
         header("Content-Type: application/json");
         echo json_encode($isError ? ["Error" => "Invalid request"] : $resp);
         exit(0);
     }
 
     //
-    private function sendEmailNotifications($id, $revieweeId = 0, $ids = []){
+    private function sendEmailNotifications($id, $revieweeId = 0, $ids = [])
+    {
         //
         $record = $this->pmm->GetReviewByIdByReviewers($id, $revieweeId)[0];
         //
         $hf = message_header_footer($record['company_sid'], $record['CompanyName']);
         //
-        if(empty($record['Reviewees'])){
+        if (empty($record['Reviewees'])) {
             return;
         }
         //
         $template = get_email_template(REVIEW_ADDED);
 
         $this->load->model('Hr_documents_management_model', 'HRDMM');
-        foreach($record['Reviewees'] as $row){
+        foreach ($record['Reviewees'] as $row) {
             //
-            if(!empty($ids)){
-                if(!in_array($row[0]['reviewer_sid'], $ids)){
+            if (!empty($ids)) {
+                if (!in_array($row[0]['reviewer_sid'], $ids)) {
                     continue;
                 }
             }
             //
-            if(!$this->HRDMM->isActiveUser($row[0]['reviewer_sid'])){
+            if (!$this->HRDMM->isActiveUser($row[0]['reviewer_sid'])) {
                 continue;
             }
             //
@@ -1972,10 +2062,10 @@ class Performance_management extends Public_Controller{
             $replaceArray['{{first_name}}'] = ucwords($row[0]['reviewer_first_name']);
             $replaceArray['{{last_name}}'] = ucwords($row[0]['reviewer_last_name']);
             $replaceArray['{{review_title}}'] = $record['review_title'];
-            
+
             $replaceArray['{{table}}'] = $this->load->view('table', ['records' => $row, 'id' => $record['sid']], true);
             //
-            $body = $hf['header'].str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
+            $body = $hf['header'] . str_replace(array_keys($replaceArray), $replaceArray, $template['text']) . $hf['footer'];
 
             log_and_sendEmail(
                 FROM_EMAIL_NOTIFICATIONS,
@@ -1985,5 +2075,42 @@ class Performance_management extends Public_Controller{
                 $record['CompanyName']
             );
         }
+    }
+
+    //
+
+    function dashboardNew()
+    {
+        // 
+
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] =  $this->pargs['session']['employer_detail'];
+
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach ($this->pargs['company_employees'] as $emp) {
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 0, 6);
+        $this->pargs['FeedbackReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1, 6);
+        //
+        $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
+        //
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
+        $this->load->view("{$this->pp}dashboard_new");
+        $this->load->view('main/footer');
     }
 }

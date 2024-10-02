@@ -11,7 +11,7 @@
         <br>
         <br>
         <br>
-        <button class="btn btn-orange csF16 text-center form-control" id="jsReviewCreateNewBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;I want to create a review from scratch</button>
+        <button class="btn btn-success csF16 text-center form-control" id="jsReviewCreateNewBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;I want to create a review from scratch</button>
         <br>
         <br>
         <p class="text-center csF16 csB7">------------------- OR -------------------</p>
@@ -20,9 +20,9 @@
 </div>
 <!-- csPageBoxBody -->
 <div class="csPageBoxBody ">
-    <?php $this->load->view($pp.'partials/company_templates');?>
+    <?php $this->load->view($pp . 'partials/company_templates', ['efj' => $efj, 'panelHeading' => $panelHeading]); ?>
 </div>
 <!-- csPageBoxBody -->
 <div class="csPageBoxBody ">
-    <?php $this->load->view($pp.'partials/personal_templates');?>
+    <?php $this->load->view($pp . 'partials/personal_templates', ['efj' => $efj, 'panelHeading' => $panelHeading]); ?>
 </div>

@@ -4,7 +4,7 @@ $(function() {
     var obj = {
         Id: pm.template !== undefined ? pm.template.sid : 0,
         Title: pm.template !== undefined ? pm.template.name : '',
-        Questions: pm.template !== undefined && pm.template.questions != '' ? JSON.parse(pm.template.questions) : [],
+        Questions: pm.template !== undefined && pm.template.questions != '' && pm.template.questions != undefined ? JSON.parse(pm.template.questions) : [],
     };
 
     loadQuestions();

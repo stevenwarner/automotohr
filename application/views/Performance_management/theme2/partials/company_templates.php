@@ -1,6 +1,5 @@
 <div class="panel panel-theme">
-    <div class="panel-heading">
-        <h3 class="csF16 csB7 mt0 mb0 csW">
+    <div class="panel-heading" style="<?=$panelHeading?>">
             Default Template(s) - <?=count($system_templates);?> templates found
             <span class="pull-right">
                 <i class="fa fa-minus-circle csF20 jsPageBTN csW" data-target="company_templates" aria-hidden="true"></i>
@@ -17,7 +16,7 @@
                 <p class="csF16"><button class="btn btn-xs btn-black"><i class="fa fa-check-circle"
                             aria-hidden="true"></i></button>&nbsp;Select the template to start with.</p>
             </div>
-        </div>
+        </div><br>
         <div class="row">
             <?php  
                     foreach($system_templates as $template):

@@ -40,11 +40,22 @@
 
 ?>
 
-<div class="col-md-12 col-sm-12">
+<?php
+   if ($load_view) {
+
+    $panelHeading = 'background-color: #3554DC';
+} else {
+    $panelHeading = 'background-color: #81b431';
+}
+ 
+ ?>
+
+
+<div class="col-md-12 col-sm-12" style="padding-left: 0px;padding-right: 0px;">
 
     <!-- Assigned -->
     <div class="panel panel-theme">
-        <div class="panel-heading" style="background-color: #3554DC;">
+        <div class="panel-heading" style="<?=$panelHeading?>">
             <div class="row">
                 <div class="col-md-9 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
@@ -73,7 +84,7 @@
                     
                         <?php foreach($newArray as $review_title => $row){ ?>
                         <div class="panel panel-theme">
-                            <div class="panel-heading" style="background-color: #3554DC;">
+                            <div class="panel-heading" style="<?=$panelHeading?>">
                                 <h5 class="csF16 csB7 csW mb0 mt0">
                                     <?=$review_title;?>
                                 </h5>

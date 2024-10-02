@@ -1,6 +1,15 @@
 <!-- Schedule -->
+
+<?php if ($load_view) {
+
+$panelHeading = 'background-color: #3554DC';
+} else {
+$panelHeading = 'background-color: #81b431';
+}
+?>
+
 <div class="panel panel-theme">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?= $panelHeading ?>">
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Basic</p>
@@ -41,7 +50,7 @@
 
 <!-- Schedule -->
 <div class="panel panel-theme">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?= $panelHeading ?>">
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Schedule <small>(When the review will start & end)</small></p>
@@ -216,7 +225,7 @@
 
 <!-- Visibility -->
 <div class="panel panel-theme">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?= $panelHeading ?>">
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Visibility <small>(Who shall have access to this review)</small></p>
@@ -297,7 +306,7 @@
         <button class="btn btn-black csF16 jsPageSectionBtn" data-to="template"><i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp;Back To Templates</button>
         <!--  -->
         <span class="pull-right">
-            <button class="btn btn-orange csF16" id="jsReviewScheduleSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp;Save & Next</button>
+            <button class="btn btn-success csF16" id="jsReviewScheduleSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp;Save & Next</button>
             <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp;Finish Later</button>
         </span>
     </div>

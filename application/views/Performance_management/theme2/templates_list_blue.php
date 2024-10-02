@@ -1,8 +1,16 @@
-<div class="col-md-12 col-sm-12">
+<?php if($load_view){
+
+$panelHeading='background-color: #3554DC';
+
+}else{
+$panelHeading='background-color: #81b431';
+}
+?>
+<div class="col-md-12 col-sm-12" style="padding-left: 0px;padding-right: 0px;">
     <!--  -->
     <div class="panel panel-theme">
         <!--  -->
-        <div class="panel-heading mt0 mb0 pb0">
+        <div class="panel-heading mt0 mb0 pb0" style="<?=$panelHeading?>">
             <div class="row">
                 <div class="col-xs-12 col-md-2">
                     <h5 class="csF16 csW csB7">
@@ -34,7 +42,7 @@
                         
                             <div class="col-md-4 col-xs-12">
                                 <div class="panel panel-theme jsReviewBox" >
-                                    <div class="panel-heading pl5 pr5">
+                                    <div class="panel-heading pl5 pr5" style="<?=$panelHeading?>">
                                         <span class="pull-right">
                                         <a href="<?=purl('template/create/'.$template['sid']);?>" class="btn btn-black csF16 btn-xs "  title="Edit Template" placement="top">
                                             <i class="fa fa-edit csF16" aria-hidden="true"></i>

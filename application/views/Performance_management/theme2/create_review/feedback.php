@@ -1,7 +1,16 @@
 <!-- Feedback Listing -->
+ <?php
+   if ($load_view) {
+
+    $panelHeading = 'background-color: #3554DC';
+} else {
+    $panelHeading = 'background-color: #81b431';
+}
+ 
+ ?>
 <div id="jsReviewQuestionListBox">
     <div class="panel panel-theme">
-        <div class="panel-heading">
+        <div class="panel-heading" style="<?=$panelHeading?>">
             <p class="csF16 csB7 csW mb0">
                 Sharing Feedback
             </p>
@@ -36,7 +45,7 @@
             <button class="btn btn-black csF16 jsPageSectionBtn" data-to="questions"><i
                     class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp; Back To Questions</button>
             <span class="pull-right">
-                <button class="btn btn-orange csF16" id="jsReviewSaveBtn"><i class="fa fa-arrow-circle-o-right"
+                <button class="btn btn-success csF16" id="jsReviewSaveBtn"><i class="fa fa-arrow-circle-o-right"
                         aria-hidden="true"></i>&nbsp; Save & Finish</button>
             </span>
         </div>

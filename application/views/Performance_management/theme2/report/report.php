@@ -1,6 +1,5 @@
 
 <?php 
-
     //
     $newArray = [];
     //
@@ -61,10 +60,8 @@
     }
 
 ?>
-
-
 <!--  -->
-<div class="col-md-12 col-sm-12 col-xs-12">
+<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0px;padding-right: 0px;">
     <!--  -->
     <div class="row dn">
         <div class="col-sm-4 col-xs-12 col-sm-offset-8">
@@ -77,7 +74,7 @@
     <br />
     <!-- Overall -->
     <div class="panel panel-theme">
-        <div class="panel-heading">
+        <div class="panel-heading" style="background-color: #81b431;" >
             <div class="row">
                 <div class="col-md-11 col-xs-11">
                     <!--  -->

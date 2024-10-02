@@ -1,6 +1,13 @@
 <!-- Reviewees -->
+<?php if ($load_view) {
+$panelHeading = 'background-color: #3554DC';
+} else {
+$panelHeading = 'background-color: #81b431';
+}
+?>
+
 <div class="panel panel-theme">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?=$panelHeading;?>">
         <div class="row">
             <div class="col-xs-11">
                 <p class="csF16 csB7 csW mb0">Select Reviewees <small>(The reviewee's are the employee's against which the review will run)</small></p>
@@ -28,7 +35,7 @@
             <!-- Filter -->
             <div class="col-md-4 col-xs-12">
                 <div class="panel panel-theme">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="<?=$panelHeading;?>">
                         <p class="csF16 csB7 csW mb0">Rule Settings</p>
                     </div>
                     <div class="panel-body">
@@ -167,7 +174,7 @@
                         <div class="row">
                             <br />
                             <div class="col-sm-12">
-                                <button class="btn btn-orange form-control csF16 jsReviewRevieweeSearchBtn">
+                                <button class="btn btn-success form-control csF16 jsReviewRevieweeSearchBtn">
                                     <i class="fa fa-search csB7" aria-hidden="true"></i>&nbsp;
                                     Apply Filter
                                 </button>
@@ -189,7 +196,7 @@
             <!-- Content -->
             <div class="col-md-8 col-xs-12">
                 <div class="panel panel-theme">
-                    <div class="panel-heading">
+                    <div class="panel-heading" style="<?=$panelHeading;?>">
                         <p class="csF16 csB7 csW mb0">
                             Selected Reviewee(s): <span id="jsReviewRevieweesCount"><?= count($company_employees); ?></span>
                         </p>
@@ -264,7 +271,7 @@
         <br />
         <button class="btn btn-black csF16 jsPageSectionBtn" data-to="schedule"><i class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp; Back To Schedule</button>
         <span class="pull-right">
-            <button class="btn btn-orange csF16" id="jsReviewRevieweesSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp; Save & Next</button>
+            <button class="btn btn-success csF16" id="jsReviewRevieweesSaveBtn"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>&nbsp; Save & Next</button>
             <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp; Finish Later</button>
         </span>
     </div>

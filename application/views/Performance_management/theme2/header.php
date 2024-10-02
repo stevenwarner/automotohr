@@ -8,54 +8,11 @@
     );
     //
     $tabs = [];
-    $tabs[] =     [
-        'title' => 'Overview',
-        'url' => '/dashboard',
-        'slug' => '',
-        'icon' => 'dashboard',
-        'segment' => 'dashboard'
-    ];
-    //
-    if($PM_PERMISSION){
-        $tabs[] =     [
-            'title' => 'Template(s)',
-            'url' => '/templates',
-            'slug' => 'templates',
-            'icon' => 'plus-square',
-            'segment' => 'templates'
-        ];
-        $tabs[] =     [
-            'title' => 'Create a Review',
-            'url' => '/review/create',
-            'slug' => 'create',
-            'icon' => 'plus-square',
-            'segment' => 'review/create'
-        ];
-    }
+     
     $tabs[] = [
         'title' => 'Reviews',
         'submenu' => [ 
-        [
-            'title' => 'All Reviews',
-            'url' => '/reviews',
-            'slug' => 'reviews',
-            'icon' => '',
-            'segment' => 'reviews'
-        ],
-        [
-            'title' => 'Assigned Reviews - Reviewer',
-            'url' => '/reviews/all',
-            'slug' => 'assigned-reviews',
-            'icon' => '',
-            'segment' => 'reviews/all'
-        ],
-        [
-            'title' => 'Assigned Reviews - Reporting Manager',
-            'url' => '/feedbacks/all',
-            'slug' => 'assigned-reviews',
-            'icon' => '',
-            'segment' => 'reviews/all'
-        ],
+       
         [
             'title' => 'Reviews Completed Against Me',
             'url' => '/my-reviews',
@@ -64,17 +21,7 @@
             'segment' => 'my-reviews'
         ]]
     ];
-    
-    $tabs[] =     [
-        'title' => 'Create a Goal',
-        'url' => 'javascript:void(0)',
-        'slug' => 'goal/create',
-        'icon' => 'plus-square',
-        'segment' => 'goal/create',
-        'class' => 'jsCreateGoal'
-    ];
-    
-    
+        
     $tabs[] =     [
         'title' => 'Goals',
         'url' => '/goals',
@@ -82,35 +29,8 @@
         'icon' => 'bullseye',
         'segment' => 'goals'
     ];
-    $sub[] =     [
-        'title' => 'Calendar',
-        'url' => 'javascript:void(0)',
-        'slug' => 'calendar',
-        'icon' => 'calendar',
-        'segment' => 'calendar',
-        'class' => 'jsCalendarView'
-    ];
-    if($PM_PERMISSION){
-        
-        $sub[] =     [
-            'title' => 'Report',
-            'url' => '/report',
-            'slug' => 'report',
-            'icon' => 'pie-chart',
-            'segment' => 'report'
-        ];
-        $sub[] =     [
-            'title' => 'Settings',
-            'url' => '/settings',
-            'slug' => 'settings',
-            'icon' => 'pie-chart',
-            'segment' => 'settings'
-        ];
-    }
-    $tabs[] = [
-        'title' => 'More',
-        'submenu' => $sub
-    ];
+ 
+
     //
     $lis = '';
     //

@@ -1,5 +1,13 @@
 <!-- Add/Edit Question -->
 <!-- Add Question -->
+ <?php
+   if ($load_view) {
+
+    $panelHeading = 'background-color: #3554DC';
+} else {
+    $panelHeading = 'background-color: #81b431';
+}
+ ?>
 <div id="jsReviewQuestionAddBox" class="dn">
     <br>
     <!-- Title -->
@@ -108,7 +116,7 @@
     <br>
     <!-- Question Preview -->
     <div class="panel panel-theme">
-        <div class="panel-heading">
+        <div class="panel-heading" style="<?=$panelHeading?>">
             <p class="csF16 csB7 csW mb0">Question Preview</p>
         </div>
         <div class="panel-body pa0 pb0 pl0 pr0">
@@ -196,9 +204,9 @@
             <span class="pull-right">
                 <button class="btn btn-black csF16" id="jsReviewQuestionToList"><i class="fa fa-arrow-circle-o-left"
                         aria-hidden="true"></i>&nbsp; Back To Questions</button>
-                <button class="btn btn-orange csF16" id="jsReviewQuestionSaveBtn"><i class="fa fa-arrow-circle-o-right"
+                <button class="btn btn-success csF16" id="jsReviewQuestionSaveBtn"><i class="fa fa-arrow-circle-o-right"
                     aria-hidden="true"></i>&nbsp; Save Question</button>
-                <button class="btn btn-orange csF16 dn" id="jsReviewQuestionEditBtn"><i class="fa fa-arrow-circle-o-right"
+                <button class="btn btn-success csF16 dn" id="jsReviewQuestionEditBtn"><i class="fa fa-arrow-circle-o-right"
                     aria-hidden="true"></i>&nbsp; Update Question</button>
             </span>
         </div>
@@ -210,7 +218,7 @@
 <!-- Question Listing -->
 <div id="jsReviewQuestionListBox">
     <div class="panel panel-theme">
-        <div class="panel-heading">
+        <div class="panel-heading" style="<?=$panelHeading?>">
             <div class="row">
                 <div class="col-sm-9 col-xs-12">
                     <p class="csF16 csB7 csW mb0">
@@ -237,7 +245,7 @@
             <button class="btn btn-black csF16 jsPageSectionBtn" data-to="reviewers"><i
                     class="fa fa-arrow-circle-o-left" aria-hidden="true"></i>&nbsp; Back To Reviewers</button>
             <span class="pull-right">
-                <button class="btn btn-orange csF16" id="jsReviewQuestionsSaveBtn"><i class="fa fa-arrow-circle-o-right"
+                <button class="btn btn-success csF16" id="jsReviewQuestionsSaveBtn"><i class="fa fa-arrow-circle-o-right"
                         aria-hidden="true"></i>&nbsp; Save & Next</button>
                 <button class="btn btn-black csF16"><i class="fa fa-archive" aria-hidden="true"></i>&nbsp; Finish
                     Later</button>

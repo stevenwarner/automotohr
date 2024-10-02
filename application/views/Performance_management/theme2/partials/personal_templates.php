@@ -1,5 +1,5 @@
 <div class="panel panel-default">
-    <div class="panel-heading">
+    <div class="panel-heading" style="<?=$panelHeading?>">
         <h3 class="csF16 csB7 mt0 mb0 csW">
             Company Template(s) - <?=count($company_templates);?> templates found
             <span class="pull-right">

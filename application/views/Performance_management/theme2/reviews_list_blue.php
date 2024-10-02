@@ -1,8 +1,20 @@
-<div class="col-md-12 col-sm-12">
+
+<?php 
+    $employeeSelect = $efj['EmployeeRows'];
+    if ($load_view) {
+
+        $panelHeading = 'background-color: #3554DC';
+    } else {
+        $panelHeading = 'background-color: #81b431';
+    }
+?>
+
+
+<div class="col-md-12 col-sm-12" style="padding-left: 0px;padding-right: 0px;">
     <!--  -->
     <div class="panel panel-theme">
         <!--  -->
-        <div class="panel-heading mt0 mb0 pb0">
+        <div class="panel-heading mt0 mb0 pb0" style="<?=$panelHeading ?>">
             <div class="row">
                 <div class="col-xs-12 col-md-2">
                     <h5 class="csF16 csW csB7">
@@ -54,7 +66,7 @@
                         
                             <div class="col-md-4 col-xs-12">
                                 <div class="panel panel-theme jsReviewBox" data-id="<?=$review['sid'];?>" data-title="<?=$review['review_title'];?>">
-                                    <div class="panel-heading pl5 pr5">
+                                    <div class="panel-heading pl5 pr5" style="<?=$panelHeading ?>">
                                     <?php
                                     if(!$review['is_draft']){?>
                                         <button class="btn btn-<?=$statusClass;?> btn-xs csF14 csRadius5"><?=strtoupper($review['status']);?></button>
