@@ -588,7 +588,7 @@ $assignIdObj = $confidential_sids;
                                                                                                 <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_assign_revoke_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_assign_revoke_doc')) || $canAccessDocument) { ?>
                                                                                                     <?php if ($action_btn_flag == true || $session['employer_detail']['pay_plan_flag'] == 0) { ?>
                                                                                                         <td>
-                                                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
+                                                                                                            <?php if ($document_all_permission) { ?>
                                                                                                                 <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids)) { ?>
 
                                                                                                                     <?php if (in_array($document['sid'], $assigned_sids)) { ?>

@@ -3714,7 +3714,6 @@ class Hr_documents_management extends Public_Controller
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, $user_type, $user_sid, 0, 1, 0, $pp_flag);
 
-
             $company_offer_letters = $this->hr_documents_management_model->get_all_company_offers_letters($company_sid, 0);
             $assigned_offer_letters = $this->hr_documents_management_model->get_assigned_offers($company_sid, $user_type, $user_sid);
             $assigned_offer_letter_history = $this->hr_documents_management_model->get_assigned_offer_letter_history($company_sid, $user_type, $user_sid, 0);

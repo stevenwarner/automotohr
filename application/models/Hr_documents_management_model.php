@@ -4153,7 +4153,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('company_sid', $company_sid);
         $this->db->where('archive', 0);
         $this->db->where('is_specific', 0);
-        $this->db->where('isdoctolibrary', 0);
+        // $this->db->where('isdoctolibrary', 0);
 
         if ($pp_flag) {
             $this->db->group_start();
