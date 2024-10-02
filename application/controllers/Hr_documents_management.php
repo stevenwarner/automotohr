@@ -13988,7 +13988,7 @@ class Hr_documents_management extends Public_Controller
                 //Send document completion alert
                 broadcastAlert(
                     DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
-                    'general_information_status',
+                    'documents_status',
                     'document_completed',
                     $company_sid,
                     $session['company_detail']['CompanyName'],
