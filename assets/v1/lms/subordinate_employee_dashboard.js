@@ -1,4 +1,5 @@
 $(function LMSEmployeeCourses() {
+	console.log("initial")
 	// set the xhr
 	let XHR = null;
     //
@@ -249,13 +250,15 @@ $(function LMSEmployeeCourses() {
 			});
 	}
     //
-    if (page === "subordinate_courses") {
+    if (page === "subordinate_courses") {console.log("start")
+		
+		
         getLMSAssignCourses(subordinateId);
+		$(".jsIPLoader").hide();
     } else {
         $(".jsSaveQuestionResult").hide();
         getLMSAssignCourse();
     }
-
 
 	function getEmployeeInfo() {
 		var tmp = [];
