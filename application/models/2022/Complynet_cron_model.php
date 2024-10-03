@@ -201,11 +201,6 @@ class Complynet_cron_model extends CI_Model
                 "complynet_company_sid",
                 "complynet_location_sid"
             ])
-            ->where(
-                "company_sid",
-                21
-            )
-            ->limit(1)
             ->get("complynet_companies")
             ->result_array();
     }
