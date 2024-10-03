@@ -16,6 +16,11 @@
                 <div class="col-lg-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
+                            <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
+                                <?php echo "My"; ?>
+                            <?php } else { ?> 
+                                <?php echo $type == "non_plus" ? "Subordinate" : "Employee"; ?>
+                            <?php } ?>   
                             Courses
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>

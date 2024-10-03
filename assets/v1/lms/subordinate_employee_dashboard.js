@@ -251,11 +251,11 @@ $(function LMSEmployeeCourses() {
     //
     if (page === "subordinate_courses") {
         getLMSAssignCourses(subordinateId);
+		$(".jsIPLoader").hide();
     } else {
         $(".jsSaveQuestionResult").hide();
         getLMSAssignCourse();
     }
-
 
 	function getEmployeeInfo() {
 		var tmp = [];
