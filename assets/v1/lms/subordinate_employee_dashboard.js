@@ -286,6 +286,16 @@ $(function LMSEmployeeCourses() {
 		//
 	});
 
+	$(document).on("change", ".jsSelectCourseLanguage", function (event) {
+		event.preventDefault();
+		//
+        var courseId = $(this).data("course_id");
+		var language = $(this).val();
+        var url = baseURI + "lms/subordinate/course/" + courseId + '/' + subordinateId + '/' + reviewAs + '/' + language;
+		//
+        $('.jsStartCourse'+courseId).attr('href', url);
+	});
+
 	function sendEmailToEmployees(employeeInfo, employeeNote) {
 		// check and abort previous calls
 		if (XHR !== null) {
@@ -391,7 +401,7 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `            <p>&nbsp;</p>`;
 
 				if (course.course_status == "passed") {
-					coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
+					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}>
 												<i class="fa fa-eye"></i>
 												View Content
 											</a>`;
@@ -401,7 +411,7 @@ $(function LMSEmployeeCourses() {
 												View Certificate
 											</a>`;
 				} else {
-					coursesHTML += `            <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}">
+					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
 												<i class="fa fa-play"></i>
 												Launch Content
 											</a>`;

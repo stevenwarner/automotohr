@@ -125,8 +125,9 @@ $(function LMSEmployeeCourses() {
 		// make the call
 		var courseUrl = apiURL + "lms/report/" + subordinateId + "/" + courseId;
 		//
+		console.log(courseLanguage)
 		if (courseType == "scorm") {
-			courseUrl += courseUrl+ "/" +courseLanguage
+			courseUrl += "/" + courseLanguage
 		}
 		XHR = $.ajax({
 			url: courseUrl,
