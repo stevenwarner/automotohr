@@ -1,5 +1,4 @@
 $(function LMSEmployeeCourses() {
-	console.log("initial")
 	// set the xhr
 	let XHR = null;
     //
@@ -250,9 +249,7 @@ $(function LMSEmployeeCourses() {
 			});
 	}
     //
-    if (page === "subordinate_courses") {console.log("start")
-		
-		
+    if (page === "subordinate_courses") {
         getLMSAssignCourses(subordinateId);
 		$(".jsIPLoader").hide();
     } else {
