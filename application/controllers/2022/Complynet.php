@@ -753,6 +753,7 @@ class Complynet extends Admin_Controller
             }
             //
             if (!$found) {
+                /*
                 // Add role to ComplyNet
                 $response = $this->clib->addJobRole([
                     'ParentId' => $role['complynet_department_sid'],
@@ -762,10 +763,10 @@ class Complynet extends Admin_Controller
                 if ($response != 'A') {
                     $this->db->where('sid', $role['sid'])->update('complynet_jobRole', ['complynet_job_role_sid' => $response]);
                 }
+
+                    */
             }
         }
-
-        _e(count($rolesByDepartment));
         //
         exit('Roles processed.');
     }

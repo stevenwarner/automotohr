@@ -111,13 +111,16 @@ class Complynet_cron_model extends CI_Model
             ->select("complynet_job_role_sid")
             ->where([
                 "complynet_department_sid" => $complynetDepartmentId,
-                "trim(lower(REGEXP_REPLACE(job_title, '/[^a-zA-Z]/', ''))) =" => $this->stringToSlug($jobTitle),
+                "trim(lower(REGEXP_REPLACE(job_title, '[^a-zA-Z]', ''))) =" => $this->stringToSlug($jobTitle),
             ])
             ->limit(1)
             ->get("complynet_jobRole")
             ->row_array();
         //
         if (!$record) {
+
+            return 0;
+            
             $complyNetJobRoleId = $this
                 ->complynet_lib
                 ->addJobRole([
@@ -133,6 +136,9 @@ class Complynet_cron_model extends CI_Model
             $ins["status"] = 1;
             $ins["updated_at"] = getSystemDate();
             $this->checkAndAddDepartmentJobRole($ins);
+         
+
+          //  $complyNetJobRoleId = 0;
         } else {
             $complyNetJobRoleId = $record["complynet_job_role_sid"];
         }
@@ -679,13 +685,16 @@ class Complynet_cron_model extends CI_Model
             ->select("complynet_job_role_sid")
             ->where([
                 "complynet_department_sid" => $departmentId,
-                "trim(lower(REGEXP_REPLACE(job_title, '/[^a-zA-Z]/', ''))) =" => $this->stringToSlug($record["complynet_job_title"]),
+                "trim(lower(REGEXP_REPLACE(job_title, '[^a-zA-Z]', ''))) =" => $this->stringToSlug($record["complynet_job_title"]),
             ])
             ->limit(1)
             ->get("complynet_jobRole")
             ->row_array();
         //
         if (!$record2) {
+            
+            return 0;
+
             $complyNetJobRoleId = $this
                 ->complynet_lib
                 ->addJobRole([

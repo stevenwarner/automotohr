@@ -492,10 +492,10 @@ class Complynet_model extends CI_Model
             return $complyRoleId;
         }
         //
-        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle))); //
+        $slug = preg_replace('/[^A-Za-z]/', '', strtolower(trim($jobTitle))); //
         foreach ($complyJobTitles as $title) {
             //
-            $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
+            $slugComply = preg_replace('/[^A-Za-z]/', '', strtolower(trim($title['Name'])));
             //
             if ($slug == $slugComply) {
                 $ins = [];
@@ -515,6 +515,8 @@ class Complynet_model extends CI_Model
         }
         //
         if ($complyRoleId === 0) {
+
+            return 0;
             // Let's add the job role
             $complyRoleId = $this->clib->addJobRole([
                 'ParentId' => $departmentId,
@@ -784,10 +786,17 @@ class Complynet_model extends CI_Model
             return SendResponse(200, ['errors' => $errorArray]);
         }
         //
+
+
+
+
         $complyJobRoleId = $this->syncJobRoles(
             $complyDepartmentId,
             $employee['complynet_job_title']
         );
+
+
+        /*
         //
         if ($complyJobRoleId === 0) {
             $errorArray[] = 'Job role not found.';
@@ -804,6 +813,9 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
+       */
+
+
         //
         $isTransferred = $this->checkIsEmployeeTransferred($employeeId);
         //
@@ -1788,7 +1800,7 @@ class Complynet_model extends CI_Model
         // Convert department to index
 
         if (!empty($complyDepartments)) {
-            //
+            // 
             $systemDepartmentslug = preg_replace('/[^a-zA-Z]/', '', strtolower($departmentName));
 
             foreach ($complyDepartments as $department) {
@@ -1960,7 +1972,8 @@ class Complynet_model extends CI_Model
         string $complynetJobTitle
     ) {
 
-        $employeeComplyNetJobTitleslug = preg_replace('/[^a-zA-Z]/', '', strtolower($complynetJobTitle));
+
+        $employeeComplyNetJobTitleslug = preg_replace('/[^A-Za-z]/', '', strtolower($complynetJobTitle));
 
         $JobTitles = $this->db
             ->select('
@@ -1972,13 +1985,13 @@ class Complynet_model extends CI_Model
             ->where('complynet_department_sid', $complynetDepartmentId)
             ->get('complynet_jobRole')
             ->result_array();
+
         //
         if (empty($JobTitles)) {
             return '';
         } else {
             foreach ($JobTitles as $JobTitleRow) {
-
-                $employeeJobTitleslug = preg_replace('/[^a-zA-Z]/', '', strtolower($JobTitleRow['complynet_job_role_name']));
+                $employeeJobTitleslug = preg_replace('[^a-zA-Z]', '', strtolower($JobTitleRow['complynet_job_role_name']));
                 if ($employeeJobTitleslug == $employeeComplyNetJobTitleslug) {
                     return $JobTitleRow['complynet_job_role_sid'];
                 }
@@ -2005,6 +2018,7 @@ class Complynet_model extends CI_Model
         string $departmentId,
         string $jobTitle
     ) {
+
         // fetch complynet
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
@@ -2020,11 +2034,11 @@ class Complynet_model extends CI_Model
             return $complyRoleId;
         }
 
-        $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($jobTitle))); //
+        $slug = preg_replace('/[^A-Za-z]/', '', strtolower(trim($jobTitle))); //
 
         foreach ($complyJobTitles as $title) {
             //
-            $slugComply = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($title['Name'])));
+            $slugComply = preg_replace('/[^A-Za-z]/', '', strtolower(trim($title['Name'])));
             //
             if ($slug == $slugComply) {
                 $ins = [];
@@ -2044,8 +2058,11 @@ class Complynet_model extends CI_Model
         }
 
 
+
+
         // Add to ComplyNet
         if ($complyRoleId === 0) {
+            return 0;
             // Let's add the job role
             $complyRoleId = $this->clib->addJobRole([
                 'ParentId' => $departmentId,
