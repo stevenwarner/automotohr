@@ -130,6 +130,7 @@ class Complynet_lib
     public function addJobRole(
         array $ins
     ) {
+        return 0;
         // Check and set token
         $this->checkAndSetAccessToken();
         //

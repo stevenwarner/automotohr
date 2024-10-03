@@ -515,6 +515,8 @@ class Complynet_model extends CI_Model
         }
         //
         if ($complyRoleId === 0) {
+
+            return 0;
             // Let's add the job role
             $complyRoleId = $this->clib->addJobRole([
                 'ParentId' => $departmentId,
@@ -2046,6 +2048,7 @@ class Complynet_model extends CI_Model
 
         // Add to ComplyNet
         if ($complyRoleId === 0) {
+            return 0;
             // Let's add the job role
             $complyRoleId = $this->clib->addJobRole([
                 'ParentId' => $departmentId,

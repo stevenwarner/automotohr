@@ -753,6 +753,7 @@ class Complynet extends Admin_Controller
             }
             //
             if (!$found) {
+                continue;
                 // Add role to ComplyNet
                 $response = $this->clib->addJobRole([
                     'ParentId' => $role['complynet_department_sid'],

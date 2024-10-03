@@ -118,6 +118,7 @@ class Complynet_cron_model extends CI_Model
             ->row_array();
         //
         if (!$record) {
+            return 0;
             $complyNetJobRoleId = $this
                 ->complynet_lib
                 ->addJobRole([
@@ -686,6 +687,7 @@ class Complynet_cron_model extends CI_Model
             ->row_array();
         //
         if (!$record2) {
+            return 0;
             $complyNetJobRoleId = $this
                 ->complynet_lib
                 ->addJobRole([
