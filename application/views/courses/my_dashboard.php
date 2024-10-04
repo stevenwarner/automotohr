@@ -16,7 +16,7 @@
                 <div class="col-lg-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
-                            Courses
+                            My Courses
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
@@ -79,12 +79,14 @@
                         <div class="csTabContent">
                             <div class="csLisitingArea">
                                 <div class="csBoxWrap jsBoxWrap">
+
+                                    <!-- Courses in Progress Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <h1 class="panel-heading-text text-medium">
-                                                        <strong>Inprogress Courses</strong>
+                                                        <strong>Courses in Progress</strong>
                                                     </h1>
                                                     <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are starting to attempt.</p>
                                                 </div>
@@ -97,45 +99,9 @@
                                             <div class="row" id="jsInprogressCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Courses in Progress End -->
 
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h1 class="panel-heading-text text-medium">
-                                                        <strong>Past Due</strong>
-                                                    </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are now expired.</p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row" id="jsPastDueCourses"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h1 class="panel-heading-text text-medium">
-                                                        <strong>Due Soon</strong>
-                                                    </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are nearing expiration.</p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row" id="jsDueSoonCourses"></div>
-                                        </div>
-                                    </div>
-
+                                    <!-- Ready To Start Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <div class="row">
@@ -154,7 +120,51 @@
                                             <div class="row" id="jsAssignedCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Ready To Start End -->
 
+                                    <!-- Past Due Start -->
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <h1 class="panel-heading-text text-medium">
+                                                        <strong>Past Due</strong>
+                                                    </h1>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are now expired.</p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <a href="<?= base_url("lms/courses/my?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row" id="jsPastDueCourses"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Past Due End -->
+
+                                    <!-- Due Soon Start -->
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <h1 class="panel-heading-text text-medium">
+                                                        <strong>Due Soon</strong>
+                                                    </h1>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are nearing expiration.</p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <a href="<?= base_url("lms/courses/my?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row" id="jsDueSoonCourses"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Due Soon End -->
+
+                                    <!-- Passed Courses Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <div class="row">
@@ -173,6 +183,8 @@
                                             <div class="row" id="jsPassedCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Passed Courses End -->
+
                                 </div>
                             </div>
                             <div class="clearfix"></div>

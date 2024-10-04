@@ -62,6 +62,8 @@
                         <div class="csTabContent">
                             <div class="csLisitingArea">
                                 <div class="csBoxWrap jsBoxWrap">
+
+                                    <!-- Courses in Progress Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
@@ -82,7 +84,30 @@
                                             <div class="row" id="jsInprogressCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Courses in Progress End -->
 
+                                    <!-- Ready To Start Start -->
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <h1 class="panel-heading-text text-medium">
+                                                        <strong>Ready To Start</strong>
+                                                    </h1>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <a href="<?= base_url("lms/courses/my?type=assigned") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row" id="jsAssignedCourses"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Ready To Start End -->
+
+                                    <!-- Past Due Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
@@ -103,7 +128,9 @@
                                             <div class="row" id="jsPastDueCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Past Due End -->
 
+                                    <!-- Due Soon Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
@@ -124,26 +151,9 @@
                                             <div class="row" id="jsDueSoonCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Due Soon End -->
 
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h1 class="panel-heading-text text-medium">
-                                                        <strong>Ready To Start</strong>
-                                                    </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=assigned") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row" id="jsAssignedCourses"></div>
-                                        </div>
-                                    </div>
-
+                                    <!-- Passed Courses Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <div class="row">
@@ -162,6 +172,8 @@
                                             <div class="row" id="jsPassedCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Passed Courses End -->
+
                                 </div>
                             </div>
                             <div class="clearfix"></div>

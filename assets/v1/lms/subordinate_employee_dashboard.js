@@ -194,29 +194,29 @@ $(function LMSEmployeeCourses() {
 							if (response.data.assignedIds.includes(course["sid"])) {
 								//
 								if (response.data.inprogressIds.includes(course["sid"])) {
-									if(inprogressCourses.length < 3) {
+									// if(inprogressCourses.length < 3) {
 										inprogressCourses.push(course);
-									}
+									// }
 								} else if (response.data.expiredIds.includes(course["sid"])) {	
-									if(pastDueCourses.length < 3) {
+									// if(pastDueCourses.length < 3) {
 										pastDueCourses.push(course);
-									}
+									// }
 								} else if (response.data.expiredSoonIds.includes(course["sid"])) {
-									if(dueSoonCourses.length < 3) {
+									// if(dueSoonCourses.length < 3) {
 										dueSoonCourses.push(course);
-									}	
+									// }	
 								} else if (response.data.readyToStartIds.includes(course["sid"])) {
-									if(readyToStartCourses.length < 3) {
+									// if(readyToStartCourses.length < 3) {
 										readyToStartCourses.push(course);
-									}
+									// }
 								} else if (response.data.passedIds.includes(course["sid"])) {
-									if(passedCourses.length < 3) {
+									// if(passedCourses.length < 3) {
 										passedCourses.push(course);
-									}	
+									// }	
 								} else {
-									if(assignedCourses.length < 3) {
+									// if(assignedCourses.length < 3) {
 										assignedCourses.push(course);
-									}	
+									// }	
 								}
 							}	
 						}	
