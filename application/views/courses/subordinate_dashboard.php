@@ -155,7 +155,7 @@
                                                     <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=assigned") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
                                                 </div>
                                             </div>
                                         </div>

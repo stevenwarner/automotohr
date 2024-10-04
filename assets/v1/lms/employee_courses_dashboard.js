@@ -435,7 +435,7 @@ $(function LMSEmployeeDashboard() {
 							name: 'Ready To Start',
 							y: count.readyToStart,
 							color: '#2caffe',
-							url: baseURI + "lms/courses/my?type=assigned"
+							url: baseURI + "lms/courses/my?type=ready_to_start"
 						},
 						{
 							name: 'Passed',
