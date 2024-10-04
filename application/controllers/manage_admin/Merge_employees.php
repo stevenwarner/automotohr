@@ -57,6 +57,10 @@ class Merge_employees extends Admin_Controller
         $secondary_employee_sid = $this->input->post('secondary_employee_sid');
         $primary_employee_sid   = $this->input->post('primary_employee_sid');
         $secondary_employee_email    = $this->input->post('secondary_employee_email');
+
+
+        $adminId = getCompanyAdminSid($company_sid);
+
         //
         //Update Primary Employee Profile
         $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
@@ -70,7 +74,7 @@ class Merge_employees extends Admin_Controller
         $equipment_information = $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
 
         // 3) Employee dependant information
-        $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
+        $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid, $adminId);
 
         // 4) Employee license information
         $license_information = $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);

@@ -153,8 +153,10 @@ class Merge_employees_model extends CI_Model
         }
     }
 
-    function update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid)
+    function update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid, $adminId = 0)
     {
+
+
         $columns = 'equipment_details, equipment_type, brand_name,imei_no, model,issue_date,color,notes,product_id,specification,vin_number,transmission_type,fuel_type,serial_number,acknowledgement_flag,acknowledgement_datetime,acknowledgement_notes,acknowledge_by_ip,delete_flag,delete_datetime,delete_by_id,delete_by_ip,assigned_id,assigned_by_ip';
         //
         $this->db->select($columns);
@@ -169,7 +171,9 @@ class Merge_employees_model extends CI_Model
                 $data_to_insert = $this->findDifference($primary_equipment, $secondary_equipment);
                 //
                 $data_to_insert["users_sid"] = $primary_employee_sid;
-                $data_to_insert["users_type"] = "employee";
+                if($adminId!=0){
+                $data_to_insert["assigned_id"] = $adminId;
+                }
                 //
                 $this->db->insert('equipment_information', $data_to_insert);
             }
@@ -476,6 +480,7 @@ class Merge_employees_model extends CI_Model
                 //
                 unset($secondary_employee_w9['sid']);
                 $secondary_employee_w9['user_sid'] = $primary_employee_sid;
+
                 $this->db->insert('applicant_w9form', $secondary_employee_w9);
             }
         }
@@ -630,7 +635,7 @@ class Merge_employees_model extends CI_Model
         }
     }
 
-    function update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid)
+    function update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid, $adminId = 0)
     {
         $columns = 'portal_applicant_jobs_list_sid, us_citizen, visa_status, group_status, veteran, disability, gender, is_latest, last_sent_at, is_expired';
         //
@@ -649,6 +654,11 @@ class Merge_employees_model extends CI_Model
                 //
                 if (!empty($data_to_update)) {
                     //Update primary Employee
+
+                    if ($adminId != 0) {
+                        $data_to_update["last_assigned_by"] = $adminId;
+                    }
+
                     $this->db->where('application_sid', $primary_employee_sid);
                     $this->db->where('users_type', 'employee');
                     $this->db->update('portal_eeo_form', $data_to_update);
@@ -659,6 +669,10 @@ class Merge_employees_model extends CI_Model
                 $data_to_insert = $this->findDifference($primary_employee_eeoc, $secondary_employee_eeoc);
                 $data_to_insert["application_sid"] = $primary_employee_sid;
                 $data_to_insert["users_type"] = "employee";
+                if ($adminId != 0) {
+                $data_to_insert["last_assigned_by"] = $adminId;
+                }
+
                 //
                 if (!empty($data_to_insert)) {
                     $this->db->insert('portal_eeo_form', $data_to_insert);
@@ -777,6 +791,10 @@ class Merge_employees_model extends CI_Model
     //
     function update_documents_new($primary_employee_sid, $secondary_employee_sid, $primary_company_sid)
     {
+
+        //admin user id
+        $adminId = getCompanyAdminSid($primary_company_sid);
+
         $return_array = [
             'W4' => '',
             'W9' => '',
@@ -804,6 +822,8 @@ class Merge_employees_model extends CI_Model
                 //
                 unset($secondary_employee_w4['sid']);
                 $secondary_employee_w4['employer_sid'] = $primary_employee_sid;
+                $secondary_employee_w4['last_assign_by'] = $adminId;
+
                 $this->db->insert('form_w4_original', $secondary_employee_w4);
             }
         }
@@ -828,6 +848,8 @@ class Merge_employees_model extends CI_Model
                 //
                 unset($secondary_employee_w9['sid']);
                 $secondary_employee_w9['user_sid'] = $primary_employee_sid;
+                $secondary_employee_w9['last_assign_by'] = $adminId;
+
                 $this->db->insert('applicant_w9form', $secondary_employee_w9);
             }
         }
@@ -853,6 +875,8 @@ class Merge_employees_model extends CI_Model
                 unset($secondary_employee_i9['sid']);
                 $secondary_employee_i9['user_sid'] = $primary_employee_sid;
                 $secondary_employee_i9['emp_app_sid'] = $primary_employee_sid;
+                $secondary_employee_i9['last_assign_by'] = $adminId;
+
                 $this->db->insert('applicant_i9form', $secondary_employee_i9);
             }
         }
@@ -875,6 +899,7 @@ class Merge_employees_model extends CI_Model
                     $secondary_doc['user_sid'] = $primary_employee_sid;
                     $secondary_doc['user_type'] = 'employee';
                     $secondary_doc['company_sid'] = $primary_company_sid;
+                    $secondary_doc['assigned_by'] = $adminId;
 
                     $this->db->insert('documents_assigned', $secondary_doc);
                 }
@@ -901,6 +926,8 @@ class Merge_employees_model extends CI_Model
                         $secondary_doc['user_sid'] = $primary_employee_sid;
                         $secondary_doc['user_type'] = 'employee';
                         $secondary_doc['company_sid'] = $primary_company_sid;
+                        $secondary_doc['assigned_by'] = $adminId;
+
                         $this->db->insert('documents_assigned', $secondary_doc);
                     }
                 }
@@ -908,7 +935,6 @@ class Merge_employees_model extends CI_Model
                 $return_array['documents'] = $secondary_general_docs;
             }
         }
-
         //
         return $return_array;
     }
