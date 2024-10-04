@@ -7666,6 +7666,7 @@ class Timeoff_model extends CI_Model
             ->where('request_to_date >=', $startDate)
             ->group_end()
             ->group_end()
+            ->where('status <>', "rejected")
             ->get("timeoff_requests")
             ->result_array();
 
