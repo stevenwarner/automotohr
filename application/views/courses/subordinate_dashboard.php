@@ -46,7 +46,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
-                            <strong>Subordinate Info</strong>
+                            <strong><?php echo $type == "non_plus" ? "Subordinate" : "Employee"; ?> Info</strong>
                         </h1>
                     </div>
                     <div class="panel-body">
@@ -55,7 +55,7 @@
                                 <img style="width: 90px; height: 90px; border-radius: 50% !important;" src="<?= getImageURL($subordinateInfo["profile_picture"]); ?>" alt="" />
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-small weight-6 myb-0">
+                                <p class="text-small weight-6 myb-0" style="font-size: 14px;">
                                     <?= remakeEmployeeName($subordinateInfo, true, true); ?>
                                 </p>
                                 <p class="text-small">
@@ -64,9 +64,30 @@
                                 <p class="text-small">
                                     <?= $subordinateInfo['email']; ?>
                                 </p>
-                                <p class="text-small">
-                                    Course Info
-                                </p>
+                                <table class="table table-bordered table-condensed table-hover">
+                                    <tbody>
+                                        <tr style="background-color: #544fc5; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Courses in Progress</th>
+                                            <td class="col-xs-2" id="jsInProgressCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #ff834e; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Ready To Start</th>
+                                            <td class="col-xs-2" id="jsReadyToStartCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #fa4b42; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Past Due</th>
+                                            <td class="col-xs-2" id="jsPastDueCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #feb56a; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Due Soon</th>
+                                            <td class="col-xs-2" id="jsDueSoon"></td>
+                                        </tr>
+                                        <tr style="background-color: #00e272; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Passed Courses</th>
+                                            <td class="col-xs-2" id="jsCompletedCount"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         <!-- Sidebar head -->
@@ -100,7 +121,7 @@
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        <strong>Inprogress Courses</strong>
+                                                        <strong>Courses in Progress</strong>
                                                     </div>
                                                     <div class="col-sm-6 text-right">
                                                         <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Course</a>

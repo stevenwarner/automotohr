@@ -173,14 +173,8 @@ $(function LMSEmployeeCourses() {
 				// empty the call
 				XHR = null;
 				// set the view
-				let coursesHTML = "";
 				let count = response.data.count;
 				let courses = response.data.courses;
-				//
-				$("#jsAssignedCount").html(count.assigned);
-				$("#jsPendingCount").html(count.pending);
-				$("#jsCompletedCount").html(count.completed);
-				$("#jsExpiredSoonCount").html(count.expire_soon);
 				//
 				if (!response.data.assignedIds.length) {
 					$(".jsFilterSectionBtn").hide();
@@ -222,6 +216,12 @@ $(function LMSEmployeeCourses() {
 						}	
 					});
 				} 
+				//
+				$("#jsInProgressCount").html(inprogressCourses.length);
+				$("#jsReadyToStartCount").html(readyToStartCourses.length);
+				$("#jsPastDueCount").html(pastDueCourses.length);
+				$("#jsDueSoon").html(dueSoonCourses.length);
+				$("#jsCompletedCount").html(passedCourses.length);
 				//
 				setCourseBox(inprogressCourses, 'jsInprogressCourses');
 				setCourseBox(pastDueCourses, 'jsPastDueCourses');
