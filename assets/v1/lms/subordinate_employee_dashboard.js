@@ -340,7 +340,7 @@ $(function LMSEmployeeCourses() {
 				//
 				coursesHTML += `    <div class="col-sm-4">`;
 				coursesHTML += `    <article class="article-sec">`;
-				coursesHTML += `    <h1>`;
+				coursesHTML += `    <h1 class="height: 58px;">`;
 				coursesHTML += course.course_title;
 				coursesHTML += `    </h1>`;
 				coursesHTML += `    <br>`;
