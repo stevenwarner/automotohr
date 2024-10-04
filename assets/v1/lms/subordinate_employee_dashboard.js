@@ -173,14 +173,8 @@ $(function LMSEmployeeCourses() {
 				// empty the call
 				XHR = null;
 				// set the view
-				let coursesHTML = "";
 				let count = response.data.count;
 				let courses = response.data.courses;
-				//
-				$("#jsAssignedCount").html(count.assigned);
-				$("#jsPendingCount").html(count.pending);
-				$("#jsCompletedCount").html(count.completed);
-				$("#jsExpiredSoonCount").html(count.expire_soon);
 				//
 				if (!response.data.assignedIds.length) {
 					$(".jsFilterSectionBtn").hide();
@@ -194,34 +188,40 @@ $(function LMSEmployeeCourses() {
 							if (response.data.assignedIds.includes(course["sid"])) {
 								//
 								if (response.data.inprogressIds.includes(course["sid"])) {
-									if(inprogressCourses.length < 3) {
+									// if(inprogressCourses.length < 3) {
 										inprogressCourses.push(course);
-									}
+									// }
 								} else if (response.data.expiredIds.includes(course["sid"])) {	
-									if(pastDueCourses.length < 3) {
+									// if(pastDueCourses.length < 3) {
 										pastDueCourses.push(course);
-									}
+									// }
 								} else if (response.data.expiredSoonIds.includes(course["sid"])) {
-									if(dueSoonCourses.length < 3) {
+									// if(dueSoonCourses.length < 3) {
 										dueSoonCourses.push(course);
-									}	
+									// }	
 								} else if (response.data.readyToStartIds.includes(course["sid"])) {
-									if(readyToStartCourses.length < 3) {
+									// if(readyToStartCourses.length < 3) {
 										readyToStartCourses.push(course);
-									}
+									// }
 								} else if (response.data.passedIds.includes(course["sid"])) {
-									if(passedCourses.length < 3) {
+									// if(passedCourses.length < 3) {
 										passedCourses.push(course);
-									}	
+									// }	
 								} else {
-									if(assignedCourses.length < 3) {
+									// if(assignedCourses.length < 3) {
 										assignedCourses.push(course);
-									}	
+									// }	
 								}
 							}	
 						}	
 					});
 				} 
+				//
+				$("#jsInProgressCount").html(inprogressCourses.length);
+				$("#jsReadyToStartCount").html(readyToStartCourses.length);
+				$("#jsPastDueCount").html(pastDueCourses.length);
+				$("#jsDueSoon").html(dueSoonCourses.length);
+				$("#jsCompletedCount").html(passedCourses.length);
 				//
 				setCourseBox(inprogressCourses, 'jsInprogressCourses');
 				setCourseBox(pastDueCourses, 'jsPastDueCourses');
@@ -340,7 +340,7 @@ $(function LMSEmployeeCourses() {
 				//
 				coursesHTML += `    <div class="col-sm-4">`;
 				coursesHTML += `    <article class="article-sec">`;
-				coursesHTML += `    <h1>`;
+				coursesHTML += `    <h1 style="height: 58px;">`;
 				coursesHTML += course.course_title;
 				coursesHTML += `    </h1>`;
 				coursesHTML += `    <br>`;
@@ -522,13 +522,13 @@ $(function LMSEmployeeCourses() {
 							name: 'Ready To Start',
 							y: count.readyToStart,
 							color: '#2caffe',
-							url: baseURI + "lms/courses/my?type=assigned"
+							url: baseURI + "lms/courses/my?type=ready_to_start"
 						},
 						{
 							name: 'Passed',
 							y: count.passed,
 							color: '#00e272',
-							url: baseURI + "lms/courses/my?type=assigned"
+							url: baseURI + "lms/courses/my?type=completed"
 						}
 					]
 				}
@@ -613,7 +613,7 @@ $(function LMSEmployeeCourses() {
 							name: 'Passed',
 							color: '#00e272',
 							y: count.passed,
-							url: baseURI + "lms/courses/my?type=inprogress"
+							url: baseURI + "lms/courses/my?type=completed"
 						},
 						{
 							name: 'Past Due',

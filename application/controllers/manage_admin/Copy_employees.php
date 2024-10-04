@@ -162,6 +162,9 @@ class Copy_employees extends Admin_Controller
                 $passArray['newEmployeeId'] = $primary_employee_sid;
 
                 $secondary_employee_email    = $employee['email'];
+
+                $adminId = getCompanyAdminSid($to_company);
+
                 //
                 //Update Primary Employee Profile
                 $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
@@ -175,7 +178,7 @@ class Copy_employees extends Admin_Controller
                 $equipment_information = $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
 
                 // 3) Employee dependant information
-                $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
+                $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid, $adminId);
 
                 // 4) Employee license information
                 $license_information = $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);
@@ -214,7 +217,7 @@ class Copy_employees extends Admin_Controller
                 $e_signature_data = $this->merge_employees_model->update_employee_e_signature($primary_employee_sid, $secondary_employee_sid);
 
                 // 16) Employee EEOC Form
-                $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid);
+                $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid, $adminId);
                 //
                 $merge_secondary_employee_data = [
                     'user_profile' => $secondary_employee_data,
@@ -329,13 +332,18 @@ class Copy_employees extends Admin_Controller
                     );
 
                 //
-             //   $this->complynet_model->manageEmployee($passArray);
+                //   $this->complynet_model->manageEmployee($passArray);
 
 
                 echo json_encode($resp);
             } else {
 
                 $user_to_insert = array();
+
+
+                $adminId = getCompanyAdminSid($to_company);
+
+
 
                 foreach ($employee as $key => $value) {
                     if ($key == 'username') {
@@ -536,6 +544,9 @@ class Copy_employees extends Admin_Controller
                             $insert_assigned_document['archive'] = 0;
                         }
 
+
+                        $insert_assigned_document['assigned_by'] = $adminId;
+
                         $this->copy_employees_model->copy_new_employee_assign_document($insert_assigned_document);
                     }
                 }
@@ -561,6 +572,8 @@ class Copy_employees extends Admin_Controller
                         unset($insert_offer_letter['download_required']);
                         unset($insert_offer_letter['signature_required']);
 
+                        $insert_offer_letter['assigned_by'] = $adminId;
+
                         $this->copy_employees_model->copy_new_employee_offer_letter($insert_offer_letter);
                     }
                 }
@@ -578,6 +591,7 @@ class Copy_employees extends Admin_Controller
                     $insert_eev_w4['company_sid'] = $to_company;
                     $insert_eev_w4['employee_sid'] = $new_employee_sid;
                     unset($insert_eev_w4['sid']);
+                    $insert_eev_w4['uploaded_by_sid'] = $adminId;
 
                     $this->copy_employees_model->copy_new_employee_eev_form($insert_eev_w4);
                 } else {
@@ -594,6 +608,8 @@ class Copy_employees extends Admin_Controller
                         $insert_w4_form['company_sid'] = $to_company;
                         $insert_w4_form['employer_sid'] = $new_employee_sid;
                         unset($insert_w4_form['sid']);
+
+                        $insert_w4_form['last_assign_by'] = $adminId;
 
                         $this->copy_employees_model->copy_new_employee_w4_form($insert_w4_form);
                     }
@@ -612,6 +628,8 @@ class Copy_employees extends Admin_Controller
                     $insert_eev_w9['employee_sid'] = $new_employee_sid;
                     unset($insert_eev_w9['sid']);
 
+                    $insert_eev_w9['uploaded_by_sid'] = $adminId;
+
                     $this->copy_employees_model->copy_new_employee_eev_form($insert_eev_w9);
                 } else {
                     $w9_form = $this->copy_employees_model->fetch_form_for_front_end('w9', 'employee', $employee_sid);
@@ -627,6 +645,8 @@ class Copy_employees extends Admin_Controller
                         $insert_w9_form['company_sid'] = $to_company;
                         $insert_w9_form['user_sid'] = $new_employee_sid;
                         unset($insert_w9_form['sid']);
+
+                        $insert_w9_form['last_assign_by'] = $adminId;
 
                         $this->copy_employees_model->copy_new_employee_w9_form($insert_w9_form);
                     }
@@ -644,7 +664,7 @@ class Copy_employees extends Admin_Controller
                     $insert_eev_i9['company_sid'] = $to_company;
                     $insert_eev_i9['employee_sid'] = $new_employee_sid;
                     unset($insert_eev_i9['sid']);
-
+                    $insert_eev_w9['uploaded_by_sid'] = $adminId;
                     $this->copy_employees_model->copy_new_employee_eev_form($insert_eev_i9);
                 } else {
                     $i9_form = $this->copy_employees_model->fetch_form_for_front_end('i9', 'employee', $employee_sid);
@@ -659,6 +679,8 @@ class Copy_employees extends Admin_Controller
                         $insert_i9_form['company_sid'] = $to_company;
                         $insert_i9_form['user_sid'] = $new_employee_sid;
                         unset($insert_i9_form['sid']);
+
+                        $insert_i9_form['last_assign_by'] = $adminId;
 
                         $this->copy_employees_model->copy_new_employee_i9_form($insert_i9_form);
                     }
@@ -697,6 +719,8 @@ class Copy_employees extends Admin_Controller
                         $insert_doc_history['user_sid'] = $new_employee_sid;
                         unset($insert_doc_history['sid']);
 
+                        $insert_doc_history['assigned_by'] = $adminId;
+
                         $this->copy_employees_model->copy_new_employee_documents_history($insert_doc_history);
                     }
                 }
@@ -715,6 +739,7 @@ class Copy_employees extends Admin_Controller
                         $insert_w4_history['employer_sid'] = $new_employee_sid;
                         unset($insert_w4_history['sid']);
 
+                        $insert_w4_history['last_assign_by'] = $adminId;
                         $this->copy_employees_model->copy_new_employee_w4_history($insert_w4_history);
                     }
                 }
@@ -732,7 +757,7 @@ class Copy_employees extends Admin_Controller
                         $insert_w9_history['company_sid'] = $to_company;
                         $insert_w9_history['user_sid'] = $new_employee_sid;
                         unset($insert_w9_history['sid']);
-
+                        $insert_w9_history['last_assign_by'] = $adminId;
                         $this->copy_employees_model->copy_new_employee_w9_history($insert_w9_history);
                     }
                 }
@@ -750,6 +775,7 @@ class Copy_employees extends Admin_Controller
                         $insert_i9_history['company_sid'] = $to_company;
                         $insert_i9_history['user_sid'] = $new_employee_sid;
                         unset($insert_i9_history['sid']);
+                        $insert_i9_history['last_assign_by'] = $adminId;
 
                         $this->copy_employees_model->copy_new_employee_i9_history($insert_i9_history);
                     }
@@ -768,6 +794,8 @@ class Copy_employees extends Admin_Controller
                         $insert_resume_history['company_sid'] = $to_company;
                         $insert_resume_history['user_sid'] = $new_employee_sid;
                         unset($insert_resume_history['sid']);
+
+                        $insert_resume_history['requested_by'] = $adminId;
 
                         $this->copy_employees_model->copy_new_employee_request_log($insert_resume_history);
                     }
@@ -836,7 +864,7 @@ class Copy_employees extends Admin_Controller
                     );
 
                 //
-            //    $this->complynet_model->manageEmployee($passArray);
+                //    $this->complynet_model->manageEmployee($passArray);
 
                 //
                 echo json_encode($resp);

@@ -622,6 +622,7 @@ class Courses extends Public_Controller
         $data['employer_sid'] = $employeeId;
         $data['subordinate_sid'] = $subordinateId;
         $data['subordinateName'] = getUserNameBySID($subordinateId);
+        $data['subordinateInfo'] = get_employee_profile_info($subordinateId);
         $data['viewMode'] = "subordinate";
         $data['employee'] = $session['employer_detail'];
         $data['load_view'] = 1;

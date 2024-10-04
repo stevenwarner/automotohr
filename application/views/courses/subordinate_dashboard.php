@@ -46,6 +46,64 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
+                            <strong><?php echo $type == "non_plus" ? "Subordinate" : "Employee"; ?> Info</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img style="width: 90px; height: 90px; border-radius: 50% !important;" src="<?= getImageURL($subordinateInfo["profile_picture"]); ?>" alt="" />
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-small weight-6 myb-0" style="font-size: 14px;">
+                                    <?= remakeEmployeeName($subordinateInfo, true, true); ?>
+                                </p>
+                                <p class="text-small">
+                                    <?= remakeEmployeeName($subordinateInfo, false); ?>
+                                </p>
+                                <p class="text-small">
+                                    <?= $subordinateInfo['email']; ?>
+                                </p>
+                                <table class="table table-bordered table-condensed table-hover">
+                                    <thead style="background-color: #fd7a2a;">
+                                        <tr>
+                                            <th>Courses Catagories</th>
+                                            <th>Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr style="background-color: #544fc5; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Courses in Progress</th>
+                                            <td class="col-xs-2 text-center" id="jsInProgressCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #ff834e; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Ready To Start</th>
+                                            <td class="col-xs-2 text-center" id="jsReadyToStartCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #fa4b42; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Past Due</th>
+                                            <td class="col-xs-2 text-center" id="jsPastDueCount"></td>
+                                        </tr>
+                                        <tr style="background-color: #feb56a; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Due Soon</th>
+                                            <td class="col-xs-2 text-center" id="jsDueSoon"></td>
+                                        </tr>
+                                        <tr style="background-color: #00e272; color:#fff;">
+                                            <th class="col-xs-10" style="font-size: 14px !important;">Passed Courses</th>
+                                            <td class="col-xs-2 text-center" id="jsCompletedCount"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Sidebar head -->
+                       
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
                             <strong>Assign Course(s)</strong>
                         </h1>
                     </div>
@@ -62,12 +120,14 @@
                         <div class="csTabContent">
                             <div class="csLisitingArea">
                                 <div class="csBoxWrap jsBoxWrap">
+
+                                    <!-- Courses in Progress Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        <strong>Inprogress Courses</strong>
+                                                        <strong>Courses in Progress</strong>
                                                     </div>
                                                     <div class="col-sm-6 text-right">
                                                         <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
@@ -82,7 +142,30 @@
                                             <div class="row" id="jsInprogressCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Courses in Progress End -->
 
+                                    <!-- Ready To Start Start -->
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <h1 class="panel-heading-text text-medium">
+                                                        <strong>Ready To Start</strong>
+                                                    </h1>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="row" id="jsAssignedCourses"></div>
+                                        </div>
+                                    </div>
+                                    <!-- Ready To Start End -->
+
+                                    <!-- Past Due Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
@@ -103,7 +186,9 @@
                                             <div class="row" id="jsPastDueCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Past Due End -->
 
+                                    <!-- Due Soon Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h1 class="panel-heading-text text-medium">
@@ -124,26 +209,9 @@
                                             <div class="row" id="jsDueSoonCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Due Soon End -->
 
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <h1 class="panel-heading-text text-medium">
-                                                        <strong>Ready To Start</strong>
-                                                    </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=assigned") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="panel-body">
-                                            <div class="row" id="jsAssignedCourses"></div>
-                                        </div>
-                                    </div>
-
+                                    <!-- Passed Courses Start -->
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <div class="row">
@@ -162,6 +230,8 @@
                                             <div class="row" id="jsPassedCourses"></div>
                                         </div>
                                     </div>
+                                    <!-- Passed Courses End -->
+
                                 </div>
                             </div>
                             <div class="clearfix"></div>
