@@ -46,6 +46,37 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
+                            <strong>Subordinate Info</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <img style="width: 90px; height: 90px; border-radius: 50% !important;" src="<?= getImageURL($subordinateInfo["profile_picture"]); ?>" alt="" />
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-small weight-6 myb-0">
+                                    <?= remakeEmployeeName($subordinateInfo, true, true); ?>
+                                </p>
+                                <p class="text-small">
+                                    <?= remakeEmployeeName($subordinateInfo, false); ?>
+                                </p>
+                                <p class="text-small">
+                                    <?= $subordinateInfo['email']; ?>
+                                </p>
+                                <p class="text-small">
+                                    Course Info
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Sidebar head -->
+                       
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
                             <strong>Assign Course(s)</strong>
                         </h1>
                     </div>
