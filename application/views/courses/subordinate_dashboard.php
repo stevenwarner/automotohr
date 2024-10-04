@@ -65,26 +65,32 @@
                                     <?= $subordinateInfo['email']; ?>
                                 </p>
                                 <table class="table table-bordered table-condensed table-hover">
+                                    <thead style="background-color: #fd7a2a;">
+                                        <tr>
+                                            <th>Courses Catagories</th>
+                                            <th>Count</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
                                         <tr style="background-color: #544fc5; color:#fff;">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Courses in Progress</th>
-                                            <td class="col-xs-2" id="jsInProgressCount"></td>
+                                            <td class="col-xs-2 text-center" id="jsInProgressCount"></td>
                                         </tr>
                                         <tr style="background-color: #ff834e; color:#fff;">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Ready To Start</th>
-                                            <td class="col-xs-2" id="jsReadyToStartCount"></td>
+                                            <td class="col-xs-2 text-center" id="jsReadyToStartCount"></td>
                                         </tr>
                                         <tr style="background-color: #fa4b42; color:#fff;">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Past Due</th>
-                                            <td class="col-xs-2" id="jsPastDueCount"></td>
+                                            <td class="col-xs-2 text-center" id="jsPastDueCount"></td>
                                         </tr>
                                         <tr style="background-color: #feb56a; color:#fff;">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Due Soon</th>
-                                            <td class="col-xs-2" id="jsDueSoon"></td>
+                                            <td class="col-xs-2 text-center" id="jsDueSoon"></td>
                                         </tr>
                                         <tr style="background-color: #00e272; color:#fff;">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Passed Courses</th>
-                                            <td class="col-xs-2" id="jsCompletedCount"></td>
+                                            <td class="col-xs-2 text-center" id="jsCompletedCount"></td>
                                         </tr>
                                     </tbody>
                                 </table>
