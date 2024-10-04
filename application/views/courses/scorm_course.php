@@ -24,9 +24,9 @@
                             <div style="float: right;">
                                 <?php if ($viewMode == "preview_only") { ?>
                                     <?php if ($reviewAs == "plus") { ?>
-                                        <a href="<?php echo base_url('lms/employee/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                        <a href="<?php echo base_url('lms/employee/courses/dashboard/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } else { ?>
-                                        <a href="<?php echo base_url('lms/subordinate/courses/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+                                        <a href="<?php echo base_url('lms/subordinate/courses/dashboard/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } ?>
                                 <?php } else { ?> 
                                     <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>

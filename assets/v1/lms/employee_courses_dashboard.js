@@ -441,7 +441,7 @@ $(function LMSEmployeeDashboard() {
 							name: 'Passed',
 							y: count.passed,
 							color: '#00e272',
-							url: baseURI + "lms/courses/my?type=assigned"
+							url: baseURI + "lms/courses/my?type=completed"
 						}
 					]
 				}
@@ -526,7 +526,7 @@ $(function LMSEmployeeDashboard() {
 							name: 'Passed',
 							color: '#00e272',
 							y: count.passed,
-							url: baseURI + "lms/courses/my?type=inprogress"
+							url: baseURI + "lms/courses/my?type=completed"
 						},
 						{
 							name: 'Past Due',
