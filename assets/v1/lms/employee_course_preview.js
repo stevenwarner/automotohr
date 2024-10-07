@@ -235,160 +235,163 @@ $(function LMSEmployeeCourses() {
 					courses.map(function (course) {
 						if (course["employee_sid"] == null || course["employee_sid"] == employeeId) {
 							if (response.data.assignedIds.includes(course["sid"])) {
-								if (response.data.expiredSoonIds.includes(course["sid"])) {
-									coursesHTML += `<article class="article-sec" style="background: #fcf8e3 !important">`;
-								} else if (response.data.expiredIds.includes(course["sid"])) {
-									coursesHTML += `<article class="article-sec" style="background: #f2dede !important">`;
-								} else {
-									coursesHTML += `<article class="article-sec">`;
-								}
-
-								if (response.data.expiredSoonIds.includes(course["sid"])) {
-									const end = moment(course["course_end_period"],"YYYY-MM-DD");
-									const now = moment();
-									const end_diff = end.diff(now, 'days');
-									//
-									var expiredSoonText = '';
-									//
-									if (end_diff == 0) {
-										expiredSoonText = `Expiring today`;
-									} else if (end_diff == 1) {
-										expiredSoonText = `Expiring in ${end_diff} day`;
+								if (!htmlCheck.includes(course["sid"])) {
+									htmlCheck.push(course["sid"]);
+									if (response.data.expiredSoonIds.includes(course["sid"])) {
+										coursesHTML += `<article class="article-sec" style="background: #fcf8e3 !important">`;
+									} else if (response.data.expiredIds.includes(course["sid"])) {
+										coursesHTML += `<article class="article-sec" style="background: #f2dede !important">`;
 									} else {
-										expiredSoonText = `Expiring in ${end_diff} days`;
+										coursesHTML += `<article class="article-sec">`;
 									}
-									//
-									//
-									coursesHTML += `    <div class="row">`;
-									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-									coursesHTML += `        	<a href="javascript:;" class="btn btn-warning btn-xs csRadius5 csF14" title="This course will expired in ${end_diff} days" placement="top">
-																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
-																	&nbsp;${expiredSoonText}
-																</a>`;
-									coursesHTML += `        </div>`;
-									coursesHTML += `    </div>`;
-								}
 
-								if (response.data.expiredIds.includes(course["sid"])) {
-									const end = moment(course["course_end_period"],"YYYY-MM-DD");
-									const now = moment();
-									const end_diff = Math.abs(end.diff(now, 'days'));
-									//
-									var expiredText = '';
-									//
-									if (end_diff == 0) {
-										expiredText = `Expired today`;
-									} else if (end_diff == 1) {
-										expiredText = `Expired ${end_diff} day ago`;
-									} else {
-										expiredText = `Expired ${end_diff} days ago`;
+									if (response.data.expiredSoonIds.includes(course["sid"])) {
+										const end = moment(course["course_end_period"],"YYYY-MM-DD");
+										const now = moment();
+										const end_diff = end.diff(now, 'days');
+										//
+										var expiredSoonText = '';
+										//
+										if (end_diff == 0) {
+											expiredSoonText = `Expiring today`;
+										} else if (end_diff == 1) {
+											expiredSoonText = `Expiring in ${end_diff} day`;
+										} else {
+											expiredSoonText = `Expiring in ${end_diff} days`;
+										}
+										//
+										//
+										coursesHTML += `    <div class="row">`;
+										coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
+										coursesHTML += `        	<a href="javascript:;" class="btn btn-warning btn-xs csRadius5 csF14" title="This course will expired in ${end_diff} days" placement="top">
+																		<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
+																		&nbsp;${expiredSoonText}
+																	</a>`;
+										coursesHTML += `        </div>`;
+										coursesHTML += `    </div>`;
 									}
-									//
+
+									if (response.data.expiredIds.includes(course["sid"])) {
+										const end = moment(course["course_end_period"],"YYYY-MM-DD");
+										const now = moment();
+										const end_diff = Math.abs(end.diff(now, 'days'));
+										//
+										var expiredText = '';
+										//
+										if (end_diff == 0) {
+											expiredText = `Expired today`;
+										} else if (end_diff == 1) {
+											expiredText = `Expired ${end_diff} day ago`;
+										} else {
+											expiredText = `Expired ${end_diff} days ago`;
+										}
+										//
+										coursesHTML += `    <div class="row">`;
+										coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
+										coursesHTML += `        	<a href="javascript:;" class="btn btn-danger btn-xs csRadius5 csF14" title="This course was expired ${end_diff} days ago." placement="top">
+																		<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
+																		&nbsp;${expiredText}
+																	</a>`;
+										coursesHTML += `        </div>`;
+										coursesHTML += `    </div>`;
+									}
+
+									coursesHTML += `    <h1>`;
+									coursesHTML += course.course_title;
+									coursesHTML += `    </h1>`;
+									coursesHTML += `    <br>`;
 									coursesHTML += `    <div class="row">`;
-									coursesHTML += `        <div class="col-md-12 col-xs-12 text-right">`;
-									coursesHTML += `        	<a href="javascript:;" class="btn btn-danger btn-xs csRadius5 csF14" title="This course was expired ${end_diff} days ago." placement="top">
-																	<i class="fa fa-info-circle csF14" aria-hidden="true"></i>
-																	&nbsp;${expiredText}
-																</a>`;
-									coursesHTML += `        </div>`;
-									coursesHTML += `    </div>`;
-								}
-
-								coursesHTML += `    <h1>`;
-								coursesHTML += course.course_title;
-								coursesHTML += `    </h1>`;
-								coursesHTML += `    <br>`;
-								coursesHTML += `    <div class="row">`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
-								coursesHTML += `            <p>${moment(
-									course.course_start_period
-								).format(timeOffDateFormatWithTime)}</p>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
-
-								if (course.course_end_period === null) {
-									coursesHTML += `--`;
-								} else {
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
 									coursesHTML += `            <p>${moment(
-										course.course_end_period
+										course.course_start_period
 									).format(timeOffDateFormatWithTime)}</p>`;
-								}
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>DUE DATE</strong></p>`;
+
+									if (course.course_end_period === null) {
+										coursesHTML += `--`;
+									} else {
+										coursesHTML += `            <p>${moment(
+											course.course_end_period
+										).format(timeOffDateFormatWithTime)}</p>`;
+									}
+									
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;
+									coursesHTML += `            <p>${
+										course.course_status == "passed"
+											? "COMPLETED"
+											: "PENDING"
+									}</p>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>`;
+									coursesHTML += `            <p>${response.data.employeeName}</p>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `    </div>`;
+									coursesHTML += `    <div class="row">`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12 hidden">`;
+									coursesHTML += `            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>`;
+									coursesHTML += `            <p>15 min / 15 min</p>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>STARTED DATE </strong></p>`;
+									coursesHTML += `            <p>${
+										course.created_at
+											? moment(course.created_at).format(
+													timeOffDateFormatWithTime
+											)
+											: "-"
+									}</p>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-3 col-xs-12">`;
+									coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
+									coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
+									//
+									if (course['course_type'] == 'scorm') {
+										course['course_languages'].map(function (language) {
+											coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+										});
+									} else {
+										coursesHTML += `                <option value="english">English</option>`;
+									}
+									//
+									coursesHTML += `            </select>`;
+									coursesHTML += `        </div>`;
+									coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
+									coursesHTML += `            <p>&nbsp;</p>`;
+
+									var defaultLanguage = '';
+									if (course['course_type'] == 'scorm') {
+										defaultLanguage = course['course_languages'][0];
+									} else {
+										defaultLanguage = 'english';
+									}
 								
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>STATUS</strong></p>`;
-								coursesHTML += `            <p>${
-									course.course_status == "passed"
-										? "COMPLETED"
-										: "PENDING"
-								}</p>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED TO</strong></p>`;
-								coursesHTML += `            <p>${response.data.employeeName}</p>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `    </div>`;
-								coursesHTML += `    <div class="row">`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12 hidden">`;
-								coursesHTML += `            <p class="csColumSection"><strong>TIME REMAINING/TOTAL</strong></p>`;
-								coursesHTML += `            <p>15 min / 15 min</p>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>STARTED DATE </strong></p>`;
-								coursesHTML += `            <p>${
-									course.created_at
-										? moment(course.created_at).format(
-												timeOffDateFormatWithTime
-										)
-										: "-"
-								}</p>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-3 col-xs-12">`;
-								coursesHTML += `            <p class="csColumSection"><strong>LANGUAGE</strong></p>`;
-								coursesHTML += `            <select class="form-control jsSelectCourseLanguage jsCourseLanguage${course.sid}" data-course_id="${course.sid}">`;
-								//
-								if (course['course_type'] == 'scorm') {
-									course['course_languages'].map(function (language) {
-										coursesHTML += `            <option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
-									});
-								} else {
-									coursesHTML += `                <option value="english">English</option>`;
-								}
-								//
-								coursesHTML += `            </select>`;
-								coursesHTML += `        </div>`;
-								coursesHTML += `        <div class="col-md-6 col-xs-12 text-right">`;
-								coursesHTML += `            <p>&nbsp;</p>`;
+									if (course.course_status == "passed") {
+										coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
+																	<i class="fa fa-eye"></i>
+																	View Content
+																</a>`;
+																
+										coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
+																	<i class="fa fa-eye"></i>
+																	View Certificate
+																</a>`;
+									} else {
+										coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
+																	<i class="fa fa-play"></i>
+																	Launch Content
+																</a>`;
+									}		
 
-								var defaultLanguage = '';
-								if (course['course_type'] == 'scorm') {
-									defaultLanguage = course['course_languages'][0];
-								} else {
-									defaultLanguage = 'english';
+									coursesHTML += `        </div>`;
+									coursesHTML += `    </div>`;
+									coursesHTML += `</article>`;
 								}
-							
-								if (course.course_status == "passed") {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
-																<i class="fa fa-eye"></i>
-																View Content
-															</a>`;
-															
-									coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
-																<i class="fa fa-eye"></i>
-																View Certificate
-															</a>`;
-								} else {
-									coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse jsStartCourse${course.sid}" data-course_id="${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
-																<i class="fa fa-play"></i>
-																Launch Content
-															</a>`;
-								}		
-
-								coursesHTML += `        </div>`;
-								coursesHTML += `    </div>`;
-								coursesHTML += `</article>`;
 							}	
 						}
 					});
