@@ -88,10 +88,13 @@
                                                     <h1 class="panel-heading-text text-medium">
                                                         <strong>Courses in Progress</strong>
                                                     </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are starting to attempt.</p>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important">
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        &nbsp;Courses that you have started but have not completed.
+                                                    </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -109,10 +112,13 @@
                                                     <h1 class="panel-heading-text text-medium">
                                                         <strong>Ready To Start</strong>
                                                     </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important">
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        &nbsp;Courses that have been assigned to you, but have not been started.
+                                                    </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -130,10 +136,13 @@
                                                     <h1 class="panel-heading-text text-medium">
                                                         <strong>Past Due</strong>
                                                     </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are now expired.</p>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important">
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        &nbsp;Courses that have been assigned to you and are currently Past Due.
+                                                    </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -151,10 +160,13 @@
                                                     <h1 class="panel-heading-text text-medium">
                                                         <strong>Due Soon</strong>
                                                     </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;Courses that you have assigned and are nearing expiration.</p>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important">
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        &nbsp;Courses that have been assigned to you and are nearing expiration.
+                                                    </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -172,10 +184,13 @@
                                                     <h1 class="panel-heading-text text-medium">
                                                         <strong>Passed Course(s)</strong>
                                                     </h1>
-                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important"><i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;The total number of courses you have assigned.</p>
+                                                    <p class="csF14 csInfo csB7" style="font-size: 12px !important">
+                                                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                                                        &nbsp;Congratulations! These are the Courses that you have Completed Successfully.
+                                                    </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Course</a>
+                                                    <a href="<?= base_url("lms/courses/my?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>

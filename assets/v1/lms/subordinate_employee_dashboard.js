@@ -64,6 +64,15 @@ $(function LMSEmployeeCourses() {
 		//
 		getLMSAssignCourses(subordinateId);
 	});
+
+	$(".jsCategoryCourses").click(function (event) {
+		// prevent default event
+		event.preventDefault();
+		//
+		var url = $(this).data("url");
+		window.open(url, '_blank');
+	});
+
 	// set the default filter
     if (page === "subordinate_course") {
         if (courseType === "scorm") {
