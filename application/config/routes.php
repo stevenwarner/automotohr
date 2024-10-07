@@ -1709,6 +1709,7 @@ $route['lms/courses/import_course_csv'] = 'v1/Courses/importCourseCSV';
 $route['lms/courses/import_course_csv_handler'] = 'v1/Courses/handler';
 
 $route['lms/subordinate/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/non_plus/$1';
+$route['lms/subordinate/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';
 $route['lms/subordinate/courses/(:num)'] = 'v1/Courses/subordinateCourses/non_plus/$1';
 
 $route['lms/employee/courses/dashboard/(:num)'] = 'v1/Courses/subordinateDashboard/plus/$1';
