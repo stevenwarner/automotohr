@@ -1428,20 +1428,6 @@ class Performance_management_model extends CI_Model{
     
     
 
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
     //
     function getMyGoals(){
         return [];

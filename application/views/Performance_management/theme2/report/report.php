@@ -119,7 +119,7 @@
                     foreach($newArray as $row){
                         ?>
                         <div class="pane panel-theme">
-                            <div class="panel-heading">
+                            <div class="panel-heading" style="background-color: #81b431;">
                                 <h5 class="csF16 csB7 mt0 mb0 csW">
                                     <?=$row['Name'];?>
                                     <span class="pull-right">

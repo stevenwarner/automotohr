@@ -19,9 +19,16 @@
             'slug' => 'my-reviews',
             'icon' => '',
             'segment' => 'my-reviews'
+        ],
+        [
+            'title' => 'Reviews Assigned To Me - Reviewer',
+            'url' => '/reviews/all',
+            'slug' => 'alls',
+            'icon' => '',
+            'segment' => 'alls'
         ]]
     ];
-        
+          
     $tabs[] =     [
         'title' => 'Goals',
         'url' => '/goals',
@@ -30,7 +37,7 @@
         'segment' => 'goals'
     ];
  
-
+    
     //
     $lis = '';
     //
@@ -71,15 +78,7 @@
                                         class="fa fa-th" aria-hidden="true"></i>Go To Dashboard</a>
                             </li>
                             <li><a href="javascript:void(0)" class="csF14">|</a></li>
-                            <?= $lis; ?>
-                            <li class="pull-right" style="margin-top: 5px; cursor: pointer;">
-                                <span class="csF18 csB9 jsIncreaseSize" title="Increase the font size"
-                                    placement="bottom">A</span>&nbsp;
-                                <span class="csF16 jsDecreaseSize" title="Decrease the font size"
-                                    placement="bottom">A</span>&nbsp;&nbsp;
-                                <span class="csF16 jsResetSize" title="Reset the font size to default"
-                                    placement="bottom"><i class="fa fa-refresh" aria-hidden="true"></i></span>
-                            </li>
+                            <?= $lis; ?>                            
                         </ul>
                         <!-- Mobile -->
                         <div class="csMobile hidden-sm">

@@ -139,7 +139,6 @@ class Performance_management extends Public_Controller
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
             $this->pargs['load_view'] = true;
-       
         } else if ($type == 'company') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], 0);
@@ -166,18 +165,17 @@ class Performance_management extends Public_Controller
         }
         //
         if ($type == 'my') {
-        $this->load->view($this->header, $this->pargs);
-        $this->load->view("{$this->pp}header");
-        $this->load->view("{$this->pp}goals/dashboard");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view($this->footer);
-        }else{       
-       $this->load->view('main/header', $this->pargs);
-         $this->load->view("{$this->pp}goals/dashboard");
-        $this->load->view("{$this->pp}footer");
-        $this->load->view('main/footer');
+            $this->load->view($this->header, $this->pargs);
+            $this->load->view("{$this->pp}header");
+            $this->load->view("{$this->pp}goals/dashboard");
+            $this->load->view("{$this->pp}footer");
+            $this->load->view($this->footer);
+        } else {
+            $this->load->view('main/header', $this->pargs);
+            $this->load->view("{$this->pp}goals/dashboard");
+            $this->load->view("{$this->pp}footer");
+            $this->load->view('main/footer');
         }
-
     }
 
     /**
@@ -219,6 +217,15 @@ class Performance_management extends Public_Controller
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+
+        //
+        $loggedin_access_level = $this->pargs['employee']['access_level'];
+        if (strtolower($loggedin_access_level) == 'employee') {
+            redirect(base_url('performance-management/reviews/all'), "refresh");
+        }
+
+
         // Set company employees
         $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
         //
@@ -525,15 +532,13 @@ class Performance_management extends Public_Controller
         //
         $this->pargs['template'] = $this->pmm->GetTemplateById($id);
         //
-       
+
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
 
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}create_template/create");
         $this->load->view('main/footer');
-
-
     }
 
     /**
@@ -583,15 +588,13 @@ class Performance_management extends Public_Controller
         // Get Settings
         $this->pargs['settings'] = $this->pmm->GetSettings($this->pargs['companyId']);
         //
-       
+
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
 
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}settings");
         $this->load->view('main/footer');
-
-
     }
 
 
@@ -666,8 +669,6 @@ class Performance_management extends Public_Controller
         $this->load->view("{$this->pp}all_feedbacks");
         $this->load->view("{$this->pp}footer");
         $this->load->view('main/footer');
-
-
     }
 
     /**
@@ -1628,14 +1629,13 @@ class Performance_management extends Public_Controller
         $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
         $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);
         //
-      
+
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
 
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}report/index");
         $this->load->view('main/footer');
-
     }
 
     //
@@ -2090,6 +2090,14 @@ class Performance_management extends Public_Controller
         $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
         // Set employee information for the blue screen
         $this->pargs['employee'] =  $this->pargs['session']['employer_detail'];
+
+
+        //
+        $loggedin_access_level = $this->pargs['employee']['access_level'];
+        if (strtolower($loggedin_access_level) == 'employee') {
+            redirect(base_url('performance-management/reviews/all'), "refresh");
+        }
+
 
         // Set company employees
         $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
