@@ -72,23 +72,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="jsCategoryCourses" style="background-color: #544fc5; color:#fff;" data-url="<?php echo base_url("lms/courses/my?type=inprogress"); ?>">
+                                        <tr class="jsCategoryCourses" style="background-color: #544fc5; color:#fff; cursor: pointer;" data-url="<?php echo base_url("lms/courses/my?type=inprogress"); ?>">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Courses in Progress</th>
                                             <td class="col-xs-2 text-center" id="jsInProgressCount"></td>
                                         </tr>
-                                        <tr class="jsCategoryCourses" style="background-color: #ff834e; color:#fff;" data-url="<?php echo base_url("lms/courses/my?type=ready_to_start"); ?>">
+                                        <tr class="jsCategoryCourses" style="background-color: #ff834e; color:#fff; cursor: pointer;" data-url="<?php echo base_url("lms/courses/my?type=ready_to_start"); ?>">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Ready To Start</th>
                                             <td class="col-xs-2 text-center" id="jsReadyToStartCount"></td>
                                         </tr>
-                                        <tr class="jsCategoryCourses" style="background-color: #fa4b42; color:#fff;" data-url="<?php echo base_url("lms/courses/my?type=past_due"); ?>">
+                                        <tr class="jsCategoryCourses" style="background-color: #fa4b42; color:#fff; cursor: pointer;" data-url="<?php echo base_url("lms/courses/my?type=past_due"); ?>">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Past Due</th>
                                             <td class="col-xs-2 text-center" id="jsPastDueCount"></td>
                                         </tr>
-                                        <tr class="jsCategoryCourses" style="background-color: #feb56a; color:#fff;" data-url="<?php echo base_url("lms/courses/my?type=due_soon"); ?>">
+                                        <tr class="jsCategoryCourses" style="background-color: #feb56a; color:#fff; cursor: pointer;" data-url="<?php echo base_url("lms/courses/my?type=due_soon"); ?>">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Due Soon</th>
                                             <td class="col-xs-2 text-center" id="jsDueSoon"></td>
                                         </tr>
-                                        <tr class="jsCategoryCourses" style="background-color: #00e272; color:#fff;" data-url="<?php echo base_url("lms/courses/my?type=completed"); ?>">
+                                        <tr class="jsCategoryCourses" style="background-color: #00e272; color:#fff; cursor: pointer;" data-url="<?php echo base_url("lms/courses/my?type=completed"); ?>">
                                             <th class="col-xs-10" style="font-size: 14px !important;">Passed Courses</th>
                                             <td class="col-xs-2 text-center" id="jsCompletedCount"></td>
                                         </tr>
@@ -161,7 +161,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
+                                                    <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -237,7 +237,7 @@
                                                     </p>
                                                 </div>
                                                 <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
+                                                    <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
