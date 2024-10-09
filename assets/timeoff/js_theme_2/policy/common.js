@@ -56,8 +56,7 @@ $('.jsViewPoliciesBtn').click(function (e) {
 });
 
 $(document).on('click', '.js-to-step', function (e) {
-    //
-   
+    //   
     e.preventDefault();
     //
     ml(true, 'policy');

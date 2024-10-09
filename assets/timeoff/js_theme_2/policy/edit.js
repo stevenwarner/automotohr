@@ -19,7 +19,7 @@ $(function () {
             approverList: [],
             deactivate: 0,
             include: 1,
-            isESST:0,
+            isESST: 0,
             method: 'yearly',
             time: 'none',
             frequency: 'none',
@@ -566,6 +566,9 @@ $(function () {
         policy.plans = accruals.plans;
         policy.policy_category_type = resp.Data.policy_category_type;
         policy.approverList = resp.Data.allowed_approvers;
+       
+        policy.isCustom = resp.Data.is_custom;
+
         //
         policy.accuralDefaultFlow = accruals.defaultFlow;
         //
@@ -596,7 +599,7 @@ $(function () {
         $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);
-        
+
         if (policy.approver == 1) {
             $('#js-approvers-list-edit').select2('val', policy.approverList ? policy.approverList.split(',') : []);
         }
@@ -606,6 +609,7 @@ $(function () {
         $('#js-include-check-edit').prop('checked', policy.include == 1 ? true : false);
         //
         $('#js-is-esst-edit').prop('checked', policy.isESST == 1 ? true : false);
+        
         // Set accrual method
         // $('#js-accrual-method-edit').select2('val', policy.method);
         // $('#js-accrual-method-edit').trigger('change');
@@ -646,13 +650,16 @@ $(function () {
         // Policy reset date
         $('#js-custom-reset-date-edit').val(policy.resetDate);
         //
+        $('#js-is-custom-edit').prop('checked', policy.isCustom == 1 ? true : false);
+        
+        //
         $('#js-step-bar-edit').show();
         //
         $("#js-accrual-default-flow-edit").prop(
-			"checked",
-			policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
-				: false
-		);
+            "checked",
+            policy.accuralDefaultFlow == 1 || policy.accuralDefaultFlow == undefined ? true
+                : false
+        );
         //
         if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
@@ -825,6 +832,8 @@ $(function () {
             // Set deactivate check
             policyOBJ.include = $('#js-include-check-edit').prop('checked') == true ? 1 : 0;
             //
+            policyOBJ.isCustom = $('#js-is-custom-edit').prop('checked') === true ? 1 : 0;
+            //
             saveStep(policyOBJ);
             //
             return true;
@@ -844,7 +853,7 @@ $(function () {
             policyOBJ.rate = getField('#js-accrual-rate-edit');
             // Set policy rate type
             policyOBJ.rateType = getField('#js-accrual-rate-type-edit option:selected');
-            
+
             // Set policy minimum aplicable type
             policyOBJ.applicableTimeType = getField('.js-minimum-applicable-time-edit:checked');
             // Set policy minimum aplicable time

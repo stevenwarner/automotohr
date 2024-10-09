@@ -239,6 +239,25 @@
                                         <div class="js-hint js-hint-balance">
                                             <?php echo $get_policy_item_info['is_esst_policy_hint']; ?>
                                         </div>
+
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb10 csRow">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="">
+                                        <label class="control control--checkbox">
+                                            <input type="checkbox" id="js-is-custom-edit" />
+                                            <?php echo $get_policy_item_info['is_custom_policy_label']; ?>
+                                            <span class="control__indicator"></span>
+                                        </label>
+                                        <i class="fa fa-question-circle" data-hint="js-hint" data-target="custom"></i>
+                                        <div class="js-hint js-hint-custom">
+                                            <?php echo $get_policy_item_info['is_custom_policy_hint']; ?>
+                                        </div>
+                                     
                                     </div>
                                 </div>
                             </div>

@@ -299,6 +299,9 @@ $(function () {
             policyOBJ.employeeTypes = $('#js-employee-type-add').val();
             //
             policyOBJ.offDays = getField('#js-off-days-add');
+
+            policyOBJ.isCustom = $('#js-is-custom-add').prop('checked') === true ? 1 : 0;
+
             // Check policy title
             if (policyOBJ.employeeTypes == null) {
                 alertify.alert('WARNING!', 'Please, add the employee type.', () => { });

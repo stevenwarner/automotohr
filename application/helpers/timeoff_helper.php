@@ -839,6 +839,28 @@ if (!function_exists('getEmployeeAccrual')) {
                 $r
             );
         }
+
+
+        //
+        if (checkPolicyCustom($policyId) == 1) {
+            //
+            return processCustomPolicy(
+                $policyId,
+                $employeeId,
+                $employementStatus,
+                $employeeJoiningDate,
+                $durationInMinutes,
+                $accruals,
+                $balanceInMinutes,
+                $asOfToday,
+                $slug,
+                $categoryType,
+                $r
+            );
+        }
+
+
+
         // Check if employee is on probation
         if ($employementStatus == 'probation') {
             // Probation
@@ -2069,4 +2091,107 @@ function hasAllowedTimeBeforePolicyImplements(
     $r["allowed"] = 1;
 
     return $r;
+}
+
+
+//
+//
+if (!function_exists('checkPolicyCustom')) {
+    /**
+     * Check is policy is Cuatom
+     * 
+     * @param int $policyId
+     * 
+     * @return int
+     */
+    function checkPolicyCustom(
+        int $policyId
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('is_custom');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result['is_custom'];
+    }
+}
+
+//
+if (!function_exists('processCustomPolicy')) {
+    /**
+     * 
+     */
+    function processCustomPolicy(
+        $policyId,
+        $employeeId,
+        $employementStatus,
+        $employeeJoiningDate,
+        $durationInMinutes,
+        $accruals,
+        $balanceInMinutes,
+        $asOfToday,
+        $slug,
+        $categoryType,
+        $r
+    ) {
+
+
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $CI->db->select('policy_start_date');
+        $CI->db->where('sid', $policyId);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        $todayDate = !empty($asOfToday) ? $asOfToday : date('Y-m-d', strtotime('now'));
+        $todayDate = getFormatedDate($todayDate);
+        //
+
+        if ($employeeJoiningDate < $result['policy_start_date']) {
+            $employeeAnniversaryDate = getEmployeeAnniversary($result['policy_start_date'], $todayDate);
+        } else {
+            $employeeAnniversaryDate = getEmployeeAnniversary($employeeJoiningDate, $todayDate);
+        }
+        //
+        $totalShiftMinutes = 0;
+        //
+
+        //72 total
+        //40 main 
+        //32 extra 
+
+        $date1 = date_create($employeeAnniversaryDate['lastAnniversaryDate']);
+        $date2 = date_create($todayDate);
+        $diff = date_diff($date1, $date2);
+
+        $daysDif = $diff->format("%a");
+
+        $totalAllowedTitmeOff = $accruals['rate'];
+
+        if ($daysDif > 90) {
+            $extraDays = $daysDif - 90;
+            $extraWeeks = $extraDays / 7;
+            if ($extraWeeks > 32) {
+                $extraAllowedTimeoff = 32;
+            } else {
+                $extraAllowedTimeoff = $extraWeeks;
+            }
+
+            $totalAllowedTitmeOff = $totalAllowedTitmeOff + $extraAllowedTimeoff;
+            if ($totalAllowedTitmeOff > 72) {
+                $totalAllowedTitmeOff = 72;
+            }
+        }
+
+        //        
+        $r['AllowedTime'] = $totalAllowedTitmeOff * 60; //allowedTime;
+        $r['RemainingTime'] = $totalAllowedTitmeOff * 60;
+        $r['EmployementStatus'] = $employementStatus;
+        $r['lastAnniversaryDate'] =  $employeeAnniversaryDate['lastAnniversaryDate'];
+        $r['upcomingAnniversaryDate'] = $employeeAnniversaryDate['upcomingAnniversaryDate'];
+        //
+        return $r;
+    }
 }
