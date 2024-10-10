@@ -648,7 +648,7 @@ class Testing extends CI_Controller
         //
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
-        $this->db->where_in('employee_type', ['fulltime','full-time']);
+        $this->db->where_in('employee_type', ['fulltime', 'full-time']);
         $this->db->where('parent_sid <>', 0);
         $this->db->where('employment_date', null);
         $this->db->where('is_executive_admin', 0);
@@ -688,7 +688,7 @@ class Testing extends CI_Controller
         echo "All Done";
     }
 
-     /**
+    /**
      * 
      */
     private function addLastRead($sid)
@@ -1077,7 +1077,7 @@ class Testing extends CI_Controller
                 $totalJobsForFeed++;
             }
         }
-        _e($totalJobsForFeed,true,true);
+        _e($totalJobsForFeed, true, true);
 
         // Post data to browser
         header('Content-type: text/xml');
@@ -1111,9 +1111,10 @@ class Testing extends CI_Controller
 
         return $validSlug;
     }
-   
 
-    function addScormCourses () {
+
+    function addScormCourses()
+    {
         //
         $results = $this->db->select("sid, course_file_name, Imsmanifist_json")
             ->where("company_sid", 0)
@@ -1134,6 +1135,26 @@ class Testing extends CI_Controller
             //
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
+    }
+
+
+
+    //    
+    public function syncComplyNetCompanyEmployees()
+    {
+
+        //
+        $this->load->model("2022/Complynet_model", "Complynet_model");
+        $complyNetEmployees = $this->Complynet_model->getComplyNetEmployees();
+        if (!empty($complyNetEmployees)) {
+            foreach ($complyNetEmployees as $row) {
+              //  _e($row['employee_sid'], true);
+                updateEmployeeJobRoleToComplyNet($row['employee_sid'], $row['company_sid']);
+                updateEmployeeDepartmentToComplyNet($row['employee_sid'], $row['company_sid']);
+            }
+        }
+
+        echo "Done";
     }
 }
 
@@ -1162,5 +1183,3 @@ if (!function_exists('remakeSalary')) {
         return $salary;
     }
 }
-
-

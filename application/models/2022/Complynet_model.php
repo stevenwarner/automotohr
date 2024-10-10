@@ -2299,4 +2299,16 @@ class Complynet_model extends CI_Model
             ])
             ->count_all_results('complynet_employees');
     }
+
+    //
+
+    public function getComplyNetEmployees($companySid = 0)
+    {
+        $this->db->select('company_sid,employee_sid');
+        if ($companySid != 0) {
+            $this->db->where('company_sid', $companySid);
+        }
+        return $this->db->get('complynet_employees')
+            ->result_array();
+    }
 }
