@@ -744,4 +744,52 @@ class Complynet_cron_model extends CI_Model
             )
         );
     }
+
+
+    public function syncEmployeesToComplyNet()
+    {
+        // get all active and complynet linked employees
+        $employees = $this
+            ->db
+            ->select("employee_sid")
+            ->where("employee_sid", 37755)
+            ->get("complynet_employees")
+            ->result_array();
+        //
+        if (!$employees) {
+            exit("No linked employees found.");
+        }
+
+        foreach ($employees as $v0) {
+
+            $sid = $v0["employee_sid"];
+
+            $oldData = $this->db
+                ->select('first_name, last_name, email, PhoneNumber, parent_sid')
+                ->where('sid', $sid)
+                ->get('users')
+                ->row_array();
+            //
+            $this->load->model('2022/complynet_model', 'complynet_model');
+            // check if employee is ready for transfer
+            $this
+                ->complynet_model
+                ->checkAndStartTransferEmployeeProcess(
+                    $sid,
+                    $oldData["parent_sid"]
+                );
+            // ComplyNet interjection
+            if (isCompanyOnComplyNet($oldData['parent_sid'])) {
+                //
+                $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
+                    'first_name' => $oldData['first_name'],
+                    'last_name' => $oldData['last_name'],
+                    'email' => $oldData['email'],
+                    'PhoneNumber' => $oldData['PhoneNumber']
+                ]);
+                //
+                updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
+            }
+        }
+    }
 }
