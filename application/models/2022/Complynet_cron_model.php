@@ -759,6 +759,7 @@ class Complynet_cron_model extends CI_Model
             exit("No linked employees found.");
         }
 
+        $this->load->model('2022/complynet_model', 'complynet_model');
         foreach ($employees as $v0) {
 
             $sid = $v0["employee_sid"];
@@ -766,22 +767,20 @@ class Complynet_cron_model extends CI_Model
             $oldData = $this->db
                 ->select('first_name, last_name, email, PhoneNumber, parent_sid')
                 ->where('sid', $sid)
+                ->where('pending_complynet_update', 0)
                 ->get('users')
                 ->row_array();
-            //
-            $this->load->model('2022/complynet_model', 'complynet_model');
-            // check if employee is ready for transfer
-            $this
-                ->complynet_model
-                ->checkAndStartTransferEmployeeProcess(
-                    $sid,
-                    $oldData["parent_sid"]
-                );
+
+            if (!$oldData) {
+                continue;
+            }
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
                 //
                 updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
             }
         }
+
+        exit("All done");
     }
 }
