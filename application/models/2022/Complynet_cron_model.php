@@ -752,7 +752,6 @@ class Complynet_cron_model extends CI_Model
         $employees = $this
             ->db
             ->select("employee_sid")
-            ->where("employee_sid", 37755)
             ->get("complynet_employees")
             ->result_array();
         //
@@ -780,13 +779,6 @@ class Complynet_cron_model extends CI_Model
                 );
             // ComplyNet interjection
             if (isCompanyOnComplyNet($oldData['parent_sid'])) {
-                //
-                $this->complynet_model->updateEmployeeOnComplyNet($oldData['parent_sid'], $sid, [
-                    'first_name' => $oldData['first_name'],
-                    'last_name' => $oldData['last_name'],
-                    'email' => $oldData['email'],
-                    'PhoneNumber' => $oldData['PhoneNumber']
-                ]);
                 //
                 updateEmployeeJobRoleToComplyNet($sid, $oldData['parent_sid']);
             }
