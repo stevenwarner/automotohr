@@ -1135,6 +1135,40 @@ class Testing extends CI_Controller
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
+
+    function fixSalary () {
+        //
+        $salaries = ["1000", " ", "500", "60000", "12", "100000", "200", "30", "0000000", "15", "5000", "9", "20", "80", "50", "100", "150000", "111", "50000", "10", "70000", "11", "45000", "4568", "$50 - $60", "80000", "30000", "$3500 to $4500 plus bonus", "$12 - $27","According to experience","$18,000, plus commission",
+        "TBD",
+        "$65k-$80k",
+        "72,000.00 to 150,000.00" ,
+        "20.00",
+        "60,000",
+        "12.50",
+        "$50 - $600",
+        "$100",
+        "$12.00 to $15.00",
+        "40k to 90k a year.",
+        "Based upon experience",
+        "Commission Plus Bonus",
+        "$60K to $90K",
+        "Salary Plus Bonus",
+        "$100000",
+        "$14",
+        "$10-$12 + BONUS",
+        "10.00",
+        "salary plus commision"];
+        //
+        foreach ($salaries as $key => $salary) {
+            $salaryArray = setTheSalary(
+                $salary,
+               "yearly"
+            );
+            //
+            _e($salaryArray,true);
+        } 
+        //
+    }
 }
 
 

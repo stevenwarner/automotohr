@@ -1172,12 +1172,21 @@ class Indeed_model extends CI_Model
 
     //
     public function updateIndeedJobPostingResponse($updateArray, $jobId)
-
     {
         $this->db
             ->where("job_id", $jobId)
             ->update(
                 "job_posting_indeed_response",
+                $updateArray
+            );
+    }
+
+    public function updateIndeedJobQueue($rowId, $updateArray)
+    {
+        $this->db
+            ->where("sid", $rowId)
+            ->update(
+                "indeed_job_queue",
                 $updateArray
             );
     }
@@ -1238,6 +1247,7 @@ class Indeed_model extends CI_Model
             ->where([
                 "indeed_job_queue.is_processing" => 0,
                 "indeed_job_queue.is_processed" => 0,
+                "indeed_job_queue.has_errors" => 0,
             ])
             ->limit($numberOfJobs)
             ->get("indeed_job_queue");
@@ -1611,6 +1621,7 @@ class Indeed_model extends CI_Model
                 "indeed_job_queue.processed_at",
                 "indeed_job_queue.is_expired",
                 "indeed_job_queue.has_errors",
+                "indeed_job_queue.errors",
                 "indeed_job_queue.is_processing",
                 "indeed_job_queue.log_sid",
                 "indeed_job_queue.created_at",
@@ -1794,5 +1805,32 @@ class Indeed_model extends CI_Model
             ->order_by("indeed_job_queue_history.sid", "DESC")
             ->get("indeed_job_queue_history")
             ->result_array();
+    }
+
+    public function getErrorsById($sid)
+    {
+        $o = $this
+            ->db
+            ->select([
+                "indeed_job_queue.sid",
+                "indeed_job_queue.job_sid",
+                "portal_job_listings.Title",
+                "portal_job_listings.JobDescription",
+                "portal_job_listings.Salary",
+                "portal_job_listings.SalaryType",
+                "portal_job_listings.JobType",
+            ])
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->where("indeed_job_queue.sid", $sid)
+            ->get("indeed_job_queue");
+            //
+            $data = $o->row_array();
+            $o->free_result();
+            //
+            return $data;
     }
 }

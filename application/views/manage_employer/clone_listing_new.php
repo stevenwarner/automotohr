@@ -144,6 +144,11 @@
                                         <li class="form-col-50-left">
                                             <label>Salary:</label>
                                             <input class="invoice-fields" type="text" name="salary" id="salary" value="<?php echo set_value('salary', $listing["Salary"]); ?>">
+                                            <div class="video-link text-danger" style='font-style: italic;'>
+                                                <b>
+                                                    Please use the following format: $20 - $30
+                                                </b>
+                                            </div>
                                             <?php echo form_error('salary'); ?>
                                         </li>
                                         <li class="form-col-50-right">

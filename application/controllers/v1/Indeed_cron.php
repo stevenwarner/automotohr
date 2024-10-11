@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+
+use Aws\ImportExport\Enum\JobType;
+
+ defined('BASEPATH') || exit('No direct script access allowed');
 /**
  * Indeed Cron job
  *
@@ -100,6 +104,8 @@ class Indeed_cron extends CI_Controller
         );
     }
 
+
+
     /**
      * Cron job to push the jobs to Indeed
      *
@@ -121,20 +127,39 @@ class Indeed_cron extends CI_Controller
         foreach ($this->jobs as $job) {
             // set the job
             $this->job = $job;
-            // set the uuid and publish date
-            $this->setJobUUIdAndPublishDate();
-            // check if job is expired
-            if ($job["is_expired"]) {
-                $this->expiredJobs[] = $this->job;
+            // validate job
+            $issues = $this->validateJobForIndeed();
+            //
+            if ($issues) {
+                echo $job['sid']." errors accure<br>";
+                // update job queue
+                $this->jobs = $this
+                    ->indeed_model
+                    ->updateIndeedJobQueue(
+                        $job['sid'],
+                        [
+                            'has_errors' => 1,
+                            'errors' => json_encode($issues) 
+                        ]    
+                    );
+                //
                 continue;
-            }
-            // generate the add/edit job body
-            $this->generateJobBody();
+            } 
+            echo $job['sid']." continue<br>";
+            // set the uuid and publish date
+            // $this->setJobUUIdAndPublishDate();
+            // // check if job is expired
+            // if ($job["is_expired"]) {
+            //     $this->expiredJobs[] = $this->job;
+            //     continue;
+            // }
+            // // generate the add/edit job body
+            // $this->generateJobBody();
         }
         // create/update jobs on Indeed
-        $this->sendJobsToIndeed();
+        // $this->sendJobsToIndeed();
         // delete jobs from Indeed
-        $this->deleteJobsFromIndeed();
+        // $this->deleteJobsFromIndeed();
         //
         exit("All done");
     }
@@ -144,6 +169,69 @@ class Indeed_cron extends CI_Controller
     /* Private Events  */
     /************************************************************************* */
 
+
+    /**
+     * Cron job to push the jobs to Indeed
+     *
+     * @param string $verificationToken
+     */
+    private function validateJobForIndeed ()
+    {
+        $validateArray = [];
+        //
+        $salaryInfo = $this->getSalary();
+        //
+        if ($salaryInfo['min'] == 0 && $salaryInfo['max'] == 0) {
+            array_push($validateArray, "salary");
+        }
+
+        if (empty($this->job['JobType'])) {
+            array_push($validateArray, "job type");
+        }
+
+        $validationIssues = $this->validateDescription();
+
+        //
+        if (!empty($validationIssues)) {
+            array_push($validateArray, "description");
+            // foreach ($validationIssues as $issue) {
+            //     echo $issue . "\n";
+            // }
+        } 
+ 
+        return $validateArray;
+    }
+
+    /**
+     * load the jobs
+     */
+    private function validateDescription()
+    {
+        $issues = [];
+        $description = $this->job['JobDescription'];
+
+        // Check for the presence of HTML tags
+        if (strip_tags($description) === $description) {
+            $issues[] = "No HTML elements found for formatting.";
+        }
+
+        // Check for escaped characters
+        if (preg_match('/&[a-zA-Z0-9#]+;/', $description)) {
+            $issues[] = "Escaped characters found.";
+        }
+
+        // Check for rich formatting (simple example)
+        if (strpos($description, '<b>') === false && strpos($description, '<i>') === false && strpos($description, '<ul>') === false) {
+            $issues[] = "Rich formatting is missing.";
+        }
+
+        // Check if the text is messy (optional: this can be enhanced)
+        if (strlen($description) < 150) {
+            $issues[] = "The description is too short.";
+        }
+
+        return $issues;
+    }
 
     /**
      * load the jobs
@@ -398,19 +486,21 @@ class Indeed_cron extends CI_Controller
             "min" => null,
             "max" => null,
             "period" => null,
+            "salary" => null
         ];
         //
         if ($this->job["Salary"]) {
             //
-            $salaryArray = setTheSalary(
+            $salaryInfo = setTheSalary(
                 $this->job["Salary"],
                 $this->job['SalaryType']
             );
         }
         //
-        $salaryArray["min"] = 25;
-        $salaryArray["max"] = 30;
-        $salaryArray["period"] = "HOUR";
+        $salaryArray["min"] = $salaryInfo['min'];
+        $salaryArray["max"] = $salaryInfo['max'];
+        $salaryArray["period"] = $salaryInfo['type'];
+        $salaryArray["salary"] = $salaryInfo['salary'];
         //
         return $salaryArray;
     }

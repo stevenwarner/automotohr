@@ -155,15 +155,16 @@
                                         </div>
 
                                         <li class="form-col-100 autoheight">
-
                                             <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here. <a href="#" class=" jsSalaryInfo" style="text-decoration: underline;">Click Here for More Details</a></strong></p></label>
                                         </li>
 
                                         <li class="form-col-50-left">
                                             <label>Salary or Salary Range:</label>
                                             <input class="invoice-fields" type="text" name="Salary" id="Salary" value="<?php echo set_value('Salary', $listing["Salary"]); ?>">
-                                            <div class="video-link" style='font-style: italic;'><b></b>
-                                                Please include Currency sign e.g. $20 - $30
+                                            <div class="video-link text-danger" style='font-style: italic;'>
+                                                <b>
+                                                    Please use the following format: $20 - $30
+                                                </b>
                                             </div>
                                             <?php echo form_error('Salary'); ?>
                                         </li>

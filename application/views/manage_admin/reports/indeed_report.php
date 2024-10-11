@@ -216,7 +216,7 @@
                                                         $companyCache[$v0["user_sid"]] =
                                                             $companyCache[$v0["user_sid"]] ?? getCompanyColumnById($v0["user_sid"], "CompanyName")["CompanyName"];
                                                     ?>
-                                                        <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>" data-jobid="<?= $v0["job_sid"]; ?>">
+                                                        <tr data-id="<?= $v0["sid"]; ?>" data-logid="<?= $v0["log_sid"]; ?>" data-jobSid="<?= $v0["job_sid"]; ?>">
                                                             <td>
                                                                 <strong>
                                                                     <?= $v0["Title"]; ?>
@@ -257,6 +257,7 @@
 
                                                                 <?php if ($v0["has_errors"]): ?>                                                                
                                                                 <button class="btn btn-success jsHasErrors">Run</button>
+                                                                <button class="btn btn-success jsShowErrors" data-queue_sid="<?=$v0["sid"];?>">Show Error</button>
                                                                 <?php endif; ?>
 
                                                                 <button class="btn btn-success jsHistory">
@@ -431,7 +432,7 @@
     $(".jsHistory").click(function(event) {
         event.preventDefault();
 
-        const jobId = $(this).closest("tr").data("jobid");
+        const jobId = $(this).closest("tr").data("jobSid");
 
         Modal({
                 Id: "jsModal",
@@ -447,10 +448,42 @@
 
     $(".jsHasErrors").click(function(event) {
         event.preventDefault();
-        const jobId = $(this).closest("tr").data("jobid");
-       window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
-   
+        const jobId = $(this).closest("tr").data("jobSid");
+        window.location.href = '<?php echo base_url('manage_admin/companies/runIndeedJob/');?>'+jobId;
     });
 
+    $(".jsShowErrors").click(function(event) {
+        event.preventDefault();
+        //
+        var queueId = $(this).data("queue_sid");
+        console.log(queueId)
+        //
+        Modal({
+                Id: "jsModal",
+                Title: "Job Error(s)",
+                Loader: "jsModalLoader",
+                Body: '<div id="jsModalBody"></div>'
+            },
+            function() {
+                loadErrors(queueId)
+            }
+        );
+    });
+
+    // load history
+    function loadErrors(queueId) {
+        $.ajax({
+                url: window.location.origin + "/manage_admin/reports/indeed/errors/" + queueId,
+                method: "GET"
+            })
+            .fail(function() {
+                $("#jsModal .jsModalCancel").click();
+                alert("Something went wrong!");
+            })
+            .success(function(resp) {
+                $("#jsModalBody").html(resp.view);
+                $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
+            });
+    }
 
 </script>

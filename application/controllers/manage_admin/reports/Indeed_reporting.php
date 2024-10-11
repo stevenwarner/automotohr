@@ -117,12 +117,12 @@ class Indeed_reporting extends Admin_Controller
                 $exportBy
             ));
 
-            if(!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])){
-            fputcsv($output, array(
-                "Period: " ,
-                 $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
-            ));
-        }
+            if (!empty($data["filter"]["startDate"]) && !empty($data["filter"]["endDate"])) {
+                fputcsv($output, array(
+                    "Period: ",
+                    $data["filter"]["startDate"] . " - " . $data["filter"]["endDate"],
+                ));
+            }
 
 
             fputcsv($output, array(
@@ -223,5 +223,16 @@ class Indeed_reporting extends Admin_Controller
                 "view" => $this->load->view("manage_admin/reports/indeed_history", ["records" => $records], true)
             ]
         );
+    }
+
+    //
+    public function errors (int $sid) {
+        $record = $this
+            ->indeed_model
+            ->getErrorsById(
+                $sid
+            );
+        //
+        _e($record,true);    
     }
 }
