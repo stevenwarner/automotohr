@@ -1028,4 +1028,66 @@ class Cron_common extends CI_Controller
         );
         _e($holder, true, true);
     }
+
+
+
+    //
+    public function autoEmailReminderForPM($reminderFor = 'reviewExpiry', $reminderBefor = 2)
+    {
+        $this->load->model('common_ajax_model');
+
+        $reminderBefor = 1;
+        $templateCode = 'review_expiration';
+        if ($reminderFor == "reviewExpiry") {
+            $todayDate = getSystemDate('Y-m-d');
+            $reminderFromDate = date('Y-m-d', strtotime("+$reminderBefor day", strtotime($todayDate)));
+
+            $reviewsData = $this->db
+                ->select("
+            pm_reviews.review_title,pm_reviews.company_sid,pm_reviews.company_sid,pm_reviews.review_end_date,pm_reviews.sid,pm_review_reviewers.reviewer_sid,pm_review_reviewers.reviewee_sid,users.first_name,users.last_name,users.email
+        ")
+                ->where('pm_reviews.review_end_date', $reminderFromDate)
+                ->where('pm_review_reviewers.is_completed', 0)
+                ->join("pm_review_reviewers", "pm_review_reviewers.review_sid = pm_reviews.sid", "inner")
+                ->join("users", "users.sid = pm_review_reviewers.reviewer_sid", "inner")
+                ->group_by('pm_review_reviewers.reviewer_sid')
+                ->get("pm_reviews")
+                ->result_array();
+
+            if (!empty($reviewsData)) {
+                foreach ($reviewsData as $reviewRow) {
+                    //  echo $reviewRow['review_title'];
+                    $companyData =
+                        $this->db
+                        ->select("CompanyName")
+                        ->where("sid", $reviewRow['company_sid'])
+                        ->limit(1)
+                        ->get("users")
+                        ->row_array();
+                    // Get email template
+                    $template = $this->common_ajax_model->get_email_template_by_code($templateCode);
+                    // Set replace array
+
+                   $replaceArray = [];
+                    $replaceArray['{{reviewer_name}}'] = ucwords($reviewRow['first_name']) . ' ' . ucwords($reviewRow['last_name']);
+                    $replaceArray['{{review_title}}'] = ucwords($reviewRow['review_title']);
+                    $replaceArray['{{expiry_date}}'] = formatDateToDB($reviewRow['review_end_date'], 'Y-m-d', 'M d Y, D');
+
+                    $replaceArray['{{company_name}}'] = ucwords($companyData['CompanyName']);
+                    //
+                    $indexes = array_keys($replaceArray);
+                    // Change subject
+                    $subject = str_replace($indexes, $replaceArray, $template['subject']);
+                    $body = str_replace($indexes, $replaceArray, $template['text']);
+                    //
+                    $from_email = empty($template['from_email']) ? FROM_EMAIL_NOTIFICATIONS : $template['from_email'];
+                    $from_name = empty($template['from_name']) ? ucwords($companyData['CompanyName']) : str_replace($indexes, $replaceArray, $template['from_name']);
+                    //
+                    log_and_sendEmail($from_email, $reviewRow['email'], $subject, $body, $from_name);
+                }
+            }
+
+            echo "done";
+        }
+    }
 }

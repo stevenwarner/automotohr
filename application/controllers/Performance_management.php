@@ -245,10 +245,11 @@ class Performance_management extends Public_Controller
         );
 
 
+        // 
+        $this->pargs['reviewersPendingReviews'] = $this->pmm->getReviewersPendingReviews($this->pargs['companyId']);
+
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
-
-
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}reviews");
         $this->load->view("{$this->pp}footer");
@@ -659,6 +660,7 @@ class Performance_management extends Public_Controller
             $this->pargs['company_employees_index'][$emp['Id']] = $emp;
         }
         // // Get Assigned Feedbacks 
+
         $this->pargs['AssignedReviews'] = $this->pmm->GetReviewsByTypeForDashboard($this->pargs['employerId'], 1);
 
         //   
@@ -2120,5 +2122,39 @@ class Performance_management extends Public_Controller
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}dashboard_new");
         $this->load->view('main/footer');
+    }
+
+
+    //
+    public function reviwersReminders()
+    {
+        $this->checkLogin($this->pargs);
+        $reviewers = $this->input->post('reviewers', TRUE);
+
+        $reviewsData = $this->pmm->getReviewersPendingReviewsByReviewerSid($this->pargs['companyId'], $reviewers);
+
+        $this->load->model('common_ajax_model');
+        $templateCode = 'review_reminder';
+
+        if (!empty($reviewsData)) {
+            foreach ($reviewsData as $reviewRow) {
+                $template = $this->common_ajax_model->get_email_template_by_code($templateCode);
+                $replaceArray = [];
+                $replaceArray['{{reviewer_name}}'] = ucwords($reviewRow['first_name']) . ' ' . ucwords($reviewRow['last_name']);
+                $replaceArray['{{review_title}}'] = ucwords($reviewRow['review_title']);
+                $replaceArray['{{company_name}}'] = ucwords($this->pargs['CompanyName']);
+                //
+                $indexes = array_keys($replaceArray);
+                // Change subject
+                $subject = str_replace($indexes, $replaceArray, $template['subject']);
+                $body = str_replace($indexes, $replaceArray, $template['text']);
+                //
+                $from_email = empty($template['from_email']) ? FROM_EMAIL_NOTIFICATIONS : $template['from_email'];
+                $from_name = empty($template['from_name']) ? ucwords($this->pargs['CompanyName']) : str_replace($indexes, $replaceArray, $template['from_name']);
+                //
+                log_and_sendEmail($from_email, $reviewRow['email'], $subject, $body, $from_name);
+            }
+        }
+        echo "sucess";
     }
 }

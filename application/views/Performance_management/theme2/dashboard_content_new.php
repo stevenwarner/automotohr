@@ -11,16 +11,18 @@
     <div class="panel panel-theme">
         <div class="panel-heading" style="<?= $panelHeading ?>">
             <div class="row">
-                <div class="col-md-9 col-sm-12">
+                <div class="col-md-7 col-sm-12">
                     <h5 class="csF16 csB7 csW jsToggleHelp" data-target="assigned_reviews">
                         Reviews Assigned To Me - Reviewer
                     </h5>
                 </div>
-                <div class="col-md-3 col-sm-12">
+                <div class="col-md-5 col-sm-12">
+
                     <?php
                     if (!empty($AssignedReviews)) {
-                    ?>
-                        <span class="pull-right">
+                    ?>                      
+
+                        <span class="pull-right" style="margin-right: 5px;;">
                             <a href="<?= purl("reviews/all"); ?>" class="btn btn-orange"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View
                                 Review(s)</a>
                         </span>
@@ -46,22 +48,22 @@
                     $now = date('Y-m-d', strtotime('now'));
                     foreach ($AssignedReviews as $review) {
                     ?>
-                
-                            <!-- Employee -->
-                            <div class="col-md-3 col-sm-3 col-xs-12" style="padding-top: 20px;">
+
+                        <!-- Employee -->
+                        <div class="col-md-3 col-sm-3 col-xs-12" style="padding-top: 20px;">
                             <div class="csEBox">
-                                    <figure>
-                                        <img src="<?= ($company_employees_index[$review['reviewee_sid']]['Image']); ?>" alt="">
-                                    </figure>
-                                    <div class="csEBoxText">
-                                        <p class="mb0 ma10 csF14 csB7"><?= $company_employees_index[$review['reviewee_sid']]['Name']; ?> <?= $company_employees_index[$review['reviewee_sid']]['Role']; ?> </p>
-                                        <p class="csTextSmall csF14">Due in <?= dateDifferenceInDays($now, $review['end_date'], '%a'); ?> day(s)</p>
-                                        <p class="csTextSmall csF14">
-                                            <a href="<?= purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}"); ?>" class="btn btn-orange csF14">Start Review</a>
-                                        </p>
-                                    </div>
+                                <figure>
+                                    <img src="<?= ($company_employees_index[$review['reviewee_sid']]['Image']); ?>" alt="">
+                                </figure>
+                                <div class="csEBoxText">
+                                    <p class="mb0 ma10 csF14 csB7"><?= $company_employees_index[$review['reviewee_sid']]['Name']; ?> <?= $company_employees_index[$review['reviewee_sid']]['Role']; ?> </p>
+                                    <p class="csTextSmall csF14">Due in <?= dateDifferenceInDays($now, $review['end_date'], '%a'); ?> day(s)</p>
+                                    <p class="csTextSmall csF14">
+                                        <a href="<?= purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}"); ?>" class="btn btn-orange csF14">Start Review</a>
+                                    </p>
                                 </div>
-                            </div> 
+                            </div>
+                        </div>
                     <?php
                     }
                     ?>
@@ -121,20 +123,19 @@
                     $now = date('Y-m-d', strtotime('now'));
                     foreach ($FeedbackReviews as $review) {
                     ?>
-                        <div class="col-md-4 col-sm-4 col-xs-12">
-                            <div class="csEmployeeBox">
+
+                        <div class="col-md-3 col-sm-3 col-xs-12" style="padding-top: 20px;">
+                            <div class="csEBox">
                                 <figure>
-                                    <img src="<?= ($company_employees_index[$review['reviewee_sid']]['Image']); ?>" class="csRadius50" alt="" />
-                                    <div class="csTextBox">
-                                        <p class="csF14 csB7 mb0"><?= $company_employees_index[$review['reviewee_sid']]['Name']; ?></p>
-                                        <p class="csTextSmall mb0 csF14"> <?= $company_employees_index[$review['reviewee_sid']]['Role']; ?></p>
-                                        <p class="csTextSmall csF14">Due in <?= dateDifferenceInDays($now, $review['end_date'], '%a'); ?> day(s)</p>
-                                        <p class="csTextSmall csF14">
-                                            <a href="<?= purl("feedback/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}"); ?>" class="btn btn-orange csF14">Start Review</a>
-                                        </p>
-                                    </div>
+                                    <img src="<?= ($company_employees_index[$review['reviewee_sid']]['Image']); ?>" alt="">
                                 </figure>
-                                <div class="clearfix"></div>
+                                <div class="csEBoxText">
+                                    <p class="mb0 ma10 csF14 csB7"><?= $company_employees_index[$review['reviewee_sid']]['Name']; ?> <?= $company_employees_index[$review['reviewee_sid']]['Role']; ?> </p>
+                                    <p class="csTextSmall csF14">Due in <?= dateDifferenceInDays($now, $review['end_date'], '%a'); ?> day(s)</p>
+                                    <p class="csTextSmall csF14">
+                                        <a href="<?= purl("review/{$review['sid']}/{$review['reviewee_sid']}/{$review['reviewer_sid']}"); ?>" class="btn btn-orange csF14">Start Review</a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     <?php

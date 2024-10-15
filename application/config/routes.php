@@ -2298,13 +2298,13 @@ $route["fillable/epe/(:num)/section/(:any)/(:any)"]["get"] =
   "v1/Employee_performance_evaluation/loadSection/$1/$2/$3";
 
 $route["fillable/epe/(:num)/save_section/(:any)"]["post"] =
-  "v1/Employee_performance_evaluation/saveSectionData/$1/$2";  
+  "v1/Employee_performance_evaluation/saveSectionData/$1/$2";
 
 $route["fillable/epe/(:num)/(:any)/(:any)"]["get"] =
-  "v1/Employee_performance_evaluation/handleDocumentAction/$1/$2/$3";  
+  "v1/Employee_performance_evaluation/handleDocumentAction/$1/$2/$3";
 
 $route["fillable/epe/send_verification_request/(:num)/(:num)"]["post"] =
-  "v1/Employee_performance_evaluation/sendVerificationRequest/$1/$2";    
+  "v1/Employee_performance_evaluation/sendVerificationRequest/$1/$2";
 
 $route["fillable/epe/verification/documents"]["get"] =
   "v1/Employee_performance_evaluation/pendingVerificationDocuments";
@@ -2313,7 +2313,7 @@ $route["fillable/epe/verification/documents/(:num)/(:num)"]["get"] =
   "v1/Employee_performance_evaluation/getPendingVerificationDocument/$1/$2";
 
 $route["fillable/epe/verification_request/(:num)/(:num)/(:num)/(:any)"]["get"] =
-  "v1/Employee_performance_evaluation/completeVerificationRequest/$1/$2/$3/$4";  
+  "v1/Employee_performance_evaluation/completeVerificationRequest/$1/$2/$3/$4";
 
 $route["fillable/epe/get_employee_signature"]["get"] =
   "v1/Employee_performance_evaluation/getEmployeeSignature";
@@ -2325,13 +2325,13 @@ $route["fillable/epe/assign_bulk_document_to_employee"]["post"] =
   "v1/Employee_performance_evaluation/assignBulkDocument";
 
 $route["fillable/epe/get_schedule_document_view"]["get"] =
-  "v1/Employee_performance_evaluation/getScheduleDocumentView";  
+  "v1/Employee_performance_evaluation/getScheduleDocumentView";
 
 $route["fillable/epe/save_schedule_setting"]["post"] =
   "v1/Employee_performance_evaluation/saveScheduleSetting";
 
 $route["fillable/epe/get_assign_employees"]["get"] =
-  "v1/Employee_performance_evaluation/getAssignEmployees";  
+  "v1/Employee_performance_evaluation/getAssignEmployees";
 
 $route["fillable/epe/get_document_preview"]["get"] =
   "v1/Employee_performance_evaluation/getDocumentPreview";
@@ -2415,3 +2415,5 @@ $route['manage_admin/reports/indeed/log/(:num)'] = 'manage_admin/reports/Indeed_
 // Indeed cron job link
 $route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
 $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Indeed_reporting/history/$1';
+
+$route['performance-management/reviwers_reminder'] = 'Performance_management/reviwersReminders';
