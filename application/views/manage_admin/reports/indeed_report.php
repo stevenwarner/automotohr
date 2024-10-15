@@ -307,8 +307,14 @@
 
 <link rel="stylesheet" href="<?= base_url("public/v1/plugins/ms_modal/main.min.css"); ?>">
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
+<script src="<?= base_url("assets/js/app_helper.js"); ?>"></script>
 
 <script>
+    /**
+	 * set XHR request holder
+	 */
+	let XHR = null;
+
     $(function() {
         $("#jsCompanies").select2({
             closeOnSelection: false
@@ -483,7 +489,88 @@
             .success(function(resp) {
                 $("#jsModalBody").html(resp.view);
                 $('.jsIPLoader[data-page="jsModalLoader"]').hide(0);
+                CKEDITOR.replace('jsJobDescription');
             });
     }
+
+    
+    /**
+	 * toggle multiple choice box
+	 */
+	$(document).on("click", ".jsUpdateJobInfo", function () {
+        //
+		var myUrl = "<?= base_url() ?>manage_admin/reports/indeed/fix_errors";
+        //
+        var obj = {
+            "queueId": $('#jsQueueId').val(),
+            "JobId": $('#jsJobId').val(),
+        };
+        const errorArray = [];
+        //
+        if($('#jsSalary').val()) {
+            obj.salary = $('#jsSalary').val();
+            //
+            if (!obj.salary) {
+                errorArray.push("Job salary is required.");
+            }
+            //
+            obj.salaryType = $('#jsSalaryType').val();
+            //
+            if (!obj.salaryType || obj.salaryType == 0) {
+                errorArray.push("Job salary type is required.");
+            }
+        }
+        //
+        if($('#jsJobType').val()) {
+            obj.jobType = $('#jsJobType').val();
+            //
+            if (!obj.jobType || obj.jobType == 0) {
+                errorArray.push("Job type is required.");
+            }
+        }
+
+        //
+        if($('#jsJobDescription').val()) {
+            obj.description = CKEDITOR.instances['jsJobDescription'].getData().trim();
+            //
+            if (!obj.description) {
+                errorArray.push("Job description is required.");
+            }
+        }
+        //
+        if (errorArray.length) {
+            //
+            return alertify.alert(
+                "ERROR!",
+                getErrorsStringFromArray(errorArray),
+                CB
+            );
+        }
+        //
+        // check for existing call
+		if (XHR !== null) {
+			return;
+		}
+		//
+        ml(true, "jsModalLoader");
+        //
+		XHR = $.ajax({
+			url: baseUrl("manage_admin/reports/indeed/fix_errors"),
+			method: "POST",
+			data:obj,
+		})
+			.success(function (resp) {
+				_success(resp.msg, function () {
+					window.location.reload();
+				});
+			})
+			.fail(handleErrorResponse)
+			.always(function () {
+				// flush the call
+				XHR = null;
+				// hides the loader
+				ml(false, "jsModalLoader");
+			});
+	});
 
 </script>

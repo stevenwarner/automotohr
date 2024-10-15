@@ -1833,4 +1833,22 @@ class Indeed_model extends CI_Model
             //
             return $data;
     }
+
+    public function updateJobInfo($jobSid, $dataToUpdate)
+    {
+        $this->db
+            ->where('sid', $jobSid)
+            ->update('portal_job_listings', $dataToUpdate);
+    }
+
+    public function updateJobQueue ($queueId) {
+        $this->db
+            ->where('sid', $queueId)
+            ->update('indeed_job_queue', [
+                "has_errors" => 0,
+                "errors" => null,
+                "is_processing" => 0,
+                "is_processed" => 0
+            ]);
+    }
 }

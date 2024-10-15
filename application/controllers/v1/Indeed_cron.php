@@ -189,48 +189,14 @@ class Indeed_cron extends CI_Controller
             array_push($validateArray, "job type");
         }
 
-        $validationIssues = $this->validateDescription();
+        $validationIssues = validateDescription($this->job["JobDescription"]);
 
         //
         if (!empty($validationIssues)) {
             array_push($validateArray, "description");
-            // foreach ($validationIssues as $issue) {
-            //     echo $issue . "\n";
-            // }
         } 
  
         return $validateArray;
-    }
-
-    /**
-     * load the jobs
-     */
-    private function validateDescription()
-    {
-        $issues = [];
-        $description = $this->job['JobDescription'];
-
-        // Check for the presence of HTML tags
-        if (strip_tags($description) === $description) {
-            $issues[] = "No HTML elements found for formatting.";
-        }
-
-        // Check for escaped characters
-        if (preg_match('/&[a-zA-Z0-9#]+;/', $description)) {
-            $issues[] = "Escaped characters found.";
-        }
-
-        // Check for rich formatting (simple example)
-        if (strpos($description, '<b>') === false && strpos($description, '<i>') === false && strpos($description, '<ul>') === false) {
-            $issues[] = "Rich formatting is missing.";
-        }
-
-        // Check if the text is messy (optional: this can be enhanced)
-        if (strlen($description) < 150) {
-            $issues[] = "The description is too short.";
-        }
-
-        return $issues;
     }
 
     /**

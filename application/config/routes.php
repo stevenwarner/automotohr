@@ -2417,4 +2417,6 @@ $route['manage_admin/reports/indeed/log/(:num)'] = 'manage_admin/reports/Indeed_
 $route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
 $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Indeed_reporting/history/$1';
 $route['manage_admin/reports/indeed/errors/(:num)'] = 'manage_admin/reports/Indeed_reporting/errors/$1';
+$route['manage_admin/reports/indeed/fix_errors'] = 'manage_admin/reports/Indeed_reporting/fixJobIssues';
 $route["crons/indeed/process"]["get"] = "v1/Indeed_cron/processJobSync";
+

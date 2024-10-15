@@ -227,12 +227,105 @@ class Indeed_reporting extends Admin_Controller
 
     //
     public function errors (int $sid) {
-        $record = $this
+        //
+        $errorsArray = [];
+        //
+        $jobInfo = $this
             ->indeed_model
             ->getErrorsById(
                 $sid
             );
         //
-        _e($record,true);    
+        $salaryInfo = setTheSalary(
+            $jobInfo["Salary"],
+            $jobInfo['SalaryType']
+        );
+        //
+        if ($salaryInfo['min'] == 0 && $salaryInfo['max'] == 0) {
+            $errorsArray['salary'] = "Salary is missing.";
+        }
+        //
+        if (!$salaryInfo['JobType']) {
+            $errorsArray['JobType'] = "Job type is missing.";
+        }
+        //
+        $validationIssues = validateDescription($jobInfo["JobDescription"]);
+        //
+        if (!empty($validationIssues)) {
+            $descriptionIssues = [];
+            //
+            foreach ($validationIssues as $issue) {
+                array_push($descriptionIssues, $issue);
+            }
+            //
+            $errorsArray['description'] = $descriptionIssues;
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                "view" => $this->load->view("manage_admin/reports/indeed_job_errors", ["jobInfo" => $jobInfo, "errors" => $errorsArray], true)
+            ]
+        ); 
+    }
+
+    public function fixJobIssues () {
+        //
+        $errorsArray = [];
+        $dataToUpdate = [];
+        //
+        if (isset($_POST['salary'])) {
+            $salaryInfo = setTheSalary(
+                $_POST['salary'],
+                $_POST['salaryType']
+            );
+            //
+            if ($salaryInfo['min'] == 0 && $salaryInfo['max'] == 0) {
+                $errorsArray[] = "<b>Salary:</b>";
+                $errorsArray[] = "Salary is missing.";
+            } else {
+                $dataToUpdate['Salary'] = $salaryInfo['salary'];
+                $dataToUpdate['SalaryType'] = $salaryInfo['type'];
+            }
+        }
+        //
+        if (isset($_POST['jobType'])) {
+            $dataToUpdate['JobType'] = $_POST['jobType'];
+        } 
+        //
+        $validationIssues = validateDescription($_POST["description"]);
+        //
+        if (!empty($validationIssues)) {
+            $descriptionIssues = "";
+            //
+            $errorsArray[] = "<b>Description:</b>";
+            foreach ($validationIssues as $issue) {
+                $descriptionIssues .= $issue."<br>";
+            }
+            //
+            $errorsArray[] = $descriptionIssues;
+        }  else {
+            $dataToUpdate['JobDescription'] = $_POST["description"];
+        }
+        //
+        if ($errorsArray) {
+            return SendResponse(400, ["errors" => $errorsArray]);
+        } else {
+            $this->indeed_model->updateJobInfo(
+                $_POST["JobId"],
+                $dataToUpdate
+            );
+            //
+            $this->indeed_model->updateJobQueue(
+                $_POST["queueId"]
+            );
+            //
+            return SendResponse(
+                200,
+                [
+                    "msg" => "The Job info update successfully."
+                ]
+            );
+        }
     }
 }
