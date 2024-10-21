@@ -72,6 +72,24 @@ class Direct_deposit_model extends CI_Model
     }
 
     //
+    function getPreviousDDI($users_type, $user_sid, $company_sid, $sid){
+        $this->db->select('bank_account_details.*, users.CompanyName');
+        $this->db->where('users_type', $users_type);
+        $this->db->where('users_sid', $user_sid);
+        $this->db->where('bank_account_details.sid', $sid);
+        $this->db->order_by('bank_account_details.sid', 'ASC');
+        $this->db->join('users', 'users.sid = bank_account_details.company_sid', 'inner');
+        //
+        if($company_sid > 0) $this->db->where('bank_account_details.company_sid', $company_sid);
+        //
+        $a = $this->db->get('bank_account_details');
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    //
     function checkDDI($users_type, $user_sid, $company_sid){
         $this->db->where('users_type', $users_type);
         $this->db->where('users_sid', $user_sid);

@@ -377,13 +377,18 @@
                         //
                         if (resp.Data.length > 0) {
                             resp.Data.map((v) => {
-                                rows += `
-                                <tr>
-                                    <td>${ v.name }</td>
-                                    <td class="text-${v.action != 'revoke' ? 'success' : 'danger'}">${v.action.ucwords()}${v.action == 'revoke' ? 'd' : ( v.action == 'assign' ? 'ed' : '')}</td>
-                                    <td>${moment(v.created_at).format('MMM Do YYYY, ddd H:m:s')}</td>
-                                </tr>
-                            `;
+                               
+                                //
+                                rows += `<tr>`;
+                                rows += `   <td>${ v.name }</td>`;
+                                rows += `   <td class="text-${v.action != 'revoke' ? 'success' : 'danger'}">${v.action.ucwords()}${v.action == 'revoke' ? 'd' : ( v.action == 'assign' ? 'ed' : '')}</td>`;
+                                rows += `   <td>${moment(v.created_at).format('MMM Do YYYY, ddd H:m:s')}</td>`;
+                                if (v.type && v.documentSid) {
+                                    console.log(v.documentUrl)
+                                    $('#jsDirectDepositSection').removeClass("hidden");
+                                    rows += `<td class="text-center"><a class="btn btn-success" target="_blank" href="${v.documentUrl}" title="show this document">View</a></td>`;
+                                } 
+                                rows += `</tr>`;
                             });
                         } else {
                             rows = `
@@ -394,6 +399,10 @@
                         <tr>`;
                         }
                         //
+                        if (resp.Type == "direct_deposit") {
+                            $('#jsGeneralHistoryModel').find('.modal-footer').append(`<a class="btn btn-success pull-right" id="jsDDHistoryDetail" target="_blank" href="${resp.URL}" title="show this document">View History Detail</a>`);
+                        }
+                        //
                         $('#jsGeneralHistoryModel').find('.modal-title').html(`<strong>${$(this).closest('tr').data('id').replace(/_/, ' ').ucwords()} History</strong>`);
                         $('#jsGeneralHistoryModalBody').html(rows);
                         $('#jsGeneralHistoryModel').modal('show');
@@ -401,6 +410,10 @@
                         nl(false);
                     }
                 );
+            });
+
+            $("#jsGeneralHistoryModel").on("hidden.bs.modal", function () {
+                $("#jsDDHistoryDetail").remove();
             });
 
             //

@@ -389,7 +389,7 @@
             ssc.popover('show');
         }
 
-        //
+        // data-type="'+slugToName[v.document_type]+'"
         function getDefaultObj(documentType){
             return {
                 sid: 0,

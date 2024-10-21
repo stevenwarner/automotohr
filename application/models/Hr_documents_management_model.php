@@ -6831,7 +6831,24 @@ class Hr_documents_management_model extends CI_Model
         //
         $c = [];
         //
+        // $ddIds = [];
+        // $documentInfo = $this->getGeneralDocumentAssignedInfo($generalDocumentSid);
+        // //
+        // if ($documentInfo['document_type'] == "direct_deposit") {
+        //     $ddIds = $this->getDirectDepositIds($documentInfo['user_sid'], $documentInfo['user_type']);
+        // }
+        //
+        // $index = 0;
+        //
         foreach ($b as $k => $v) {
+            //
+            // if ($ddIds && $v['action'] == "completed") {
+            //     $c[$k]['type'] = $ddIds[$index]['type'];
+            //     $c[$k]['documentSid'] = $ddIds[$index]['sid'];
+            //     $c[$k]['documentUrl'] = base_url("hr_documents_management/show_direct_deposit_document_info/").$ddIds[$index]['type']."/".$ddIds[$index]['sid'];
+            //     //
+            //     $index++;
+            // }
             //
             $c[$k]['action'] = $v['action'];
             $c[$k]['assigned_from'] = $v['assigned_from'];
@@ -6856,6 +6873,7 @@ class Hr_documents_management_model extends CI_Model
                 $c[$k]['created_at']
             );
         }
+        // _e($c,true);
         return $c;
     }
 
@@ -11934,5 +11952,89 @@ class Hr_documents_management_model extends CI_Model
             ])
             ->get()
             ->row_array();
+    }
+
+    public function getAssignDocumentType ($assignedId) {
+        $this->db->select('user_sid, user_type, document_type');
+        $this->db->where('sid', $assignedId);
+        $record_obj = $this->db->get('documents_assigned_general');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr) && $record_arr['document_type'] == "direct_deposit") {
+            //
+            $this->db->where('users_sid', $record_arr['user_sid']);
+            $this->db->where('users_type', $record_arr['user_type']);
+            $this->db->from('bank_account_details_history');
+            $rows = $this->db->count_all_results();
+            //
+            if ($rows > 0) {
+                return 'direct_deposit';
+            } else {
+                return '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    public function getDirectDepositIds ($userId, $userType) {
+        //
+        $records = [];
+        //
+        $this->db->select('sid');
+        $this->db->where('users_sid', $userId);
+        $this->db->where('users_type', $userType);
+        $record_obj = $this->db->get('bank_account_details');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            //
+            $this->db->select('*');
+            $this->db->where('bank_account_details_sid', $record_arr[0]['sid']);
+            $this->db->order_by('sid', 'DESC');
+            $record_obj = $this->db->get('bank_account_details_history');
+            $historyInfo1 = $record_obj->result_array();
+            $record_obj->free_result();
+            //
+            $this->db->select('*');
+            $this->db->where('bank_account_details_sid', $record_arr[1]['sid']);
+            $this->db->order_by('sid', 'DESC');
+            $record_obj = $this->db->get('bank_account_details_history');
+            $historyInfo2 = $record_obj->result_array();
+            $record_obj->free_result();
+            //
+            if (!empty($historyInfo1)) {
+                //
+                foreach ($historyInfo1 as $key => $row) {
+                    $records[$key] = [
+                        'account1' => $row,
+                        'account2' => $historyInfo2[$key] ?? [] 
+                    ];
+                }
+            }  
+        } 
+        //
+        return $records;
+    }
+
+    public function getDirectDepositDetailedInfo ($assignedId) {
+        $this->db->select('user_sid, user_type');
+        $this->db->where('sid', $assignedId);
+        $record_obj = $this->db->get('documents_assigned_general');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return [
+                'userSid' => $record_arr['user_sid'],
+                'userType' => $record_arr['user_type'],
+                'userName' => $record_arr['user_type'] == "employee" ? getUserNameBySID($record_arr['user_sid']) : getApplicantNameBySID($record_arr['user_sid']),
+                'history' => $this->getDirectDepositIds ($record_arr['user_sid'], $record_arr['user_type'])
+            ];
+        } else {
+            return [];
+        }
     }
 }

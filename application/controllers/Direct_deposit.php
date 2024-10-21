@@ -379,7 +379,8 @@ class Direct_deposit extends Public_Controller
 
                 // fetch old record and save it into history table start
                 $update_by_sid = $session['employer_detail']['sid'];
-                $old_record = $this->direct_deposit_model->getDDI($user_type, $user_sid, $company_sid);
+                // $old_record = $this->direct_deposit_model->getDDI($user_type, $user_sid, $company_sid);
+                $old_record = $this->direct_deposit_model->getPreviousDDI($user_type, $user_sid, $company_sid, $record_sid);
                 $old_bank_record = $old_record[0];
                 unset($old_bank_record['sid']);
                 $old_bank_record['bank_account_details_sid'] = $record_sid;

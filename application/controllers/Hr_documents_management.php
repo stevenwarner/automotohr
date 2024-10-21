@@ -11114,8 +11114,16 @@ class Hr_documents_management extends Public_Controller
                     $post['userType']
                 );
                 //
+                $documentType = $this->hr_documents_management_model->getAssignDocumentType(
+                    $post['generalDocumentSid']
+                );
+                //
                 $this->res['Status'] = TRUE;
                 $this->res['Data'] = $history;
+                if ($documentType == "direct_deposit") {
+                    $this->res['Type'] = $documentType;
+                    $this->res['URL'] = base_url("hr_documents_management/show_direct_deposit_history_detail/").$post['generalDocumentSid'];
+                }
                 $this->res['Response'] = 'Proceed';
                 $this->resp();
                 break;
@@ -17481,6 +17489,120 @@ class Hr_documents_management extends Public_Controller
             $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
 
             
+        }
+    }
+
+    public function show_direct_deposit_history_detail ($assignedId) {
+        if ($this->session->has_userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            $company_sid = $session['company_detail']['sid'];
+            $employer_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($employer_sid);
+            check_access_permissions($security_details, 'manage_ems', 'add_edit_offer_letter'); // no need to check in this Module as Dashboard will be available to all
+            //
+            
+            $data['session'] = $session;
+            $data['company_sid'] = $company_sid;
+            $data['employer_sid'] = $employer_sid;
+            $data['security_details'] = $security_details;
+            $data['title'] = 'Direct Deposit History';
+            //
+            $detail = $this->hr_documents_management_model->getDirectDepositDetailedInfo($assignedId);
+            $data['user_type'] = $detail['userType'];
+            $data['user_sid'] = $detail['userSid'];
+            $data['historyDetail'] = $detail['history'];
+            $data['assignedId'] = $assignedId;
+            //
+            switch ($data['user_type']) {
+                case 'employee':
+                    //
+                    $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $data['user_sid']);
+                    
+                    //
+                    if (empty($user_info)) {
+                        $this->session->set_flashdata('message', '<strong>Error:</strong> Employee Not Found!');
+                        redirect('employee_management', 'refresh');
+                    }
+                    //
+                    
+                    $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
+                    $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($data['user_sid'], 'employee'); // getting applicant ratings - getting average rating of applicant
+                    $data['employer'] = $this->hr_documents_management_model->get_company_detail($data['user_sid']);
+                    $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $data['user_sid'], $data['user_type'], 'single_download');
+                    $data = employee_right_nav($data['user_sid'], $data);
+                  
+                    break;
+                case 'applicant':
+                    $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $data['user_sid']);
+
+                    if (empty($user_info)) {
+                        $this->session->set_flashdata('message', '<strong>Error:</strong> Applicant Not Found!');
+                        redirect('application_tracking_system/active/all/all/all/all', 'refresh');
+                    }
+                    $data['left_navigation'] = 'manage_employer/application_tracking_system/profile_right_menu_applicant';
+                    $applicant_info = $this->hr_documents_management_model->get_applicants_details($data['user_sid']);
+
+                    $data_employer = array(
+                        'sid' => $applicant_info['sid'],
+                        'first_name' => $applicant_info['first_name'],
+                        'last_name' => $applicant_info['last_name'],
+                        'email' => $applicant_info['email'],
+                        'Location_Address' => $applicant_info['address'],
+                        'Location_City' => $applicant_info['city'],
+                        'Location_Country' => $applicant_info['country'],
+                        'Location_State' => $applicant_info['state'],
+                        'Location_ZipCode' => $applicant_info['zipcode'],
+                        'PhoneNumber' => $applicant_info['phone_number'],
+                        'profile_picture' => $applicant_info['pictures'],
+                        'user_type' => ucwords($user_type)
+                    );
+
+                    $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($data['user_sid'], 'applicant'); //getting average rating of applicant
+                    $data['employer'] = $data_employer;
+                    $data['company_sid'] = $company_sid;
+                    $data['employer_sid'] = $applicant_info['sid'];
+                    $data = applicant_right_nav($data['user_sid'], $jobs_listing);
+
+                    $data['downloadDocumentData'] = $this->hr_documents_management_model->get_last_download_document_name($company_sid, $data['user_sid'], $data['user_type'], 'single_download');
+                    break;
+            }
+            
+            
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('hr_documents_management/show_direct_deposit_history');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
+
+    public function pd_direct_deposit_history_detail ($assignedId, $action) {
+        if ($this->session->has_userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            $company_sid = $session['company_detail']['sid'];
+            $employer_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($employer_sid);
+            check_access_permissions($security_details, 'manage_ems', 'add_edit_offer_letter'); // no need to check in this Module as Dashboard will be available to all
+            //
+            
+            $data['session'] = $session;
+            $data['company_sid'] = $company_sid;
+            $data['employer_sid'] = $employer_sid;
+            $data['security_details'] = $security_details;
+            $data['title'] = 'Direct Deposit History';
+            //
+            $detail = $this->hr_documents_management_model->getDirectDepositDetailedInfo($assignedId);
+            $data['user_type'] = $detail['userType'];
+            $data['user_sid'] = $detail['userSid'];
+            $data['historyDetail'] = $detail['history']; 
+            $data['action'] = $action; 
+            //
+            $this->load->view('hr_documents_management/pd_direct_deposit_history', $data);
+            //
+        } else {
+            redirect('login', 'refresh');
         }
     }
 }
