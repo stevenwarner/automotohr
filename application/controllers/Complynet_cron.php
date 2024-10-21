@@ -30,4 +30,13 @@ class Complynet_cron extends CI_Controller
     {
         $this->complynet_cron_model->syncStoreToComplyNet();
     }
+    
+    
+    /**
+     * sync companies with ComplyNet
+     */
+    public function syncEmployeesToComplyNet()
+    {
+        $this->complynet_cron_model->syncEmployeesToComplyNet();
+    }
 }
