@@ -101,7 +101,11 @@
                                                                                                 <th>Updated By</th>
                                                                                                 <td>
                                                                                                     <?php if ($detail['account1']['updated_by']) { ?>
-                                                                                                        <?= getUserNameBySID($detail['account1']['updated_by']); ?>
+                                                                                                        <?php if (getUserNameBySID($detail['account1']['updated_by'])) { ?>
+                                                                                                            <?= getUserNameBySID($detail['account1']['updated_by']); ?>
+                                                                                                        <?php } else { ?>
+                                                                                                            <?= getApplicantNameBySID($detail['account1']['updated_by']); ?>
+                                                                                                        <?php } ?>    
                                                                                                     <?php } ?>
                                                                                                 </td>
                                                                                             </tr>
@@ -155,7 +159,11 @@
                                                                                                 <th>Updated By</th>
                                                                                                 <td>
                                                                                                     <?php if ($detail['account2']['updated_by']) { ?>
-                                                                                                        <?= getUserNameBySID($detail['account2']['updated_by']); ?>
+                                                                                                        <?php if (getUserNameBySID($detail['account2']['updated_by'])) { ?>
+                                                                                                            <?= getUserNameBySID($detail['account2']['updated_by']); ?>
+                                                                                                        <?php } else { ?>
+                                                                                                            <?= getApplicantNameBySID($detail['account2']['updated_by']); ?>
+                                                                                                        <?php } ?>  
                                                                                                     <?php } ?>
                                                                                                 </td>
                                                                                             </tr>
