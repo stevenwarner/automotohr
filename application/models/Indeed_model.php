@@ -1795,4 +1795,24 @@ class Indeed_model extends CI_Model
             ->get("indeed_job_queue_history")
             ->result_array();
     }
+
+    /**
+     * add errors to job queue
+     *
+     * @param int $jobQueueId
+     * @param array $errors
+     */
+    public function saveErrors(int $jobQueueId, array $errors)
+    {
+        $this
+            ->db
+            ->where("sid", $jobQueueId)
+            ->update(
+                "indeed_job_queue",
+                [
+                    "errors" => json_encode($errors),
+                    "updated_at" => getSystemDate()
+                ]
+            );
+    }
 }

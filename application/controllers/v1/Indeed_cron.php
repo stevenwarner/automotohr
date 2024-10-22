@@ -121,6 +121,8 @@ class Indeed_cron extends CI_Controller
         foreach ($this->jobs as $job) {
             // set the job
             $this->job = $job;
+            // set the default errors
+            $this->job["errors"] = [];
             // set the uuid and publish date
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
@@ -130,6 +132,15 @@ class Indeed_cron extends CI_Controller
             }
             // generate the add/edit job body
             $this->generateJobBody();
+            //
+            if ($this->job["errors"]) {
+                $this
+                    ->indeed_model
+                    ->saveErrors(
+                        $this->job["sid"],
+                        $this->job["errors"]
+                    );
+            }
         }
         // create/update jobs on Indeed
         $this->sendJobsToIndeed();
@@ -260,6 +271,7 @@ class Indeed_cron extends CI_Controller
         $this->job["data"] = [
             '\title' => $this->job["Title"],
             '\description' => $this->getDescription(),
+            'descriptionFormatting' => "RICH_FORMATTING",
             '\country' => "US",
             '\cityRegionPostal' => $this->getRegionPostal(),
             '\currency' => 'USD',
@@ -268,19 +280,20 @@ class Indeed_cron extends CI_Controller
             '\period' => $salaryArray["period"],
             '\companyName' => $employerDetails["CompanyName"],
             '\sourceName' => $employerDetails["CompanyName"],
+            '\jobRequisitionId' => $this->job["user_sid"],
             '\sourceType' => 'Employer',
             '\contactName' => "",
             '\contactEmail' => "",
             '\contactPhone' => "",
             '\jobPostingId' => $this->job["uuid"],
-            '\datePublished' => convertTimeZone(
+            '\datePublished' => $this->job["publishDate"] ? convertTimeZone(
                 $this->job["publishDate"],
                 DB_DATE_WITH_TIME,
                 "PST",
                 "UTC",
                 true,
                 "Y-m-d\TH:i\Z"
-            ),
+            ) : "",
             '\url' => $this->getJobURL(),
             '\apiToken' => $this->apiToken,
             '\postUrl' => $this->getPostURL(),
@@ -313,15 +326,16 @@ class Indeed_cron extends CI_Controller
                 clean($indeedContactDetails['Phone']);
         }
         if ($indeedContactDetails['Email']) {
-            $this->job["data"]["\contactPhone"] =
+            $this->job["data"]["\contactEmail"] =
                 clean($indeedContactDetails['Email']);
         }
-        // for testing purpose
-        if (
-            $this->job["data"]["\contactEmail"] == '' ||
-            $this->job["data"]["\contactEmail"] == null
-        ) {
-            $this->job["data"]["\contactEmail"] = "test@automotohr.com";
+
+        // check and set errors
+        if (!$this->job["data"]["\contactName"]) {
+            $this->job["errors"]["contact_name"] = "Contact name is missing";
+        }
+        if (!$this->job["data"]["\contactEmail"]) {
+            $this->job["errors"]["contact_email"] = "Contact email is missing";
         }
     }
 
@@ -351,7 +365,7 @@ class Indeed_cron extends CI_Controller
             $jd
         );
         //
-        return htmlentities($jd);
+        return addslashes($jd);
     }
 
     /**
@@ -395,9 +409,10 @@ class Indeed_cron extends CI_Controller
     {
         // set default
         $salaryArray = [
-            "min" => null,
-            "max" => null,
-            "period" => null,
+            "salary" => 0,
+            "min" => 0,
+            "max" => 0,
+            "period" => "",
         ];
         //
         if ($this->job["Salary"]) {
@@ -408,9 +423,9 @@ class Indeed_cron extends CI_Controller
             );
         }
         //
-        $salaryArray["min"] = 25;
-        $salaryArray["max"] = 30;
-        $salaryArray["period"] = "HOUR";
+        if ($salaryArray["min"] == "0") {
+            $this->job["errors"]["salary"] = "Salary is either missing or misformed.";
+        }
         //
         return $salaryArray;
     }
@@ -481,6 +496,10 @@ class Indeed_cron extends CI_Controller
      */
     private function convertDataToJobToGQL()
     {
+        if ($this->job["errors"]) {
+            return false;
+        }
+        //
         $this->jobBody .= trim(
             str_replace(
                 array_keys(
@@ -502,6 +521,7 @@ class Indeed_cron extends CI_Controller
             body: {
                 title: "\title"
                 description: "\description"
+                descriptionFormatting: "RICH_FORMATTING"
                 location: {
                     country: "\country"
                     cityRegionPostal: "\cityRegionPostal"
@@ -528,6 +548,7 @@ class Indeed_cron extends CI_Controller
                     }
                 }
                 jobPostingId: "\jobPostingId"
+                jobRequisitionId: "\jobRequisitionId"
                 datePublished: "\datePublished"
                 url: "\url"
             }
