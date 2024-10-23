@@ -935,11 +935,6 @@ if (count($data) == 1) {
                     );
                     record_error = 1;
                 }
-                
-                // if (obj_length == (el + 1) && record_error == 0) {
-                //     form_data = megaOBJ;
-                //       submit_form_data();
-                // }
 
             });
 
@@ -1010,6 +1005,12 @@ if (count($data) == 1) {
                 $("#jsAccountNumber1").val("");
                 $("#jsRoutingNumber2").val("");
                 $("#jsAccountNumber2").val("");
+                //
+                $('#jsRoutingNumber1Error').text('');
+                $('#jsAccountNumber1Error').text('');
+                $('#jsRoutingNumber2Error').text('');
+                $('#jsAccountNumber2Error').text('');
+                //
                 $("#jsDDModal").modal('show');
             }
 
