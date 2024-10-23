@@ -362,14 +362,14 @@ if (count($data) == 1) {
                                             <tr>
                                                 <th>Confirm bank routing number (ABA number) <span class="cs-required">*</span></th>
                                                 <td>
-                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber1" value="" onfocusout="confirmValidation()"/>
+                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber1" value=""/>
                                                     <span id="jsRoutingNumber1Error" class="error_text_color"></span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th>Confirm account Number <span class="cs-required">*</span></th>
                                                 <td>
-                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber1" value="" onfocusout="confirmValidation()"/>
+                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber1" value=""/>
                                                     <span id="jsAccountNumber1Error" class="error_text_color"></span>
                                                 </td>
                                             </tr>
@@ -398,14 +398,14 @@ if (count($data) == 1) {
                                             <tr>
                                                 <th>Confirm bank routing number (ABA number) <span class="cs-required">*</span></th>
                                                 <td>
-                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber2" value="" onfocusout="confirmValidation()"/>
+                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber2" value=""/>
                                                     <span id="jsRoutingNumber2Error" class="error_text_color"></span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th>Confirm account Number <span class="cs-required">*</span></th>
                                                 <td>
-                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber2" value="" onfocusout="confirmValidation()"/>
+                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber2" value=""/>
                                                     <span id="jsAccountNumber2Error" class="error_text_color"></span>
                                                 </td>
                                             </tr>
@@ -625,7 +625,6 @@ if (count($data) == 1) {
         });
 
         function confirmValidation () {
-            console.log("here I am")
             //
             var record_error = 0;
             var errorArray = [];
