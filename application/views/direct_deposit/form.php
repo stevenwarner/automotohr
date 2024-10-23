@@ -337,6 +337,98 @@ if (count($data) == 1) {
     </div>
 </div>
 
+<div id="jsDDModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Bank routing number/Account Number confirmation</h4>
+            </div>
+            <div id="jsDDModalBody" class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <strong>Account 1</strong>
+                                </th>    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="table table-bordered table-condensed table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <th>Confirm bank routing number (ABA number) <span class="cs-required">*</span></th>
+                                                <td>
+                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber1" value="" onfocusout="confirmValidation()"/>
+                                                    <span id="jsRoutingNumber1Error" class="error_text_color"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Confirm account Number <span class="cs-required">*</span></th>
+                                                <td>
+                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber1" value="" onfocusout="confirmValidation()"/>
+                                                    <span id="jsAccountNumber1Error" class="error_text_color"></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-responsive hidden" id="jsAccountTwo">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <strong>Account 2</strong>
+                                </th>    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <table class="table table-bordered table-condensed table-hover">
+                                        <tbody>
+                                            <tr>
+                                                <th>Confirm bank routing number (ABA number) <span class="cs-required">*</span></th>
+                                                <td>
+                                                    <input type="text" class="form-control js-account-routing-number" id="jsRoutingNumber2" value="" onfocusout="confirmValidation()"/>
+                                                    <span id="jsRoutingNumber2Error" class="error_text_color"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Confirm account Number <span class="cs-required">*</span></th>
+                                                <td>
+                                                    <input type="text" class="form-control js-account-number" id="jsAccountNumber2" value="" onfocusout="confirmValidation()"/>
+                                                    <span id="jsAccountNumber2Error" class="error_text_color"></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="jsDDModalFooter" class="modal-footer">
+                <button class="btn btn-black csF16 csB7" data-dismiss="modal">
+                    Cancel
+                </button>
+                <button class="btn btn-orange csF16 csB7 jsDDConfirmNumbers">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php $this->load->view('static-pages/e_signature_popup'); ?>
 
 <style>
@@ -430,6 +522,19 @@ if (count($data) == 1) {
             
         });
 
+        $(".js-account-routing-number").bind("paste", function(e){
+            e.preventDefault(); // Prevent the paste action
+            alertify.alert("<b>Pasting is not permitted for the bank routing number (ABA number).</b>").set({
+                title: "WARNING !"
+            });
+        });
+
+        $(".js-account-number").bind("paste", function(e){
+            e.preventDefault(); // Prevent the paste action
+            alertify.alert("<b>Pasting is not permitted for the account number.</b>").set({
+                title: "WARNING !"
+            });
+        });
 
         //
         $('#DTV_0').change(function(e) {
@@ -482,6 +587,120 @@ if (count($data) == 1) {
             html: true,
             placement: "top"
         });
+        
+        $('.jsDDConfirmNumbers').on('click', function() {
+            confirmValidation();
+        });
+
+        $('#jsRoutingNumber1').blur(function() {
+            if ($('#jsRoutingNumber1').val() != form_data[0]['accountRoutingNumber']) {
+                $('#jsRoutingNumber1Error').text('Provided ABA number not matched');
+            } else if ($('#jsRoutingNumber1').val() == form_data[0]['accountRoutingNumber']) {
+                $('#jsRoutingNumber1Error').text('');
+            }
+        });
+
+        $('#jsAccountNumber1').blur(function() {
+            if ($('#jsAccountNumber1').val() != form_data[0]['accountNumber']) {
+                $('#jsAccountNumber1Error').text('Provided account number not matched');
+            } else if ($('#jsAccountNumber1').val() == form_data[0]['accountNumber']) {
+                $('#jsAccountNumber1Error').text('');
+            }
+        });
+
+        $('#jsRoutingNumber2').blur(function() {
+            if ($('#jsRoutingNumber2').val() != form_data[1]['accountRoutingNumber']) {
+                $('#jsRoutingNumber2Error').text('Provided ABA number not matched');
+            } else if ($('#jsRoutingNumber2').val() == form_data[1]['accountRoutingNumber']) {
+                $('#jsRoutingNumber2Error').text('');
+            }
+        });
+
+        $('#jsAccountNumber2').blur(function() {
+            if ($('#jsAccountNumber2').val() != form_data[1]['accountNumber']) {
+                $('#jsAccountNumber2Error').text('Provided account number not matched');
+            } else if ($('#jsAccountNumber2').val() == form_data[1]['accountNumber']) {
+                $('#jsAccountNumber2Error').text('');
+            }
+        });
+
+        function confirmValidation () {
+            console.log("here I am")
+            //
+            var record_error = 0;
+            var errorArray = [];
+            //
+            if (!$('#jsRoutingNumber1').val().length) {
+                errorArray.push('Routing number for account 1 is required.');
+            }
+            //
+            if (!$('#jsAccountNumber1').val().length) {
+                errorArray.push('Account number for account 1 is required.');
+            }
+            //
+            if ($('#jsRoutingNumber1').val() != form_data[0]['accountRoutingNumber']) {
+                $('#jsRoutingNumber1Error').text('Provided ABA number not matched');
+                record_error = 1;
+            } else if ($('#jsRoutingNumber1').val() == form_data[0]['accountRoutingNumber']) {
+                $('#jsRoutingNumber1Error').text('');
+            }
+
+            if ($('#jsAccountNumber1').val() != form_data[0]['accountNumber']) {
+                $('#jsAccountNumber1Error').text('Provided account number not matched');
+                record_error = 1;
+            } else if ($('#jsAccountNumber1').val() == form_data[0]['accountNumber']) {
+                $('#jsAccountNumber1Error').text('');
+            }
+
+            if (form_data[1]) {
+                //
+                if (!$('#jsRoutingNumber2').val().length) {
+                    errorArray.push('Routing number for account 2 is required.');
+                }
+                //
+                if (!$('#jsAccountNumber2').val().length) {
+                    errorArray.push('Account number for account 2 is required.');
+                }
+                //
+                if ($('#jsRoutingNumber2').val() != form_data[1]['accountRoutingNumber']) {
+                    $('#jsRoutingNumber2Error').text('Provided ABA number not matched');
+                    record_error = 1;
+                } else if ($('#jsRoutingNumber2').val() == form_data[1]['accountRoutingNumber']) {
+                    $('#jsRoutingNumber2Error').text('');
+                }
+
+                if ($('#jsAccountNumber2').val() != form_data[1]['accountNumber']) {
+                    $('#jsAccountNumber2Error').text('Provided account number not matched');
+                    record_error = 1;
+                } else if ($('#jsAccountNumber2').val() == form_data[1]['accountNumber']) {
+                    $('#jsAccountNumber2Error').text('');
+                }
+
+            }
+            //
+            if (errorArray.length) {
+                return alertify.alert(
+                    "ERROR!",
+                    getErrorsStringFromArray(errorArray)
+                );
+            }
+            //
+            if (record_error == 0) {
+                $("#jsDDModal").modal('hide');
+                submit_form_data();
+            } 
+        }
+
+        function getErrorsStringFromArray(errorArray, errorMessage) {
+            return (
+                "<strong><p>" +
+                (errorMessage ?
+                    errorMessage :
+                    "Please, resolve the following errors") +
+                "</p></strong><br >" +
+                errorArray.join("<br />")
+            );
+        }
 
 
         // //
@@ -740,32 +959,28 @@ if (count($data) == 1) {
 
                 //               
               
-
-                let totlaPercentage = parseFloat(megaOBJ[0]['accountPercentage']) + parseFloat(megaOBJ[1]['accountPercentage']);
+                let totalPercentage = parseFloat(megaOBJ[0]['accountPercentage']) + parseFloat(megaOBJ[1]['accountPercentage']);
 
                 if (megaOBJ[0]['depositType'] == 'percentage' && megaOBJ[1]['depositType'] == 'percentage') {
 
-                    if (totlaPercentage > 100 || totlaPercentage < 100 || !totlaPercentage) {
+                    if (totalPercentage > 100 || totalPercentage < 100 || !totalPercentage) {
                         alertify.alert('To ensure that the total percentage value deposited into Account 1 and Account 2 should be 100%').set({
                             title: "WARNING !"
                         });
                         record_error = 1;
                     }
-
                 }
-
-
             }
 
             //
 
             if (megaOBJ.length == 1) {
                 //
-                let totlaPercentage = parseFloat(megaOBJ[0]['accountPercentage']);
+                let totalPercentage = parseFloat(megaOBJ[0]['accountPercentage']);
 
                 if (megaOBJ[0]['depositType'] == 'percentage') {
 
-                    if (totlaPercentage != 100) {
+                    if (totalPercentage != 100) {
                         alertify.alert('To ensure that the total percentage value deposited into Account 1 is 100%').set({
                             title: "WARNING !"
                         });
@@ -774,22 +989,29 @@ if (count($data) == 1) {
 
                 }
 
-
-                if (!totlaPercentage) {
-
+                if (!totalPercentage) {
                     alertify.alert('Ensure that a deposited amount is numeric.').set({
                         title: "WARNING !"
                     });
                     record_error = 1;
                 }
-
-
             }
             //  if (obj_length == (el + 1) && record_error == 0) {
 
+
             if (record_error == 0) {
+                //
+                if (megaOBJ.length > 1) {
+                    $("#jsAccountTwo").removeClass("hidden");
+                }
+                //
                 form_data = megaOBJ;
-                submit_form_data();
+                //
+                $("#jsRoutingNumber1").val("");
+                $("#jsAccountNumber1").val("");
+                $("#jsRoutingNumber2").val("");
+                $("#jsAccountNumber2").val("");
+                $("#jsDDModal").modal('show');
             }
 
         }
