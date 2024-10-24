@@ -519,7 +519,7 @@ class Indeed_cron extends CI_Controller
             body: {
                 title: "\title"
                 description: "\description"
-                descriptionFormatting: "RICH_FORMATTING"
+                descriptionFormatting: RICH_FORMATTING
                 location: {
                     country: "\country"
                     cityRegionPostal: "\cityRegionPostal"
