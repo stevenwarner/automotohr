@@ -531,7 +531,6 @@ class Indeed_cron extends CI_Controller
                     maximumMinor: \maximumMinor
                     period: "\period"
                 }
-                jobTypes: [\jobTypes]
             }
             metadata: {
                 jobSource: {
@@ -549,6 +548,9 @@ class Indeed_cron extends CI_Controller
                 jobPostingId: "\jobPostingId"
                 jobRequisitionId: "\jobRequisitionId"
                 datePublished: "\datePublished"
+                taxonomyClassification: {
+                    jobTypes: [\jobTypes]
+                }
                 url: "\url"
             }
             applyMethod: {
