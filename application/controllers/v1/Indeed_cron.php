@@ -142,10 +142,12 @@ class Indeed_cron extends CI_Controller
                     );
             }
         }
+
+        _e($this->jobBody, true, true);
         // create/update jobs on Indeed
-        $this->sendJobsToIndeed();
+        // $this->sendJobsToIndeed();
         // delete jobs from Indeed
-        $this->deleteJobsFromIndeed();
+        // $this->deleteJobsFromIndeed();
         //
         exit("All done");
     }
@@ -271,7 +273,7 @@ class Indeed_cron extends CI_Controller
         $this->job["data"] = [
             '\title' => $this->job["Title"],
             '\description' => $this->getDescription(),
-            'descriptionFormatting' => "RICH_FORMATTING",
+            '\jobTypes' => $this->getJobType(),
             '\country' => "US",
             '\cityRegionPostal' => $this->getRegionPostal(),
             '\currency' => 'USD',
@@ -331,9 +333,6 @@ class Indeed_cron extends CI_Controller
         }
 
         // check and set errors
-        if (!$this->job["data"]["\contactName"]) {
-            $this->job["errors"]["contact_name"] = "Contact name is missing";
-        }
         if (!$this->job["data"]["\contactEmail"]) {
             $this->job["errors"]["contact_email"] = "Contact email is missing";
         }
@@ -496,9 +495,9 @@ class Indeed_cron extends CI_Controller
      */
     private function convertDataToJobToGQL()
     {
-        if ($this->job["errors"]) {
-            return false;
-        }
+        // if ($this->job["errors"]) {
+        //     return false;
+        // }
         //
         $this->jobBody .= trim(
             str_replace(
@@ -533,6 +532,7 @@ class Indeed_cron extends CI_Controller
                     maximumMinor: \maximumMinor
                     period: "\period"
                 }
+                jobTypes
             }
             metadata: {
                 jobSource: {
@@ -810,5 +810,15 @@ class Indeed_cron extends CI_Controller
                     ]
                 );
         }
+    }
+
+    /**
+     * get the job type
+     *
+     * @return array
+     */
+    private function getJobType(): array
+    {
+        return $this->job["JobType"] !== "Full Time" ? ["part-time"] : ["full-time"];
     }
 }
