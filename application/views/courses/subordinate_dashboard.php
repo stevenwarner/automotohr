@@ -109,6 +109,15 @@
                     </div>
                     <div class="panel-body">
                         <div id="container"></div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Assign Course(s)</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
                         <div id="container1"></div>
                     </div>
                 </div>
