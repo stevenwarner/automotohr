@@ -1254,19 +1254,19 @@ class Indeed_model extends CI_Model
             "sid"
         );
         // update the processing jobs
-        // $this
-        //     ->db
-        //     ->where_in(
-        //         "sid",
-        //         $queueIds
-        //     )
-        //     ->update(
-        //         "indeed_job_queue",
-        //         [
-        //             "is_processing" => 1,
-        //             "updated_at" => getSystemDate()
-        //         ]
-        //     );
+        $this
+            ->db
+            ->where_in(
+                "sid",
+                $queueIds
+            )
+            ->update(
+                "indeed_job_queue",
+                [
+                    "is_processing" => 1,
+                    "updated_at" => getSystemDate()
+                ]
+            );
         //
         return $d;
     }

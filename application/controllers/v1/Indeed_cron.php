@@ -143,11 +143,10 @@ class Indeed_cron extends CI_Controller
             }
         }
 
-        _e($this->jobBody, true, true);
         // create/update jobs on Indeed
-        // $this->sendJobsToIndeed();
+        $this->sendJobsToIndeed();
         // delete jobs from Indeed
-        // $this->deleteJobsFromIndeed();
+        $this->deleteJobsFromIndeed();
         //
         exit("All done");
     }
@@ -495,9 +494,9 @@ class Indeed_cron extends CI_Controller
      */
     private function convertDataToJobToGQL()
     {
-        // if ($this->job["errors"]) {
-        //     return false;
-        // }
+        if ($this->job["errors"]) {
+            return false;
+        }
         //
         $this->jobBody .= trim(
             str_replace(
@@ -532,7 +531,7 @@ class Indeed_cron extends CI_Controller
                     maximumMinor: \maximumMinor
                     period: "\period"
                 }
-                jobTypes
+                jobTypes: [\jobTypes]
             }
             metadata: {
                 jobSource: {
@@ -817,8 +816,8 @@ class Indeed_cron extends CI_Controller
      *
      * @return array
      */
-    private function getJobType(): array
+    private function getJobType(): string
     {
-        return $this->job["JobType"] !== "Full Time" ? ["part-time"] : ["full-time"];
+        return $this->job["JobType"] !== "Full Time" ? '"part-time"' : '"full-time"';
     }
 }
