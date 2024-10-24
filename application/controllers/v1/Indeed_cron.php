@@ -142,6 +142,7 @@ class Indeed_cron extends CI_Controller
                     );
             }
         }
+
         // create/update jobs on Indeed
         $this->sendJobsToIndeed();
         // delete jobs from Indeed
@@ -271,7 +272,7 @@ class Indeed_cron extends CI_Controller
         $this->job["data"] = [
             '\title' => $this->job["Title"],
             '\description' => $this->getDescription(),
-            'descriptionFormatting' => "RICH_FORMATTING",
+            '\jobTypes' => $this->getJobType(),
             '\country' => "US",
             '\cityRegionPostal' => $this->getRegionPostal(),
             '\currency' => 'USD',
@@ -317,23 +318,20 @@ class Indeed_cron extends CI_Controller
         // update job data array
         $indeedContactDetails = $this->indeedContactDetails[$this->job["user_sid"]];
         // update the contact details
-        if (clean($indeedContactDetails['Name'])) {
+        if (($indeedContactDetails['Name'])) {
             $this->job["data"]["\contactName"] =
-                clean($indeedContactDetails['Name']);
+                ($indeedContactDetails['Name']);
         }
-        if (clean($indeedContactDetails['Phone'])) {
+        if (($indeedContactDetails['Phone'])) {
             $this->job["data"]["\contactPhone"] =
-                clean($indeedContactDetails['Phone']);
+                ($indeedContactDetails['Phone']);
         }
         if ($indeedContactDetails['Email']) {
             $this->job["data"]["\contactEmail"] =
-                clean($indeedContactDetails['Email']);
+                $indeedContactDetails['Email'];
         }
 
         // check and set errors
-        if (!$this->job["data"]["\contactName"]) {
-            $this->job["errors"]["contact_name"] = "Contact name is missing";
-        }
         if (!$this->job["data"]["\contactEmail"]) {
             $this->job["errors"]["contact_email"] = "Contact email is missing";
         }
@@ -521,7 +519,7 @@ class Indeed_cron extends CI_Controller
             body: {
                 title: "\title"
                 description: "\description"
-                descriptionFormatting: "RICH_FORMATTING"
+                descriptionFormatting: RICH_FORMATTING
                 location: {
                     country: "\country"
                     cityRegionPostal: "\cityRegionPostal"
@@ -550,6 +548,9 @@ class Indeed_cron extends CI_Controller
                 jobPostingId: "\jobPostingId"
                 jobRequisitionId: "\jobRequisitionId"
                 datePublished: "\datePublished"
+                taxonomyClassification: {
+                    jobTypes: [\jobTypes]
+                }
                 url: "\url"
             }
             applyMethod: {
@@ -810,5 +811,15 @@ class Indeed_cron extends CI_Controller
                     ]
                 );
         }
+    }
+
+    /**
+     * get the job type
+     *
+     * @return array
+     */
+    private function getJobType(): string
+    {
+        return $this->job["JobType"] !== "Full Time" ? '"part-time"' : '"full-time"';
     }
 }
