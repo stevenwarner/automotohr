@@ -318,13 +318,13 @@ class Indeed_cron extends CI_Controller
         // update job data array
         $indeedContactDetails = $this->indeedContactDetails[$this->job["user_sid"]];
         // update the contact details
-        if (clean($indeedContactDetails['Name'])) {
+        if (($indeedContactDetails['Name'])) {
             $this->job["data"]["\contactName"] =
-                clean($indeedContactDetails['Name']);
+                ($indeedContactDetails['Name']);
         }
-        if (clean($indeedContactDetails['Phone'])) {
+        if (($indeedContactDetails['Phone'])) {
             $this->job["data"]["\contactPhone"] =
-                clean($indeedContactDetails['Phone']);
+                ($indeedContactDetails['Phone']);
         }
         if ($indeedContactDetails['Email']) {
             $this->job["data"]["\contactEmail"] =
