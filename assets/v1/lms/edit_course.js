@@ -557,17 +557,18 @@ $(function editCourse() {
 	/**
 	 * Read Scorm manifest file and update Course
 	 *
-	 * @param {*} filePath
+	 * @param {*} courseId
 	 * @returns
 	 */
-	function updateScormCourseCall(filePath) {
+	function updateScormCourseCall(courseId, filePath, language) {
 		return new Promise(function (resolve, reject) {
 			const courseObj = {
 				scorm_file: filePath,
+				scorm_language: language
 			};
 			//
 			$.ajax({
-				url: baseURI + "lms/course/scorm/parse/" + courseCode,
+				url: baseURI + "lms/course/scorm/parse/" + courseId,
 				method: "POST",
 				data: courseObj,
 			})

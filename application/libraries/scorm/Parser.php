@@ -101,6 +101,7 @@ class parser
      */
     public function setContent(string $xmlContent)
     {
+        $xmlContent = $this->cleanContent($xmlContent);
         // set the data
         $this->content = preg_replace_callback('/\badlcp:(.*)\b/im', function ($match) {
             return 'adlcp_' . strtolower($match[1]);
@@ -112,6 +113,53 @@ class parser
         // die;
         // return this for chaining
         return $this;
+    }
+
+    private function cleanContent($xmlString)
+    {
+
+        $dom = new DOMDocument();
+        libxml_use_internal_errors(true); // Suppress errors for now
+        $dom->loadXML($xmlString);
+
+        // Function to remove namespace prefixes
+        function removeNamespaces($dom)
+        {
+            // Loop through all nodes
+            foreach ($dom->getElementsByTagName('*') as $node) {
+                // If the node has a namespace prefix
+                if ($node->prefix) {
+                    // Create a new element without the namespace
+                    $newNode = $dom->createElement(str_replace($node->prefix . ':', '', $node->nodeName));
+
+                    // Copy attributes
+                    foreach ($node->attributes as $attr) {
+                        $newNode->setAttribute($attr->nodeName, $attr->nodeValue);
+                    }
+
+                    // Copy child nodes
+                    while ($node->firstChild) {
+                        $newNode->appendChild($dom->importNode($node->firstChild, true));
+                    }
+
+                    // Replace the old node with the new node
+                    $node->parentNode->replaceChild($newNode, $node);
+                }
+            }
+        }
+
+        // Remove namespaces
+        removeNamespaces($dom);
+
+        // Remove the namespace declarations from the root element
+        $root = $dom->documentElement;
+        $root->removeAttribute('xmlns');
+        $root->removeAttribute('xmlns:adlcp');
+        $root->removeAttribute('xmlns:xsi');
+
+        $cleanedXml = $dom->saveXML();
+       
+        return $cleanedXml;
     }
 
     /**
