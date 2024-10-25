@@ -357,7 +357,12 @@ class Indeed_cron extends CI_Controller
         $jd = str_replace(
             [
                 "\r",
-                "\n"
+                "\n",
+                "\f",
+                "\t",
+                "\ooo",
+                "\xhh",
+                "\$",
             ],
             "",
             $jd
