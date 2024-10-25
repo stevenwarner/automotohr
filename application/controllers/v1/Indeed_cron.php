@@ -369,12 +369,13 @@ class Indeed_cron extends CI_Controller
                 "\$",
                 "\v",
                 "\0",
+                "\u00a0"
             ],
             "",
             $jd
         );
         //
-        return addslashes($jd);
+        return ($jd);
     }
 
     /**
