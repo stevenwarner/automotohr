@@ -370,7 +370,6 @@ class Indeed_cron extends CI_Controller
                 "\$",
                 "\v",
                 "\0",
-                "\\"
             ],
             "",
             $jd
