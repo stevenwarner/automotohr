@@ -222,6 +222,10 @@
                                                                     <?= $v0["Title"]; ?>
                                                                 </strong>
                                                                 <p>Company: <?= $companyCache[$v0["user_sid"]]; ?></p>
+                                                                <p>URL: <a href="<?=generateJobLink(
+                                                                    $v0["user_sid"],
+                                                                    $v0["job_sid"]
+                                                                );?>">Job Link</a></p>
                                                             </td>
                                                             <td class="text-right">
                                                                 <?= $v0["indeed_posting_id"] ?? "-"; ?>

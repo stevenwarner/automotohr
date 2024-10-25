@@ -3854,9 +3854,10 @@ if (!function_exists("isAmount")) {
         return is_double($value);
     }
 }
-        
+
 if (!function_exists("checkEmployeeExistInCompany")) {
-    function checkEmployeeExistInCompany ($data, $companyId) {
+    function checkEmployeeExistInCompany($data, $companyId)
+    {
         //
         $columnName = "";
         $columnValue = "";
@@ -3869,15 +3870,15 @@ if (!function_exists("checkEmployeeExistInCompany")) {
             $columnValue = $data['employee_number'];
         } else if ($data['employee_ssn']) {
             $columnName = 'REGEXP_REPLACE(ssn, "[^0-9]", "") =';
-            $columnValue = preg_replace('/[^0-9]/', '',$data['employee_ssn']);
+            $columnValue = preg_replace('/[^0-9]/', '', $data['employee_ssn']);
         } else if ($data['employee_email']) {
             $columnName = 'LOWER(email)';
             $columnValue = $data['employee_email'];
         } else if ($data['employee_phone']) {
             $columnName = 'PhoneNumber';
-            $columnValue =$data['employee_phone'];
+            $columnValue = $data['employee_phone'];
         }
-    
+
         //
         if ($columnName &&  $columnValue) {
             //
@@ -3890,35 +3891,35 @@ if (!function_exists("checkEmployeeExistInCompany")) {
             //
             if ($columnName == 'PhoneNumber') {
                 //
-                $phoneNumber = preg_replace('/[^0-9]/', '',$data['employee_phone']);
+                $phoneNumber = preg_replace('/[^0-9]/', '', $data['employee_phone']);
                 //
                 $CI->db->group_start();
                 $CI->db->where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', $phoneNumber);
                 //
-                if (substr(preg_replace('/[^0-9]/', '',$data['employee_phone']),0,1) != 1) {
+                if (substr(preg_replace('/[^0-9]/', '', $data['employee_phone']), 0, 1) != 1) {
                     $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', '1' . $phoneNumber);
                     $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+1' . $phoneNumber);
                 } else {
                     $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9+]","")', '+' . $phoneNumber);
-                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', substr($phoneNumber,1));
+                    $CI->db->or_where('REGEXP_REPLACE(PhoneNumber,"[^0-9]","")', substr($phoneNumber, 1));
                 }
                 //
                 $CI->db->group_end();
             } else {
                 $CI->db->where($columnName, $columnValue);
             }
-            
+
             $CI->db->limit(1);
             //
             $result = $CI->db->get('users')->row_array();
-            
+
             return $result['sid'] ?? 0;
-        } 
+        }
         //
         return 0;
         //
     }
-}        
+}
 
 if (!function_exists("getCompanyDataForPrefil")) {
     /**
@@ -3947,9 +3948,9 @@ if (!function_exists("getCompanyDataForPrefil")) {
             "state_ein" => "",
         ];
         //
-        $record = 
-        get_instance()
-        ->db
+        $record =
+            get_instance()
+            ->db
             ->select('
                 users.CompanyName,
                 users.company_corp_name,
@@ -3993,7 +3994,7 @@ if (!function_exists("getCompanyDataForPrefil")) {
             $address .= $record["Location_City"] ? $record["Location_City"] . ', ' : '';
             $address .= $record["state_code"] ? $record["state_code"] . ', ' : '';
             $address .= $record["Location_ZipCode"] ? $record["Location_ZipCode"] . ', ' : '';
-    
+
             $returnArray["address"] = rtrim(
                 $address,
                 ", "
@@ -4007,5 +4008,23 @@ if (!function_exists("getCompanyDataForPrefil")) {
         }
         //
         return $returnArray;
+    }
+}
+
+if (!function_exists("generateJobLink")) {
+    function generateJobLink($companyId, $jobId)
+    {
+        //
+        $ci = get_instance();
+        // get the subdomain
+        $subDomain = $ci
+            ->db
+            ->select("sub_domain")
+            ->where("user_sid", $companyId)
+            ->limit(1)
+            ->get("portal_employer")
+            ->row_array();
+        //
+        return "https://".$subDomain . "/job_details/" . $jobId;
     }
 }
