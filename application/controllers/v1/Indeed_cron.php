@@ -84,6 +84,7 @@ class Indeed_cron extends CI_Controller
             ->load
             ->model(
                 "Indeed_model",
+            first
                 "indeed_model"
             );
         // load the all feed model
@@ -119,6 +120,7 @@ class Indeed_cron extends CI_Controller
             );
         // iterate through jobs
         foreach ($this->jobs as $job) {
+            $this->jobBody = "";
             // set the job
             $this->job = $job;
             // set the default errors
@@ -140,13 +142,16 @@ class Indeed_cron extends CI_Controller
                         $this->job["sid"],
                         $this->job["errors"]
                     );
+                    continue;
             }
-        }
+            // create/update jobs on Indeed
+            $this->sendJobsToIndeed($this->job["sid"]);
 
-        // create/update jobs on Indeed
-        $this->sendJobsToIndeed();
+            usleep(200);
+        }
         // delete jobs from Indeed
         $this->deleteJobsFromIndeed();
+
         //
         exit("All done");
     }
@@ -576,7 +581,7 @@ class Indeed_cron extends CI_Controller
     /**
      * make the call to Indeed
      */
-    private function sendJobsToIndeed()
+    private function sendJobsToIndeed($jobId)
     {
         // revert if there is no body
         if (!$this->jobBody) {
@@ -596,7 +601,8 @@ class Indeed_cron extends CI_Controller
                 ->indeed_model
                 ->updateJobsQueue(
                     array_column( // get all the job queue ids
-                        $this->jobIds,
+                    $jobId,
+                        // $this->jobIds,
                         "sid"
                     ),
                     [
