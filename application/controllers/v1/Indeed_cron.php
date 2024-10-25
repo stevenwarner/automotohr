@@ -84,7 +84,6 @@ class Indeed_cron extends CI_Controller
             ->load
             ->model(
                 "Indeed_model",
-            first
                 "indeed_model"
             );
         // load the all feed model
