@@ -4023,7 +4023,7 @@ if (!function_exists("generateJobLink")) {
             ->where("user_sid", $companyId)
             ->limit(1)
             ->get("portal_employer")
-            ->row_array();
+            ->row_array()["sub_domain"];
         //
         return "https://".$subDomain . "/job_details/" . $jobId;
     }
