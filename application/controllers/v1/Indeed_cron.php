@@ -376,7 +376,7 @@ class Indeed_cron extends CI_Controller
             $jd
         );
         //
-        return ($jd);
+        return addslashes($jd);
     }
 
     /**
