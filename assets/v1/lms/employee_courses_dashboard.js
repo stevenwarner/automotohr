@@ -320,7 +320,7 @@ $(function LMSEmployeeDashboard() {
 												View Content
 											</button>`;
 											
-					coursesHTML += `        <a class="btn btn-info csRadius5 csF16 btn-block" href="${window.location.origin}/lms/courses/${course.sid}/${employeeId}/my/certificate">
+					coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${window.location.origin}/lms/courses/${course.sid}/${employeeId}/my/certificate">
 												<i class="fa fa-eye"></i>
 												View Certificate
 											</a>`;
@@ -375,6 +375,14 @@ $(function LMSEmployeeDashboard() {
 				valueSuffix: ''
 			},
 			plotOptions: {
+				pie: {
+					dataLabels: {
+						enabled: true,
+						style: {
+							fontSize: '12px' // Increase font size for all data labels here
+						}
+					}
+				},
 				series: {
 					allowPointSelect: true,
 					cursor: 'pointer',
@@ -445,7 +453,12 @@ $(function LMSEmployeeDashboard() {
 						}
 					]
 				}
-			]
+			],
+			tooltip: {
+				style: {
+					fontSize: '14px' // Increase font size for the tooltip here
+				}
+			}
 		});
     }
 	//
@@ -464,11 +477,21 @@ $(function LMSEmployeeDashboard() {
 				}
 			},
 			xAxis: {
-				type: 'category'
+				type: 'category',
+				labels: {
+					style: {
+						fontSize: '12px'  // Change this to your desired size
+					}
+				}
 			},
 			yAxis: {
 				title: {
 					text: 'Total number of assigned course(s)'
+				},
+				labels: {
+					style: {
+						fontSize: '12px'  // Change this to your desired size
+					}
 				}
 		
 			},
@@ -486,9 +509,8 @@ $(function LMSEmployeeDashboard() {
 			},
 		
 			tooltip: {
-				headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-				pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
-					'<b>{point.y}</b> course(s)<br/>'
+				headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
+				pointFormat: '<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>'
 			},
 		
 			series: [
@@ -506,15 +528,21 @@ $(function LMSEmployeeDashboard() {
 					data: [
 						{
 							name: 'Assigned ',
-							color: '#2caffe',
+							color: '#6B8ABB',
 							y: count.assigned,
-							url: baseURI + "lms/courses/my?type=assigned"
+							url: baseURI + "lms/courses/my?type=assigned",
 						},
 						{
 							name: 'Pending',
 							color: '#ff834e',
 							y: count.pending,
 							url: baseURI + "lms/courses/my?type=pending"
+						},
+						{
+							name: 'Ready To Start',
+							color: '#2caffe',
+							y: count.readyToStart,
+							url: baseURI + "lms/courses/my?type=ready_to_start"
 						},
 						{
 							name: 'In Progress',
@@ -540,7 +568,12 @@ $(function LMSEmployeeDashboard() {
 							y: count.expire_soon,
 							url: baseURI + "lms/courses/my?type=due_soon"
 						}
-					]
+					],
+					dataLabels: {
+						style: {
+							fontSize: '12px'  // Change this to your desired size
+						}
+					}
 				}
 			]
 		});

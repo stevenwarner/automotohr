@@ -231,6 +231,8 @@ $(function LMSEmployeeCourses() {
 					$(".jsSendReminderEmail").hide();
 				}
 				//
+				var htmlCheck = [];
+				//
 				if (courses.length) {
 					courses.map(function (course) {
 						if (course["employee_sid"] == null || course["employee_sid"] == employeeId) {
