@@ -141,10 +141,10 @@ class Indeed_cron extends CI_Controller
                         $this->job["sid"],
                         $this->job["errors"]
                     );
-                    continue;
+                continue;
             }
             // create/update jobs on Indeed
-            $this->sendJobsToIndeed($this->job["sid"]);
+            $this->sendJobsToIndeed();
 
             usleep(200);
         }
@@ -579,7 +579,7 @@ class Indeed_cron extends CI_Controller
     /**
      * make the call to Indeed
      */
-    private function sendJobsToIndeed($jobId)
+    private function sendJobsToIndeed()
     {
         // revert if there is no body
         if (!$this->jobBody) {
@@ -599,8 +599,7 @@ class Indeed_cron extends CI_Controller
                 ->indeed_model
                 ->updateJobsQueue(
                     array_column( // get all the job queue ids
-                    $jobId,
-                        // $this->jobIds,
+                        $this->job["sid"],
                         "sid"
                     ),
                     [
@@ -759,30 +758,29 @@ class Indeed_cron extends CI_Controller
         array $jobPostingArray,
         int $logId
     ) {
+        $sourcedPostingId = $jobPostingArray[0]["jobPosting"]["sourcedPostingId"];
         // iterate the results
-        foreach ($jobPostingArray as $k0 => $v0) {
-            // add the tracking
-            $this
-                ->indeed_model
-                ->checkAndAddIndeedJobPosting(
-                    $this->jobIds[$k0]["uuid"], // the job sid
-                    $v0["jobPosting"]["sourcedPostingId"] // indeed job posting id
-                );
-            $this
-                ->indeed_model
-                ->updateJobsQueue(
-                    [
-                        $this->jobIds[$k0]["sid"]
-                    ],
-                    [
-                        "has_errors" => null,
-                        "is_processed" => 1,
-                        "is_processing" => 0,
-                        "processed_at" => getSystemDate(),
-                        "log_sid" => $logId,
-                    ]
-                );
-        }
+        // add the tracking
+        $this
+            ->indeed_model
+            ->checkAndAddIndeedJobPosting(
+                $this->job["uuid"], // the job sid
+                $sourcedPostingId // indeed job posting id
+            );
+        $this
+            ->indeed_model
+            ->updateJobsQueue(
+                [
+                    $this->job["sid"]
+                ],
+                [
+                    "has_errors" => null,
+                    "is_processed" => 1,
+                    "is_processing" => 0,
+                    "processed_at" => getSystemDate(),
+                    "log_sid" => $logId,
+                ]
+            );
         //
         return true;
     }
