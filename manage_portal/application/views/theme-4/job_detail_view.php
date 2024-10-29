@@ -11,7 +11,7 @@
     <?php if ((!empty($jobs_detail_page_banner_data) && $jobs_detail_page_banner_data['banner_type'] == 'default') || empty($jobs_detail_page_banner_data)) { ?>
         <div class="row">
             <div class="col-sm-12 text-center">
-                <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a>
+                <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a><br>
                 <?php if ($indeedApplyButtonDetails): ?>
                     <a class="site-btn apply-now-large" style="background: none;" href="javascript:void(0)">
                         <div

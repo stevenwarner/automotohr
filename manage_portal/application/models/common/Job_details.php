@@ -1447,8 +1447,20 @@ class Job_details extends CI_Model
      * @param int|string $jobId
      * @return array
      */
-    public function getIndeedApplyButtonDetails(string $jobId): array
+    public function getIndeedApplyButtonDetails(string $jobId, int $companySid = 0): array
     {
+
+        $result =  $this->db
+            ->select('indeed_job_opt')
+            ->from('portal_employer')
+            ->where('user_sid', $companySid)
+            ->get();
+        $data = $result->row_array();
+
+        if ($data['indeed_job_opt'] == 0) {
+              return [];
+        }
+        //
         return $this
             ->db
             ->select([

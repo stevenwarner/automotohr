@@ -950,6 +950,7 @@ class Company_model extends CI_Model
         $this->db->select('countries.country_name as country_name');
         $this->db->select('countries.country_name as country_name');
         $this->db->select('states.state_name as state_name');
+        $this->db->select('portal_employer.indeed_job_opt');
         $this->db->where('users.sid', $company_sid);
         $this->db->where('portal_themes.theme_name', 'theme-4');
         $this->db->join('products', 'users.account_package_sid = products.sid', 'left');
@@ -3463,14 +3464,14 @@ class Company_model extends CI_Model
         $this->load->model("Indeed_model", "indeed_model");
         //
         $this
-        ->db
-        ->where("user_sid", $companyId)
-        ->update(
-            "portal_employer",
-            [
-                "indeed_job_sync" => $selectedOption
-            ]
-        );
+            ->db
+            ->where("user_sid", $companyId)
+            ->update(
+                "portal_employer",
+                [
+                    "indeed_job_sync" => $selectedOption
+                ]
+            );
         //
         if ($selectedOption == 1) {
             $this->db->select('sid');
@@ -3502,5 +3503,20 @@ class Company_model extends CI_Model
                 }
             }
         }
+    }
+
+    //
+    function updateIndeedJobOptStatus($companyId, $data)
+    {
+
+        $this
+            ->db
+            ->where("user_sid", $companyId)
+            ->update(
+                "portal_employer",
+                [
+                    "indeed_job_opt" => $data
+                ]
+            );
     }
 }
