@@ -130,10 +130,10 @@ const SCORM_2004_API = {
 		return this.lastError;
 	},
 	GetErrorString: function () {
-		return errorCodes[this.lastError];
+		return this.errorCodes[this.lastError];
 	},
 	GetDiagnostic: function (CMIErrorCode) {
-		return errorCodes[CMIErrorCode];
+		return this.errorCodes[CMIErrorCode];
 	},
 };
 

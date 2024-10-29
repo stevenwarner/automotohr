@@ -100,10 +100,10 @@ const SCORM_12_API = {
 		return this.lastError;
 	},
 	LMSGetErrorString: function () {
-		return errorCodes[this.lastError];
+		return this.errorCodes[this.lastError];
 	},
 	LMSGetDiagnostic: function (CMIErrorCode) {
-		return errorCodes[CMIErrorCode];
+		return this.errorCodes[CMIErrorCode];
 	},
 };
 
