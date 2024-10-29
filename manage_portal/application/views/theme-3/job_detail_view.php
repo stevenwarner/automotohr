@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-sm-12 text-center">
         <?php if ($indeedApplyButtonDetails): ?>
-            <a class="site-btn-lg custom-apply-now" style="background: none !important;" href="javascript:void(0)">
+            <a class="site-btn-lg custom-apply-now" style="background: none !important; max-width:200px !important" href="javascript:void(0)">
                 <div
                     data-indeed-apply-widget-type="AWI"
                     data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"

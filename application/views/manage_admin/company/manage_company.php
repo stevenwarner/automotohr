@@ -512,7 +512,7 @@
                                                                 <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
                                                                 <input type="hidden" id="opt_status" name="opt_status" value="" />
                                                                 <li>
-                                                                    <label>Indeed Job Opt-In / Opt-Out</label>
+                                                                    <label>Indeed Apply</label>
                                                                     <div class="text text-center">
                                                                         <?php $indeedJobOptStatus =  ($company_info['indeed_job_opt'] == 1 ? 'Opt-In' : 'Opt-Out'); ?>
                                                                         <span class="<?php echo strtolower(str_replace(' ', '-', $indeedJobOptStatus)); ?>">
@@ -2382,11 +2382,10 @@
         var status = $(this).attr('data-status');
         $("#opt_status").val(status);
         let msg = '';
-        //  let status = $('input[name="set_indeed_api_status"]:checked').val();
         if (status == 1) {
-            msg = "  set Opt-In , Indeed Job apply button will show on job portal";
+            msg = "  opt-in? , This action will show the 'Indeed Apply' button on the careers page.";
         } else {
-            msg = " ser Opt-Out , Indeed Job apply button will not show on job portal";
+            msg = " opt-out? , This action will hide the 'Indeed Apply' button on the careers page.";
         }
 
         alertify.confirm('Confirmation', "<strong> Are you sure you want to " + msg + "</strong>",
