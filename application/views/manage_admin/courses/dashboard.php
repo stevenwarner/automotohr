@@ -45,3 +45,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    function sendCourseToSave(){}
+</script>
