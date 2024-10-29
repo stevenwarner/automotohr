@@ -374,8 +374,12 @@ class Indeed_cron extends CI_Controller
             "",
             $jd
         );
+        // convert all escape characters
+        $jd = str_replace(["&#39;", "&quot;"], ["'", '"'], $jd);
+        // convert double to single
+        $jd = str_replace('"', "'", $jd);
         //
-        return ($jd);
+        return $jd;
     }
 
     /**
