@@ -2383,12 +2383,12 @@
         $("#opt_status").val(status);
         let msg = '';
         if (status == 1) {
-            msg = "  opt-in? , This action will show the 'Indeed Apply' button on the careers page.";
+            msg = "This action will show the 'Indeed Apply' button on the careers page.<br> Are you sure you want to opt-in?";
         } else {
-            msg = " opt-out? , This action will hide the 'Indeed Apply' button on the careers page.";
+            msg = "This action will hide the 'Indeed Apply' button on the careers page.<br> Are you sure you want to opt-out?";
         }
 
-        alertify.confirm('Confirmation', "<strong> Are you sure you want to " + msg + "</strong>",
+        alertify.confirm('Confirmation', "<strong> " + msg + "</strong>",
             function() {
                  $("#form_set_indeed_job_opt_status").submit();
             },
