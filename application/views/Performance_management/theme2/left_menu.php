@@ -166,6 +166,7 @@
                 'segment' => 'report'
             ];
 
+            /*
             $tabs[] =     [
                 'title' => 'Shared Reports',
                 'url' => '/sharedrep',
@@ -173,6 +174,8 @@
                 'icon' => '',
                 'segment' => 'sharedrep'
             ];
+            */
+            
             $tabs[] =     [
                 'title' => 'Settings',
                 'url' => '/settings',
