@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     const
         goal = {
             title: '',
@@ -20,7 +20,7 @@ $(function() {
     /**
      * 
      */
-    $(document).on('click', '.jsCreateGoal', function(event) {
+    $(document).on('click', '.jsCreateGoal', function (event) {
         //
         event.preventDefault();
         //
@@ -29,7 +29,7 @@ $(function() {
             Title: 'Create a Goal',
             Body: '',
             Loader: 'jsCreateGoalModalLoader'
-        }, async() => {
+        }, async () => {
             //
             const resp = await getCreateGoalBody();
             //
@@ -41,7 +41,7 @@ $(function() {
                 changeYear: true,
                 changeMonth: true,
                 formatDate: pm.dateTimeFormats.ymdf,
-                onSelect: function(d) {
+                onSelect: function (d) {
                     $('#jsCGEndDate').datepicker('option', 'minDate', d);
                     goal.startDate = d;
                 }
@@ -51,7 +51,7 @@ $(function() {
                 changeYear: true,
                 changeMonth: true,
                 formatDate: pm.dateTimeFormats.ymdf,
-                onSelect: function(d) {
+                onSelect: function (d) {
                     goal.endDate = d;
                 }
             });
@@ -76,21 +76,21 @@ $(function() {
     /**
      * 
      */
-    $(document).on('keyup', '#jsCGTitle', function() {
+    $(document).on('keyup', '#jsCGTitle', function () {
         goal.title = $(this).val().trim();
     });
 
     /**
      * 
      */
-    $(document).on('keyup', '#jsCGDescription', function() {
+    $(document).on('keyup', '#jsCGDescription', function () {
         goal.description = $(this).val().trim();
     });
 
     /**
      *  
      */
-    $(document).on('change', '#jsCGType', function() {
+    $(document).on('change', '#jsCGType', function () {
         //
         goal.type = $(this).val();
         //
@@ -114,28 +114,28 @@ $(function() {
     /**
      * 
      */
-    $(document).on('change', '#jsCGDepartments', function() {
+    $(document).on('change', '#jsCGDepartments', function () {
         goal.departmentIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGTeams', function() {
+    $(document).on('change', '#jsCGTeams', function () {
         goal.teamIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGEmployees', function() {
+    $(document).on('change', '#jsCGEmployees', function () {
         goal.employeeIds = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGGoalType', function() {
+    $(document).on('change', '#jsCGGoalType', function () {
         //
         goal.measureUnit = $(this).val();
         //
@@ -149,42 +149,42 @@ $(function() {
     /**
      * 
      */
-    $(document).on('keyup', '#jsCGCustomGoalType', function() {
+    $(document).on('keyup', '#jsCGCustomGoalType', function () {
         goal.customUnit = $(this).val().trim();
     });
 
     /**
      * 
      */
-    $(document).on('keyup', '#jsCGTarget', function() {
+    $(document).on('keyup', '#jsCGTarget', function () {
         goal.target = $(this).val().trim();
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVRoles', function() {
+    $(document).on('change', '#jsCGVRoles', function () {
         goal.roles = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVDepartments', function() {
+    $(document).on('change', '#jsCGVDepartments', function () {
         goal.departments = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVTeams', function() {
+    $(document).on('change', '#jsCGVTeams', function () {
         goal.teams = $(this).val() || [];
     });
 
     /**
      * 
      */
-    $(document).on('change', '#jsCGVEmployees', function() {
+    $(document).on('change', '#jsCGVEmployees', function () {
         goal.employees = $(this).val() || [];
     });
 
@@ -192,12 +192,12 @@ $(function() {
      * 
      * @returns 
      */
-    $(document).on('click', '.jsCGCloseModal', function(event) {
+    $(document).on('click', '.jsCGCloseModal', function (event) {
         //
         event.preventDefault();
         //
         alertify.confirm('All the unsaved changes will be lost. <br> Would you like to continue?',
-            function() {
+            function () {
                 //
                 resetGoal();
                 $('.jsModalCancel').trigger('click');
@@ -208,7 +208,7 @@ $(function() {
      * 
      * @returns 
      */
-    $(document).on('click', '.jsCGSaveGoal', function(event) {
+    $(document).on('click', '.jsCGSaveGoal', function (event) {
         //
         event.preventDefault();
         //
@@ -267,7 +267,7 @@ $(function() {
         ml(true, 'jsCreateGoalModalLoader');
         //
         $.post(pm.urls.pbase + "save_goal", goal)
-            .done(function(resp) {
+            .done(function (resp) {
                 ml(false, 'jsCreateGoalModalLoader');
                 //
                 if (resp.Status === false) {
@@ -275,7 +275,7 @@ $(function() {
                     return;
                 }
                 //
-                handleSuccess("You have successfully created a goal.", function() {
+                handleSuccess("You have successfully created a goal.", function () {
                     resetGoal();
                     $('.jsModalCancel').trigger('click');
                 });
@@ -305,9 +305,130 @@ $(function() {
     function getCreateGoalBody() {
         return new Promise((res) => {
             $.get(`${pm.urls.pbase}get_goal_body`)
-                .done(function(resp) { res(resp); });
+                .done(function (resp) { res(resp); });
         });
     }
 
+    //
+    $(document).on('click', '.jsCGSaveEmployeeGoal', function (event) {
+        //
+        event.preventDefault();
+        //
+        console.log(goal);
+        //
+        if (goal.title == '') {
+            handleError("Goal title is required.");
+            return;
+        }
+        //
+        if (goal.startDate == '') {
+            handleError("Goal start date is required.");
+            return;
+        }
+        //
+        if (goal.endDate == '') {
+            handleError("Goal end date is required.");
+            return;
+        }
+
+
+        goal.type = 4;
+        goal.employeeIds = $("#jsemployeeId").val();
+
+        //
+        if (goal.measureUnit == 0) {
+            handleError("Measure unit is required.");
+            return;
+        }
+        //
+        if (goal.measureUnit == 4 && goal.customUnit == '') {
+            handleError("Measure unit is required.");
+            return;
+        }
+        //
+        if (goal.target == '') {
+            handleError("Please set a proper target.");
+            return;
+        }
+        //
+        ml(true, 'jsCreateGoalModalLoader');
+        //
+        $.post(pm.urls.pbase + "save_goal", goal)
+            .done(function (resp) {
+                ml(false, 'jsCreateGoalModalLoader');
+                //
+                if (resp.Status === false) {
+                    handleError("Something went wrong while creating goal.");
+                    return;
+                }
+                //
+                handleSuccess("You have successfully created a goal.", function () {
+                    resetGoal();
+                    $('.jsModalCancel').trigger('click');
+                    window.location.reload();
+
+                });
+            });
+    });
+
+
+
+
+    function getCreateEmployeeGoalBody() {
+        return new Promise((res) => {
+            $.get(`${pm.urls.pbase}get_employee_goal_body`)
+                .done(function (resp) { res(resp); });
+        });
+    }
+
+
+    $(document).on('click', '.jsCreateGoalEmployee', function (event) {
+        //
+        event.preventDefault();
+
+        //
+        Modal({
+            Id: 'jsCreateGoalModal',
+            Title: 'Create a Goal',
+            Body: '',
+            Loader: 'jsCreateGoalModalLoader'
+        }, async () => {
+            //
+            const resp = await getCreateEmployeeGoalBody();
+            //
+            $('#jsCreateGoalModal .csModalBody').append(resp);
+            //
+            ml(false, 'jsCreateGoalModalLoader');
+            //
+            $('#jsCGStartDate').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                formatDate: pm.dateTimeFormats.ymdf,
+                onSelect: function (d) {
+                    $('#jsCGEndDate').datepicker('option', 'minDate', d);
+                    goal.startDate = d;
+                }
+            });
+            //
+            $('#jsCGEndDate').datepicker({
+                changeYear: true,
+                changeMonth: true,
+                formatDate: pm.dateTimeFormats.ymdf,
+                onSelect: function (d) {
+                    goal.endDate = d;
+                }
+            });
+
+            //
+            $('#jsCGType').select2({ minimumResultsForSearch: -1 });
+            $('#jsCGGoalType').select2({ minimumResultsForSearch: -1 });
+            $('#jsCGDepartments').select2({ closeOnSelect: false });
+            $('#jsCGTeams').select2({ closeOnSelect: false });
+            $('#jsCGEmployees').select2({ closeOnSelect: false });
+
+            //
+            loadFonts();
+        });
+    });
 
 });

@@ -21,14 +21,40 @@
             'segment' => 'my-reviews'
         ],
         [
-            'title' => 'Reviews Assigned To Me - Reviewer',
+            'title' => 'Reviews Assigned To Me - As Reviewer',
             'url' => '/reviews/all',
             'slug' => 'alls',
             'icon' => '',
             'segment' => 'alls'
-        ]]
+        ],
+        [
+            'title' => 'Completed Reviews Assigned To Me - As Reviewer',
+            'url' => '/reviews/all_completed',
+            'slug' => 'alls',
+            'icon' => '',
+            'segment' => 'alls'
+        ],
+        [
+            'title' => 'Reviews Shared With Me',
+            'url' => '/shared_reviews',
+            'slug' => 'alls',
+            'icon' => '',
+            'segment' => 'alls'
+        ]
+        ]
     ];
           
+
+    $tabs[] =     [
+        'title' => 'Create a Goal',
+        'url' => 'javascript:void(0)',
+        'slug' => 'goal/create',
+        'icon' => '',
+        'segment' => 'goal/create',
+        'class' => 'jsCreateGoalEmployee'
+    ];
+
+
     $tabs[] =     [
         'title' => 'Goals',
         'url' => '/goals',
@@ -36,8 +62,7 @@
         'icon' => 'bullseye',
         'segment' => 'goals'
     ];
- 
-    
+     
     //
     $lis = '';
     //
@@ -58,7 +83,6 @@
             $lis .= '   </ul>';
             $lis .= '</li>';
         } else{
-
             //
             $lis .= '<li><a '.( isset($tab['props']) ? $tab['props'] : "").' class="csF16 '.(isset($tab['class']) ? $tab['class'] : '').' '.( $tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '' ).'" href="'.( $tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL.$tab['url'] ).'" ><i class="fa fa-'.( $tab['icon'] ).'"></i> '.( $tab['title'] ).'</a></li>';
         }
@@ -74,7 +98,7 @@
                         <!-- Web -->
                         <ul class="csWeb hidden-xs">
                             <li>
-                                <a href="<?=base_url('dashboard');?>" class="csBackButton csRadius100 csF16"><i
+                                <a href="<?=base_url('employee_management_system');?>" class="csBackButton csRadius100 csF16"><i
                                         class="fa fa-th" aria-hidden="true"></i>Go To Dashboard</a>
                             </li>
                             <li><a href="javascript:void(0)" class="csF14">|</a></li>

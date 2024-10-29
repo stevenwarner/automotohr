@@ -2417,3 +2417,23 @@ $route["crons/indeed/process"]["cli"] = "v1/Indeed_cron/processJobSync";
 $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Indeed_reporting/history/$1';
 
 $route['performance-management/reviwers_reminder'] = 'Performance_management/reviwersReminders';
+$route['performance-management/reviwers_report_share'] = 'Performance_management/ShareReportToReviewers';
+$route['performance-management/sharedrep'] = 'Performance_management/sharedReports';
+$route['performance-management/sharedreportdetail/(:num)'] = 'Performance_management/sharedReportDetail/$1';
+
+$route['performance-management/teamcomparison'] = 'Performance_management/teamComparison';
+$route['performance-management/get_employee_goal_body']['get'] = 'Performance_management/GetEmployeeGoalBody';
+$route['performance-management/reviews/all_completed']['get'] = 'Performance_management/allCompletedReviews';
+$route['performance-management/review_share'] = 'Performance_management/ShareReview';
+$route['performance-management/shared_reviews'] = 'Performance_management/SharedReviews';
+$route['performance-management/feedbackshared/(:num)/(:num)/(:num)']['get'] = 'Performance_management/feedbackShared/$1/$2/$3';
+$route['performance-management/export_report/(:any)/(:any)/(:any)'] = 'Performance_management/reportExport/$1/$2/$3';
+
+
+
+
+
+
+//$route['performance-management/upload'] = 'Performance_management/upload';
+
+

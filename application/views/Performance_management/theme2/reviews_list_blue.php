@@ -7,8 +7,6 @@ if ($load_view) {
     $panelHeading = 'background-color: #81b431';
 }
 ?>
-
-
 <div class="col-md-12 col-sm-12" style="padding-left: 0px;padding-right: 0px;">
     <!--  -->
     <div class="panel panel-theme">
@@ -21,11 +19,8 @@ if ($load_view) {
                     </h5>
                 </div>
                 <div class="col-xs-12 col-md-10">
-
-
                     <span class="pull-right">
                         <a href="javascript:void(0)" class="btn btn-orange" id="jsReminderReviewer"><i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp; Send Reminder Email</a>
-
                         <a title="Show me active reviews" placement="top" href="<?= current_url(); ?>?type=active" class="btn btn-orange <?= $type == 'active' ? 'active' : '' ?>">Active Reviews (<?= $ReviewCount['Active']; ?>)</a>
                         <a title="Show me archived reviews" placement="top" href="<?= current_url(); ?>?type=archived" class="btn btn-orange <?= $type == 'archived' ? 'active' : '' ?>">Archived Reviews (<?= $ReviewCount['Archived']; ?>)</a>
                         <a title="Show me reviews that are in draft" placement="top" href="<?= current_url(); ?>?type=draft" class="btn btn-orange <?= $type == 'draft' ? 'active' : '' ?>">Reviews In Draft (<?= $ReviewCount['Draft']; ?>)</a>
@@ -50,7 +45,6 @@ if ($load_view) {
                 </div>
             </div>
             <br />
-            <!--  -->
             <div class="row">
                 <?php
                 //   
@@ -66,7 +60,6 @@ if ($load_view) {
                             $statusClass = 'danger';
                         }
                 ?>
-
                         <div class="col-md-4 col-xs-12">
                             <div class="panel panel-theme jsReviewBox" data-id="<?= $review['sid']; ?>" data-title="<?= $review['review_title']; ?>">
                                 <div class="panel-heading pl5 pr5" style="<?= $panelHeading ?>">
@@ -77,8 +70,7 @@ if ($load_view) {
                                     <span class="pull-right">
                                         <?php
                                         if (!$review['is_draft']) {
-                                            if ($review['status'] != 'started') {
-                                        ?>
+                                            if ($review['status'] != 'started') {                                        ?>
                                                 <button class="btn btn-black csF16 btn-xs jsStartReview" title="Start the review" placement="top">
                                                     <i class="fa fa-play csF16" aria-hidden="true"></i>
                                                 </button>
@@ -184,7 +176,7 @@ if ($load_view) {
             Body: '<div class="container"><div id="jsReminderReviewerBody"></div></div>',
             Title: 'Reminder Email To Reviewers'
         }, );
-      
+
         <?php
         $reviewersList = '<br><label>Reviewers</label><select id="js-reviewers" multiple="true"><option value"all">All</option>';
         foreach ($reviewersPendingReviews as $review) {
@@ -205,7 +197,6 @@ if ($load_view) {
         });
     }
 
-
     //
     $(document).on("click", "#js-sendMail", function() {
         let selectedReviewers = $("#js-reviewers").val();
@@ -222,13 +213,11 @@ if ($load_view) {
             },
             success: function(data) {
                 console.log(data);
-               alertify.success('Email sent successfully');
-               $('#jsReminderReviewerModel .jsModalCancel').trigger('click');
+                alertify.success('Email sent successfully');
+                $('#jsReminderReviewerModel .jsModalCancel').trigger('click');
 
             }
         });
-
-
 
     });
 </script>

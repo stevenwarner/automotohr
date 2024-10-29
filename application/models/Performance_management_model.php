@@ -1188,7 +1188,7 @@ class Performance_management_model extends CI_Model
     /**
      * 
      */
-    function GetCompletedReviews($companyId)
+    function GetCompletedReviews($companyId, $startDate = '', $endDate = '', $reviewers = [])
     {
         //
         $query =
@@ -1215,8 +1215,20 @@ class Performance_management_model extends CI_Model
             ->where("{$this->R}.is_archived", 0)
             ->where("{$this->R}.status <>", 'pending')
             ->where("{$this->R}.company_sid", $companyId)
-            ->where("{$this->PRR}.is_started", 1)
-            ->get();
+            ->where("{$this->PRR}.is_started", 1);
+        if ($startDate && $endDate != '' && $startDate != 'all' && $endDate != 'all') {
+
+            $query =
+                $this->db->where("{$this->R}.review_start_date>=", $startDate);
+            $query =
+                $this->db->where("{$this->R}.review_start_date<=", $endDate);
+        }
+        if (!empty($reviewers) && (!in_array('all', $reviewers))) {
+            $this->db->where_in("{$this->PRRS}.reviewer_sid", $reviewers);
+        }
+
+        $query =
+            $this->db->get();
         //
         $records = $query->result_array();
         $query->free_result();
@@ -1393,7 +1405,7 @@ class Performance_management_model extends CI_Model
             ->where("{$this->DM}.is_deleted", 0)
             ->where_in("{$this->DM}.sid", $ids)
             ->get();
-        //
+
         return array_unique(array_column($query->result_array(), 'employee_sid'));
     }
 
@@ -2227,7 +2239,7 @@ class Performance_management_model extends CI_Model
         $reviewerId
     ) {
         //
-        
+
         $this->db
             ->select("
             {$this->R}.sid as reviewId,
@@ -2262,5 +2274,218 @@ class Performance_management_model extends CI_Model
         $query->free_result();
         //
         return $records;
+    }
+
+    //
+    function saveReportShare($data)
+    {
+        $this->db->insert('pm_report_share', $data);
+    }
+
+
+    //
+    function getSharedReport($employeeSid, $companySid)
+    {
+        $this->db
+            ->select("pm_report_share.sid,pm_report_share.share_from,pm_report_share.share_date,users.first_name,users.last_name,users.middle_name,users.job_title,users.timezone,users.is_executive_admin,users.access_level,users.access_level_plus,users.pay_plan_flag")
+            ->from("pm_report_share")
+            ->where("pm_report_share.company_sid", $companySid)
+            ->where("pm_report_share.share_to", $employeeSid)
+            ->join("users", "users.sid = pm_report_share.share_from", "inner");
+
+        $this->db->order_by("sid", "DESC");
+        //
+        $query = $this->db->get();
+        $records = $query->result_array();
+        //
+        return $records;
+    }
+
+    //
+    function getSharedReportDetail($reportSid)
+    {
+        $this->db
+            ->select("report_data")
+            ->from("pm_report_share")
+            ->where("pm_report_share.sid", $reportSid);
+        //
+        $query = $this->db->get();
+        $records = $query->row_array();
+        //
+        return $records;
+    }
+
+    //
+    public function getCompanyDepartments($companyId)
+    {
+        $this->db->select('name,sid')
+            ->from('departments_management')
+            ->where('company_sid', $companyId)
+            ->where('is_deleted', 0);
+        $query = $this->db->get();
+        $records = $query->result_array();
+        return $records;
+    }
+
+
+
+    //
+    public function getCompanyteams($companyId)
+    {
+
+        $this->db->select('name,sid,department_sid');
+        $this->db->where_in('company_sid', $companyId);
+        $this->db->where('is_deleted', 0);
+        $this->db->where('status', 1);
+        //
+        $teams = $this->db->get('departments_team_management')->result_array();
+        return $teams;
+    }
+
+
+    //
+    function getDepartmentGoals($companyId, $departmentId)
+    {
+        $query =
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('department_sid', $departmentId)
+            ->get('goals');
+        //
+        $goals = $query->result_array();
+        //        
+        $query->free_result();
+        //
+        return $goals;
+    }
+
+    function getTeamGoals($companyId, $teamId)
+    {
+        $query =
+            $this->db
+            ->select('goals.*,departments_team_management.name', $companyId)
+            ->where('goals.company_sid', $companyId)
+            ->join('departments_team_management', "departments_team_management.sid = goals.team_sid", "inner")
+            ->where_in('goals.team_sid', $teamId)
+            ->order_by('goals.team_sid', "ASC")
+            ->get('goals');
+        //
+        $goals = $query->result_array();
+        $query->free_result();
+
+
+        $teamsGoalData = [];
+
+        if (!empty($goals)) {
+            foreach ($goals as $goalRow) {
+                if (!array_key_exists($goalRow['team_sid'], $teamsGoalData)) {
+                    $teamsGoalData[$goalRow['team_sid']] = array(
+                        'team_title' => $goalRow['name'],
+                        'total_number_of_goals' => 0,
+                        'completed' => 0,
+                        'not_completed' => 0,
+                        'closed' => 0,
+                        'opened' => 0,
+                        'on_track' => 0,
+                        'off_track' => 0
+                    );
+                }
+
+                if (array_key_exists($goalRow['team_sid'], $teamsGoalData)) {
+                    $teamsGoalData[$goalRow['team_sid']]['total_number_of_goals'] = $teamsGoalData[$goalRow['team_sid']]['total_number_of_goals'] + 1;
+
+                    //
+                    if ($goalRow['status'] == 1) {
+                        $teamsGoalData[$goalRow['team_sid']]['closed'] = $teamsGoalData[$goalRow['team_sid']]['closed'] + 1;
+                    } else {
+                        $teamsGoalData[$goalRow['team_sid']]['opened'] = $teamsGoalData[$goalRow['team_sid']]['opened'] + 1;
+                    }
+                    //
+                    if ($goalRow['on_track'] == 1) {
+                        $teamsGoalData[$goalRow['team_sid']]['on_track'] = $teamsGoalData[$goalRow['team_sid']]['on_track'] + 1;
+                    } else {
+                        $teamsGoalData[$goalRow['team_sid']]['off_track'] = $teamsGoalData[$goalRow['team_sid']]['off_track'] + 1;
+                    }
+                    //
+                    if ($goalRow['completed_target'] >= $goalRow['target']) {
+                        $teamsGoalData[$goalRow['team_sid']]['completed'] = $teamsGoalData[$goalRow['team_sid']]['completed'] + 1;
+                    } else {
+                        $teamsGoalData[$goalRow['team_sid']]['not_completed'] = $teamsGoalData[$goalRow['team_sid']]['not_completed'] + 1;
+                    }
+                }
+            }
+        }
+        //
+        return $teamsGoalData;
+    }
+
+
+    function GetMyCompletedReviews($employeeId)
+    {
+
+        //
+        $query =
+            $this->db
+            ->select("
+            {$this->R}.sid,
+            {$this->R}.review_title,
+            {$this->PRR}.reviewee_sid,
+            {$this->PRRS}.reviewer_sid,
+            {$this->PRR}.start_date,
+            {$this->PRR}.end_date,
+            " . (getUserFields()) . "
+        ")
+            ->from("{$this->PRRS}")
+            ->join("{$this->PRR}", "{$this->PRR}.review_sid = {$this->PRRS}.review_sid AND {$this->PRR}.reviewee_sid = {$this->PRRS}.reviewee_sid", "inner")
+            ->join("{$this->R}", "{$this->R}.sid = {$this->PRR}.review_sid", "inner")
+            ->join("{$this->U}", "{$this->U}.sid = {$this->PRR}.reviewee_sid", "inner")
+            ->where("{$this->PRR}.is_started", 1)
+            ->where("{$this->R}.is_archived", 0)
+            ->where("{$this->R}.is_draft", 0)
+            ->where("{$this->PRRS}.reviewer_sid", $employeeId)
+            ->where("{$this->PRRS}.is_completed", 1)
+            ->get();
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        return $result;
+    }
+
+
+    function GetSharedReviews($employeeId)
+    {
+
+        //
+        $query =
+            $this->db
+            ->select("
+            pm_shared_reviews.sid,
+            pm_reviews.review_title,
+            pm_shared_reviews.review_sid,
+            pm_shared_reviews.share_to,
+            pm_shared_reviews.share_from,
+            pm_shared_reviews.share_date,
+            " . (getUserFields()) . "
+        ")
+            ->from("pm_shared_reviews")
+            ->join("pm_reviews", "pm_reviews.sid = pm_shared_reviews.review_sid", "inner")
+            ->join("users", "users.sid = pm_shared_reviews.share_from", "inner")
+            ->where("pm_shared_reviews.share_to", $employeeId)
+            ->get();
+        //
+        $result = $query->result_array();
+        $qry = $this->db->last_query();
+        //
+        $query->free_result();
+        //
+        return $result;
+    }
+
+
+    function saveSharedReview($data)
+    {
+        $this->db->insert('pm_shared_reviews', $data);
     }
 }

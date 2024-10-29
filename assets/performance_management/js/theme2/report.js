@@ -5,8 +5,8 @@ $(function() {
     );
     loadSchedulesGraph(
         graph2.Started,
-        graph2.Completed,
-        graph2.archived,
+        graph2.Pending,
+        graph2.Archived,
         graph2.Draft
     );
     //
@@ -61,10 +61,10 @@ $(function() {
     //
     function loadSchedulesGraph(
         scheduled,
-        active,
+        pending,
         archived,
         draft
-    ) {
+    ) { 
         new Chart(document.getElementById('jsTimeoffPieGraph2'), {
             type: 'bar',
             data: {
@@ -72,13 +72,13 @@ $(function() {
                     label: '',
                     data: [
                         scheduled,
-                        active,
+                        pending,
                         archived,
                         draft,
                     ],
                     backgroundColor: [
                         '#1032c3',
-                        '#81b431',
+                        '#FFA500',
                         '#cc1100',
                         '#444'
                     ],
@@ -87,7 +87,7 @@ $(function() {
                 // These labels appear in the legend and in the tooltips when hovering different arcs
                 labels: [
                     `Started Review(s)`,
-                    `Completed Review(s)`,
+                    `Pending Review(s)`,
                     `Arhived Review(s)`,
                     `Review(s) In Draft`
                 ],
@@ -108,7 +108,7 @@ $(function() {
                                 return `Scheduled Review(s): ${scheduled}`
                             }
                             if (tooltipindex.index == 1) {
-                                return `Active Review(s): ${active}`
+                                return `Pending Review(s): ${pending}`
                             }
                             if (tooltipindex.index == 2) {
                                 return `Archived Review(s): ${archived}`

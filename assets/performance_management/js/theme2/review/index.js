@@ -88,6 +88,10 @@ $(function() {
                 //
                 if (!isManager && page == totalPages) {
                     text = 'You have successfully provided feedback.';
+
+
+
+                    
                 }
                 handleSuccess(text, function() {
                     //

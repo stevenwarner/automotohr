@@ -844,7 +844,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                         <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6" id="js-to-box">
-                                <a href="<?= base_url('performance-management/dashboard'); ?>">
+                                <a href="<?= base_url('performance-management/goals'); ?>">
                                     <div class="widget-box">
                                         <div class="link-box  bg-pr full-width">
                                             <h2 class="text-blue">Performance Management</h2>

@@ -1029,8 +1029,6 @@ class Cron_common extends CI_Controller
         _e($holder, true, true);
     }
 
-
-
     //
     public function autoEmailReminderForPM($reminderFor = 'reviewExpiry', $reminderBefor = 2)
     {

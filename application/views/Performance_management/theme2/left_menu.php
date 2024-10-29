@@ -1,6 +1,5 @@
 <div class="dashboard-menu">
     <ul>
-        <!--1-->
         <li>
             <a <?php if (strpos(base_url(uri_string()), site_url('dashboard')) !== false) {
                     echo 'class="active"';
@@ -18,6 +17,8 @@
             );
         //
         $tabs = [];
+
+        /*
         $tabs[] =     [
             'title' => 'Overview',
             'url' => '/dashboard',
@@ -25,144 +26,169 @@
             'icon' => 'dashboard',
             'segment' => 'dashboard'
         ];
+        */
+
         //
         if ($PM_PERMISSION) {
             $tabs[] =     [
                 'title' => 'Template(s)',
                 'url' => '/templates',
                 'slug' => 'templates',
-                'icon' => 'plus-square',
+                'icon' => '',
                 'segment' => 'templates'
             ];
         }
-        $tabs[] = [
-            'title' => 'Reviews',
-            'submenu' => [
-                [
-                    'title' => 'Create a Review',
-                    'url' => '/review/create',
-                    'slug' => 'create',
-                    'icon' => '',
-                    'segment' => 'review/create'
-                ],
-                [
-                    'title' => 'All Reviews',
-                    'url' => '/reviews',
-                    'slug' => 'reviews',
-                    'icon' => '',
-                    'segment' => 'reviews'
-                ],
-                [
-                    'title' => 'Assigned Reviews - Reviewer',
-                    'url' => '/reviews/all',
-                    'slug' => 'assigned-reviews',
-                    'icon' => '',
-                    'segment' => 'reviews/all'
-                ],
-                [
-                    'title' => 'Assigned Reviews - Reporting Manager',
+
+        $tabs[] =     [
+            'title' => 'Create a Review',
+            'url' => '/review/create',
+            'slug' => 'create',
+            'icon' => '',
+            'segment' => 'review/create'
+        ];
+
+        $tabs[] =     [
+            'title' => 'All Reviews',
+            'url' => '/reviews',
+            'slug' => 'reviews',
+            'icon' => '',
+            'segment' => 'reviews'
+        ];
+
+
+        /*  Blue
+        $tabs[] =     [
+            'title' => 'Assigned Reviews - Reviewer',
+            'url' => '/reviews/all',
+            'slug' => 'assigned-reviews',
+            'icon' => '',
+            'segment' => 'reviews/all'
+        ];
+        */
+
+          /*  Blue
+        $tabs[] =     [
+           'title' => 'Assigned Reviews - Reporting Manager',
                     'url' => '/feedbacks/all',
                     'slug' => 'assigned-reviews',
                     'icon' => '',
                     'segment' => 'feedbacks/all'
-                ],
-                [
-                    'title' => 'Reviews Completed Against Me',
+        ];
+
+        $tabs[] =     [
+            'title' => 'Reviews Completed Against Me',
                     'url' => '/my-reviews',
                     'slug' => 'my-reviews',
                     'icon' => '',
                     'segment' => 'my-reviews'
-                ]
-            ]
-        ];
+         ];
 
+*/
+
+        // for both blue and green
         $tabs[] =     [
             'title' => 'Create a Goal',
             'url' => 'javascript:void(0)',
             'slug' => 'goal/create',
-            'icon' => 'plus-square',
+            'icon' => '',
             'segment' => 'goal/create',
             'class' => 'jsCreateGoal'
         ];
 
         $tabs[] =     [
-            'title' => 'Goals',
-            'submenu' => [
-                [
-                    'title' => 'Create a Goal',
-                    'url' => 'javascript:void(0)',
-                    'slug' => 'goal/create',
-                    'icon' => '',
-                    'segment' => 'goal/create',
-                    'class'=>'jsCreateGoal'
-                ],
-                [
-                    'title' => 'All Goal(s)',
-                    'url' => '/goals?type=all',
-                    'slug' => 'goals?type=all',
-                    'icon' => '',
-                    'segment' => 'goalstype=all'
-                ],
-                [
-                    'title' => 'My Goal(s)',
-                    'url' => '/goals?type=my',
-                    'slug' => '',
-                    'icon' => '',
-                    'segment' => '/goalstype=my'
-                ],
-                [
-                    'title' => 'Company Goal(s)',
-                    'url' => '/goals?type=company',
-                    'slug' => '',
-                    'icon' => '',
-                    'segment' => '/goalstype=company'
-                ],
-                [
-                    'title' => 'Department Goal(s)',
-                    'url' => '/goals?type=department',
-                    'slug' => '',
-                    'icon' => '',
-                    'segment' => '/goalstype=department'
-                ],
-                [
-                    'title' => 'Team Goal(s)',
+            'title' => 'All Goal(s)',
+            'url' => '/goals?type=all',
+            'slug' => 'goals?type=all',
+            'icon' => '',
+            'segment' => 'goalstype=all'
+        ];
+
+        /* blue
+        $tabs[] =     [
+            'title' => 'My Goal(s)',
+            'url' => '/goals?type=my',
+            'slug' => '',
+            'icon' => '',
+            'segment' => '/goalstype=my'
+        ];
+        */
+
+        $tabs[] =     [
+            'title' => 'Company Goal(s)',
+            'url' => '/goals?type=company',
+            'slug' => '',
+            'icon' => '',
+            'segment' => '/goalstype=company'
+        ];
+
+        $tabs[] =     [
+            'title' => 'Departments Goal(s)',
+            'url' => '/goals?type=department',
+            'slug' => '',
+            'icon' => '',
+            'segment' => '/goalstype=department'
+        ];
+
+        $tabs[] =     [
+            'title' => 'Teams Goal(s)',
                     'url' => '/goals?type=team',
                     'slug' => '',
                     'icon' => '',
                     'segment' => '/goalstype=team'
-                ]
-            ]
         ];
 
-        $sub[] =     [
+
+        $tabs[] =     [
+            'title' => 'Teams comparison',
+            'url' => '/teamcomparison',
+            'slug' => '/teamcomparison',
+            'icon' => '',
+            'segment' => '/teamcomparison',
+            'class' => ''
+        ];
+
+
+        $tabs[] =     [
             'title' => 'Calendar',
             'url' => 'javascript:void(0)',
             'slug' => 'calendar',
-            'icon' => 'calendar',
+            'icon' => '',
             'segment' => 'calendar',
             'class' => 'jsCalendarView'
         ];
         if ($PM_PERMISSION) {
 
-            $sub[] =     [
+            $tabs[] =     [
                 'title' => 'Report',
                 'url' => '/report',
                 'slug' => 'report',
-                'icon' => 'pie-chart',
+                'icon' => '',
                 'segment' => 'report'
             ];
-            $sub[] =     [
+
+            $tabs[] =     [
+                'title' => 'Shared Reports',
+                'url' => '/sharedrep',
+                'slug' => 'sharedrep',
+                'icon' => '',
+                'segment' => 'sharedrep'
+            ];
+            $tabs[] =     [
                 'title' => 'Settings',
                 'url' => '/settings',
                 'slug' => 'settings',
-                'icon' => 'pie-chart',
+                'icon' => '',
                 'segment' => 'settings'
             ];
         }
+
+        /*
         $tabs[] = [
             'title' => 'More',
             'submenu' => $sub
         ];
+        */
+
         //
         $lis = '';
         //
@@ -170,25 +196,27 @@
         //
         foreach ($tabs as $tab) {
             //
-            if (isset($tab['submenu'])) {
+           // if (isset($tab['submenu'])) {
+                /*
                 $tmp = '';
                 $lis .= '<li class="has">';
-                $lis .= '   <a href="javascript:void(0)"><i class="fa fa-list"></i>&nbsp;&nbsp;' . ($tab['title']) . ' &nbsp; <i class="fa fa-caret-down"></i></a>';
+                $lis .= '   <a href="javascript:void(0)"><i class="fa fa-list"></i>&nbsp;&nbsp;' . ($tab['title']) . ' &nbsp; <i class="fa"></i></a>';
                 $lis .= '   <ul>';
 
                 foreach ($tab['submenu'] as $item) {
                     $params   = $_SERVER['QUERY_STRING'];
                     $activeURL = $this->uri->uri_string() . trim($params);
-                    $tmp .= '<a href="' . ($item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL . $item['url']) . '" ' . "class='" . (strpos($activeURL, $item['segment']) !== FALSE  ?  'active ' : ' ') .   $item['class'].   "'" . '><i class="fa fa-' . ($item['icon']) . '"></i> ' . ($item['title']) . '</a>';
+                    $tmp .= '<a href="' . ($item["url"] == "javascript:void(0)" ? $item['url'] : $baseURL . $item['url']) . '" ' . "class='" . (strpos($activeURL, $item['segment']) !== FALSE  ?  'active ' : ' ') .   $item['class'] .   "'" . '><i class="fa fa-' . ($item['icon']) . '"></i> ' . ($item['title']) . '</a>';
                 }
                 //          
                 $lis .=       $tmp;
                 $lis .= '   </ul>';
                 $lis .= '</li>';
             } else {
+                */
                 //
                 $lis .= '<li><a ' . (isset($tab['props']) ? $tab['props'] : "") . ' class="csF16 ' . (isset($tab['class']) ? $tab['class'] : '') . ' ' . ($tab['segment'] == '' || strpos($this->uri->uri_string(), $tab['segment']) !== FALSE  ?  'active' : '') . '" href="' . ($tab['url'] == 'javascript:void(0)' ? $tab['url'] : $baseURL . $tab['url']) . '" ><i class="fa fa-' . ($tab['icon']) . '"></i> ' . ($tab['title']) . '</a></li>';
-            }
+          //  }
         }
         echo $lis;
         ?>

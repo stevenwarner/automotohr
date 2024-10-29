@@ -111,14 +111,18 @@ class Performance_management extends Public_Controller
      */
     function goals()
     {
+
         // 
         $this->checkLogin($this->pargs);
+
         // Set title
         $this->pargs['title'] = 'Performance Management - Goals';
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
         // Set company employees
         $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+
+
         //
         $ne = [];
         //
@@ -128,13 +132,13 @@ class Performance_management extends Public_Controller
         //
         $this->pargs['ne'] = $ne;
 
-
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
 
         //
         $this->pargs['type'] = $type = $this->input->get('type', true) ? $this->input->get('type', true) : 'my';
         //
+
         if ($type == 'my') {
             //
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
@@ -144,10 +148,22 @@ class Performance_management extends Public_Controller
             $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], 0);
         } else if ($type == 'department') {
             //
-            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['department_sid']));
-        } else if ($type == 'team') {
-            //
-            $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pmm->GetEmployeesByDeparmentIds($this->pargs['employee']['team_sid']));
+            $departments = $this->pmm->getCompanyDepartments($this->pargs['companyId']);
+
+            foreach ($departments as $key => $val) {
+                $goals = $this->pmm->getDepartmentGoals($this->pargs['companyId'], $val['sid']);
+                $departments[$key]['goals'] = $goals;
+            }
+            $this->pargs['MyGoals'] = $departments;
+        } else if ($type == 'team') {  //
+
+            $teams = $this->pmm->getCompanyteams($this->pargs['companyId']);
+
+            foreach ($teams as $key => $val) {
+                $goals = $this->pmm->getTeamGoals($this->pargs['companyId'], $val['sid']);
+                $teams[$key]['goals'] = $goals;
+            }
+            $this->pargs['MyGoals'] = $teams;
         } else {
             //
             if (!$this->pargs['employee']['access_level_plus']) {
@@ -165,6 +181,7 @@ class Performance_management extends Public_Controller
         }
         //
         if ($type == 'my') {
+
             $this->load->view($this->header, $this->pargs);
             $this->load->view("{$this->pp}header");
             $this->load->view("{$this->pp}goals/dashboard");
@@ -284,7 +301,6 @@ class Performance_management extends Public_Controller
 
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
-
 
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}templates");
@@ -1619,7 +1635,7 @@ class Performance_management extends Public_Controller
      * 
      * @return Void
      */
-    function report($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all')
+    function report()
     {
         // 
         $this->checkLogin($this->pargs);
@@ -1627,13 +1643,45 @@ class Performance_management extends Public_Controller
         $this->pargs['title'] = 'Performance Management - Report';
         // Set employee information for the blue screen
         $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        if ($this->input->get('period_start', TRUE)) {
+            $periodStart = $this->input->get('period_start', TRUE);
+        } else {
+            $periodStart = '';
+        }
+
+        if ($this->input->get('period_end', TRUE)) {
+            $periodEnd = $this->input->get('period_end', TRUE);
+        } else {
+            $periodEnd = '';
+        }
+
+
+        if ($this->input->get('reviewers', TRUE)) {
+            $reviewers = $this->input->get('reviewers', TRUE);
+            $this->pargs['filter_state'] = true;
+        } else {
+            $reviewers = ['all'];
+        }
+
+
+        $periodStart = formatDateToDB($periodStart, 'm-d-Y', DB_DATE);
+        $periodEnd = formatDateToDB($periodEnd, 'm-d-Y', DB_DATE);
+
         //
-        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
+        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId'], $periodStart, $periodEnd, $reviewers);
+
         $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);
+
+        $this->pargs['reviewers'] = db_get_company_users($this->pargs['companyId']);
         //
 
         $this->pargs['sanitizedView'] = false;
         $this->pargs['load_view'] = false;
+        $this->pargs['periodStart'] = $periodStart;
+        $this->pargs['periodEnd'] = $periodEnd;
+        $this->pargs['selectedReviewers'] = json_encode($reviewers);
+
 
         $this->load->view('main/header', $this->pargs);
         $this->load->view("{$this->pp}report/index");
@@ -1702,11 +1750,25 @@ class Performance_management extends Public_Controller
 
         if (!empty($ids)) {
             //
-            foreach ($ids as $id) {
-                $insertArray['employee_sid'] = $id;
+            if (is_array($ids)) {
+                foreach ($ids as $id) {
+                    _e($id, true, true);
+                    $insertArray['employee_sid'] = $id;
+                    $employeeTeamDepartment = getEmployeeDepartmentAndTeams($id);
+
+                    $insertArray['department_sid'] = $employeeTeamDepartment['teams'][0]['department_sid'] ? $employeeTeamDepartment['teams'][0]['department_sid'] : '';
+                    $insertArray['team_sid'] = $employeeTeamDepartment['teams'][0]['sid'] ? $employeeTeamDepartment['teams'][0]['sid'] : '';
+                    $this->pmm->InsertGoal($insertArray);
+                }
+            } else {
+                $insertArray['employee_sid'] = $ids;
+                $employeeTeamDepartment = getEmployeeDepartmentAndTeams($ids);
+                $insertArray['department_sid'] = $employeeTeamDepartment['teams'][0]['department_sid'] ? $employeeTeamDepartment['teams'][0]['department_sid'] : '';
+                $insertArray['team_sid'] = $employeeTeamDepartment['teams'][0]['sid'] ? $employeeTeamDepartment['teams'][0]['sid'] : '';
                 $this->pmm->InsertGoal($insertArray);
             }
         }
+
         //
         $resp['Status'] = true;
         $resp['Msg'] = 'Procees';
@@ -1940,7 +2002,8 @@ class Performance_management extends Public_Controller
     //
     function filterGoals(
         $goals,
-        $employerId
+        $employerIds,
+        $goalType = ''
     ) {
         //
         if (empty($goals)) {
@@ -1950,8 +2013,15 @@ class Performance_management extends Public_Controller
         $myGoals = [];
         //
         foreach ($goals as $goal) {
-            if ($goal['employee_sid'] == $employerId) {
-                $myGoals[] = $goal;
+
+            if ($goalType != '') {
+                if ($goalType == $goal['goal_type']) {
+                    $myGoals[] = $goal;
+                }
+            } else {
+                if ($goal['employee_sid'] == $employerIds) {
+                    $myGoals[] = $goal;
+                }
             }
         }
         //
@@ -2084,6 +2154,8 @@ class Performance_management extends Public_Controller
     function dashboardNew()
     {
         // 
+        redirect(base_url('performance-management/templates'), "refresh");
+
 
         $this->checkLogin($this->pargs);
         // Set title
@@ -2156,5 +2228,372 @@ class Performance_management extends Public_Controller
             }
         }
         echo "sucess";
+    }
+
+
+    //
+    public function ShareReportToReviewers()
+    {
+        $this->checkLogin($this->pargs);
+        $reviewers = $this->input->post('reviewers', TRUE);
+
+        if (in_array('All', $reviewers)) {
+            $users = db_get_company_users($this->pargs['companyId']);
+            $reviewers = array_column($users, 'sid');
+        }
+
+        $this->checkLogin($this->pargs);
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId']);
+        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);
+
+        $reportdata['graph1'] = $this->pargs['graph1'];
+        $reportdata['graph2'] = $this->pargs['graph2'];
+        $shareDdata = serialize($reportdata);
+        if (!empty($reviewers)) {
+            foreach ($reviewers as $reviewer) {
+                $insertData = [];
+                $insertData['share_to'] = $reviewer;
+                $insertData['share_from'] = $this->pargs['employee']['sid'];
+                $insertData['report_data'] = $shareDdata;
+                $insertData['company_sid'] = $this->pargs['companyId'];
+                $insertData['share_date'] = date('Y-m-d');
+                $this->pmm->saveReportShare($insertData);
+            }
+        }
+
+        $this->session->set_flashdata('message', '<b>Success:</b> Report Shared Successfully!');
+
+        redirect(base_url('performance-management/report'));
+    }
+
+
+
+    function sharedReports($reviewId = 'all', $employeeIds = 'all', $startDate = 'all', $endDate = 'all')
+    {
+        // 
+        $this->checkLogin($this->pargs);
+        // Set titleub
+        $this->pargs['title'] = 'Performance Management - Shared Reports';
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['sharedreports'] = $this->pmm->getSharedReport($this->pargs['employee']['sid'], $this->pargs['companyId']);
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
+        $this->load->view("{$this->pp}report/shared_index");
+        $this->load->view('main/footer');
+    }
+
+
+
+    function sharedReportDetail($reportId)
+    {
+        // 
+        $this->checkLogin($this->pargs);
+        // Set titleub
+        $this->pargs['title'] = 'Performance Management - Shared Reports';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $sharedReportData = $this->pmm->getSharedReportDetail($reportId);
+
+        $reportdata = unserialize($sharedReportData['report_data']);
+        if ($reportdata['graph1']) {
+            $this->pargs['graph1'] = $reportdata['graph1'];
+        } else {
+            $this->pargs['graph1'] = [];
+        }
+
+        if ($reportdata['graph2']) {
+            $this->pargs['graph2'] = $reportdata['graph2'];
+        } else {
+            $this->pargs['graph2'] = [];
+        }
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
+        $this->load->view("{$this->pp}report/index");
+        $this->load->view('main/footer');
+    }
+
+
+    //
+    public function teamComparison()
+    {
+
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Dashboard';
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        $this->pargs['employee'] =  $this->pargs['session']['employer_detail'];
+        //
+
+        $post = $this->input->post(NULL, TRUE);
+
+        $teamsgoalsdata = [];
+        if ($post['teams']) {
+            $teams = $post['teams'];
+            $teamsgoalsdata = $this->pmm->getTeamGoals($this->pargs['companyId'], $teams);
+            $this->pargs['teams'] = $teams;
+        }
+
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        // Get Settings
+
+
+        $this->pargs['teamsgoalsdata'] = $teamsgoalsdata;
+
+        $this->pargs['sanitizedView'] = false;
+        $this->pargs['load_view'] = false;
+
+        $this->load->view('main/header', $this->pargs);
+        $this->load->view("{$this->pp}team_comparison");
+        $this->load->view('main/footer');
+    }
+
+    //
+    function GetEmployeeGoalBody()
+    {
+        //
+        $this->checkLogin($this->pargs);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        // Set company department and teams
+        $this->pargs['company_dt'] = $this->pmm->GetCompanyDepartmentAndTeams($this->pargs['companyId']);
+        //
+        echo $this->load->view("{$this->pp}goals/employee_goal_create", $this->pargs, true);
+    }
+
+
+
+
+    function allCompletedReviews()
+    {   // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - All Reviews';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach ($this->pargs['company_employees'] as $emp) {
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetMyCompletedReviews($this->pargs['employerId'], 0);
+
+        $this->pargs['employees'] = db_get_company_users($this->pargs['companyId']);
+
+
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}all_completed_reviews");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+    //
+    public function ShareReview()
+    {
+        $this->checkLogin($this->pargs);
+        $employees = $this->input->post('employees', TRUE);
+
+        if (in_array('All', $employees)) {
+            $users = db_get_company_users($this->pargs['companyId']);
+            $employees = array_column($users, 'sid');
+        }
+        $reviewSid = $this->input->post('reviewid', TRUE);
+
+        $this->checkLogin($this->pargs);
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        if (!empty($employees)) {
+            foreach ($employees as $employee) {
+                $insertData = [];
+                $insertData['review_sid'] = $reviewSid;
+                $insertData['share_to'] = $employee;
+                $insertData['share_from'] = $this->pargs['employee']['sid'];
+                $insertData['company_sid'] = $this->pargs['companyId'];
+                $insertData['share_date'] = date('Y-m-d');
+                $this->pmm->saveSharedReview($insertData);
+            }
+        }
+
+        $this->session->set_flashdata('message', '<b>Success:</b> Review Shared Successfully!');
+        redirect(base_url('performance-management/reviews/all_completed'));
+    }
+
+
+
+    function SharedReviews()
+    {   // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - All Reviews';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach ($this->pargs['company_employees'] as $emp) {
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        // // Get Assigned Reviews 
+        $this->pargs['AssignedReviews'] = $this->pmm->GetSharedReviews($this->pargs['employerId'], 0);
+
+        //$this->pargs['employees'] = db_get_company_users($this->pargs['companyId']);
+
+
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}shared_reviews_blue");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+
+
+    function feedbackShared($reviewId, $revieweeId, $reviewerId)
+    {
+
+        // 
+        $this->checkLogin($this->pargs);
+        // Set title
+        $this->pargs['title'] = 'Performance Management - Feedback';
+        // Set logged in employee departments and teams
+        $this->pargs['employee_dt'] = $this->pmm->getMyDepartmentAndTeams($this->pargs['companyId'], $this->pargs['employerId']);
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+        //
+        $this->pargs['review'] = $this->pmm->GetReviewByReviewer($reviewId, $revieweeId, $reviewerId, true);
+        // Set company employees
+        $this->pargs['company_employees'] = $this->pmm->GetAllEmployees($this->pargs['companyId']);
+        //
+        $this->pargs['company_employees_index'] = [];
+        //
+        foreach ($this->pargs['company_employees'] as $emp) {
+            $this->pargs['company_employees_index'][$emp['Id']] = $emp;
+        }
+        //
+        $this->pargs['reviewId'] = $reviewId;
+        $this->pargs['revieweeId'] = $revieweeId;
+        $this->pargs['reviewerId'] = $reviewerId;
+        //
+        $this->pargs['selectedPage'] = $this->input->get('page', true) ? $this->input->get('page', true) : 1;
+        //
+        $this->load->view($this->header, $this->pargs);
+        $this->load->view("{$this->pp}header");
+        $this->load->view("{$this->pp}feedback/feedback_shared");
+        $this->load->view("{$this->pp}footer");
+        $this->load->view($this->footer);
+    }
+
+
+
+    function reportExport($periodStart = '', $periodEnd = '', $reviwers = '')
+    {
+        // 
+        $this->checkLogin($this->pargs);
+        // Set titleub
+        $this->pargs['title'] = 'Performance Management - Report';
+        // Set employee information for the blue screen
+        $this->pargs['employee'] = $this->pargs['session']['employer_detail'];
+
+        if ($periodStart != '' && $periodStart != 'all') {
+            $periodStart = formatDateToDB($periodStart, 'm-d-Y', DB_DATE);
+        }
+        if ($periodEnd != '' && $periodEnd != 'all') {
+            $periodEnd = formatDateToDB($periodEnd, 'm-d-Y', DB_DATE);
+        }
+
+        $selectedReviewers = json_decode(urldecode($reviwers));
+        //
+        $this->pargs['graph1'] = $this->pmm->GetCompletedReviews($this->pargs['companyId'], $periodStart, $periodEnd, $selectedReviewers);
+
+        $this->pargs['graph2'] = $this->pmm->GetReviewCountByStatus($this->pargs['companyId']);
+
+        $this->pargs['reviewers'] = db_get_company_users($this->pargs['companyId']);
+        //
+        $rows = '';
+        if (!empty($this->pargs['graph1']['Records'])) {
+            foreach ($this->pargs['graph1']['Records'] as $item) {
+                $rows .= $item['review_title'] . ',' . $item['first_name'] . ' ' . $item['last_name'] . ',' . $item['reviewee_first_name'] . ' ' . $item['reviewee_last_name'] . ',' . (str_replace(',', ' ', formatDateToDB($item['review_start_date'], DB_DATE, DATE))) . ' - ' . (str_replace(',', ' ', formatDateToDB($item['review_end_date'], DB_DATE, DATE))) . ',' . ($item['is_manager'] ? 'Reporting Manager' : 'Reviewer') . PHP_EOL;
+            }
+        }
+
+        $rows .= PHP_EOL;
+
+        $header_row = 'Company Name,' . $this->pargs['session']['company_detail']['CompanyName'] . PHP_EOL;
+        $header_row .= 'Exported By,' . $this->pargs['session']['employer_detail']['first_name'] . ' ' . $this->pargs['session']['employer_detail']['last_name']  . PHP_EOL . PHP_EOL;
+        $header_row .= 'Review,Reviewer,Reviewee,Cycle Period,Review Type';
+        $file_content = '';
+        $file_content .= $header_row . ',' . PHP_EOL;
+        $file_content .= $rows;
+        $file_size = 0;
+
+        header('Pragma: public');     // required
+        header('Expires: 0');         // no cache
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');  // Add the mime type from Code igniter.
+        header('Content-Disposition: attachment; filename="Reviewer(s)_that_havenot_completed_the_reviews_' . date('Y_m_d-H:i:s') . '.csv"');  // Add the file name
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . $file_size); // provide file size
+        header('Connection: close');
+        echo $header_row . ',' . PHP_EOL;
+        echo $rows;
+        die();
+    }
+
+    //
+    function uploadtest()
+    {
+        //
+        $post = $this->input->post(NULL, FALSE);
+
+        // _e($post ,true,true);
+
+        //   _e(base64_decode(str_replace('data:application/pdf;base64,', '', $post['data'])),true,true);
+        //  _e($post,true,true);
+
+
+
+        //
+        $dir = ROOTPATH . 'temp_files/performance_reports/' . $post['token'] . '/';
+        //
+        if (!is_dir($dir)) mkdir($dir, 0777, true);
+
+        // Verification documents
+        $pathWithFile = $dir . date('Ymdhsi') . '.pdf';
+        $f = fopen($pathWithFile, 'w');
+
+
+
+        // fwrite($f, base64_decode(str_replace('data:application/pdf;base64,', '', $post['data']['content']), true));
+
+
+        //
+        $data['user_sid'] = 1;
+        $htmlData = $this->load->view('Performance_management/theme2/report/share_report2', $data, true);
+
+        //  _e($htmlData, true, true);
+
+
+        fwrite($f, $htmlData);
+
+        fclose($f);
     }
 }
