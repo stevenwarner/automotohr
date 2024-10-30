@@ -325,6 +325,11 @@ class Courses extends Public_Controller
             $data['version'] = $scormInfo["version"];
             //
             $data['CMIObject'] = $this->course_model->getCMIObject($sid, $employeeId, $companyId);
+            // add the employee id and name
+            if (!$data["CMIObject"] || array_key_exists("cmi.core.student_id", $data['CMIObject'])) {
+                $data['CMIObject']["cmi.core.student_id"] = $data['CMIObject']["cmi.core.student_id"] ? $data['CMIObject']["cmi.core.student_id"] : $employeeId;
+                $data['CMIObject']["cmi.core.student_name"] = $data['CMIObject']["cmi.core.student_name"] ? $data['CMIObject']["cmi.core.student_name"] : getEmployeeOnlyNameBySID($employeeId);
+            }
         } elseif ($courseInfo['course_type'] == "manual") {
             $viewName = "manual_course";
             //
