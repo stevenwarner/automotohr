@@ -780,8 +780,33 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             <?php
                             } ?>
 
-                        <?php } ?>
+                            <!-- Approval -->
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <span id="main">
+                                        <div class="link-box bg-complynet full-width">
+                                            <h2>Compliance <br /> Management System</h2>
+                                            <ul class="cs-jam-ul" style="position: relative; z-index:1;">
+                                                <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
+                                                    <li><button id="js-dashboard"
+                                                            data-href="<?= base_url('complynet/dashboard'); ?>"
+                                                            class="btn btn-link"
+                                                            style="color: #ffffff; padding: 3px;">Dashboard</button></li>
+                                                <?php } ?>
+                                                <li><button id="js-login" data-href="<?= base_url('complynet/login'); ?>"
+                                                        class="btn btn-link"
+                                                        style="color: #ffffff; padding: 3px;">Login</button></li>
+                                            </ul>
+                                            <div class="status-panel">
+                                                <h3>Complynet</h3>
+                                                <span>Show</span>
+                                            </div>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
 
+                        <?php } ?>
                         <!-- Authorised Signature  -->
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <a href="<?= base_url('authorized_document'); ?>">

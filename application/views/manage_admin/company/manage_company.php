@@ -858,7 +858,7 @@
                                                 <!-- EMS -  End  -->
                                                 <article class="information-box">
                                                     <header class="hr-box-header">
-                                                        ComplyNet Status
+                                                        Compliance Management System
                                                         <a href="<?= base_url('manage_admin/companies/manage_complynet/' . $company_sid) ?>" id="complynet-manage" class="site-btn pull-right">Manage</a>
                                                     </header>
                                                     <div class="table-outer">
