@@ -72,19 +72,6 @@
 
                 <div class="text-center banner-btn-apply">
                     <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a>
-                    <?php if ($indeedApplyButtonDetails): ?>
-                        <a class="site-btn apply-now-large" style="background: none;" href="javascript:void(0)">
-                            <div
-                                data-indeed-apply-widget-type="AWI"
-                                data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
-                                data-indeed-apply-partnerApiToken="56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781"
-                                data-indeed-apply-encryptedJobUrl="<?= urlencode(current_url()) ?>"
-                                data-indeed-apply-hl="en"
-                                data-indeed-apply-co="US"
-                                data-indeed-apply-newTab="true">
-                            </div>
-                        </a>
-                    <?php endif; ?>
                 </div>
             </div>
         <?php $li_color = '#000'; //use black instead of button color - suggested by Steven
@@ -95,6 +82,21 @@
             //}
         } ?>
         <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <?php if ($indeedApplyButtonDetails): ?>
+                        <div
+                            data-indeed-apply-widget-type="AWI"
+                            data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
+                            data-indeed-apply-partnerApiToken="56010deedbac7ff45f152641f2a5ec8c819b17dea29f503a3ffa137ae3f71781"
+                            data-indeed-apply-encryptedJobUrl="<?= urlencode(current_url()) ?>"
+                            data-indeed-apply-hl="en"
+                            data-indeed-apply-co="US"
+                            data-indeed-apply-newTab="true">
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="<?php echo $banner_type == 'custom' ? '' : 'detail-banner-caption' ?>">
                 <header class="heading-title mt-3" style="<?php echo $banner_type == 'custom' ? 'text-align: center; margin: 0' : '' ?>">
                     <h1 class="job-title <?php echo $banner_type == 'custom' ? 'custom-theme4-job-title' : '' ?>"><?php echo $job_details['Title'] ?></h1>
