@@ -11,9 +11,11 @@
     <?php if ((!empty($jobs_detail_page_banner_data) && $jobs_detail_page_banner_data['banner_type'] == 'default') || empty($jobs_detail_page_banner_data)) { ?>
         <div class="row">
             <div class="col-sm-12 text-center">
-                <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a>
+                <a href="javascript:;" class="site-btn bg-color apply-now-large" data-toggle="modal" data-target="#myModal">apply now</a><br>
+            </div>
+            <div class="col-sm-12 text-center">
                 <?php if ($indeedApplyButtonDetails): ?>
-                    <a class="site-btn apply-now-large" style="background: none;" href="javascript:void(0)">
+                    <a class="site-btn apply-now-large" style="background: none;min-width:100px;" href="javascript:void(0)">
                         <div
                             data-indeed-apply-widget-type="AWI"
                             data-indeed-apply-sourceJobPostingId="<?= $indeedApplyButtonDetails["indeed_posting_id"]; ?>"
@@ -21,7 +23,7 @@
                             data-indeed-apply-encryptedJobUrl="<?= urlencode(current_url()) ?>"
                             data-indeed-apply-hl="en"
                             data-indeed-apply-co="US"
-                            data-indeed-apply-newTab="true">
+                            data-indeed-apply-newTab="true" style="background: none; text-align: center! important">
                         </div>
                     </a>
                 <?php endif; ?>

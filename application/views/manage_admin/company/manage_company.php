@@ -482,13 +482,15 @@
                                                 </article>
 
                                                 <!-- Phone Pattern -->
+
                                                 <div class="table-outer">
                                                     <div class="info-row">
                                                         <p><strong>Indeed Job Sync & Disposition API</strong></p>
-                                                        <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>" id="form_set_indeed_api_status">
-                                                            <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_api_status" />
-                                                            <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
-                                                            <ul>
+                                                        <ul>
+                                                            <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>" id="form_set_indeed_api_status">
+                                                                <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_api_status" />
+                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+
                                                                 <li class="lineheight">
                                                                     <div class="row">
                                                                         <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
@@ -502,10 +504,36 @@
                                                                         </div>
                                                                     </div>
                                                                 </li>
-                                                            </ul>
-                                                        </form>
+
+                                                            </form>
+
+                                                            <form enctype="multipart/form-data" method="post" action="<?= base_url('manage_admin/companies/manage_company/' . ($company_sid) . ''); ?>" id="form_set_indeed_job_opt_status">
+                                                                <input type="hidden" id="perform_action" name="perform_action" value="set_indeed_job_opt_status" />
+                                                                <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
+                                                                <input type="hidden" id="opt_status" name="opt_status" value="" />
+                                                                <li>
+                                                                    <label>Indeed Apply</label>
+                                                                    <div class="text text-center">
+                                                                        <?php $indeedJobOptStatus =  ($company_info['indeed_job_opt'] == 1 ? 'Opt-In' : 'Opt-Out'); ?>
+                                                                        <span class="<?php echo strtolower(str_replace(' ', '-', $indeedJobOptStatus)); ?>">
+                                                                            <?php echo ucwords(str_replace('-', ' ', $indeedJobOptStatus)) ?>
+                                                                            <?php if ($indeedJobOptStatus == 'Opt-In') { ?>
+                                                                                <img src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                                                                <a href="javascript:;" data-status="0" data-attr="occupational_license_flag" data-label="Occupational License Information" class="site-btn btn-sm btn-danger pull-right js_set_indeed_job_opt_status">Opt-Out</a>
+                                                                            <?php } else { ?>
+                                                                                <img src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                                                                <a href="javascript:;" data-status="1" data-attr="occupational_license_flag" data-label="Occupational License Information" class="site-btn btn-sm pull-right js_set_indeed_job_opt_status">Opt-In</a>
+                                                                            <?php } ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </form>
+                                                        </ul>
                                                     </div>
                                                 </div>
+
+
+
                                                 <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
 
@@ -2341,6 +2369,28 @@
         alertify.confirm('Confirmation', "<strong> Are you sure you want to " + msg + "</strong>",
             function() {
                 $("#form_set_indeed_api_status").submit();
+            },
+            function() {
+                alertify.error('Canceled');
+            });
+    });
+
+
+    //
+    $(document).on('click', '.js_set_indeed_job_opt_status', function() {
+
+        var status = $(this).attr('data-status');
+        $("#opt_status").val(status);
+        let msg = '';
+        if (status == 1) {
+            msg = "This action will show the 'Indeed Apply' button on the careers page.<br> Are you sure you want to opt-in?";
+        } else {
+            msg = "This action will hide the 'Indeed Apply' button on the careers page.<br> Are you sure you want to opt-out?";
+        }
+
+        alertify.confirm('Confirmation', "<strong> " + msg + "</strong>",
+            function() {
+                 $("#form_set_indeed_job_opt_status").submit();
             },
             function() {
                 alertify.error('Canceled');

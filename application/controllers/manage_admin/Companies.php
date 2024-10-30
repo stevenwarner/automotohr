@@ -1605,6 +1605,16 @@ class Companies extends Admin_Controller
                         $this->session->set_flashdata('message', 'You have successfully <strong>' . ($this->input->post('set_indeed_api_status', true) == 1 ? "Activated" : "Deactivated") . '</strong> the Indeed job sync & disposition API.');
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
+                    case 'set_indeed_job_opt_status':
+                        $this
+                            ->company_model
+                            ->updateIndeedJobOptStatus(
+                                $this->input->post('company_sid', true),
+                                $this->input->post('opt_status', true)
+                            );
+                        $this->session->set_flashdata('message', 'You have successfully set <strong>' . ($this->input->post('opt_status', true) == 1 ? " Indeed Job Opt-In " : " Indeed Job Opt-Out") . '</strong>.');
+                        redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
+                        break;
                 }
             }
         } else {

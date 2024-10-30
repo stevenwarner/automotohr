@@ -1131,7 +1131,8 @@ class Home extends CI_Controller
         $data["indeedApplyButtonDetails"] = $this
             ->job_details
             ->getIndeedApplyButtonDetails(
-                $originalId
+                $originalId,
+                $data['company_details']['sid']
             );
 
         $jobs_page_title = $this->theme_meta_model->fGetThemeMetaData($data['company_details']['sid'], $theme_name, 'jobs', 'jobs_page_title');
