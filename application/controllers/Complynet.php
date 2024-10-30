@@ -13,7 +13,7 @@ class Complynet extends Public_Controller {
      * @return VOID
      */
     function index($activeTab = 'dashboard'){
-        return redirect('dashboard');
+ 
         if (!$this->session->userdata('logged_in')) redirect(base_url('login'), "refresh");
         $data['session'] = $this->session->userdata('logged_in');
         $employer_detail = $data['session']['employer_detail'];

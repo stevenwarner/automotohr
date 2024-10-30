@@ -754,10 +754,48 @@
                                         <?php } ?>
                                     <?php } ?>
 
+
+                                    <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
+                                    $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
+                                    $complynet_dashboard_link = $session["company_detail"]["complynet_dashboard_link"];
+                                    $access_level  = $session["employer_detail"]['access_level'];
+                                    ?>
+
+                                    <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure>
+                                                        <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
+                                                    </figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('complynet'); ?>">Compliance <br /> Management System</a>
+                                                    </h2>
+                                                    <div class="button-panel col-lg-12">
+                                                        <div class="row">
+                                                            <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } else { ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+
+
                                     <?php
                                     $pto_user_access = get_pto_user_access($session['employer_detail']['parent_sid'], $session['employer_detail']['sid']);
                                     ?>
-
                                     <!-- Performance Review -->
 
                                     <?php if (checkIfAppIsEnabled('performance_management')) { ?>
