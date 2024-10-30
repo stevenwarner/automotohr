@@ -83,7 +83,7 @@
         } ?>
         <div class="container">
             <div class="row">
-                <div class="col-sm-12 text-center">
+                <div class="col-sm-2 col-sm-offset-5 text-center">
                     <?php if ($indeedApplyButtonDetails): ?>
                         <div
                             data-indeed-apply-widget-type="AWI"
