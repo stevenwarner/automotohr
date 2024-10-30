@@ -1,6 +1,6 @@
 <?php if ($load_view) { ?>
     <div class="main">
-        <div class="container">
+        <div class="container-fluid">
         <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
             <div class="row">
                 <div class="col-lg-12">

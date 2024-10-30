@@ -1,5 +1,5 @@
 <div class="main jsmaincontent">
-    <div class="container">
+    <div class="container-fluid">
         <div style="position: relative; min-height: 500px;">
         
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>

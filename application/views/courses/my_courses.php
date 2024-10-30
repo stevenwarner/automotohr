@@ -1,5 +1,5 @@
 <div class="main jsmaincontent">
-    <div class="container">
+    <div class="container-fluid">
         <div style="position: relative">
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
             <?php $this->load->view('courses/partials/my_course_filter'); ?>
