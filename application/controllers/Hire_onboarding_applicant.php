@@ -151,6 +151,10 @@ class Hire_onboarding_applicant extends CI_Controller
 
     private function move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date = null)
     {
+
+
+        $assignedBySid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+
         if ($joining_date == null) $joining_date = date('Y-m-d');
         else $joining_date = DateTime::createFromFormat('m/d/Y', $joining_date)->format('Y-m-d');
         $company_name = $company_info['CompanyName'];
@@ -353,7 +357,7 @@ class Hire_onboarding_applicant extends CI_Controller
             $onboarding_configuration = $this->hire_onboarding_applicant_model->get_onboarding_configuration($applicant_sid, $employee_result);
 
             // 14) Documents
-            $documents = $this->hire_onboarding_applicant_model->get_documents($applicant_sid, $employee_result);
+            $documents = $this->hire_onboarding_applicant_model->get_documents($applicant_sid, $employee_result,$assignedBySid);
 
             // 15) Direct Deposit Information
             $bank_details = $this->hire_onboarding_applicant_model->get_direct_deposit_information($applicant_sid, $employee_result);

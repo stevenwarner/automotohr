@@ -81,7 +81,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.hourly_technician');
         $this->db->select('portal_job_applications.flat_rate_technician');
         $this->db->select('portal_job_applications.semi_monthly_salary');
-        $this->db->select('portal_job_applications.semi_monthly_draw');        
+        $this->db->select('portal_job_applications.semi_monthly_draw');
         //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');
@@ -966,7 +966,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         //        }
     }
 
-    function get_documents($sid, $hired_sid)
+    function get_documents($sid, $hired_sid, $assignedBySid = 0)
     {
         //Fillable Forms
         //W4
@@ -981,6 +981,8 @@ class Hire_onboarding_applicant_model extends CI_Model
 
             unset($forms[0]['sid']);
             $forms[0]['employer_sid'] = $hired_sid;
+            $forms[0]['last_assign_by'] = $assignedBySid;
+
             $forms[0]['user_type'] = 'employee';
             $this->db->insert('form_w4_original', $forms[0]);
             $newW4Id = $this->db->insert_id();
@@ -1030,6 +1032,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             unset($forms[0]['sid']);
             $forms[0]['user_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
+            $forms[0]['last_assign_by'] = $assignedBySid;
             $this->db->insert('applicant_w9form', $forms[0]);
             $newW9Id = $this->db->insert_id();
 
@@ -1080,6 +1083,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             $forms[0]['user_sid'] = $hired_sid;
             $forms[0]['user_type'] = 'employee';
             $forms[0]['emp_app_sid'] = $hired_sid;
+            $forms[0]['last_assign_by'] = $assignedBySid;
             $this->db->insert('applicant_i9form', $forms[0]);
 
             $newI9Id = $this->db->insert_id();
@@ -1135,6 +1139,8 @@ class Hire_onboarding_applicant_model extends CI_Model
                 unset($record['sid']);
                 $record['user_sid'] = $hired_sid;
                 $record['user_type'] = 'employee';
+
+                $record['assigned_by'] = $assignedBySid;
 
                 $this->db->insert('documents_assigned', $record);
                 $newSid = $this->db->insert_id();
