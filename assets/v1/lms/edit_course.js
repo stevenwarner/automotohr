@@ -512,6 +512,9 @@ $(function editCourse() {
 		try {
 			//
 			const updateCourseResponse = await updateCourseCall(courseObj);
+
+			console.log(courseObj);
+			console.log(deleteLanguages)
 			//
 			if (courseObj.course_type === "scorm") {
 				//
