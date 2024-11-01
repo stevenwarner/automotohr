@@ -99,7 +99,7 @@
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <strong>Subordinate Report</strong>
+                                <strong>Team Members Report</strong>
                             </div>
                             <div class="panel-body">
 

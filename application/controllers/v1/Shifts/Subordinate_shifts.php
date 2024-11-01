@@ -38,7 +38,7 @@ class Subordinate_shifts extends Public_Controller
         }
         // set default data
         $data = [];
-        $data['title'] = "My Subordinates Shifts | " . STORE_NAME;
+        $data['title'] = "My Team Members Shifts | " . STORE_NAME;
         $data['employee'] = $this->loggedInEmployee;
         $data['loggedInEmployee'] = $this->loggedInEmployee;
         $data["security_details"] = $data["securityDetails"] = db_get_access_level_details($this->loggedInCompany["sid"]);

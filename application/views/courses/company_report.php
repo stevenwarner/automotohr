@@ -86,12 +86,25 @@
                                                             <button type="button" class="form-btn btn-black" onclick="jsClearDateFilters();">
                                                                 <i class="fa fa-times" aria-hidden="true"></i>
                                                                 &nbsp;
+                                                                &nbsp;
                                                                 Clear Filter
                                                             </button>
                                                         </div>
                                                         <button type="submit" id="jsFetchCSVReport" class="dn"></button>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </form>
+                                        <form id="form-filters" method="post" enctype="multipart/form-data" action="">
+                                            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8"></div>
+                                            <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                <input type="hidden" name="departmentData" value="1">
+                                                <button type="submit" id="jsDepartmentCSVReport" class="dn"></button>
+                                                <br>
+                                                <button type="button" class="form-btn" onclick="excel_export_departments();">
+                                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                                    Export CSV
+                                                </button>
                                             </div>
                                         </form>
                                     </div>
@@ -412,9 +425,13 @@
         window.location = url;
     }
 
-
     function excel_export() {
         $("#jsFetchCSVReport").click();
+    }
+
+    // export department data
+    function excel_export_departments() {
+        $("#jsDepartmentCSVReport").click();
     }
 
     function jsClearDateFilters() {

@@ -620,7 +620,7 @@ class Courses extends Public_Controller
         if ($type == "plus") {
             $data['title'] = "Employee Courses | " . STORE_NAME;
         } else {
-            $data['title'] = "Subordinate Courses | " . STORE_NAME;
+            $data['title'] = "Team Members Courses | " . STORE_NAME;
         }
         //
         $data['companyId'] = $companyId;
@@ -1080,7 +1080,7 @@ class Courses extends Public_Controller
                             $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;
                             //
                             $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeCoursesReport(
-                                $data['company_sid'], 
+                                $data['company_sid'],
                                 $employee['sid'],
                                 $jobRoleCourses[$job_title_sid ]
                             );
@@ -1152,59 +1152,95 @@ class Courses extends Public_Controller
             //
             if ($this->input->method() === 'post') {
                 if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
-                    header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename=data.csv');
-                    $output = fopen('php://output', 'w');
-                    //
-                    fputcsv($output, array('Company Name',$session['company_detail']['CompanyName'], '', '', '', ''));
-                    fputcsv($output, array('Exported By',getUserNameBySID($security_sid), '', '', '', ''));
-                    fputcsv($output, array('Export Date', date(DATE_WITH_TIME, strtotime('now')), '', '', '', ''));
-                    //
-                    fputcsv($output, array('', '', '', '', '', ''));
-                    fputcsv($output, array('', '', '', '', '', ''));
-                    //
-                    fputcsv($output, array('Employee have courses', $companyReport['employee_have_courses'], '', '', '', ''));
-                    fputcsv($output, array('Employee not have courses', $companyReport['employee_not_have_courses'], '', '', '', ''));
-                    //
-                    fputcsv($output, array('Expired courses', $companyReport['courses_report']['expired'], '', '', '', ''));
-                    fputcsv($output, array('Start courses', $companyReport['courses_report']['started'], '', '', '', ''));
-                    fputcsv($output, array('Coming courses', $companyReport['courses_report']['coming'], '', '', '', ''));
-                    //
-                    fputcsv($output, array('', '', '', '', '', ''));
-                    fputcsv($output, array('', '', '', '', '', ''));
-                    //
-                    $cols = array();
-                    $cols[] = 'Employee Name';
-                    $cols[] = 'Department';
-                    $cols[] = 'Assign Course(s)';
-                    $cols[] = 'Pending Course(s)';
-                    $cols[] = 'Completed Course(s)';
-                    $cols[] = 'Completion Percentage';
-                    //
-                    fputcsv($output, $cols);
-                    //
-                    foreach ($companyReport['departments_report'] as $department) {
-                        if (!empty($department["employees"])) { 
-                            foreach ($department['employees'] as $employee) { 
-                                $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
-                                $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
-                                $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
-                                $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
-                                //
-                                fputcsv($output, array(
-                                    $companyReport["EmployeeList"][$employee]["full_name"],
-                                    $department["name"], 
-                                    $assignCourses, 
-                                    $pendingCourses, 
-                                    $completedCourses,
-                                    $completedCoursesPercentage." %"
-                                ));
+                    if ($this->input->post('departmentData') !== null && $this->input->post('departmentData')) {
+                        header('Content-Type: text/csv; charset=utf-8');
+                        header('Content-Disposition: attachment; filename=department_report.csv');
+                        $output = fopen('php://output', 'w');
+                        // Write the header row
+                        fputcsv($output, ['Department Name', 'Total Courses', 'Completed Courses', 'Pending Courses']);
+
+                        foreach ($companyReport['departments_report'] as $department) {
+                            // Write the department summary row
+                            fputcsv($output, [
+                                $department['name'],
+                                $department['total_courses'],
+                                $department['completed_courses'],
+                                $department['pending_courses']
+                            ]);
+
+                            // Write the employee and course details
+                            foreach ($department['employees'] as $employee) {
+                                $employeeData = $companyReport['EmployeeList'][$employee];
+                                foreach ($employeeData['courses_statistics']['coursesInfo'] as $courseId => $status) {
+                                    $course = $companyReport['CoursesList'][$courseId];
+                                    fputcsv($output, [
+                                        '', // Indentation for sub-table
+                                        $employeeData['full_name'],
+                                        $course['course_title'],
+                                        $status == 0 ? 'Pending' : 'Completed',
+                                        $status == 0 ? $employeeData['courses_statistics']['pendingCount'] : $employeeData['courses_statistics']['completedCount']
+                                    ]);
+                                }
                             }
                         }
-                    }
 
-                    fclose($output);
-                    exit;
+                        fclose($output);
+                        exit;
+                    } else {
+                        header('Content-Type: text/csv; charset=utf-8');
+                        header('Content-Disposition: attachment; filename=data.csv');
+                        $output = fopen('php://output', 'w');
+                        //
+                        fputcsv($output, array('Company Name',$session['company_detail']['CompanyName'], '', '', '', ''));
+                        fputcsv($output, array('Exported By',getUserNameBySID($security_sid), '', '', '', ''));
+                        fputcsv($output, array('Export Date', date(DATE_WITH_TIME, strtotime('now')), '', '', '', ''));
+                        //
+                        fputcsv($output, array('', '', '', '', '', ''));
+                        fputcsv($output, array('', '', '', '', '', ''));
+                        //
+                        fputcsv($output, array('Employee have courses', $companyReport['employee_have_courses'], '', '', '', ''));
+                        fputcsv($output, array('Employee not have courses', $companyReport['employee_not_have_courses'], '', '', '', ''));
+                        //
+                        fputcsv($output, array('Expired courses', $companyReport['courses_report']['expired'], '', '', '', ''));
+                        fputcsv($output, array('Start courses', $companyReport['courses_report']['started'], '', '', '', ''));
+                        fputcsv($output, array('Coming courses', $companyReport['courses_report']['coming'], '', '', '', ''));
+                        //
+                        fputcsv($output, array('', '', '', '', '', ''));
+                        fputcsv($output, array('', '', '', '', '', ''));
+                        //
+                        $cols = array();
+                        $cols[] = 'Employee Name';
+                        $cols[] = 'Department';
+                        $cols[] = 'Assign Course(s)';
+                        $cols[] = 'Pending Course(s)';
+                        $cols[] = 'Completed Course(s)';
+                        $cols[] = 'Completion Percentage';
+                        //
+                        fputcsv($output, $cols);
+                        //
+                        foreach ($companyReport['departments_report'] as $department) {
+                            if (!empty($department["employees"])) {
+                                foreach ($department['employees'] as $employee) {
+                                    $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
+                                    $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
+                                    $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
+                                    $completedCoursesPercentage = $companyReport["EmployeeList"][$employee]["courses_statistics"]['percentage'];
+                                    //
+                                    fputcsv($output, array(
+                                        $companyReport["EmployeeList"][$employee]["full_name"],
+                                        $department["name"],
+                                        $assignCourses,
+                                        $pendingCourses,
+                                        $completedCourses,
+                                        $completedCoursesPercentage." %"
+                                    ));
+                                }
+                            }
+                        }
+
+                        fclose($output);
+                        exit;
+                    }
                 }    
             }
             //

@@ -19,16 +19,18 @@
                             <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
                                 <?php echo "My"; ?>
                             <?php } else { ?> 
-                                <?php echo $type == "non_plus" ? "Subordinate" : "Employee"; ?>
+                                <?php echo $type == "non_plus" ? "Team Members" : "Employee"; ?>
                             <?php } ?>   
                             Courses
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
-                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
+                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Team Members Report</a>
                                     <?php } else { ?>
                                         <?php if ($type == "non_plus") { ?>
-                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Subordinate Report</a>
+                                            <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
+
+                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Team Members Report</a>
                                         <?php } else if ($type == "plus") { ?>
                                             <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Company Report</a>
                                         <?php } ?>
