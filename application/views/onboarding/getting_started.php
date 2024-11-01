@@ -781,7 +781,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                             } ?>
 
                             <!-- Approval -->
-                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 hidden">
                                 <div class="widget-box">
                                     <span id="main">
                                         <div class="link-box bg-complynet full-width">

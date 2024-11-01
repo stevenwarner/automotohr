@@ -752,7 +752,7 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 hidden">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure>
@@ -782,7 +782,7 @@
                                         </div>
                                     <?php } ?>
 
-           
+
 
                                     <?php
                                     $pto_user_access = get_pto_user_access($session['employer_detail']['parent_sid'], $session['employer_detail']['sid']);
