@@ -519,7 +519,7 @@ $(function LMSEmployeeCourses() {
 							name: 'Due Soon',
 							y: count.expire_soon,
 							color: '#feb56a',
-							url: baseURI + "lms/courses/my?type=due_soon"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=due_soon"
 						},
 						{
 							name: 'Past Due',
@@ -527,25 +527,25 @@ $(function LMSEmployeeCourses() {
 							selected: true,
 							y: count.expired,
 							color: '#fa4b42',
-							url: baseURI + "lms/courses/my?type=past_due"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=past_due"
 						},
 						{
 							name: 'In Progress',
 							y: count.inprogress,
 							color: '#544fc5',
-							url: baseURI + "lms/courses/my?type=inprogress"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=inprogress"
 						},
 						{
 							name: 'Ready To Start',
 							y: count.readyToStart,
 							color: '#2caffe',
-							url: baseURI + "lms/courses/my?type=ready_to_start"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=ready_to_start"
 						},
 						{
 							name: 'Passed',
 							y: count.passed,
 							color: '#00e272',
-							url: baseURI + "lms/courses/my?type=completed"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=completed"
 						}
 					]
 				}
@@ -626,43 +626,43 @@ $(function LMSEmployeeCourses() {
 							name: 'Assigned ',
 							color: '#6B8ABB',
 							y: count.assigned,
-							url: baseURI + "lms/courses/my?type=assigned",
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=assigned",
 						},
 						{
 							name: 'Pending',
 							color: '#ff834e',
 							y: count.pending,
-							url: baseURI + "lms/courses/my?type=pending"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=pending"
 						},
 						{
 							name: 'Ready To Start',
 							color: '#2caffe',
 							y: count.readyToStart,
-							url: baseURI + "lms/courses/my?type=ready_to_start"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=ready_to_start"
 						},
 						{
 							name: 'In Progress',
 							color: '#544fc5',
 							y: count.inprogress,
-							url: baseURI + "lms/courses/my?type=inprogress"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=inprogress"
 						},
 						{
 							name: 'Passed',
 							color: '#00e272',
 							y: count.passed,
-							url: baseURI + "lms/courses/my?type=completed"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=completed"
 						},
 						{
 							name: 'Past Due',
 							color: '#fa4b42',
 							y: count.expired,
-							url: baseURI + "lms/courses/my?type=past_due"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=past_due"
 						},
 						{
 							name: 'Due Soon',
 							color: '#feb56a',
 							y: count.expire_soon,
-							url: baseURI + "lms/courses/my?type=due_soon"
+							url: baseURI + "lms/subordinate/courses/"+(subordinateId)+"?type=due_soon"
 						}
 					],
 					dataLabels: {

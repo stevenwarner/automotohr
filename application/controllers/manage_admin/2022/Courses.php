@@ -63,6 +63,7 @@ class Courses extends Admin_Controller
             'v1/plugins/ms_uploader/main',
             'v1/plugins/ms_modal/main',
             'v1/plugins/ms_recorder/main',
+            'v1/plugins/moment/moment.min',
             'v1/common',
             'v1/lms/add_question',
             'v1/lms/edit_question',
