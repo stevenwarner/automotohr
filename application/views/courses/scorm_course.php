@@ -61,5 +61,4 @@
     var subordinateId = "<?php echo $subordinate_sid; ?>";
     var reviewAs = "<?php echo $reviewAs; ?>";
     var search = "<?php echo $search; ?>";
-    console.log(search)
 </script>

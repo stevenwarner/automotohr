@@ -152,7 +152,8 @@ $(function LMSEmployeeCourses() {
 								"Congratulations on successfully passing this course!",
 								function () {
 									window.location =
-										baseURI + "lms/courses/my";
+										baseURI +
+										"lms/courses/my_lms_dashboard";
 								}
 							);
 						}
