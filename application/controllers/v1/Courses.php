@@ -398,6 +398,7 @@ class Courses extends Public_Controller
             DB_DATE,
             DATE
         );
+        $data["studentInfo"] = $studentInfo;
         //
         // load CSS
         $data['PageCSS'] = [
