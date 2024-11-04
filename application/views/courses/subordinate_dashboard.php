@@ -25,10 +25,11 @@
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
-                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
+                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Team Report</a>
                                     <?php } else { ?>
                                         <?php if ($type == "non_plus") { ?>
-                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Subordinate Report</a>
+                                            <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to My Courses</a>
+                                            <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Team Report</a>
                                         <?php } else if ($type == "plus") { ?>
                                             <a href="<?php echo base_url('lms/courses/company_report'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to Company Report</a>
                                         <?php } ?>
