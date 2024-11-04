@@ -80,7 +80,7 @@ class Course_model extends CI_Model
     public function getStudentInfo($employeeId)
     {
         //
-        $this->db->select('dob, ssn');
+        $this->db->select('first_name, last_name, middle_name, dob, ssn');
         $this->db->where('sid', $employeeId);
         //
         $result = $this->db->get('users')->row_array();
