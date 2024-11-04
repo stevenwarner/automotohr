@@ -99,7 +99,7 @@
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <strong>Subordinate Report</strong>
+                                <strong>Team Report</strong>
                             </div>
                             <div class="panel-body">
 
@@ -110,7 +110,7 @@
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 text-right">
                                         <button type="button" class="btn btn-info btn-orange csRadius5 csF16 jsSendReminderEmail">
-                                            <i class="fa fa-paper-plane" aria-hidden="true"></i> Send Reminder Email                                        
+                                            <i class="fa fa-paper-plane" aria-hidden="true"></i> Send Reminder Email
                                         </button>
                                     </div>
                                 </div>
