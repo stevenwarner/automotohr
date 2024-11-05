@@ -577,4 +577,48 @@ class Course_model extends CI_Model
     public function insertEmployeeCourseInfo ($dataToInsert) {
         $this->db->insert('lms_employee_course', $dataToInsert);
     }
+
+
+
+    public function getEmployeeCourseData ($companyId, $filter) {
+
+        
+        $this->db->select('users.sid,users.employee_number,users.ssn,users.email,users.PhoneNumber,lms_employee_course.course_status,lms_employee_course.lesson_status,lms_employee_course.course_type,lms_employee_course.course_taken_count,lms_default_courses.course_title,lms_default_courses.course_start_period,lms_default_courses.course_end_period');
+        $this->db->join('users', 'users.sid = lms_employee_course.employee_sid', 'inner');
+        $this->db->join('lms_default_courses', 'lms_default_courses.sid = lms_employee_course.course_sid', 'inner');
+
+        $this->db->where('lms_employee_course.company_sid', $companyId);
+        //
+        if ($filter["courses"] != "all" && $filter["courses"] != "0") {
+            $this->db->where_in('lms_employee_course.course_sid', explode(",", $filter["courses"]));
+        }
+        if ($filter["employees"] != "all" && $filter["employees"] != "0") {
+            $this->db->where_in('lms_employee_course.employee_sid', explode(",", $filter["employees"]));
+        }
+        //
+        $a = $this->db->get('lms_employee_course');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+
+    public function getEmployeePassesCourseData ($companyId, $employeeId) {
+        
+        $this->db->select('lms_employee_course.course_status,lms_employee_course.lesson_status,lms_employee_course.course_type,lms_employee_course.course_taken_count,lms_default_courses.course_title,lms_default_courses.course_start_period,lms_default_courses.course_end_period');
+        $this->db->join('lms_default_courses', 'lms_default_courses.sid = lms_employee_course.course_sid', 'inner');
+
+        $this->db->where('lms_employee_course.company_sid', $companyId);
+        $this->db->where('lms_employee_course.employee_sid', $employeeId);
+        $this->db->where('lms_employee_course.course_status', 'completed');
+            //
+        $a = $this->db->get('lms_employee_course');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
 }

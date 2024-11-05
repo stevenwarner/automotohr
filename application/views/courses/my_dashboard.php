@@ -18,6 +18,8 @@
                         <h1 class="section-ttile">
                             My Courses
                             <div style="float: right;">
+                                <a href="<?php echo base_url('lms/courses/export_passed_courses'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Export Passed Courses</a>
+
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
                                         <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Subordinate Report</a>
@@ -46,7 +48,7 @@
                     </div>
                     <div class="panel-body">
                         <div id="container2"></div>
-                        
+
                     </div>
                 </div>
                 <div class="panel panel-default">
@@ -211,7 +213,7 @@
 </div>
 
 
-<script src="https://code.highcharts.com/highcharts.js"></script> 
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>

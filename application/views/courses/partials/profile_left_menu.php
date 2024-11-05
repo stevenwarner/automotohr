@@ -34,7 +34,16 @@
                     <figure><i class="fa fa-file-text-o"></i></figure>Import CSV
                 </a>
             </li>
+
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), 'reports') !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url('lms/courses/reports') ?>">
+                    <figure><i class="fa fa-line-chart"></i></figure>reports
+                </a>
+            </li>
         <?php } ?>
+
         <li>
             <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
                     echo 'class="active"';
