@@ -1674,18 +1674,18 @@ class Courses extends Public_Controller
     private function setColumns()
     {
         return [
-            ["slug" => "sid", "value" => "Employee Id", "selected" => true],
-            ["slug" => "employee_number", "value" => "Employee Number", "selected" => true],
-            ["slug" => "ssn", "value" => "Employee SSN", "selected" => true],
-            ["slug" => "email", "value" => "Employee Email", "selected" => true],
+            ["slug" => "sid", "value" => "Employee Id", "selected" => false],
+            ["slug" => "employee_number", "value" => "Employee Number", "selected" => false],
+            ["slug" => "ssn", "value" => "Employee SSN", "selected" => false],
+            ["slug" => "email", "value" => "Employee Email", "selected" => false],
             ["slug" => "PhoneNumber", "value" => "Phone Number", "selected" => false],
-            ["slug" => "course_title", "value" => "Course Title", "selected" => false],
-            ["slug" => "lesson_status", "value" => "Lesson Status", "selected" => false],
-            ["slug" => "course_status", "value" => "Course Status", "selected" => false],
-            ["slug" => "course_type", "value" => "Course Type", "selected" => false],
-            ["slug" => "course_taken_count", "value" => "Course Taken Count", "selected" => false],
-            ["slug" => "course_start_period", "value" => "Course Start Date", "selected" => false],
-            ["slug" => "course_end_period", "value" => "Course End Date", "selected" => false],
+            ["slug" => "course_title", "value" => "Course Title", "selected" => true],
+            ["slug" => "lesson_status", "value" => "Lesson Status", "selected" => true],
+            ["slug" => "course_status", "value" => "Course Status", "selected" => true],
+            ["slug" => "course_type", "value" => "Course Type", "selected" => true],
+            ["slug" => "course_taken_count", "value" => "Course Taken Count", "selected" => true],
+            ["slug" => "course_start_period", "value" => "Course Start Date", "selected" => true],
+            ["slug" => "course_end_period", "value" => "Course End Date", "selected" => true],
         ];
     }
 

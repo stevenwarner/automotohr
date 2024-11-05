@@ -156,7 +156,7 @@
 
                         </div>
 
-                        <div class="panel panel-default">
+                        <div class="panel panel-default" style="display: none;">
                             <div class="panel-heading">
                                 <strong>Report</strong>
                             </div>
