@@ -10,8 +10,6 @@
                     <div class="page-header-area">
                         <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                     </div>
-
-
                     <div class="row">
                         <div class="applicant-reg-date">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -27,6 +25,14 @@
                                                         <option value="<?php echo $course["sid"]; ?>"><?php echo $course["course_title"]; ?></option>
                                                     <?php } ?>
                                                 <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+                                            <label><strong>Course Type</strong></label>
+                                            <select id="jsCourseType" multiple style="width: 100%">
+                                                <option value="all">All</option>
+                                                <option value="scorm">SCORM</option>
+                                                <option value="manual">Manual</option>
                                             </select>
                                         </div>
                                         <!-- Employee Filter  -->
@@ -52,6 +58,17 @@
                                                 <?php } ?>
                                             </select>
                                         </div>
+
+                                       <!-- <div class="row"> -->
+                                        <div class="col-xs-12 col-md-4">
+                                            <label>Start Date</label>
+                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="start_date" id="start_date" />
+                                        </div>
+                                        <div class="col-xs-12 col-md-4">
+                                            <label>End Date</label>
+                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="end_date" id="end_date" />
+                                        </div>
+                                        <!-- </div> -->
                                         <!-- Filter Buttons  -->
                                         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8"></div>
 
@@ -83,8 +100,6 @@
                     </div>
 
                     <?php if (!empty($employeeCoursesData)) { ?>
-
-
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <div class="row">
@@ -147,7 +162,6 @@
                                         <div class="col-xs-12">
                                             <div class="form-group">
                                                 <input type="submit" name="submit" class="submit-btn pull-right" value="Export">
-
                                             </div>
                                         </div>
                                     </div>
@@ -216,6 +230,8 @@
     </div>
 </div>
 
+
+
 <style>
     ._csVm {
         vertical-align: middle !important;
@@ -257,11 +273,18 @@
 <script type="text/javascript">
     $(document).ready(function() {
         var courses = "<?php echo $filters['courses']; ?>";
+        var courseType = "<?php echo $filters['courseType']; ?>";
         var employees = "<?php echo $filters['employees']; ?>";
+        var startDate = "<?php echo $filters['startDate']; ?>";
+        var endDate = "<?php echo $filters['endDate']; ?>";
         var baseURL = "<?= base_url(); ?>";
 
         // load select2 on teams
         $("#jsCompanyCourses").select2({
+            closeOnSelect: false,
+        });
+
+        $("#jsCourseType").select2({
             closeOnSelect: false,
         });
         //
@@ -272,9 +295,23 @@
         $("#jsSubordinateEmployees").select2({
             closeOnSelect: false,
         });
+
+        if (courseType) {
+            $('#jsCourseType').select2('val', courseType.split(','));
+        } else {
+            $('#jsCourseType').select2('val', 'all');
+        }
+
         //
         if (employees) {
             $('#jsSubordinateEmployees').select2('val', employees.split(','));
+        }
+
+        if (startDate) {
+            $('#start_date').val(startDate);
+        }
+        if (endDate) {
+            $('#end_date').val(endDate);
         }
 
     });
@@ -282,14 +319,24 @@
     function jsApplyDateFilters() {
         var courses = $('#jsCompanyCourses').val();
         var employees = $('#jsSubordinateEmployees').val();
+        var courseType = $('#jsCourseType').val();
+
+        var startDate = $('#start_date').val();
+        var endDate = $('#end_date').val();
+
 
         var url = '<?php echo base_url('lms/courses/reports'); ?>';
 
         //   departments = departments != '' && departments != null && departments != undefined ? encodeURIComponent(departments) : '0';
         courses = courses != '' && courses != null && courses != undefined ? encodeURIComponent(courses) : '0';
         employees = employees != '' && employees != null && employees != undefined ? encodeURIComponent(employees) : '0';
+        courseType = courseType != '' && courseType != null && courseType != undefined ? encodeURIComponent(courseType) : '0';
 
-        url += '/' + courses + '/' + employees;
+        startDate = startDate != '' && startDate != null && startDate != undefined ? encodeURIComponent(startDate) : '0';
+        endDate = endDate != '' && endDate != null && endDate != undefined ? encodeURIComponent(endDate) : '0';
+
+
+        url += '/' + courses + '/' + employees + '/' + courseType + '/' + startDate + '/' + endDate;
 
         window.location = url;
     }
@@ -315,5 +362,27 @@
             $(`.jsExtraColumnBody`).addClass("hidden");
         }
 
+    });
+
+    $(document).ready(function() {
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy'
+        }).val();
+
+        $('#start_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1900:+1",
+            onSelect: function(value) {}
+        });
+
+        $('#end_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1900:+1",
+            onSelect: function(value) {}
+        });
     });
 </script>

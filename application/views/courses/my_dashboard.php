@@ -18,7 +18,7 @@
                         <h1 class="section-ttile">
                             My Courses
                             <div style="float: right;">
-                                <a href="<?php echo base_url('lms/courses/export_passed_courses'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Export Passed Courses</a>
+                                <a href="<?php echo base_url('lms/courses/export_passed_courses'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-send"></i> Export Passed Courses</a>
 
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>

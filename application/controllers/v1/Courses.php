@@ -1526,14 +1526,13 @@ class Courses extends Public_Controller
 
 
     //
-    public function report($courses = "all", $employees = "all")
+    public function report($courses = "all", $employees = "all", $courseType = "all", $startDate = '', $endDate = '')
     {
         if ($this->session->userdata('logged_in')) {
             // Added on: 28-08-2023
             $session = $this->session->userdata('logged_in');
             $companyId = $session['company_detail']['sid'];
             //
-            $departments = "all";
 
             if (!$session['employer_detail']['access_level_plus']) {
                 $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
@@ -1560,7 +1559,10 @@ class Courses extends Public_Controller
             //
             $filters = [
                 "courses" => urldecode($courses),
-                "employees" => urldecode($employees)
+                "employees" => urldecode($employees),
+                "courseType" => urldecode($courseType),
+                "startDate" => urldecode($startDate),
+                "endDate" => urldecode($endDate)
             ];
 
             //
@@ -1690,7 +1692,7 @@ class Courses extends Public_Controller
     }
 
 
-//
+    //
     public function exportEmployeePassedCourses()
     {
         if ($this->session->userdata('logged_in')) {
@@ -1734,9 +1736,9 @@ class Courses extends Public_Controller
 
     private function handleExportForPassed($data)
     {
-       
+
         // set columns
-        $columns = ["course_title","lesson_status","course_status","course_type","course_taken_count","course_start_period","course_end_period"];
+        $columns = ["course_title", "lesson_status", "course_status", "course_type", "course_taken_count", "course_start_period", "course_end_period"];
 
         $tmp = [];
         //
@@ -1800,6 +1802,4 @@ class Courses extends Public_Controller
         fclose($output);
         exit;
     }
-
- 
 }

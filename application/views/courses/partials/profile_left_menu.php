@@ -39,7 +39,7 @@
                 <a <?php if (strpos(base_url(uri_string()), 'reports') !== false) {
                         echo 'class="active"';
                     } ?> href="<?php echo base_url('lms/courses/reports') ?>">
-                    <figure><i class="fa fa-line-chart"></i></figure>Export CSV
+                    <figure><i class="fa fa-send"></i></figure>Export CSV
                 </a>
             </li>
         <?php } ?>
