@@ -2422,3 +2422,5 @@ $route['manage_admin/reports/indeed/history/(:num)'] = 'manage_admin/reports/Ind
 $route['lms/courses/reports'] = 'v1/Courses/report';
 $route['lms/courses/reports/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Courses/report/$1/$2/$3/$4/$5';
 $route['lms/courses/export_passed_courses'] = 'v1/Courses/exportEmployeePassedCourses';
+
+$route['lms/courses/company_courses_list']['get'] = 'v1/Courses/companyCoursesList';

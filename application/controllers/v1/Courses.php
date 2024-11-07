@@ -1510,6 +1510,32 @@ class Courses extends Public_Controller
         $this->resp($resp);
     }
 
+
+
+
+    function companyCoursesList()
+    {
+
+        // check and set user session
+        $data['session'] = checkUserSession();
+        // set
+        $data['loggedInPerson'] = $data['session']['employer_detail'];
+        $data['companyId'] = $data['session']['company_detail']['sid'];
+        $data['employerId'] = $data['session']['employer_detail']['sid'];
+        // Set default response array
+        $resp = array();
+
+        $data['companyCourses'] = $this->course_model->getActiveCourseList($data['companyId'], 0);
+
+        $resp['companyCourses']=$data['companyCourses'];
+        $resp['Status'] = TRUE;
+        $resp['Response'] = 'Proceed.';
+        //
+        $this->resp($resp);
+    }
+
+
+
     /**
      * Send JSON response
      *
