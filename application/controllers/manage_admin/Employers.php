@@ -4,10 +4,6 @@ use GraphQL\Error\FormattedError;
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-
-
-
-
 class employers extends Admin_Controller
 {
     function __construct()
@@ -296,7 +292,7 @@ class employers extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         // set employment date
         $this->load->model('employee_model');
-       
+
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
         $this->data['company_detail'] = $company_detail;
@@ -353,6 +349,7 @@ class employers extends Admin_Controller
             $data['first_name'] = $this->input->post('first_name');
             $data['last_name'] = $this->input->post('last_name');
             $data['job_title'] = $this->input->post('job_title');
+            $data['job_title_by_lms_id'] = $this->input->post('job_title_by_lms_id');
             $data['direct_business_number'] = $this->input->post('direct_business_number');
             $data['cell_number'] = $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('cell_number');
             $data['PhoneNumber'] = $data['cell_number'];
@@ -564,6 +561,7 @@ class employers extends Admin_Controller
         $employeeDetail,
         $dataToInsert
     ) {
+
         // New employee profile data
         $newProfileData = [];
         $newProfileData['first_name'] = $dataToInsert['first_name'];

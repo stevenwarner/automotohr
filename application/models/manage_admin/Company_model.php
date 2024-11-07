@@ -191,6 +191,7 @@ class Company_model extends CI_Model
         $this->db->select('table_one.password');
         $this->db->select('table_one.email');
         $this->db->select('table_one.job_title');
+        $this->db->select('table_one.job_title_by_lms_id');
         $this->db->select('table_one.registration_date');
         $this->db->select('table_one.joined_at');
         $this->db->select('table_one.rehire_date');

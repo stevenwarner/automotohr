@@ -167,6 +167,28 @@
                                                     </div>
                                                 </li>
 
+                                                <li>
+                                                    <?php echo form_label('Job Title By LMS', 'job_title_by_lms'); ?>
+
+                                                    <?php $templateTitles = get_templet_jobtitles($data['parent_sid']); ?>
+
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
+                                                                <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
+                                                                    <?php if ($templateTitles) { ?>
+                                                                        <select name="job_title_by_lms_id" id="job_title_by_lms_id" class="invoice-fields">
+                                                                            <option value="0">Please select job title</option>
+                                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                                <option <?php if ($titleRow['sid'] == $data["job_title_by_lms_id"]) { echo "selected"; } ?> value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                    <?php } ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
 
                                                 <?php if (isCompanyOnComplyNet($data['parent_sid']) != 0) { ?>
                                                     <li>

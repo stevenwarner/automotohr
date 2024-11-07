@@ -16879,6 +16879,21 @@ if (!function_exists('get_templet_jobtitles')) {
 }
 
 
+
+if (!function_exists('get_job_title_by_lms')) {
+    function get_job_title_by_lms($title_id)
+    {
+        if (!empty($title_id)) {
+            $CI = &get_instance();
+            $CI->db->select('title');
+            $CI->db->where('sid', $title_id);
+            $title = $CI->db->get('portal_job_title_templates')->row_array();
+            return $title['title'] ?? null;
+        }
+    }
+}
+
+
 //
 if (!function_exists('get_templet_complynettitle')) {
     function get_templet_complynettitle($titleSid)

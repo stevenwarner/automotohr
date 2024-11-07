@@ -151,6 +151,11 @@
                                                                             <?php echo $value['email'] . '<br>' . (
                                                                                 $value["PhoneNumber"] ? '<b>Primary Number: </b>' . $value['PhoneNumber'] . "<br />" : ''
                                                                             ) . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
+                                                                            <?php
+                                                                            if ($value['job_title_by_lms_id']) {
+                                                                                echo '<br/> <b>Title By LMS:</b> '. ucwords(get_job_title_by_lms($value['job_title_by_lms_id']));
+                                                                            }
+                                                                            ?>
 
                                                                             <?php
                                                                             if (!empty($value['complynet_job_title'])) { ?>
