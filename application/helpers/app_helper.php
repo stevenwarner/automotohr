@@ -1703,6 +1703,9 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     //
                 }
             }
+            usort($employees, function ($a, $b) {
+                return $a['employee_sid'] <=> $b['employee_sid'];
+            });
             //
             $r['employees'] = $employees;
         }

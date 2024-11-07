@@ -156,23 +156,25 @@
                                                                 $employee_names = [];
                                                                 $statuses = [];
                                                                 ?>
-                                                                <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                                    <?php
-                                                                    //$teamId = $employee['team_sid'];
-                                                                    //$departmentId = $employee['department_sid'];
+                                                                <?php foreach ($subordinateInfo["employees"] as $employee) {
+                                                                    //
                                                                     $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
                                                                     $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
                                                                     $courseCountText = $courseCount > 1 ? $courseCount." courses assigned" : $courseCount." course assigned";
-                                                                    //$departmentName = isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
-                                                                    //$teamName = isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
                                                                     // graph data
                                                                     $employee_names[] = $employee['full_name'];
-                                                                    $statuses['in_progress'][] = $employee['in_progress'];
-                                                                    $statuses['ready_to_start'][] = $employee['ready_to_start'];
-                                                                    $statuses['past_due'][] = $employee['past_due'];
-                                                                    $statuses['expire_soon'][] = $employee['expire_soon'];
-                                                                    $statuses['passed'][] = $employee['passed'];
-
+                                                                    $statuses['in_progress'] += $employee['in_progress'];
+                                                                    $statuses['ready_to_start'] += $employee['ready_to_start'];
+                                                                    $statuses['past_due'] += $employee['past_due'];
+                                                                    $statuses['expire_soon'] += $employee['expire_soon'];
+                                                                    $statuses['passed'] += $employee['passed'];
+                                                                    // labels for graph
+                                                                    $formattedKeys = array_map(function($key) {
+                                                                        return ucwords(str_replace('_', ' ', $key)); // Capitalize the first letter and replace underscores with spaces
+                                                                    }, array_keys($statuses));
+                                                                    $labels = json_encode($formattedKeys);
+                                                                    // labels for graph
+                                                                    $values = json_encode(array_values($statuses));
                                                                     ?>
                                                                     <tr>
                                                                         <td>
@@ -260,7 +262,7 @@
             align: 'left'
         },
         xAxis: {
-            categories: <?php echo json_encode($employee_names); ?>,
+            categories: <?php echo $labels; ?>,
             crosshair: true,
             accessibility: {
                 description: 'Employees'
@@ -283,24 +285,8 @@
         },
         series: [
             {
-                name: 'Ready To Start',
-                data: <?php echo json_encode($statuses['in_progress']); ?>
-            },
-            {
-                name: 'In Progress',
-                data: <?php echo json_encode($statuses['ready_to_start']); ?>,
-            },
-            {
-                name: 'Past Due',
-                data: <?php echo json_encode($statuses['past_due']); ?>,
-            },
-            {
-                name: 'Expire Soon',
-                data: <?php echo json_encode($statuses['expire_soon']); ?>,
-            },
-            {
-                name: 'Passed',
-                data: <?php echo json_encode($statuses['passed']); ?>,
+                name: 'Statuses',
+                data: <?php echo $values; ?>
             }
         ]
     });
