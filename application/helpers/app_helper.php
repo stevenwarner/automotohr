@@ -1595,7 +1595,9 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     $employees[$employee['employee_sid']]["full_name"] = $employeeName;
                     $employees[$employee['employee_sid']]["employee_sid"] = $employee['employee_sid'];
                     $employees[$employee['employee_sid']]["department_sid"] = $employee['department_sid'];
+                    $employees[$employee['employee_sid']]["department_name"] = $departmentAndTeams[0]["name"];
                     $employees[$employee['employee_sid']]["team_sid"] = $employee['team_sid'];
+                    $employees[$employee['employee_sid']]["team_name"] = $departmentAndTeams[0]["team_name"];
                     //
                     $employeeData = [];
                     $employeeData["employee_sid"] = $employee['employee_sid'];
@@ -1609,7 +1611,9 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                             $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
                             //
                             $companyCourses = $CI->db->select("
-                                    lms_default_courses.sid
+                                    lms_default_courses.sid,
+                                    course_start_period,
+                                    course_end_period
                                 ")
                                 ->join(
                                     "lms_default_courses_job_titles",
@@ -1625,9 +1629,61 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                                 ->group_end()
                                 ->get('lms_default_courses')
                                 ->result_array();
-                            //
+
+                            foreach ($companyCourses as $course) {
+                                $courseStatuses = [
+                                    'in_progress' => 0,
+                                    'ready_to_start' => 0,
+                                    'past_due' => 0,
+                                    'expire_soon' => 0,
+                                    'passed' => 0
+                                ];
+                                // Current date and time
+                                $now = new DateTime();
+
+                                $start = new DateTime($course['course_start_period']);
+                                $end = new DateTime($course['course_end_period']);
+
+                                $startDiff = $start->diff($now)->days; // Get the absolute difference
+                                $endDiff = $end->diff($now)->days; // Get the absolute difference
+                                $companyId = getEmployeeUserParent_sid($employee['employee_sid']);
+
+                                $courseInfo = $CI->db->select("lesson_status, course_status")
+                                    ->where('course_sid', $course['sid'])
+                                    ->where('employee_sid', $employee['employee_sid'])
+                                    ->where('company_sid', $companyId)
+                                    ->get('lms_employee_course')
+                                    ->row_array();
+
+                                // Update counts based on status and conditions
+                                if (isset($courseInfo['course_status']) && $courseInfo['course_status'] === 'completed') {
+                                    $courseStatuses['passed']++;
+                                }
+
+                                if (!$courseInfo['lesson_status']) {
+                                    $courseStatuses['ready_to_start']++;
+                                } elseif ($courseInfo['lesson_status'] === 'incomplete') {
+                                    $courseStatuses['in_progress']++;
+                                }
+
+                                if ($startDiff < 0 && $endDiff >= 0) {
+                                    if ($endDiff < 15 && $courseInfo['course_status'] !== 'passed') {
+                                        $courseStatuses['expire_soon']++;
+                                    }
+                                } elseif ($startDiff < $now && $endDiff < $now && $courseInfo['course_status'] !== 'completed') {
+                                    $courseStatuses['expired']++;
+                                }
+
+                                // Map course count info to employee data
+                                $employees[$employee['employee_sid']]['in_progress'] += $courseStatuses['in_progress'];
+                                $employees[$employee['employee_sid']]['ready_to_start'] += $courseStatuses['ready_to_start'];
+                                $employees[$employee['employee_sid']]['past_due'] += $courseStatuses['past_due'];
+                                $employees[$employee['employee_sid']]['expire_soon'] += $courseStatuses['expire_soon'];
+                                $employees[$employee['employee_sid']]['passed'] += $courseStatuses['passed'];
+                                $employees[$employee['employee_sid']]['expired'] += $courseStatuses['expired']; // Added 'expired' status
+                            }
                             $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
-                            //
+
                             $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
                             $employeeData["assign_courses"] =  $assignCourses;
                         } else {

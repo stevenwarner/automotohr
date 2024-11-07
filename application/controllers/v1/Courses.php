@@ -588,13 +588,15 @@ class Courses extends Public_Controller
         //
         $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
         //
+        //_e($data, true, true);
         $this->load
             ->view('main/header_2022', $data)
             ->view('courses/subordinate_report')
             ->view('main/footer');
     }
 
-    public function subordinateDashboard($type, $subordinateId) {
+    public function subordinateDashboard($type, $subordinateId)
+    {
         //
         $data = [];
         //

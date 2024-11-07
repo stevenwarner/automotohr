@@ -76,27 +76,32 @@ $(function LMSEmployeeCourses() {
 				var html = '';
 				//
 				$.each(response, function (index,employee) {
-						var teamId = employee.team_sid;
-						var departmentId = employee.department_sid;
-						var assignCourses = employee.assign_courses ? employee.assign_courses.split(",") : [];
-						var courseCount = assignCourses ? assignCourses.length : 0;
-						var courseCountText = courseCount > 1 ? courseCount+" courses assign" : courseCount+" course assign";
-						var departmentName =   "N/A";
-						var teamName =  "N/A";
-					
-						html += `<tr class="js-tr">`;
-						html += `<td>`;
-						html += `	<label class="control control--checkbox">`;
-						html += `		<input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" />`;
-						html += `		<div class="control__indicator"></div>`;
-						html += `	</label>`;
-						html += `</td>`;
-						html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
-						html += `<td class="_csVm">${employee.department_name}</td>`;
-						html += `<td class="_csVm">${employee.team_name}</td>`;
-						html += `<td class="_csVm">${courseCountText}</td>`;
-						html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
-						html += `</tr>`;
+					var teamId = employee.team_sid;
+					var departmentId = employee.department_sid;
+					var assignCourses = employee.assign_courses ? employee.assign_courses.split(",") : [];
+					var courseCount = assignCourses ? assignCourses.length : 0;
+					var courseCountText = courseCount > 1 ? courseCount+" courses assign" : courseCount+" course assign";
+					var departmentName =   "N/A";
+					var teamName =  "N/A";
+
+					html += `<tr class="js-tr">`;
+					html += `<td>`;
+					html += `	<label class="control control--checkbox">`;
+					html += `		<input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" />`;
+					html += `		<div class="control__indicator"></div>`;
+					html += `	</label>`;
+					html += `</td>`;
+					html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
+					html += `<td class="_csVm">${employee.department_name}</td>`;
+					html += `<td class="_csVm">${employee.team_name}</td>`;
+					html += `<td class="_csVm">${courseCountText}</td>`;
+					html += `<td class="_csVm">${employee.in_progress}</td>`;
+					html += `<td class="_csVm">${employee.ready_to_start}</td>`;
+					html += `<td class="_csVm">${employee.past_due}</td>`;
+					html += `<td class="_csVm">${employee.expire_soon}</td>`;
+					html += `<td class="_csVm">${employee.passed}</td>`;
+					html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
+					html += `</tr>`;
 				});
 				//
 				$("#jsSubordinateList").html(html);
