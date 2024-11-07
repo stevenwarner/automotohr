@@ -105,7 +105,7 @@
                                     </h1>
                                 </div>
                                 <div class="panel-body">
-                                    <div id="container"></div>
+                                    <div id="courses_count_chart"></div>
                                 </div>
                             </div>
                             <div class="panel-heading">
@@ -246,7 +246,7 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script>
-    Highcharts.chart('container', {
+    Highcharts.chart('courses_count_chart', {
         chart: {
             type: 'column'
         },
@@ -269,11 +269,11 @@
         yAxis: {
             min: 0,
             title: {
-                text: '1000 metric tons (MT)'
+                text: 'Counts'
             }
         },
         tooltip: {
-            valueSuffix: ' (1000 MT)'
+            valueSuffix: ' Total'
         },
         plotOptions: {
             column: {
