@@ -89,6 +89,8 @@ class Courses extends Public_Controller
      */
     public function myCourses()
     {
+        redirect(base_url('lms/courses/my_lms_dashboard'), "refresh");
+
         //
         $data = [];
         //
@@ -663,7 +665,9 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateCourses ($type, $subordinateId) {
+    public function subordinateCourses ($type, $subordinateId)
+    {
+        redirect(base_url('lms/subordinate/dashboard/'.$subordinateId), "refresh");
         //
         $data = [];
         //

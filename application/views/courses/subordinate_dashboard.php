@@ -140,9 +140,6 @@
                                                     <div class="col-sm-6">
                                                         <strong>Courses in Progress</strong>
                                                     </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                    </div>
                                                 </div>
                                             </h1>
                                         </div>
@@ -171,9 +168,6 @@
                                                         &nbsp;Courses that have been assigned to you, but have not been started.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -189,9 +183,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Past Due</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -215,9 +206,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Due Soon</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -247,9 +235,6 @@
                                                         &nbsp;Congratulations! These are the Courses that you have Completed Successfully.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/".$subordinate_sid."?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -257,7 +242,6 @@
                                         </div>
                                     </div>
                                     <!-- Passed Courses End -->
-
                                 </div>
                             </div>
                             <div class="clearfix"></div>
