@@ -153,7 +153,6 @@
                                                             <tbody id="jsSubordinateList">
                                                             <?php if (!empty($subordinateInfo["employees"])) { ?>
                                                                 <?php
-                                                                $employee_names = [];
                                                                 $statuses = [];
                                                                 ?>
                                                                 <?php foreach ($subordinateInfo["employees"] as $employee) {
@@ -162,7 +161,6 @@
                                                                     $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
                                                                     $courseCountText = $courseCount > 1 ? $courseCount." courses assigned" : $courseCount." course assigned";
                                                                     // graph data
-                                                                    $employee_names[] = $employee['full_name'];
                                                                     $statuses['in_progress'] += $employee['in_progress'];
                                                                     $statuses['ready_to_start'] += $employee['ready_to_start'];
                                                                     $statuses['past_due'] += $employee['past_due'];
@@ -265,7 +263,7 @@
             categories: <?php echo $labels; ?>,
             crosshair: true,
             accessibility: {
-                description: 'Employees'
+                description: 'Statuses'
             }
         },
         yAxis: {

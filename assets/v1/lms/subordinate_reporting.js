@@ -52,13 +52,15 @@ $(function LMSEmployeeCourses() {
 		var SelectedDepartments = $("#jsSubordinateDepartments").val();
 		var SelectedTeams = $("#jsSubordinateTeams").val();
 		var SelectedEmployees = $("#jsSubordinateEmployees").val();
-		//
+
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
 		}
+
 		// show the loader
 		ml(true, "jsPageLoader");
+
 		// make the call
 		XHR = $.ajax({
 			url: baseURL + "lms/courses/report",
@@ -69,31 +71,40 @@ $(function LMSEmployeeCourses() {
 				employees: SelectedEmployees
 			}
 		})
-			.success(function (response) {
+			.done(function (response) {
 				// empty the call
 				XHR = null;
-				//
+
+				// Initialize arrays for chart data and statuses
+				var labels = [];
+				var statuses = {
+					in_progress: 0,
+					ready_to_start: 0,
+					past_due: 0,
+					expire_soon: 0,
+					passed: 0
+				};
+
+				// Build HTML and populate chart data
 				var html = '';
-				//
-				$.each(response, function (index,employee) {
-					var teamId = employee.team_sid;
-					var departmentId = employee.department_sid;
+				$.each(response, function (index, employee) {
+					// Update status counts
+					statuses.in_progress += employee.in_progress;
+					statuses.ready_to_start += employee.ready_to_start;
+					statuses.past_due += employee.past_due;
+					statuses.expire_soon += employee.expire_soon;
+					statuses.passed += employee.passed;
+
+					// HTML rows for employee data
 					var assignCourses = employee.assign_courses ? employee.assign_courses.split(",") : [];
-					var courseCount = assignCourses ? assignCourses.length : 0;
-					var courseCountText = courseCount > 1 ? courseCount+" courses assign" : courseCount+" course assign";
-					var departmentName =   "N/A";
-					var teamName =  "N/A";
+					var courseCount = assignCourses.length;
+					var courseCountText = courseCount > 1 ? courseCount + " courses assigned" : courseCount + " course assigned";
 
 					html += `<tr class="js-tr">`;
-					html += `<td>`;
-					html += `	<label class="control control--checkbox">`;
-					html += `		<input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" />`;
-					html += `		<div class="control__indicator"></div>`;
-					html += `	</label>`;
-					html += `</td>`;
+					html += `<td><label class="control control--checkbox"><input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" /><div class="control__indicator"></div></label></td>`;
 					html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
-					html += `<td class="_csVm">${employee.department_name}</td>`;
-					html += `<td class="_csVm">${employee.team_name}</td>`;
+					html += `<td class="_csVm">${employee.department_name || "N/A"}</td>`;
+					html += `<td class="_csVm">${employee.team_name || "N/A"}</td>`;
 					html += `<td class="_csVm">${courseCountText}</td>`;
 					html += `<td class="_csVm">${employee.in_progress}</td>`;
 					html += `<td class="_csVm">${employee.ready_to_start}</td>`;
@@ -103,9 +114,58 @@ $(function LMSEmployeeCourses() {
 					html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
 					html += `</tr>`;
 				});
-				//
+
+				// Update table with generated HTML
 				$("#jsSubordinateList").html(html);
-				//
+
+				// Format labels and values for the chart
+				var formattedLabels = Object.keys(statuses).map(function(key) {
+					return key.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+				});
+
+				var values = Object.values(statuses);
+
+				// Render the chart with Highcharts
+				Highcharts.chart('courses_count_chart', {
+					chart: {
+						type: 'column'
+					},
+					title: {
+						text: 'Employee Course Statuses',
+						align: 'left'
+					},
+					subtitle: {
+						text: 'Show Status Count of Courses',
+						align: 'left'
+					},
+					xAxis: {
+						categories: formattedLabels,
+						title: {
+							text: 'Statuses'
+						}
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: 'Course Count'
+						},
+						allowDecimals: false
+					},
+					legend: {
+						reversed: true
+					},
+					plotOptions: {
+						series: {
+							stacking: 'normal'
+						}
+					},
+					series: [{
+						name: 'Statuses',
+						data: values
+					}]
+				});
+
+				// hide the loader
 				ml(false, "jsPageLoader");
 			})
 			.fail(handleErrorResponse)
@@ -116,6 +176,7 @@ $(function LMSEmployeeCourses() {
 				ml(false, "jsPageLoader");
 			});
 	});
+
 	//
 	$(document).on('click', '.jsCheckAll', selectAllInputs);
     $(document).on('click', '.jsSelectSubordinate', selectSingleInput);
