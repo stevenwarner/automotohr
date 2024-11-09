@@ -1455,8 +1455,10 @@ class Courses extends Public_Controller
                             //
                             if ($employeeId != 0) {
                                 //
-                                $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
-                                //
+                             //   $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
+                               
+                             $courseId =$course['courseId'];
+                             //
                                 if ($courseId > 0) {
                                     if (
                                         !$this->db

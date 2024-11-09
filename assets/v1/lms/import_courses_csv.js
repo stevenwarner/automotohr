@@ -24,6 +24,16 @@ $(function importCoursesCSV() {
         endPeriod = ['end', 'enddate', 'endduration', 'endperiod', 'courseenddate', 'courseendperiod'];
 
     loader('hide');
+
+
+
+    let coursetitleSlugData = {};
+
+    var records = [];
+
+
+
+
     // 
     // $('#userfile').change(fileChanged);
     //
@@ -141,7 +151,9 @@ $(function importCoursesCSV() {
             );
         }
         //
-        var records = [];
+
+        //  var records = [];
+
         //
         const errorArray = [];
         //
@@ -379,10 +391,7 @@ $(function importCoursesCSV() {
         else chunkOBJ.records.push(records);
         //
 
-        // console.log(records);
-
         showCourseModel(records);
-
         //  uploadChunk();
     }
 
@@ -496,11 +505,11 @@ $(function importCoursesCSV() {
             Body: '<div id="jsCheckCourseTitleModalBody"></div>'
         }, function () {
 
-            // console.log(records.companyCourses);
-
             let companyCoursesList = {};
             let options = '';
             let trs = '';
+
+            let courseTitleSlug = {};
 
             $.get(baseURI + 'lms/courses/company_courses_list', function (resp) {
 
@@ -509,14 +518,24 @@ $(function importCoursesCSV() {
                     options += '<option value="' + v.sid + '" >' + v.course_title + '</option>';
                 });
 
+
                 indexes = records.map(function (v, i) {
-                    trs += '<tr class="jsCourseRow" data-recordid="'+i+'" data-coursetitle="'+v.title+'" >';
-                    trs += '<td>' + v.title + '</td>';
-                    trs += '<td><select name="companycourses[]" class="jscompanycourses invoice-fields"><option value="">Please Select</option>' + options + '</select></td>';
-                    trs += '</tr>';
+                    slugtitle = v.title.trim();
+                    courseTitleSlug[slugtitle] = 0;
+
                 });
 
-                let importbtn = '<br><div class="row"><div class="col-sm-9"></div><div class="col-sm-3 text-right"><button class="btn btn-success jsTransferPolicyBTN">Import</button></div></div>';
+                //
+                let icount = 0;
+                $.each(courseTitleSlug, function (i, value) {
+                    trs += '<tr class="jsCourseRow" data-recordid="0" data-coursetitle="' + i + '" >';
+                    trs += '<td>' + i + '</td>';
+                    trs += '<td><select name="companycourses[]" class="jscompanycourses invoice-fields"><option value="">Please Select</option>' + options + '</select></td>';
+                    trs += '</tr>';
+                    icount++;
+                });
+
+                let importbtn = '<br><div class="row"><div class="col-sm-9"></div><div class="col-sm-3 text-right"><button class="btn btn-success jsCourseImportBTN">Import</button></div></div>';
 
                 let tblData = '<br><br><div class="table-responsive">';
                 tblData += '<table class="table table-striped ">'
@@ -539,18 +558,77 @@ $(function importCoursesCSV() {
                     false,
                     "jsCheckCourseTitleLoader"
                 );
-
             });
 
         });
     }
 
+    //
+    $(document).on("click", ".jsCourseImportBTN", function () {
+        let notSelected = 0;
+
+        $.each($('.jscompanycourses'), function (ind, val) {
+            if ($(this).find('option:selected').val() == '') {
+                notSelected++;
+            } else {
+                courseId = $(this).find('option:selected').val();
+            }
+        });
+
+        //
+        let titleId = 0;
+        let titleSlugKey = '';
+        $.each($('.jsCourseRow'), function (ind, val) {
+            titleSlugKey = $(this).data("coursetitle");
+            titleId = $(this).closest('tr').attr("data-recordid");
+            if (titleId != 0) {
+                coursetitleSlugData[titleSlugKey] = titleId;
+            }
+        });
 
 
+        if (notSelected > 0) {
+            alertify
+                .confirm(
+                    notSelected+" Cousese are not maped and will not import <br> Are you sure you want to import?",
+                    function () {
+                        //
+                        records.map(function (v, i) {
+                            if (Object.keys(coursetitleSlugData).includes(v.title)) {
+                                var titles = v.title;
+                                records[i]['courseId'] = coursetitleSlugData[titles];
+                            } else {
+                                //Remove Index;
+                                delete records[i];
+                            }
+                        });
 
+                        $('#jsCheckCourseTitleModal .jsModalCancel').trigger('click');
+                        uploadChunk();
+                    },
 
+                )
+                .setHeader("Confirm");
 
+        } else {
+            //
+            records.map(function (v, i) {
+                if (Object.keys(coursetitleSlugData).includes(v.title)) {
+                    var titles = v.title;
+                    records[i]['courseId'] = coursetitleSlugData[titles];
+                }
+            });
 
+            $('#jsCheckCourseTitleModal .jsModalCancel').trigger('click');
+            uploadChunk();
+        }
 
+    });
+
+    //
+    $(document).on("change", ".jscompanycourses", function () {
+        var selectedCourseId = $(this).val();
+        $(this).closest('tr').attr("data-recordid", selectedCourseId);
+    });
 
 });
