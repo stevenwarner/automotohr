@@ -240,7 +240,7 @@ $(function createCourse() {
 			});
 			//
 			$("#jsAddCourseFile"+id).msFileUploader({
-				fileLimit: "100mb",
+				fileLimit: "200mb",
 				allowedTypes: ["zip"],
 			});
 			//
@@ -372,12 +372,12 @@ $(function createCourse() {
 				$("#jsAddCourseReassignType").val("year");
 				// load image
 				$("#jsAddCourseFile").msFileUploader({
-					fileLimit: "100mb",
+					fileLimit: "200mb",
 					allowedTypes: ["zip"],
 				});
 				//
 				$("#jsAddCourseVideoFile").msFileUploader({
-					fileLimit: "100mb",
+					fileLimit: "200mb",
 					allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 				});
 				//

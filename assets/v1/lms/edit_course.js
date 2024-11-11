@@ -48,7 +48,7 @@ $(function editCourse() {
 	 * SCORM uploader options
 	 */
 	let scormOptions = {
-		fileLimit: "100mb",
+		fileLimit: "200mb",
 		allowedTypes: ["zip"],
 	};
 
@@ -56,7 +56,7 @@ $(function editCourse() {
 	 * Manual uploader options
 	 */
 	let manualOptions = {
-		fileLimit: "100mb",
+		fileLimit: "200mb",
 		allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 	};
 
@@ -261,7 +261,7 @@ $(function editCourse() {
 			});
 			//
 			$("#jsEditCourseFile" + id).msFileUploader({
-				fileLimit: "100mb",
+				fileLimit: "200mb",
 				allowedTypes: ["zip"],
 			});
 			//
