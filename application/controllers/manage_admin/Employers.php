@@ -296,7 +296,7 @@ class employers extends Admin_Controller
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         // set employment date
         $this->load->model('employee_model');
-       
+
         $employer_detail = $this->company_model->get_details($sid, 'employer');
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
         $this->data['company_detail'] = $company_detail;
@@ -498,6 +498,12 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+
+            // set LMS job title
+            $data["lms_job_title"] = $this->input->post(
+                "lms_job_title",
+                true
+            );
             //
             $this->company_model->update_user($sid, $data, 'Employer');
             //

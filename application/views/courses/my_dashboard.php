@@ -91,9 +91,6 @@
                                                         &nbsp;Courses that you have started but have not completed.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -114,9 +111,6 @@
                                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                         &nbsp;Courses that have been assigned to you, but have not been started.
                                                     </p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -139,9 +133,6 @@
                                                         &nbsp;Courses that have been assigned to you and are currently Past Due.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -163,9 +154,6 @@
                                                         &nbsp;Courses that have been assigned to you and are nearing expiration.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -186,9 +174,6 @@
                                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                         &nbsp;Congratulations! These are the Courses that you have Completed Successfully.
                                                     </p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/courses/my?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>

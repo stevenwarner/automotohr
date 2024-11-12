@@ -56,7 +56,7 @@
                                 <img style="width: 90px; height: 90px; border-radius: 50% !important;" src="<?= getImageURL($subordinateInfo["profile_picture"]); ?>" alt="" />
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-small weight-6 myb-0" style="font-size: 14px;">
+                                <p class="text-small weight-6 myb-0" style="font-size: 20px;">
                                     <?= remakeEmployeeName($subordinateInfo, true, true); ?>
                                 </p>
                                 <p class="text-small">
@@ -139,9 +139,6 @@
                                                     <div class="col-sm-6">
                                                         <strong>Courses in Progress</strong>
                                                     </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                    </div>
                                                 </div>
                                             </h1>
                                         </div>
@@ -170,9 +167,6 @@
                                                         &nbsp;Courses that have been assigned to you, but have not been started.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -188,9 +182,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Past Due</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -214,9 +205,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Due Soon</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -245,9 +233,6 @@
                                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                         &nbsp;Congratulations! These are the Courses that you have Completed Successfully.
                                                     </p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>

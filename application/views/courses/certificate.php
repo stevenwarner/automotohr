@@ -268,7 +268,7 @@
                                         <div class="row">
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                                             <div class="pm-course-title underline col-xs-8 text-center">
-                                                <span class="pm-credits-text block bold sans"><?php echo $courseInfo['course_title']; ?></span>
+                                                <span class="pm-credits-text block bold sans"><?php echo $courseInfo['course_title']; ?> (<?= ucfirst($EmployeeCourseProgress["course_language"]);?>)</span>
                                             </div>
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                                         </div>
@@ -280,13 +280,7 @@
                                         <div class="pm-certificate-footer">
                                             <div class="col-xs-5 pm-certified text-center">
                                             <span class="pm-credits-text block sans">Training provided by</span>
-                                                <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="">
-                                                <!-- <span class="pm-credits-text block sans">Signature</span>
-                                                <span class="pm-entitled-text block cursive"><?php echo $company_info['ContactName']; ?></span>
-                                                <span class="pm-empty-space block underline"></span>
-                                                <span class="bold block">
-                                                <?php //echo ucwords($company_info['Location_Address']) . ', ' . ucwords($company_info['Location_City']) . ', ' . ucwords($company_info['state_name']) . ', ' . ucwords($company_info['Location_ZipCode']) . ', ' . ucwords($company_info['country_name']); ?>
-                                                </span> -->
+                                                <img class="image-responsive" src="<?php echo $AHRLogo; ?>" alt="" style="width: 120px">
                                             </div>
                                             <div class="col-xs-2">
                                                 <!-- LEAVE EMPTY -->

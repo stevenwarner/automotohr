@@ -18,7 +18,7 @@ class Courses extends Public_Controller
                 $this->session->userdata('logged_in')['company_detail']['sid'],
                 $this->session->userdata('logged_in')['employer_detail']['sid']
             );
-        }    
+        }
         //
     }
 
@@ -89,6 +89,7 @@ class Courses extends Public_Controller
      */
     public function myCourses()
     {
+        return redirect("lms/courses/my_lms_dashboard");
         //
         $data = [];
         //
@@ -110,7 +111,7 @@ class Courses extends Public_Controller
         $data['search'] = '';
         //
         if (isset($_GET) && $_GET['type']) {
-           $data['search'] = $_GET['type'];
+            $data['search'] = $_GET['type'];
         }
         //
         $data['title'] = "My Course(s) | " . STORE_NAME;
@@ -378,7 +379,7 @@ class Courses extends Public_Controller
         $data['company_info'] = $session['company_detail'];
         $data['companyName'] = getCompanyNameBySid($companyId);
         $data['AHRLogo'] = base_url('assets/images/lms_certificate_logo.png');
-        $data['AHRStudentID'] = 'AHR-'.$studentId;
+        $data['AHRStudentID'] = 'AHR-' . $studentId;
         $data['load_view'] = 1;
         $data['level'] = 0;
         $data['courseInfo'] = $this->course_model->getCourseInfo($courseId);
@@ -399,6 +400,7 @@ class Courses extends Public_Controller
             DATE
         );
         $data["studentInfo"] = $studentInfo;
+        $data["EmployeeCourseProgress"] = $EmployeeCourseProgress;
         //
         // load CSS
         $data['PageCSS'] = [
@@ -420,7 +422,7 @@ class Courses extends Public_Controller
         $this->load
             ->view('main/header_2022', $data)
             ->view('courses/certificate')
-            ->view('main/footer');    
+            ->view('main/footer');
     }
 
     /**
@@ -498,7 +500,7 @@ class Courses extends Public_Controller
             // Enter subordinate json into DB
             $haveSubordinate = 'yes';
             $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
-        } 
+        }
         //
         $filters = [
             "departments" => $departments,
@@ -506,7 +508,7 @@ class Courses extends Public_Controller
             "employees" => $employees
         ];
         //
-        if($this->input->is_ajax_request()){
+        if ($this->input->is_ajax_request()) {
             if (isset($_GET['departments'])) {
                 $filters["departments"] = $_GET['departments'];
             }
@@ -541,21 +543,22 @@ class Courses extends Public_Controller
                             if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
                                 $selectedEmployeesList[] = $subordinateEmployee;
                                 array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
-                            }    
+                            }
                         }
                         //
                         if (in_array($subordinateEmployee["department_sid"], $filters["departments"])) {
                             if (!in_array($subordinateEmployee["employee_sid"], $selectedEmployeesIds)) {
                                 $selectedEmployeesList[] = $subordinateEmployee;
                                 array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
-                            }    
+                            }
                         }
-                    }    
+                    }
                 }
-            }    
+            }
             //
             header('Content-Type: application/json');
-            echo json_encode($selectedEmployeesList); exit(0);
+            echo json_encode($selectedEmployeesList);
+            exit(0);
         }
         //
         $data['title'] = "My Courses :: " . STORE_NAME;
@@ -595,7 +598,8 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateDashboard($type, $subordinateId) {
+    public function subordinateDashboard($type, $subordinateId)
+    {
         //
         $data = [];
         //
@@ -662,7 +666,9 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function subordinateCourses ($type, $subordinateId) {
+    public function subordinateCourses($type, $subordinateId)
+    {
+        return redirect("lms/subordinate/dashboard/{$subordinateId}");
         //
         $data = [];
         //
@@ -713,7 +719,7 @@ class Courses extends Public_Controller
         $data['PageCSS'] = [
             '2022/css/main'
         ];
-  
+
         // load JS
         $data['PageScripts'] = [
             'js/app_helper',
@@ -735,7 +741,8 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function previewSubordinateCourse ($courseId, $subordinateId, $reviewAs) {
+    public function previewSubordinateCourse($courseId, $subordinateId, $reviewAs)
+    {
         //
         $data = [];
         //
@@ -751,7 +758,7 @@ class Courses extends Public_Controller
         if (!empty($subordinateInfo['employees'])) {
             // Enter subordinate json into DB
             $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
-        } 
+        }
         //
         $courseInfo = $this->course_model->getCourseInfo($courseId);
         //
@@ -808,7 +815,6 @@ class Courses extends Public_Controller
             $viewName = "manual_course";
             //
             $data['questions'] = $questions;
-            
         }
         //
         // get access token
@@ -826,7 +832,8 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function previewSubordinateCourseByLanguage ($courseId, $subordinateId, $reviewAs, $language) {
+    public function previewSubordinateCourseByLanguage($courseId, $subordinateId, $reviewAs, $language)
+    {
         //
         $data = [];
         //
@@ -842,7 +849,7 @@ class Courses extends Public_Controller
         if (!empty($subordinateInfo['employees'])) {
             // Enter subordinate json into DB
             $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
-        } 
+        }
         //
         $courseInfo = $this->course_model->getCourseInfo($courseId);
         //
@@ -901,7 +908,6 @@ class Courses extends Public_Controller
             $viewName = "manual_course";
             //
             $data['questions'] = $questions;
-            
         }
         //
         // get access token
@@ -919,8 +925,9 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function companyReport ($departments = "all", $courses = "all", $employees = "all") {
-        if ($this->session->userdata('logged_in')) { 
+    public function companyReport($departments = "all", $courses = "all", $employees = "all")
+    {
+        if ($this->session->userdata('logged_in')) {
             // Added on: 28-08-2023
             $session = $this->session->userdata('logged_in');
             $companyId = $session['company_detail']['sid'];
@@ -971,10 +978,10 @@ class Courses extends Public_Controller
                     $fetchDepartment = $departmentIds;
                     $fetchEmployees = $filters["employees"];
                 } else {
-                    $fetchDepartment = $filters["departments"].','.implode(",", $departmentIds);
+                    $fetchDepartment = $filters["departments"] . ',' . implode(",", $departmentIds);
                     $fetchDepartmentEmployees = $this->course_model->getAllDepartmentEmployees($data['company_sid'], $filters["departments"]);
 
-                    $fetchEmployees = $filters["employees"].','.implode(",", $fetchDepartmentEmployees);
+                    $fetchEmployees = $filters["employees"] . ',' . implode(",", $fetchDepartmentEmployees);
                 }
             }
             //
@@ -983,7 +990,7 @@ class Courses extends Public_Controller
             $companyReport = [
                 "employee_have_courses" => 0,
                 "employee_not_have_courses" => 0,
-                "total_employees" => 0, 
+                "total_employees" => 0,
                 "departments_report" => [],
                 "courses_report" => [
                     "expired" => 0,
@@ -1052,14 +1059,14 @@ class Courses extends Public_Controller
                     $departments[0]['pending_courses'] = 0;
                     $departments[0]['completed_courses'] = 0;
                     $departments[0]['total_courses'] = 0;
-                }    
+                }
                 //
                 $companyReport["total_employees"] = count($companyEmployeesList);
                 //
                 foreach ($companyEmployeesList as $ekey => $employee) {
-                    
-                    if ($fetchEmployees == "all" || in_array($employee['sid'], explode("," ,$fetchEmployees))) {
-                        
+
+                    if ($fetchEmployees == "all" || in_array($employee['sid'], explode(",", $fetchEmployees))) {
+
                         $employeesList[$employee['sid']]["sid"]  = $employee['sid'];
                         //
                         $employeeName = remakeEmployeeName([
@@ -1081,9 +1088,9 @@ class Courses extends Public_Controller
                             $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;
                             //
                             $employeesList[$employee['sid']]["courses_statistics"] = $this->course_model->checkEmployeeCoursesReport(
-                                $data['company_sid'], 
+                                $data['company_sid'],
                                 $employee['sid'],
-                                $jobRoleCourses[$job_title_sid ]
+                                $jobRoleCourses[$job_title_sid]
                             );
                             //
                             $companyReport["employee_have_courses"]++;
@@ -1135,7 +1142,6 @@ class Courses extends Public_Controller
                                 //
                                 $departments[$employeeDepartment]['employees'][] = $employee['sid'];
                             }
-                            
                         }
                         //
                     }
@@ -1144,7 +1150,7 @@ class Courses extends Public_Controller
                 $companyReport["departments_report"] = $departments;
                 $companyReport["EmployeeList"] = $employeesList;
                 $companyReport["CoursesList"] = $coursesList;
-            } 
+            }
             //
             $data["companyReport"] = $companyReport;
             $data["filters"] = $filters;
@@ -1157,8 +1163,8 @@ class Courses extends Public_Controller
                     header('Content-Disposition: attachment; filename=data.csv');
                     $output = fopen('php://output', 'w');
                     //
-                    fputcsv($output, array('Company Name',$session['company_detail']['CompanyName'], '', '', '', ''));
-                    fputcsv($output, array('Exported By',getUserNameBySID($security_sid), '', '', '', ''));
+                    fputcsv($output, array('Company Name', $session['company_detail']['CompanyName'], '', '', '', ''));
+                    fputcsv($output, array('Exported By', getUserNameBySID($security_sid), '', '', '', ''));
                     fputcsv($output, array('Export Date', date(DATE_WITH_TIME, strtotime('now')), '', '', '', ''));
                     //
                     fputcsv($output, array('', '', '', '', '', ''));
@@ -1185,8 +1191,8 @@ class Courses extends Public_Controller
                     fputcsv($output, $cols);
                     //
                     foreach ($companyReport['departments_report'] as $department) {
-                        if (!empty($department["employees"])) { 
-                            foreach ($department['employees'] as $employee) { 
+                        if (!empty($department["employees"])) {
+                            foreach ($department['employees'] as $employee) {
                                 $assignCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['courseCount'];
                                 $pendingCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['pendingCount'];
                                 $completedCourses = $companyReport["EmployeeList"][$employee]["courses_statistics"]['completedCount'];
@@ -1194,11 +1200,11 @@ class Courses extends Public_Controller
                                 //
                                 fputcsv($output, array(
                                     $companyReport["EmployeeList"][$employee]["full_name"],
-                                    $department["name"], 
-                                    $assignCourses, 
-                                    $pendingCourses, 
+                                    $department["name"],
+                                    $assignCourses,
+                                    $pendingCourses,
                                     $completedCourses,
-                                    $completedCoursesPercentage." %"
+                                    $completedCoursesPercentage . " %"
                                 ));
                             }
                         }
@@ -1206,20 +1212,20 @@ class Courses extends Public_Controller
 
                     fclose($output);
                     exit;
-                }    
+                }
             }
             //
             $this->load->view('main/header', $data);
             $this->load->view('courses/company_report');
             $this->load->view('main/footer');
-            
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function companyCourses () {
-        if ($this->session->userdata('logged_in')) { 
+    public function companyCourses()
+    {
+        if ($this->session->userdata('logged_in')) {
             // Added on: 28-08-2023
             $session = $this->session->userdata('logged_in');
             //
@@ -1263,13 +1269,13 @@ class Courses extends Public_Controller
             $this->load->view('main/header', $data);
             $this->load->view('courses/company_courses');
             $this->load->view('main/footer');
-            
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-    public function emailReminder ($type) {
+    public function emailReminder($type)
+    {
 
         //
         $res = [
@@ -1277,11 +1283,11 @@ class Courses extends Public_Controller
             'Message' => 'Invalid Request.'
         ];
         //
-        if(
-            !$this->input->is_ajax_request() || 
-            !$this->input->post(NULL, TRUE) || 
-            $this->input->method() != 'post' 
-        ){
+        if (
+            !$this->input->is_ajax_request() ||
+            !$this->input->post(NULL, TRUE) ||
+            $this->input->method() != 'post'
+        ) {
             res($res);
         }
         //
@@ -1299,7 +1305,7 @@ class Courses extends Public_Controller
             $assignCourses = $subordinateInfo['employees'][$employee['employee_sid']]['assign_courses'];
             //
             $coursesStatistics = $this->course_model->checkEmployeeCoursesReport(
-                $companyId, 
+                $companyId,
                 $employee['employee_sid'],
                 $assignCourses
             );
@@ -1314,10 +1320,10 @@ class Courses extends Public_Controller
             $replaceArray['completed_count'] = $coursesStatistics['completedCount'];
             $replaceArray['pending_count'] = $coursesStatistics['pendingCount'];
             $replaceArray['percentage'] = $coursesStatistics['percentage'];
-            $replaceArray['my_courses_link'] = '<a href="'. base_url("lms/courses/my").'" target="_blank" style="padding: 8px 12px; border: 1px solid #4CBB17;background-color:#4CBB17;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">My Courses</a>';
+            $replaceArray['my_courses_link'] = '<a href="' . base_url("lms/courses/my") . '" target="_blank" style="padding: 8px 12px; border: 1px solid #4CBB17;background-color:#4CBB17;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">My Courses</a>';
             //
             if ($type == 'single') {
-                $replaceArray['employee_note'] = '<strong>Employer Note:</strong></br>'.$post['note'];
+                $replaceArray['employee_note'] = '<strong>Employer Note:</strong></br>' . $post['note'];
             }
             //
             log_and_send_templated_email(
@@ -1334,7 +1340,8 @@ class Courses extends Public_Controller
         res($res);
     }
 
-    public function deletePreviousAllLanguages ($courseId) {
+    public function deletePreviousAllLanguages($courseId)
+    {
         //
         $this->course_model->deletePreviousAllLanguagesById($courseId);
         //
@@ -1346,7 +1353,8 @@ class Courses extends Public_Controller
         );
     }
 
-    public function deletePreviousLanguages ($courseId, $language) {
+    public function deletePreviousLanguages($courseId, $language)
+    {
         //
         $this->course_model->deletePreviousAllLanguagesByIdAndLanguage($courseId, $language);
         //
@@ -1445,7 +1453,7 @@ class Courses extends Public_Controller
                         //
                         if ($employeeId == 0) {
                             $failCount++;
-                            $failRows[] =$key;
+                            $failRows[] = $key;
                         } else {
                             //
                             if ($employeeId != 0) {
@@ -1455,12 +1463,12 @@ class Courses extends Public_Controller
                                 if ($courseId > 0) {
                                     if (
                                         !$this->db
-                                        ->where([
-                                            'course_sid' => $courseId,
-                                            'company_sid' => $data['companyId'],
-                                            'employee_sid' => $employeeId
-                                            ])    
-                                        ->count_all_results('lms_employee_course')
+                                            ->where([
+                                                'course_sid' => $courseId,
+                                                'company_sid' => $data['companyId'],
+                                                'employee_sid' => $employeeId
+                                            ])
+                                            ->count_all_results('lms_employee_course')
                                     ) {
                                         //
                                         $dataToInsert = [];
@@ -1483,7 +1491,7 @@ class Courses extends Public_Controller
                                     }
                                 } else {
                                     $failCount++;
-                                    $failRows[] =$key;
+                                    $failRows[] = $key;
                                 }
                             }
                         }
@@ -1518,6 +1526,4 @@ class Courses extends Public_Controller
         echo json_encode($responseArray);
         exit(0);
     }
-
 }
-
