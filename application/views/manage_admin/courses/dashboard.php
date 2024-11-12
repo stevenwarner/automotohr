@@ -36,6 +36,8 @@
                                 <!-- Main area -->
                                 <div id="jsDefaultCoursesView"></div>
                             </div>
+
+
                         </div>
                     </div>
                     <!-- Load filter -->
@@ -47,5 +49,5 @@
 </div>
 
 <script>
-    function sendCourseToSave(){}
+    function sendCourseToSave() {}
 </script>

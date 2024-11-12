@@ -42,7 +42,7 @@ class Courses extends Admin_Controller
      * Dashboard
      */
     public function index()
-    {
+    { 
         // check and set the security group
         $this->data['security_details'] = db_get_admin_access_level_details($this->loggedInId);
         // make sure the system is redirecting

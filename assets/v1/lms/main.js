@@ -290,4 +290,67 @@ $(function LMSCourses() {
 	//
 	getDefaultJobTitles();
 	getLMSDefaultCourses();
+
+
+
+
+
+	$(document).on("click", ".jsDraggable", function (event) {
+		// stop the default functionality
+		event.preventDefault();
+		// call the function
+
+		//	alert('sdfsdf');
+		$(".jsDraggable").sortable({
+			//	$(".jsDraggable").sortable({
+			update: function (event, ui) {
+				//
+				var orderList = [];
+				//
+				$(".jsCourseSortOrder").map(function (i) {
+					orderList.push($(this).data("key"));
+				});
+				// 
+				var obj = {};
+				obj.sortOrders = orderList;
+				//
+				updateCourseSortOrder(obj);
+			}
+		});
+	});
+
+
+	//
+	function updateCourseSortOrder(data) {
+		// check if XHR already in progress
+		if (XHR !== null) {
+			return;
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + "lms/course/updateOrder",
+			method: "PUT",
+			headers: {
+				"content-type": "application/json",
+			},
+			data: JSON.stringify({ active: data }),
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//getLMSDefaultCourses();
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+
+	}
+
+
 });
