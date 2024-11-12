@@ -39,6 +39,24 @@
         border-radius: 5px;
         box-shadow: 0 0 5px 1px #eee;
     }
+    .popover {
+        max-width: 300px !important; /* Set a max width */
+    }
+
+    .popover .popover-body {
+        padding: 0 !important; /* Remove padding around the table */
+    }
+
+    .popover table {
+        margin: 0 !important;
+        width: 100% !important; /* Ensure table takes full width */
+    }
+
+    .popover table th,
+    .popover table td {
+        padding: 8px !important; /* Adjust padding as needed */
+    }
+
 </style>
 <div class="main">
     <div class="container-fluid">
@@ -205,6 +223,7 @@
                                                         <th class="text-right" scope="col">Source<br />Posting<br />Id</th>
                                                         <th class="text-right" scope="col">Tracking<br />Key</th>
                                                         <th class="text-right" scope="col">Type</th>
+                                                        <th class="text-right" scope="col">Errors</th>
                                                         <th class="text-right" scope="col">Status</th>
                                                         <th class="text-right" scope="col">Actions</th>
                                                     </tr>
@@ -237,6 +256,11 @@
                                                                 <strong>
                                                                     <?= $v0["is_expired"] ? "EXPIRED" : "NEW"; ?>
                                                                 </strong>
+                                                            </td>
+                                                            <td class="text-right">
+                                                                <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
+                                                                    Show Errors
+                                                                </button>
                                                             </td>
                                                             <td class="text-right">
                                                                 <?php if ($v0["is_processed"]) : ?>
@@ -298,7 +322,6 @@
                                 </div>
                             <?php endif; ?>
                             <!-- Main body -->
-
                         </div>
                     </div>
                 </div>
@@ -306,7 +329,6 @@
         </div>
     </div>
 </div>
-
 
 <link rel="stylesheet" href="<?= base_url("public/v1/plugins/ms_modal/main.min.css"); ?>">
 <script src="<?= base_url("public/v1/plugins/ms_modal/main.min.js"); ?>"></script>
@@ -353,8 +375,6 @@
             return date;
         }
 
-
-
         $(".jsButton").click(function(event) {
             event.preventDefault();
 
@@ -376,7 +396,6 @@
             );
         });
 
-
         // load log
         function loadLog(logId) {
             $
@@ -395,7 +414,6 @@
         }
     })
 
-
     //js-search
     $("#js-search").click(function(event) {
         event.preventDefault();
@@ -411,8 +429,6 @@
         $("#perform_action").val('csvexport');
         $("#js-indeedform").submit();
     });
-
-
 
     // load history
     function loadHistory(logId) {
@@ -456,5 +472,47 @@
    
     });
 
+    // modal to show the errors
+    $(document).ready(function () {
+        $('.jsShowErrors').on('click', function () {
+            var errors = $(this).data('errors');
 
+            // Parse the JSON if it's a JSON string
+            if (typeof errors === 'string') {
+                try {
+                    errors = JSON.parse(errors);
+                } catch (e) {
+                    errors = {};
+                }
+            }
+            // Display the errors in a tabular format
+            var errorHTML = '<p>No error found.</p>';
+            if (!$.isEmptyObject(errors)) {
+                errorHTML = '<table class="table"><thead><tr><th>Type</th><th>Message</th></tr></thead><tbody>';
+                for (var key in errors) {
+                    if (errors.hasOwnProperty(key)) {
+                        errorHTML += '<tr><td><strong>' + formatKey(key) + ':</strong></td><td>' + errors[key] + '</td></tr>';
+                    }
+                }
+                errorHTML += '</tbody></table>';
+            }
+
+            $(this).popover({
+                html: true,
+                content: errorHTML,
+                placement: 'auto',
+                trigger: 'focus' // Show popover when button is focused
+            }).popover('show');
+        });
+    });
+
+    // Function to format the keys
+    function formatKey(key) {
+        // Replace underscores with spaces and capitalize each word
+        return key
+            .replace(/_/g, ' ')
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
 </script>

@@ -1610,6 +1610,7 @@ class Indeed_model extends CI_Model
                 "indeed_job_queue.is_processed",
                 "indeed_job_queue.processed_at",
                 "indeed_job_queue.is_expired",
+                "indeed_job_queue.errors",
                 "indeed_job_queue.has_errors",
                 "indeed_job_queue.is_processing",
                 "indeed_job_queue.log_sid",
