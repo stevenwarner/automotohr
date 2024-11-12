@@ -752,14 +752,14 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
-                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 hidden">
+                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 ">
                                             <div class="dash-box">
                                                 <div class="dashboard-widget-box">
                                                     <figure>
                                                         <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
                                                     </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('complynet'); ?>">Compliance <br /> Management System</a>
+                                                        <a href="<?php echo base_url('complynet'); ?>">Compliance <br /> Report</a>
                                                     </h2>
                                                     <div class="button-panel col-lg-12">
                                                         <div class="row">
