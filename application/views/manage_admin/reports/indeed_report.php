@@ -258,9 +258,11 @@
                                                                 </strong>
                                                             </td>
                                                             <td class="text-right">
+                                                                <?php if ($v0["errors"]):?>
                                                                 <button class="btn btn-danger jsShowErrors" data-errors='<?= htmlspecialchars($v0["errors"], ENT_QUOTES); ?>'>
                                                                     Show Errors
                                                                 </button>
+                                                                <?php endif; ?>
                                                             </td>
                                                             <td class="text-right">
                                                                 <?php if ($v0["is_processed"]) : ?>
