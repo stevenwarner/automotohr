@@ -58,6 +58,7 @@ $(function createCourse() {
 							: "jsAddCourseVideoFile") +
 						""
 				).msFileUploader("get") || {},
+			course_banner: $("#jsAddCourseBanner").msFileUploader("get"),
 			course_questions: questionsArray,
 		};
 		//
@@ -173,7 +174,7 @@ $(function createCourse() {
 	 * Indefinite Course
 	 */
 	$(document).on("click", ".jsAddIndefiniteCourse", function (event) {
-		if ($('.jsAddIndefiniteCourse').is(':checked')) {
+		if ($(".jsAddIndefiniteCourse").is(":checked")) {
 			$("#jsAddCourseEndPeriod").val("");
 			$(".jsRecurringCourses").hide();
 		} else {
@@ -185,19 +186,19 @@ $(function createCourse() {
 	 * Add Scorm Courses
 	 */
 	$(document).on("click", ".jsAddNewScormCourse", function (event) {
-		var totalLanguages = $(this).data('language_count');
-		var languages = $(this).data('languages').split(',');
+		var totalLanguages = $(this).data("language_count");
+		var languages = $(this).data("languages").split(",");
 		var totalItems = $(".jsScormCourseItem").length;
 		var selectedLanguages = [];
 		//
-		$(".jsScormCourseItem").each(function(i){
+		$(".jsScormCourseItem").each(function (i) {
 			//
 			let rowNo = $(this).data("row_no");
 			//
 			if (i == 0) {
 				selectedLanguages.push($("#jsAddCourseLanguage").val());
 			} else {
-				selectedLanguages.push($("#jsAddCourseLanguage"+rowNo).val());
+				selectedLanguages.push($("#jsAddCourseLanguage" + rowNo).val());
 			}
 		});
 		//
@@ -213,16 +214,20 @@ $(function createCourse() {
 			html += `</div>`;
 			html += `</div>`;
 			html += `<div class="form-group">`;
-			html += `<label>SCORM Language <strong class="text-danger">*</strong></label>`; 
+			html += `<label>SCORM Language <strong class="text-danger">*</strong></label>`;
 			html += `<p class="text-danger"><strong><em>The language of the SCORM.</strong></em></p>`;
 			html += `<select style="width: 100%" class="jsScormLanguage" id="jsAddCourseLanguage${id}">`;
-			languages.map(function(language) { 
+			languages.map(function (language) {
 				if (selectedLanguages.includes(language)) {
-					html += `<option disabled="disabled" value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+					html += `<option disabled="disabled" value="${language}">${
+						language.charAt(0).toUpperCase() + language.slice(1)
+					}</option>`;
 				} else {
-					html += `<option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+					html += `<option value="${language}">${
+						language.charAt(0).toUpperCase() + language.slice(1)
+					}</option>`;
 				}
-			})
+			});
 			html += `</select>`;
 			html += `</div>`;
 			html += `<br>`;
@@ -235,85 +240,92 @@ $(function createCourse() {
 			//
 			$("#jsScormLanguageCourses").append(html);
 			//
-			$("#jsAddCourseLanguage"+id).select2({
+			$("#jsAddCourseLanguage" + id).select2({
 				closeOnSelect: false,
 			});
 			//
-			$("#jsAddCourseFile"+id).msFileUploader({
+			$("#jsAddCourseFile" + id).msFileUploader({
 				fileLimit: "200mb",
 				allowedTypes: ["zip"],
 			});
 			//
 			disableSelectedLanguage(languages);
 		}
-		
-		if (totalLanguages == (totalItems + 1)) {
-			$(".jsAddNewScormCourse").prop('disabled', true);
+
+		if (totalLanguages == totalItems + 1) {
+			$(".jsAddNewScormCourse").prop("disabled", true);
 		}
 	});
 
-	function disableSelectedLanguage (languages) {
+	function disableSelectedLanguage(languages) {
 		//
 		let selectedLanguages = [];
 		//
-		$(".jsScormCourseItem").each(function(i){
+		$(".jsScormCourseItem").each(function (i) {
 			//
 			let rowNo = $(this).data("row_no");
 			//
 			if (i == 0) {
 				selectedLanguages.push($("#jsAddCourseLanguage").val());
 			} else {
-				selectedLanguages.push($("#jsAddCourseLanguage"+rowNo).val());
+				selectedLanguages.push($("#jsAddCourseLanguage" + rowNo).val());
 			}
 		});
 		//
-		$(".jsScormCourseItem").each(function(i){
+		$(".jsScormCourseItem").each(function (i) {
 			//
 			let rowNo = $(this).data("row_no");
-			var language1 = '';
-			var selectId = '';
+			var language1 = "";
+			var selectId = "";
 			//
 			if (i == 0) {
 				language1 = $("#jsAddCourseLanguage").val();
 			} else {
-				language1 = $("#jsAddCourseLanguage"+rowNo).val();
+				language1 = $("#jsAddCourseLanguage" + rowNo).val();
 				selectId = rowNo;
 			}
 			//
-			var html = '';
+			var html = "";
 			//
-			languages.map(function(language) { 
-				if (selectedLanguages.includes(language) && language != language1) {
-					html += `<option disabled="disabled" value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+			languages.map(function (language) {
+				if (
+					selectedLanguages.includes(language) &&
+					language != language1
+				) {
+					html += `<option disabled="disabled" value="${language}">${
+						language.charAt(0).toUpperCase() + language.slice(1)
+					}</option>`;
 				} else {
-					html += `<option value="${language}">${language.charAt(0).toUpperCase() + language.slice(1)}</option>`;
+					html += `<option value="${language}">${
+						language.charAt(0).toUpperCase() + language.slice(1)
+					}</option>`;
 				}
 			});
 			//
-			$("#jsAddCourseLanguage"+selectId).html(html);
+			$("#jsAddCourseLanguage" + selectId).html(html);
 			//
-		})
+		});
 	}
 
-	
 	/**
 	 * Add Scorm Courses
 	 */
 	$(document).on("click", ".jsRemoveLanguageSection", function (event) {
-		var sectionId = $(this).data('section_id');
-		var languageCount = $(this).data('language_count');
+		var sectionId = $(this).data("section_id");
+		var languageCount = $(this).data("language_count");
 		var totalItems = $(".jsScormCourseItem").length;
 		//
 		if (languageCount == totalItems) {
-			$(".jsAddNewScormCourse").prop('disabled', false);
+			$(".jsAddNewScormCourse").prop("disabled", false);
 		}
 		//
-		$("#"+sectionId).remove();
+		$("#" + sectionId).remove();
 		//
-		disableSelectedLanguage($(".jsAddNewScormCourse").data('languages').split(','))
+		disableSelectedLanguage(
+			$(".jsAddNewScormCourse").data("languages").split(",")
+		);
 	});
 
-	
 	/**
 	 * Create a course
 	 *
@@ -370,6 +382,10 @@ $(function createCourse() {
 				});
 				///
 				$("#jsAddCourseReassignType").val("year");
+				$("#jsAddCourseBanner").msFileUploader({
+					fileLimit: "15mb",
+					allowedTypes: ["jpg", "jpeg", "png", "webp"],
+				});
 				// load image
 				$("#jsAddCourseFile").msFileUploader({
 					fileLimit: "200mb",
@@ -381,8 +397,11 @@ $(function createCourse() {
 					allowedTypes: ["mp4", "ppt", "pptx", "mov"],
 				});
 				//
-				$("input[name=jsAddCourseType][value=scorm]").attr('checked', 'checked');
-				$('#jsAddCourseLanguage').select2('val', 'english');
+				$("input[name=jsAddCourseType][value=scorm]").attr(
+					"checked",
+					"checked"
+				);
+				$("#jsAddCourseLanguage").select2("val", "english");
 				$(".jsAddCourseScormBox").removeClass("hidden");
 				//
 				$("#jsAddCourseStartPeriod")
@@ -416,7 +435,7 @@ $(function createCourse() {
 								value
 							);
 							//
-							$('.jsAddIndefiniteCourse').prop('checked', false);
+							$(".jsAddIndefiniteCourse").prop("checked", false);
 							$(".jsRecurringCourses").show();
 						},
 					})
@@ -474,6 +493,12 @@ $(function createCourse() {
 		if (!courseObj.course_type) {
 			errorArray.push("Course type is required.");
 		}
+		// handle banner
+		if (!Object.keys(courseObj.course_banner).length) {
+			errorArray.push("Please upload the Course banner.");
+		} else if (courseObj.course_banner.errorCode) {
+			errorArray.push(courseObj.course_banner.errorCode);
+		}
 		// set default question array
 		courseObj.course_questions = questionsArray;
 		// only when a file is uploaded
@@ -501,35 +526,36 @@ $(function createCourse() {
 		let scorm_course_files = [];
 		//
 		if (courseObj.course_type == "scorm") {
-			
 			///
-			$(".jsScormCourseItem").each(function(i){
-				// 
+			$(".jsScormCourseItem").each(function (i) {
+				//
 				var rowNo = $(this).data("row_no");
 				//
 				var id = "";
-				var languageId = '';
+				var languageId = "";
 				if (i == 0) {
-					id = 'jsAddCourseFile';
-					languageId = 'jsAddCourseLanguage';
+					id = "jsAddCourseFile";
+					languageId = "jsAddCourseLanguage";
 				} else {
-					id = 'jsAddCourseFile'+rowNo;
-					languageId = 'jsAddCourseLanguage'+rowNo;
+					id = "jsAddCourseFile" + rowNo;
+					languageId = "jsAddCourseLanguage" + rowNo;
 				}
 				//
-				var course_file = $("#"+id).msFileUploader("get");
-				var language = $("#"+languageId).val();
+				var course_file = $("#" + id).msFileUploader("get");
+				var language = $("#" + languageId).val();
 				//
 				if (!Object.keys(course_file).length) {
 					errorArray.push(
-						"Please upload the scorm "+ language +" file."
+						"Please upload the scorm " + language + " file."
 					);
 				} else if (course_file.errorCode) {
 					errorArray.push(course_file.errorCode);
 				} else {
-					scorm_course_files.push({key: language, value: course_file })
+					scorm_course_files.push({
+						key: language,
+						value: course_file,
+					});
 				}
-
 			});
 			//
 		}
@@ -552,7 +578,10 @@ $(function createCourse() {
 		// start the loader and upload the file
 		ml(true, modalLoaderId);
 		//
-		if (Object.keys(courseObj.course_file).length && courseObj.course_type === "manual") {
+		if (
+			Object.keys(courseObj.course_file).length &&
+			courseObj.course_type === "manual"
+		) {
 			// upload file
 			let response = await uploadFile(courseObj.course_file);
 			// parse the JSON
@@ -570,15 +599,20 @@ $(function createCourse() {
 			}
 			// set the file
 			courseObj.course_file = response.data;
-		} else if (Object.keys(scorm_course_files).length && courseObj.course_type === "scorm") {	
+		} else if (
+			Object.keys(scorm_course_files).length &&
+			courseObj.course_type === "scorm"
+		) {
 			//
-			await Promise.all(scorm_course_files.map(async (item) => {
-				let response = await uploadFile(item.value);
-				response = JSON.parse(response);
-				//
-				item.filePath = response.data;
-				return item;
-			}));
+			await Promise.all(
+				scorm_course_files.map(async (item) => {
+					let response = await uploadFile(item.value);
+					response = JSON.parse(response);
+					//
+					item.filePath = response.data;
+					return item;
+				})
+			);
 			//
 			delete courseObj.course_file;
 		} else {
@@ -588,6 +622,25 @@ $(function createCourse() {
 		delete courseObj.course_file_link;
 		// add company code
 		courseObj.company_code = companyCode;
+
+		// upload file
+		let response = await uploadFile(courseObj.course_banner);
+		// parse the JSON
+		response = JSON.parse(response);
+		// if file was not uploaded successfully
+		if (!response.data) {
+			return alertify.alert(
+				"ERROR",
+				"Failed to upload the course banner.",
+				function () {
+					//
+					ml(false, modalLoaderId);
+				}
+			);
+		}
+
+		// set the file
+		courseObj.course_banner = response.data;
 		//
 		try {
 			//
@@ -595,13 +648,15 @@ $(function createCourse() {
 			//
 			if (courseObj.course_type === "scorm") {
 				//
-				await Promise.all(scorm_course_files.map(async (item) => {
-					await updateScormCourseCall(
-						createCourseResponse.courseId,
-						item.filePath,
-						item.key
-					);
-				}));
+				await Promise.all(
+					scorm_course_files.map(async (item) => {
+						await updateScormCourseCall(
+							createCourseResponse.courseId,
+							item.filePath,
+							item.key
+						);
+					})
+				);
 			}
 			//
 			return alertify.alert(
@@ -622,7 +677,6 @@ $(function createCourse() {
 			);
 		}
 	}
-
 
 	/**
 	 * Create the default course
@@ -658,7 +712,7 @@ $(function createCourse() {
 		return new Promise(function (resolve, reject) {
 			const courseObj = {
 				scorm_file: filePath,
-				scorm_language: language
+				scorm_language: language,
 			};
 			//
 			$.ajax({
@@ -773,7 +827,7 @@ $(function createCourse() {
 		return question[0];
 	}
 
-	function getRandomNumber () {
+	function getRandomNumber() {
 		var min = 10000;
 		var max = 99999;
 		return Math.floor(Math.random() * (max - min + 1)) + min;

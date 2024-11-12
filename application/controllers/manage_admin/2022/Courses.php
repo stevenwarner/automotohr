@@ -105,13 +105,13 @@ class Courses extends Admin_Controller
         // load JS
         $this->data['PageScripts'] = [
             'js/app_helper',
-            'v1/plugins/ms_uploader/main',
+            // 'v1/plugins/ms_uploader/main',
             'v1/plugins/ms_modal/main',
-            'v1/plugins/ms_recorder/main',
-            'js/app_helper',
+            // 'v1/plugins/ms_recorder/main',
+            // 'js/app_helper',
             'v1/common',
-            'v1/lms/edit_question',
-            'v1/lms/edit_course',
+            // 'v1/lms/edit_question',
+            // 'v1/lms/edit_course',
             'v1/lms/main',
             'v1/lms/assign_company_courses'
         ];

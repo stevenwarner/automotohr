@@ -248,12 +248,20 @@ $(function LMSEmployeeDashboard() {
 		if (courses.length) {
 			courses.map(function (course) {
 				//
+				coursesHTML += `    <div class="rows">`;
 				coursesHTML += `    <div class="col-sm-4">`;
 				coursesHTML += `    <article class="article-sec">`;
+				if (course.course_banner) {
+					coursesHTML += `    <div class="row">
+											<div class="col-md-12 col-xs-12">
+												<img src="https://automotohrattachments.s3.amazonaws.com/${course.course_banner}" class="" />
+											</div>
+										</div>
+												`;
+				}
 				coursesHTML += `    <h1 style="height: 58px;">`;
 				coursesHTML += course.course_title;
 				coursesHTML += `    </h1>`;
-				coursesHTML += `    <br>`;
 				coursesHTML += `    <div class="row">`;
 				coursesHTML += `        <div class="col-md-12 col-xs-12">`;
 				coursesHTML += `            <p>${course.course_content.substr(0,50)}&nbsp;</p>`;
@@ -334,6 +342,7 @@ $(function LMSEmployeeDashboard() {
 				coursesHTML += `        </div>`;
 				coursesHTML += `    </div>`;
 				coursesHTML += `</article>`;
+				coursesHTML += `</div>`;
 				coursesHTML += `</div>`;
 						
 			});

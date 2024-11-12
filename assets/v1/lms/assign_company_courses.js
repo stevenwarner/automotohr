@@ -32,14 +32,19 @@ $(function LMSStoreCourses() {
 	/**
 	 * Toggle view
 	 */
-	$(document).on("click", ".jsToggleViewAssignCompanyCourse", function (event) {
-		// prevent default event
-		event.preventDefault();""
-		//
-		$(
-			'[data-key="jsView' + $(this).closest("tr").data("id") + '"]'
-		).toggleClass("hidden");
-	});
+	$(document).on(
+		"click",
+		".jsToggleViewAssignCompanyCourse",
+		function (event) {
+			// prevent default event
+			event.preventDefault();
+			("");
+			//
+			$(
+				'[data-key="jsView' + $(this).closest("tr").data("id") + '"]'
+			).toggleClass("hidden");
+		}
+	);
 
 	$(document).on("click", ".jsCheckAll", selectAllInputs);
 	$(document).on("click", ".jsAssignCourses", selectSingleInput);
@@ -54,11 +59,10 @@ $(function LMSStoreCourses() {
 
 	// Select single input: checkbox
 	function selectSingleInput() {
-		$(".jsCheckAll")
-			.prop(
-				"checked",
-				$(".jsAssignCourses").length == $(".jsAssignCourses:checked").length
-			);
+		$(".jsCheckAll").prop(
+			"checked",
+			$(".jsAssignCourses").length == $(".jsAssignCourses:checked").length
+		);
 	}
 
 	function start_copy_process(e) {
@@ -73,6 +77,8 @@ $(function LMSStoreCourses() {
 			);
 		}
 
+		current_course = 0;
+		copy_course_count = selected_courses.length;
 		ml(true, "jsPageLoader");
 		$("#js-loader-text").html("Please wait, we are copying employee");
 		copy_courses();

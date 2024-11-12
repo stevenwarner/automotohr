@@ -171,8 +171,14 @@ $(function LMSCourses() {
 			.done(function () {
 				// empty the call
 				XHR = null;
+				if (getSegment(3) !== undefined) {
+					$(".jsEditCourse").remove();
+					$(".jsDisableDefaultCourse").remove();
+					$(".jsToggleViewDefaultCourse").remove();
+				}
 				// hide the loader
 				ml(false, "jsPageLoader");
+
 			});
 	}
 

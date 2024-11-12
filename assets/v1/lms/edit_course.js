@@ -103,6 +103,8 @@ $(function editCourse() {
 							: "jsEditCourseVideoFile") +
 						""
 				).msFileUploader("get") || {},
+
+			course_banner: $("#jsEditCourseBanner").msFileUploader("get"),
 			course_questions: questionsArray,
 		};
 		//
@@ -395,6 +397,14 @@ $(function editCourse() {
 		if (!courseObj.course_recurring_type.length) {
 			errorArray.push("Course recurring type is required.");
 		}
+		// handle banner
+		if (typeof courseObj.course_banner.link === "undefined") {
+			if (!Object.keys(courseObj.course_banner).length) {
+				errorArray.push("Please upload the Course banner.");
+			} else if (courseObj.course_banner.errorCode) {
+				errorArray.push(courseObj.course_banner.errorCode);
+			}
+		}
 		// set default question array
 		courseObj.course_questions = questionsArray;
 		//
@@ -535,6 +545,27 @@ $(function editCourse() {
 		}
 		//
 		delete courseObj.course_file_link;
+		//
+		if (typeof courseObj.course_banner.link === "undefined") {
+			// upload file
+			let response = await uploadFile(courseObj.course_banner);
+			// parse the JSON
+			response = JSON.parse(response);
+			// if file was not uploaded successfully
+			if (!response.data) {
+				return alertify.alert(
+					"ERROR",
+					"Failed to upload the course banner.",
+					function () {
+						//
+						ml(false, modalLoaderId);
+					}
+				);
+			}
+			// set the file
+			courseObj.course_banner = {};
+			courseObj.course_banner.link = response.data;
+		}
 		// add company code
 		courseObj.company_code = companyCode;
 		//
@@ -847,6 +878,12 @@ $(function editCourse() {
 			"click"
 		);
 		$('.jsEditCourseType[value="' + co.course_type + '"]').trigger("click");
+
+		$("#jsEditCourseBanner").msFileUploader({
+			fileLimit: "15mb",
+			allowedTypes: ["jpg", "jpeg", "png", "webp"],
+			placeholderImage: co.course_banner,
+		});
 
 		// for SCORM
 		if (co.course_type === "scorm") {
