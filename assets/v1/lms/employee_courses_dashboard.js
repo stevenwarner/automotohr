@@ -145,6 +145,7 @@ $(function LMSEmployeeDashboard() {
 	 * get LMS default courses
 	 */
 	function getLMSAssignCourses() {
+		console.log('my courses')
 		// check and abort previous calls
 		if (XHR !== null) {
 			XHR.abort();
@@ -186,29 +187,17 @@ $(function LMSEmployeeDashboard() {
 							if (response.data.assignedIds.includes(course["sid"])) {
 								//
 								if (response.data.inprogressIds.includes(course["sid"])) {
-									// if(inprogressCourses.length < 3) {
-										inprogressCourses.push(course);
-									// }
-								} else if (response.data.expiredIds.includes(course["sid"])) {	
-									// if(pastDueCourses.length < 3) {
-										pastDueCourses.push(course);
-									// }
+									inprogressCourses.push(course);
+								} else if (response.data.expiredIds.includes(course["sid"])) {
+									pastDueCourses.push(course);
 								} else if (response.data.expiredSoonIds.includes(course["sid"])) {
-									// if(dueSoonCourses.length < 3) {
-										dueSoonCourses.push(course);
-									// }	
+									dueSoonCourses.push(course);
 								} else if (response.data.readyToStartIds.includes(course["sid"])) {
-									// if(readyToStartCourses.length < 3) {
-										readyToStartCourses.push(course);
-									// }
+									readyToStartCourses.push(course);
 								} else if (response.data.passedIds.includes(course["sid"])) {
-									// if(passedCourses.length < 3) {
-										passedCourses.push(course);
-									// }	
+									passedCourses.push(course);
 								} else {
-									// if(assignedCourses.length < 3) {
-										assignedCourses.push(course);
-									// }	
+									assignedCourses.push(course);
 								}
 							}	
 						}	
