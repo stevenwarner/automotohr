@@ -565,10 +565,14 @@ class App extends CI_Controller
         // SCORM file name
         $filePath = $this->input->post('scorm_file');
         $fileLanguage = $this->input->post('scorm_language');
+        $languageSortOrder = $this->input->post('language_sort_order');
+
         // get the file to local
         $zipFilePath = copyAWSFile($filePath);
         $uploadPath = str_replace('.zip', '', $zipFilePath);
         // extract the file
+
+        
         $zip = new ZipArchive;
         $res = $zip->open($zipFilePath);
         //
@@ -605,16 +609,20 @@ class App extends CI_Controller
             // Todo delete AWS file and also local one if version not matched
             return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
         }
+
+    
         //
         $insert_data = array();
         $insert_data['course_sid'] = $courseId;
         $insert_data['course_file_name'] = $filePath;
         $insert_data['course_file_language'] = $fileLanguage;
-        $insert_data['Imsmanifist_json'] = $scormInfo;
+        //   $insert_data['Imsmanifist_json'] = $scormInfo;
         $insert_data['created_at'] = getSystemDate();
         $insert_data['updated_at'] = getSystemDate();
+        $insert_data['language_sort_order'] = $languageSortOrder;
         //
         $this->db->insert('lms_scorm_courses', $insert_data);
+
         //
         // $this->db->where("sid", $courseId);
         // $this->db->update("lms_default_courses", ["Imsmanifist_json" => $scormInfo]);
