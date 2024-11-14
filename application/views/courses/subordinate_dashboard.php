@@ -24,8 +24,10 @@
                             Courses
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>
+                                    <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Team Report</a>
+                                    <a href="<?php echo base_url('lms/courses/employee_courses_history/'.$type.'/'.$subordinate_sid); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-history"></i> Employee Courses History</a>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
-                                        <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Team Report</a>
+                                        
                                     <?php } else { ?>
                                         <?php if ($type == "non_plus") { ?>
                                             <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5 csF16"><i class="fa fa-arrow-left"></i> Back to My Courses</a>
@@ -139,9 +141,6 @@
                                                     <div class="col-sm-6">
                                                         <strong>Courses in Progress</strong>
                                                     </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=inprogress") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                    </div>
                                                 </div>
                                             </h1>
                                         </div>
@@ -170,9 +169,6 @@
                                                         &nbsp;Courses that have been assigned to you, but have not been started.
                                                     </p>
                                                 </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=ready_to_start") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="panel-body">
@@ -188,9 +184,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Past Due</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=past_due") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -214,9 +207,6 @@
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <strong>Due Soon</strong>
-                                                    </div>
-                                                    <div class="col-sm-6 text-right">
-                                                        <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=due_soon") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                     </div>
                                                 </div>
                                             </h1>
@@ -245,9 +235,6 @@
                                                         <i class="fa fa-info-circle" aria-hidden="true"></i>
                                                         &nbsp;Congratulations! These are the Courses that you have Completed Successfully.
                                                     </p>
-                                                </div>
-                                                <div class="col-sm-6 text-right">
-                                                    <a href="<?= base_url("lms/subordinate/courses/" . $subordinate_sid . "?type=completed") ?>" class="btn btn-info csRadius5" role="button">View Additional Courses</a>
                                                 </div>
                                             </div>
                                         </div>

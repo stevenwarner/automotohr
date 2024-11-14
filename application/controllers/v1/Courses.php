@@ -90,6 +90,8 @@ class Courses extends Public_Controller
     public function myCourses()
     {
         //
+        redirect('lms/courses/my_lms_dashboard', 'refresh');
+        //
         $data = [];
         //
         $session = $this->session->userdata('logged_in');
@@ -663,6 +665,12 @@ class Courses extends Public_Controller
     }
 
     public function subordinateCourses ($type, $subordinateId) {
+        //
+        if ($type == "plus") {
+            redirect('lms/subordinate/dashboard/'.$subordinateId, 'refresh');
+        } else {
+            redirect('lms/employee/courses/dashboard/'.$subordinateId, 'refresh');
+        }
         //
         $data = [];
         //
@@ -1402,6 +1410,319 @@ class Courses extends Public_Controller
         }
     }
 
+    public function getMyHistory () {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        $haveSubordinate = 'no';
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $haveSubordinate = 'yes';
+            $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } else if ($session['employer_detail']['access_level_plus']) {
+            $haveSubordinate = 'yes';
+        }
+        //
+        $history = $this->course_model->getEmployeeCoursesHistory($companyId, $employeeId);
+        //
+        $data['title'] = "My Courses History :: " . STORE_NAME;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['viewMode'] = "subordinate";
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['uniqueKey'] = $uniqueKey;
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['page'] = "my_courses_history";
+        $data['page_title'] = "My Courses History";
+        $data['level'] = 0;
+        $data['history'] = $history;
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/courses_history'
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/courses_history')
+            ->view('main/footer');
+    }
+
+    /**
+     *
+     */
+    public function previewCourseHistory(int $sid)
+    {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $courseInfo = $this->course_model->getCourseHistoryInfo($sid);
+        //
+        $lessonStatus = '';
+        //
+        if ($courseInfo['lesson_status'] == "completed") {
+            //
+            $lessonStatus = 'completed';
+        } else {
+            // 
+            $lessonStatus = 'started';
+        }
+        //
+        $courseInfo['course_title'] = $this->course_model->getCoursesHistoryTitle($courseInfo['course_sid']);
+        $questions = $courseInfo['course_questions'];
+        //
+        $data['title'] = "My Course History :: " . STORE_NAME;
+        $data['session'] = $session;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['course_sid'] = $sid;
+        $data['courseInfo'] = $courseInfo;
+        $data['lessonStatus'] = $lessonStatus;
+        $data['page'] = "my_course";
+        $data['subordinate_sid'] = 0;
+        $data['level'] = 0;
+        $data['viewMode'] = "preview_my_history";
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/courses_history',
+        ];
+        //
+        if ($courseInfo['course_type'] == "scorm") {
+            $viewName = "scorm_course";
+            $scormInfo = json_decode($courseInfo['Imsmanifist_json'], true);
+            $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
+            //
+            if ($scormInfo["version"] == '1.2') {
+                $data['PageScripts'][] = 'v1/plugins/ms_scorm/adapter_12';
+            } elseif ($scormInfo["version"] == '2004_3') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_3'];
+            } elseif ($scormInfo["version"] == '2004_4') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_4'];
+            }
+            //
+            $data['version'] = $scormInfo["version"];
+            //
+            $data['CMIObject'] = json_decode($courseInfo['course_answer_json'], true);
+        } elseif ($courseInfo['course_type'] == "manual") {
+            $viewName = "manual_course";
+            //
+            $data['questions'] = $questions;
+        }
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/' . $viewName)
+            ->view('main/footer');
+    }
+
+    public function getEmployeeHistory ($reviewAs, $subordinateId) {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        $haveSubordinate = 'no';
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $haveSubordinate = 'yes';
+            $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } else if ($session['employer_detail']['access_level_plus']) {
+            $haveSubordinate = 'yes';
+        }
+        //
+        $history = $this->course_model->getEmployeeCoursesHistory($companyId, $subordinateId);
+        $subordinateName = getUserNameBySID($subordinateId);
+        //
+        $data['title'] = "My Courses History :: " . STORE_NAME;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['viewMode'] = "subordinate";
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['uniqueKey'] = $uniqueKey;
+        $data['haveSubordinate'] = $haveSubordinate;
+        $data['subordinateId'] = $subordinateId;
+        $data['page'] = "employee_courses_history";
+        $data['page_title'] = $reviewAs == "non_plus" ? "Subordinate Courses History :: ".$subordinateName : "Employee Courses History :: ".$subordinateName;
+        $data['level'] = 0;
+        $data['reviewAs'] = $reviewAs;
+        $data['history'] = $history;
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/courses_history'
+        ];
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/courses_history')
+            ->view('main/footer');
+    }
+
+    public function previewSubordinateCourseHistory ($reviewAs, $sid, $subordinateId) {
+        //
+        $data = [];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $companyId = $session['company_detail']['sid'];
+        $employeeId = $session['employer_detail']['sid'];
+        //
+        $data['security_details'] = db_get_access_level_details($employeeId);
+        //
+        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
+        //
+        if (!empty($subordinateInfo['employees'])) {
+            // Enter subordinate json into DB
+            $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
+        } 
+        //
+        $courseInfo = $this->course_model->getCourseHistoryInfo($sid);
+        //
+        $questions = $courseInfo['course_questions'];
+        //
+        if ($reviewAs == "plus") {
+            $data['title'] = "Employee Course Preview | " . STORE_NAME;
+        } else {
+            $data['title'] = "Subordinate Course Preview | " . STORE_NAME;
+        }
+        //
+        $courseInfo['course_title'] = $this->course_model->getCoursesHistoryTitle($courseInfo['course_sid']);
+        //
+        $data["reviewAs"] = $reviewAs;
+        $data['session'] = $session;
+        $data['companyId'] = $companyId;
+        $data['employer_sid'] = $employeeId;
+        $data['employee'] = $session['employer_detail'];
+        $data['load_view'] = 1;
+        $data['course_sid'] = $sid;
+        $data['courseInfo'] = $courseInfo;
+        // $data['lessonStatus'] = $lessonStatus;
+        $data['page'] = "subordinate_course";
+        $data['subordinate_sid'] = $subordinateId;
+        $data['level'] = 0;
+        $data['search'] = "";
+        $data['viewMode'] = "preview_subordinate_history";
+        //
+        // load CSS
+        $data['PageCSS'] = [
+            '2022/css/main'
+        ];
+        // load JS
+        $data['PageScripts'] = [
+            'js/app_helper',
+            'v1/common',
+            'v1/lms/courses_history',
+        ];
+        //
+        if ($courseInfo['course_type'] == "scorm") {
+            $viewName = "scorm_course";
+            $scormInfo = json_decode($courseInfo['Imsmanifist_json'], true);
+            $data['PageScripts'][] = 'v1/plugins/ms_scorm/main';
+            //
+            if ($scormInfo["version"] == '1.2') {
+                $data['PageScripts'][] = 'v1/plugins/ms_scorm/adapter_12';
+            } elseif ($scormInfo["version"] == '2004_3') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_3'];
+            } elseif ($scormInfo["version"] == '2004_4') {
+                $data['PageScripts'][] = ['v1/plugins/ms_scorm/adapter_2004_4'];
+            }
+            //
+            $data['version'] = $scormInfo["version"];
+            //
+            $data['CMIObject'] = json_decode($courseInfo['course_answer_json'], true);
+        } elseif ($courseInfo['course_type'] == "manual") {
+            $viewName = "manual_course";
+            //
+            $data['questions'] = $questions;
+            
+        }
+        //
+        // get access token
+        $data['apiAccessToken'] = getApiAccessToken(
+            $companyId,
+            $employeeId
+        );
+        //
+        $data['apiURL'] = getCreds('AHR')->API_BROWSER_URL;
+        //
+        $this->load
+            ->view('main/header_2022', $data)
+            ->view('courses/' . $viewName)
+            ->view('main/footer');
+    }
+
     /**
      * Handle all ajax requests
      * Created on: 16-08-2019
@@ -1504,6 +1825,8 @@ class Courses extends Public_Controller
         //
         $this->resp($resp);
     }
+
+    
 
     /**
      * Send JSON response

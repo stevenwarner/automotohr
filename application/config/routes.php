@@ -1722,7 +1722,13 @@ $route['lms/courses/company_courses'] = 'v1/Courses/companyCourses';
 $route['lms/courses/emailReminder/(:any)'] = 'v1/Courses/emailReminder/$1';
 $route['lms/course/delete_language/(:num)']['delete'] = 'v1/Courses/deletePreviousAllLanguages/$1';
 $route['lms/course/delete_language/(:num)/(:any)']['delete'] = 'v1/Courses/deletePreviousLanguages/$1/$2';
-
+//
+$route['lms/courses/my_courses_history']['get'] = 'v1/Courses/getMyHistory';
+$route['lms/courses/my_history_preview/(:num)']['get'] = 'v1/Courses/previewCourseHistory/$1';
+//
+$route['lms/courses/employee_courses_history/(:any)/(:num)']['get'] = 'v1/Courses/getEmployeeHistory/$1/$2';
+$route['lms/courses/employee_history_preview/(:num)/(:num)'] = 'v1/Courses/previewSubordinateCourseHistory/plus/$1/$2';
+$route['lms/courses/subordinate_history_preview/(:num)/(:num)'] = 'v1/Courses/previewSubordinateCourseHistory/non_plus/$1/$2';
 
 
 $route['hr/document/hybrid/generate'] = 'Hr_documents_management/generateHybridDocument';

@@ -17,12 +17,18 @@
                     </div>
                 </div>
          
+                <br>
+
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
                             <?php echo $courseInfo["course_title"]; ?>
                             <div style="float: right;">
-                                <?php if ($viewMode == "preview_only") { ?>
+                                <?php if ($viewMode == "preview_my_history") { ?>
+                                    <a href="<?php echo base_url('lms/courses/my_courses_history'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to History</a>
+                                <?php } else if ($viewMode == "preview_subordinate_history") { ?>
+                                    <a href="<?php echo base_url('lms/courses/employee_courses_history/'.$reviewAs.'/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i>  Back to History</a>
+                                <?php } else if ($viewMode == "preview_only") { ?>
                                     <?php if ($reviewAs == "plus") { ?>
                                         <a href="<?php echo base_url('lms/employee/courses/dashboard/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } else { ?>
@@ -34,7 +40,7 @@
                             </div>
                         </h1>
                     </div>
-
+                    <br>
                     <div class="section-inner">
                         <div class="heading-sec">
                             <div id="jsPreviewCourse"></div>
