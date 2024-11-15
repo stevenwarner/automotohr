@@ -71,7 +71,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
-                            <strong>Assign Course(s)</strong>
+                            <strong>History Course(s)</strong>
                         </h1>
                     </div>
                     <div class="panel-body">
