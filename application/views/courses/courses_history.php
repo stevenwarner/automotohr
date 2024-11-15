@@ -214,4 +214,29 @@
     var reviewAs = "<?php echo $type; ?>";
     var courseCategories = <?php echo json_encode($categories); ?>;
     var categoriesValues = <?php echo json_encode($categoriesValues); ?>;
+
+    Highcharts.chart('historyContainer', {
+		chart: {
+			type: 'bar'
+		},
+		title: {
+			text: 'Courses History'
+		},
+		xAxis: {
+			categories: courseCategories,
+			title: {
+				text: 'Courses'
+			}
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: 'Course Count'
+			}
+		},
+		series: [{
+			name: 'Courses History Count',
+			data: categoriesValues
+		}]
+	});
 </script>

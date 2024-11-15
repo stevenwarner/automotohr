@@ -84,30 +84,6 @@ $(function LMSEmployeeCoursesHistory() {
 	//
 	window.sendCourseToSave = sendCourseToSave;
 	//
-	Highcharts.chart('historyContainer', {
-		chart: {
-			type: 'bar'
-		},
-		title: {
-			text: 'Courses History'
-		},
-		xAxis: {
-			categories: courseCategories,
-			title: {
-				text: 'Courses'
-			}
-		},
-		yAxis: {
-			min: 0,
-			title: {
-				text: 'Course Count'
-			}
-		},
-		series: [{
-			name: 'Courses History Count',
-			data: categoriesValues
-		}]
-	});
 
 	getLMSCourseHistory();
 	ml(false, "jsPageLoader");
