@@ -42,10 +42,72 @@ $(function LMSEmployeeCoursesHistory() {
 			});
 	}
 
+	/**
+	 * get LMS course questions
+	 */
+	function getCourseQuestions() {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url:
+				apiURL +
+				"lms/history/" +
+				courseId +
+				"/questions",
+			method: "GET",
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				$("#jsPreviewCourseQuestion").html(response);
+				//
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				$(".jsSaveQuestionResult").hide();
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
 	function sendCourseToSave(CMIElements) {
 	}
 	//
 	window.sendCourseToSave = sendCourseToSave;
+	//
+	Highcharts.chart('historyContainer', {
+		chart: {
+			type: 'bar'
+		},
+		title: {
+			text: 'Courses History'
+		},
+		xAxis: {
+			categories: courseCategories,
+			title: {
+				text: 'Courses'
+			}
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: 'Course Count'
+			}
+		},
+		series: [{
+			name: 'Courses History Count',
+			data: categoriesValues
+		}]
+	});
 
 	getLMSCourseHistory();
 	ml(false, "jsPageLoader");

@@ -36,7 +36,52 @@
                 </div>
             </div>
             <!--  -->
-            <div class="col-sm-12">
+            <!--  -->
+            <div class="col-sm-3"> 
+                <?php if ($page == "employee_courses_history") { ?> 
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1 class="panel-heading-text text-medium">
+                                <strong><?php echo $type == "non_plus" ? "Subordinate" : "Employee"; ?> Info</strong>
+                            </h1>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <img style="width: 90px; height: 90px; border-radius: 50% !important;" src="<?= getImageURL($subordinateInfo["profile_picture"]); ?>" alt="" />
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-small weight-6 myb-0" style="font-size: 14px;">
+                                        <?= remakeEmployeeName($subordinateInfo, true, true); ?>
+                                    </p>
+                                    <p class="text-small">
+                                        <?= remakeEmployeeName($subordinateInfo, false); ?>
+                                    </p>
+                                    <p class="text-small">
+                                        <?= $subordinateInfo['email']; ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Sidebar head -->
+
+                        </div>
+                    </div>
+                <?php } ?>    
+                <!--  -->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h1 class="panel-heading-text text-medium">
+                            <strong>Assign Course(s)</strong>
+                        </h1>
+                    </div>
+                    <div class="panel-body">
+                        <div id="historyContainer"></div>
+                    </div>
+                </div>
+            </div>
+            <!--  -->
+            <!--  -->
+            <div class="col-sm-9">
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="csTabContent">
@@ -167,4 +212,6 @@
     var subordinateId = "<?php echo $subordinate_sid; ?>";
     var subordinateName = "<?php echo $subordinateName; ?>";
     var reviewAs = "<?php echo $type; ?>";
+    var courseCategories = <?php echo json_encode($categories); ?>;
+    var categoriesValues = <?php echo json_encode($categoriesValues); ?>;
 </script>

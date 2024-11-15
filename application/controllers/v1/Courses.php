@@ -336,8 +336,13 @@ class Courses extends Public_Controller
             $viewName = "manual_course";
             //
             $data['questions'] = $questions;
-            $data['viewMode'] = "attempt";
-        }
+            if ( $lessonStatus = 'completed') {
+                $data['viewMode'] = "preview";
+            } else {
+                $data['viewMode'] = "attempt";
+            }
+            //
+        }   
         //
         // get access token
         $data['apiAccessToken'] = getApiAccessToken(
@@ -1435,6 +1440,20 @@ class Courses extends Public_Controller
         //
         $history = $this->course_model->getEmployeeCoursesHistory($companyId, $employeeId);
         //
+        $historyOverView = [];
+        //
+        if ($history) {
+            foreach ($history as $item) {
+                $historyOverView[] = [
+                    'name' => $item['course_title'],
+                    'value' => count($item['history'])
+                ];
+            }
+            //
+            $data['categories'] = array_column($historyOverView, 'name');
+            $data['categoriesValues'] = array_column($historyOverView, 'value');
+        }
+        //
         $data['title'] = "My Courses History :: " . STORE_NAME;
         $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
@@ -1588,9 +1607,22 @@ class Courses extends Public_Controller
         }
         //
         $history = $this->course_model->getEmployeeCoursesHistory($companyId, $subordinateId);
-        $subordinateName = getUserNameBySID($subordinateId);
         //
-        $data['title'] = "My Courses History :: " . STORE_NAME;
+        $historyOverView = [];
+        //
+        if ($history) {
+            foreach ($history as $item) {
+                $historyOverView[] = [
+                    'name' => $item['course_title'],
+                    'value' => count($item['history'])
+                ];
+            }
+            //
+            $data['categories'] = array_column($historyOverView, 'name');
+            $data['categoriesValues'] = array_column($historyOverView, 'value');
+        }
+        //
+        $data['title'] = "Subordinate Courses History :: " . STORE_NAME;
         $data['companyId'] = $companyId;
         $data['employer_sid'] = $employeeId;
         $data['viewMode'] = "subordinate";
@@ -1599,8 +1631,9 @@ class Courses extends Public_Controller
         $data['uniqueKey'] = $uniqueKey;
         $data['haveSubordinate'] = $haveSubordinate;
         $data['subordinateId'] = $subordinateId;
+        $data['subordinateInfo'] = get_employee_profile_info($subordinateId);
         $data['page'] = "employee_courses_history";
-        $data['page_title'] = $reviewAs == "non_plus" ? "Subordinate Courses History :: ".$subordinateName : "Employee Courses History :: ".$subordinateName;
+        $data['page_title'] = $reviewAs == "non_plus" ? "Subordinate Courses History" : "Employee Courses History";
         $data['level'] = 0;
         $data['reviewAs'] = $reviewAs;
         $data['history'] = $history;
@@ -1706,7 +1739,7 @@ class Courses extends Public_Controller
             $viewName = "manual_course";
             //
             $data['questions'] = $questions;
-            
+            //
         }
         //
         // get access token

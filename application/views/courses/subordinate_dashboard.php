@@ -105,6 +105,14 @@
                 </div>
 
                 <div class="panel panel-default">
+                    <div class="panel-body" style="background: #113d61; border-radius: 4px;">
+                        <h2 style="color: #fff;">Trainings: <span style="color: #ef6c34;" id="jsOverViewTrainings">0%</span></h2>
+                        <h3 style="color: #fff; margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon">0</span> Courses Due Soon</h3>
+                        <h3 style="color: #fff; margin-top: 0px;"><span id="jsOverViewCourseTotal">0</span> Courses Total</h3>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
                     <div class="panel-heading">
                         <h1 class="panel-heading-text text-medium">
                             <strong>Assign Course(s)</strong>
