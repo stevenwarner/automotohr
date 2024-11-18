@@ -240,6 +240,8 @@ $(function LMSEmployeeCourses() {
 				//
 				if (count.assigned) {
 					//
+					loadOverView(count)
+					//
 					loadMyAssignedCoursesPaiChart(count);
 					//
 					loadMyAssignedCoursesBarChart(count);
@@ -418,12 +420,12 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `            <p>&nbsp;</p>`;
 
 				if (course.course_status == "passed") {
-					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}>
+					coursesHTML += `            <a class="btn btn-info csRadius5 csF16 jsStartCourse${course.sid}" href="${baseURI}lms/subordinate/course/${course.sid}/${subordinateId}/${reviewAs}/${defaultLanguage}">
 												<i class="fa fa-eye"></i>
 												View Content
 											</a>`;
 											
-					coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate}">
+					coursesHTML += `        <a class="btn btn-info csRadius5 csF16" href="${baseURI}lms/courses/${course.sid}/${subordinateId}/subordinate/certificate">
 												<i class="fa fa-eye"></i>
 												View Certificate
 											</a>`;
@@ -464,6 +466,13 @@ $(function LMSEmployeeCourses() {
 		
 	}
 	//
+	//
+	function loadOverView (count) {
+		var percentage = ((count.assigned - count.pending) / count.assigned) * 100;
+		$("#jsOverViewTrainings").html(percentage+"%");
+		$("#jsOverViewCourseDueSoon").html(count.pending);
+		$("#jsOverViewCourseTotal").html(count.assigned);
+	}
 	//
 	function loadMyAssignedCoursesPaiChart(
         count

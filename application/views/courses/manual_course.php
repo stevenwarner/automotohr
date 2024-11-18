@@ -20,8 +20,11 @@
                         <h1 class="section-ttile">
                             <?php echo $courseInfo["course_title"]; ?> 
                             <div style="float: right;">
-                                
-                                <?php if ($viewMode == "preview_only") { ?>
+                                <?php if ($viewMode == "preview_my_history") { ?>
+                                    <a href="<?php echo base_url('lms/courses/my_courses_history'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to History</a>
+                                <?php } else if ($viewMode == "preview_subordinate_history") { ?>
+                                    <a href="<?php echo base_url('lms/courses/employee_courses_history/'.$reviewAs.'/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i>  Back to History</a>
+                                <?php } else if ($viewMode == "preview_only") { ?>
                                     <?php if ($reviewAs == "plus") { ?>
                                         <a href="<?php echo base_url('lms/employee/courses/dashboard/'.$subordinate_sid); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to Courses</a>
                                     <?php } else { ?>
@@ -73,10 +76,12 @@
 <script>
     var courseId = "<?php echo $course_sid; ?>";
     var courseType = "<?php echo $courseInfo['course_type']; ?>";
+    var courseLanguage = "<?php echo $language; ?>";
     var questions = <?= json_encode($questions); ?>;
     var mode = "<?php echo $viewMode; ?>";
     var lessonStatus = "<?php echo $lessonStatus; ?>";
     var page = "<?php echo $page; ?>";
     var subordinateId = "<?php echo $subordinate_sid; ?>";
     var search = "<?php echo $search; ?>";
+    console.log(mode)
 </script>

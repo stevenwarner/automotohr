@@ -577,4 +577,68 @@ class Course_model extends CI_Model
     public function insertEmployeeCourseInfo ($dataToInsert) {
         $this->db->insert('lms_employee_course', $dataToInsert);
     }
+
+    public function getEmployeeCoursesHistory ($companyId, $employeeId) {
+        $this->db->select('sid, course_title, course_start_period, course_end_period');
+        $this->db->where('company_sid', $companyId);
+        $a = $this->db->get('lms_default_courses');
+        //
+        $c = $a->result_array();
+        $a = $a->free_result();
+        //
+        if (!empty($c)) {
+            foreach ($c as $key => $course) {
+                //
+                $this->db->select('sid, lesson_status, course_status, course_language, created_at, updated_at');
+                $this->db->where('company_sid', $companyId);
+                $this->db->where('employee_sid', $employeeId);
+                $this->db->where('course_sid', $course['sid']);
+                $a = $this->db->get('lms_employee_course_history');
+                //
+                $h = $a->result_array();
+                $a = $a->free_result();
+                //
+                if (!empty($h)) {
+                    $c[$key]['history'] = $h;
+                } else {
+                    unset($c[$key]);
+                }
+            }
+            //
+            return $c;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getCourseHistoryInfo ($sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+        $a = $this->db->get('lms_employee_course_history');
+        //
+        $h = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!empty($h)) {
+            return $h;
+        } else {
+           return [];
+        }
+    }
+
+    public function getCoursesHistoryTitle ($courseId) {
+        $this->db->select('course_title');
+        $this->db->where('sid', $courseId);
+        $a = $this->db->get('lms_default_courses');
+        //
+        $t = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!empty($t)) {
+            //
+            return $t['course_title'];
+        } else {
+            return '';
+        }
+    }
 }

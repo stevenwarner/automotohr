@@ -223,6 +223,8 @@ $(function LMSEmployeeDashboard() {
 				//
 				if (count.assigned) {
 					//
+					loadOverView(count);
+					//
 					loadMyAssignedCoursesPaiChart(count);
 					//
 					loadMyAssignedCoursesBarChart(count);
@@ -368,6 +370,13 @@ $(function LMSEmployeeDashboard() {
 		$("#"+ID).html(coursesHTML);
 		
 		
+	}
+	//
+	function loadOverView (count) {
+		var percentage = ((count.assigned - count.pending) / count.assigned) * 100;
+		$("#jsOverViewTrainings").html(percentage+"%");
+		$("#jsOverViewCourseDueSoon").html(count.pending);
+		$("#jsOverViewCourseTotal").html(count.assigned);
 	}
 	//
 	function loadMyAssignedCoursesPaiChart(
