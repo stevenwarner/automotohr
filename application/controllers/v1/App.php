@@ -563,14 +563,17 @@ class App extends CI_Controller
     public function parseScorm($courseId)
     {
         // SCORM file name
+
         $filePath = $this->input->post('scorm_file');
         $fileLanguage = $this->input->post('scorm_language');
         $languageSortOrder = $this->input->post('language_sort_order');
+
 
         // get the file to local
         $zipFilePath = copyAWSFile($filePath);
         $uploadPath = str_replace('.zip', '', $zipFilePath);
         // extract the file
+
 
         
         $zip = new ZipArchive;
@@ -610,18 +613,37 @@ class App extends CI_Controller
             return SendResponse(404, ['status' => false, 'errors' => $scormInfo['errors']]);
         }
 
-    
-        //
-        $insert_data = array();
-        $insert_data['course_sid'] = $courseId;
-        $insert_data['course_file_name'] = $filePath;
-        $insert_data['course_file_language'] = $fileLanguage;
-        //   $insert_data['Imsmanifist_json'] = $scormInfo;
-        $insert_data['created_at'] = getSystemDate();
-        $insert_data['updated_at'] = getSystemDate();
-        $insert_data['language_sort_order'] = $languageSortOrder;
-        //
-        $this->db->insert('lms_scorm_courses', $insert_data);
+
+
+        $action = $this->input->post('action', true);
+        if ($action == 'update') {
+
+            $languageSortSid = $this->input->post('language_sid');
+
+            $update_data = array();
+            $update_data['course_sid'] = $courseId;
+            $update_data['course_file_name'] = $filePath;
+            $update_data['course_file_language'] = $fileLanguage;
+            $update_data['Imsmanifist_json'] = $scormInfo;
+            $update_data['updated_at'] = getSystemDate();
+            $update_data['language_sort_order'] = $languageSortOrder;
+
+            $this->db->where('sid', $languageSortSid);
+            $this->db->update('lms_scorm_courses', $update_data);
+        } else {
+
+            //
+            $insert_data = array();
+            $insert_data['course_sid'] = $courseId;
+            $insert_data['course_file_name'] = $filePath;
+            $insert_data['course_file_language'] = $fileLanguage;
+            $insert_data['Imsmanifist_json'] = $scormInfo;
+            $insert_data['created_at'] = getSystemDate();
+            $insert_data['updated_at'] = getSystemDate();
+            $insert_data['language_sort_order'] = $languageSortOrder;
+            //
+            $this->db->insert('lms_scorm_courses', $insert_data);
+        }
 
         //
         // $this->db->where("sid", $courseId);

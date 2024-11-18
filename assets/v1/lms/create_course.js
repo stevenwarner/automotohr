@@ -226,7 +226,6 @@ $(function createCourse() {
 			html += `</select>`;
 			html += `</div>`;
 			html += `<br>`;
-
 			html += '<div class="input-group">';
 			html += '<div class="row">';
 			html += '<div class="col-md-12">';
@@ -241,7 +240,6 @@ $(function createCourse() {
 			html += '</div>';
 			html += '<br />';
 			html += '</div>';
-
 
 			html += `<div class="form-group">`;
 			html += `<label>Course <strong class="text-danger">*</strong></label>`;

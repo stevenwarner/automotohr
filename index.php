@@ -1,4 +1,7 @@
 <?php
+
+use Aws\Sdk;
+
 ob_start();
 // 
 require_once(dirname(__FILE__).'/../protected_files/main.php');
