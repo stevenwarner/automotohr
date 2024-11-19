@@ -2350,7 +2350,7 @@ class Notification_emails extends Public_Controller
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
 
-                        redirect('notification_emails/general_information', 'refresh');
+                        redirect('notification_emails/courses', 'refresh');
                         break;
                     case 'course_status':
                         $notifications_status                               = $this->input->post('course_status');
