@@ -635,16 +635,6 @@ class Dashboard extends Public_Controller
                         $data['session']['company_detail']['sid'],
                         $data['session']['employer_detail']['sid']
                     );
-                //
-                $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
-                //
-                $data['haveSubordinate'] = 'no';
-                $data['subordinateCount'] = 0;
-                //
-                if (!empty($subordinateInfo['employees'])) {
-                    $data['haveSubordinate'] = 'yes';
-                    $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;
@@ -1145,17 +1135,6 @@ class Dashboard extends Public_Controller
                         $data['session']['company_detail']['sid'],
                         $data['session']['employer_detail']['sid']
                     );
-                //
-                $subordinateInfo = getMyDepartmentAndTeams($data['session']['employer_detail']['sid']);
-                //
-                //
-                $data['haveSubordinate'] = 'no';
-                $data['subordinateCount'] = 0;
-                //
-                if (!empty($subordinateInfo['employees'])) {
-                    $data['haveSubordinate'] = 'yes';
-                    $data['subordinateCount'] = count($subordinateInfo['employees']);
-                }
             }
             //
             $data['isLMSModuleEnabled'] = $isLMSModuleEnabled;

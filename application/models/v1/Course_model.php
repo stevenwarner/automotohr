@@ -134,25 +134,13 @@ class Course_model extends CI_Model
         $jobTitleId = $this->db
             ->select('portal_job_title_templates.sid')
             ->from('users')
-            ->join('portal_job_title_templates', 'users.job_title = portal_job_title_templates.title', 'title')
+            ->join('portal_job_title_templates', 'users.lms_job_title = portal_job_title_templates.sid', 'inner')
             ->where('users.sid', $employeeId)
             ->get()
             ->row_array();
         // when no job title is assigned
         if (!$jobTitleId) {
-            $userJobTitle = $this->db
-                ->select('job_title')
-                ->from('users')
-                ->where('users.sid', $employeeId)
-                ->get()
-                ->row_array();
-            //    
-            if (!empty($userJobTitle['job_title'])) {
-                $jobTitleId = -1;
-            } else {  
-                return 0;
-            }
-            
+            return 0;
         }
         //
         $jobTitleId = $jobTitleId['sid'];
