@@ -288,14 +288,15 @@
 
                                                 <li>
                                                     <?php echo form_label('LMS Job Title', 'lms_job_title'); ?>
+                                                    <?php $storeJobTitles = getStoreJobTitles(); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="row">
                                                             <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
                                                                 <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
-                                                                    <?php if ($templateTitles) { ?>
+                                                                    <?php if ($storeJobTitles) { ?>
                                                                         <select name="lms_job_title" id="lms_job_title" class="invoice-fields">
                                                                             <option value="0">Please select job title</option>
-                                                                            <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                            <?php foreach ($storeJobTitles as $titleRow) { ?>
                                                                                 <option value="<?php echo $titleRow['sid']; ?>" <?=$titleRow["sid"] == $data["lms_job_title"] ? "selected": "";?>> <?php echo $titleRow['title']; ?> </option>
                                                                             <?php } ?>
                                                                         </select>

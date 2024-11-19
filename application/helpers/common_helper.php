@@ -16878,6 +16878,17 @@ if (!function_exists('get_templet_jobtitles')) {
     }
 }
 
+if (!function_exists('getStoreJobTitles')) {
+    function getStoreJobTitles()
+    {
+            // Get Job Titles
+            return get_instance()->db
+            ->where('archive_status', 'active')
+            ->order_by('sort_order', 'ASC')
+            ->get('portal_job_title_templates')->result_array();
+    }
+}
+
 
 //
 if (!function_exists('get_templet_complynettitle')) {
