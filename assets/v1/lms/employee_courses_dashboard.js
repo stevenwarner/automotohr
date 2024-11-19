@@ -373,7 +373,7 @@ $(function LMSEmployeeDashboard() {
 	}
 	//
 	function loadOverView (count) {
-		var percentage = ((count.assigned - count.pending) / count.assigned) * 100;
+		var percentage = Math.round(((count.assigned - count.pending) / count.assigned) * 100);
 		$("#jsOverViewTrainings").html(percentage+"%");
 		$("#jsOverViewCourseDueSoon").html(count.pending);
 		$("#jsOverViewCourseTotal").html(count.assigned);
