@@ -1570,7 +1570,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         ->where('users.sid', $employee['employee_sid'])
                         ->where([
                             "users.active" => 1,
-                            "users.terminated_status" => 0
+                            "users.terminated_status" => 0,
+                            "users.is_executive_admin" => 0
                         ])
                         ->get('users')
                         ->row_array();
