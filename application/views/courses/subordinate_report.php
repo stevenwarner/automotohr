@@ -99,6 +99,39 @@
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
+                                <strong>Team Report: Visual Representation</strong>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body" style="background: #113d61; border-radius: 4px;">
+                                                <?php 
+                                                    $total = $subordinateInfo["total_course"];
+                                                    $completed = $subordinateInfo["completed"];
+                                                    $unCompleted = $total - $completed;
+                                                    $percentage = ($completed/$total * 100).'%';
+                                                ?>
+                                                <h2 style="color: #fff;">Trainings: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?=$percentage?></span></h2>
+                                                <h3 style="color: #fff; margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?=$unCompleted?></span> Courses Due Soon</h3>
+                                                <h3 style="color: #fff; margin-top: 0px;"><span id="jsOverViewCourseTotal"><?=$total?></span> Courses Total</h3>
+                                            </div>
+                                        </div>
+                                    </div>    
+
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div id="container1"></div>
+                                            </div>    
+                                        </div>
+                                    </div>    
+                                </div>
+                            </div>
+                        </div>    
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
                                 <strong>Team Report</strong>
                             </div>
                             <div class="panel-body">
@@ -135,6 +168,11 @@
                                                                     <th>Department</th>
                                                                     <th>Team</th>
                                                                     <th>Course Count</th>
+                                                                    <th>Passed Course(s)</th>
+                                                                    <th>Due Soon</th>
+                                                                    <th>Past Due</th>
+                                                                    <th>Ready To Start</th>
+                                                                    <th>Courses in Progress</th>
                                                                     <th>Action</th>
                                                                 </tr>
                                                             </thead>
@@ -168,7 +206,12 @@
                                                                                 <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
                                                                                 <td class="_csVm"><?php echo $departmentName; ?></td>
                                                                                 <td class="_csVm"><?php echo $teamName; ?></td>
-                                                                                <td class="_csVm"><?php echo $courseCountText; ?></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
+                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
                                                                                 <td class="_csVm">
                                                                                     <!-- <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View
@@ -220,6 +263,12 @@
     </div>
 </div>
 
+<script src="https://code.highcharts.com/highcharts.js"></script> 
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
 <script>
     var uniqueKey = "<?php echo $uniqueKey; ?>";
     var haveSubordinate = "<?php echo $haveSubordinate; ?>";
@@ -228,4 +277,10 @@
     var teams = "<?php echo $filters['teams']; ?>";
     var employees = "<?php echo $filters['employees']; ?>";
     var baseURL = "<?= base_url(); ?>";
+    var totalCourses = <?=$subordinateInfo["total_course"]?>;
+    var dueSoonCourses = <?=$subordinateInfo["expire_soon"]?>;
+    var pastDueCourses = <?=$subordinateInfo["expired"]?>;
+    var inProgressCourses = <?=$subordinateInfo["started"]?>;
+    var completedCourses = <?=$subordinateInfo["completed"]?>;
+    var readyToStart = <?=$subordinateInfo["ready_to_start"]?>;
 </script>

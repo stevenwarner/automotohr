@@ -504,6 +504,29 @@ class Courses extends Public_Controller
         $haveSubordinate = 'no';
         //
         if (!empty($subordinateInfo['employees'])) {
+            //
+            $subordinateInfo['total_course'] = 0;
+            $subordinateInfo['expire_soon'] = 0;
+            $subordinateInfo['expired'] = 0;
+            $subordinateInfo['started'] = 0;
+            $subordinateInfo['completed'] = 0;
+            $subordinateInfo['ready_to_start'] = 0;
+            //
+            foreach ($subordinateInfo['employees'] as $key => $subordinateEmployee) {
+                $teamId = $subordinateEmployee['team_sid'];
+                $subordinateInfo['employees'][$key]['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                $subordinateInfo['employees'][$key]['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                //
+                if (isset($subordinateEmployee['coursesInfo'])) {
+                    $subordinateInfo['total_course'] = $subordinateInfo['total_course'] + $subordinateEmployee['coursesInfo']['total_course'];
+                    $subordinateInfo['expire_soon'] = $subordinateInfo['expire_soon'] + $subordinateEmployee['coursesInfo']['expire_soon'];
+                    $subordinateInfo['expired'] = $subordinateInfo['expired'] + $subordinateEmployee['coursesInfo']['expired'];
+                    $subordinateInfo['started'] = $subordinateInfo['started'] + $subordinateEmployee['coursesInfo']['started'];
+                    $subordinateInfo['completed'] = $subordinateInfo['completed'] + $subordinateEmployee['coursesInfo']['completed'];
+                    $subordinateInfo['ready_to_start'] = $subordinateInfo['ready_to_start'] + $subordinateEmployee['coursesInfo']['ready_to_start'];
+                }
+            }
+            // _e($subordinateInfo,true);
             // Enter subordinate json into DB
             $haveSubordinate = 'yes';
             $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
@@ -537,9 +560,9 @@ class Courses extends Public_Controller
                 foreach ($subordinateInfo['employees'] as $subordinateEmployee) {
                     if ($subordinateEmployee["job_title_sid"] > 0) {
                         //
-                        $teamId = $subordinateEmployee['team_sid'];
-                        $subordinateEmployee['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
-                        $subordinateEmployee['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                        // $teamId = $subordinateEmployee['team_sid'];
+                        // $subordinateEmployee['department_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                        // $subordinateEmployee['team_name'] =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
                         //
                         if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {
                             $selectedEmployeesList[] = $subordinateEmployee;

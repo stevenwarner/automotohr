@@ -1629,6 +1629,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                             $assignCourses = !empty($companyCourses) ? implode(',', array_column($companyCourses, "sid")) : "";
                             //
                             $employees[$employee['employee_sid']]["assign_courses"] = $assignCourses;
+                            $employees[$employee['employee_sid']]["coursesInfo"] = getCoursesInfo($assignCourses, $employee['employee_sid']);
                             $employeeData["assign_courses"] =  $assignCourses;
                         } else {
                             $employees[$employee['employee_sid']]["assign_courses"] = "";
@@ -1652,6 +1653,111 @@ if (!function_exists('getMyDepartmentAndTeams')) {
         }
         //
         return $r;
+    }
+}
+
+if (!function_exists('getCoursesInfo')) {
+    /**
+     * Prefill he form data
+     * 
+     * @param string $ids,
+     * @param int $employeeId,
+     * @return array
+     */
+    function getCoursesInfo(
+        string $ids,
+        int $employeeId
+    ): array {
+        //
+        $result = [
+            'total_course' => 0,
+            'expire_soon' => 0,
+            'expired' => 0,
+            'started' => 0,
+            'completed' => 0,
+            'ready_to_start' => 0
+        ];
+        //
+        // get the company courses
+        $assignCourses = get_instance()->db
+            ->select('sid, course_start_period, course_end_period')
+            ->from('lms_default_courses')
+            ->where_in('sid', explode(',', $ids))
+            ->get()
+            ->result_array();
+        //
+        // if no courses are found
+        if (!$assignCourses) {
+            return $result;
+        }
+        //
+        $now = new DateTime(date("Y-m-d"));
+        // loop through courses
+        foreach ($assignCourses as $course) {
+            //
+            $courseStatus = getEmployeeCourseStatus($course['sid'], $employeeId);
+            //
+            $start_period = new DateTime($course['course_start_period']);
+            $end_period = new DateTime($course['course_end_period']);
+            //
+            $start_diff = $now->diff($start_period)->format("%r%a");
+            $end_diff = $now->diff($end_period)->format("%r%a");
+            //
+            if ($courseStatus == 'not_started') {
+                if ($start_diff < 0 && $end_diff > 0) {
+                    if ($end_diff < 15) {
+                        $result['expire_soon']++;
+                    } 
+                    //
+                    // $result['started']++;
+                } else if ($start_diff < 0 && $end_diff < 0) {
+                    $result['expired']++;
+                } else {
+                    $result['ready_to_start']++;
+                }
+            } else if ($courseStatus == 'started') {
+                $result['started']++;
+            } else if ($courseStatus == 'completed') {
+                $result['completed']++;
+            }
+            //
+            $result['total_course']++;
+            //
+        }
+        //
+       return $result;
+    }
+}
+
+if (!function_exists('getEmployeeCourseStatus')) {
+    /**
+     * Prefill he form data
+     * 
+     * @param int $courseId,
+     * @param int $employeeId,
+     * @return string
+     */
+    function getEmployeeCourseStatus(
+        int $courseId,
+        int $employeeId
+    ): string {
+        // get the company courses
+        $courseInfo = get_instance()->db
+            ->select('lesson_status')
+            ->from('lms_employee_course')
+            ->where('course_sid', $courseId)
+            ->where('employee_sid', $employeeId)
+            ->get()
+            ->row_array();
+        //
+        // if no courses are found
+        if (!$courseInfo) {
+            return 'not_started';
+        } else if ($courseInfo['lesson_status'] == 'completed') {
+            return 'completed';
+        } else if ($courseInfo['lesson_status'] == 'incomplete') {
+            return 'started';
+        }
     }
 }
 

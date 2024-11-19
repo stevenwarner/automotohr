@@ -94,7 +94,12 @@ $(function LMSEmployeeCourses() {
 						html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
 						html += `<td class="_csVm">${employee.department_name}</td>`;
 						html += `<td class="_csVm">${employee.team_name}</td>`;
-						html += `<td class="_csVm">${courseCountText}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.total_course : 0}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.completed : 0}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.expire_soon : 0}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.expired : 0}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.ready_to_start : 0}</td>`;
+						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.started : 0}</td>`;
 						html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
 						html += `</tr>`;
 				});
@@ -193,7 +198,109 @@ $(function LMSEmployeeCourses() {
 		});
 	}
 
+	function loadMyAssignedCoursesBarChart () {
+		Highcharts.chart('container1', {
+			chart: {
+				type: 'column'
+			},
+			title: {
+				align: 'left',
+				text: 'Assigned Course(s) Bar Chart'
+			},
+			accessibility: {
+				announceNewData: {
+					enabled: true
+				}
+			},
+			xAxis: {
+				type: 'category',
+				labels: {
+					style: {
+						fontSize: '12px'  // Change this to your desired size
+					}
+				}
+			},
+			yAxis: {
+				title: {
+					text: 'Total number of assigned course(s)'
+				},
+				labels: {
+					style: {
+						fontSize: '12px'  // Change this to your desired size
+					}
+				}
+		
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				series: {
+					borderWidth: 0,
+					dataLabels: {
+						enabled: true,
+						format: '{point.y}'
+					}
+				}
+			},
+		
+			tooltip: {
+				headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
+				pointFormat: '<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>'
+			},
+		
+			series: [
+				{
+					name: 'Course(s)',
+					colorByPoint: true,
+					data: [
+						{
+							name: 'Assigned ',
+							color: '#6B8ABB',
+							y: totalCourses
+						},
+						{
+							name: 'Pending',
+							color: '#ff834e',
+							y: (totalCourses - completedCourses)
+						},
+						{
+							name: 'Ready To Start',
+							color: '#2caffe',
+							y: readyToStart
+						},
+						{
+							name: 'In Progress',
+							color: '#544fc5',
+							y: inProgressCourses
+						},
+						{
+							name: 'Passed',
+							color: '#00e272',
+							y: completedCourses
+						},
+						{
+							name: 'Past Due',
+							color: '#fa4b42',
+							y: pastDueCourses
+						},
+						{
+							name: 'Due Soon',
+							color: '#feb56a',
+							y: dueSoonCourses
+						}
+					],
+					dataLabels: {
+						style: {
+							fontSize: '12px'  // Change this to your desired size
+						}
+					}
+				}
+			]
+		});
+	}
+
 
 	ml(false, "jsPageLoader");
-	// getEmployeesReport();
+	loadMyAssignedCoursesBarChart();
 });
