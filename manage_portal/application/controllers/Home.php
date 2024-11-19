@@ -1388,6 +1388,14 @@ class Home extends CI_Controller
                     $data['more_career_oppurtunatity']                          = 'https://' . $more_career_oppurtunatity . '/' . $job_company_career_title;
                     $data['is_preview']                                         = 'no';
 
+
+                    //
+                    if ((!empty($data['jobs_detail_page_banner_data']) && $data['jobs_detail_page_banner_data']['banner_type'] == 'default') || empty($data['jobs_detail_page_banner_data'])) {
+                        if ($data['indeedApplyButtonDetails']) {
+                            $data['job_details']['Title'] = $list['TitleOnly'];
+                        }
+                    }
+
                     if ($this->form_validation->run() == false) {
                         if ($data['is_paid']) {
                             $this->load->view($theme_name . '/_parts/header_view', $data);
