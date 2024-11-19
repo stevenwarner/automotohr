@@ -337,13 +337,13 @@ class Courses extends Public_Controller
             $viewName = "manual_course";
             //
             $data['questions'] = $questions;
-            if ( $lessonStatus = 'completed') {
+            if ($lessonStatus = 'completed') {
                 $data['viewMode'] = "preview";
             } else {
                 $data['viewMode'] = "attempt";
             }
             //
-        }   
+        }
         //
         // get access token
         $data['apiAccessToken'] = getApiAccessToken(
@@ -701,9 +701,9 @@ class Courses extends Public_Controller
         return redirect("lms/subordinate/dashboard/{$subordinateId}");
         //
         if ($type == "plus") {
-            redirect('lms/subordinate/dashboard/'.$subordinateId, 'refresh');
+            redirect('lms/subordinate/dashboard/' . $subordinateId, 'refresh');
         } else {
-            redirect('lms/employee/courses/dashboard/'.$subordinateId, 'refresh');
+            redirect('lms/employee/courses/dashboard/' . $subordinateId, 'refresh');
         }
         //
         $data = [];
@@ -1427,11 +1427,13 @@ class Courses extends Public_Controller
             $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
             //
             $data['PageCSS'] = [
+                'v1/plugins/ms_modal/main.min',
                 'v1/plugins/alertifyjs/css/alertify.min',
                 'mFileUploader/index'
             ];
             // load JS
             $data['PageScripts'] = [
+                'v1/plugins/ms_modal/main.min',
                 'lodash/loadash.min',
                 'v1/plugins/alertifyjs/alertify.min',
                 'mFileUploader/index',
@@ -1446,7 +1448,8 @@ class Courses extends Public_Controller
         }
     }
 
-    public function getMyHistory () {
+    public function getMyHistory()
+    {
         //
         $data = [];
         //
@@ -1614,7 +1617,8 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function getEmployeeHistory ($reviewAs, $subordinateId) {
+    public function getEmployeeHistory($reviewAs, $subordinateId)
+    {
         //
         $data = [];
         //
@@ -1694,7 +1698,8 @@ class Courses extends Public_Controller
             ->view('main/footer');
     }
 
-    public function previewSubordinateCourseHistory ($reviewAs, $sid, $subordinateId) {
+    public function previewSubordinateCourseHistory($reviewAs, $sid, $subordinateId)
+    {
         //
         $data = [];
         //
@@ -1710,7 +1715,7 @@ class Courses extends Public_Controller
         if (!empty($subordinateInfo['employees'])) {
             // Enter subordinate json into DB
             $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
-        } 
+        }
         //
         $courseInfo = $this->course_model->getCourseHistoryInfo($sid);
         //
@@ -1825,6 +1830,12 @@ class Courses extends Public_Controller
                 //
                 if ($formpost['courses']) {
                     foreach ($formpost['courses'] as $key => $course) {
+
+                        if (!$course["course_sid"] || $course["course_sid"] == 0) {
+                            $failCount++;
+                            $failRows[] = $key;
+                            continue;
+                        }
                         //
                         $employeeId = checkEmployeeExistInCompany($course, $data['companyId']);
                         //
@@ -1835,7 +1846,7 @@ class Courses extends Public_Controller
                             //
                             if ($employeeId != 0) {
                                 //
-                                $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
+                                $courseId = $course["course_sid"];
                                 //
                                 if ($courseId > 0) {
                                     if (
@@ -1890,7 +1901,7 @@ class Courses extends Public_Controller
         $this->resp($resp);
     }
 
-    
+
 
     /**
      * Send JSON response
@@ -1904,5 +1915,20 @@ class Courses extends Public_Controller
         header('Content-type: application/json');
         echo json_encode($responseArray);
         exit(0);
+    }
+
+    public function companyCoursesList()
+    {
+        return SendResponse(
+            200,
+            [
+                "company_courses" => $this
+                    ->course_model
+                    ->getActiveCourseList(
+                        checkUserSession()["company_detail"]["sid"],
+                        "0"
+                    )
+            ]
+        );
     }
 }

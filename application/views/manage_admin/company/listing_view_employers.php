@@ -157,8 +157,12 @@
                                                                                 <br />
                                                                                 <b>ComplyNet Job Title:</b> <?php echo $value['complynet_job_title']; ?>
                                                                             <?php } ?>
-                                                                            <br />
-
+                                                                            <?php
+                                                                            if (!empty($value['title'])) { ?>
+                                                                                <br />
+                                                                                <b>LMS Job Title:</b> <?php echo $value['title']; ?>
+                                                                            <?php } ?>
+                                                                            <br>
                                                                             <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">

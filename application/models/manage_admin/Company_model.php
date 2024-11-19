@@ -210,7 +210,14 @@ class Company_model extends CI_Model
         $this->db->select('table_one.languages_speak');
 
         $this->db->select('table_one.complynet_job_title');
+        $this->db->select('portal_job_title_templates.title');
         $this->db->select('table_one.PhoneNumber');
+
+        $this->db->join(
+            "portal_job_title_templates",
+            "portal_job_title_templates.sid = table_one.lms_job_title",
+            "left"
+        );
 
 
 

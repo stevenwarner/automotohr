@@ -1560,25 +1560,26 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         users.timezone,
                         users.access_level_plus,
                         users.is_executive_admin,
-                        users.pay_plan_flag,
-                        portal_job_title_templates.sid as job_title_sid
+                        users.pay_plan_flag
                     ")
                         ->join(
                             "portal_job_title_templates",
-                            "portal_job_title_templates.title = users.job_title",
+                            "portal_job_title_templates.sid = users.lms_job_title",
                             "left"
                         )
                         ->where('users.sid', $employee['employee_sid'])
+                        ->where([
+                            "users.active" => 1,
+                            "users.terminated_status" => 0,
+                            "users.is_executive_admin" => 0
+                        ])
                         ->get('users')
                         ->row_array();
+                    if (!$jobTitleInfo || !$jobTitleInfo["first_name"]) {
+                        continue;
+                    }
                     //
                     $jobTitleId = !empty($jobTitleInfo['job_title_sid']) ? $jobTitleInfo['job_title_sid'] : 0;
-                    //
-                    if ($jobTitleId == 0) {
-                        if (!empty($jobTitleInfo["job_title"])) {
-                            $jobTitleId = -1;
-                        }
-                    }
                     //  
                     $employeeName = remakeEmployeeName([
                         'first_name' => $jobTitleInfo['first_name'],
@@ -4131,6 +4132,6 @@ if (!function_exists("generateJobLink")) {
             ->get("portal_employer")
             ->row_array()["sub_domain"];
         //
-        return "https://".$subDomain . "/job_details/" . $jobId;
+        return "https://" . $subDomain . "/job_details/" . $jobId;
     }
 }
