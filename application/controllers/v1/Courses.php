@@ -1404,11 +1404,13 @@ class Courses extends Public_Controller
             $data['employerData'] = $this->course_model->getEmployerDetail($data['employerId']);
             //
             $data['PageCSS'] = [
+                'v1/plugins/ms_modal/main.min',
                 'v1/plugins/alertifyjs/css/alertify.min',
                 'mFileUploader/index'
             ];
             // load JS
             $data['PageScripts'] = [
+                'v1/plugins/ms_modal/main.min',
                 'lodash/loadash.min',
                 'v1/plugins/alertifyjs/alertify.min',
                 'mFileUploader/index',

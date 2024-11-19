@@ -439,13 +439,13 @@ $(function importCoursesCSV() {
 		insertedCount = 0,
 		existedCount = 0;
 
-        let recordsHolder = [];
+	let recordsHolder = [];
 
 	//
 	function uploadRecords(records) {
-        recordsHolder = records
-		
-        showCourseModel();
+		recordsHolder = records;
+
+		showCourseModel();
 		//
 	}
 
@@ -594,7 +594,7 @@ $(function importCoursesCSV() {
 
 	function showCourseModel() {
 		//
-		Modal(
+		Model(
 			{
 				Id: "jsCheckCourseTitleModal",
 				Loader: "jsCheckCourseTitleLoader",
@@ -663,12 +663,10 @@ $(function importCoursesCSV() {
 				.val();
 		});
 
-        addToChunks();
-
+		addToChunks();
 	});
 
-
-    function addToChunks(){
+	function addToChunks() {
 		chunkOBJ.records = [];
 		//
 		chunkOBJ.recordsLength = recordsHolder.length;
@@ -682,6 +680,6 @@ $(function importCoursesCSV() {
 			chunkOBJ.records = _.chunk(recordsHolder, chunkOBJ.totalChunks);
 		else chunkOBJ.records.push(recordsHolder);
 
-        uploadChunk();
+		uploadChunk();
 	}
 });
