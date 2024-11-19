@@ -1,23 +1,22 @@
 <style type="text/css">
-    
     .dash-box {
-        height: 100%  !important;
+        height: 100% !important;
     }
 
     .notification_Info {
         color: #000;
         font-style: italic;
     }
-    .dash-box-main .dash-box
-    {
+
+    .dash-box-main .dash-box {
         padding-bottom: 60px !important;
     }
-    .dash-box-main
-    {
+
+    .dash-box-main {
         margin-bottom: 30px;
     }
-    .dashboard-widget-box .button-panel
-    {
+
+    .dashboard-widget-box .button-panel {
         margin-top: 0 !important;
     }
 
@@ -25,7 +24,7 @@
         list-style: none;
         font-weight: 700;
     }
-</style>    
+</style>
 
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -279,7 +278,7 @@
                                                         <a href="<?php echo base_url('notification_emails/employee_profile'); ?>">Employee Profile changes</a>
                                                     </h2>
                                                     <div class="count-box">
-                                                        <small>View Employee Profile  Notifications</small>
+                                                        <small>View Employee Profile Notifications</small>
                                                         <br>
                                                         <p>
                                                             <strong class="notification_Info">
@@ -338,6 +337,29 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-envelope"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('notification_emails/courses'); ?>">Courses Messages Notification</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>View Courses Notifications</small>
+                                                        <br>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                <?php echo COURSE_MESSAGE; ?>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/courses'); ?>">View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -349,8 +371,8 @@
     </div>
 </div>
 
-<script src="<?=base_url('assets/js/matchHeight.js');?>" ></script>
+<script src="<?= base_url('assets/js/matchHeight.js'); ?>"></script>
 
 <script type="text/javascript">
-    jQuery('.dash-box-main').matchHeight();    
+    jQuery('.dash-box-main').matchHeight();
 </script>

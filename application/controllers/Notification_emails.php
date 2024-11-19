@@ -2259,4 +2259,160 @@ class Notification_emails extends Public_Controller
             redirect(base_url('login'), "refresh");
         }
     }
+
+    public function courses()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session']                                                    = $this->session->userdata('logged_in');
+            $security_sid                                                       = $data['session']['employer_detail']['sid'];
+            $security_details                                                   = db_get_access_level_details($security_sid);
+            $data['security_details']                                           = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'notification_emails');
+            $company_sid                                                        = $data['session']['company_detail']['sid'];
+            $data['company_sid']                                                = $company_sid;
+            $notifications_type                                                 = 'course_status';
+            $data['title']                                                      = 'Course Notifications';
+            $data['notification_type']                                          = $notifications_type;
+            $data['sub_title']                                                  = 'Add Course Notification';
+            $employees = $this->notification_emails_model->get_all_employeesNew($company_sid);
+            //
+            foreach ($employees as $e_key => $employee) {
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
+            }
+            //
+            $data['employees'] = $employees;
+
+            $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+            $perform_action                                                     = $this->input->post('perform_action');
+
+            switch ($perform_action) {
+                case 'course_status':
+                    $this->form_validation->set_rules('course_status', 'Course Status', 'required|trim|xss_clean');
+                    break;
+                case 'add_notification_email':
+                    $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
+                    $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
+                    $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
+                    break;
+                case 'add_notification_employee':
+                    $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_course');
+                default:
+                    break;
+            }
+
+            if ($this->form_validation->run() === FALSE) {
+                $notifications_emails                                       = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
+                $data['notifications_emails']                               = $notifications_emails;
+                $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, 'course_status');
+                $data['notifications_status']                               = $notifications_status;
+                $data['current_notification_status']                        = $notifications_status['course_status'];
+                $data['notifications_type']                                 = 'course_status';
+                $data['title_for_js_dialog']                                = 'Course Notifications';
+
+                if ($perform_action == 'add_notification_employee') {
+                    $data['emp_id'] = $this->input->post('employee');
+                    $data['duplicate_employee'] = true;
+                }
+
+                $this->load->view('main/header', $data);
+                $this->load->view('notification_emails/course_notification');
+                $this->load->view('main/footer');
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'add_notification_employee':
+                        $formpost = $this->input->post(NULL, true);
+                        $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
+
+                        if (isset($employee_data[0])) {
+                            $employee_data = $employee_data[0];
+                        }
+
+                        $insert_array                                           = array();
+                        $insert_array['email']                                  = $employee_data['email'];
+                        $insert_array['contact_name']                           = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
+                        $insert_array['contact_no']                             = $employee_data['PhoneNumber'];
+                        $insert_array['status']                                 = 'active';
+                        $insert_array['date_added']                             = date('Y-m-d H:i:s');
+                        $insert_array['short_description']                      = 'Company Employee';
+                        $insert_array['notifications_type']                     = $formpost['notifications_type'];
+                        $insert_array['company_sid']                            = $company_sid;
+                        $insert_array['employer_sid']                           = $employee_data['sid'];
+                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array);
+
+                        if ($result == 'success') {
+                            $this->session->set_flashdata('message', 'Success: New Contact is added!');
+                        } else {
+                            $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
+                        }
+
+                        redirect('notification_emails/general_information', 'refresh');
+                        break;
+                    case 'course_status':
+                        $notifications_status                               = $this->input->post('course_status');
+                        $company_sid                                        = $this->input->post('company_sid');
+                        $data_to_update                                     = array();
+                        $data_to_update['course_status']    = $notifications_status;
+                        $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
+                        $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
+                        redirect('notification_emails/courses', 'refresh');
+                        break;
+                    default:
+                        $formpost = $this->input->post(NULL, TRUE);
+                        $data_to_save['company_sid'] = $company_sid;
+                        $data_to_save['date_added'] = date('Y-m-d H:i:s');
+
+                        foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
+                            if ($key != 'status') { // remove status from save data as it is an DB Enum
+                                $data_to_save[$key] = $value;
+                            }
+                        }
+
+                        $status = $this->input->post('status');
+
+                        if (!empty($status) && intval($status) == 1) {
+                            $status = 'active';
+                        } else {
+                            $status = 'deactive';
+                        }
+
+                        $data_to_save['status'] = $status;
+                        $result = $this->notification_emails_model->save_notification_email($data_to_save);
+
+                        if ($result == 'success') {
+                            $this->session->set_flashdata('message', 'Success: New Contact is added!');
+                        } else {
+                            $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
+                        }
+
+                        redirect('notification_emails/courses', 'refresh');
+                        break;
+                }
+            }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+
+    public function check_course($employee_sid)
+    {
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data["session"]["company_detail"]["sid"];
+        $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'course_status');
+
+        if ($result == true) {
+            $this->session->set_flashdata('message', 'Error: Employee already exists');
+            //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
+            redirect('notification_emails/courses', "refresh");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }
