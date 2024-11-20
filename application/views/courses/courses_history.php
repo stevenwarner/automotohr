@@ -68,16 +68,18 @@
                     </div>
                 <?php } ?>    
                 <!--  -->
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h1 class="panel-heading-text text-medium">
-                            <strong>History Course(s)</strong>
-                        </h1>
+                <?php if ($history) { ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h1 class="panel-heading-text text-medium">
+                                <strong>History Course(s)</strong>
+                            </h1>
+                        </div>
+                        <div class="panel-body">
+                            <div id="historyContainer"></div>
+                        </div>
                     </div>
-                    <div class="panel-body">
-                        <div id="historyContainer"></div>
-                    </div>
-                </div>
+                <?php } ?>    
             </div>
             <!--  -->
             <!--  -->
@@ -187,6 +189,12 @@
                                             </div>
                                             <!-- Course History End -->
                                         <?php } ?>     
+                                    <?php } else { ?>
+                                        <div class="row">
+                                            <div class="col-sm-12 text-center">
+                                                <h3>No Courses History Found!</h3>
+                                            </div>
+                                        </div>        
                                     <?php } ?>
                                 </div>
                             </div>
