@@ -145,5 +145,10 @@ $(function LMSCompanyCourses() {
 			});
 	}
 	//
+	function sendCourseToSave(CMIElements) {
+	}
+	//
+	window.sendCourseToSave = sendCourseToSave;
+	//
 	getLMSCompanyCourses();
 });
