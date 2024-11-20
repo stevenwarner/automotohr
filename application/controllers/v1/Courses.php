@@ -1061,6 +1061,8 @@ class Courses extends Public_Controller
                 "EmployeeList" => [],
                 "CoursesList" => []
             ];
+            _e($companyCoursesList,true);
+            _e($companyEmployeesList,true);
             //
             if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
                 //
@@ -1143,7 +1145,7 @@ class Courses extends Public_Controller
                         //
                         $employeesList[$employee['sid']]["full_name"]  = $employeeName;
                         //
-                        if (!empty($employee['job_title'])) {
+                        if (!empty($employee['lms_job_title'])) {
                             $employeesList[$employee['sid']]["courses_sid"]  = $jobRoleCourses[$employee['job_title_sid']];
                             //
                             $job_title_sid = !empty($employee['job_title_sid']) ? $employee['job_title_sid'] : -1;

@@ -323,11 +323,17 @@ class Course_model extends CI_Model
             users.is_executive_admin,
             users.pay_plan_flag,
             users.job_title,
+            users.lms_job_title,
             portal_job_title_templates.sid as job_title_sid
         ')
+        //     ->join(
+        //         "portal_job_title_templates",
+        //         "portal_job_title_templates.title = users.job_title",
+        //         "left"
+        //     )
             ->join(
                 "portal_job_title_templates",
-                "portal_job_title_templates.title = users.job_title",
+                "portal_job_title_templates.sid = users.lms_job_title",
                 "left"
             )
             ->where('users.parent_sid', $companyId)
