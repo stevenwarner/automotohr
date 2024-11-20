@@ -1061,8 +1061,6 @@ class Courses extends Public_Controller
                 "EmployeeList" => [],
                 "CoursesList" => []
             ];
-            _e($companyCoursesList,true);
-            _e($companyEmployeesList,true);
             //
             if (!empty($companyEmployeesList) && !empty($companyCoursesList)) {
                 //
