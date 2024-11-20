@@ -42,6 +42,16 @@ $(function LMSEmployeeCourses() {
 			$('#jsSubordinateEmployees').select2('val', employees.split(','));
 		}		
 	}
+	// load select2 on courses
+	$("#jsSubordinateCourses").select2({
+		closeOnSelect: false,
+	});
+	//
+	if (courses) {
+		if ($('#jsSubordinateCourses').length) {
+			$('#jsSubordinateCourses').select2('val', courses.split(','));
+		}		
+	}
 	//
 	/**
 	 * Get Employee courses
@@ -49,9 +59,10 @@ $(function LMSEmployeeCourses() {
 	$(document).on("click", ".jsSearchEmployees", function (event) {
 		// stop the default behavior
 		event.preventDefault();
-		var SelectedDepartments = $("#jsSubordinateDepartments").val();
-		var SelectedTeams = $("#jsSubordinateTeams").val();
-		var SelectedEmployees = $("#jsSubordinateEmployees").val();
+		var selectedDepartments = $("#jsSubordinateDepartments").val();
+		var selectedTeams = $("#jsSubordinateTeams").val();
+		var selectedEmployees = $("#jsSubordinateEmployees").val();
+		var selectedCourses = $("#jsSubordinateCourses").val();
 		//
 		// check and abort previous calls
 		if (XHR !== null) {
@@ -64,9 +75,10 @@ $(function LMSEmployeeCourses() {
 			url: baseURL + "lms/courses/report",
 			method: "GET",
 			data: {
-				departments: SelectedDepartments,
-				teams: SelectedTeams,
-				employees: SelectedEmployees
+				departments: selectedDepartments,
+				teams: selectedTeams,
+				employees: selectedEmployees,
+				courses: selectedCourses
 			}
 		})
 			.success(function (response) {

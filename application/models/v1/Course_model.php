@@ -193,9 +193,29 @@ class Course_model extends CI_Model
     }
 
     /***
-     * get employee pending course count
+     * get company active courses list
      *
      * @param int    $companyId
+     * @return array
+     */
+    public function getActiveCompanyCourses(
+        int $companyId
+    ): array {
+        // 
+        // get the active company courses
+        return $this->db
+            ->select('sid, course_title')
+            ->from('lms_default_courses')
+            ->where('company_sid', $companyId)
+            ->where('is_active', 1)
+            ->get()
+            ->result_array();
+    }        
+
+    /***
+     * get employee pending course count
+     *
+     * @param int $companyId
      * @return array
      */
     public function getCompanyCoursesInfo(

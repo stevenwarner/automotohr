@@ -72,6 +72,18 @@
                                                     </select>
                                                 <?php } ?>     
                                             </div>
+                                            <!-- Courses Filter  -->
+                                            <div class="col-xs-12  col-md-4">
+                                                <?php if (!empty($subordinateInfo["courses"])) { ?>
+                                                    <label><strong>Courses</strong></label>
+                                                    <select id="jsSubordinateCourses" multiple style="width: 100%">
+                                                        <option value="all">All</option>
+                                                        <?php foreach ($subordinateInfo["courses"] as $course) { ?>
+                                                            <option value="<?php echo $course['sid']; ?>"><?php echo $course['course_title']; ?></option>
+                                                        <?php } ?>   
+                                                    </select>
+                                                <?php } ?>     
+                                            </div>
                                         </div>    
                                         <div class="row">    
                                             <div class="col-xs-12 col-md-3" style="float: right;">
@@ -276,6 +288,7 @@
     var departments = "<?php echo $filters['departments']; ?>";
     var teams = "<?php echo $filters['teams']; ?>";
     var employees = "<?php echo $filters['employees']; ?>";
+    var courses = "<?php echo $filters['courses']; ?>";
     var baseURL = "<?= base_url(); ?>";
     var totalCourses = <?=$subordinateInfo["total_course"]?>;
     var dueSoonCourses = <?=$subordinateInfo["expire_soon"]?>;
