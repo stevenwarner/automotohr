@@ -1560,7 +1560,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                         users.timezone,
                         users.access_level_plus,
                         users.is_executive_admin,
-                        users.pay_plan_flag
+                        users.pay_plan_flag,
+                        users.lms_job_title
                     ")
                         ->join(
                             "portal_job_title_templates",
