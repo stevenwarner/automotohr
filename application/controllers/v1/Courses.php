@@ -600,10 +600,19 @@ class Courses extends Public_Controller
                         }
                     }
                 }
+                //
+                // $subordinateInfo['total_course'];
+                // $subordinateInfo['expire_soon'];
+                // $subordinateInfo['expired'];
+                // $subordinateInfo['started'];
+                // $subordinateInfo['completed'];
+                // $subordinateInfo['ready_to_start'];
             }
             //
             header('Content-Type: application/json');
-            echo json_encode($selectedEmployeesList);
+            echo json_encode([
+                "employees" => $selectedEmployeesList
+            ]);
             exit(0);
         }
         //

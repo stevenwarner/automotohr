@@ -87,7 +87,7 @@ $(function LMSEmployeeCourses() {
 				//
 				var html = '';
 				//
-				$.each(response, function (index,employee) {
+				$.each(response.employees, function (index,employee) {
 						var teamId = employee.team_sid;
 						var departmentId = employee.department_sid;
 						var assignCourses = employee.assign_courses ? employee.assign_courses.split(",") : [];
