@@ -1604,7 +1604,7 @@ if (!function_exists('getMyDepartmentAndTeams')) {
                     $employeeData["employee_name"] =  $employeeName;
                     //
                     if ($flag == 'courses') {
-                        if ($jobTitleId != 0) {
+                        if ($jobTitleInfo['lms_job_title'] != 0) {
                             $today = date('Y-m-d');
                             //
                             $companyId = getEmployeeUserParent_sid($employee['employee_sid']);

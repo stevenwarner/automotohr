@@ -110,7 +110,7 @@
                                                     $total = $subordinateInfo["total_course"];
                                                     $completed = $subordinateInfo["completed"];
                                                     $unCompleted = $total - $completed;
-                                                    $percentage = ($completed/$total * 100).'%';
+                                                    $percentage = $total != 0 ? ($completed/$total * 100).'%' : '0%';
                                                 ?>
                                                 <h2 style="color: #fff;">Trainings: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?=$percentage?></span></h2>
                                                 <h3 style="color: #fff; margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?=$unCompleted?></span> Courses Due Soon</h3>

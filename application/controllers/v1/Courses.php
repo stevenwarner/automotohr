@@ -526,7 +526,7 @@ class Courses extends Public_Controller
                     $subordinateInfo['ready_to_start'] = $subordinateInfo['ready_to_start'] + $subordinateEmployee['coursesInfo']['ready_to_start'];
                 }
             }
-            // _e($subordinateInfo,true);
+            //
             // Enter subordinate json into DB
             $haveSubordinate = 'yes';
             $uniqueKey = $this->course_model->insertEmployeeSubordinate($companyId, $employeeId, $subordinateInfo);
