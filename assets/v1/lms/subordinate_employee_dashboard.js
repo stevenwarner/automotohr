@@ -358,6 +358,13 @@ $(function LMSEmployeeCourses() {
 											</div>
 										</div>
 												`;
+				} else {
+					coursesHTML += `    <div class="row">
+											<div class="col-md-12 col-xs-12">
+												<img src="https://automotohrattachments.s3.amazonaws.com/default_course_banner-Uk2W5O.jpg" class="" />
+											</div>
+										</div>
+												`;
 				}
 				coursesHTML += `    <h1 style="height: 58px;">`;
 				coursesHTML += course.course_title;
