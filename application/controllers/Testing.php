@@ -1135,6 +1135,22 @@ class Testing extends CI_Controller
             $this->db->insert('lms_scorm_courses', $insert_data);
         }
     }
+
+    function fixCompletesCourses ($empId, $courseId) {
+        //
+        $result = $this->db->select("course_version, course_file_name, Imsmanifist_json")
+            ->where("sid", $courseId)
+            ->get("lms_default_courses")
+            ->row_array();
+        
+        $this->db->where("employee_sid", $empId)
+            ->where("course_sid",  $courseId)
+            ->update("lms_employee_course", [
+                "course_version" => $result['course_version'],
+                "course_file_name" => $result['course_file_name'],
+                "Imsmanifist_json" => $result['Imsmanifist_json']
+            ]);
+    }
 }
 
 
