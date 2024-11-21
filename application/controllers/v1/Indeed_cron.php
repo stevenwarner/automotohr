@@ -128,8 +128,8 @@ class Indeed_cron extends CI_Controller
             $this->setJobUUIdAndPublishDate();
             // check if job is expired
             if ($job["is_expired"]) {
-                $this->expiredJobs[] = $this->job;
-                continue;
+                // $this->expiredJobs[] = $this->job;
+                // continue;
             }
             // generate the add/edit job body
             $this->generateJobBody();
@@ -149,7 +149,7 @@ class Indeed_cron extends CI_Controller
             usleep(200);
         }
         // delete jobs from Indeed
-        $this->deleteJobsFromIndeed();
+        // $this->deleteJobsFromIndeed();
 
         //
         exit("All done");

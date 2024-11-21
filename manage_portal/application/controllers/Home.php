@@ -1388,6 +1388,10 @@ class Home extends CI_Controller
                     $data['more_career_oppurtunatity']                          = 'https://' . $more_career_oppurtunatity . '/' . $job_company_career_title;
                     $data['is_preview']                                         = 'no';
 
+                    if ($data['indeedApplyButtonDetails']) {
+                        $data['job_details']['Title'] = $list['TitleOnly'];
+                    }
+
                     if ($this->form_validation->run() == false) {
                         if ($data['is_paid']) {
                             $this->load->view($theme_name . '/_parts/header_view', $data);
