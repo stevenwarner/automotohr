@@ -23,6 +23,15 @@
             src: url(https://fonts.gstatic.com/s/rochester/v22/6ae-4KCqVa4Zy6Fif-UC2FHS.ttf) format('truetype');
         }
 
+        .s13 {
+            color: black;
+            font-family: "Times New Roman", serif;
+            font-style: normal;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 9.5pt;
+        }
+
         .cursive {
             font-family: "Pinyon Script", cursive;
         }
@@ -138,8 +147,8 @@
         }
 
         .pm-certificate-title h1 {
-            font-size: 44px !important;
-            font-weight: 500;
+            font-size: 64px !important;
+            font-weight: 900;
             text-align: center;
         }
 
@@ -233,7 +242,7 @@
 
                         <div class="pm-certificate-border col-xs-12">
                             <div class="row pm-certificate-header">
-                                <div class="pm-certificate-title cursive col-xs-12 text-center">
+                                <div class="pm-certificate-title s13 col-xs-12 text-center">
                                     <h1><?php echo $companyName; ?></h1>
                                 </div>
                             </div>
