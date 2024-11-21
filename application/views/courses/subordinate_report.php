@@ -117,16 +117,16 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="panel panel-default">
-                                            <div class="panel-body" style="background: #113d61; border-radius: 4px;">
+                                            <div class="panel-body" style="background: #e6e7ff; border-radius: 4px;">
                                                 <?php 
                                                     $total = $subordinateInfo["total_course"];
                                                     $completed = $subordinateInfo["completed"];
                                                     $unCompleted = $total - $completed;
                                                     $percentage = $total != 0 ? round(($completed/$total * 100), 0, PHP_ROUND_HALF_UP).'%' : '0%';
                                                 ?>
-                                                <h2 style="color: #fff;">Trainings: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?=$percentage?></span></h2>
-                                                <h3 style="color: #fff; margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?=$unCompleted?></span> Courses Due Soon</h3>
-                                                <h3 style="color: #fff; margin-top: 0px;"><span id="jsOverViewCourseTotal"><?=$total?></span> Courses Total</h3>
+                                                <h2 style="">Completed Courses: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?=$percentage?></span></h2>
+                                                <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?=$unCompleted?></span> Courses Due Soon</h3>
+                                                <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?=$total?></span> Courses Total</h3>
                                             </div>
                                         </div>
                                     </div>    
