@@ -59,14 +59,18 @@
                                             </select>
                                         </div>
 
-                                       <!-- <div class="row"> -->
+                                        <!-- <div class="row"> -->
                                         <div class="col-xs-12 col-md-4">
+                                            <?php
+                                            $yearStartDate = date('01-01-Y');
+                                            $yearEndDate = date('12-31-Y');
+                                            ?>
                                             <label>Start Date</label>
-                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="start_date" id="start_date" />
+                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="start_date" id="start_date" value="<?php echo $yearStartDate; ?>" />
                                         </div>
                                         <div class="col-xs-12 col-md-4">
                                             <label>End Date</label>
-                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="end_date" id="end_date" />
+                                            <input class="invoice-fields" placeholder="11-05-2024" type="text" name="end_date" id="end_date" value="<?php echo $yearEndDate; ?>" />
                                         </div>
                                         <!-- </div> -->
                                         <!-- Filter Buttons  -->

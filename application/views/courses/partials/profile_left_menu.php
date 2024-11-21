@@ -42,6 +42,16 @@
                     <figure><i class="fa fa-send"></i></figure>Export CSV
                 </a>
             </li>
+
+            <li>
+                <a <?php if (strpos(base_url(uri_string()), 'schedule_report') !== false) {
+                        echo 'class="active"';
+                    } ?> href="<?php echo base_url('lms/courses/schedule_report') ?>">
+                    <figure><i class="fa fa-send"></i></figure>Schedule Report
+                </a>
+            </li>
+
+
         <?php } ?>
 
         <li>

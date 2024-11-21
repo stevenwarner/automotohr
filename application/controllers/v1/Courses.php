@@ -1830,4 +1830,71 @@ class Courses extends Public_Controller
         fclose($output);
         exit;
     }
+
+
+      //
+      public function scheduleReport($courses = "all", $employees = "all", $courseType = "all", $startDate = '', $endDate = '')
+      {
+          if ($this->session->userdata('logged_in')) {
+              // Added on: 28-08-2023
+              $session = $this->session->userdata('logged_in');
+              $companyId = $session['company_detail']['sid'];
+              //
+  
+              if (!$session['employer_detail']['access_level_plus']) {
+                  $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
+                  redirect('dashboard', 'refresh');
+              }
+              //
+              $security_sid = $session['employer_detail']['sid'];
+              $security_details = db_get_access_level_details($security_sid);
+              //
+              check_access_permissions($security_details, 'dashboard', 'companyReport');
+              //
+              $data['session'] = $session;
+              $data['security_details'] = $security_details;
+              $data['title'] = "LMS Company Report";
+              $data['companyId'] = $companyId;
+              $data['employer_sid'] = $security_sid;
+              $data['company_sid'] = $session['company_detail']['sid'];
+              $data['logged_in_view'] = true;
+              $data['left_navigation'] = 'courses/partials/profile_left_menu';
+              $data['employer_detail'] = $data['session']['employer_detail'];
+              $data['company_detail'] = $data['session']['company_detail'];
+              $data['level'] = 0;
+  
+              //
+              $filters = [
+                  "courses" => urldecode($courses),
+                  "employees" => urldecode($employees),
+                  "courseType" => urldecode($courseType),
+                  "startDate" => urldecode($startDate),
+                  "endDate" => urldecode($endDate)
+              ];
+  
+              //
+              $companyEmployeesList = $this->course_model->getAllActiveEmployees($data['company_sid'], false);
+              //
+              $filterData = [];
+              $filterData["employees"] = $companyEmployeesList;
+              $filterData["courses"] = $this->course_model->getActiveCourseList($data['company_sid'], "all");
+  
+              $employeeCoursesData = $this->course_model->getEmployeeCourseData($data['company_sid'], $filters);
+  
+              $data["columns"] = $this->setColumns();
+  
+              //
+              $data['employeeCoursesData'] = $employeeCoursesData;
+              $data["filters"] = $filters;
+              $data["filterData"] = $filterData;
+  
+              $this->handleExport($data);
+  
+              $this->load->view('main/header', $data);
+              $this->load->view('courses/schedule_report');
+              $this->load->view('main/footer');
+          } else {
+              redirect(base_url('login'), "refresh");
+          }
+      }
 }

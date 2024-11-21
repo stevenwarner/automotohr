@@ -2424,3 +2424,6 @@ $route['lms/courses/reports/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'v1/Courses/r
 $route['lms/courses/export_passed_courses'] = 'v1/Courses/exportEmployeePassedCourses';
 
 $route['lms/courses/company_courses_list']['get'] = 'v1/Courses/companyCoursesList';
+
+//
+$route['lms/courses/schedule_report'] = 'v1/Courses/scheduleReport';
