@@ -354,14 +354,14 @@ $(function LMSEmployeeCourses() {
 				if (course.course_banner) {
 					coursesHTML += `    <div class="row">
 											<div class="col-md-12 col-xs-12">
-												<img src="https://automotohrattachments.s3.amazonaws.com/${course.course_banner}" class="" />
+												<img src="https://automotohrattachments.s3.amazonaws.com/${course.course_banner}" style="height: 214px !important;" />
 											</div>
 										</div>
 												`;
 				} else {
 					coursesHTML += `    <div class="row">
 											<div class="col-md-12 col-xs-12">
-												<img src="https://automotohrattachments.s3.amazonaws.com/default_course_banner-Uk2W5O.jpg" class="" />
+												<img src="https://automotohrattachments.s3.amazonaws.com/default_course_banner-Uk2W5O.jpg" style="height: 214px !important;" />
 											</div>
 										</div>
 												`;
