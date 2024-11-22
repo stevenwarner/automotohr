@@ -108,8 +108,7 @@ class Indeed_cron extends CI_Controller
     public function processJobSync()
     {
         // load the queued jobs
-        // $this->loadJobs();
-        $this->loadProcessedJobs();
+        $this->loadJobs();
         // load portal data
         $this
             ->loadPortalData(
@@ -173,22 +172,6 @@ class Indeed_cron extends CI_Controller
             ->getJobQueueForActiveJobs(
                 $this->numberOfJobsForQueue
             );
-        // when there is no jobs in queue
-        if (!$this->jobs) {
-            echo "No jobs found.";
-            exit(0);
-        }
-    }
-
-    /**
-     * load the jobs
-     */
-    private function loadProcessedJobs()
-    {
-        // get the jobs
-        $this->jobs = $this
-            ->indeed_model
-            ->getJobsForPayload();
         // when there is no jobs in queue
         if (!$this->jobs) {
             echo "No jobs found.";
@@ -609,15 +592,6 @@ class Indeed_cron extends CI_Controller
         }
         // get the multi job Indeed query
         $queryForIndeed = $this->getJobsBodyForIndeed();
-        if (!file_exists(ROOTPATH . "payload.txt")) {
-            $handler = fopen(ROOTPATH . "payload.txt", "w");
-            fwrite($handler, "");
-            fclose($handler);
-        }
-        $handler = fopen(ROOTPATH . "payload.txt", "a");
-        fwrite($handler, $queryForIndeed);
-        fclose($handler);
-        return false;
         // make the call to Indeed
         $response = $this
             ->indeed_lib
