@@ -1816,4 +1816,48 @@ class Indeed_model extends CI_Model
                 ]
             );
     }
+
+
+    public function getJobsForPayload()
+    {
+        return $this
+            ->db
+            ->select([
+                "indeed_job_queue.sid",
+                "indeed_job_queue.job_sid",
+                "indeed_job_queue.is_expired",
+                "portal_job_listings.user_sid",
+                "portal_job_listings.activation_date",
+                "portal_job_listings.Title",
+                "portal_job_listings.JobDescription",
+                "portal_job_listings.JobRequirements",
+                "portal_job_listings.Location_Country",
+                "portal_job_listings.Location_State",
+                "portal_job_listings.Location_City",
+                "portal_job_listings.Location_ZipCode",
+                "portal_job_listings.Salary",
+                "portal_job_listings.SalaryType",
+                "portal_job_listings.JobType",
+                "portal_job_listings.questionnaire_sid",
+                "portal_job_listings.approval_status",
+                "states.state_code",
+            ])
+            ->join(
+                "portal_job_listings",
+                "portal_job_listings.sid = indeed_job_queue.job_sid",
+                "inner"
+            )
+            ->join(
+                "states",
+                "states.sid = portal_job_listings.Location_State",
+                "inner"
+            )
+            ->where([
+                "indeed_job_queue.is_processing" => 1,
+                "indeed_job_queue.is_processed" => 1,
+            ])
+            ->where("indeed_job_queue.is_expired", 0)
+            ->get("indeed_job_queue")
+            ->result_array();
+    }
 }
