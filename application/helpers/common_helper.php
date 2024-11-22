@@ -16884,7 +16884,7 @@ if (!function_exists('getStoreJobTitles')) {
             // Get Job Titles
             return get_instance()->db
             ->where('archive_status', 'active')
-            ->order_by('sort_order', 'ASC')
+            ->order_by('title', 'ASC')
             ->get('portal_job_title_templates')->result_array();
     }
 }
