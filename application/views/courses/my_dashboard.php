@@ -19,7 +19,7 @@
                             My Courses
                             <div style="float: right;">
                                 <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
-                                        <a href="<?php echo base_url('lms/courses/my_courses_history'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-history"></i> My Courses History</a>
+                                        <a href="<?php echo base_url('lms/courses/my_courses_history'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-history"></i> My Course History</a>
                                 <?php } ?>
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>

@@ -49,6 +49,8 @@ $(function createCourse() {
 			course_sort_order: $("#jsAddCourseSortOrder").val().trim(),
 			course_version: $("#jsAddCourseVersion").val(),
 			course_file_type: $(".jsAddCourseFileType:checked").val(),
+			course_secondary_logo_type: $(".jsAddSecondaryLogo:checked").val(),
+			course_secondary_logo: $("#jsPartnershipLogo").msFileUploader("get"),
 			course_file_link: $("#jsAddCourseLink").val(),
 			course_file:
 				$(
@@ -83,6 +85,19 @@ $(function createCourse() {
 			$(".jsAddManualCourseBox").removeClass("hidden");
 			loadCourseFileView();
 			loadQuestionsView();
+		}
+	});
+
+	/**
+	 * Toggle between secondary logo required or not
+	 */
+	$(document).on("click", ".jsAddSecondaryLogo", function () {
+		// make view
+		if ($(this).val() === "yes") {
+			$(".jsPartnershipLogoSection").removeClass("hidden");
+		} else {
+			// set defaults
+			$(".jsPartnershipLogoSection").addClass("hidden");
 		}
 	});
 
@@ -402,7 +417,17 @@ $(function createCourse() {
 					"checked"
 				);
 				$("#jsAddCourseLanguage").select2("val", "english");
-				$(".jsAddCourseScormBox").removeClass("hidden");
+				$(".jsAddCourseScormBox").removeClass("hidden");		
+				//
+				$(".jsPartnershipLogoSection").addClass("hidden");
+				$("input[name=jsAddSecondaryLogo][value=no]").attr(
+					"checked",
+					"checked"
+				);	
+				$("#jsPartnershipLogo").msFileUploader({
+					fileLimit: "15mb",
+					allowedTypes: ["jpg", "jpeg", "png", "webp"],
+				});
 				//
 				$("#jsAddCourseStartPeriod")
 					.datepicker({
@@ -493,12 +518,23 @@ $(function createCourse() {
 		if (!courseObj.course_type) {
 			errorArray.push("Course type is required.");
 		}
+		//
 		// handle banner
 		if (!Object.keys(courseObj.course_banner).length) {
 			errorArray.push("Please upload the Course banner.");
 		} else if (courseObj.course_banner.errorCode) {
 			errorArray.push(courseObj.course_banner.errorCode);
 		}
+		//
+		if (courseObj.course_secondary_logo_type == "yes") {
+			// handle logo
+			if (!Object.keys(courseObj.course_secondary_logo).length) {
+				errorArray.push("Please upload the Course Secondary Logo.");
+			} else if (courseObj.course_secondary_logo.errorCode) {
+				errorArray.push(courseObj.course_secondary_logo.errorCode);
+			}
+		}
+		//
 		// set default question array
 		courseObj.course_questions = questionsArray;
 		// only when a file is uploaded
@@ -639,8 +675,29 @@ $(function createCourse() {
 			);
 		}
 
-		// set the file
-		courseObj.course_banner = response.data;
+		if (courseObj.course_secondary_logo_type == "yes") {
+			// upload secondary logo
+			let responseLogo = await uploadFile(courseObj.course_secondary_logo);
+			// parse the JSON
+			responseLogo = JSON.parse(responseLogo);
+			// if file was not uploaded successfully
+			if (!responseLogo.data) {
+				return alertify.alert(
+					"ERROR",
+					"Failed to upload the course secondary logo.",
+					function () {
+						//
+						ml(false, modalLoaderId);
+					}
+				);
+			}
+			//
+			// set the logo file
+			courseObj.course_secondary_logo = responseLogo.data;
+		}	
+
+
+		
 		//
 		try {
 			//

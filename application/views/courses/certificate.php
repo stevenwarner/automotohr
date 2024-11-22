@@ -41,7 +41,7 @@
         }
          
         .bold {
-            font-weight: bold;
+            font-weight: bolder;
         }
          
         .block {
@@ -157,7 +157,11 @@
         }
 
         .pm-name-text {
-            font-size: 20px;
+            font-size: 32px;
+        }
+
+        .pm-course-title-text {
+            font-size: 22px;
         }
          
         .pm-credits-text {
@@ -276,8 +280,8 @@
                                     <div class="col-xs-12">
                                         <div class="row">
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                                            <div class="pm-course-title underline col-xs-8 text-center">
-                                                <span class="pm-credits-text block bold sans"><?php echo $courseInfo['course_title']; ?> (<?= ucfirst($EmployeeCourseProgress["course_language"]);?>)</span>
+                                            <div class="pm-course-title underline col-xs-10 text-center">
+                                                <span class="pm-course-title-text block bold sans"><?php echo $courseInfo['course_title']; ?> (<?= ucfirst($EmployeeCourseProgress["course_language"]);?>)</span>
                                             </div>
                                             <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
                                         </div>

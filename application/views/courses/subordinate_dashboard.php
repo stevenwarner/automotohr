@@ -25,7 +25,7 @@
                             <div style="float: right;">
                                 <?php if ($haveSubordinate == "yes") { ?>
                                     <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-pie-chart"></i> Team Report</a>
-                                    <a href="<?php echo base_url('lms/courses/employee_courses_history/'.$type.'/'.$subordinate_sid); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-history"></i> Employee Courses History</a>
+                                    <a href="<?php echo base_url('lms/courses/employee_courses_history/'.$type.'/'.$subordinate_sid); ?>" class="btn btn-info btn-orange csRadius5 csF16"><i class="fa fa-history"></i> Employee Course History</a>
                                     <?php if ($page == "my_courses" || $page == "my_dashboard") { ?>
                                         
                                     <?php } else { ?>

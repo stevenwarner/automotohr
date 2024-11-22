@@ -192,7 +192,7 @@
                                     <?php } else { ?>
                                         <div class="row">
                                             <div class="col-sm-12 text-center">
-                                                <h3>No Courses History Found!</h3>
+                                                <h3>No Course History Found!</h3>
                                             </div>
                                         </div>        
                                     <?php } ?>
@@ -228,7 +228,7 @@
 			type: 'bar'
 		},
 		title: {
-			text: 'Courses History'
+			text: 'Course History'
 		},
 		xAxis: {
 			categories: courseCategories,
@@ -243,7 +243,7 @@
 			}
 		},
 		series: [{
-			name: 'Courses History Count',
+			name: 'Course History Count',
 			data: categoriesValues
 		}]
 	});
