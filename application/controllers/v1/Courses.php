@@ -1455,10 +1455,10 @@ class Courses extends Public_Controller
                             //
                             if ($employeeId != 0) {
                                 //
-                             //   $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
-                               
-                             $courseId =$course['courseId'];
-                             //
+                                //   $courseId = $this->course_model->getCourseIdByTitleAndType($course['title'], $course['type'], $data['companyId']);
+
+                                $courseId = $course['courseId'];
+                                //
                                 if ($courseId > 0) {
                                     if (
                                         !$this->db
@@ -1529,7 +1529,7 @@ class Courses extends Public_Controller
 
         $data['companyCourses'] = $this->course_model->getActiveCourseList($data['companyId'], 0);
 
-        $resp['companyCourses']=$data['companyCourses'];
+        $resp['companyCourses'] = $data['companyCourses'];
         $resp['Status'] = TRUE;
         $resp['Response'] = 'Proceed.';
         //
@@ -1825,76 +1825,89 @@ class Courses extends Public_Controller
         foreach ($rows as $row) {
             fputcsv($output, $row);
         }
-
         // Close the output stream
         fclose($output);
         exit;
     }
 
+    //
+    public function scheduleReport()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $session = $this->session->userdata('logged_in');
+            $companyId = $session['company_detail']['sid'];
+            //
 
-      //
-      public function scheduleReport($courses = "all", $employees = "all", $courseType = "all", $startDate = '', $endDate = '')
-      {
-          if ($this->session->userdata('logged_in')) {
-              // Added on: 28-08-2023
-              $session = $this->session->userdata('logged_in');
-              $companyId = $session['company_detail']['sid'];
-              //
-  
-              if (!$session['employer_detail']['access_level_plus']) {
-                  $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
-                  redirect('dashboard', 'refresh');
-              }
-              //
-              $security_sid = $session['employer_detail']['sid'];
-              $security_details = db_get_access_level_details($security_sid);
-              //
-              check_access_permissions($security_details, 'dashboard', 'companyReport');
-              //
-              $data['session'] = $session;
-              $data['security_details'] = $security_details;
-              $data['title'] = "LMS Company Report";
-              $data['companyId'] = $companyId;
-              $data['employer_sid'] = $security_sid;
-              $data['company_sid'] = $session['company_detail']['sid'];
-              $data['logged_in_view'] = true;
-              $data['left_navigation'] = 'courses/partials/profile_left_menu';
-              $data['employer_detail'] = $data['session']['employer_detail'];
-              $data['company_detail'] = $data['session']['company_detail'];
-              $data['level'] = 0;
-  
-              //
-              $filters = [
-                  "courses" => urldecode($courses),
-                  "employees" => urldecode($employees),
-                  "courseType" => urldecode($courseType),
-                  "startDate" => urldecode($startDate),
-                  "endDate" => urldecode($endDate)
-              ];
-  
-              //
-              $companyEmployeesList = $this->course_model->getAllActiveEmployees($data['company_sid'], false);
-              //
-              $filterData = [];
-              $filterData["employees"] = $companyEmployeesList;
-              $filterData["courses"] = $this->course_model->getActiveCourseList($data['company_sid'], "all");
-  
-              $employeeCoursesData = $this->course_model->getEmployeeCourseData($data['company_sid'], $filters);
-  
-              $data["columns"] = $this->setColumns();
-  
-              //
-              $data['employeeCoursesData'] = $employeeCoursesData;
-              $data["filters"] = $filters;
-              $data["filterData"] = $filterData;
-  
-              $this->handleExport($data);
-  
-              $this->load->view('main/header', $data);
-              $this->load->view('courses/schedule_report');
-              $this->load->view('main/footer');
-          } else {
-              redirect(base_url('login'), "refresh");
-          }
-      }
+            if (!$session['employer_detail']['access_level_plus']) {
+                $this->session->set_flashdata('message', '<strong>Error:</strong> Module Not Accessible!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $security_sid = $session['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            //
+            check_access_permissions($security_details, 'dashboard', 'companyReport');
+            //
+            $data['session'] = $session;
+            $data['security_details'] = $security_details;
+            $data['title'] = "LMS Company Report";
+            $data['companyId'] = $companyId;
+            $data['employer_sid'] = $security_sid;
+            $data['company_sid'] = $session['company_detail']['sid'];
+            $data['logged_in_view'] = true;
+            $data['left_navigation'] = 'courses/partials/profile_left_menu';
+            $data['employer_detail'] = $data['session']['employer_detail'];
+            $data['company_detail'] = $data['session']['company_detail'];
+            $data['level'] = 0;
+
+                     //
+            $companyEmployeesList = $this->course_model->getAllActiveEmployees($data['company_sid'], false);
+            //
+            $filterData = [];
+            $filterData["employees"] = $companyEmployeesList;
+            $data["filterData"] = $filterData;
+
+
+            $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
+
+            if ($this->form_validation->run() == false) {
+                $this->load->view('main/header', $data);
+                $this->load->view('courses/schedule_report');
+                $this->load->view('main/footer');
+            } else {
+
+                //
+                $employer_sid = $data['session']['employer_detail']['sid'];
+                $data_to_insert['company_sid'] = $this->input->post('company_sid');              
+                $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
+                $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
+                $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
+                $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
+             
+                $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
+                if ($sender_list[0] == '-1') {
+                    $data_to_insert['sender_list'] = 'all';
+                } else {
+                    $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',', $this->input->post('assignAdnSendSelectedEmployees')) : '';
+                }
+
+                $data_to_insert['created_at'] = date('Y-m-d H:i:s');
+                $data_to_insert['created_by'] = $employer_sid;
+            
+                if (!empty($to_date)) {
+                    $to_date = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
+                }
+                //
+                if (!empty($from_date)) {
+                    $from_date = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
+                }
+            
+                $this->course_model->save_courses_csv_report_settings($data_to_insert);
+                $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
+                redirect('lms/courses/schedule_report', 'refresh');
+            }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
 }
