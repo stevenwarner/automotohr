@@ -128,22 +128,25 @@ class Notifications extends Public_Controller
         }
 
         //
-        $this->load->model('v1/course_model');
-        $pendingTrainings =
-            $this->course_model->getEmployeePendingCourseCount(
-                $ses['company_detail']['sid'],
-                $ses['employer_detail']['sid']
-            );
-        //
-        if ($pendingTrainings > 0) {
-            $data[] = [
-                'count' => $pendingTrainings,
-                'link' => base_url('lms/courses/my_lms_dashboard'),
-                'title' => 'Pending Courses'
-            ];
+        if (!isLoggedInPersonAnExecutiveAdmin()) {
+
+            $this->load->model('v1/course_model');
+            $pendingTrainings =
+                $this->course_model->getEmployeePendingCourseCount(
+                    $ses['company_detail']['sid'],
+                    $ses['employer_detail']['sid']
+                );
+            //
+            if ($pendingTrainings > 0) {
+                $data[] = [
+                    'count' => $pendingTrainings,
+                    'link' => base_url('lms/courses/my_lms_dashboard'),
+                    'title' => 'Pending Courses'
+                ];
+            }
         }
 
-        if (checkIfAppIsEnabled(SCHEDULE_MODULE)) { 
+        if (checkIfAppIsEnabled(SCHEDULE_MODULE)) {
             //
             $this->load->model("v1/Shift_model", "shift_model");
             $awaitingShiftsRequests = $this->shift_model->getAwaitingSwapShiftsByUserId($ses['employer_detail']['sid']);
@@ -171,20 +174,20 @@ class Notifications extends Public_Controller
 
 
 
-        
+
         //
         if (checkIfAppIsEnabled('performanceevaluation')) {
             $this
-            ->load
-            ->model(
-                "v1/Employee_performance_evaluation_model",
-                "employee_performance_evaluation_model"
-            );
+                ->load
+                ->model(
+                    "v1/Employee_performance_evaluation_model",
+                    "employee_performance_evaluation_model"
+                );
             //
             $pendingPerformanceSection =
-                    $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
-                        $ses['employer_detail']['sid']
-                    );
+                $this->employee_performance_evaluation_model->checkEmployeeUncompletedDocument(
+                    $ses['employer_detail']['sid']
+                );
             //
             if ($pendingPerformanceSection) {
                 $data[] = [
@@ -192,13 +195,13 @@ class Notifications extends Public_Controller
                     'link' => base_url('hr_documents_management/my_documents'),
                     'title' => 'Employee Performance Evaluation'
                 ];
-            }   
+            }
             //
             $pendingVerificationPerformanceSectionOne =
                 $this->employee_performance_evaluation_model->checkPerformanceVerificationDocumentSection(
                     $ses['employer_detail']['sid'],
                     1
-                ); 
+                );
             //
             if ($pendingVerificationPerformanceSectionOne) {
                 $data[] = [
@@ -206,8 +209,8 @@ class Notifications extends Public_Controller
                     'link' => base_url('fillable/epe/verification/documents'),
                     'title' => 'Pending Performance Verification'
                 ];
-            }    
-        }    
+            }
+        }
         //
         if (!sizeof($data)) {
             $this->res['Response'] = 'No notifications found.';
