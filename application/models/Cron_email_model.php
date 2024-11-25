@@ -208,10 +208,6 @@ class Cron_email_model extends CI_Model
         if (!$companyIds) {
             exit("No companies found!");
         }
-        $companyIds = [
-            // 51,
-            8578,
-        ];
         // iterate
         foreach ($companyIds as $companyId) {
             // send emails
@@ -230,6 +226,7 @@ class Cron_email_model extends CI_Model
             "expired",
             "inprogress",
             "ready_to_start",
+            "passed"
         ],
         array $courseIds = []
     ) {
@@ -279,7 +276,7 @@ class Cron_email_model extends CI_Model
         // Add first section
         $data[] = ["Report"];
         // add headers
-        $data[] = ["Employee", "Courses", "Due Soon", "Expired", "In Progress", "Ready To Start"];
+        $data[] = ["Employee", "Courses", "Due Soon", "Expired", "In Progress", "Ready To Start", "Completed"];
         //
         $totals = [
             "total" => 0,
@@ -287,6 +284,7 @@ class Cron_email_model extends CI_Model
             "expired" => 0,
             "inprogress" => 0,
             "ready_to_start" => 0,
+            "passed" => 0,
         ];
         //
         foreach ($this->companyEmployees as $v0) {
@@ -298,19 +296,21 @@ class Cron_email_model extends CI_Model
                 count($v0["courses"]["expired"]),
                 count($v0["courses"]["inprogress"]),
                 count($v0["courses"]["ready_to_start"]),
+                count($v0["courses"]["passed"]),
             ];
             //
             $tmp[1] = $tmp[2]
                 + $tmp[3]
                 + $tmp[4]
-                + $tmp[5];
+                + $tmp[5]
+                + $tmp[6];
             //
             $totals["total"] += $tmp[1];
             $totals["due_soon"] += $tmp[2];
             $totals["expired"] += $tmp[3];
             $totals["inprogress"] += $tmp[4];
             $totals["ready_to_start"] += $tmp[5];
-
+            $totals["passed"] += $tmp[6];
 
             $data[] = $tmp;
         }
@@ -324,6 +324,7 @@ class Cron_email_model extends CI_Model
             $totals["expired"],
             $totals["inprogress"],
             $totals["ready_to_start"],
+            $totals["passed"],
         ];
 
         return ["name" => "lms_report.csv", "data" => $data];
@@ -568,6 +569,7 @@ class Cron_email_model extends CI_Model
             "due_soon" => [],
             "ready_to_start" => [],
             "inprogress" => [],
+            "passed" => [],
         ];
         // set today date
         $todayDateTime = new DateTime(date("Y-m-d 00:00:00"));
@@ -577,6 +579,9 @@ class Cron_email_model extends CI_Model
             // no need to sent notification email
             // for completed courses
             if ($employeeStartedCourses["completed"] && in_array($v0["sid"], $employeeStartedCourses["completed"])) {
+                if (in_array("passed", $types)) {
+                    $employeeCoursesList["passed"][] = $v0;
+                }
                 continue;
             }
             // check if the course implements on employee
