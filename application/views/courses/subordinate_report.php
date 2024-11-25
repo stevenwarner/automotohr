@@ -297,10 +297,10 @@
     var employees = "<?php echo $filters['employees']; ?>";
     var courses = "<?php echo $filters['courses']; ?>";
     var baseURL = "<?= base_url(); ?>";
-    var totalCourses = <?= $subordinateInfo["total_course"] ?>;
-    var dueSoonCourses = <?= $subordinateInfo["expire_soon"] ?>;
-    var pastDueCourses = <?= $subordinateInfo["expired"] ?>;
-    var inProgressCourses = <?= $subordinateInfo["started"] ?>;
-    var completedCourses = <?= $subordinateInfo["completed"] ?>;
-    var readyToStart = <?= $subordinateInfo["ready_to_start"] ?>;
+    var totalCourses = <?= $subordinateInfo["total_course"]  ?> || 0;
+    var dueSoonCourses = <?= $subordinateInfo["expire_soon"] ?> || 0;
+    var pastDueCourses = <?= $subordinateInfo["expired"] ?> || 0;
+    var inProgressCourses = <?= $subordinateInfo["started"] ?> || 0;
+    var completedCourses = <?= $subordinateInfo["completed"] ?> || 0;
+    var readyToStart = <?= $subordinateInfo["ready_to_start"] ?> || 0;
 </script>
