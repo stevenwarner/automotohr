@@ -54,7 +54,7 @@ class Api_auth
     {
         // set default result
         $result = $this->ci->db
-            ->select('sid, client_id, client_secret, expires_in, updated_at')
+            ->select('sid, client_id, client_secret, expires_in, updated_at, iat, exp')
             ->where([
                 'user_sid' => $this->userId,
                 'company_sid' => $this->companyId
@@ -70,17 +70,16 @@ class Api_auth
             $this->ci->db->insert('api_credentials', $ins);
             // set default result
             $result = $this->ci->db
-                ->select('sid, client_id, client_secret, expires_in')
+                ->select('sid, client_id, client_secret, expires_in, iat, exp')
                 ->where([
                     'user_sid' => $this->userId,
                     'company_sid' => $this->companyId
                 ])->get('api_credentials')->row_array();
         }
         //
-        $currentDateWithTime = getSystemDate();
-        $expireDateWithTime = getSystemDate(DB_DATE_WITH_TIME, $result['updated_at'] . '+ ' . ($result['expires_in'] ?? '0') . ' seconds');
+        $currentTimeStamp = strtotime("now");
         //
-        if (!$result['expires_in'] || ($currentDateWithTime >= $expireDateWithTime)) {
+        if ($currentTimeStamp >= $result["exp"]) {
             // flush the old access token
             $this->ci->db
                 ->where([
