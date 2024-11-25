@@ -160,11 +160,14 @@ class Dashboard extends CI_Controller
 
     public function company_login()
     {
+
         $company_sid = $this->input->post("company_sid");
         $action = $this->input->post("action");
         $logged_in_sid = $this->input->post('logged_in_sid');
+        $incident = $this->input->post('incident');
         //$action = 'login'; $company_sid = 57; $logged_in_sid = 58;
         if ($action == 'login') {
+
             $data['employer_detail'] = $this->Users_model->get_company_details($logged_in_sid); // logged in
             $data['company_detail'] = $this->Users_model->get_company_details($company_sid);
             $data['portal'] = $this->Users_model->get_portal_details($company_sid);
@@ -179,7 +182,10 @@ class Dashboard extends CI_Controller
             );
             //            echo '<pre>'; print_r($sess_array); exit;
             $this->session->set_userdata('logged_in', $sess_array);
-            echo $sess_array['employer_detail']['active'];
+            // echo $sess_array['employer_detail']['active'];
+            $logincheck['logedin'] = $sess_array['employer_detail']['active'];
+            $logincheck['incident'] = $incident;
+            echo json_encode($logincheck);
         }
     }
 
@@ -592,7 +598,7 @@ class Dashboard extends CI_Controller
                 if ($is_executive == 'no') {
                     unset($users[$ukey]);
                 }
-            } 
+            }
         }
         //
         if (!sizeof($users)) {

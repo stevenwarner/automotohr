@@ -143,7 +143,10 @@
                                                             <a class="btn btn-success btn-sm" href="<?php echo base_url('private_messages') . '/' . $user_company['company_sid']; ?>">Messages</a>
                                                             <?php if ($user_company['incidentCount'] > 0) { ?>
                                                                 <span class="btn btn-sm" data-toggle="tooltip" data-placement="top" title="<?php echo $user_company['incidentCount']; ?> Incident Pending">
-                                                                    <figure><i class="fa fa-exclamation-triangle start_animation " aria-hidden="true"></i></figure>
+                                                                    <a class="" style="" href="javascript:;" id="<?php echo $user_company['company_sid']; ?>" onclick="return companyLogin(this.id,<?php echo $user_company['logged_in_sid']; ?>,1);">
+                                                                        <figure><i class="fa fa-exclamation-triangle start_animation " aria-hidden="true"></i></figure>
+                                                                    </a>
+
                                                                 </span>
                                                             <?php } ?>
 
@@ -206,15 +209,19 @@
     $parent_base_url = (isset($_SERVER['HTTPS']) ? STORE_PROTOCOL_SSL : STORE_PROTOCOL) . $_SERVER['HTTP_HOST'];
 } ?>
 <script>
-    function companyLogin(company_sid, logged_in_sid) {
+    function companyLogin(company_sid, logged_in_sid, incident = 0) {
         url_to = "<?= base_url() ?>dashboard/company_login";
         $.post(url_to, {
                 action: "login",
                 company_sid: company_sid,
-                logged_in_sid: logged_in_sid
+                logged_in_sid: logged_in_sid,
+                incident: incident
             })
             .done(function(data) {
-                if (data == 1) {
+                dataCheck = JSON.parse(data)
+                if (dataCheck.logedin == 1 && dataCheck.incident == 1) {
+                    window.open("<?= $parent_base_url ?>/incident_reporting_system/assigned_incidents", '_blank');
+                } else if (dataCheck.logedin == 1 && dataCheck.incident == 0) {
                     window.open("<?= $parent_base_url ?>/dashboard", '_blank');
                 } else {
                     alert('Account Is De-Activated');
