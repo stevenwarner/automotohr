@@ -6,7 +6,7 @@ $(function LMSEmployeeCourses() {
 	let filterObj = {
 		teams: "all",
 		employees: "all",
-        courses: "all"
+		courses: "all",
 	};
 	//
 	let timeOffDateFormatWithTime = "MMM DD YYYY, ddd";
@@ -16,20 +16,22 @@ $(function LMSEmployeeCourses() {
 		closeOnSelect: false,
 	});
 	//
-	if (departments) {
-		if ($('#jsSubordinateDepartments').length) {
-			$('#jsSubordinateDepartments').select2('val', departments.split(','));
-		}	
-		
+	if (departments !== undefined) {
+		if ($("#jsSubordinateDepartments").length) {
+			$("#jsSubordinateDepartments").select2(
+				"val",
+				departments.split(",")
+			);
+		}
 	}
 	// load select2 on teams
 	$("#jsSubordinateTeams").select2({
 		closeOnSelect: false,
 	});
 	//
-	if (teams) {
-		if ($('#jsSubordinateTeams').length) {
-			$('#jsSubordinateTeams').select2('val', teams.split(','));
+	if (teams !== undefined) {
+		if ($("#jsSubordinateTeams").length) {
+			$("#jsSubordinateTeams").select2("val", teams.split(","));
 		}
 	}
 	// load select2 on employees
@@ -37,20 +39,20 @@ $(function LMSEmployeeCourses() {
 		closeOnSelect: false,
 	});
 	//
-	if (employees) {
-		if ($('#jsSubordinateEmployees').length) {
-			$('#jsSubordinateEmployees').select2('val', employees.split(','));
-		}		
+	if (employees !== undefined) {
+		if ($("#jsSubordinateEmployees").length) {
+			$("#jsSubordinateEmployees").select2("val", employees.split(","));
+		}
 	}
 	// load select2 on courses
 	$("#jsSubordinateCourses").select2({
 		closeOnSelect: false,
 	});
 	//
-	if (courses) {
-		if ($('#jsSubordinateCourses').length) {
-			$('#jsSubordinateCourses').select2('val', courses.split(','));
-		}		
+	if (courses !== undefined) {
+		if ($("#jsSubordinateCourses").length) {
+			$("#jsSubordinateCourses").select2("val", courses.split(","));
+		}
 	}
 	//
 	/**
@@ -78,42 +80,67 @@ $(function LMSEmployeeCourses() {
 				departments: selectedDepartments,
 				teams: selectedTeams,
 				employees: selectedEmployees,
-				courses: selectedCourses
-			}
+				courses: selectedCourses,
+			},
 		})
 			.success(function (response) {
 				// empty the call
 				XHR = null;
 				//
-				var html = '';
+				var html = "";
 				//
-				$.each(response.employees, function (index,employee) {
-						var teamId = employee.team_sid;
-						var departmentId = employee.department_sid;
-						var assignCourses = employee.assign_courses ? employee.assign_courses.split(",") : [];
-						var courseCount = assignCourses ? assignCourses.length : 0;
-						var courseCountText = courseCount > 1 ? courseCount+" courses assign" : courseCount+" course assign";
-						var departmentName =   "N/A";
-						var teamName =  "N/A";
-					
-						html += `<tr class="js-tr">`;
-						html += `<td>`;
-						html += `	<label class="control control--checkbox">`;
-						html += `		<input type="checkbox" name="employees_ids[]" value="${employee['employee_sid']}" />`;
-						html += `		<div class="control__indicator"></div>`;
-						html += `	</label>`;
-						html += `</td>`;
-						html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
-						html += `<td class="_csVm">${employee.department_name}</td>`;
-						html += `<td class="_csVm">${employee.team_name}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.total_course : 0}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.completed : 0}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.expire_soon : 0}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.expired : 0}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.ready_to_start : 0}</td>`;
-						html += `<td class="_csVm">${employee.coursesInfo ? employee.coursesInfo.started : 0}</td>`;
-						html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee['employee_sid']}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
-						html += `</tr>`;
+				$.each(response.employees, function (index, employee) {
+					var teamId = employee.team_sid;
+					var departmentId = employee.department_sid;
+					var assignCourses = employee.assign_courses
+						? employee.assign_courses.split(",")
+						: [];
+					var courseCount = assignCourses ? assignCourses.length : 0;
+					var courseCountText =
+						courseCount > 1
+							? courseCount + " courses assign"
+							: courseCount + " course assign";
+					var departmentName = "N/A";
+					var teamName = "N/A";
+
+					html += `<tr class="js-tr">`;
+					html += `<td>`;
+					html += `	<label class="control control--checkbox">`;
+					html += `		<input type="checkbox" name="employees_ids[]" value="${employee["employee_sid"]}" />`;
+					html += `		<div class="control__indicator"></div>`;
+					html += `	</label>`;
+					html += `</td>`;
+					html += `<td class="_csVm"><b>${employee.full_name}</b></td>`;
+					html += `<td class="_csVm">${employee.department_name}</td>`;
+					html += `<td class="_csVm">${employee.team_name}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo
+							? employee.coursesInfo.total_course
+							: 0
+					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo
+							? employee.coursesInfo.completed
+							: 0
+					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo
+							? employee.coursesInfo.expire_soon
+							: 0
+					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo ? employee.coursesInfo.expired : 0
+					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo
+							? employee.coursesInfo.ready_to_start
+							: 0
+					}</td>`;
+					html += `<td class="_csVm">${
+						employee.coursesInfo ? employee.coursesInfo.started : 0
+					}</td>`;
+					html += `<td class="_csVm"><a href="${baseURL}lms/subordinate/courses/${employee["employee_sid"]}" class="btn btn-info btn-block csRadius5 csF16">View</a></td>`;
+					html += `</tr>`;
 				});
 				//
 				$("#jsSubordinateList").html(html);
@@ -129,51 +156,64 @@ $(function LMSEmployeeCourses() {
 			});
 	});
 	//
-	$(document).on('click', '.jsCheckAll', selectAllInputs);
-    $(document).on('click', '.jsSelectSubordinate', selectSingleInput);
+	$(document).on("click", ".jsCheckAll", selectAllInputs);
+	$(document).on("click", ".jsSelectSubordinate", selectSingleInput);
 
 	// Select all input: checkbox
 	function selectAllInputs() {
-		$(".jsSelectSubordinate")
-			.prop("checked", $(this).prop("checked"));
+		$(".jsSelectSubordinate").prop("checked", $(this).prop("checked"));
 	}
 
 	// Select single input: checkbox
 	function selectSingleInput() {
-		$(this).find('input[name="employees_ids[]"]').prop('checked', !$(this).find('input[name="employees_ids[]"]').prop('checked'));
-		$(".jsCheckAll")
+		$(this)
+			.find('input[name="employees_ids[]"]')
 			.prop(
 				"checked",
-				$(".jsSelectSubordinate").length == $(".jsSelectSubordinate:checked").length
+				!$(this).find('input[name="employees_ids[]"]').prop("checked")
 			);
+		$(".jsCheckAll").prop(
+			"checked",
+			$(".jsSelectSubordinate").length ==
+				$(".jsSelectSubordinate:checked").length
+		);
 	}
 
 	function get_all_selected_employees() {
 		var tmp = [];
-		$.each($('input[name="employees_ids[]"]:checked'), function() {
+		$.each($('input[name="employees_ids[]"]:checked'), function () {
 			var obj = {};
 			obj.employee_sid = parseInt($(this).val());
-			obj.employee_name = $(this).closest('tr').find('td.js-employee-name').text();
+			obj.employee_name = $(this)
+				.closest("tr")
+				.find("td.js-employee-name")
+				.text();
 
 			tmp.push(obj);
 		});
 		return tmp;
 	}
 
-	$(document).on('click', '.jsSendReminderEmail', function(e) {
+	$(document).on("click", ".jsSendReminderEmail", function (e) {
 		e.preventDefault();
 		//
 		senderList = get_all_selected_employees();
 		//
 		if (senderList.length === 0) {
-			alertify.alert('ERROR!', 'Please select at least one employee to start the process.');
+			alertify.alert(
+				"ERROR!",
+				"Please select at least one employee to start the process."
+			);
 			return;
 		}
 		//
-		alertify.confirm('Do you really want to send email reminders to the selected employees?', function(){
-			//
-			sendEmailToEmployees(senderList);
-		});
+		alertify.confirm(
+			"Do you really want to send email reminders to the selected employees?",
+			function () {
+				//
+				sendEmailToEmployees(senderList);
+			}
+		);
 	});
 
 	function sendEmailToEmployees(senderList) {
@@ -192,126 +232,126 @@ $(function LMSEmployeeCourses() {
 				employeeList: senderList,
 			},
 		})
-		.success(function (response) {
-			// empty the call
-			XHR = null;
-			//
-			ml(false, "jsPageLoader");
-			//
-			return alertify.alert(
-				"SUCCESS!",
-				"You have successfully sent an email reminder to selected employees."
-			);
-		})
-		.fail(handleErrorResponse)
-		.done(function (response) {
-			// empty the call
-			XHR = null;
-		});
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				//
+				ml(false, "jsPageLoader");
+				//
+				return alertify.alert(
+					"SUCCESS!",
+					"You have successfully sent an email reminder to selected employees."
+				);
+			})
+			.fail(handleErrorResponse)
+			.done(function (response) {
+				// empty the call
+				XHR = null;
+			});
 	}
 
-	function loadMyAssignedCoursesBarChart () {
-		Highcharts.chart('container1', {
+	function loadMyAssignedCoursesBarChart() {
+		Highcharts.chart("container1", {
 			chart: {
-				type: 'column'
+				type: "column",
 			},
 			title: {
-				align: 'left',
-				text: 'Assigned Course(s) Bar Chart'
+				align: "left",
+				text: "Assigned Course(s) Bar Chart",
 			},
 			accessibility: {
 				announceNewData: {
-					enabled: true
-				}
+					enabled: true,
+				},
 			},
 			xAxis: {
-				type: 'category',
+				type: "category",
 				labels: {
 					style: {
-						fontSize: '12px'  // Change this to your desired size
-					}
-				}
+						fontSize: "12px", // Change this to your desired size
+					},
+				},
 			},
 			yAxis: {
 				title: {
-					text: 'Total number of assigned course(s)'
+					text: "Total number of assigned course(s)",
 				},
 				labels: {
 					style: {
-						fontSize: '12px'  // Change this to your desired size
-					}
-				}
-		
+						fontSize: "12px", // Change this to your desired size
+					},
+				},
 			},
 			legend: {
-				enabled: false
+				enabled: false,
 			},
 			plotOptions: {
 				series: {
 					borderWidth: 0,
 					dataLabels: {
 						enabled: true,
-						format: '{point.y}'
-					}
-				}
+						format: "{point.y}",
+					},
+				},
 			},
-		
+
 			tooltip: {
-				headerFormat: '<span style="font-size:14px">{series.name}</span><br>',
-				pointFormat: '<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>'
+				headerFormat:
+					'<span style="font-size:14px">{series.name}</span><br>',
+				pointFormat:
+					'<span style="font-size:12px; color:{point.color}">{point.name}:</span> <b style="font-size:12px">{point.y} course(s)</b>',
 			},
-		
+
 			series: [
 				{
-					name: 'Course(s)',
+					name: "Course(s)",
 					colorByPoint: true,
 					data: [
 						{
-							name: 'Assigned ',
-							color: '#6B8ABB',
-							y: totalCourses
+							name: "Assigned ",
+							color: "#6B8ABB",
+							y: totalCourses,
 						},
 						{
-							name: 'Pending',
-							color: '#ff834e',
-							y: (totalCourses - completedCourses)
+							name: "Pending",
+							color: "#ff834e",
+							y: totalCourses - completedCourses,
 						},
 						{
-							name: 'Ready To Start',
-							color: '#2caffe',
-							y: readyToStart
+							name: "Ready To Start",
+							color: "#2caffe",
+							y: readyToStart,
 						},
 						{
-							name: 'In Progress',
-							color: '#544fc5',
-							y: inProgressCourses
+							name: "In Progress",
+							color: "#544fc5",
+							y: inProgressCourses,
 						},
 						{
-							name: 'Passed',
-							color: '#00e272',
-							y: completedCourses
+							name: "Passed",
+							color: "#00e272",
+							y: completedCourses,
 						},
 						{
-							name: 'Past Due',
-							color: '#fa4b42',
-							y: pastDueCourses
+							name: "Past Due",
+							color: "#fa4b42",
+							y: pastDueCourses,
 						},
 						{
-							name: 'Due Soon',
-							color: '#feb56a',
-							y: dueSoonCourses
-						}
+							name: "Due Soon",
+							color: "#feb56a",
+							y: dueSoonCourses,
+						},
 					],
 					dataLabels: {
 						style: {
-							fontSize: '12px'  // Change this to your desired size
-						}
-					}
-				}
-			]
+							fontSize: "12px", // Change this to your desired size
+						},
+					},
+				},
+			],
 		});
 	}
-
 
 	ml(false, "jsPageLoader");
 	loadMyAssignedCoursesBarChart();
