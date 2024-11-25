@@ -532,6 +532,49 @@ if (!function_exists('sendMailWithAttachmentRealPath')) {
     }
 }
 
+if (!function_exists('sendMailWithAttachmentAsString')) {
+
+    function sendMailWithAttachmentAsString(
+        $from,
+        $to,
+        $subject,
+        $body,
+        $fromName = NULL,
+        $filePath = NULL,
+        $replyTo = NULL,
+        $is_html = true
+    ) {
+        require_once(APPPATH . 'libraries/phpmailer/PHPMailerAutoload.php');
+        $mail = new PHPMailer;
+        $mail->From = $from;
+        $mail->FromName = $fromName;
+        $mail->addReplyTo($replyTo === null ? $from : $replyTo);
+        $mail->addAddress($to);
+        $mail->CharSet = 'UTF-8';
+        $mail->isHTML(true);
+
+        if ($filePath != NULL) {
+            //
+            $data = $filePath["data"];
+            // Create CSV content in memory
+            $dataContent = '';
+            $file = fopen('php://temp', 'r+');
+            foreach ($data as $row) {
+                fputcsv($file, $row);
+            }
+            rewind($file);
+            $dataContent = stream_get_contents($file);
+            fclose($file);
+            // Attach the CSV content as a file
+            $mail->addStringAttachment($dataContent, $filePath["name"]);
+        }
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->send();
+        return $mail->getLastMessageID();
+    }
+}
+
 
 if (!function_exists('sendMailWithStringAttachment')) {
 
@@ -6736,7 +6779,7 @@ if (!function_exists('generate_event_status_rows')) {
  * @return String
  */
 if (!function_exists('log_and_send_email_with_attachment')) {
-    function log_and_send_email_with_attachment($from, $to, $subject, $body, $sender_name, $file_path)
+    function log_and_send_email_with_attachment($from, $to, $subject, $body, $sender_name, $file_path, $method = "sendMailWithAttachmentRealPath")
     {
         if (empty($to) || $to == NULL) return 0;
         $email_data = array(
@@ -6749,8 +6792,9 @@ if (!function_exists('log_and_send_email_with_attachment')) {
         //
         save_email_log_common($email_data);
         //
-        if (base_url() != STAGING_SERVER_URL)
-            sendMailWithAttachmentRealPath($from, $to, $subject, $body, $sender_name, $file_path);
+        if (base_url() != STAGING_SERVER_URL){
+            return $method($from, $to, $subject, $body, $sender_name, $file_path);
+        }
     }
 }
 
@@ -13194,7 +13238,7 @@ if (!function_exists('document_description_tags')) {
     {
         //
         $all_magic_codes = array();
-        $simple_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}','{{select}}');
+        $simple_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{short_text_required}}', '{{text_required}}', '{{text_area_required}}', '{{checkbox_required}}', '{{select}}');
         $signature_codes = array('{{signature}}', '{{inital}}');
         $authorized_codes = array('{{authorized_signature}}', '{{authorized_signature_date}}', '{{authorized_editable_date}}');
         //
@@ -13575,7 +13619,7 @@ if (!function_exists('getDocumentBody')) {
             $my_return = preg_replace('/{{text_area}}/', $textarea, $my_return, 1);
         }
         //
-        for ($stb;  $stb < ($short_textboxes + $short_textboxes_required); $stb++) {
+        for ($stb; $stb < ($short_textboxes + $short_textboxes_required); $stb++) {
             $short_textbox_name = 'short_textbox_' . $stb;
             //
             $short_textbox_value = '';
@@ -13585,7 +13629,7 @@ if (!function_exists('getDocumentBody')) {
             //
             $short_textbox_id = 'short_textbox_' . $stb . '_id';
             //
-            $short_textbox ='<label><span class="staric">*</span></label><br>';
+            $short_textbox = '<label><span class="staric">*</span></label><br>';
             $short_textbox .= '<input type="text" required data-type="text" data-required="yes" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
             //
             $my_return = preg_replace('/{{short_text_required}}/', $short_textbox, $my_return, 1);
@@ -13601,7 +13645,7 @@ if (!function_exists('getDocumentBody')) {
             //
             $long_textbox_id = 'long_textbox_' . $ltb . '_id';
             //
-            $long_textbox ='<label><span class="staric">*</span></label>';
+            $long_textbox = '<label><span class="staric">*</span></label>';
             $long_textbox .= '<input type="text" data-type="text" data-required="yes" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
             //
             $my_return = preg_replace('/{{text_required}}/', $long_textbox, $my_return, 1);
@@ -13618,7 +13662,7 @@ if (!function_exists('getDocumentBody')) {
             $textarea_id = 'textarea_' . $ta . '_id';
             $div_id = 'textarea_' . $ta . '_id_sec';
             //
-            $textarea ='<label><span class="staric">*</span></label>';
+            $textarea = '<label><span class="staric">*</span></label>';
             $textarea .= '<textarea data-type="textarea" data-required="yes" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
             $my_return = preg_replace('/{{text_area_required}}/', $textarea, $my_return, 1);
         }
@@ -13636,16 +13680,16 @@ if (!function_exists('getDocumentBody')) {
             //
             $checkbox_id = 'checkbox_' . $cb . '_id';
             //
-            $checkboxRequired = '<div class="row jsCheckbox" data-type="checkbox" data-required="yes" data-name="'. $checkbox_name .'" id="'.$checkbox_id.'">';
+            $checkboxRequired = '<div class="row jsCheckbox" data-type="checkbox" data-required="yes" data-name="' . $checkbox_name . '" id="' . $checkbox_id . '">';
             $checkboxRequired .= '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
             $checkboxRequired .= '<label><span class="staric">*</span></label>';
             $checkboxRequired .= '</div>';
             $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'. $checkbox_name .'1" value="yes" ' . $checkbox_value1 . '/>Yes';
+            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '1" value="yes" ' . $checkbox_value1 . '/>Yes';
             $checkboxRequired .= '</div>';
             $checkboxRequired .= '<br>';
             $checkboxRequired .= '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
-            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'. $checkbox_name .'2" value="no" ' . $checkbox_value2 . '/>No';
+            $checkboxRequired .= '<input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '2" value="no" ' . $checkbox_value2 . '/>No';
             $checkboxRequired .= '</div>';
             $checkboxRequired .= '</div>';
             //
@@ -16882,8 +16926,8 @@ if (!function_exists('get_templet_jobtitles')) {
 if (!function_exists('getStoreJobTitles')) {
     function getStoreJobTitles()
     {
-            // Get Job Titles
-            return get_instance()->db
+        // Get Job Titles
+        return get_instance()->db
             ->where('archive_status', 'active')
             ->order_by('title', 'ASC')
             ->get('portal_job_title_templates')->result_array();

@@ -71,11 +71,18 @@ class Cron_lms_courses extends CI_Controller
     }
 
     /**
-     * Send email notification every two weeks.
+     * Send email notification for first time course availability
      */
     public function sendFirstTimeAvailableCourseEmailToEmployees()
     {
-
         $this->cron_email_model->sendFirstTimeAvailableCourseEmailToEmployees();
+    }
+    
+    /**
+     * Send email notification for first time course availability
+     */
+    public function sendCourseReportToManagers()
+    {
+        $this->cron_email_model->sendCourseReportToManagers();
     }
 }

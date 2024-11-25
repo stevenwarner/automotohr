@@ -6,6 +6,7 @@ class Cron_email_model extends CI_Model
 
     private $companyId;
     private $byPass;
+    private $notifiers;
     private $companyEmployees;
 
     public function __construct()
@@ -197,6 +198,129 @@ class Cron_email_model extends CI_Model
             );
         // return
         return $records;
+    }
+
+    public function sendCourseReportToManagers()
+    {
+        // get the company ids
+        $companyIds = $this->getLMSCompanyIds();
+        // check
+        if (!$companyIds) {
+            exit("No companies found!");
+        }
+        $companyIds = [
+            // 51,
+            8578,
+        ];
+        // iterate
+        foreach ($companyIds as $companyId) {
+            // send emails
+            $this->generateAndSendReport($companyId);
+        }
+    }
+
+
+    /**
+     * Send course reminder emails by company wise
+     */
+    private function generateAndSendReport(
+        int $companyId,
+        array $types = [
+            "due_soon",
+            "expired",
+            "inprogress",
+            "ready_to_start",
+        ],
+        array $courseIds = []
+    ) {
+        // set the company Id
+        $this->companyId = $companyId;
+        // get notifiers
+        $this->notifiers = get_notification_email_contacts(
+            $this->companyId,
+            "course_status"
+        );
+        //
+        if (!$this->notifiers) {
+            return ["errors" => ["No notifiers found"]];
+        }
+        // get the company employees by course
+        $employeesWithCourseList = $this
+            ->getCompanyEmployeesWithCourses(
+                $types,
+                $courseIds
+            );
+        //
+        if (!$employeesWithCourseList) {
+            return ["errors" => ["No employees found!"]];
+        }
+        //
+        $this->companyEmployees = $employeesWithCourseList;
+        //
+        $report = $this->generateReport();
+        //
+        $this->sendCourseReportEmails($report);
+        //
+        return ["success"];
+    }
+
+    /**
+     * generate courses report
+     * 
+     * @return array
+     */
+    private function generateReport(): array
+    {
+        //
+        $data = [];
+        // add header to the file
+        $data[] = ["Report Date/Time", getSystemDate(DATE_WITH_TIME) . " PST"];
+        $data[] = [];
+        // Add first section
+        $data[] = ["Report"];
+        // add headers
+        $data[] = ["Employee", "Courses", "Due Soon", "Expired", "In Progress", "Ready To Start"];
+        //
+        $totals = [
+            "total" => 0,
+            "due_soon" => 0,
+            "expired" => 0,
+            "inprogress" => 0,
+            "ready_to_start" => 0,
+        ];
+        //
+        foreach ($this->companyEmployees as $v0) {
+            //
+            $tmp = [
+                remakeEmployeeName($v0, true, true),
+                count($v0["courses"]),
+                count($v0["courses"]["due_soon"]),
+                count($v0["courses"]["expired"]),
+                count($v0["courses"]["inprogress"]),
+                count($v0["courses"]["ready_to_start"]),
+            ];
+            //
+            $totals["total"] += $tmp[1];
+            $totals["due_soon"] += $tmp[2];
+            $totals["expired"] += $tmp[3];
+            $totals["inprogress"] += $tmp[4];
+            $totals["ready_to_start"] += $tmp[4];
+
+            $data[] = $tmp;
+        }
+
+        //
+        $data[] = [];
+        $data[] = [
+            "Summary",
+            $totals["total"],
+            $totals["due_soon"],
+            $totals["expired"],
+            $totals["inprogress"],
+            $totals["ready_to_start"],
+        ];
+
+        return ["name" => "lms_report.csv", "data" => $data];
     }
 
 
@@ -582,6 +706,66 @@ class Cron_email_model extends CI_Model
                 $subject,
                 $body,
                 $replaceArray["{{contact_name}}"]
+            );
+        }
+    }
+
+    private function sendCourseReportEmails(array $report)
+    {
+        // get the template
+        $template = get_email_template(COURSE_REPORT_EMAILS);
+        // get company details
+        $companyDetails = getCompanyInfo($this->companyId);
+        // set common replace array
+        $companyReplaceArray = [
+            "{{company_name}}" => $companyDetails["company_name"],
+            "{{company_address}}" => $companyDetails["company_address"],
+            "{{company_phone}}" => $companyDetails["company_phone"],
+            "{{career_site_url}}" => $companyDetails["career_site_url"],
+        ];
+        // get the required indexes
+        $templateSubject = $template["subject"];
+        $templateFromName = $template["from_name"];
+        $templateBody = $template["text"];
+
+        //
+        foreach ($this->notifiers as $employee) {
+            // set replace array
+            $replaceArray = $companyReplaceArray;
+            //
+            $replaceArray["{{baseurl}}"] = base_url();
+            $replaceArray["{{full_name}}"] =
+                $replaceArray["{{contact_name}}"]
+                = $employee["contact_name"];
+
+            // set keys
+            $replaceKeys = array_keys($replaceArray);
+
+            // replace
+            $fromName = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateFromName
+            );
+            $subject = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateSubject
+            );
+            $body = str_replace(
+                $replaceKeys,
+                $replaceArray,
+                $templateBody
+            );
+
+            log_and_send_email_with_attachment(
+                FROM_EMAIL_NOTIFICATIONS,
+                $employee["email"],
+                $subject,
+                $body,
+                $fromName,
+                $report,
+                "sendMailWithAttachmentAsString"
             );
         }
     }

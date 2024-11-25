@@ -735,7 +735,7 @@ from your paycheck and may owe taxes and penalties when
 you file your 2024 tax return. To claim exemption from
 withholding, certify that you meet both of the conditions
 above by writing “Exempt” on Form W-4 in the space below
-Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not
+Step 4(c). Then, complete SteAction Required: Courses Pendingps 1(a), 1(b), and 5. Do not
 complete any other steps. You will need to submit a new
 Form W-4 by February 15, 2025');
 
@@ -749,6 +749,7 @@ define('SHIFTS_SWAP_ADMIN_APPROVED', 451);
 
 // Courses
 define("COURSE_UNCOMPLETED_REMINDER_EMAILS", 470);
+define("COURSE_REPORT_EMAILS", 471);
 define("COURSE_DUE_SOON_DAYS", 4);
 
 
