@@ -879,6 +879,8 @@ class Notification_emails extends Public_Controller
                     redirect("notification_emails/general_information");
                 } else if ($type == 'default_approvers') {
                     redirect("notification_emails/default_approvers");
+                } else if ($type == 'course_status') {
+                    redirect("notification_emails/courses");
                 } else {
                     redirect("notification_emails/new_applicant_notifications");
                 }

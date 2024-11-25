@@ -343,7 +343,7 @@
                                                 <div class="dashboard-widget-box">
                                                     <figure><i class="fa fa-envelope"></i></figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('notification_emails/courses'); ?>">Courses Messages Notification</a>
+                                                        <a href="<?php echo base_url('notification_emails/courses'); ?>">Course Report Notification</a>
                                                     </h2>
                                                     <div class="count-box">
                                                         <small>View Courses Notifications</small>

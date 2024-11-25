@@ -142,7 +142,7 @@
                                                 </label>
                                             </li>
                                             <li class="form-col-100 autoheight">
-                                                <input type="hidden" id="perform_action" name="perform_action" value="add_notification_email" />
+                                                <input type="hidden" id="perform_action" name="perform_action" value="course_status" />
                                                 <input type="hidden" name="notifications_type" value="<?php echo $notification_type; ?>">
                                                 <input type="submit" value="Save" onclick="return validate_form()" class="submit-btn">
                                                 <input type="button" value="Cancel" id="cancel_button_employee" class="submit-btn btn-cancel" />
