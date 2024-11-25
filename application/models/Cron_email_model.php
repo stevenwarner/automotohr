@@ -5,11 +5,14 @@ class Cron_email_model extends CI_Model
 {
 
     private $companyId;
+    private $byPass;
     private $companyEmployees;
 
     public function __construct()
     {
         parent::__construct();
+        //
+        $this->byPass = false;
     }
 
     /**
@@ -25,7 +28,7 @@ class Cron_email_model extends CI_Model
         }
         $companyIds = [
             51,
-            8578
+            8578,
         ];
         // iterate
         foreach ($companyIds as $companyId) {
@@ -45,7 +48,7 @@ class Cron_email_model extends CI_Model
             "inprogress",
             "ready_to_start",
         ],
-        int $courseId = 0
+        array $courseIds = []
     ) {
         // set the company Id
         $this->companyId = $companyId;
@@ -53,7 +56,7 @@ class Cron_email_model extends CI_Model
         $employeesWithCourseList = $this
             ->getCompanyEmployeesWithCourses(
                 $types,
-                $courseId
+                $courseIds
             );
         //
         if (!$employeesWithCourseList) {
@@ -67,16 +70,148 @@ class Cron_email_model extends CI_Model
         return ["success"];
     }
 
+    /**
+     * Send course reminder emails to specific employees
+     *
+     * @param array $employeeIds
+     * @param int $companyId
+     * @return bool
+     */
+    public function sendCourseReminderEmailsToSpecificEmployees(
+        array $employeeIds,
+        int $companyId,
+        bool $byPass = false,
+        array $types = [
+            "due_soon",
+            "expired",
+            "inprogress",
+            "ready_to_start",
+        ]
+    ) {
+        // set the company Id
+        $this->companyId = $companyId;
+        $this->byPass = $byPass;
+        // get the company employees by course
+        $employeesWithCourseList = $this
+            ->getCompanyEmployeesWithCourses(
+                $types,
+                [],
+                $employeeIds
+            );
+
+        //
+        if (!$employeesWithCourseList) {
+            return ["errors" => ["No employees found!"]];
+        }
+        //
+        $this->companyEmployees = $employeesWithCourseList;
+        //
+        $this->sendCourseEmailRemindersToEmployees();
+
+        return ["success"];
+    }
+
+    /**
+     * send first time course available emails
+     */
+    public function sendFirstTimeAvailableCourseEmailToEmployees()
+    {
+        // get the jobs from queue
+        $jobs = $this->getCoursesByCompany();
+        // extract courses ids
+        $courseIds = array_column(
+            $jobs,
+            "course_sid"
+        );
+        // send emails forcefully
+        $this->byPass = true;
+        // get the company employees by course
+        $employeesWithCourseList = $this
+            ->getCompanyEmployeesWithCourses(
+                [
+                    "due_soon",
+                    "expired",
+                    "inprogress",
+                    "ready_to_start",
+                ],
+                $courseIds
+            );
+        //
+        if (!$employeesWithCourseList) {
+            //
+            $this
+                ->db
+                ->where_in("sid", array_column($jobs, "sid"))
+                ->delete("lms_course_email_queue");
+            return ["errors" => ["No employees found!"]];
+        }
+        //
+        $this->companyEmployees = $employeesWithCourseList;
+        //
+        $this->sendCourseEmailRemindersToEmployees();
+        //
+        $this
+            ->db
+            ->where_in("sid", array_column($jobs, "sid"))
+            ->delete("lms_course_email_queue");
+    }
+
+    /**
+     * send first time course available emails
+     */
+    public function getCoursesByCompany()
+    {
+        // get the company id from queue
+        $record =
+            $this
+            ->db
+            ->select("distinct(company_sid)")
+            ->where("is_processing", 0)
+            ->limit(1)
+            ->get("lms_course_email_queue")
+            ->row_array();
+        //
+        if (!$record) {
+            exit("Queue is empty.");
+        }
+        // set the company id
+        $this->companyId = $record["company_sid"];
+        // get the company courses
+        $records =
+            $this
+            ->db
+            ->select("course_sid, sid")
+            ->where("company_sid", $this->companyId)
+            ->where("is_processing", 0)
+            ->get("lms_course_email_queue")
+            ->result_array();
+        // update the processing flag
+        $this
+            ->db
+            ->where_in("sid", array_column($records, "sid"))
+            ->update(
+                "lms_course_email_queue",
+                [
+                    "is_processing" => 1
+                ]
+            );
+        // return
+        return $records;
+    }
+
 
     /**
      * Send course reminder emails by company wise
      */
     private function getCompanyEmployeesWithCourses(
         array $types,
-        int $courseId
+        array $courseIds,
+        array $employeeIds = []
     ) {
         // get company active courses
-        $employeeList = $this->getCompanyEmployeesWithJobTiles();
+        $employeeList = $this->getCompanyEmployeesWithJobTiles(
+            $employeeIds
+        );
         //
         if (!$employeeList) {
             return [];
@@ -99,7 +234,7 @@ class Cron_email_model extends CI_Model
                     $employeeStartedCourses,
                     $employee["lms_job_title"],
                     $types,
-                    $courseId
+                    $courseIds
                 );
             // employee don't have courses
             if (!$employeeCourses) {
@@ -114,10 +249,11 @@ class Cron_email_model extends CI_Model
     /**
      * Send course reminder emails by company wise
      */
-    private function getCompanyEmployeesWithJobTiles()
-    {
+    private function getCompanyEmployeesWithJobTiles(
+        array $employeeIds
+    ) {
         // get company active courses
-        return $this
+        $this
             ->db
             ->select([
                 "users.sid",
@@ -139,7 +275,18 @@ class Cron_email_model extends CI_Model
                 "users.terminated_status" => 0,
                 "users.is_executive_admin" => 0,
                 "portal_job_title_templates.status" => 1,
-            ])
+            ]);
+        // check for employee ids
+        if ($employeeIds) {
+            $this
+                ->db
+                ->where_in(
+                    "users.sid",
+                    $employeeIds
+                );
+        }
+        return $this
+            ->db
             ->get("users")
             ->result_array();
     }
@@ -283,7 +430,7 @@ class Cron_email_model extends CI_Model
         array $employeeStartedCourses,
         int $lmsJobTitleId,
         array $types,
-        int $courseId
+        array $courseIds
     ) {
         //
         $employeeCoursesList = [
@@ -310,7 +457,7 @@ class Cron_email_model extends CI_Model
                 continue;
             }
             // check for courseId
-            if ($courseId != 0 && $courseId != $v0["sid"]) {
+            if ($courseIds && !in_array($v0["sid"], $courseIds)) {
                 continue;
             }
 
@@ -368,10 +515,10 @@ class Cron_email_model extends CI_Model
         return $employeeCoursesList;
     }
 
-    private function sendCourseEmailRemindersToEmployees()
+    private function sendCourseEmailRemindersToEmployees(string $templateCode = COURSE_UNCOMPLETED_REMINDER_EMAILS)
     {
         // get the template
-        $template = get_email_template(COURSE_UNCOMPLETED_REMINDER_EMAILS);
+        $template = get_email_template($templateCode);
         // get company details
         $companyDetails = getCompanyInfo($this->companyId);
         // set common replace array
@@ -388,7 +535,7 @@ class Cron_email_model extends CI_Model
         //
         foreach ($this->companyEmployees as $employee) {
             // check if two weeks are done
-            if (!$this->allowedToSendEmail($employee["sid"])) {
+            if (!$this->byPass && !$this->allowedToSendEmail($employee["sid"])) {
                 continue;
             }
             // set replace array
@@ -464,7 +611,7 @@ class Cron_email_model extends CI_Model
                 $html .= $v0["course_title"];
                 $html .= '  </td>';
                 $html .= '  <td>';
-                if ($v0["expiring_in"] || $v0["expiring"] == 0) {
+                if (strlen($v0["expiring_in"]) >= 1) {
                     $html .= "Due in " . ($v0["expiring_in"]) . " days. ";
                 } else {
                     $html .= "-";
@@ -487,7 +634,7 @@ class Cron_email_model extends CI_Model
                 $html .= $v0["course_title"];
                 $html .= '  </td>';
                 $html .= '  <td>';
-                if ($v0["expiring_in"] || $v0["expiring"] == 0) {
+                if (strlen($v0["expiring_in"]) >= 1) {
                     $html .= "Due in " . ($v0["expiring_in"]) . " days. ";
                 } else {
                     $html .= "-";
@@ -529,7 +676,7 @@ class Cron_email_model extends CI_Model
                 $html .= $v0["course_title"];
                 $html .= '  </td>';
                 $html .= '  <td>';
-                if ($v0["expiring_in"] || $v0["expiring"] == 0) {
+                if (strlen($v0["expiring_in"]) >= 1) {
                     $html .= "Due in " . ($v0["expiring_in"]) . " days. ";
                 } else {
                     $html .= "-";

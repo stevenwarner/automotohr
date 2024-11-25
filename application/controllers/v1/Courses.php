@@ -522,7 +522,7 @@ class Courses extends Public_Controller
                 if (isset($subordinateEmployee['coursesInfo'])) {
                     //
                     if (isset($_GET['courses']) && $_GET['courses'] != "all") {
-                        $filterCourses = getCoursesInfo(implode(',',$_GET['courses']), $key);
+                        $filterCourses = getCoursesInfo(implode(',', $_GET['courses']), $key);
                         //
                         $subordinateInfo['employees'][$key]['coursesInfo']['total_course'] = $filterCourses['total_course'];
                         $subordinateInfo['employees'][$key]['coursesInfo']['expire_soon'] = $filterCourses['expire_soon'];
@@ -562,7 +562,7 @@ class Courses extends Public_Controller
                 $filters["teams"] = $_GET['teams'];
             }
             //
-            if (isset($_GET['employees'])) { 
+            if (isset($_GET['employees'])) {
                 $filters["employees"] = $_GET['employees'];
             }
             //
@@ -579,7 +579,7 @@ class Courses extends Public_Controller
                 foreach ($subordinateInfo['employees'] as $subordinateEmployee) {
                     if ($subordinateEmployee["job_title_sid"] > 0) {
                         //
-                        _e($subordinateEmployee,true,true);
+                        _e($subordinateEmployee, true, true);
                         if (in_array($subordinateEmployee["employee_sid"], $filters["employees"])) {
                             $selectedEmployeesList[] = $subordinateEmployee;
                             array_push($selectedEmployeesIds, $subordinateEmployee["employee_sid"]);
@@ -1337,7 +1337,6 @@ class Courses extends Public_Controller
 
     public function emailReminder($type)
     {
-
         //
         $res = [
             'Status' => false,
@@ -1346,54 +1345,37 @@ class Courses extends Public_Controller
         //
         if (
             !$this->input->is_ajax_request() ||
-            !$this->input->post(NULL, TRUE) ||
+            !$this->input->post(null, true) ||
             $this->input->method() != 'post'
         ) {
-            res($res);
+            return SendResponse(400, $res);
         }
         //
-        $post = $this->input->post(NULL, TRUE);
+        $post = $this->input->post(null, true);
+
+        // extract employee id
+        $employeeIds = array_column($post["employeeList"], "employee_sid");
         //
-        $session = $this->session->userdata('logged_in');
-        //
-        $companyName = $session['company_detail']['CompanyName'];
-        $companyId = $session['company_detail']['sid'];
-        $employeeId = $session['employer_detail']['sid'];
-        $subordinateInfo = getMyDepartmentAndTeams($employeeId, "courses");
-        //
-        foreach ($post['employeeList'] as $employee) {
-            $employeeInfo = db_get_employee_profile($employee['employee_sid'])[0];
-            $assignCourses = $subordinateInfo['employees'][$employee['employee_sid']]['assign_courses'];
-            //
-            $coursesStatistics = $this->course_model->checkEmployeeCoursesReport(
-                $companyId,
-                $employee['employee_sid'],
-                $assignCourses
-            );
-            //
-            $replaceArray = [];
-            $replaceArray['username'] = $employee['employee_name'];
-            $replaceArray['first_name'] = ucwords($employeeInfo['first_name']);
-            $replaceArray['last_name'] = ucwords($employeeInfo['last_name']);
-            $replaceArray['baseurl'] = base_url();
-            $replaceArray['company_name'] = $companyName;
-            $replaceArray['assigned_count'] = $coursesStatistics['courseCount'];
-            $replaceArray['completed_count'] = $coursesStatistics['completedCount'];
-            $replaceArray['pending_count'] = $coursesStatistics['pendingCount'];
-            $replaceArray['percentage'] = $coursesStatistics['percentage'];
-            $replaceArray['my_courses_link'] = '<a href="' . base_url("lms/courses/my") . '" target="_blank" style="padding: 8px 12px; border: 1px solid #4CBB17;background-color:#4CBB17;border-radius: 2px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">My Courses</a>';
-            //
-            if ($type == 'single') {
-                $replaceArray['employee_note'] = '<strong>Employer Note:</strong></br>' . $post['note'];
-            }
-            //
-            log_and_send_templated_email(
-                COURSES_REMINDER_NOTIFICATION,
-                $employeeInfo['email'],
-                $replaceArray,
-                message_header_footer($companyId, $companyName)
-            );
+        if (!$employeeIds) {
+            $res["Message"] = "No employees selected";
+            return SendResponse(400, $res);
         }
+        // load model
+        $this->load->model("cron_email_model");
+        // send reminder emails
+        $response = $this
+            ->cron_email_model
+            ->sendCourseReminderEmailsToSpecificEmployees(
+                $employeeIds,
+                $this->session->userdata('logged_in')["company_detail"]["sid"],
+                true
+            );
+
+        if ($response["errors"]) {
+            $res["Message"] = "Something went wrong!";
+            return SendResponse(400, $res);
+        }
+
         //
         $res['Status'] = true;
         $res['Message'] = 'You have successfully sent an email reminder to selected employees.';
