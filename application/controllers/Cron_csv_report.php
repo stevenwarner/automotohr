@@ -7,7 +7,7 @@ class Cron_csv_report extends CI_Controller
 
     public function index()
     {
-        
+
         $this->load->model('export_csv_model');
         // Get CSV report setting 
         $csv_report_settings = $this->export_csv_model->get_employee_csv_report_settings();
@@ -19,7 +19,7 @@ class Cron_csv_report extends CI_Controller
             $current_time = date('H:i A');
             // 
             foreach ($csv_report_settings as $settings_row) {
-               
+
                 $custom_type = $settings_row['custom_type'];
                 $custom_date = $settings_row['custom_date'];
                 $custom_day =  $settings_row['custom_day'];
@@ -30,12 +30,12 @@ class Cron_csv_report extends CI_Controller
                 $access_level = $settings_row['employee_type'];
                 $company_sid = $settings_row['company_sid'];
                 $status = $settings_row['employee_status'];
-                $checked_boxes = explode(',',$settings_row['selected_columns']);
+                $checked_boxes = explode(',', $settings_row['selected_columns']);
 
                 $start_time = '';
                 $end_time = '';
-                
-               
+
+
 
                 //
                 if ($status == "new_hires") {
@@ -48,41 +48,46 @@ class Cron_csv_report extends CI_Controller
                 }
 
                 //  check cron type
+
+                $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes);
+
+
                 if ($custom_type == 'daily') {
                     if ($current_time == $custom_time) {
                         //call generte csv and send mail
-                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes);
                     }
                 }
 
                 if ($custom_type == 'weekly') {
                     if ($current_day == $custom_day  && $current_time == $custom_time) {
-                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes);
                     }
                 }
 
                 if ($custom_type == 'monthly') {
                     if ($current_month == (int) $custom_date  && $current_time == $custom_time) {
-                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes);
                     }
                 }
 
                 if ($custom_type == 'yearly') {
                     if ((int) $custom_month_day[0] == $current_month  && (int) $custom_month_day[1] == $current_day && $current_time == $custom_time) {
-                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+                        $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes);
                     }
                 }
 
-              //  $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+                //  $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
                 // die('d');
             }
         }
     }
 
-   // Generate CSV and Send email;
-    public function generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes)
+    // Generate CSV and Send email;
+    public function generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list, $checked_boxes)
     {
         // Get employees data for csv
+
         $employees = $this->export_csv_model->get_all_employees_from_DB($company_sid, $access_level, $status, $start_time, $end_time);
 
         $export_data = array();
@@ -159,8 +164,8 @@ class Cron_csv_report extends CI_Controller
                     $export_data[$i]['status'] = 'Archived Employee';
                 }
                 $header = '';
-                //
                 //      if (($access_level_plus || $pay_plan_flag == 1) && !empty($checked_boxes)  && !empty($checked_boxes[0])) {
+
                 if (!empty($checked_boxes)  && !empty($checked_boxes[0])) {
 
                     foreach ($checked_boxes as $key => $value) {
@@ -206,8 +211,92 @@ class Cron_csv_report extends CI_Controller
                     substr($row, 0, -1);
                 }
                 $rows .= $row . PHP_EOL;
+
                 $i++;
             }
+
+            if (in_array('approvers', $checked_boxes)) {
+
+                // $rows .= "Approvers" . PHP_EOL;
+                $this->load->model('department_management_model');
+                $approversData = $this->department_management_model->get_all_departments($company_sid);
+
+                $rows .= PHP_EOL . PHP_EOL . "Approvers" . PHP_EOL;
+
+                foreach ($approversData as $department) {
+                    if (!empty($department['approvers']) || !empty($department['supervisor'])) {
+
+                        $rows .= PHP_EOL . "Department," . $department['name'] . PHP_EOL;
+
+                        $a = explode(',', $department['approvers']);
+                        $s = explode(',', $department['supervisor']);
+
+                        if (!empty($a)) {
+                            $rows .=  "Approvers" . PHP_EOL;
+                        }
+
+                        foreach ($a as $af) {
+                            $approverDetails = db_get_employee_profile($af)[0];
+                            if (!empty($approverDetails)) {
+                                $rows .= $approverDetails['first_name'] . ' ' . $approverDetails['missle_name'] . ' ' . $approverDetails['last_name'] . PHP_EOL;
+                            }
+                        }
+
+                        if (!empty($s)) {
+                            $rows .= PHP_EOL . "Supervisors" . PHP_EOL;
+                        }
+
+                        foreach ($s as $sf) {
+                            $supervisorsDetails = db_get_employee_profile($sf)[0];
+
+                            if (!empty($supervisorsDetails)) {
+                                $rows .= $supervisorsDetails['first_name'] . ' ' . $supervisorsDetails['missle_name'] . ' ' . $supervisorsDetails['last_name'] . PHP_EOL;
+                            }
+                        }
+                    }
+
+                    //
+                    $teams = $this->department_management_model->get_all_department_teams($company_sid, $department['sid']);
+
+                    if (!empty($teams)) {
+                        foreach ($teams as $team) {
+                            if (!empty($team['approvers']) || !empty($team['team_lead'])) {
+                                $rows .= PHP_EOL . "Team ," . $team['name'] . PHP_EOL;
+                            }
+
+                            if (!empty($team['approvers'])) {
+                                $ta = explode(',', $team['approvers']);
+
+                                if (!empty($ta)) {
+                                    $rows .=  "Approvers" . PHP_EOL;
+                                }
+
+                                foreach ($ta as $taf) {
+                                    $teamApproversDetails = db_get_employee_profile($taf)[0];
+                                    if (!empty($teamApproversDetails)) {
+                                        $rows .= $teamApproversDetails['first_name'] . ' ' . $teamApproversDetails['missle_name'] . ' ' . $teamApproversDetails['last_name'] . PHP_EOL;
+                                    }
+                                }
+                            }
+
+                            if (!empty($team['team_lead'])) {
+                                $tal = explode(',', $team['team_lead']);
+                                if (!empty($tal)) {
+                                    $rows .=  PHP_EOL . "Team Leads" . PHP_EOL;
+                                }
+
+                                foreach ($tal as $talf) {
+                                    $teamLeadsDetails = db_get_employee_profile($talf)[0];
+                                    if (!empty($teamLeadsDetails)) {
+                                        $rows .= $teamLeadsDetails['first_name'] . ' ' . $teamLeadsDetails['missle_name'] . ' ' . $teamLeadsDetails['last_name'] . PHP_EOL;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             $header_row = 'First Name,Last Name,E-Mail,Primary Number,Street Address,City,Zipcode,State,Country,Profile Picture,Access Level,Job Title,Status' . $header;
             $file_content = '';
@@ -223,12 +312,14 @@ class Cron_csv_report extends CI_Controller
             ($status == 'terminated') ? $subject = 'Terminated Employees Report' : '';
             ($status == 'manual_employee') ? $subject = 'Manual Added Employees Report' : '';
             ($status == 'both') ? $subject = 'All Employees Report' : '';
+            ($status == 'all') ? $subject = 'All Employees Report' : '';
 
             //
             $file_name = str_replace(' ', '_', $subject);
             $file_name = $file_name . '_' . date('Y_m_d-H:i:s') . '.csv';
 
             $dir = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'csv_reports';
+
 
             if (!is_dir($dir)) mkdir($dir, 0777, true);
             $temp_file_path = $dir . '/' . $file_name;
@@ -264,6 +355,8 @@ class Cron_csv_report extends CI_Controller
 
                 $hf = message_header_footer_domain($company_sid, $company_name);
 
+                $downloadLink = '<a href="' . base_url() . 'assets/csv_reports/' . $file_name . '"> Download </a>';
+
                 $body = $hf['header']
                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
                     . '<br><br>'
@@ -271,16 +364,14 @@ class Cron_csv_report extends CI_Controller
                     . '<br><br><b>'
                     . 'Date:</b> '
                     . $message_date
-                    . '<br><br><b>'
-                    . 'Subject:</b> '
-                    . $subject
+                    . '<br><br>'
+                    . $downloadLink
                     . $hf['footer'];
-
-                   $email->Body = $body;
-                   $email->addAddress($to);
-                  $email->send();
+                $email->Body = $body;
+                $email->addAddress($to);
+                $email->send();
             }
-            break;
+            //  break;
         } else {
         }
     }

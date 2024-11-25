@@ -158,9 +158,13 @@ class Export_employees_csv extends Public_Controller
                                 }
 
                                 //
+                                $approversData = [];
                                 if (($access_level_plus || $pay_plan_flag == 1) && !empty($checked_boxes)  && !empty($checked_boxes[0])) {
                                     foreach ($checked_boxes as $key => $value) {
-                                        $header[$value] = $value;
+                                        if ($value != "approvers") {
+                                            $header[$value] = $value;
+                                        }
+
                                         if ($value == "terminated_date" || $value == "terminated_reason") {
                                             $terminated_data = $this->export_csv_model->get_status_info($employee['sid'], 1);
                                             //
@@ -288,6 +292,14 @@ class Export_employees_csv extends Public_Controller
                                             $export_data[$i][$value] = $employee['union_member'] == 1 ? 'Yes' : 'No';
                                         } elseif ($value == 'employment_type') {
                                             $export_data[$i][$value] = ucwords(preg_replace("/-_/", " ", $employee["employee_type"]));
+                                        } elseif ($value == "approvers") {
+
+                                            $this->load->model('department_management_model');
+                                            //_e($company_sid,true,true);
+                                            $approversData = $this->department_management_model->get_all_departments($company_sid);
+
+
+                                            // $approversData=                                       
                                         } else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
                                         }
@@ -353,6 +365,8 @@ class Export_employees_csv extends Public_Controller
                                 $file_size = strlen($file_content);
                             }
 
+                            //  _e($approversData,true,true);
+
                             header('Pragma: public');     // required
                             header('Expires: 0');         // no cache
                             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -365,6 +379,94 @@ class Export_employees_csv extends Public_Controller
                             echo $companyHeader . PHP_EOL . PHP_EOL;
                             echo $header_row . PHP_EOL;
                             echo $rows;
+
+                            if (!empty($approversData)) {
+
+                                echo PHP_EOL . PHP_EOL . "Approvers" . PHP_EOL;
+
+                                foreach ($approversData as $department) {
+                                    if (!empty($department['approvers']) || !empty($department['supervisor'])) {
+
+                                        echo PHP_EOL . "Department," . $department['name'] . PHP_EOL;
+
+                                        $a = explode(',', $department['approvers']);
+                                        $s = explode(',', $department['supervisor']);
+
+                                        if(!empty($a)){
+                                        echo  "Approvers" . PHP_EOL;
+                                        }
+
+                                        foreach ($a as $af) {
+                                            $approverDetails = db_get_employee_profile($af)[0];
+                                            if (!empty($approverDetails)) {
+                                                echo $approverDetails['first_name'] . ' ' . $approverDetails['missle_name'] . ' ' . $approverDetails['last_name'] . PHP_EOL;
+                                            }
+                                        }
+
+                                        if(!empty($s)){
+                                        echo PHP_EOL . "Supervisors" . PHP_EOL;
+                                        }
+
+                                        foreach ($s as $sf) {
+                                            $supervisorsDetails = db_get_employee_profile($sf)[0];
+
+                                            if (!empty($supervisorsDetails)) {
+                                                echo $supervisorsDetails['first_name'] . ' ' . $supervisorsDetails['missle_name'] . ' ' . $supervisorsDetails['last_name'] . PHP_EOL;
+                                            }
+                                        }
+                                    }
+
+                                    //
+                                    $teams = $this->department_management_model->get_all_department_teams($company_sid, $department['sid']);
+
+                                    if (!empty($teams)) {
+                                        foreach ($teams as $team) {
+
+
+                                            if (!empty($team['approvers']) || !empty($team['team_lead'])) {
+                                                echo PHP_EOL . "Team ," . $team['name'] . PHP_EOL;
+                                            }
+
+                                            if (!empty($team['approvers'])) {
+
+
+                                                $ta = explode(',', $team['approvers']);
+
+                                                if(!empty($ta)){
+                                                echo  "Approvers" . PHP_EOL;
+                                                }
+                                               
+                                                foreach ($ta as $taf) {
+
+                                                    $teamApproversDetails = db_get_employee_profile($taf)[0];
+                                                    if (!empty($teamApproversDetails)) {
+
+                                                        echo $teamApproversDetails['first_name'] . ' ' . $teamApproversDetails['missle_name'] . ' ' . $teamApproversDetails['last_name'] . PHP_EOL;
+                                                    }
+                                                }
+                                            }
+
+
+                                            if (!empty($team['team_lead'])) {
+
+                                                $tal = explode(',', $team['team_lead']);
+
+                                                if(!empty($tal)){
+                                                echo  PHP_EOL . "Team Leads" . PHP_EOL;
+                                                }
+                                                
+                                                foreach ($tal as $talf) {
+                                                    $teamLeadsDetails = db_get_employee_profile($talf)[0];
+                                                    if (!empty($teamLeadsDetails)) {
+                                                        echo $teamLeadsDetails['first_name'] . ' ' . $teamLeadsDetails['missle_name'] . ' ' . $teamLeadsDetails['last_name'] . PHP_EOL;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             break;
                         } else {
                             $this->session->set_flashdata('message', '<b>Error:</b> Record(s) Not Found!');

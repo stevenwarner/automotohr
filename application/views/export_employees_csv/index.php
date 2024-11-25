@@ -376,6 +376,14 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                 </div>
                                             </div>
 
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Approvers<input type="checkbox" name="approvers" class="check_it" value="approvers">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
 
                                         </div>
                                     </div>
