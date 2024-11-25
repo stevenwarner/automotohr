@@ -382,26 +382,37 @@ class Export_employees_csv extends Public_Controller
 
                             if (!empty($approversData)) {
 
-                                echo PHP_EOL . PHP_EOL . "Supervisors and  Approvers" . PHP_EOL;
+                                echo PHP_EOL . PHP_EOL . "Approvers" . PHP_EOL;
 
                                 foreach ($approversData as $department) {
                                     if (!empty($department['approvers']) || !empty($department['supervisor'])) {
 
-                                        echo PHP_EOL . "Department: " . $department['name'] . PHP_EOL;
+                                        echo PHP_EOL . "Department," . $department['name'] . PHP_EOL;
 
                                         $a = explode(',', $department['approvers']);
                                         $s = explode(',', $department['supervisor']);
 
+                                        if(!empty($a)){
                                         echo  "Approvers" . PHP_EOL;
-
-                                        foreach ($a as $af) {
-                                            echo remakeEmployeeName(db_get_employee_profile($af)[0]) . PHP_EOL;
                                         }
 
+                                        foreach ($a as $af) {
+                                            $approverDetails = db_get_employee_profile($af)[0];
+                                            if (!empty($approverDetails)) {
+                                                echo $approverDetails['first_name'] . ' ' . $approverDetails['missle_name'] . ' ' . $approverDetails['last_name'] . PHP_EOL;
+                                            }
+                                        }
+
+                                        if(!empty($s)){
                                         echo PHP_EOL . "Supervisors" . PHP_EOL;
+                                        }
 
                                         foreach ($s as $sf) {
-                                            echo  remakeEmployeeName(db_get_employee_profile($sf)[0]) . PHP_EOL;
+                                            $supervisorsDetails = db_get_employee_profile($sf)[0];
+
+                                            if (!empty($supervisorsDetails)) {
+                                                echo $supervisorsDetails['first_name'] . ' ' . $supervisorsDetails['missle_name'] . ' ' . $supervisorsDetails['last_name'] . PHP_EOL;
+                                            }
                                         }
                                     }
 
@@ -411,15 +422,44 @@ class Export_employees_csv extends Public_Controller
                                     if (!empty($teams)) {
                                         foreach ($teams as $team) {
 
+
+                                            if (!empty($team['approvers']) || !empty($team['team_lead'])) {
+                                                echo PHP_EOL . "Team ," . $team['name'] . PHP_EOL;
+                                            }
+
                                             if (!empty($team['approvers'])) {
 
-                                                echo PHP_EOL . "Team: " . $team['name'] . PHP_EOL;
 
                                                 $ta = explode(',', $team['approvers']);
 
+                                                if(!empty($ta)){
                                                 echo  "Approvers" . PHP_EOL;
+                                                }
+                                               
                                                 foreach ($ta as $taf) {
-                                                    echo remakeEmployeeName(db_get_employee_profile($taf)[0]) . PHP_EOL;
+
+                                                    $teamApproversDetails = db_get_employee_profile($taf)[0];
+                                                    if (!empty($teamApproversDetails)) {
+
+                                                        echo $teamApproversDetails['first_name'] . ' ' . $teamApproversDetails['missle_name'] . ' ' . $teamApproversDetails['last_name'] . PHP_EOL;
+                                                    }
+                                                }
+                                            }
+
+
+                                            if (!empty($team['team_lead'])) {
+
+                                                $tal = explode(',', $team['team_lead']);
+
+                                                if(!empty($tal)){
+                                                echo  PHP_EOL . "Team Leads" . PHP_EOL;
+                                                }
+                                                
+                                                foreach ($tal as $talf) {
+                                                    $teamLeadsDetails = db_get_employee_profile($talf)[0];
+                                                    if (!empty($teamLeadsDetails)) {
+                                                        echo $teamLeadsDetails['first_name'] . ' ' . $teamLeadsDetails['missle_name'] . ' ' . $teamLeadsDetails['last_name'] . PHP_EOL;
+                                                    }
                                                 }
                                             }
                                         }
