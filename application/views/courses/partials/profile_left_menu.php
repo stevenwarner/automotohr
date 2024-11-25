@@ -35,6 +35,7 @@
                 </a>
             </li>
         <?php } ?>
+         <?php if(!isLoggedInPersonAnExecutiveAdmin()) {?>
         <li>
             <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
                     echo 'class="active"';
@@ -42,6 +43,15 @@
                 <figure><i class="fa fa-list-alt"></i></figure>My Courses
             </a>
         </li>
+        <?php }else {?>
+            <li>
+            <a <?php if (strpos(base_url(uri_string()), 'my') !== false) {
+                    echo 'class="active"';
+                } ?> href="<?php echo base_url('lms/courses/report') ?>">
+                <figure><i class="fa fa-users"></i></figure>Team Courses
+            </a>
+        </li>
+        <?php }?>
     </ul>
 </div>
 

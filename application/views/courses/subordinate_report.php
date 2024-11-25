@@ -1,7 +1,7 @@
 <div class="main jsmaincontent">
     <div class="container-fluid">
         <div style="position: relative; min-height: 500px;">
-        
+
             <?php $this->load->view('loader_new', ['id' => 'jsPageLoader']); ?>
 
             <div class="row">
@@ -16,14 +16,16 @@
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                     </div>
                 </div>
-         
+
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="page-header">
                         <h1 class="section-ttile">
                             <?php echo $title; ?>
-                            <div style="float: right;">
-                                <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
-                            </div>
+                            <?php if (!isLoggedInPersonAnExecutiveAdmin()) { ?>
+                                <div style="float: right;">
+                                    <a href="<?php echo base_url('lms/courses/my_lms_dashboard'); ?>" class="btn btn-black csRadius5"><i class="fa fa-arrow-left"></i> Back to my Courses</a>
+                                </div>
+                            <?php } ?>
                         </h1>
                     </div>
 
@@ -42,10 +44,10 @@
                                                         <option value="all">All</option>
                                                         <?php foreach ($subordinateInfo['departments'] as $departments) { ?>
                                                             <option value="<?php echo $departments["sid"]; ?>"><?php echo $departments["name"]; ?></option>
-                                                        <?php } ?> 
+                                                        <?php } ?>
                                                     </select>
                                                 </div>
-                                            <?php } ?> 
+                                            <?php } ?>
                                             <!-- Team Filter -->
                                             <div class="col-xs-12 <?php echo empty($subordinateInfo['departments']) ? "col-md-6" : "col-md-4"; ?>">
                                                 <?php if (!empty($subordinateInfo['teams'])) { ?>
@@ -54,9 +56,9 @@
                                                         <option value="all">All</option>
                                                         <?php foreach ($subordinateInfo['teams'] as $teams) { ?>
                                                             <option value="<?php echo $teams["sid"]; ?>"><?php echo $teams["name"]; ?></option>
-                                                        <?php } ?> 
+                                                        <?php } ?>
                                                     </select>
-                                                <?php } ?> 
+                                                <?php } ?>
                                             </div>
                                             <!-- Employee Filter  -->
                                             <div class="col-xs-12 <?php echo empty($subordinateInfo['departments']) ? "col-md-6" : "col-md-4"; ?>">
@@ -65,12 +67,14 @@
                                                     <select id="jsSubordinateEmployees" multiple style="width: 100%">
                                                         <option value="all">All</option>
                                                         <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                            <? //if ($employee['job_title_sid'] > 0) { ?>
-                                                                <option value="<?php echo $employee['employee_sid']; ?>"><?php echo $employee['full_name']; ?></option>
-                                                            <?php } ?> 
-                                                        <?php //} ?>     
+                                                            <? //if ($employee['job_title_sid'] > 0) { 
+                                                            ?>
+                                                            <option value="<?php echo $employee['employee_sid']; ?>"><?php echo $employee['full_name']; ?></option>
+                                                        <?php } ?>
+                                                        <?php //} 
+                                                        ?>
                                                     </select>
-                                                <?php } ?>     
+                                                <?php } ?>
                                             </div>
                                             <!-- Courses Filter  -->
                                             <div class="col-xs-12  col-md-4">
@@ -80,12 +84,12 @@
                                                         <option value="all">All</option>
                                                         <?php foreach ($subordinateInfo["courses"] as $course) { ?>
                                                             <option value="<?php echo $course['sid']; ?>"><?php echo $course['course_title']; ?></option>
-                                                        <?php } ?>   
+                                                        <?php } ?>
                                                     </select>
-                                                <?php } ?>     
+                                                <?php } ?>
                                             </div>
-                                        </div>    
-                                        <div class="row">    
+                                        </div>
+                                        <div class="row">
                                             <div class="col-xs-12 col-md-3" style="float: right;">
                                                 <label><strong>&nbsp;</strong></label>
                                                 <div class="row">
@@ -94,13 +98,13 @@
                                                         <a href="javascript:;" class="btn btn-info btn-block csRadius5 jsSearchEmployees csF16">
                                                             <i class="fa fa-filter" aria-hidden="true"></i> Search
                                                         </a>
-                                                    </div>    
+                                                    </div>
                                                     <div class="col-lg-6">
                                                         <a href="<?php echo base_url('lms/courses/report'); ?>" class="btn btn-black btn-block csRadius5 csF16">
                                                             <i class="fa fa-times" aria-hidden="true"></i> Clear
                                                         </a>
-                                                    </div> 
-                                                </div>    
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row" style="margin-top: 20px;"></div>
@@ -118,29 +122,29 @@
                                     <div class="col-sm-6">
                                         <div class="panel panel-default">
                                             <div class="panel-body" style="background: #e6e7ff; border-radius: 4px;">
-                                                <?php 
-                                                    $total = $subordinateInfo["total_course"];
-                                                    $completed = $subordinateInfo["completed"];
-                                                    $unCompleted = $total - $completed;
-                                                    $percentage = $total != 0 ? round(($completed/$total * 100), 0, PHP_ROUND_HALF_UP).'%' : '0%';
+                                                <?php
+                                                $total = $subordinateInfo["total_course"];
+                                                $completed = $subordinateInfo["completed"];
+                                                $unCompleted = $total - $completed;
+                                                $percentage = $total != 0 ? round(($completed / $total * 100), 0, PHP_ROUND_HALF_UP) . '%' : '0%';
                                                 ?>
-                                                <h2 style="">Completed Courses: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?=$percentage?></span></h2>
-                                                <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?=$unCompleted?></span> Courses Due Soon</h3>
-                                                <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?=$total?></span> Courses Total</h3>
+                                                <h2 style="">Completed Courses: <span style="color: #ef6c34;" id="jsOverViewTrainings"><?= $percentage ?></span></h2>
+                                                <h3 style="margin-bottom: 0px;"><span id="jsOverViewCourseDueSoon"><?= $unCompleted ?></span> Courses Due Soon</h3>
+                                                <h3 style="margin-top: 0px;"><span id="jsOverViewCourseTotal"><?= $total ?></span> Courses Total</h3>
                                             </div>
                                         </div>
-                                    </div>    
+                                    </div>
 
                                     <div class="col-sm-6">
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <div id="container1"></div>
-                                            </div>    
+                                            </div>
                                         </div>
-                                    </div>    
+                                    </div>
                                 </div>
                             </div>
-                        </div>    
+                        </div>
 
                         <div class="panel panel-default">
                             <div class="panel-heading">
@@ -150,7 +154,7 @@
 
                                 <div class="row" style="margin-bottom:10px;">
                                     <div class="col-xs-12 col-sm-9 col-md-9 col-lg-9">
-                                        
+
                                     </div>
 
                                     <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 text-right">
@@ -162,7 +166,7 @@
 
                                 <div class="section-inner">
                                     <div class="heading-sec">
-                                        <?php  if ($haveSubordinate == "yes") { ?>
+                                        <?php if ($haveSubordinate == "yes") { ?>
                                             <div class="hr-box">
                                                 <div class="hr-innerpadding">
 
@@ -191,59 +195,62 @@
                                                             <tbody id="jsSubordinateList">
                                                                 <?php if (!empty($subordinateInfo["employees"])) { ?>
                                                                     <?php foreach ($subordinateInfo["employees"] as $employee) { ?>
-                                                                        <?php //if ($employee['job_title_sid'] > 0) { ?>
-                                                                            <?php 
-                                                                                $teamId = $employee['team_sid'];
-                                                                                $departmentId = $employee['department_sid'];
-                                                                                $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
-                                                                                $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
-                                                                                $courseCountText = $courseCount > 1 ? $courseCount." courses assigned" : $courseCount." course assigned";
-                                                                                $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
-                                                                                $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
-                                                                            ?>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <?php if ($courseCount > 0) { ?>
-                                                                                        <label class="control control--checkbox">
-                                                                                            <input type="checkbox" class="jsSelectSubordinate" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" />
-                                                                                            <div class="control__indicator"></div>
-                                                                                        </label>
-                                                                                    <?php } else { ?>  
-                                                                                        <label class="control control--checkbox">
-                                                                                            <input type="checkbox" value="" disabled/>
-                                                                                            <div class="control__indicator"></div>
-                                                                                        </label>
-                                                                                    <?php } ?> 
-                                                                                </td>
-                                                                                <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
-                                                                                <td class="_csVm"><?php echo $departmentName; ?></td>
-                                                                                <td class="_csVm"><?php echo $teamName; ?></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
-                                                                                <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
-                                                                                <td class="_csVm">
-                                                                                    <!-- <a href="<?php echo base_url('lms/subordinate/courses/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                        <?php //if ($employee['job_title_sid'] > 0) { 
+                                                                        ?>
+                                                                        <?php
+                                                                        $teamId = $employee['team_sid'];
+                                                                        $departmentId = $employee['department_sid'];
+                                                                        $assignCourses = !empty($employee['assign_courses']) ? explode(",", $employee['assign_courses']) : [];
+                                                                        $courseCount = !empty($assignCourses) ? count($assignCourses) : 0;
+                                                                        $courseCountText = $courseCount > 1 ? $courseCount . " courses assigned" : $courseCount . " course assigned";
+                                                                        $departmentName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["department_name"] : "N/A";
+                                                                        $teamName =  isset($subordinateInfo['teams'][$teamId]) ? $subordinateInfo['teams'][$teamId]["name"] : "N/A";
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <?php if ($courseCount > 0) { ?>
+                                                                                    <label class="control control--checkbox">
+                                                                                        <input type="checkbox" class="jsSelectSubordinate" name="employees_ids[]" value="<?php echo $employee['employee_sid']; ?>" />
+                                                                                        <div class="control__indicator"></div>
+                                                                                    </label>
+                                                                                <?php } else { ?>
+                                                                                    <label class="control control--checkbox">
+                                                                                        <input type="checkbox" value="" disabled />
+                                                                                        <div class="control__indicator"></div>
+                                                                                    </label>
+                                                                                <?php } ?>
+                                                                            </td>
+                                                                            <td class="_csVm js-employee-name"><b><?php echo $employee['full_name']; ?></b></td>
+                                                                            <td class="_csVm"><?php echo $departmentName; ?></td>
+                                                                            <td class="_csVm"><?php echo $teamName; ?></td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['total_course'] : 0; ?></td>
+                                                                            </td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['completed'] : 0; ?></td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expire_soon'] : 0; ?></td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['expired'] : 0; ?></td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['ready_to_start'] : 0; ?></td>
+                                                                            <td class="_csVm"><?php echo isset($employee['coursesInfo']) ? $employee['coursesInfo']['started'] : 0; ?></td>
+                                                                            <td class="_csVm">
+                                                                                <!-- <a href="<?php echo base_url('lms/subordinate/courses/' . $employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
                                                                                         <i class="fa fa-eye"></i> View
                                                                                     </a> -->
-                                                                                    <a href="<?php echo base_url('lms/subordinate/dashboard/'.$employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
-                                                                                        <i class="fa fa-eye"></i> View
-                                                                                    </a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        <?php //} ?>    
+                                                                                <a href="<?php echo base_url('lms/subordinate/dashboard/' . $employee['employee_sid']); ?>" class="btn btn-info btn-block csRadius5 csF16">
+                                                                                    <i class="fa fa-eye"></i> View
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <?php //} 
+                                                                        ?>
                                                                     <?php } ?>
-                                                                <?php } else { ?> 
+                                                                <?php } else { ?>
                                                                     <tr>
-                                                                    <td colspan="5">
-                                                                        <p class="alert alert-info text-center">
-                                                                            No employee(s) found.
-                                                                        </p>
-                                                                    </td>
-                                                                    </tr>    
-                                                                <?php } ?>    
+                                                                        <td colspan="5">
+                                                                            <p class="alert alert-info text-center">
+                                                                                No employee(s) found.
+                                                                            </p>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php } ?>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -251,10 +258,10 @@
                                             </div>
                                         <?php  } else { ?>
                                             <?php echo "No record found!"; ?>
-                                        <?php  } ?> 
+                                        <?php  } ?>
                                     </div>
                                 </div>
-        
+
                             </div>
                         </div>
 
@@ -268,14 +275,14 @@
                             </div>
                         </div>
 
-                    <?php } ?>     
-                </div> 
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://code.highcharts.com/highcharts.js"></script> 
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -290,10 +297,10 @@
     var employees = "<?php echo $filters['employees']; ?>";
     var courses = "<?php echo $filters['courses']; ?>";
     var baseURL = "<?= base_url(); ?>";
-    var totalCourses = <?=$subordinateInfo["total_course"]?>;
-    var dueSoonCourses = <?=$subordinateInfo["expire_soon"]?>;
-    var pastDueCourses = <?=$subordinateInfo["expired"]?>;
-    var inProgressCourses = <?=$subordinateInfo["started"]?>;
-    var completedCourses = <?=$subordinateInfo["completed"]?>;
-    var readyToStart = <?=$subordinateInfo["ready_to_start"]?>;
+    var totalCourses = <?= $subordinateInfo["total_course"] ?>;
+    var dueSoonCourses = <?= $subordinateInfo["expire_soon"] ?>;
+    var pastDueCourses = <?= $subordinateInfo["expired"] ?>;
+    var inProgressCourses = <?= $subordinateInfo["started"] ?>;
+    var completedCourses = <?= $subordinateInfo["completed"] ?>;
+    var readyToStart = <?= $subordinateInfo["ready_to_start"] ?>;
 </script>

@@ -1500,6 +1500,8 @@ if (!function_exists('getMyDepartmentAndTeams')) {
             ->group_start()
             ->where("FIND_IN_SET({$employeeId}, departments_team_management.team_lead) > 0", null, null)
             ->or_where("FIND_IN_SET({$employeeId}, departments_management.supervisor) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_management.lms_managers_ids) > 0", null, null)
+            ->or_where("FIND_IN_SET({$employeeId}, departments_team_management.lms_managers_ids) > 0", null, null)
             ->group_end();
         //
         if ($method == "count_all_results") {
@@ -1709,7 +1711,7 @@ if (!function_exists('getCoursesInfo')) {
                 if ($start_diff < 0 && $end_diff > 0) {
                     if ($end_diff < 15) {
                         $result['expire_soon']++;
-                    } 
+                    }
                     //
                     // $result['started']++;
                 } else if ($start_diff < 0 && $end_diff < 0) {
@@ -1727,7 +1729,7 @@ if (!function_exists('getCoursesInfo')) {
             //
         }
         //
-       return $result;
+        return $result;
     }
 }
 
@@ -4134,5 +4136,60 @@ if (!function_exists("generateJobLink")) {
             ->row_array()["sub_domain"];
         //
         return "https://" . $subDomain . "/job_details/" . $jobId;
+    }
+}
+
+
+if (!function_exists("checkIfEmployeeIsLMSManager")) {
+    /**
+     * check if employee is LMS Manage
+     * at department or team level
+     *
+     * @param int $employeeID
+     * @return bool
+     */
+    function checkIfEmployeeIsLMSManager(int $employeeId): bool
+    {
+        // load CI instance
+        $CI = get_instance();
+        // check for department level
+        if (
+            $CI
+            ->db
+            ->where("is_deleted", 0)
+            ->where("FIND_IN_SET('{$employeeId}', lms_managers_ids) !=", 0)
+            ->count_all_results("departments_management")
+        ) {
+            return true;
+        }
+        // check it on team level
+        return
+            $CI
+            ->db
+            ->join(
+                "departments_management",
+                "departments_management.sid = departments_team_management.department_sid",
+                "inner"
+            )
+            ->where("departments_management.is_deleted", 0)
+            ->where("departments_team_management.is_deleted", 0)
+            ->where("FIND_IN_SET('{$employeeId}', departments_team_management.lms_managers_ids) !=", 0)
+            ->count_all_results("departments_team_management");
+    }
+}
+
+if (!function_exists("isLoggedInPersonAnExecutiveAdmin")) {
+    /**
+     * check if the logged in person is
+     * an exec
+     *
+     * @return bool
+     */
+    function isLoggedInPersonAnExecutiveAdmin(): bool
+    {
+        // load CI instance
+        return get_instance()
+            ->session
+            ->userdata("logged_in")["employer_detail"]["is_executive_admin"];
     }
 }

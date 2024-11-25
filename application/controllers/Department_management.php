@@ -102,7 +102,6 @@ class Department_management extends Public_Controller
                         $department_supervisor = $this->input->post('supervisor');
                         $department_sort_order = $this->input->post('sort_order');
 
-                        // TODO
                         // link approvers with time off table
 
                         $data_to_insert = array();
@@ -129,6 +128,10 @@ class Department_management extends Public_Controller
                         $data_to_insert['sort_order'] = $department_sort_order;
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
+                        //
+                        if ($this->input->post("lms_managers", true)) {
+                            $data_to_insert["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
+                        }
 
                         $new_department_sid = $this->department_management_model->insert_department($data_to_insert);
 
@@ -196,6 +199,11 @@ class Department_management extends Public_Controller
                         $data_to_update['sort_order'] = $department_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
+
+                        //
+                        if($this->input->post("lms_managers", true)) {
+                            $data_to_update["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
+                        }
 
                         $this->department_management_model->update_department($department_sid, $data_to_update);
 
@@ -330,6 +338,10 @@ class Department_management extends Public_Controller
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['department_sid'] = $department_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
+                        //
+                        if ($this->input->post("lms_managers", true)) {
+                            $data_to_insert["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
+                        }
                         $teamId = $this->department_management_model->insert_team($data_to_insert);
                         //
                         if ($this->input->post('approvers', true)) {
@@ -373,6 +385,10 @@ class Department_management extends Public_Controller
                         $data_to_update['sort_order'] = $team_sort_order;
                         $data_to_update['modified_by_sid'] = $employer_sid;
                         $data_to_update['modified_date'] = date('Y-m-d H:i:s');
+                        //
+                        if ($this->input->post("lms_managers", true)) {
+                            $data_to_update["lms_managers_ids"] = implode(",", $this->input->post("lms_managers", true));
+                        }
                         $this->department_management_model->update_team($team_sid, $data_to_update);
                         //
                         if ($this->input->post('approvers', true)) {

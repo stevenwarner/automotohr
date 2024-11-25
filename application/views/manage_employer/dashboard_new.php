@@ -1130,6 +1130,7 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
+                                        <?php if(!isLoggedInPersonAnExecutiveAdmin()) {?>
                                         <!--  -->
                                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                             <div class="dash-box">
@@ -1148,6 +1149,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php } ?>
                                         <!--  -->
                                     <?php endif; ?>
 

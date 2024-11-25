@@ -28,12 +28,18 @@ class Courses extends Public_Controller
     public function dashboard()
     {
         //
+        if (isLoggedInPersonAnExecutiveAdmin()) {
+            $this->session->set_flashdata("error", "Permission denied!");
+            return redirect("/dashboard");
+        }
         $data = [];
         //
         $session = $this->session->userdata('logged_in');
         //
+        //
         $companyId = $session['company_detail']['sid'];
         $employeeId = $session['employer_detail']['sid'];
+
         //
         $data['security_details'] = db_get_access_level_details($employeeId);
         //
@@ -358,7 +364,6 @@ class Courses extends Public_Controller
             ->view('courses/' . $viewName)
             ->view('main/footer');
     }
-
 
     /**
      *

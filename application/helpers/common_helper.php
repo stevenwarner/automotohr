@@ -13875,6 +13875,7 @@ if (!function_exists('getUserHint')) {
         $hints['visibility_hint'] = '<strong>Visible To Payroll:</strong> Payroll employees can manage this document.<br /><br />The selected roles, departments (Supervisors), teams (Team Leads), and employees will have access to this document.';
         $hints['authorized_managers_hint'] = 'The selected manager will sign this document.';
         $hints['assigner_hint'] = 'Choose employees to approve document assign.';
+        $hints['lms_manager_hint'] = 'Select the employees who have access to this department to view the employees in the LMS.';
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }

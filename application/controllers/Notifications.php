@@ -138,7 +138,7 @@ class Notifications extends Public_Controller
         if ($pendingTrainings > 0) {
             $data[] = [
                 'count' => $pendingTrainings,
-                'link' => base_url('lms/courses/my'),
+                'link' => base_url('lms/courses/my_lms_dashboard'),
                 'title' => 'Pending Courses'
             ];
         }
