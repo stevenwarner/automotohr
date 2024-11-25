@@ -293,18 +293,24 @@ class Cron_email_model extends CI_Model
             //
             $tmp = [
                 remakeEmployeeName($v0, true, true),
-                count($v0["courses"]),
+                0,
                 count($v0["courses"]["due_soon"]),
                 count($v0["courses"]["expired"]),
                 count($v0["courses"]["inprogress"]),
                 count($v0["courses"]["ready_to_start"]),
             ];
             //
+            $tmp[1] = $tmp[2]
+                + $tmp[3]
+                + $tmp[4]
+                + $tmp[5];
+            //
             $totals["total"] += $tmp[1];
             $totals["due_soon"] += $tmp[2];
             $totals["expired"] += $tmp[3];
             $totals["inprogress"] += $tmp[4];
-            $totals["ready_to_start"] += $tmp[4];
+            $totals["ready_to_start"] += $tmp[5];
+
 
             $data[] = $tmp;
         }
