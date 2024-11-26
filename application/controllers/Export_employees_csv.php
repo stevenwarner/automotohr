@@ -228,13 +228,11 @@ class Export_employees_csv extends Public_Controller
                                             }
                                         } elseif ($value == "drivers_license") {
                                             unset($header['drivers_license']);
-
                                             //
                                             $drivingData = get_employee_drivers_license($employee['sid']);
 
                                             $licenseDetails = "";
                                             if (!empty($drivingData)) {
-
 
                                                 $drivingDataDetails = unserialize($drivingData['license_details']);
 
@@ -256,7 +254,6 @@ class Export_employees_csv extends Public_Controller
                                                 $export_data[$i]['license_indefinite'] = $drivingDataDetails['license_indefinite'] ?? 'N/A';
                                                 $export_data[$i]['license_notes'] = $drivingDataDetails['license_notes'] ?? 'N/A';
                                             } else {
-
 
                                                 $export_data[$i]['license_type'] = '';
                                                 $header['license_type'] = 'license_type';
@@ -293,13 +290,8 @@ class Export_employees_csv extends Public_Controller
                                         } elseif ($value == 'employment_type') {
                                             $export_data[$i][$value] = ucwords(preg_replace("/-_/", " ", $employee["employee_type"]));
                                         } elseif ($value == "approvers") {
-
                                             $this->load->model('department_management_model');
-                                            //_e($company_sid,true,true);
                                             $approversData = $this->department_management_model->get_all_departments($company_sid);
-
-
-                                            // $approversData=                                       
                                         } else {
                                             $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
                                         }
@@ -346,6 +338,10 @@ class Export_employees_csv extends Public_Controller
                                         $header[$key] = "SSN";
                                     } else if ($item == "eeoc_code") {
                                         $header[$key] = "EEOC Code";
+                                    } elseif ($item == "department_sid") {
+                                        $header[$key] = "Department";
+                                    } elseif ($item == "team_sid") {
+                                        $header[$key] = "Team";
                                     } else {
                                         $header[$key] = ucwords(str_replace("_", " ", $item));
                                     }
@@ -392,8 +388,8 @@ class Export_employees_csv extends Public_Controller
                                         $a = explode(',', $department['approvers']);
                                         $s = explode(',', $department['supervisor']);
 
-                                        if(!empty($a)){
-                                        echo  "Approvers" . PHP_EOL;
+                                        if (!empty($a)) {
+                                            echo  "Approvers" . PHP_EOL;
                                         }
 
                                         foreach ($a as $af) {
@@ -403,8 +399,8 @@ class Export_employees_csv extends Public_Controller
                                             }
                                         }
 
-                                        if(!empty($s)){
-                                        echo PHP_EOL . "Supervisors" . PHP_EOL;
+                                        if (!empty($s)) {
+                                            echo PHP_EOL . "Supervisors" . PHP_EOL;
                                         }
 
                                         foreach ($s as $sf) {
@@ -432,10 +428,10 @@ class Export_employees_csv extends Public_Controller
 
                                                 $ta = explode(',', $team['approvers']);
 
-                                                if(!empty($ta)){
-                                                echo  "Approvers" . PHP_EOL;
+                                                if (!empty($ta)) {
+                                                    echo  "Approvers" . PHP_EOL;
                                                 }
-                                               
+
                                                 foreach ($ta as $taf) {
 
                                                     $teamApproversDetails = db_get_employee_profile($taf)[0];
@@ -451,10 +447,10 @@ class Export_employees_csv extends Public_Controller
 
                                                 $tal = explode(',', $team['team_lead']);
 
-                                                if(!empty($tal)){
-                                                echo  PHP_EOL . "Team Leads" . PHP_EOL;
+                                                if (!empty($tal)) {
+                                                    echo  PHP_EOL . "Team Leads" . PHP_EOL;
                                                 }
-                                                
+
                                                 foreach ($tal as $talf) {
                                                     $teamLeadsDetails = db_get_employee_profile($talf)[0];
                                                     if (!empty($teamLeadsDetails)) {
