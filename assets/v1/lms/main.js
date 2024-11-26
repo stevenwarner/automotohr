@@ -46,7 +46,7 @@ $(function LMSCourses() {
 	/**
 	 * Enable course
 	 */
-	$(document).on("click", ".jsEnableDefaultCourse", function (event) {
+	$(document).on("click", ".jsEnableCourse", function (event) {
 		// prevent default event
 		event.preventDefault();
 		//
@@ -71,7 +71,7 @@ $(function LMSCourses() {
 	/**
 	 * Disable course
 	 */
-	$(document).on("click", ".jsDisableDefaultCourse", function (event) {
+	$(document).on("click", ".jsDisableCourse", function (event) {
 		// prevent default event
 		event.preventDefault();
 		//

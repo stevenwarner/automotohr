@@ -50,6 +50,81 @@ $(function LMSStoreCourses() {
 	$(document).on("click", ".jsAssignCourses", selectSingleInput);
 	$(document).on("click", ".jsCopyCoursesBtn", start_copy_process);
 
+	/**
+	 * Disabl company course
+	 */
+	$(document).on("click", ".jsDisableCourse", function (event) {
+		// stop the default functionality
+		// event.preveentDefault();
+		var sid = $(this).closest("tr").data("id");
+		//
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to disable this course?',
+			function () {
+				// call the function
+				changeCourseStatus(sid, 'disable');
+			},
+			function () {
+
+			}
+		)
+	});
+
+	/**
+	 * Enable company course
+	 */
+	$(document).on("click", ".jsEnableCourse", function (event) {
+		// stop the default functionality
+		// event.preventDefault();
+		var sid = $(this).closest("tr").data("id");
+		//
+		alertify.confirm(
+			'Are You Sure?',
+			'Are you sure want to enable this course?',
+			function () {
+				// call the function
+				changeCourseStatus(sid, 'enable');
+			},
+			function () {
+
+			}
+		)
+	});
+
+	// Change course status
+	function changeCourseStatus (id, status) {
+		// check and abort previous calls
+		if (XHR !== null) {
+			XHR.abort();
+		}
+		// show the loader
+		ml(true, "jsPageLoader");
+		// make the call
+		XHR = $.ajax({
+			url: apiURL + `lms/course/store/course/${id}/${status}`,
+			method: "PUT",
+			headers: {
+				Authorization: "Bearer " + apiAccessTokenStore,
+			},
+		})
+			.success(function (response) {
+				// empty the call
+				XHR = null;
+				// set the view
+				window.location.reload();
+				// hide the loader
+				ml(false, "jsPageLoader");
+			})
+			.fail(handleErrorResponse)
+			.done(function () {
+				// empty the call
+				XHR = null;
+				// hide the loader
+				ml(false, "jsPageLoader");
+			});
+	}
+
 	// Select all input: checkbox
 	function selectAllInputs() {
 		$(".jsStoreCourseRow")
