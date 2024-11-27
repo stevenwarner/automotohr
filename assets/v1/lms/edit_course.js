@@ -568,8 +568,6 @@ $(function editCourse() {
 			courseObj.course_file = courseObj.course_file_name;
 		}
 		//
-		console.log(courseObj)
-		//
 		delete courseObj.course_file_link;
 		//
 		if (typeof courseObj.course_banner.link === "undefined") {

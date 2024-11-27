@@ -1680,7 +1680,7 @@ class Courses extends Public_Controller
         $data['subordinateId'] = $subordinateId;
         $data['subordinateInfo'] = get_employee_profile_info($subordinateId);
         $data['page'] = "employee_courses_history";
-        $data['page_title'] = $reviewAs == "non_plus" ? "Subordinate Courses History" : "Employee Courses History";
+        $data['page_title'] = $reviewAs == "non_plus" ? "Subordinate Course History" : "Employee Course History";
         $data['level'] = 0;
         $data['reviewAs'] = $reviewAs;
         $data['history'] = $history;
