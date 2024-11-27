@@ -609,7 +609,7 @@ $(function editCourse() {
 					);
 				}
 				// set the file
-				courseObj.course_secondary_logo = responseLogo;
+				courseObj.course_secondary_logo = responseLogo.data;
 			}
 		}	
 		// add company code
