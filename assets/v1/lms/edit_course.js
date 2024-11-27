@@ -568,6 +568,8 @@ $(function editCourse() {
 			courseObj.course_file = courseObj.course_file_name;
 		}
 		//
+		console.log(courseObj)
+		//
 		delete courseObj.course_file_link;
 		//
 		if (typeof courseObj.course_banner.link === "undefined") {
@@ -601,7 +603,7 @@ $(function editCourse() {
 				if (!responseLogo.data) {
 					return alertify.alert(
 						"ERROR",
-						"Failed to upload the course banner.",
+						"Failed to upload the course secondary logo.",
 						function () {
 							//
 							ml(false, modalLoaderId);
@@ -610,8 +612,11 @@ $(function editCourse() {
 				}
 				// set the file
 				courseObj.course_secondary_logo = responseLogo.data;
+			} else {
+				// set the file
+				courseObj.course_secondary_logo = courseObj.course_secondary_logo.link;
 			}
-		}	
+		}
 		// add company code
 		courseObj.company_code = companyCode;
 		//
