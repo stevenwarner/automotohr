@@ -8,7 +8,7 @@
             <!--  -->
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                    <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                    <a href="<?php echo $employee['access_level'] == 'Employee' ?   base_url('employee_management_system'): base_url('dashboard'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                 </div>
             </div>
             <!--  -->
