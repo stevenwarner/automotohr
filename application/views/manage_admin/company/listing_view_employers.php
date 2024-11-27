@@ -246,6 +246,11 @@
                                                                                 }
                                                                             }
                                                                             ?>
+
+
+                                                                            <br><b>LMS Dashboard: </b><br>
+                                                                            <input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLoginForLMS('<?php echo $value['sid'];?>')" value="Show">
+
                                                                         </td>
 
 
@@ -693,4 +698,16 @@
         let id = $(this).closest('tr').data('id');
         $('.jsToggleTable' + id).toggle();
     });
+
+
+    function employerLoginForLMS(userId) {     
+        url_to = "<?= base_url() ?>manage_admin/employers/employer_login_lms";
+        $.post(url_to, {
+                action: "login",
+                sid: userId
+            })
+            .done(function() {
+                window.open("<?= base_url('/lms/courses/my_lms_dashboard') ?>", '_blank');
+            });
+    }
 </script>

@@ -1983,4 +1983,89 @@ class employers extends Admin_Controller
             res($resp);
         }
     }
+
+
+    function employer_login_lms()
+    {
+
+        $redirect_url = 'manage_admin';
+        $function_name = 'employerlogin';
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        $this->load->model('dashboard_model');
+        $action = $this->input->post('action');
+        $employer_id = $this->input->post('sid');
+
+
+        if ($action == 'login') {
+
+            $result = $this->dashboard_model->update_session_details(0, $employer_id);
+            $empData = $result['employer'];
+            $system_check = NULL;
+
+            if (isset($_POST['system'])) {
+                $system_check = $_POST['system'];
+            }
+
+            $task_check = NULL;
+
+            if (isset($_POST['task'])) {
+                $task_check = $_POST['task'];
+            }
+
+            if ($system_check != null) {
+                $dataToUpdate = array('verification_key' => NULL); //removing verification key from user document
+                $this->company_model->updateUserDocument($employer_id, $dataToUpdate); //activate user
+                $updatedData = array('active' => 1);
+                $this->dashboard_model->update_user($employer_id, $updatedData);
+            } else if ($task_check != null) {
+                $updatedData = array('activation_key' => NULL); //Removing user activation_key
+                $this->dashboard_model->update_user($empData["parent_sid"], $updatedData);
+            }
+
+            $companyData = $result['company'];
+
+
+            if ($empData) {
+                $portal_detail = $result['portal'];
+                $sess_array = array();
+                $data['cart'] = db_get_cart_content($empData['parent_sid']);
+                $sess_array = array(
+                    'company_detail' => $companyData,
+                    'employer_detail' => $empData,
+                    'portal_detail' => $portal_detail,
+                    'cart' => $data['cart'],
+                    'is_super' => 1,
+                    'clocked_status' => $result['clocked_status']
+                );
+
+                $this->db->where('company_id', $sess_array['company_detail']['sid']);
+                $config = $this->db->count_all_results('incident_type_configuration');
+                $sess_array['incident_config'] = $config;
+                $sess_array['resource_center'] = $sess_array['company_detail']['enable_resource_center'];
+
+                $this->session->set_userdata('logged_in', $sess_array);
+                $activity_data = array();
+                $activity_data['company_sid'] = $companyData['sid'];
+                $activity_data['employer_sid'] = $empData['sid'];
+                $activity_data['company_name'] = $companyData['CompanyName'];
+                $activity_data['employer_name'] = $empData['first_name'] . ' ' . $empData['last_name'];
+                $activity_data['employer_access_level'] = $empData['access_level'];
+                $activity_data['module'] = 'Super Admin';
+                $activity_data['action_performed'] = 'Employer Login';
+                $activity_data['action_year'] = date('Y');
+                $activity_data['action_week'] = date('W');
+                $activity_data['action_timestamp'] = date('Y-m-d H:i:s');
+                $activity_data['action_status'] = '';
+                $activity_data['action_url'] = current_url();
+                $activity_data['employer_ip'] = getUserIP();
+                $activity_data['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $this->db->insert('logged_in_activitiy_tracker_super', $activity_data);
+                return "true";
+            } else
+                return "false";
+        }
+    }
 }
