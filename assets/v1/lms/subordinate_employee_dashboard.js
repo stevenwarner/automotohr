@@ -379,7 +379,7 @@ $(function LMSEmployeeCourses() {
 				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
 				coursesHTML += `            <p class="csColumSection"><strong>ASSIGNED DATE</strong></p>`;
 				coursesHTML += `            <p>${moment(
-					course.course_start_period
+					course.assigned_on
 				).format(timeOffDateFormatWithTime)}</p>`;
 				coursesHTML += `        </div>`;
 				coursesHTML += `        <div class="col-md-6 col-xs-12">`;
